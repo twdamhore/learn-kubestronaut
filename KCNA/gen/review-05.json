@@ -1,17 +1,7 @@
 {
   "set": "05",
-  "round": 11,
+  "round": 12,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s05-q005",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "current_answer": 3,
-      "suggested_answer": null,
-      "problem": "The question asks 'Which CNCF project is specifically designed for container image vulnerability scanning?' and the answer/explanation states 'Trivy is a CNCF project'. Trivy is NOT a CNCF project — it is developed by Aqua Security and is not listed in the CNCF landscape as a sandbox, incubating, or graduated project. The question premise is flawed because none of the four options is a CNCF project that does container image vulnerability scanning (Falco is CNCF but does runtime detection, OPA is CNCF but does policy, cert-manager is CNCF but does TLS). Trivy is the correct tool for image vulnerability scanning, but calling it a CNCF project is factually incorrect.",
-      "fix": "Either (a) rephrase the question to remove the 'CNCF project' requirement (e.g., 'Which open-source tool is specifically designed for container image vulnerability scanning?'), and update the explanation to remove the claim that Trivy is a CNCF project, or (b) replace Trivy with Grype (anchore/grype, also not CNCF) and reword the question to not require CNCF status."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

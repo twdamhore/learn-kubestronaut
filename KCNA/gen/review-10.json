@@ -1,16 +1,7 @@
 {
   "set": "10",
-  "round": 11,
+  "round": 12,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s10-q004",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "current_answer": 3,
-      "suggested_answer": null,
-      "problem": "The answer assumes that a NotReady node's topology domain is included in the topologySpreadConstraints skew calculation. Since Kubernetes 1.26 (beta, on by default) and 1.27 (GA), the default `nodeTaintsPolicy` for topologySpreadConstraints is `Honor`, which excludes nodes with non-tolerated taints from the spread calculation. A NotReady node receives a `node.kubernetes.io/not-ready:NoSchedule` taint, which a standard Deployment pod does not tolerate. Under the default Honor policy, the NotReady node and its zone-c domain are excluded, making the spread calculation over zones a and b only: (1,1) -> can scale to (3,3) across two zones, scheduling all 6 pods successfully (answer A). The current answer D is only correct for Kubernetes < 1.26 or if `nodeTaintsPolicy: Ignore` is explicitly set. Since the question does not specify a Kubernetes version, the answer is version-dependent and ambiguous."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }
