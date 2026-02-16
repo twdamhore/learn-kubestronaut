@@ -1,0 +1,402 @@
+{
+  "s09-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/",
+    "wrong": "- A: Readiness probe failures affect traffic routing via Endpoints, not container restarts\n- C: A registry/image format issue would show ImagePullBackOff or ErrImagePull, not repeated restarts\n- D: Resource-pressure evictions are reported as Evicted status and unrelated to probe configuration"
+  },
+  "s09-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- B: 7 Pods would require maxSurge: 2 with 5 replicas; maxSurge: 1 allows only 1 extra Pod\n- C: 5 Pods would mean no surge at all, contradicting maxSurge: 1 which permits one extra\n- D: 4 Pods would violate maxUnavailable: 0 which requires all 5 original replicas stay available"
+  },
+  "s09-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "wrong": "- B: ClusterIP Services are designed for internal cluster access, not external-only via load balancer\n- C: Standard container images include DNS resolver libraries; this is not a missing-library issue\n- D: ClusterIP Services are the standard mechanism for direct inter-Pod communication within a cluster"
+  },
+  "s09-q004": {
+    "ref": "https://opentelemetry.io/docs/what-is-opentelemetry/",
+    "wrong": "- A: Prometheus focuses on metrics collection and does not natively support traces or logs\n- B: Jaeger is a distributed tracing system and does not collect metrics or logs\n- D: Fluentd is a log aggregator and does not provide built-in trace correlation or metrics collection"
+  },
+  "s09-q005": {
+    "ref": "https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
+    "wrong": "- A: Insufficient Prometheus resources would cause scrape timeouts, not total absence of target discovery\n- B: Readiness probes do not gate Prometheus scraping; scraping depends on SD config and relabeling\n- C: Prometheus Operator CRDs are not required when using raw kubernetes_sd_configs in a ConfigMap"
+  },
+  "s09-q006": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+    "wrong": "- A: Argo CD operates independently of Flux; they are separate GitOps tools that do not require each other\n- C: Argo CD does support Git webhooks for faster detection; webhooks supplement but are not required for sync\n- D: If repoURL were missing, the application would fail to create, not show OutOfSync status"
+  },
+  "s09-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
+    "wrong": "- A: Changing Service type does not diagnose the issue; it changes the access method entirely\n- B: Restarting kube-proxy is a heavy-handed action unlikely to fix a selector mismatch problem\n- D: Increasing nodePort range is irrelevant since port 30080 is already within the default 30000-32767 range"
+  },
+  "s09-q008": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/leases/",
+    "wrong": "- A: Controller-manager instances are not partitioned by resource type; the leader handles all resources\n- B: The API server does not route or serialize controller requests to a single instance\n- D: etcd does not distribute work; it stores data while leader election uses Lease objects in kube-system"
+  },
+  "s09-q009": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-admission/",
+    "wrong": "- A: NetworkPolicy controls network traffic, not user identity or container security contexts\n- C: ResourceQuota limits aggregate resource consumption, not security attributes like runAsNonRoot\n- D: There is no privileged field in resource limits; security context fields are separate from resource specs"
+  },
+  "s09-q010": {
+    "ref": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+    "wrong": "- B: Re-merging into a monolith reverses the microservices migration and does not address the resilience issue\n- C: Retries with backoff can worsen cascading failures by adding more load to an already failing service\n- D: Deploying all services on one node creates a single point of failure and does not fix cascading timeouts"
+  },
+  "s09-q011": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: nodeSelector requires exact label match; v100 and a100 are different values regardless of GPU family\n- C: The Pod never gets scheduled, so there is no container start or driver compatibility issue\n- D: The scheduler never creates labels; it only evaluates existing node labels against Pod constraints"
+  },
+  "s09-q012": {
+    "ref": "https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd",
+    "wrong": "- A: No evidence suggests Kata Containers is in use; the question states containerd is the runtime\n- B: The kubelet does not hand off containers to the kernel scheduler; it manages them through the CRI\n- C: Docker and containerd have separate container stores; docker ps does not require special privileges"
+  },
+  "s09-q013": {
+    "ref": "https://opentelemetry.io/docs/concepts/context-propagation/",
+    "wrong": "- B: Jaeger has no such 2-span limit; traces can contain thousands of spans\n- C: Storage issues would cause random span loss across all traces, not a clean break at a specific service\n- D: OpenTelemetry supports both gRPC and HTTP instrumentation, plus many other protocols"
+  },
+  "s09-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: Volume-mounted ConfigMaps do update automatically; the kubelet syncs them periodically\n- B: ConfigMap updates do not require PersistentVolumeClaims; the volume mount syncs in-place\n- D: The kubelet syncs ConfigMap updates on its regular sync interval, not during maintenance windows"
+  },
+  "s09-q015": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: PVCs are retained by default on scale-down, not deleted; this preserves stateful data\n- B: PVCs are not migrated between Pods; each PVC is bound to a specific Pod ordinal identity\n- D: PVCs remain Bound (not Released) to the PV; the PVC object itself is retained in the namespace"
+  },
+  "s09-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
+    "wrong": "- A: Forbid policy prevents concurrent runs; a second Job is not created alongside the active one\n- B: Forbid does not terminate running Jobs; the Replace policy would do that\n- C: The Job is not queued; it is simply skipped entirely when the previous Job is still active"
+  },
+  "s09-q017": {
+    "ref": "https://12factor.net/processes",
+    "wrong": "- B: Factor III (Config) is about externalizing config, not about session state or stickiness\n- C: Factor XI (Logs) is about treating logs as event streams, unrelated to session management\n- D: Factor IX (Disposability) is about fast startup and graceful shutdown, not statelessness"
+  },
+  "s09-q018": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
+    "wrong": "- A: Increasing database resources is speculative; other Pods connect fine, so the DB is not overloaded\n- B: Restarting kube-dns is a blunt action; the issue is likely Pod-specific hostname or driver mismatch\n- D: CrashLoopBackOff is not terminal; it indicates repeated failures with exponential backoff retries"
+  },
+  "s09-q019": {
+    "ref": "https://etcd.io/docs/v3.5/op-guide/hardware/",
+    "wrong": "- B: Increasing etcd members beyond 3 or 5 increases consensus latency due to more Raft round trips\n- C: Disabling authentication is a security risk and not appropriate for production environments\n- D: In-memory storage loses all data on restart, making it unsuitable for production Kubernetes clusters"
+  },
+  "s09-q020": {
+    "ref": "https://helm.sh/docs/helm/helm_rollback/",
+    "wrong": "- A: Deleting and reinstalling causes unnecessary downtime and loses release history\n- B: Revision 1 is the first install, which may not be the immediately previous release after multiple upgrades\n- D: Manually editing resources is error-prone, slow, and does not leverage Helm's release management"
+  },
+  "s09-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/#compute-resource-quota",
+    "wrong": "- A: Default values are not assigned automatically by the scheduler; a LimitRange would be needed for that\n- B: ResourceQuota is not auto-adjusted; it is a fixed constraint that must be explicitly modified\n- C: The Pod is rejected immediately by the API server, not left in Pending state waiting for a LimitRange"
+  },
+  "s09-q022": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
+    "wrong": "- A: DNS policies in CoreDNS do not override NetworkPolicy enforcement at the network layer\n- B: Annotations cannot bypass NetworkPolicy; enforcement is done at the CNI level, not by annotation\n- C: ServiceAccount privileges control API access, not network-level traffic allowed by NetworkPolicy"
+  },
+  "s09-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
+    "wrong": "- A: DNS records are created for all Service types including ClusterIP; LoadBalancer is not required\n- B: CoreDNS fully supports the svc.cluster.local suffix; it is the standard cluster DNS domain\n- C: DNS resolution works with Service names; name-based lookups are the primary use case for CoreDNS"
+  },
+  "s09-q024": {
+    "ref": "https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
+    "wrong": "- A: Knative's routing reconfiguration takes milliseconds, not 8 seconds\n- C: DNS cache expiry does not cause 8-second delays; DNS resolution is fast within a cluster\n- D: Images are typically cached on nodes; even if re-pulled, this is one factor of cold start, not the sole cause"
+  },
+  "s09-q025": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: nodeSelector targets nodes but does not override taints; the Pod still needs a matching toleration\n- C: updateStrategy OnDelete controls update behavior, not initial scheduling on tainted nodes\n- D: Removing resource requests does not bypass taints; taints and resource scheduling are separate mechanisms"
+  },
+  "s09-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: emptyDir is not recreated on container restart; it persists for the Pod's entire lifetime\n- B: emptyDir volumes are bound to the Pod, not individual containers; all containers share them\n- D: The kubelet does not move emptyDir data to PersistentVolumes; there is no such automatic migration"
+  },
+  "s09-q027": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- A: Taints work on a per-node basis and would be complex to manage for mutual exclusion between apps\n- B: preferredDuringScheduling is a soft constraint and does not guarantee Pods are never co-located\n- C: PriorityClass affects scheduling priority and preemption, not co-location constraints between Pods"
+  },
+  "s09-q028": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
+    "wrong": "- B: Environment variables are also stored in the Pod spec in etcd; this does not address at-rest encryption\n- C: ConfigMaps are not encrypted at rest by default; they are stored as plaintext just like Secrets\n- D: A separate etcd cluster adds complexity without solving the core issue; encryption config is the solution"
+  },
+  "s09-q029": {
+    "ref": "https://tekton.dev/docs/",
+    "wrong": "- B: Prometheus is a monitoring system for metrics, not a CI/CD pipeline tool\n- C: Envoy is a service proxy for traffic management, not a CI/CD pipeline orchestrator\n- D: Harbor is a container registry for storing images, not a CI/CD pipeline definition tool"
+  },
+  "s09-q030": {
+    "ref": "https://docs.fluentbit.io/manual/pipeline/inputs/tail#keep-state",
+    "wrong": "- B: Fluentd does not automatically handle offset tracking by default; it also requires explicit configuration\n- C: Elasticsearch deduplication is possible but complex and shifts the burden downstream\n- D: Reducing buffer size does not prevent re-reading from the beginning of log files after restart"
+  },
+  "s09-q031": {
+    "ref": "https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/",
+    "wrong": "- A: kube-proxy does not proxy API server requests; it handles Service-to-Pod routing only\n- B: kube-proxy does not handle encryption or mTLS; that is the role of a service mesh or CNI plugin\n- C: Node health monitoring is done by the kubelet and node controller, not kube-proxy"
+  },
+  "s09-q032": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/",
+    "wrong": "- B: Prometheus provides a custom metrics API, not the core resource metrics API used by kubectl top\n- C: kube-state-metrics exposes Kubernetes object state, not container-level CPU/memory usage\n- D: cAdvisor is embedded in the kubelet since Kubernetes 1.12 and does not need separate installation"
+  },
+  "s09-q033": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
+    "wrong": "- B: Label selectors work on all resource types including namespace-scoped resources like ConfigMaps\n- C: ConfigMaps fully support labels; they can be created, queried, and filtered using label selectors\n- D: The -l flag works with all resource types, not just workloads; the issue is with 'get all' scope"
+  },
+  "s09-q034": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- A: maxSurge: 100% with rolling update is not blue-green; it still progressively replaces Pods\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly"
+  },
+  "s09-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs",
+    "wrong": "- A: A single Pod failure does not fail the entire Job unless backoffLimit is exceeded\n- B: The kubelet may restart the container in-place only with restartPolicy: OnFailure, but the Job controller also creates replacement Pods to track completions\n- D: Jobs do not pause for manual intervention; the controller automatically handles failures and replacements"
+  },
+  "s09-q036": {
+    "ref": "https://katacontainers.io/",
+    "wrong": "- A: runc uses namespaces and cgroups which provide process-level isolation, not VM-level isolation\n- B: gVisor provides user-space kernel sandboxing, which is application-level isolation, not full VM isolation\n- D: Docker-in-Docker is a development pattern, not a security sandbox runtime for production workloads"
+  },
+  "s09-q037": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types",
+    "wrong": "- A: Prefix pathType matches any path that starts with the defined prefix, not just exact matches\n- B: The Ingress controller routes to the matching prefix rule, not return 404 for sub-paths\n- D: Requests are routed to the single matching backend, not load-balanced across all backends"
+  },
+  "s09-q038": {
+    "ref": "https://12factor.net/config",
+    "wrong": "- A: Container images can contain any files including text; there is no such restriction\n- C: Container registries do not strip credentials from images; they store images as-is\n- D: Kubernetes mounts the container filesystem at runtime; embedded files are fully accessible"
+  },
+  "s09-q039": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    "wrong": "- B: kubectl drain does not stop the kubelet or archive logs; those are separate manual operations\n- C: kubectl drain does not delete the node object; it only cordons and evicts Pods from the node\n- D: Kubernetes does not live-migrate containers; Pods are terminated and rescheduled as new instances"
+  },
+  "s09-q040": {
+    "ref": "https://prometheus.io/docs/prometheus/latest/querying/functions/#rate",
+    "wrong": "- A: Multiplying the error rate by 100 gives a scaled absolute rate, not a percentage of total requests\n- C: count() returns the number of time series, not request rates; it is not suitable for rate calculations\n- D: histogram_quantile is for histogram metrics and does not compute error ratios from counter metrics"
+  },
+  "s09-q041": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/#readiness-probes",
+    "wrong": "- A: Running state alone does not mean traffic is sent; readiness probes gate Endpoints inclusion\n- B: Services do not mark responses as degraded; the Pod is either in Endpoints or not\n- C: Readiness probe failures do not terminate the Pod; only liveness probe failures trigger restarts"
+  },
+  "s09-q042": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-ingress-traffic",
+    "wrong": "- A: Deleting the default ServiceAccount does not affect network access; ServiceAccounts control API auth\n- B: A policy with policyTypes Egress and no egress rules denies egress, not ingress traffic\n- D: Annotations on namespaces do not enforce network isolation; only NetworkPolicy objects do"
+  },
+  "s09-q043": {
+    "ref": "https://istio.io/latest/docs/tasks/traffic-management/mirroring/",
+    "wrong": "- A: Gateway resources handle ingress traffic entry, not traffic mirroring between service versions\n- B: DestinationRule with ROUND_ROBIN distributes traffic, not mirrors it to a separate version\n- C: PeerAuthentication configures mTLS policies, not traffic routing or mirroring behavior"
+  },
+  "s09-q044": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment",
+    "wrong": "- B: rollout restart triggers a new rollout by updating the Pod template, not reverting to a specific revision\n- C: kubectl apply --force overwrites with a file, not a specific revision, and requires the old YAML\n- D: kubectl set image --rollback is not a valid command; the rollback flag does not exist on set image"
+  },
+  "s09-q045": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler-implementation",
+    "wrong": "- A: node-2 is not the only eligible node; node-1 also has sufficient CPU (4 cores >= 3 requested)\n- B: The scheduler does not overcommit based on limits; scheduling uses requests for filtering\n- C: CPU requests accept both whole numbers and millicores; 3 is valid notation equivalent to 3000m"
+  },
+  "s09-q046": {
+    "ref": "https://www.gitops.tech/",
+    "wrong": "- B: kubectl apply is not deprecated; it remains a core kubectl command in all current versions\n- C: CI/CD pipelines can access registries via configured credentials; there is no inherent restriction\n- D: Pipelines routinely access registries for pushing and pulling images; network isolation is not a blocker"
+  },
+  "s09-q047": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
+    "wrong": "- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs"
+  },
+  "s09-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/limit-range/",
+    "wrong": "- A: A LimitRange does inject defaults; without it the Pod would be rejected by the ResourceQuota\n- B: The limit is not set to the request value; the LimitRange default limit is used independently\n- D: Pod creation does not fail because the LimitRange provides the missing limit value automatically"
+  },
+  "s09-q049": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#reclaim-policy",
+    "wrong": "- A: With Delete policy, the PV does not transition to Released; both PV and storage are deleted\n- B: The PV is not retained with a wipe; the Delete policy removes the PV object entirely\n- C: The PV does not remain bound; the Delete reclaim policy triggers immediate cleanup"
+  },
+  "s09-q050": {
+    "ref": "https://grafana.com/docs/grafana/latest/datasources/",
+    "wrong": "- A: Grafana Mimir is a long-term metrics storage backend, not a unified data format converter\n- B: Alertmanager integration handles alerts, not data unification across different backend sources\n- D: Grafana Agent collects telemetry but does not replace Prometheus or Elasticsearch as backends"
+  },
+  "s09-q051": {
+    "ref": "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
+    "wrong": "- B: kubectl apply does not fail with conflict errors; it performs a three-way merge patch\n- C: Kubernetes does not choose the higher replica count; the three-way diff determines the outcome\n- D: The replica count does not revert because the file value has not changed relative to last-applied"
+  },
+  "s09-q052": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "wrong": "- A: There is no exec verb on pods resource; exec is a subresource requiring create on pods/exec\n- B: The update verb on pods allows modifying Pod specs, not executing commands inside containers\n- D: Cluster-admin is not required; a namespace-scoped Role with create on pods/exec is sufficient"
+  },
+  "s09-q053": {
+    "ref": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details",
+    "wrong": "- A: The HPA does not simply double replicas; it uses a specific mathematical formula for scaling\n- B: The HPA does not add 1 replica at a time; it calculates the exact desired count in one step\n- C: The HPA does not immediately jump to maxReplicas; it computes the proportional count needed"
+  },
+  "s09-q054": {
+    "ref": "https://www.jaegertracing.io/docs/latest/frontend-ui/",
+    "wrong": "- A: Jaeger does not have a built-in alerting system; alerting is handled by tools like Prometheus\n- C: Jaeger does not aggregate metrics; it focuses on trace storage, query, and visualization\n- D: Jaeger does not have a native log correlator; log correlation requires external integration"
+  },
+  "s09-q055": {
+    "ref": "https://istio.io/latest/docs/ops/deployment/performance-and-scalability/",
+    "wrong": "- B: Envoy does not replace kube-proxy; both operate independently in a service mesh deployment\n- C: Sidecars have resource limits and do not consume all CPU; 2-5ms overhead is from proxying, not starvation\n- D: Service meshes support connection pooling and reuse; they do not disable TCP connection reuse"
+  },
+  "s09-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- A: Existing running Pods are managed by the kubelet and are not terminated when the scheduler is down\n- B: The API server continues accepting requests normally; scheduler unavailability does not block the API\n- C: ClusterIP addresses are allocated by the API server, not the scheduler"
+  },
+  "s09-q057": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/#automatic-self-healing",
+    "wrong": "- A: A CronJob running kubectl apply is fragile, lacks drift detection, and is not a proper reconciliation loop\n- C: Removing all edit permissions is impractical and does not detect or revert drift from other sources\n- D: Finalizers prevent deletion but do not make resources immutable or block modifications"
+  },
+  "s09-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- A: Pod affinity co-locates Pods together, which is the opposite of spreading them across zones\n- C: Node affinity with preferred weights is a soft constraint and does not guarantee even distribution\n- D: Three separate Deployments add management overhead and break the single-Deployment abstraction"
+  },
+  "s09-q059": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- B: Memory limits are enforced by cgroups and the kernel; they are not advisory in Kubernetes\n- C: tmpfs memory is tracked by the cgroup memory controller; it does not bypass accounting\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead"
+  },
+  "s09-q060": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress/#tls",
+    "wrong": "- A: Standard Ingress controllers (NGINX, Traefik) support TLS termination natively\n- B: Kubernetes Secrets have a 1MB size limit, far larger than typical TLS certificates\n- D: CertificateSigningRequest is for in-cluster CA signing, not required for Ingress TLS configuration"
+  },
+  "s09-q061": {
+    "ref": "https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
+    "wrong": "- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus never permanently removes targets from config; they remain and are retried each interval"
+  },
+  "s09-q062": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
+    "wrong": "- B: hostNetwork does not solve authentication issues; it changes network namespace, not registry credentials\n- C: Private registries serve any valid tag; the latest tag is not special for authentication purposes\n- D: CoreDNS configuration is for DNS resolution, not registry authentication or authorization"
+  },
+  "s09-q063": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/kubernetes-api/#api-groups-and-versioning",
+    "wrong": "- A: Developers cannot freely choose API groups; each resource type has a fixed API group assignment\n- B: The API group is determined by the resource type definition, not the namespace of the resource\n- C: Not all resources use v1; many resources use other API groups like apps/v1, batch/v1, etc."
+  },
+  "s09-q064": {
+    "ref": "https://www.cncf.io/projects/nats/",
+    "wrong": "- A: Synchronous HTTP request-response creates tight coupling and does not support fan-out to multiple consumers\n- C: Shared database polling creates tight coupling, does not scale well, and introduces polling latency\n- D: gRPC bidirectional streaming requires point-to-point connections, not publish-subscribe fan-out"
+  },
+  "s09-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit",
+    "wrong": "- B: Kubernetes does not clean up all inactive ReplicaSets; it retains them up to revisionHistoryLimit\n- C: Only revisionHistoryLimit old ReplicaSets are kept, not one per historical revision\n- D: More than 1 old ReplicaSet is retained; the limit of 3 means the 3 most recent old ones are kept"
+  },
+  "s09-q066": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#opt-out-of-api-credential-automounting",
+    "wrong": "- A: Pod-to-Pod communication uses the CNI network, not ServiceAccount tokens; it is unaffected\n- B: The ServiceAccount is still associated; its token is simply not mounted as a volume in the Pod\n- C: imagePullSecrets are configured separately on the ServiceAccount and are not affected by this setting"
+  },
+  "s09-q067": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
+    "wrong": "- B: The kubelet does not restart Pods to reconnect to the API server; Pods continue running\n- C: Pods are not immediately terminated; the container runtime operates independently of the API connection\n- D: Pods are not instantly rescheduled; there is a toleration timeout (default 300s) before eviction begins"
+  },
+  "s09-q068": {
+    "ref": "https://istio.io/latest/docs/concepts/traffic-management/#routing-rules",
+    "wrong": "- A: Scaling changes the Pod count and traffic proportionally, not independently of replica count\n- C: sessionAffinity does not support percentage-based traffic splitting between service versions\n- D: DNS-based round-robin cannot provide fine-grained percentage-based traffic control"
+  },
+  "s09-q069": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#risks",
+    "wrong": "- A: Kubernetes does not automatically encrypt Secrets with AES-256; encryption at rest must be configured\n- B: Secrets are not encrypted with PKI; they are base64-encoded, which is reversible encoding\n- D: The value is not hashed; base64 is a reversible encoding, and the original value can be easily decoded"
+  },
+  "s09-q070": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- A: CPU architecture mismatch would cause a different error, not Insufficient cpu scheduling failure\n- B: IP address exhaustion would show a different error message, not Insufficient cpu\n- D: If the scheduler were not running, the error would be different and affect all Pods, not just new ones"
+  },
+  "s09-q071": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
+    "wrong": "- A: ExternalName Services have no ClusterIP; they do not use kube-proxy for forwarding\n- B: ExternalName returns a CNAME record, not a pre-resolved A record; the client resolves the CNAME\n- D: ExternalName Services are fully supported and do resolve external hostnames via CNAME records"
+  },
+  "s09-q072": {
+    "ref": "https://trivy.dev/latest/",
+    "wrong": "- A: Falco detects runtime threats in running containers, not pre-deployment image vulnerabilities\n- C: OPA Gatekeeper enforces admission policies on Kubernetes resources, not image vulnerability scanning\n- D: cert-manager manages TLS certificates, not container image security scanning"
+  },
+  "s09-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied"
+  },
+  "s09-q074": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    "wrong": "- A: Init containers can share volumes with main containers; this is a common and supported pattern\n- C: The kubelet does not clear init container data; volumes persist across container transitions\n- D: Exit code 0 indicates success; it means the init container completed its task without errors"
+  },
+  "s09-q075": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+    "wrong": "- A: The high-priority Pod does not wait passively; the scheduler actively preempts lower-priority Pods\n- C: The API server accepts the Pod creation; scheduling constraints cause Pending, not rejection\n- D: Kubernetes does not split Pod resource requests across multiple nodes; Pods run on a single node"
+  },
+  "s09-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
+    "wrong": "- A: Kubernetes does not randomly select port bindings; the first container to bind succeeds, second fails\n- C: Containers in the same Pod share one IP and network namespace; they do not get separate IPs\n- D: kube-proxy does not detect or resolve port conflicts within a Pod; it handles Service routing only"
+  },
+  "s09-q077": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-policies",
+    "wrong": "- A: Installing a CNI with NetworkPolicy support does not enable default-deny; explicit policies are needed\n- B: Both ingress and egress are allowed by default; there is no ingress-only default restriction\n- C: Cross-namespace traffic is allowed by default; namespace boundaries do not block network traffic"
+  },
+  "s09-q078": {
+    "ref": "https://istio.io/latest/docs/concepts/what-is-istio/",
+    "wrong": "- A: A monolithic gateway becomes a bottleneck for 50+ services and is designed for north-south traffic\n- C: Implementing features in each service creates code duplication and inconsistent enforcement\n- D: DNS-based load balancers do not natively support mTLS, retries, or circuit breaking at the DNS layer"
+  },
+  "s09-q079": {
+    "ref": "https://docs.fluentd.org/",
+    "wrong": "- A: JSON is typically larger than plain text due to key names; it does not save storage space\n- B: Fluentd supports many input formats including plain text via configurable parser plugins\n- D: Elasticsearch supports multiple formats; JSON is preferred but not the only accepted format"
+  },
+  "s09-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/components/",
+    "wrong": "- A: kubectl sends requests to the API server, not the scheduler; the scheduler watches the API server\n- C: The kubelet does not receive manifests from kubectl; it watches the API server for Pod assignments\n- D: etcd does not receive manifests first; the API server is the sole gateway to etcd"
+  },
+  "s09-q081": {
+    "ref": "https://fluxcd.io/flux/concepts/",
+    "wrong": "- A: Webhook notifications supplement the reconciliation interval; they are not configured in this scenario\n- C: The timing is based on when the fix is pushed relative to the next reconciliation, not the broken push\n- D: Flux does not require manual approval after failures; it reconciles automatically on each interval"
+  },
+  "s09-q082": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment",
+    "wrong": "- A: Recreate terminates old Pods first, then creates new ones; it does not create new Pods first\n- B: Recreate terminates all Pods at once, not one at a time; it is not a gradual replacement\n- D: Recreate does not require manual approval; it proceeds automatically through the termination and creation cycle"
+  },
+  "s09-q083": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
+    "wrong": "- A: imagePullPolicy: Never prevents pulling but does not validate which registries are allowed\n- B: NetworkPolicy blocks traffic but cannot inspect image references in Pod specs during creation\n- C: ResourceQuota limits resource consumption quantities, not image source registries"
+  },
+  "s09-q084": {
+    "ref": "https://metallb.io/",
+    "wrong": "- A: The YAML is valid; loadBalancerIP is optional and the issue is the lack of a load balancer controller\n- B: Restarting kube-proxy does not provision external IPs; kube-proxy handles iptables, not IP allocation\n- D: LoadBalancer Services are supported in all Kubernetes versions; there is no version or feature gate restriction"
+  },
+  "s09-q085": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer",
+    "wrong": "- B: A single monolithic proxy becomes a bottleneck and single point of failure for all traffic\n- C: Shared libraries require code changes, language-specific implementations, and consistent upgrades\n- D: Init containers run once at startup and cannot handle ongoing request-level cross-cutting concerns"
+  },
+  "s09-q086": {
+    "ref": "https://www.opencost.io/",
+    "wrong": "- A: Equal cost division is inaccurate and does not reflect actual resource consumption differences\n- C: Dedicated node pools waste resources and do not account for variable utilization within nodes\n- D: Pod count alone is meaningless for cost; Pods vary widely in resource consumption"
+  },
+  "s09-q087": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase",
+    "wrong": "- A: The Pod object is not auto-deleted; it remains in the cluster with Failed status until manually cleaned\n- B: restartPolicy: Never means the kubelet does not restart the container regardless of exit code\n- D: Succeeded requires all containers to exit with code 0; a non-zero exit code results in Failed phase"
+  },
+  "s09-q088": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies",
+    "wrong": "- A: StatefulSet rolling updates process one Pod at a time in reverse ordinal, not in batches\n- B: redis-0 is not terminated to free resources; the controller blocks and waits for redis-1 to be ready\n- C: StatefulSet rolling updates enforce strict ordering by default and wait for readiness before proceeding"
+  },
+  "s09-q089": {
+    "ref": "https://helm.sh/docs/chart_template_guide/values_files/",
+    "wrong": "- A: Editing values.yaml in the chart source modifies the chart itself, which the question wants to avoid\n- C: Kustomize overlays can post-process Helm output but add unnecessary complexity for simple overrides\n- D: Helm does not read environment variables for value injection; --set or -f flags are the correct mechanism"
+  },
+  "s09-q090": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+    "wrong": "- A: This taint is applied automatically by the kubelet, not manually by an administrator\n- B: The kube-scheduler does not apply resource pressure taints; this is a kubelet responsibility\n- D: The kube-controller-manager applies unreachable/not-ready taints, not resource pressure taints"
+  },
+  "s09-q091": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/runtime-class/",
+    "wrong": "- B: RuntimeClass does not restrict scheduling by hardware; use nodeSelector or tolerations for that\n- C: gVisor uses standard OCI images; it does not have its own container image format\n- D: The kubelet does not install runtimes; they must be pre-installed and configured on the node"
+  },
+  "s09-q092": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
+    "wrong": "- B: The scheduler is not involved in termination; it handles placement, not shutdown processes\n- C: The kubelet sends SIGTERM first, not an immediate kill; the grace period allows graceful shutdown\n- D: The Pod is removed from Service Endpoints promptly; it does not keep receiving traffic for 60 seconds"
+  },
+  "s09-q093": {
+    "ref": "https://keda.sh/docs/latest/concepts/",
+    "wrong": "- A: KEDA can coexist with HPA; it actually creates HPA objects internally and works alongside them\n- C: KEDA supports Deployments, StatefulSets, Jobs, and custom resources, not just CronJobs\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them"
+  },
+  "s09-q094": {
+    "ref": "https://github.com/kubernetes/kube-state-metrics",
+    "wrong": "- B: Node CPU/memory usage is provided by node_exporter and cAdvisor, not kube-state-metrics\n- C: Container-level resource metrics are exposed by cAdvisor, not kube-state-metrics\n- D: Network bandwidth metrics are from node_exporter or cAdvisor, not kube-state-metrics"
+  },
+  "s09-q095": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
+    "wrong": "- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods, not just namespaces"
+  },
+  "s09-q096": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
+    "wrong": "- A: hostNetwork Pods do not get a ClusterIP; they use the node's IP address directly\n- B: No virtual interface or NAT is created; the Pod directly uses the host network namespace\n- D: hostNetwork Pods can communicate with all Pods; they are not restricted to other hostNetwork Pods"
+  },
+  "s09-q097": {
+    "ref": "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/",
+    "wrong": "- B: Kustomize never modifies base files; overlays produce output without changing the source\n- C: Kustomize does not generate Helm charts; they are separate configuration management tools\n- D: Overlays contain only patches, not complete copies; the base provides the shared foundation"
+  },
+  "s09-q098": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy",
+    "wrong": "- B: The API server does not retry webhooks indefinitely; it respects the failurePolicy setting\n- C: Other webhooks are not affected; each webhook's failurePolicy is evaluated independently\n- D: Validating webhooks can block requests with Fail policy; they are not advisory-only by default"
+  },
+  "s09-q099": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/#startup-probes",
+    "wrong": "- A: Probes do not run simultaneously; the startup probe disables liveness and readiness until it passes\n- B: The startup probe does not replace other probes; it only delays them until initialization completes\n- D: The startup probe disables both liveness and readiness probes, not just the readiness probe"
+  },
+  "s09-q100": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-admission/",
+    "wrong": "- A: CronJob scripts are reactive (delete after creation), not preventive; they cannot block non-compliant resources\n- B: RBAC cannot inspect Pod spec fields like resource limits; it controls access to API verbs and resources\n- C: NetworkPolicies control network traffic, not resource compliance or Pod security attributes"
+  }
+}

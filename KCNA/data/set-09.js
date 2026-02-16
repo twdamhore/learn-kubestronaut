@@ -14,7 +14,7 @@ var questions = [
       "The scheduler is evicting the Pod because of sustained resource pressure detected on the worker node"
     ],
     answer: 1,
-    explanation: "When a liveness probe targets port 8080 but the application listens on port 9090, every health check returns a connection refused error. The kubelet interprets this as an unhealthy container and restarts it according to the Pod's `restartPolicy`. Readiness probe failures affect traffic routing, not restarts.",
+    explanation: "When a liveness probe targets port 8080 but the application listens on port 9090, every health check returns a connection refused error. The kubelet interprets this as an unhealthy container and restarts it according to the Pod's `restartPolicy`. Readiness probe failures affect traffic routing, not restarts.\n\nWhy other options are wrong:\n- A: Readiness probe failures affect traffic routing via Endpoints, not container restarts\n- C: A registry/image format issue would show ImagePullBackOff or ErrImagePull, not repeated restarts\n- D: Resource-pressure evictions are reported as Evicted status and unrelated to probe configuration\n\nReference: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/",
     verify: "kubectl describe pod <pod-name> -n monitoring | grep -A5 'Liveness'"
   },
   {
@@ -30,7 +30,7 @@ var questions = [
       "4 Pods"
     ],
     answer: 0,
-    explanation: "With `maxSurge: 1` and 5 desired replicas, Kubernetes can create at most 1 extra Pod above the desired count during a rolling update, resulting in a maximum of 6 Pods. The `maxUnavailable: 0` setting ensures all 5 original replicas remain available until a new Pod is ready.",
+    explanation: "With `maxSurge: 1` and 5 desired replicas, Kubernetes can create at most 1 extra Pod above the desired count during a rolling update, resulting in a maximum of 6 Pods. The `maxUnavailable: 0` setting ensures all 5 original replicas remain available until a new Pod is ready.\n\nWhy other options are wrong:\n- B: 7 Pods would require maxSurge: 2 with 5 replicas; maxSurge: 1 allows only 1 extra Pod\n- C: 5 Pods would mean no surge at all, contradicting maxSurge: 1 which permits one extra\n- D: 4 Pods would violate maxUnavailable: 0 which requires all 5 original replicas stay available\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl describe deployment <name> | grep -E 'RollingUpdateStrategy|Replicas'"
   },
   {
@@ -46,7 +46,7 @@ var questions = [
       "ClusterIP Services cannot be used for direct inter-Pod communication within the cluster network"
     ],
     answer: 0,
-    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. If the payment-service is not in the `billing` namespace, the short DNS name `payment-service.billing` will fail to resolve. ClusterIP Services are the standard mechanism for internal communication between Pods.",
+    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. If the payment-service is not in the `billing` namespace, the short DNS name `payment-service.billing` will fail to resolve. ClusterIP Services are the standard mechanism for internal communication between Pods.\n\nWhy other options are wrong:\n- B: ClusterIP Services are designed for internal cluster access, not external-only via load balancer\n- C: Standard container images include DNS resolver libraries; this is not a missing-library issue\n- D: ClusterIP Services are the standard mechanism for direct inter-Pod communication within a cluster\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl get svc payment-service -n billing"
   },
   {
@@ -62,7 +62,7 @@ var questions = [
       "Fluentd, because it can collect and forward all three signal types with built-in trace correlation"
     ],
     answer: 2,
-    explanation: "OpenTelemetry is the CNCF project specifically designed to provide a single, vendor-neutral framework for collecting traces, metrics, and logs. Prometheus focuses on metrics, Jaeger on distributed tracing, and Fluentd on log aggregation. OpenTelemetry merges the capabilities of OpenTracing and OpenCensus.",
+    explanation: "OpenTelemetry is the CNCF project specifically designed to provide a single, vendor-neutral framework for collecting traces, metrics, and logs. Prometheus focuses on metrics, Jaeger on distributed tracing, and Fluentd on log aggregation. OpenTelemetry merges the capabilities of OpenTracing and OpenCensus.\n\nWhy other options are wrong:\n- A: Prometheus focuses on metrics collection and does not natively support traces or logs\n- B: Jaeger is a distributed tracing system and does not collect metrics or logs\n- D: Fluentd is a log aggregator and does not provide built-in trace correlation or metrics collection\n\nReference: https://opentelemetry.io/docs/what-is-opentelemetry/",
     verify: null
   },
   {
@@ -78,7 +78,7 @@ var questions = [
       "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct port"
     ],
     answer: 3,
-    explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.",
+    explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.\n\nWhy other options are wrong:\n- A: Insufficient Prometheus resources would cause scrape timeouts, not total absence of target discovery\n- B: Readiness probes do not gate Prometheus scraping; scraping depends on SD config and relabeling\n- C: Prometheus Operator CRDs are not required when using raw kubernetes_sd_configs in a ConfigMap\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
     verify: "kubectl get configmap prometheus-config -n monitoring -o yaml | grep -A10 relabel"
   },
   {
@@ -94,7 +94,7 @@ var questions = [
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source"
     ],
     answer: 1,
-    explanation: "By default, Argo CD applications use a manual sync policy, meaning it detects drift (showing `OutOfSync`) but waits for an operator to trigger the sync. Setting the sync policy to `automated` enables Argo CD to automatically apply changes when the Git repository state diverges from the live cluster state.",
+    explanation: "By default, Argo CD applications use a manual sync policy, meaning it detects drift (showing `OutOfSync`) but waits for an operator to trigger the sync. Setting the sync policy to `automated` enables Argo CD to automatically apply changes when the Git repository state diverges from the live cluster state.\n\nWhy other options are wrong:\n- A: Argo CD operates independently of Flux; they are separate GitOps tools that do not require each other\n- C: Argo CD does support Git webhooks for faster detection; webhooks supplement but are not required for sync\n- D: If repoURL were missing, the application would fail to create, not show OutOfSync status\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
     verify: "kubectl get application <app-name> -n argocd -o jsonpath='{.spec.syncPolicy}'"
   },
   {
@@ -110,7 +110,7 @@ var questions = [
       "Increase the <code>nodePort</code> range in the API server startup configuration parameters"
     ],
     answer: 2,
-    explanation: "When Pods are healthy but a Service is not routing traffic, the first diagnostic step is to verify that the Service's selector matches the Pod labels. Running `kubectl get endpoints <service>` shows whether the Service has discovered any backing Pods. An empty Endpoints list confirms a selector mismatch.",
+    explanation: "When Pods are healthy but a Service is not routing traffic, the first diagnostic step is to verify that the Service's selector matches the Pod labels. Running `kubectl get endpoints <service>` shows whether the Service has discovered any backing Pods. An empty Endpoints list confirms a selector mismatch.\n\nWhy other options are wrong:\n- A: Changing Service type does not diagnose the issue; it changes the access method entirely\n- B: Restarting kube-proxy is a heavy-handed action unlikely to fix a selector mismatch problem\n- D: Increasing nodePort range is irrelevant since port 30080 is already within the default 30000-32767 range\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
     verify: "kubectl get endpoints <service-name> -o wide"
   },
   {
@@ -126,7 +126,7 @@ var questions = [
       "A separate etcd watcher process distributes reconciliation work across controller-manager instances using round-robin"
     ],
     answer: 2,
-    explanation: "Kubernetes uses a leader election mechanism, typically backed by a Lease object in the `kube-system` namespace, to ensure only one kube-controller-manager instance is active at a time. The other instances remain on standby and will take over if the current leader loses its lease.",
+    explanation: "Kubernetes uses a leader election mechanism, typically backed by a Lease object in the `kube-system` namespace, to ensure only one kube-controller-manager instance is active at a time. The other instances remain on standby and will take over if the current leader loses its lease.\n\nWhy other options are wrong:\n- A: Controller-manager instances are not partitioned by resource type; the leader handles all resources\n- B: The API server does not route or serialize controller requests to a single instance\n- D: etcd does not distribute work; it stores data while leader election uses Lease objects in kube-system\n\nReference: https://kubernetes.io/docs/concepts/architecture/leases/",
     verify: "kubectl get lease -n kube-system"
   },
   {
@@ -142,7 +142,7 @@ var questions = [
       "Set <code>privileged: false</code> in the container's resource limits section to prevent root-level access"
     ],
     answer: 1,
-    explanation: "Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and set a Seccomp profile, among other constraints. It can be applied at the namespace level using labels.",
+    explanation: "Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and set a Seccomp profile, among other constraints. It can be applied at the namespace level using labels.\n\nWhy other options are wrong:\n- A: NetworkPolicy controls network traffic, not user identity or container security contexts\n- C: ResourceQuota limits aggregate resource consumption, not security attributes like runAsNonRoot\n- D: There is no privileged field in resource limits; security context fields are separate from resource specs\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
     verify: "kubectl label namespace production pod-security.kubernetes.io/enforce=restricted"
   },
   {
@@ -158,7 +158,7 @@ var questions = [
       "Deploying all services onto a single node to eliminate network latency between microservice containers entirely"
     ],
     answer: 0,
-    explanation: "The circuit breaker pattern monitors failures to a downstream service and, after a threshold is reached, trips the circuit to return errors immediately instead of waiting for timeouts. This prevents cascading failures by isolating the unhealthy service. Libraries like Istio's outlier detection or Resilience4j implement this pattern.",
+    explanation: "The circuit breaker pattern monitors failures to a downstream service and, after a threshold is reached, trips the circuit to return errors immediately instead of waiting for timeouts. This prevents cascading failures by isolating the unhealthy service. Libraries like Istio's outlier detection or Resilience4j implement this pattern.\n\nWhy other options are wrong:\n- B: Re-merging into a monolith reverses the microservices migration and does not address the resilience issue\n- C: Retries with backoff can worsen cascading failures by adding more load to an already failing service\n- D: Deploying all services on one node creates a single point of failure and does not fix cascading timeouts\n\nReference: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
     verify: null
   },
   {
@@ -174,7 +174,7 @@ var questions = [
       "The scheduler automatically creates the missing label on the most suitable node that has available GPU resources"
     ],
     answer: 1,
-    explanation: "A `nodeSelector` enforces an exact label match. Since the cluster nodes have `accelerator=nvidia-tesla-v100` but the Pod requests `accelerator=nvidia-tesla-a100`, no node satisfies the constraint. The Pod remains `Pending` with a `FailedScheduling` event until a matching node becomes available.",
+    explanation: "A `nodeSelector` enforces an exact label match. Since the cluster nodes have `accelerator=nvidia-tesla-v100` but the Pod requests `accelerator=nvidia-tesla-a100`, no node satisfies the constraint. The Pod remains `Pending` with a `FailedScheduling` event until a matching node becomes available.\n\nWhy other options are wrong:\n- A: nodeSelector requires exact label match; v100 and a100 are different values regardless of GPU family\n- C: The Pod never gets scheduled, so there is no container start or driver compatibility issue\n- D: The scheduler never creates labels; it only evaluates existing node labels against Pod constraints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
     verify: "kubectl get events --field-selector reason=FailedScheduling"
   },
   {
@@ -190,7 +190,7 @@ var questions = [
       "Containerd manages containers independently of the Docker daemon, so <code>docker ps</code> does not list them"
     ],
     answer: 3,
-    explanation: "When Kubernetes uses containerd directly (via the CRI plugin), containers are managed by containerd without involving the Docker daemon. Therefore, `docker ps` which queries the Docker daemon shows no containers. The correct tool to inspect containers is `crictl ps` or `ctr`.",
+    explanation: "When Kubernetes uses containerd directly (via the CRI plugin), containers are managed by containerd without involving the Docker daemon. Therefore, `docker ps` which queries the Docker daemon shows no containers. The correct tool to inspect containers is `crictl ps` or `ctr`.\n\nWhy other options are wrong:\n- A: No evidence suggests Kata Containers is in use; the question states containerd is the runtime\n- B: The kubelet does not hand off containers to the kernel scheduler; it manages them through the CRI\n- C: Docker and containerd have separate container stores; docker ps does not require special privileges\n\nReference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd",
     verify: "crictl ps"
   },
   {
@@ -206,7 +206,7 @@ var questions = [
       "OpenTelemetry only supports tracing for gRPC-based services and cannot instrument HTTP-based endpoints"
     ],
     answer: 0,
-    explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. Since spans appear for Services 1 and 2 but not 3 and 4, the break point is between Services 2 and 3 — Service 2 is not forwarding trace context headers in its outgoing requests. Without those headers, Services 3 and 4 create new independent traces instead of joining the original one. This is the most common cause of incomplete traces.",
+    explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. Since spans appear for Services 1 and 2 but not 3 and 4, the break point is between Services 2 and 3 — Service 2 is not forwarding trace context headers in its outgoing requests. Without those headers, Services 3 and 4 create new independent traces instead of joining the original one. This is the most common cause of incomplete traces.\n\nWhy other options are wrong:\n- B: Jaeger has no such 2-span limit; traces can contain thousands of spans\n- C: Storage issues would cause random span loss across all traces, not a clean break at a specific service\n- D: OpenTelemetry supports both gRPC and HTTP instrumentation, plus many other protocols\n\nReference: https://opentelemetry.io/docs/concepts/context-propagation/",
     verify: null
   },
   {
@@ -222,7 +222,7 @@ var questions = [
       "The kubelet only syncs ConfigMap updates during scheduled node restarts or maintenance windows"
     ],
     answer: 2,
-    explanation: "When a ConfigMap is mounted as a volume, the kubelet periodically syncs the files (typically within 30-60 seconds). However, most applications read configuration files only at startup. Unless the application is designed to watch for file changes or the Pod is restarted, it continues using the old values held in memory.",
+    explanation: "When a ConfigMap is mounted as a volume, the kubelet periodically syncs the files (typically within 30-60 seconds). However, most applications read configuration files only at startup. Unless the application is designed to watch for file changes or the Pod is restarted, it continues using the old values held in memory.\n\nWhy other options are wrong:\n- A: Volume-mounted ConfigMaps do update automatically; the kubelet syncs them periodically\n- B: ConfigMap updates do not require PersistentVolumeClaims; the volume mount syncs in-place\n- D: The kubelet syncs ConfigMap updates on its regular sync interval, not during maintenance windows\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
     verify: "kubectl exec <pod-name> -- cat /etc/config/<key>"
   },
   {
@@ -238,7 +238,7 @@ var questions = [
       "The PVCs are marked as <code>Released</code> and the underlying storage is immediately reclaimed by the provisioner"
     ],
     answer: 2,
-    explanation: "Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplate` even when the corresponding Pods are deleted during scale-down. This ensures that data is preserved and can be reattached to the same Pod identity when the StatefulSet scales back up. Manual deletion is required to remove orphaned PVCs.",
+    explanation: "Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplate` even when the corresponding Pods are deleted during scale-down. This ensures that data is preserved and can be reattached to the same Pod identity when the StatefulSet scales back up. Manual deletion is required to remove orphaned PVCs.\n\nWhy other options are wrong:\n- A: PVCs are retained by default on scale-down, not deleted; this preserves stateful data\n- B: PVCs are not migrated between Pods; each PVC is bound to a specific Pod ordinal identity\n- D: PVCs remain Bound (not Released) to the PV; the PVC object itself is retained in the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc -l app=<statefulset-name>"
   },
   {
@@ -254,7 +254,7 @@ var questions = [
       "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
     ],
     answer: 3,
-    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller skips a scheduled run if a previous Job is still active. The 10:05 invocation is simply not created. This prevents overlapping executions, which is important for Jobs that access shared resources or have side effects that are not idempotent.",
+    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller skips a scheduled run if a previous Job is still active. The 10:05 invocation is simply not created. This prevents overlapping executions, which is important for Jobs that access shared resources or have side effects that are not idempotent.\n\nWhy other options are wrong:\n- A: Forbid policy prevents concurrent runs; a second Job is not created alongside the active one\n- B: Forbid does not terminate running Jobs; the Replace policy would do that\n- C: The Job is not queued; it is simply skipped entirely when the previous Job is still active\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
     verify: "kubectl get cronjob <name> -o jsonpath='{.spec.concurrencyPolicy}'"
   },
   {
@@ -270,7 +270,7 @@ var questions = [
       "Factor IX (Disposability) -- processes should be designed to start fast and shut down gracefully on termination"
     ],
     answer: 0,
-    explanation: "Factor VI (Processes) states that twelve-factor processes are stateless and share-nothing. Any data that needs to persist must be stored in a stateful backing service such as a database or Redis. Writing session state to local disk violates this principle and prevents horizontal scaling.",
+    explanation: "Factor VI (Processes) states that twelve-factor processes are stateless and share-nothing. Any data that needs to persist must be stored in a stateful backing service such as a database or Redis. Writing session state to local disk violates this principle and prevents horizontal scaling.\n\nWhy other options are wrong:\n- B: Factor III (Config) is about externalizing config, not about session state or stickiness\n- C: Factor XI (Logs) is about treating logs as event streams, unrelated to session management\n- D: Factor IX (Disposability) is about fast startup and graceful shutdown, not statelessness\n\nReference: https://12factor.net/processes",
     verify: null
   },
   {
@@ -286,7 +286,7 @@ var questions = [
       "Delete and recreate the crashing Pod since <code>CrashLoopBackOff</code> is a terminal unrecoverable state"
     ],
     answer: 2,
-    explanation: "Since other Pods can connect to the database, the issue is likely specific to this Pod. The hostname `db-host` might not match the actual Service name, or the container image might be missing the required database client library. Verifying DNS resolution from within the Pod and checking Service naming are the most targeted diagnostic steps.",
+    explanation: "Since other Pods can connect to the database, the issue is likely specific to this Pod. The hostname `db-host` might not match the actual Service name, or the container image might be missing the required database client library. Verifying DNS resolution from within the Pod and checking Service naming are the most targeted diagnostic steps.\n\nWhy other options are wrong:\n- A: Increasing database resources is speculative; other Pods connect fine, so the DB is not overloaded\n- B: Restarting kube-dns is a blunt action; the issue is likely Pod-specific hostname or driver mismatch\n- D: CrashLoopBackOff is not terminal; it indicates repeated failures with exponential backoff retries\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
     verify: "kubectl exec <pod-name> -- nslookup db-host"
   },
   {
@@ -302,7 +302,7 @@ var questions = [
       "Configuring etcd to use an in-memory store instead of persistent storage for improved write throughput"
     ],
     answer: 0,
-    explanation: "Etcd is highly sensitive to disk I/O latency because every write operation must be committed to a write-ahead log (WAL) before being acknowledged. Using fast SSD storage is the single most impactful optimization. Increasing members beyond 3 or 5 actually increases consensus latency. Disabling auth or using in-memory storage are not production-appropriate solutions.",
+    explanation: "Etcd is highly sensitive to disk I/O latency because every write operation must be committed to a write-ahead log (WAL) before being acknowledged. Using fast SSD storage is the single most impactful optimization. Increasing members beyond 3 or 5 actually increases consensus latency. Disabling auth or using in-memory storage are not production-appropriate solutions.\n\nWhy other options are wrong:\n- B: Increasing etcd members beyond 3 or 5 increases consensus latency due to more Raft round trips\n- C: Disabling authentication is a security risk and not appropriate for production environments\n- D: In-memory storage loses all data on restart, making it unsuitable for production Kubernetes clusters\n\nReference: https://etcd.io/docs/v3.5/op-guide/hardware/",
     verify: "kubectl exec -n kube-system etcd-master -- etcdctl endpoint status --write-out=table"
   },
   {
@@ -318,7 +318,7 @@ var questions = [
       "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
     ],
     answer: 2,
-    explanation: "The `helm rollback my-release 0` command uses revision 0, which is a special value meaning \"roll back to the immediately previous release.\" This is the fastest way to restore the previous state because Helm maintains a history of all release revisions and can re-apply the previous manifests. Option B targets revision 1 specifically, which is the very first install and may not be the immediately previous release if multiple upgrades have occurred. Deleting and reinstalling would cause unnecessary downtime.",
+    explanation: "The `helm rollback my-release 0` command uses revision 0, which is a special value meaning \"roll back to the immediately previous release.\" This is the fastest way to restore the previous state because Helm maintains a history of all release revisions and can re-apply the previous manifests. Option B targets revision 1 specifically, which is the very first install and may not be the immediately previous release if multiple upgrades have occurred. Deleting and reinstalling would cause unnecessary downtime.\n\nWhy other options are wrong:\n- A: Deleting and reinstalling causes unnecessary downtime and loses release history\n- B: Revision 1 is the first install, which may not be the immediately previous release after multiple upgrades\n- D: Manually editing resources is error-prone, slow, and does not leverage Helm's release management\n\nReference: https://helm.sh/docs/helm/helm_rollback/",
     verify: "helm history my-release"
   },
   {
@@ -334,7 +334,7 @@ var questions = [
       "The API server rejects Pod creation because containers must specify CPU requests and limits under a quota"
     ],
     answer: 3,
-    explanation: "When a ResourceQuota specifying compute resources (CPU or memory) exists in a namespace, all Pods must explicitly declare requests and limits for those resources. If not specified, the API server rejects the Pod creation. A LimitRange can be configured to automatically inject defaults, preventing this rejection.",
+    explanation: "When a ResourceQuota specifying compute resources (CPU or memory) exists in a namespace, all Pods must explicitly declare requests and limits for those resources. If not specified, the API server rejects the Pod creation. A LimitRange can be configured to automatically inject defaults, preventing this rejection.\n\nWhy other options are wrong:\n- A: Default values are not assigned automatically by the scheduler; a LimitRange would be needed for that\n- B: ResourceQuota is not auto-adjusted; it is a fixed constraint that must be explicitly modified\n- C: The Pod is rejected immediately by the API server, not left in Pending state waiting for a LimitRange\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#compute-resource-quota",
     verify: "kubectl describe resourcequota -n staging"
   },
   {
@@ -350,7 +350,7 @@ var questions = [
       "A NetworkPolicy with a `namespaceSelector` for monitoring and a `podSelector` matching the scraper"
     ],
     answer: 3,
-    explanation: "NetworkPolicies support cross-namespace access control using `namespaceSelector` combined with `podSelector`. To allow the Prometheus Pod in the `monitoring` namespace to reach backend Pods, a new ingress rule must specify both the namespace and the Pod labels. Annotations and ServiceAccounts do not override NetworkPolicy enforcement.",
+    explanation: "NetworkPolicies support cross-namespace access control using `namespaceSelector` combined with `podSelector`. To allow the Prometheus Pod in the `monitoring` namespace to reach backend Pods, a new ingress rule must specify both the namespace and the Pod labels. Annotations and ServiceAccounts do not override NetworkPolicy enforcement.\n\nWhy other options are wrong:\n- A: DNS policies in CoreDNS do not override NetworkPolicy enforcement at the network layer\n- B: Annotations cannot bypass NetworkPolicy; enforcement is done at the CNI level, not by annotation\n- C: ServiceAccount privileges control API access, not network-level traffic allowed by NetworkPolicy\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
     verify: "kubectl get networkpolicy -n backend -o yaml"
   },
   {
@@ -366,7 +366,7 @@ var questions = [
       "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
     ],
     answer: 3,
-    explanation: "When a Pod's `dnsPolicy` is set to `None`, Kubernetes does not configure any default DNS servers for the Pod. Without a `dnsConfig` that includes the CoreDNS ClusterIP as a nameserver, the Pod cannot resolve cluster-internal DNS names. This results in `NXDOMAIN` even though the Service exists.",
+    explanation: "When a Pod's `dnsPolicy` is set to `None`, Kubernetes does not configure any default DNS servers for the Pod. Without a `dnsConfig` that includes the CoreDNS ClusterIP as a nameserver, the Pod cannot resolve cluster-internal DNS names. This results in `NXDOMAIN` even though the Service exists.\n\nWhy other options are wrong:\n- A: DNS records are created for all Service types including ClusterIP; LoadBalancer is not required\n- B: CoreDNS fully supports the svc.cluster.local suffix; it is the standard cluster DNS domain\n- C: DNS resolution works with Service names; name-based lookups are the primary use case for CoreDNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.dnsPolicy}'"
   },
   {
@@ -382,7 +382,7 @@ var questions = [
       "The container image is re-pulled from the remote registry on every cold start, adding significant download latency"
     ],
     answer: 1,
-    explanation: "Knative Serving supports scale-to-zero, where Pods are terminated after a configurable idle period. When a new request arrives, Knative's activator component holds the request while the autoscaler provisions a new Pod. This cold start includes pulling the image (if not cached), starting the container, and waiting for health checks to pass.",
+    explanation: "Knative Serving supports scale-to-zero, where Pods are terminated after a configurable idle period. When a new request arrives, Knative's activator component holds the request while the autoscaler provisions a new Pod. This cold start includes pulling the image (if not cached), starting the container, and waiting for health checks to pass.\n\nWhy other options are wrong:\n- A: Knative's routing reconfiguration takes milliseconds, not 8 seconds\n- C: DNS cache expiry does not cause 8-second delays; DNS resolution is fast within a cluster\n- D: Images are typically cached on nodes; even if re-pulled, this is one factor of cold start, not the sole cause\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
     verify: null
   },
   {
@@ -398,7 +398,7 @@ var questions = [
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
-    explanation: "Taints prevent Pods from being scheduled on a node unless the Pod has a matching toleration. For a DaemonSet to place Pods on a tainted node, its Pod template must include a toleration that matches the taint's key, value, and effect. Adding `tolerations: [{key: \"dedicated\", value: \"monitoring\", effect: \"NoSchedule\"}]` resolves this.",
+    explanation: "Taints prevent Pods from being scheduled on a node unless the Pod has a matching toleration. For a DaemonSet to place Pods on a tainted node, its Pod template must include a toleration that matches the taint's key, value, and effect. Adding `tolerations: [{key: \"dedicated\", value: \"monitoring\", effect: \"NoSchedule\"}]` resolves this.\n\nWhy other options are wrong:\n- A: nodeSelector targets nodes but does not override taints; the Pod still needs a matching toleration\n- C: updateStrategy OnDelete controls update behavior, not initial scheduling on tainted nodes\n- D: Removing resource requests does not bypass taints; taints and resource scheduling are separate mechanisms\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl get daemonset <name> -o jsonpath='{.spec.template.spec.tolerations}'"
   },
   {
@@ -414,7 +414,7 @@ var questions = [
       "The kubelet moves the <code>emptyDir</code> data to a PersistentVolume before the container is restarted"
     ],
     answer: 2,
-    explanation: "An `emptyDir` volume is tied to the Pod's lifecycle, not to individual containers. When a container within the Pod crashes and restarts, the `emptyDir` volume and its contents persist. The volume is only deleted when the Pod itself is removed from the node. This makes `emptyDir` suitable for sharing data between sidecar containers.",
+    explanation: "An `emptyDir` volume is tied to the Pod's lifecycle, not to individual containers. When a container within the Pod crashes and restarts, the `emptyDir` volume and its contents persist. The volume is only deleted when the Pod itself is removed from the node. This makes `emptyDir` suitable for sharing data between sidecar containers.\n\nWhy other options are wrong:\n- A: emptyDir is not recreated on container restart; it persists for the Pod's entire lifetime\n- B: emptyDir volumes are bound to the Pod, not individual containers; all containers share them\n- D: The kubelet does not move emptyDir data to PersistentVolumes; there is no such automatic migration\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Volumes'"
   },
   {
@@ -430,7 +430,7 @@ var questions = [
       "Pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code> and the hostname topology key"
     ],
     answer: 3,
-    explanation: "Pod anti-affinity with `requiredDuringSchedulingIgnoredDuringExecution` creates a hard constraint that prevents co-location. Using `kubernetes.io/hostname` as the topology key ensures the anti-affinity rule is evaluated at the individual node level, guaranteeing that Pods with matching labels are never scheduled on the same node.",
+    explanation: "Pod anti-affinity with `requiredDuringSchedulingIgnoredDuringExecution` creates a hard constraint that prevents co-location. Using `kubernetes.io/hostname` as the topology key ensures the anti-affinity rule is evaluated at the individual node level, guaranteeing that Pods with matching labels are never scheduled on the same node.\n\nWhy other options are wrong:\n- A: Taints work on a per-node basis and would be complex to manage for mutual exclusion between apps\n- B: preferredDuringScheduling is a soft constraint and does not guarantee Pods are never co-located\n- C: PriorityClass affects scheduling priority and preemption, not co-location constraints between Pods\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.affinity.podAntiAffinity}'"
   },
   {
@@ -446,7 +446,7 @@ var questions = [
       "Deploy a separate dedicated etcd cluster exclusively for Secret storage with its own encryption enabled"
     ],
     answer: 0,
-    explanation: "By default, Kubernetes Secrets are stored as base64-encoded plaintext in etcd. To protect sensitive data, administrators should configure an `EncryptionConfiguration` on the kube-apiserver, specifying a provider like `aescbc`, `aesgcm`, or an external KMS. ConfigMaps are also unencrypted, and environment variables do not address the at-rest encryption concern.",
+    explanation: "By default, Kubernetes Secrets are stored as base64-encoded plaintext in etcd. To protect sensitive data, administrators should configure an `EncryptionConfiguration` on the kube-apiserver, specifying a provider like `aescbc`, `aesgcm`, or an external KMS. ConfigMaps are also unencrypted, and environment variables do not address the at-rest encryption concern.\n\nWhy other options are wrong:\n- B: Environment variables are also stored in the Pod spec in etcd; this does not address at-rest encryption\n- C: ConfigMaps are not encrypted at rest by default; they are stored as plaintext just like Secrets\n- D: A separate etcd cluster adds complexity without solving the core issue; encryption config is the solution\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
     verify: null
   },
   {
@@ -462,7 +462,7 @@ var questions = [
       "Harbor, which stores pipeline definitions alongside container images in its artifact registry"
     ],
     answer: 0,
-    explanation: "Tekton is a CNCF project that provides Kubernetes-native CI/CD building blocks. It uses Custom Resource Definitions (CRDs) such as Task, Pipeline, and PipelineRun to define and execute CI/CD workflows declaratively. Being Kubernetes-native, Tekton pipelines can be stored in Git and managed with GitOps workflows.",
+    explanation: "Tekton is a CNCF project that provides Kubernetes-native CI/CD building blocks. It uses Custom Resource Definitions (CRDs) such as Task, Pipeline, and PipelineRun to define and execute CI/CD workflows declaratively. Being Kubernetes-native, Tekton pipelines can be stored in Git and managed with GitOps workflows.\n\nWhy other options are wrong:\n- B: Prometheus is a monitoring system for metrics, not a CI/CD pipeline tool\n- C: Envoy is a service proxy for traffic management, not a CI/CD pipeline orchestrator\n- D: Harbor is a container registry for storing images, not a CI/CD pipeline definition tool\n\nReference: https://tekton.dev/docs/",
     verify: null
   },
   {
@@ -478,7 +478,7 @@ var questions = [
       "Reduce Fluent Bit's buffer size to minimize the volume of re-sent logs after each node restart event"
     ],
     answer: 0,
-    explanation: "Fluent Bit's tail input plugin supports a `DB` parameter that stores file read positions (offsets) in a local SQLite database. When Fluent Bit restarts, it resumes reading from the last recorded position rather than the beginning. Setting `storage.type` to `filesystem` also persists in-flight data to disk to prevent data loss.",
+    explanation: "Fluent Bit's tail input plugin supports a `DB` parameter that stores file read positions (offsets) in a local SQLite database. When Fluent Bit restarts, it resumes reading from the last recorded position rather than the beginning. Setting `storage.type` to `filesystem` also persists in-flight data to disk to prevent data loss.\n\nWhy other options are wrong:\n- B: Fluentd does not automatically handle offset tracking by default; it also requires explicit configuration\n- C: Elasticsearch deduplication is possible but complex and shifts the burden downstream\n- D: Reducing buffer size does not prevent re-reading from the beginning of log files after restart\n\nReference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#keep-state",
     verify: null
   },
   {
@@ -494,7 +494,7 @@ var questions = [
       "It maintains network rules on each node (iptables or IPVS) that enable Service-based routing to Pods"
     ],
     answer: 3,
-    explanation: "kube-proxy runs on every node and is responsible for implementing the Kubernetes Service abstraction. It watches the API server for Service and Endpoints changes and programs iptables rules (or IPVS rules) on the node to route traffic destined for a Service's ClusterIP to the appropriate backend Pods.",
+    explanation: "kube-proxy runs on every node and is responsible for implementing the Kubernetes Service abstraction. It watches the API server for Service and Endpoints changes and programs iptables rules (or IPVS rules) on the node to route traffic destined for a Service's ClusterIP to the appropriate backend Pods.\n\nWhy other options are wrong:\n- A: kube-proxy does not proxy API server requests; it handles Service-to-Pod routing only\n- B: kube-proxy does not handle encryption or mTLS; that is the role of a service mesh or CNI plugin\n- C: Node health monitoring is done by the kubelet and node controller, not kube-proxy\n\nReference: https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/",
     verify: "kubectl get daemonset kube-proxy -n kube-system"
   },
   {
@@ -510,7 +510,7 @@ var questions = [
       "The cAdvisor binary, which must be installed separately on each node to collect container-level stats"
     ],
     answer: 0,
-    explanation: "The `kubectl top` command queries the Kubernetes resource metrics API (`metrics.k8s.io`), which is served by the Metrics Server. This component is not installed by default with kubeadm. It collects CPU and memory usage from the kubelet's summary API on each node. Prometheus and kube-state-metrics serve different purposes.",
+    explanation: "The `kubectl top` command queries the Kubernetes resource metrics API (`metrics.k8s.io`), which is served by the Metrics Server. This component is not installed by default with kubeadm. It collects CPU and memory usage from the kubelet's summary API on each node. Prometheus and kube-state-metrics serve different purposes.\n\nWhy other options are wrong:\n- B: Prometheus provides a custom metrics API, not the core resource metrics API used by kubectl top\n- C: kube-state-metrics exposes Kubernetes object state, not container-level CPU/memory usage\n- D: cAdvisor is embedded in the kubelet since Kubernetes 1.12 and does not need separate installation\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/",
     verify: "kubectl get apiservice v1beta1.metrics.k8s.io"
   },
   {
@@ -526,7 +526,7 @@ var questions = [
       "The <code>-l</code> flag only works with workload resources like Deployments, not configuration resources"
     ],
     answer: 0,
-    explanation: "The `kubectl get all` command returns only a predefined set of resource types (Pods, Services, Deployments, ReplicaSets, StatefulSets, DaemonSets, Jobs, CronJobs). ConfigMaps, Secrets, PVCs, and many other resource types are not included. To find labeled ConfigMaps, you must explicitly run `kubectl get configmap -l env=production`.",
+    explanation: "The `kubectl get all` command returns only a predefined set of resource types (Pods, Services, Deployments, ReplicaSets, StatefulSets, DaemonSets, Jobs, CronJobs). ConfigMaps, Secrets, PVCs, and many other resource types are not included. To find labeled ConfigMaps, you must explicitly run `kubectl get configmap -l env=production`.\n\nWhy other options are wrong:\n- B: Label selectors work on all resource types including namespace-scoped resources like ConfigMaps\n- C: ConfigMaps fully support labels; they can be created, queried, and filtered using label selectors\n- D: The -l flag works with all resource types, not just workloads; the issue is with 'get all' scope\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
     verify: "kubectl get configmap -l env=production"
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect all incoming traffic"
     ],
     answer: 1,
-    explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.",
+    explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.\n\nWhy other options are wrong:\n- A: maxSurge: 100% with rolling update is not blue-green; it still progressively replaces Pods\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.selector}'"
   },
   {
@@ -558,7 +558,7 @@ var questions = [
       "The Job pauses all execution and waits for manual administrative intervention before continuing"
     ],
     answer: 2,
-    explanation: "With `completions: 10` and `parallelism: 3`, the Job controller ensures that failed Pods are replaced to reach the target number of successful completions. A single Pod failure does not fail the entire Job unless the `backoffLimit` is exceeded. The controller creates a new Pod to replace the failed one, maintaining up to 3 concurrent Pods.",
+    explanation: "With `completions: 10` and `parallelism: 3`, the Job controller ensures that failed Pods are replaced to reach the target number of successful completions. A single Pod failure does not fail the entire Job unless the `backoffLimit` is exceeded. The controller creates a new Pod to replace the failed one, maintaining up to 3 concurrent Pods.\n\nWhy other options are wrong:\n- A: A single Pod failure does not fail the entire Job unless backoffLimit is exceeded\n- B: The kubelet may restart the container in-place only with restartPolicy: OnFailure, but the Job controller also creates replacement Pods to track completions\n- D: Jobs do not pause for manual intervention; the controller automatically handles failures and replacements\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs",
     verify: "kubectl describe job <job-name> | grep -E 'Completions|Parallelism|Failed'"
   },
   {
@@ -574,7 +574,7 @@ var questions = [
       "Docker-in-Docker, which nests Docker engines inside containers to provide process-level workload isolation"
     ],
     answer: 2,
-    explanation: "Kata Containers provides VM-level isolation by running each Pod inside a lightweight virtual machine with its own kernel. It integrates with containerd through a CRI-compatible shim (`containerd-shim-kata-v2`), making it transparent to Kubernetes. gVisor provides sandbox isolation but not full VM-level isolation. runc provides standard container isolation only.",
+    explanation: "Kata Containers provides VM-level isolation by running each Pod inside a lightweight virtual machine with its own kernel. It integrates with containerd through a CRI-compatible shim (`containerd-shim-kata-v2`), making it transparent to Kubernetes. gVisor provides sandbox isolation but not full VM-level isolation. runc provides standard container isolation only.\n\nWhy other options are wrong:\n- A: runc uses namespaces and cgroups which provide process-level isolation, not VM-level isolation\n- B: gVisor provides user-space kernel sandboxing, which is application-level isolation, not full VM isolation\n- D: Docker-in-Docker is a development pattern, not a security sandbox runtime for production workloads\n\nReference: https://katacontainers.io/",
     verify: null
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "The request is load-balanced equally between both backends based on the round-robin algorithm"
     ],
     answer: 2,
-    explanation: "With `pathType: Prefix`, the Ingress controller matches the request path against the defined prefixes. Since `/api/v1/users` starts with `/api`, it matches the rule for `api-service:8080`. The full path (including `/v1/users`) is forwarded to the backend service. Prefix matching is the most common path type used in Ingress resources.",
+    explanation: "With `pathType: Prefix`, the Ingress controller matches the request path against the defined prefixes. Since `/api/v1/users` starts with `/api`, it matches the rule for `api-service:8080`. The full path (including `/v1/users`) is forwarded to the backend service. Prefix matching is the most common path type used in Ingress resources.\n\nWhy other options are wrong:\n- A: Prefix pathType matches any path that starts with the defined prefix, not just exact matches\n- B: The Ingress controller routes to the matching prefix rule, not return 404 for sub-paths\n- D: Requests are routed to the single matching backend, not load-balanced across all backends\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types",
     verify: "kubectl describe ingress <ingress-name>"
   },
   {
@@ -606,7 +606,7 @@ var questions = [
       "Kubernetes does not mount the container filesystem at runtime, so embedded files are completely inaccessible to the application"
     ],
     answer: 1,
-    explanation: "Cloud-native applications should externalize configuration, especially secrets, from the container image. Embedding credentials in the image means the same image cannot be used across environments without rebuilding, the credentials are exposed to anyone with image pull access, and rotation requires a new image build and deployment cycle. Kubernetes Secrets or external secret managers should be used instead.",
+    explanation: "Cloud-native applications should externalize configuration, especially secrets, from the container image. Embedding credentials in the image means the same image cannot be used across environments without rebuilding, the credentials are exposed to anyone with image pull access, and rotation requires a new image build and deployment cycle. Kubernetes Secrets or external secret managers should be used instead.\n\nWhy other options are wrong:\n- A: Container images can contain any files including text; there is no such restriction\n- C: Container registries do not strip credentials from images; they store images as-is\n- D: Kubernetes mounts the container filesystem at runtime; embedded files are fully accessible\n\nReference: https://12factor.net/config",
     verify: null
   },
   {
@@ -622,7 +622,7 @@ var questions = [
       "It live-migrates all running containers from the node to other available nodes without restarting them"
     ],
     answer: 0,
-    explanation: "`kubectl drain` first cordons the node (marks it as unschedulable) and then evicts all Pods except DaemonSet Pods and mirror Pods. It respects PodDisruptionBudgets during eviction, which may cause the drain to block if evicting a Pod would violate the budget. The node object remains in the cluster with an unschedulable taint.",
+    explanation: "`kubectl drain` first cordons the node (marks it as unschedulable) and then evicts all Pods except DaemonSet Pods and mirror Pods. It respects PodDisruptionBudgets during eviction, which may cause the drain to block if evicting a Pod would violate the budget. The node object remains in the cluster with an unschedulable taint.\n\nWhy other options are wrong:\n- B: kubectl drain does not stop the kubelet or archive logs; those are separate manual operations\n- C: kubectl drain does not delete the node object; it only cordons and evicts Pods from the node\n- D: Kubernetes does not live-migrate containers; Pods are terminated and rescheduled as new instances\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get node node-3 -o jsonpath='{.spec.unschedulable}'"
   },
   {
@@ -638,7 +638,7 @@ var questions = [
       "<code>histogram_quantile(0.99, rate(http_requests_total[5m]))</code> for the 99th percentile error rate"
     ],
     answer: 1,
-    explanation: "To compute the error rate as a percentage, you divide the rate of 5xx errors by the rate of all requests and multiply by 100. Using `sum()` aggregates across all label dimensions to produce a single numerator and denominator. The `rate()` function is necessary because `http_requests_total` is a counter, and `count()` would return the number of time series, not request rates.",
+    explanation: "To compute the error rate as a percentage, you divide the rate of 5xx errors by the rate of all requests and multiply by 100. Using `sum()` aggregates across all label dimensions to produce a single numerator and denominator. The `rate()` function is necessary because `http_requests_total` is a counter, and `count()` would return the number of time series, not request rates.\n\nWhy other options are wrong:\n- A: Multiplying the error rate by 100 gives a scaled absolute rate, not a percentage of total requests\n- C: count() returns the number of time series, not request rates; it is not suitable for rate calculations\n- D: histogram_quantile is for histogram metrics and does not compute error ratios from counter metrics\n\nReference: https://prometheus.io/docs/prometheus/latest/querying/functions/#rate",
     verify: null
   },
   {
@@ -654,7 +654,7 @@ var questions = [
       "The Pod is not added to the Service's Endpoints until the readiness probe succeeds, blocking traffic"
     ],
     answer: 3,
-    explanation: "Readiness probes determine whether a Pod should receive traffic through a Service. Until the TCP socket check on port 5432 succeeds (meaning the database connection pool is ready), the Pod's IP is not added to the Service's Endpoints object. This prevents routing traffic to Pods that are not yet capable of handling requests. Unlike liveness probes, readiness probe failures do not trigger restarts.",
+    explanation: "Readiness probes determine whether a Pod should receive traffic through a Service. Until the TCP socket check on port 5432 succeeds (meaning the database connection pool is ready), the Pod's IP is not added to the Service's Endpoints object. This prevents routing traffic to Pods that are not yet capable of handling requests. Unlike liveness probes, readiness probe failures do not trigger restarts.\n\nWhy other options are wrong:\n- A: Running state alone does not mean traffic is sent; readiness probes gate Endpoints inclusion\n- B: Services do not mark responses as degraded; the Pod is either in Endpoints or not\n- C: Readiness probe failures do not terminate the Pod; only liveness probe failures trigger restarts\n\nReference: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/#readiness-probes",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -670,7 +670,7 @@ var questions = [
       "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace object"
     ],
     answer: 2,
-    explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods) and `policyTypes: [\"Ingress\"]` creates a default-deny ingress rule for the entire namespace. Either omitting the `ingress` field entirely or setting it to an empty array (`ingress: []`) achieves the same default-deny effect — both result in no ingress being allowed. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.",
+    explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods) and `policyTypes: [\"Ingress\"]` creates a default-deny ingress rule for the entire namespace. Either omitting the `ingress` field entirely or setting it to an empty array (`ingress: []`) achieves the same default-deny effect — both result in no ingress being allowed. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.\n\nWhy other options are wrong:\n- A: Deleting the default ServiceAccount does not affect network access; ServiceAccounts control API auth\n- B: A policy with policyTypes Egress and no egress rules denies egress, not ingress traffic\n- D: Annotations on namespaces do not enforce network isolation; only NetworkPolicy objects do\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-ingress-traffic",
     verify: "kubectl get networkpolicy -n team-beta -o yaml"
   },
   {
@@ -686,7 +686,7 @@ var questions = [
       "A <code>VirtualService</code> with a <code>mirror</code> field that duplicates traffic to the new version while serving from stable"
     ],
     answer: 3,
-    explanation: "Istio's `VirtualService` supports a `mirror` field that sends a copy of live traffic to a mirrored service. The responses from the mirrored service are discarded, ensuring no impact on end users. This is also known as shadow traffic or dark launching, and it allows testing with real production traffic patterns without risk.",
+    explanation: "Istio's `VirtualService` supports a `mirror` field that sends a copy of live traffic to a mirrored service. The responses from the mirrored service are discarded, ensuring no impact on end users. This is also known as shadow traffic or dark launching, and it allows testing with real production traffic patterns without risk.\n\nWhy other options are wrong:\n- A: Gateway resources handle ingress traffic entry, not traffic mirroring between service versions\n- B: DestinationRule with ROUND_ROBIN distributes traffic, not mirrors it to a separate version\n- C: PeerAuthentication configures mTLS policies, not traffic routing or mirroring behavior\n\nReference: https://istio.io/latest/docs/tasks/traffic-management/mirroring/",
     verify: "kubectl get virtualservice <name> -o yaml | grep mirror"
   },
   {
@@ -702,7 +702,7 @@ var questions = [
       "<code>kubectl set image deployment/my-app --rollback=3</code> to revert to the third image version"
     ],
     answer: 0,
-    explanation: "The `kubectl rollout undo deployment/my-app --to-revision=3` command reverts the Deployment to a specific historical revision. Kubernetes stores rollout history (up to the limit set by `revisionHistoryLimit`) as ReplicaSets. The `--to-revision` flag specifies which revision to restore, making it possible to roll back to any previously recorded state.",
+    explanation: "The `kubectl rollout undo deployment/my-app --to-revision=3` command reverts the Deployment to a specific historical revision. Kubernetes stores rollout history (up to the limit set by `revisionHistoryLimit`) as ReplicaSets. The `--to-revision` flag specifies which revision to restore, making it possible to roll back to any previously recorded state.\n\nWhy other options are wrong:\n- B: rollout restart triggers a new rollout by updating the Pod template, not reverting to a specific revision\n- C: kubectl apply --force overwrites with a file, not a specific revision, and requires the old YAML\n- D: kubectl set image --rollback is not a valid command; the rollback flag does not exist on set image\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment",
     verify: "kubectl rollout history deployment/my-app"
   },
   {
@@ -718,7 +718,7 @@ var questions = [
       "node-1 and node-2, because both have at least 3 allocatable CPU cores for the Pod request"
     ],
     answer: 3,
-    explanation: "The scheduler filters nodes based on whether they have sufficient allocatable resources to satisfy the Pod's requests. Node-1 (4 cores) and node-2 (8 cores) can accommodate a 3 CPU request, while node-3 (2 cores) cannot. CPU requests can be specified as whole numbers or millicores (e.g., `3` is equivalent to `3000m`). The scheduler then scores eligible nodes to select the best fit.",
+    explanation: "The scheduler filters nodes based on whether they have sufficient allocatable resources to satisfy the Pod's requests. Node-1 (4 cores) and node-2 (8 cores) can accommodate a 3 CPU request, while node-3 (2 cores) cannot. CPU requests can be specified as whole numbers or millicores (e.g., `3` is equivalent to `3000m`). The scheduler then scores eligible nodes to select the best fit.\n\nWhy other options are wrong:\n- A: node-2 is not the only eligible node; node-1 also has sufficient CPU (4 cores >= 3 requested)\n- B: The scheduler does not overcommit based on limits; scheduling uses requests for filtering\n- C: CPU requests accept both whole numbers and millicores; 3 is valid notation equivalent to 3000m\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler-implementation",
     verify: "kubectl describe node | grep -A5 'Allocatable'"
   },
   {
@@ -734,7 +734,7 @@ var questions = [
       "Container registries cannot be accessed from within CI/CD pipelines due to network isolation constraints"
     ],
     answer: 0,
-    explanation: "Directly calling `kubectl apply` from CI/CD pipelines (push-based deployment) requires the pipeline to have cluster credentials, which is a security risk. It also means the cluster state may drift from what is in version control if manual changes are made. GitOps approaches (pull-based, using tools like Argo CD or Flux) mitigate these issues by making Git the single source of truth.",
+    explanation: "Directly calling `kubectl apply` from CI/CD pipelines (push-based deployment) requires the pipeline to have cluster credentials, which is a security risk. It also means the cluster state may drift from what is in version control if manual changes are made. GitOps approaches (pull-based, using tools like Argo CD or Flux) mitigate these issues by making Git the single source of truth.\n\nWhy other options are wrong:\n- B: kubectl apply is not deprecated; it remains a core kubectl command in all current versions\n- C: CI/CD pipelines can access registries via configured credentials; there is no inherent restriction\n- D: Pipelines routinely access registries for pushing and pulling images; network isolation is not a blocker\n\nReference: https://www.gitops.tech/",
     verify: null
   },
   {
@@ -750,7 +750,7 @@ var questions = [
       "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service A record"
     ],
     answer: 3,
-    explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.",
+    explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.\n\nWhy other options are wrong:\n- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
     verify: "kubectl exec -it <pod> -- nslookup cassandra.database.svc.cluster.local"
   },
   {
@@ -766,7 +766,7 @@ var questions = [
       "Pod creation fails because both requests and limits must be explicitly specified under a quota"
     ],
     answer: 2,
-    explanation: "A LimitRange injects default values for any resource field not specified by the user. Since the developer specified a CPU request but not a CPU limit, the LimitRange fills in the default limit of `500m`. If neither request nor limit were specified, the LimitRange would inject both defaults. The LimitRange also enforces min/max constraints if configured.",
+    explanation: "A LimitRange injects default values for any resource field not specified by the user. Since the developer specified a CPU request but not a CPU limit, the LimitRange fills in the default limit of `500m`. If neither request nor limit were specified, the LimitRange would inject both defaults. The LimitRange also enforces min/max constraints if configured.\n\nWhy other options are wrong:\n- A: A LimitRange does inject defaults; without it the Pod would be rejected by the ResourceQuota\n- B: The limit is not set to the request value; the LimitRange default limit is used independently\n- D: Pod creation does not fail because the LimitRange provides the missing limit value automatically\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
     verify: "kubectl describe limitrange -n <namespace>"
   },
   {
@@ -782,7 +782,7 @@ var questions = [
       "The PV and its underlying storage are automatically deleted by the provisioner upon PVC deletion"
     ],
     answer: 3,
-    explanation: "When a PVC bound to a dynamically provisioned PV is deleted, the `reclaimPolicy` determines what happens. With `Delete`, the PV object and the underlying storage resource (e.g., an AWS EBS volume or GCE PD) are both automatically deleted. This prevents orphaned storage but means data is permanently lost unless backed up.",
+    explanation: "When a PVC bound to a dynamically provisioned PV is deleted, the `reclaimPolicy` determines what happens. With `Delete`, the PV object and the underlying storage resource (e.g., an AWS EBS volume or GCE PD) are both automatically deleted. This prevents orphaned storage but means data is permanently lost unless backed up.\n\nWhy other options are wrong:\n- A: With Delete policy, the PV does not transition to Released; both PV and storage are deleted\n- B: The PV is not retained with a wipe; the Delete policy removes the PV object entirely\n- C: The PV does not remain bound; the Delete reclaim policy triggers immediate cleanup\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#reclaim-policy",
     verify: "kubectl get storageclass -o jsonpath='{.items[*].reclaimPolicy}'"
   },
   {
@@ -798,7 +798,7 @@ var questions = [
       "Grafana Agent, which replaces both Prometheus and Elasticsearch with a unified collection pipeline"
     ],
     answer: 2,
-    explanation: "Grafana supports multiple data sources, allowing a single dashboard to include panels that query different backends. You can have one panel querying Prometheus for metrics and another querying Elasticsearch for logs. Each panel specifies its data source, and Grafana handles the different query languages (PromQL, Lucene, etc.) natively.",
+    explanation: "Grafana supports multiple data sources, allowing a single dashboard to include panels that query different backends. You can have one panel querying Prometheus for metrics and another querying Elasticsearch for logs. Each panel specifies its data source, and Grafana handles the different query languages (PromQL, Lucene, etc.) natively.\n\nWhy other options are wrong:\n- A: Grafana Mimir is a long-term metrics storage backend, not a unified data format converter\n- B: Alertmanager integration handles alerts, not data unification across different backend sources\n- D: Grafana Agent collects telemetry but does not replace Prometheus or Elasticsearch as backends\n\nReference: https://grafana.com/docs/grafana/latest/datasources/",
     verify: null
   },
   {
@@ -814,7 +814,7 @@ var questions = [
       "The replica count reverts to the file value because <code>kubectl apply</code> uses a three-way merge of the file, annotation, and live state"
     ],
     answer: 0,
-    explanation: "`kubectl apply` performs a three-way strategic-merge-patch between the local file, the `last-applied-configuration` annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by `kubectl edit`) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why `kubectl apply` is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.",
+    explanation: "`kubectl apply` performs a three-way strategic-merge-patch between the local file, the `last-applied-configuration` annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by `kubectl edit`) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why `kubectl apply` is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.\n\nWhy other options are wrong:\n- B: kubectl apply does not fail with conflict errors; it performs a three-way merge patch\n- C: Kubernetes does not choose the higher replica count; the three-way diff determines the outcome\n- D: The replica count does not revert because the file value has not changed relative to last-applied\n\nReference: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
     verify: "kubectl get deployment my-app -o jsonpath='{.metadata.annotations.kubectl\\.kubernetes\\.io/last-applied-configuration}'"
   },
   {
@@ -830,7 +830,7 @@ var questions = [
       "Cluster-admin privileges because <code>kubectl exec</code> always requires cluster-wide RBAC access"
     ],
     answer: 2,
-    explanation: "In Kubernetes RBAC, `kubectl exec` creates an exec subresource on the Pod. The required permission is the `create` verb on the `pods/exec` subresource, not a verb on the `pods` resource itself. Similarly, `kubectl port-forward` requires `create` on `pods/portforward`, and `kubectl logs` requires `get` on `pods/log`.",
+    explanation: "In Kubernetes RBAC, `kubectl exec` creates an exec subresource on the Pod. The required permission is the `create` verb on the `pods/exec` subresource, not a verb on the `pods` resource itself. Similarly, `kubectl port-forward` requires `create` on `pods/portforward`, and `kubectl logs` requires `get` on `pods/log`.\n\nWhy other options are wrong:\n- A: There is no exec verb on pods resource; exec is a subresource requiring create on pods/exec\n- B: The update verb on pods allows modifying Pod specs, not executing commands inside containers\n- D: Cluster-admin is not required; a namespace-scoped Role with create on pods/exec is sufficient\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i create pods/exec -n dev --as=<user>"
   },
   {
@@ -846,7 +846,7 @@ var questions = [
       "It computes <code>ceil(currentReplicas * (currentUtilization / targetUtilization))</code> = <code>ceil(4 * 90/70) = 6</code>"
     ],
     answer: 3,
-    explanation: "The HPA uses the formula `desiredReplicas = ceil(currentReplicas * (currentMetricValue / desiredMetricValue))`. With 4 replicas at 90% utilization targeting 70%, this gives `ceil(4 * 90/70) = ceil(5.14) = 6`. The HPA scales to 6 replicas, then re-evaluates. It does not jump to max or add one at a time.",
+    explanation: "The HPA uses the formula `desiredReplicas = ceil(currentReplicas * (currentMetricValue / desiredMetricValue))`. With 4 replicas at 90% utilization targeting 70%, this gives `ceil(4 * 90/70) = ceil(5.14) = 6`. The HPA scales to 6 replicas, then re-evaluates. It does not jump to max or add one at a time.\n\nWhy other options are wrong:\n- A: The HPA does not simply double replicas; it uses a specific mathematical formula for scaling\n- B: The HPA does not add 1 replica at a time; it calculates the exact desired count in one step\n- C: The HPA does not immediately jump to maxReplicas; it computes the proportional count needed\n\nReference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details",
     verify: "kubectl get hpa <name> -o jsonpath='{.status.desiredReplicas}'"
   },
   {
@@ -862,7 +862,7 @@ var questions = [
       "The Jaeger log correlator, which links structured log entries to specific trace spans for investigation"
     ],
     answer: 1,
-    explanation: "Jaeger's trace timeline view displays a Gantt-style chart showing each span's duration, start time, and parent-child relationships across services. This visualization makes it immediately clear which service or operation contributes the most latency to the overall request. It is the primary tool for identifying bottlenecks in distributed traces.",
+    explanation: "Jaeger's trace timeline view displays a Gantt-style chart showing each span's duration, start time, and parent-child relationships across services. This visualization makes it immediately clear which service or operation contributes the most latency to the overall request. It is the primary tool for identifying bottlenecks in distributed traces.\n\nWhy other options are wrong:\n- A: Jaeger does not have a built-in alerting system; alerting is handled by tools like Prometheus\n- C: Jaeger does not aggregate metrics; it focuses on trace storage, query, and visualization\n- D: Jaeger does not have a native log correlator; log correlation requires external integration\n\nReference: https://www.jaegertracing.io/docs/latest/frontend-ui/",
     verify: null
   },
   {
@@ -878,7 +878,7 @@ var questions = [
       "The service mesh disables TCP connection reuse, forcing a new TCP handshake for every single request"
     ],
     answer: 0,
-    explanation: "Envoy sidecar proxies intercept both inbound and outbound traffic for each Pod. Each hop involves the source Pod's Envoy (egress), network transit, and the destination Pod's Envoy (ingress). The proxy adds latency for TLS handshakes, header parsing, load balancing decisions, and metrics collection. This 2-5ms overhead per hop is typical and is the trade-off for the features a service mesh provides.",
+    explanation: "Envoy sidecar proxies intercept both inbound and outbound traffic for each Pod. Each hop involves the source Pod's Envoy (egress), network transit, and the destination Pod's Envoy (ingress). The proxy adds latency for TLS handshakes, header parsing, load balancing decisions, and metrics collection. This 2-5ms overhead per hop is typical and is the trade-off for the features a service mesh provides.\n\nWhy other options are wrong:\n- B: Envoy does not replace kube-proxy; both operate independently in a service mesh deployment\n- C: Sidecars have resource limits and do not consume all CPU; 2-5ms overhead is from proxying, not starvation\n- D: Service meshes support connection pooling and reuse; they do not disable TCP connection reuse\n\nReference: https://istio.io/latest/docs/ops/deployment/performance-and-scalability/",
     verify: null
   },
   {
@@ -894,7 +894,7 @@ var questions = [
       "New Pods remain <code>Pending</code> with no node assignment, but existing running Pods are unaffected"
     ],
     answer: 3,
-    explanation: "The kube-scheduler is responsible only for assigning Pods to nodes. If it is unavailable, newly created Pods that do not specify a `nodeName` remain in `Pending` state. Existing Pods that are already running on nodes are managed by the kubelet and are not affected. The API server continues to accept requests normally.",
+    explanation: "The kube-scheduler is responsible only for assigning Pods to nodes. If it is unavailable, newly created Pods that do not specify a `nodeName` remain in `Pending` state. Existing Pods that are already running on nodes are managed by the kubelet and are not affected. The API server continues to accept requests normally.\n\nWhy other options are wrong:\n- A: Existing running Pods are managed by the kubelet and are not terminated when the scheduler is down\n- B: The API server continues accepting requests normally; scheduler unavailability does not block the API\n- C: ClusterIP addresses are allocated by the API server, not the scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
     verify: "kubectl get pods --field-selector status.phase=Pending"
   },
   {
@@ -910,7 +910,7 @@ var questions = [
       "Set all Kubernetes resources to immutable using finalizers to block any modifications after creation"
     ],
     answer: 1,
-    explanation: "GitOps controllers like Argo CD (with auto-sync and self-heal) or Flux continuously compare the desired state in Git with the actual state in the cluster. When drift is detected (e.g., from a manual `kubectl edit`), the controller automatically reverts the change to match the Git-defined state. This provides a reliable drift detection and remediation mechanism.",
+    explanation: "GitOps controllers like Argo CD (with auto-sync and self-heal) or Flux continuously compare the desired state in Git with the actual state in the cluster. When drift is detected (e.g., from a manual `kubectl edit`), the controller automatically reverts the change to match the Git-defined state. This provides a reliable drift detection and remediation mechanism.\n\nWhy other options are wrong:\n- A: A CronJob running kubectl apply is fragile, lacks drift detection, and is not a proper reconciliation loop\n- C: Removing all edit permissions is impractical and does not detect or revert drift from other sources\n- D: Finalizers prevent deletion but do not make resources immutable or block modifications\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/#automatic-self-healing",
     verify: null
   },
   {
@@ -926,7 +926,7 @@ var questions = [
       "Setting <code>replicas: 2</code> in three separate Deployments, with one Deployment targeted to each zone"
     ],
     answer: 1,
-    explanation: "Topology spread constraints allow you to control how Pods are distributed across topology domains (like zones or nodes). Setting `maxSkew: 1` with `topologyKey: topology.kubernetes.io/zone` ensures that the difference in Pod count between any two zones is at most 1, resulting in 2 Pods per zone for 6 replicas across 3 zones.",
+    explanation: "Topology spread constraints allow you to control how Pods are distributed across topology domains (like zones or nodes). Setting `maxSkew: 1` with `topologyKey: topology.kubernetes.io/zone` ensures that the difference in Pod count between any two zones is at most 1, resulting in 2 Pods per zone for 6 replicas across 3 zones.\n\nWhy other options are wrong:\n- A: Pod affinity co-locates Pods together, which is the opposite of spreading them across zones\n- C: Node affinity with preferred weights is a soft constraint and does not guarantee even distribution\n- D: Three separate Deployments add management overhead and break the single-Deployment abstraction\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl get pods -o wide --sort-by='{.spec.nodeName}'"
   },
   {
@@ -942,7 +942,7 @@ var questions = [
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.",
+    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.\n\nWhy other options are wrong:\n- B: Memory limits are enforced by cgroups and the kernel; they are not advisory in Kubernetes\n- C: tmpfs memory is tracked by the cgroup memory controller; it does not bypass accounting\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {
@@ -958,7 +958,7 @@ var questions = [
       "The Ingress resource requires a separate <code>CertificateSigningRequest</code> object to enable TLS for the hostname"
     ],
     answer: 2,
-    explanation: "Certificate warnings typically occur when the common name (CN) or Subject Alternative Name (SAN) in the TLS certificate does not match the hostname the client is connecting to. If the `tls.hosts` field in the Ingress lists `app.example.com` but the certificate is issued for `*.other.com`, browsers display a warning. The Secret format itself is correct if it contains valid `tls.crt` and `tls.key` entries.",
+    explanation: "Certificate warnings typically occur when the common name (CN) or Subject Alternative Name (SAN) in the TLS certificate does not match the hostname the client is connecting to. If the `tls.hosts` field in the Ingress lists `app.example.com` but the certificate is issued for `*.other.com`, browsers display a warning. The Secret format itself is correct if it contains valid `tls.crt` and `tls.key` entries.\n\nWhy other options are wrong:\n- A: Standard Ingress controllers (NGINX, Traefik) support TLS termination natively\n- B: Kubernetes Secrets have a 1MB size limit, far larger than typical TLS certificates\n- D: CertificateSigningRequest is for in-cluster CA signing, not required for Ingress TLS configuration\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls",
     verify: "kubectl get secret <tls-secret> -o jsonpath='{.data.tls\\.crt}' | base64 -d | openssl x509 -noout -subject -dates"
   },
   {
@@ -974,7 +974,7 @@ var questions = [
       "The target is permanently removed from the scrape configuration after three consecutive timeout failures"
     ],
     answer: 2,
-    explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.",
+    explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.\n\nWhy other options are wrong:\n- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus never permanently removes targets from config; they remain and are retried each interval\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
     verify: null
   },
   {
@@ -990,7 +990,7 @@ var questions = [
       "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for private registry lookups"
     ],
     answer: 0,
-    explanation: "The `unauthorized` error indicates that the container runtime cannot authenticate to the private registry. Kubernetes uses `imagePullSecrets` (Secrets of type `kubernetes.io/dockerconfigjson`) to provide registry credentials. These can be referenced directly in the Pod spec or attached to the default ServiceAccount in the namespace for automatic injection.",
+    explanation: "The `unauthorized` error indicates that the container runtime cannot authenticate to the private registry. Kubernetes uses `imagePullSecrets` (Secrets of type `kubernetes.io/dockerconfigjson`) to provide registry credentials. These can be referenced directly in the Pod spec or attached to the default ServiceAccount in the namespace for automatic injection.\n\nWhy other options are wrong:\n- B: hostNetwork does not solve authentication issues; it changes network namespace, not registry credentials\n- C: Private registries serve any valid tag; the latest tag is not special for authentication purposes\n- D: CoreDNS configuration is for DNS resolution, not registry authentication or authorization\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
     verify: "kubectl get secret -n <namespace> --field-selector type=kubernetes.io/dockerconfigjson"
   },
   {
@@ -1006,7 +1006,7 @@ var questions = [
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
     ],
     answer: 3,
-    explanation: "Each Kubernetes resource type is defined in a specific API group. For example, Deployments belong to `apps/v1`, ConfigMaps to `v1` (core group), and NetworkPolicies to `networking.k8s.io/v1`. The API server validates that the resource type matches its expected API group and version, rejecting requests that use incorrect combinations.",
+    explanation: "Each Kubernetes resource type is defined in a specific API group. For example, Deployments belong to `apps/v1`, ConfigMaps to `v1` (core group), and NetworkPolicies to `networking.k8s.io/v1`. The API server validates that the resource type matches its expected API group and version, rejecting requests that use incorrect combinations.\n\nWhy other options are wrong:\n- A: Developers cannot freely choose API groups; each resource type has a fixed API group assignment\n- B: The API group is determined by the resource type definition, not the namespace of the resource\n- C: Not all resources use v1; many resources use other API groups like apps/v1, batch/v1, etc.\n\nReference: https://kubernetes.io/docs/concepts/overview/kubernetes-api/#api-groups-and-versioning",
     verify: "kubectl api-resources --sort-by=name | head -20"
   },
   {
@@ -1022,7 +1022,7 @@ var questions = [
       "gRPC bidirectional streaming configured between each pair of producer and consumer services"
     ],
     answer: 1,
-    explanation: "The publish-subscribe pattern using a message broker decouples producers from consumers. A service publishes events to a topic, and multiple independent consumers subscribe to process those events asynchronously. This enables loose coupling, independent scaling, and fault isolation. NATS and Kafka are popular CNCF-adjacent choices for this pattern in cloud-native architectures.",
+    explanation: "The publish-subscribe pattern using a message broker decouples producers from consumers. A service publishes events to a topic, and multiple independent consumers subscribe to process those events asynchronously. This enables loose coupling, independent scaling, and fault isolation. NATS and Kafka are popular CNCF-adjacent choices for this pattern in cloud-native architectures.\n\nWhy other options are wrong:\n- A: Synchronous HTTP request-response creates tight coupling and does not support fan-out to multiple consumers\n- C: Shared database polling creates tight coupling, does not scale well, and introduces polling latency\n- D: gRPC bidirectional streaming requires point-to-point connections, not publish-subscribe fan-out\n\nReference: https://www.cncf.io/projects/nats/",
     verify: null
   },
   {
@@ -1038,7 +1038,7 @@ var questions = [
       "1 old ReplicaSet is retained, representing only the immediately previous version of the Deployment"
     ],
     answer: 0,
-    explanation: "The `revisionHistoryLimit` field controls how many old ReplicaSets (with 0 replicas) are kept for rollback purposes. With a limit of 3, Kubernetes retains the 3 most recent old ReplicaSets plus the current active one. Older ReplicaSets beyond the limit are garbage collected. This allows rolling back to any of the last 3 revisions.",
+    explanation: "The `revisionHistoryLimit` field controls how many old ReplicaSets (with 0 replicas) are kept for rollback purposes. With a limit of 3, Kubernetes retains the 3 most recent old ReplicaSets plus the current active one. Older ReplicaSets beyond the limit are garbage collected. This allows rolling back to any of the last 3 revisions.\n\nWhy other options are wrong:\n- B: Kubernetes does not clean up all inactive ReplicaSets; it retains them up to revisionHistoryLimit\n- C: Only revisionHistoryLimit old ReplicaSets are kept, not one per historical revision\n- D: More than 1 old ReplicaSet is retained; the limit of 3 means the 3 most recent old ones are kept\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit",
     verify: "kubectl get replicaset -l app=<deployment-name>"
   },
   {
@@ -1054,7 +1054,7 @@ var questions = [
       "The ServiceAccount token is not mounted, preventing automatic API server authentication for the Pod"
     ],
     answer: 3,
-    explanation: "Setting `automountServiceAccountToken: false` prevents Kubernetes from automatically mounting the ServiceAccount's API token into the container. Without this token, processes inside the container cannot authenticate to the kube-apiserver using the ServiceAccount identity. This is a security hardening measure for Pods that do not need to interact with the Kubernetes API.",
+    explanation: "Setting `automountServiceAccountToken: false` prevents Kubernetes from automatically mounting the ServiceAccount's API token into the container. Without this token, processes inside the container cannot authenticate to the kube-apiserver using the ServiceAccount identity. This is a security hardening measure for Pods that do not need to interact with the Kubernetes API.\n\nWhy other options are wrong:\n- A: Pod-to-Pod communication uses the CNI network, not ServiceAccount tokens; it is unaffected\n- B: The ServiceAccount is still associated; its token is simply not mounted as a volume in the Pod\n- C: imagePullSecrets are configured separately on the ServiceAccount and are not affected by this setting\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#opt-out-of-api-credential-automounting",
     verify: "kubectl exec <pod-name> -- ls /var/run/secrets/kubernetes.io/serviceaccount/ 2>&1"
   },
   {
@@ -1070,7 +1070,7 @@ var questions = [
       "The Pods are instantly rescheduled to other available nodes in the cluster without any termination delay"
     ],
     answer: 0,
-    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady` (Ready condition becomes `Unknown`). The `node.kubernetes.io/unreachable:NoExecute` taint is applied, and after the configured toleration period (default 5 minutes), the control plane starts evicting Pods from the unreachable node.",
+    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady` (Ready condition becomes `Unknown`). The `node.kubernetes.io/unreachable:NoExecute` taint is applied, and after the configured toleration period (default 5 minutes), the control plane starts evicting Pods from the unreachable node.\n\nWhy other options are wrong:\n- B: The kubelet does not restart Pods to reconnect to the API server; Pods continue running\n- C: Pods are not immediately terminated; the container runtime operates independently of the API connection\n- D: Pods are not instantly rescheduled; there is a toleration timeout (default 300s) before eviction begins\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
     verify: "kubectl get node <node-name> -o jsonpath='{.status.conditions[?(@.type==\"Ready\")].status}'"
   },
   {
@@ -1086,7 +1086,7 @@ var questions = [
       "Create two separate Services and configure DNS-based round-robin load balancing between them both"
     ],
     answer: 1,
-    explanation: "Kubernetes Services distribute traffic roughly proportionally to the number of endpoints. To decouple traffic percentage from Pod count, you need a service mesh (Istio VirtualService with weight-based routing) or a smart Ingress controller (like NGINX with canary annotations). These tools allow precise traffic splitting such as sending 50% to the canary Pod regardless of replica count.",
+    explanation: "Kubernetes Services distribute traffic roughly proportionally to the number of endpoints. To decouple traffic percentage from Pod count, you need a service mesh (Istio VirtualService with weight-based routing) or a smart Ingress controller (like NGINX with canary annotations). These tools allow precise traffic splitting such as sending 50% to the canary Pod regardless of replica count.\n\nWhy other options are wrong:\n- A: Scaling changes the Pod count and traffic proportionally, not independently of replica count\n- C: sessionAffinity does not support percentage-based traffic splitting between service versions\n- D: DNS-based round-robin cannot provide fine-grained percentage-based traffic control\n\nReference: https://istio.io/latest/docs/concepts/traffic-management/#routing-rules",
     verify: null
   },
   {
@@ -1102,7 +1102,7 @@ var questions = [
       "No, the value is hashed with a one-way function, so the original password cannot be recovered"
     ],
     answer: 2,
-    explanation: "Kubernetes Secrets are stored as base64-encoded strings by default, which is an encoding scheme, not encryption. Anyone with read access to Secrets can decode the value with `echo TXlTM2NyZXQ= | base64 -d`. For actual encryption, administrators must enable encryption at rest via an `EncryptionConfiguration` on the API server or use an external secrets manager.",
+    explanation: "Kubernetes Secrets are stored as base64-encoded strings by default, which is an encoding scheme, not encryption. Anyone with read access to Secrets can decode the value with `echo TXlTM2NyZXQ= | base64 -d`. For actual encryption, administrators must enable encryption at rest via an `EncryptionConfiguration` on the API server or use an external secrets manager.\n\nWhy other options are wrong:\n- A: Kubernetes does not automatically encrypt Secrets with AES-256; encryption at rest must be configured\n- B: Secrets are not encrypted with PKI; they are base64-encoded, which is reversible encoding\n- D: The value is not hashed; base64 is a reversible encoding, and the original value can be easily decoded\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#risks",
     verify: "kubectl get secret db-creds -o jsonpath='{.data.password}' | base64 -d"
   },
   {
@@ -1118,7 +1118,7 @@ var questions = [
       "The kube-scheduler is not running and therefore cannot assign any new Pods to the available cluster nodes"
     ],
     answer: 2,
-    explanation: "With `maxUnavailable: 0` in the rolling update strategy, old Pods are not terminated until new Pods are ready. If the new Pod spec requests more CPU than the cluster has available (because the old Pods still occupy resources), the new Pods cannot be scheduled, creating a deadlock. The fix is to either reduce the CPU request, add node capacity, or temporarily set `maxUnavailable` to a non-zero value.",
+    explanation: "With `maxUnavailable: 0` in the rolling update strategy, old Pods are not terminated until new Pods are ready. If the new Pod spec requests more CPU than the cluster has available (because the old Pods still occupy resources), the new Pods cannot be scheduled, creating a deadlock. The fix is to either reduce the CPU request, add node capacity, or temporarily set `maxUnavailable` to a non-zero value.\n\nWhy other options are wrong:\n- A: CPU architecture mismatch would cause a different error, not Insufficient cpu scheduling failure\n- B: IP address exhaustion would show a different error message, not Insufficient cpu\n- D: If the scheduler were not running, the error would be different and affect all Pods, not just new ones\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl describe deployment <name> | grep -E 'Replicas|RollingUpdateStrategy'"
   },
   {
@@ -1134,7 +1134,7 @@ var questions = [
       "The Service returns an error because ExternalName Services cannot resolve external hostnames in Kubernetes"
     ],
     answer: 2,
-    explanation: "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external hostname. When a Pod queries the Service DNS name, CoreDNS returns a CNAME record. The client (or resolver) then follows the CNAME to resolve the actual IP address. No proxying or ClusterIP is involved.",
+    explanation: "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external hostname. When a Pod queries the Service DNS name, CoreDNS returns a CNAME record. The client (or resolver) then follows the CNAME to resolve the actual IP address. No proxying or ClusterIP is involved.\n\nWhy other options are wrong:\n- A: ExternalName Services have no ClusterIP; they do not use kube-proxy for forwarding\n- B: ExternalName returns a CNAME record, not a pre-resolved A record; the client resolves the CNAME\n- D: ExternalName Services are fully supported and do resolve external hostnames via CNAME records\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.type}'"
   },
   {
@@ -1150,7 +1150,7 @@ var questions = [
       "cert-manager, which automates the management and renewal of TLS certificates for cluster workloads"
     ],
     answer: 1,
-    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner that can scan container images, filesystems, and IaC files. It integrates easily into CI/CD pipelines and can be used as a registry scanning tool. Falco focuses on runtime threat detection, OPA Gatekeeper on policy enforcement, and cert-manager on certificate management.",
+    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner that can scan container images, filesystems, and IaC files. It integrates easily into CI/CD pipelines and can be used as a registry scanning tool. Falco focuses on runtime threat detection, OPA Gatekeeper on policy enforcement, and cert-manager on certificate management.\n\nWhy other options are wrong:\n- A: Falco detects runtime threats in running containers, not pre-deployment image vulnerabilities\n- C: OPA Gatekeeper enforces admission policies on Kubernetes resources, not image vulnerability scanning\n- D: cert-manager manages TLS certificates, not container image security scanning\n\nReference: https://trivy.dev/latest/",
     verify: null
   },
   {
@@ -1166,7 +1166,7 @@ var questions = [
       "The PVC stays `Pending` because AWS EBS only supports `ReadWriteOnce`, not `ReadWriteMany`"
     ],
     answer: 3,
-    explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.",
+    explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.\n\nWhy other options are wrong:\n- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: "kubectl get pvc -o wide"
   },
   {
@@ -1182,7 +1182,7 @@ var questions = [
       "The init container's exit code 0 actually indicates it encountered an error during execution and did not write files successfully"
     ],
     answer: 1,
-    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.",
+    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers can share volumes with main containers; this is a common and supported pattern\n- C: The kubelet does not clear init container data; volumes persist across container transitions\n- D: Exit code 0 indicates success; it means the init container completed its task without errors\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.initContainers[*].volumeMounts}'"
   },
   {
@@ -1198,7 +1198,7 @@ var questions = [
       "The scheduler splits the Pod's resource requests across multiple nodes using distributed scheduling"
     ],
     answer: 1,
-    explanation: "When a high-priority Pod cannot be scheduled due to resource constraints, the scheduler identifies lower-priority Pods whose eviction would free enough resources. Those Pods are preempted (sent a termination signal), and once their resources are released, the high-priority Pod is scheduled. This is Kubernetes' priority-based preemption mechanism, controlled by PriorityClasses.",
+    explanation: "When a high-priority Pod cannot be scheduled due to resource constraints, the scheduler identifies lower-priority Pods whose eviction would free enough resources. Those Pods are preempted (sent a termination signal), and once their resources are released, the high-priority Pod is scheduled. This is Kubernetes' priority-based preemption mechanism, controlled by PriorityClasses.\n\nWhy other options are wrong:\n- A: The high-priority Pod does not wait passively; the scheduler actively preempts lower-priority Pods\n- C: The API server accepts the Pod creation; scheduling constraints cause Pending, not rejection\n- D: Kubernetes does not split Pod resource requests across multiple nodes; Pods run on a single node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1214,7 +1214,7 @@ var questions = [
       "The kube-proxy detects the port conflict at runtime and automatically reassigns one container to a free port"
     ],
     answer: 1,
-    explanation: "All containers in a Pod share the same network namespace, meaning they share the same IP address and port space. If two containers attempt to listen on the same port, the second one fails with a \"port already in use\" error and crashes. This is why containers within a Pod must use different ports.",
+    explanation: "All containers in a Pod share the same network namespace, meaning they share the same IP address and port space. If two containers attempt to listen on the same port, the second one fails with a \"port already in use\" error and crashes. This is why containers within a Pod must use different ports.\n\nWhy other options are wrong:\n- A: Kubernetes does not randomly select port bindings; the first container to bind succeeds, second fails\n- C: Containers in the same Pod share one IP and network namespace; they do not get separate IPs\n- D: kube-proxy does not detect or resolve port conflicts within a Pod; it handles Service routing only\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
     verify: "kubectl logs <pod-name> -c <container-name>"
   },
   {
@@ -1230,7 +1230,7 @@ var questions = [
       "All traffic is allowed because no NetworkPolicy selects this Pod; Kubernetes follows a default-allow model until a policy applies"
     ],
     answer: 3,
-    explanation: "Kubernetes uses a default-allow networking model. If no NetworkPolicy selects a Pod, all ingress and egress traffic to and from that Pod is permitted. Network isolation only begins when at least one NetworkPolicy selects the Pod. At that point, only traffic explicitly allowed by the policy rules is permitted; all other traffic matching the policy type is denied.",
+    explanation: "Kubernetes uses a default-allow networking model. If no NetworkPolicy selects a Pod, all ingress and egress traffic to and from that Pod is permitted. Network isolation only begins when at least one NetworkPolicy selects the Pod. At that point, only traffic explicitly allowed by the policy rules is permitted; all other traffic matching the policy type is denied.\n\nWhy other options are wrong:\n- A: Installing a CNI with NetworkPolicy support does not enable default-deny; explicit policies are needed\n- B: Both ingress and egress are allowed by default; there is no ingress-only default restriction\n- C: Cross-namespace traffic is allowed by default; namespace boundaries do not block network traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-policies",
     verify: "kubectl get networkpolicy -n app"
   },
   {
@@ -1246,7 +1246,7 @@ var questions = [
       "A DNS-based load balancer, because it natively supports mTLS and retry logic at the DNS resolution layer for all service traffic"
     ],
     answer: 1,
-    explanation: "A service mesh is designed for managing east-west (service-to-service) communication in microservices architectures. It deploys sidecar proxies alongside each service to transparently handle mTLS, retries, circuit breaking, and observability. An API gateway is better suited for north-south (client-to-cluster) traffic. For 50+ services, a mesh scales better than routing all internal traffic through a centralized gateway.",
+    explanation: "A service mesh is designed for managing east-west (service-to-service) communication in microservices architectures. It deploys sidecar proxies alongside each service to transparently handle mTLS, retries, circuit breaking, and observability. An API gateway is better suited for north-south (client-to-cluster) traffic. For 50+ services, a mesh scales better than routing all internal traffic through a centralized gateway.\n\nWhy other options are wrong:\n- A: A monolithic gateway becomes a bottleneck for 50+ services and is designed for north-south traffic\n- C: Implementing features in each service creates code duplication and inconsistent enforcement\n- D: DNS-based load balancers do not natively support mTLS, retries, or circuit breaking at the DNS layer\n\nReference: https://istio.io/latest/docs/concepts/what-is-istio/",
     verify: null
   },
   {
@@ -1262,7 +1262,7 @@ var questions = [
       "JSON is the only format supported by Elasticsearch for log indexing and all other formats are rejected outright"
     ],
     answer: 2,
-    explanation: "Structured JSON logs provide key-value pairs that log aggregation systems can parse automatically and consistently. This enables reliable filtering (e.g., by severity, request ID, or user) and indexing without custom regex patterns per service. While Fluentd can parse various formats, inconsistent unstructured logs require per-service parser configurations that are fragile and hard to maintain.",
+    explanation: "Structured JSON logs provide key-value pairs that log aggregation systems can parse automatically and consistently. This enables reliable filtering (e.g., by severity, request ID, or user) and indexing without custom regex patterns per service. While Fluentd can parse various formats, inconsistent unstructured logs require per-service parser configurations that are fragile and hard to maintain.\n\nWhy other options are wrong:\n- A: JSON is typically larger than plain text due to key names; it does not save storage space\n- B: Fluentd supports many input formats including plain text via configurable parser plugins\n- D: Elasticsearch supports multiple formats; JSON is preferred but not the only accepted format\n\nReference: https://docs.fluentd.org/",
     verify: null
   },
   {
@@ -1278,7 +1278,7 @@ var questions = [
       "etcd receives the manifest first, triggers the controller manager to process it, which then notifies the API server of changes"
     ],
     answer: 1,
-    explanation: "The request flow is: (1) `kubectl` sends the manifest to the API server, which authenticates, authorizes, and validates it. (2) The API server persists the Deployment to etcd. (3) The Deployment controller (in kube-controller-manager) detects the new Deployment and creates a ReplicaSet, which in turn creates Pod objects. (4) The scheduler detects unassigned Pods and binds them to nodes. (5) The kubelet on each node starts the containers.",
+    explanation: "The request flow is: (1) `kubectl` sends the manifest to the API server, which authenticates, authorizes, and validates it. (2) The API server persists the Deployment to etcd. (3) The Deployment controller (in kube-controller-manager) detects the new Deployment and creates a ReplicaSet, which in turn creates Pod objects. (4) The scheduler detects unassigned Pods and binds them to nodes. (5) The kubelet on each node starts the containers.\n\nWhy other options are wrong:\n- A: kubectl sends requests to the API server, not the scheduler; the scheduler watches the API server\n- C: The kubelet does not receive manifests from kubectl; it watches the API server for Pod assignments\n- D: etcd does not receive manifests first; the API server is the sole gateway to etcd\n\nReference: https://kubernetes.io/docs/concepts/overview/components/",
     verify: "kubectl get events --sort-by='.lastTimestamp'"
   },
   {
@@ -1294,7 +1294,7 @@ var questions = [
       "The fix is never applied automatically; Flux requires manual approval for all changes after a failure"
     ],
     answer: 1,
-    explanation: "Flux reconciles on a configurable interval (5 minutes in this case). Without a Git webhook configured, Flux polls the repository at each interval. The fix will be applied at the next reconciliation cycle, which could be up to 5 minutes after the push. Configuring a webhook notification from Git to Flux triggers immediate reconciliation upon push, reducing the delay.",
+    explanation: "Flux reconciles on a configurable interval (5 minutes in this case). Without a Git webhook configured, Flux polls the repository at each interval. The fix will be applied at the next reconciliation cycle, which could be up to 5 minutes after the push. Configuring a webhook notification from Git to Flux triggers immediate reconciliation upon push, reducing the delay.\n\nWhy other options are wrong:\n- A: Webhook notifications supplement the reconciliation interval; they are not configured in this scenario\n- C: The timing is based on when the fix is pushed relative to the next reconciliation, not the broken push\n- D: Flux does not require manual approval after failures; it reconciles automatically on each interval\n\nReference: https://fluxcd.io/flux/concepts/",
     verify: "kubectl get gitrepository -A -o jsonpath='{.items[*].spec.interval}'"
   },
   {
@@ -1310,7 +1310,7 @@ var questions = [
       "The Deployment is paused until a cluster administrator manually reviews and approves the pending update"
     ],
     answer: 2,
-    explanation: "The `Recreate` strategy terminates all existing Pods before creating new ones. This results in downtime between the old Pods being terminated and the new Pods becoming ready. It is used when the application cannot handle multiple versions running simultaneously, such as when there are database schema migration constraints or port conflicts.",
+    explanation: "The `Recreate` strategy terminates all existing Pods before creating new ones. This results in downtime between the old Pods being terminated and the new Pods becoming ready. It is used when the application cannot handle multiple versions running simultaneously, such as when there are database schema migration constraints or port conflicts.\n\nWhy other options are wrong:\n- A: Recreate terminates old Pods first, then creates new ones; it does not create new Pods first\n- B: Recreate terminates all Pods at once, not one at a time; it is not a gradual replacement\n- D: Recreate does not require manual approval; it proceeds automatically through the termination and creation cycle\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment",
     verify: "kubectl get deployment <name> -o jsonpath='{.spec.strategy.type}'"
   },
   {
@@ -1326,7 +1326,7 @@ var questions = [
       "Use an admission controller (OPA Gatekeeper or Kyverno) to validate the image repository on Pod creation"
     ],
     answer: 3,
-    explanation: "Admission controllers like OPA Gatekeeper or Kyverno can inspect Pod specs during creation and reject those with images from unauthorized registries. A policy can enforce that all image references start with `registry.company.com/`. NetworkPolicies could block traffic but are less precise and may break other functionality. `imagePullPolicy: Never` only works if the image is pre-cached on the node.",
+    explanation: "Admission controllers like OPA Gatekeeper or Kyverno can inspect Pod specs during creation and reject those with images from unauthorized registries. A policy can enforce that all image references start with `registry.company.com/`. NetworkPolicies could block traffic but are less precise and may break other functionality. `imagePullPolicy: Never` only works if the image is pre-cached on the node.\n\nWhy other options are wrong:\n- A: imagePullPolicy: Never prevents pulling but does not validate which registries are allowed\n- B: NetworkPolicy blocks traffic but cannot inspect image references in Pod specs during creation\n- C: ResourceQuota limits resource consumption quantities, not image source registries\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
     verify: "kubectl get constrainttemplate"
   },
   {
@@ -1342,7 +1342,7 @@ var questions = [
       "LoadBalancer Services are only supported in Kubernetes versions 1.25 and above with the feature gate"
     ],
     answer: 2,
-    explanation: "The `LoadBalancer` Service type relies on an external cloud provider's load balancer integration to provision an external IP. In bare-metal environments, no such integration exists by default, so the external IP remains `<pending>`. MetalLB is a popular solution that provides a network load balancer implementation for bare-metal clusters, enabling IP address allocation for LoadBalancer Services.",
+    explanation: "The `LoadBalancer` Service type relies on an external cloud provider's load balancer integration to provision an external IP. In bare-metal environments, no such integration exists by default, so the external IP remains `<pending>`. MetalLB is a popular solution that provides a network load balancer implementation for bare-metal clusters, enabling IP address allocation for LoadBalancer Services.\n\nWhy other options are wrong:\n- A: The YAML is valid; loadBalancerIP is optional and the issue is the lack of a load balancer controller\n- B: Restarting kube-proxy does not provision external IPs; kube-proxy handles iptables, not IP allocation\n- D: LoadBalancer Services are supported in all Kubernetes versions; there is no version or feature gate restriction\n\nReference: https://metallb.io/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.status.loadBalancer}'"
   },
   {
@@ -1358,7 +1358,7 @@ var questions = [
       "Adding authentication, rate limiting, and logging features as init containers in each Pod specification"
     ],
     answer: 0,
-    explanation: "An API gateway (for north-south traffic) or service mesh (for east-west traffic) centralizes cross-cutting concerns at the infrastructure layer. This means individual services do not need to implement authentication, rate limiting, or logging themselves. The mesh/gateway handles these transparently via sidecar proxies or gateway pods, ensuring consistent enforcement without code duplication.",
+    explanation: "An API gateway (for north-south traffic) or service mesh (for east-west traffic) centralizes cross-cutting concerns at the infrastructure layer. This means individual services do not need to implement authentication, rate limiting, or logging themselves. The mesh/gateway handles these transparently via sidecar proxies or gateway pods, ensuring consistent enforcement without code duplication.\n\nWhy other options are wrong:\n- B: A single monolithic proxy becomes a bottleneck and single point of failure for all traffic\n- C: Shared libraries require code changes, language-specific implementations, and consistent upgrades\n- D: Init containers run once at startup and cannot handle ongoing request-level cross-cutting concerns\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer",
     verify: null
   },
   {
@@ -1374,7 +1374,7 @@ var questions = [
       "Monitoring only the number of Pods per team since all Pods are assumed to consume equal resources"
     ],
     answer: 1,
-    explanation: "Accurate cost allocation requires tracking actual resource usage (CPU and memory) per team. Using labels and namespaces to organize workloads, combined with tools like Kubecost or OpenCost (a CNCF sandbox project), enables granular cost reporting. These tools correlate resource usage with cloud billing data to provide per-team, per-application cost breakdowns.",
+    explanation: "Accurate cost allocation requires tracking actual resource usage (CPU and memory) per team. Using labels and namespaces to organize workloads, combined with tools like Kubecost or OpenCost (a CNCF sandbox project), enables granular cost reporting. These tools correlate resource usage with cloud billing data to provide per-team, per-application cost breakdowns.\n\nWhy other options are wrong:\n- A: Equal cost division is inaccurate and does not reflect actual resource consumption differences\n- C: Dedicated node pools waste resources and do not account for variable utilization within nodes\n- D: Pod count alone is meaningless for cost; Pods vary widely in resource consumption\n\nReference: https://www.opencost.io/",
     verify: null
   },
   {
@@ -1390,7 +1390,7 @@ var questions = [
       "The Pod transitions to <code>Succeeded</code> status because the container completed its execution run"
     ],
     answer: 2,
-    explanation: "With `restartPolicy: Never`, the kubelet does not restart containers regardless of exit code. Since the container exited with a non-zero code (1), the Pod's phase is set to `Failed`. The Pod object remains in the cluster until manually deleted or cleaned up by a TTL controller (if configured). `Succeeded` status requires all containers to exit with code 0.",
+    explanation: "With `restartPolicy: Never`, the kubelet does not restart containers regardless of exit code. Since the container exited with a non-zero code (1), the Pod's phase is set to `Failed`. The Pod object remains in the cluster until manually deleted or cleaned up by a TTL controller (if configured). `Succeeded` status requires all containers to exit with code 0.\n\nWhy other options are wrong:\n- A: The Pod object is not auto-deleted; it remains in the cluster with Failed status until manually cleaned\n- B: restartPolicy: Never means the kubelet does not restart the container regardless of exit code\n- D: Succeeded requires all containers to exit with code 0; a non-zero exit code results in Failed phase\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.phase}'"
   },
   {
@@ -1406,7 +1406,7 @@ var questions = [
       "<code>redis-0</code> is not updated because the controller processes Pods in reverse ordinal and waits"
     ],
     answer: 3,
-    explanation: "StatefulSet rolling updates proceed in reverse ordinal order (highest to lowest) by default. The controller updates one Pod at a time and waits for it to become ready before moving to the next. Since `redis-1` is not ready, the controller blocks and does not proceed to update `redis-0`. This ordered approach protects stateful workloads from cascading failures.",
+    explanation: "StatefulSet rolling updates proceed in reverse ordinal order (highest to lowest) by default. The controller updates one Pod at a time and waits for it to become ready before moving to the next. Since `redis-1` is not ready, the controller blocks and does not proceed to update `redis-0`. This ordered approach protects stateful workloads from cascading failures.\n\nWhy other options are wrong:\n- A: StatefulSet rolling updates process one Pod at a time in reverse ordinal, not in batches\n- B: redis-0 is not terminated to free resources; the controller blocks and waits for redis-1 to be ready\n- C: StatefulSet rolling updates enforce strict ordering by default and wait for readiness before proceeding\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies",
     verify: "kubectl rollout status statefulset/redis"
   },
   {
@@ -1422,7 +1422,7 @@ var questions = [
       "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for staging"
     ],
     answer: 1,
-    explanation: "Helm allows overriding default values at install or upgrade time using `--set` flags or `-f` with a custom values file. The `--set replicaCount=1` flag overrides the chart's `values.yaml` without modifying it. Using a separate `staging-values.yaml` file is preferred for complex overrides, as it is version-controllable and easier to maintain than inline `--set` flags.",
+    explanation: "Helm allows overriding default values at install or upgrade time using `--set` flags or `-f` with a custom values file. The `--set replicaCount=1` flag overrides the chart's `values.yaml` without modifying it. Using a separate `staging-values.yaml` file is preferred for complex overrides, as it is version-controllable and easier to maintain than inline `--set` flags.\n\nWhy other options are wrong:\n- A: Editing values.yaml in the chart source modifies the chart itself, which the question wants to avoid\n- C: Kustomize overlays can post-process Helm output but add unnecessary complexity for simple overrides\n- D: Helm does not read environment variables for value injection; --set or -f flags are the correct mechanism\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",
     verify: "helm get values my-release"
   },
   {
@@ -1438,7 +1438,7 @@ var questions = [
       "The taint was added by the kube-controller-manager due to a failed node health check on memory status"
     ],
     answer: 2,
-    explanation: "The kubelet automatically applies condition-based taints when it detects resource pressure. The `node.kubernetes.io/memory-pressure:NoSchedule` taint indicates that available memory is below the configured eviction threshold. This prevents new Pods from being scheduled on the node while existing Pods may be evicted based on their QoS class and priority.",
+    explanation: "The kubelet automatically applies condition-based taints when it detects resource pressure. The `node.kubernetes.io/memory-pressure:NoSchedule` taint indicates that available memory is below the configured eviction threshold. This prevents new Pods from being scheduled on the node while existing Pods may be evicted based on their QoS class and priority.\n\nWhy other options are wrong:\n- A: This taint is applied automatically by the kubelet, not manually by an administrator\n- B: The kube-scheduler does not apply resource pressure taints; this is a kubelet responsibility\n- D: The kube-controller-manager applies unreachable/not-ready taints, not resource pressure taints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
     verify: "kubectl describe node <node-name> | grep -A5 'Taints'"
   },
   {
@@ -1454,7 +1454,7 @@ var questions = [
       "The kubelet downloads and installs the gVisor runtime on the node automatically before starting the Pod"
     ],
     answer: 0,
-    explanation: "The `runtimeClassName` field in a Pod spec selects which container runtime handler processes the Pod. When set to `gvisor`, the containerd (or CRI-O) runtime uses the gVisor (runsc) handler instead of the default runc. gVisor intercepts system calls in user space, providing an additional isolation layer. The RuntimeClass must be pre-configured on the cluster with the corresponding handler.",
+    explanation: "The `runtimeClassName` field in a Pod spec selects which container runtime handler processes the Pod. When set to `gvisor`, the containerd (or CRI-O) runtime uses the gVisor (runsc) handler instead of the default runc. gVisor intercepts system calls in user space, providing an additional isolation layer. The RuntimeClass must be pre-configured on the cluster with the corresponding handler.\n\nWhy other options are wrong:\n- B: RuntimeClass does not restrict scheduling by hardware; use nodeSelector or tolerations for that\n- C: gVisor uses standard OCI images; it does not have its own container image format\n- D: The kubelet does not install runtimes; they must be pre-installed and configured on the node\n\nReference: https://kubernetes.io/docs/concepts/containers/runtime-class/",
     verify: "kubectl get runtimeclass"
   },
   {
@@ -1470,7 +1470,7 @@ var questions = [
       "The Pod continues to receive new traffic from the Service for 60 seconds before being removed from Endpoints"
     ],
     answer: 0,
-    explanation: "When a Pod is terminated, the kubelet first sends SIGTERM to the container's main process. The container then has `terminationGracePeriodSeconds` (60 seconds in this case) to perform cleanup operations like finishing in-flight requests, closing connections, and flushing buffers. If the container has not exited after 60 seconds, the kubelet sends SIGKILL to forcefully terminate it.",
+    explanation: "When a Pod is terminated, the kubelet first sends SIGTERM to the container's main process. The container then has `terminationGracePeriodSeconds` (60 seconds in this case) to perform cleanup operations like finishing in-flight requests, closing connections, and flushing buffers. If the container has not exited after 60 seconds, the kubelet sends SIGKILL to forcefully terminate it.\n\nWhy other options are wrong:\n- B: The scheduler is not involved in termination; it handles placement, not shutdown processes\n- C: The kubelet sends SIGTERM first, not an immediate kill; the grace period allows graceful shutdown\n- D: The Pod is removed from Service Endpoints promptly; it does not keep receiving traffic for 60 seconds\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.terminationGracePeriodSeconds}'"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "KEDA provides faster scaling by bypassing the Kubernetes API server and directly managing Pod counts"
     ],
     answer: 1,
-    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.",
+    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.\n\nWhy other options are wrong:\n- A: KEDA can coexist with HPA; it actually creates HPA objects internally and works alongside them\n- C: KEDA supports Deployments, StatefulSets, Jobs, and custom resources, not just CronJobs\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them\n\nReference: https://keda.sh/docs/latest/concepts/",
     verify: null
   },
   {
@@ -1502,7 +1502,7 @@ var questions = [
       "Network bandwidth metrics for inter-Pod communication measured at the container network interface"
     ],
     answer: 0,
-    explanation: "kube-state-metrics generates metrics about the state of Kubernetes objects by watching the API server. It exposes information like the number of desired vs. available replicas in a Deployment, Pod phase (Pending, Running, Failed), Job success/failure counts, and node conditions. These are complementary to node_exporter (hardware metrics) and cAdvisor (container resource metrics).",
+    explanation: "kube-state-metrics generates metrics about the state of Kubernetes objects by watching the API server. It exposes information like the number of desired vs. available replicas in a Deployment, Pod phase (Pending, Running, Failed), Job success/failure counts, and node conditions. These are complementary to node_exporter (hardware metrics) and cAdvisor (container resource metrics).\n\nWhy other options are wrong:\n- B: Node CPU/memory usage is provided by node_exporter and cAdvisor, not kube-state-metrics\n- C: Container-level resource metrics are exposed by cAdvisor, not kube-state-metrics\n- D: Network bandwidth metrics are from node_exporter or cAdvisor, not kube-state-metrics\n\nReference: https://github.com/kubernetes/kube-state-metrics",
     verify: "kubectl get deployment kube-state-metrics -n kube-system"
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "No, annotations are metadata not used by selectors or scheduling; only labels support selection"
     ],
     answer: 3,
-    explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.",
+    explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.\n\nWhy other options are wrong:\n- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods, not just namespaces\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
     verify: "kubectl get pod my-pod -o jsonpath='{.metadata.annotations}'"
   },
   {
@@ -1534,7 +1534,7 @@ var questions = [
       "The Pod can only communicate with other Pods using <code>hostNetwork: true</code> in the same cluster"
     ],
     answer: 2,
-    explanation: "When `hostNetwork: true` is set, the Pod uses the node's network namespace directly instead of getting its own. The container binds to the node's IP address on port 80, making it accessible via `<node-ip>:80`. This also means only one Pod with this configuration can bind to port 80 per node, since the port is occupied at the host level.",
+    explanation: "When `hostNetwork: true` is set, the Pod uses the node's network namespace directly instead of getting its own. The container binds to the node's IP address on port 80, making it accessible via `<node-ip>:80`. This also means only one Pod with this configuration can bind to port 80 per node, since the port is occupied at the host level.\n\nWhy other options are wrong:\n- A: hostNetwork Pods do not get a ClusterIP; they use the node's IP address directly\n- B: No virtual interface or NAT is created; the Pod directly uses the host network namespace\n- D: hostNetwork Pods can communicate with all Pods; they are not restricted to other hostNetwork Pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.hostNetwork}'"
   },
   {
@@ -1550,7 +1550,7 @@ var questions = [
       "Each overlay must contain a complete copy of all base manifests with the required modifications pre-applied"
     ],
     answer: 0,
-    explanation: "Kustomize uses a layered approach where the base directory contains shared manifests and each overlay contains patches (strategic merge patches or JSON patches) plus a `kustomization.yaml` referencing the base. Running `kubectl kustomize overlays/production` merges the patches with the base at build time, producing the final manifests. The base files are never modified.",
+    explanation: "Kustomize uses a layered approach where the base directory contains shared manifests and each overlay contains patches (strategic merge patches or JSON patches) plus a `kustomization.yaml` referencing the base. Running `kubectl kustomize overlays/production` merges the patches with the base at build time, producing the final manifests. The base files are never modified.\n\nWhy other options are wrong:\n- B: Kustomize never modifies base files; overlays produce output without changing the source\n- C: Kustomize does not generate Helm charts; they are separate configuration management tools\n- D: Overlays contain only patches, not complete copies; the base provides the shared foundation\n\nReference: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/",
     verify: "kubectl kustomize overlays/production"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "Pod creation proceeds normally because validating admission webhooks are advisory only and never block"
     ],
     answer: 0,
-    explanation: "The `failurePolicy` field in a webhook configuration determines behavior when the webhook endpoint is unreachable. The default is `Fail`, which rejects the API request to ensure that validation cannot be bypassed. Setting it to `Ignore` allows the request to proceed, which is less secure but prevents webhook outages from blocking cluster operations.",
+    explanation: "The `failurePolicy` field in a webhook configuration determines behavior when the webhook endpoint is unreachable. The default is `Fail`, which rejects the API request to ensure that validation cannot be bypassed. Setting it to `Ignore` allows the request to proceed, which is less secure but prevents webhook outages from blocking cluster operations.\n\nWhy other options are wrong:\n- B: The API server does not retry webhooks indefinitely; it respects the failurePolicy setting\n- C: Other webhooks are not affected; each webhook's failurePolicy is evaluated independently\n- D: Validating webhooks can block requests with Fail policy; they are not advisory-only by default\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy",
     verify: "kubectl get validatingwebhookconfiguration -o yaml | grep failurePolicy"
   },
   {
@@ -1582,7 +1582,7 @@ var questions = [
       "The startup probe only affects the readiness probe; the liveness probe runs independently from container start"
     ],
     answer: 2,
-    explanation: "The startup probe is designed for applications with long initialization times. It disables both liveness and readiness probes until it succeeds. With `failureThreshold: 30` and `periodSeconds: 10`, the application has up to 300 seconds to start. Once the startup probe succeeds, it is never run again, and the liveness and readiness probes take over for ongoing health monitoring.",
+    explanation: "The startup probe is designed for applications with long initialization times. It disables both liveness and readiness probes until it succeeds. With `failureThreshold: 30` and `periodSeconds: 10`, the application has up to 300 seconds to start. Once the startup probe succeeds, it is never run again, and the liveness and readiness probes take over for ongoing health monitoring.\n\nWhy other options are wrong:\n- A: Probes do not run simultaneously; the startup probe disables liveness and readiness until it passes\n- B: The startup probe does not replace other probes; it only delays them until initialization completes\n- D: The startup probe disables both liveness and readiness probes, not just the readiness probe\n\nReference: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/#startup-probes",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Startup'"
   },
   {
@@ -1598,7 +1598,7 @@ var questions = [
       "Using OPA Gatekeeper or Kyverno with admission controllers to validate resources declaratively at creation"
     ],
     answer: 3,
-    explanation: "OPA Gatekeeper and Kyverno are Kubernetes-native policy engines that operate as admission webhooks. They evaluate resource creation and modification requests against declarative policies and can reject non-compliant resources before they are persisted. Gatekeeper uses Rego language for policies, while Kyverno uses Kubernetes-native YAML-based policies. Both are CNCF projects that provide audit and enforcement capabilities.",
+    explanation: "OPA Gatekeeper and Kyverno are Kubernetes-native policy engines that operate as admission webhooks. They evaluate resource creation and modification requests against declarative policies and can reject non-compliant resources before they are persisted. Gatekeeper uses Rego language for policies, while Kyverno uses Kubernetes-native YAML-based policies. Both are CNCF projects that provide audit and enforcement capabilities.\n\nWhy other options are wrong:\n- A: CronJob scripts are reactive (delete after creation), not preventive; they cannot block non-compliant resources\n- B: RBAC cannot inspect Pod spec fields like resource limits; it controls access to API verbs and resources\n- C: NetworkPolicies control network traffic, not resource compliance or Pod security attributes\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
     verify: "kubectl get constrainttemplate"
   }
 ];

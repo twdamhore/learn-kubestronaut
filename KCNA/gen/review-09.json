@@ -1,16 +1,64 @@
 {
   "set": "09",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 7,
   "issues": [
     {
-      "id": "s09-q067",
-      "type": "wrong_explanation",
+      "id": "s09-q006",
+      "type": "giveaway",
       "severity": "moderate",
-      "what": "Explanation references wrong taint for network partition scenario",
-      "detail": "The scenario describes a network partition where the kubelet cannot reach the kube-apiserver. In this case, the node controller cannot receive heartbeats, so the Ready condition becomes Unknown (not False). This maps to the taint node.kubernetes.io/unreachable:NoExecute, not node.kubernetes.io/not-ready:NoExecute. The not-ready taint is applied when the Ready condition is explicitly False (kubelet is running but unhealthy), while the unreachable taint is applied when Ready is Unknown (connectivity loss). The explanation incorrectly states 'default 5 minutes via node.kubernetes.io/not-ready toleration' when it should reference node.kubernetes.io/unreachable.",
-      "suggestion": "Change the explanation to: 'When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller sets the Ready condition to Unknown, marking the node as NotReady. The node.kubernetes.io/unreachable:NoExecute taint is applied. After the default toleration period (300 seconds via the automatically added node.kubernetes.io/unreachable:NoExecute toleration), the control plane starts evicting Pods from the unreachable node.'"
+      "what": "Diagram text reveals the answer",
+      "detail": "The SVG diagram includes the text 'Sync Policy: Manual' at the bottom of the image, which directly reveals the answer (option B: sync policy set to manual rather than automated). A test-taker can read the diagram text and select the correct answer without evaluating the options.",
+      "suggestion": "Remove the 'Sync Policy: Manual' text from the diagram. Replace it with a neutral label such as 'Sync Policy: ?' or remove it entirely, keeping only the visual flow of Git Repo -> Argo CD -> K8s Cluster with the 'blocked?' label."
+    },
+    {
+      "id": "s09-q030",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram illustrates the correct answer",
+      "detail": "The SVG diagram shows a box labeled 'DB/File Offset' with subtext 'Position tracking' and annotation text 'Stores read position to prevent duplicates'. This directly gives away option A (enable the DB parameter to persist file read offsets). The answer is essentially drawn in the diagram.",
+      "suggestion": "Remove the 'DB/File Offset' and 'Position tracking' box from the diagram. Show only the pipeline: Node Logs -> Fluent Bit -> Elasticsearch, with a question mark or red 'X' on the Fluent Bit box indicating the problem area, without revealing the solution."
+    },
+    {
+      "id": "s09-q034",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram text describes the answer",
+      "detail": "The SVG diagram contains the text 'Switch selector from version:v1 to version:v2' and 'Instant traffic cutover', which directly describes option B (create a v2 Deployment, verify health, then switch the Service selector). The answer is readable from the diagram alone.",
+      "suggestion": "Replace the explicit text with a neutral description. Show the Blue (v1) and Green (v2) Deployments with the Service pointing at Blue via a solid arrow, and a dashed arrow toward Green with a '?' label. Remove the 'Switch selector' and 'Instant traffic cutover' text."
+    },
+    {
+      "id": "s09-q057",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels match the correct option",
+      "detail": "The SVG diagram shows a 'GitOps Controller' box with arrows labeled 'reconcile' and 'detect drift' plus 'Continuous reconciliation loop' text. This maps directly to option B (deploy a GitOps controller with automated sync and self-healing to reconcile drift).",
+      "suggestion": "Replace 'GitOps Controller' with a generic '?' box. Remove the 'reconcile' and 'detect drift' labels. Show only Git Repo -> ? -> Cluster with a generic bidirectional arrow, so the diagram shows the architecture without revealing the mechanism."
+    },
+    {
+      "id": "s09-q068",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram text gives away the weighted routing answer",
+      "detail": "The SVG diagram includes the text 'Weighted routing decouples traffic split from replica count' and shows '50%' labels on both stable and canary paths. This directly gives away option B (use a service mesh or Ingress controller with weighted routing).",
+      "suggestion": "Remove the 'Weighted routing decouples traffic split from replica count' explanation text. Show only the Ingress/Mesh box with 50%/50% split labels and a '?' on the mechanism, letting the test-taker determine how to achieve the decoupled split."
+    },
+    {
+      "id": "s09-q080",
+      "type": "giveaway",
+      "severity": "high",
+      "what": "Diagram bottom text is a direct summary of the answer",
+      "detail": "The SVG diagram contains italic text at the bottom: 'API Server -> etcd -> Controller Mgr -> Scheduler -> Kubelet', which is a verbatim summary of option B. A test-taker can simply read this line and match it to the correct answer without any analysis.",
+      "suggestion": "Remove the bottom summary text entirely. The diagram already shows the flow visually with arrows between labeled boxes, which is sufficient as a visual aid without spelling out the answer in text form."
+    },
+    {
+      "id": "s09-q097",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram text describes the overlay patching mechanism",
+      "detail": "The SVG diagram includes the text 'Overlays patch the base without modifying it' and a production-specific box showing 'replicas: 5, env vars added'. This directly describes option A (overlays contain patches applied on top of base resources at build time).",
+      "suggestion": "Remove or neutralize the 'Overlays patch the base without modifying it' text. Show only the directory structure (base/ with arrows to dev/, staging/, production/) without explaining the mechanism. The production box can show '?' instead of 'replicas: 5, env vars added'."
     }
   ]
 }
