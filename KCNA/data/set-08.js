@@ -15,7 +15,7 @@ var questions = [
       "Archived — formerly graduated projects retired from active maintenance and contributor support"
     ],
     answer: 2,
-    explanation: "CNCF Graduated projects have met the highest bar of maturity, demonstrating thriving adoption, an open governance process, and adherence to CNCF best practices. Projects such as Kubernetes, Prometheus, and Envoy hold this status. Incubating projects are on the path but have not yet met the full graduation criteria.",
+    explanation: "CNCF Graduated projects have met the highest bar of maturity, demonstrating thriving adoption, an open governance process, and adherence to CNCF best practices. Projects such as Kubernetes, Prometheus, and Envoy hold this status. Incubating projects are on the path but have not yet met the full graduation criteria.\n\nWhy other options are wrong:\n- A: Sandbox is the earliest stage with minimal production requirements, not the highest maturity\n- B: Incubating indicates growing adoption but has not yet met full graduation criteria\n- D: Archived projects are retired from active maintenance, not the highest maturity level\n\nReference: https://www.cncf.io/projects/",
     verify: null
   },
   {
@@ -31,7 +31,7 @@ var questions = [
       "NATS, which publishes DNS record updates via its messaging bus system"
     ],
     answer: 0,
-    explanation: "CoreDNS replaced kube-dns as the default DNS provider starting with Kubernetes 1.13. It is a CNCF graduated project that serves as a flexible, plugin-based DNS server. Envoy is a proxy, etcd is the cluster state store, and NATS is a messaging system.",
+    explanation: "CoreDNS replaced kube-dns as the default DNS provider starting with Kubernetes 1.13. It is a CNCF graduated project that serves as a flexible, plugin-based DNS server. Envoy is a proxy, etcd is the cluster state store, and NATS is a messaging system.\n\nWhy other options are wrong:\n- B: Envoy is an L7 proxy, not a DNS resolver; it does not intercept DNS queries\n- C: etcd stores cluster state (Pods, Services) not DNS records; CoreDNS reads Service info from API server\n- D: NATS is a messaging system for pub/sub communication, unrelated to DNS resolution\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/",
     verify: "kubectl get pods -n kube-system -l k8s-app=kube-dns"
   },
   {
@@ -47,7 +47,7 @@ var questions = [
       "The Docker shim (`dockershim`) that was built directly into the kubelet binary"
     ],
     answer: 0,
-    explanation: "Since containerd 1.1, a built-in CRI plugin allows containerd to communicate directly with the kubelet via the CRI gRPC interface. The `dockershim` was removed in Kubernetes 1.24. CRI-O is an alternative CRI runtime, not a translation layer for containerd. `runc` is an OCI runtime that creates containers but does not implement CRI.",
+    explanation: "Since containerd 1.1, a built-in CRI plugin allows containerd to communicate directly with the kubelet via the CRI gRPC interface. The `dockershim` was removed in Kubernetes 1.24. CRI-O is an alternative CRI runtime, not a translation layer for containerd. `runc` is an OCI runtime that creates containers but does not implement CRI.\n\nWhy other options are wrong:\n- B: CRI-O is an independent CRI runtime, not a translation layer between kubelet and containerd\n- C: runc is an OCI runtime that creates containers but does not implement the CRI gRPC interface\n- D: dockershim was removed in Kubernetes 1.24; it is no longer available as an interface\n\nReference: https://kubernetes.io/docs/concepts/architecture/cri/",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -63,7 +63,7 @@ var questions = [
       "CockroachDB, a distributed SQL database offering strong data consistency now"
     ],
     answer: 2,
-    explanation: "etcd is the CNCF graduated distributed key-value store used by Kubernetes to persist all cluster state, including Pod definitions, ConfigMaps, Secrets, and service accounts. High latency in etcd can cause the API server to return stale data or experience timeouts. Consul, Redis, and CockroachDB are not used as the Kubernetes backing store.",
+    explanation: "etcd is the CNCF graduated distributed key-value store used by Kubernetes to persist all cluster state, including Pod definitions, ConfigMaps, Secrets, and service accounts. High latency in etcd can cause the API server to return stale data or experience timeouts. Consul, Redis, and CockroachDB are not used as the Kubernetes backing store.\n\nWhy other options are wrong:\n- A: Consul is a HashiCorp service discovery/mesh tool, not the Kubernetes backing store\n- B: Redis is an in-memory cache/data store, not used as K8s cluster state storage\n- D: CockroachDB is a distributed SQL database not used as the Kubernetes datastore\n\nReference: https://kubernetes.io/docs/concepts/overview/components/#etcd",
     verify: "kubectl get pods -n kube-system -l component=etcd"
   },
   {
@@ -79,7 +79,7 @@ var questions = [
       "Monolithic deployment — services are packaged together to reduce network overhead cost"
     ],
     answer: 0,
-    explanation: "Loose coupling is the foundational principle for microservices independence. Each service owns its data store (database-per-service pattern) and communicates through well-defined API contracts. Shared databases create tight coupling, synchronous-only communication reduces resilience, and monolithic deployment defeats the purpose of microservices.",
+    explanation: "Loose coupling is the foundational principle for microservices independence. Each service owns its data store (database-per-service pattern) and communicates through well-defined API contracts. Shared databases create tight coupling, synchronous-only communication reduces resilience, and monolithic deployment defeats the purpose of microservices.\n\nWhy other options are wrong:\n- B: Shared database creates tight coupling between services, the opposite of independent evolution\n- C: Synchronous-only RPC reduces resilience and creates temporal coupling between services\n- D: Monolithic deployment defeats the purpose of independently deployable microservices\n\nReference: https://kubernetes.io/docs/concepts/services-networking/",
     verify: null
   },
   {
@@ -95,7 +95,7 @@ var questions = [
       "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
     ],
     answer: 3,
-    explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.",
+    explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.\n\nWhy other options are wrong:\n- A: Cilium uses eBPF, not exclusively iptables; it can inspect L7 traffic using eBPF and optionally Envoy\n- B: Cilium is CNCF graduated (not incubating) and does not require Envoy sidecars for basic L3/L4\n- C: Cilium can replace kube-proxy AND enforce Kubernetes NetworkPolicy rules\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get pods -n kube-system -l k8s-app=cilium"
   },
   {
@@ -111,7 +111,7 @@ var questions = [
       "Trivy — a vulnerability scanner for container images, filesystem content, and IaC configuration files"
     ],
     answer: 1,
-    explanation: "Falco is a CNCF graduated project that monitors kernel system calls and Kubernetes audit logs to detect runtime threats. It uses rules to identify suspicious activity such as unexpected shell execution, sensitive file reads, or privilege escalation. OPA focuses on policy enforcement at admission time, not runtime syscall monitoring.",
+    explanation: "Falco is a CNCF graduated project that monitors kernel system calls and Kubernetes audit logs to detect runtime threats. It uses rules to identify suspicious activity such as unexpected shell execution, sensitive file reads, or privilege escalation. OPA focuses on policy enforcement at admission time, not runtime syscall monitoring.\n\nWhy other options are wrong:\n- A: OPA is a policy engine for admission control, not runtime syscall monitoring\n- C: Notary is for signing and verifying container image integrity, not runtime threat detection\n- D: Trivy is a vulnerability scanner (by Aqua Security), not a runtime behavior detection tool\n\nReference: https://falco.org/docs/",
     verify: null
   },
   {
@@ -127,7 +127,7 @@ var questions = [
       "`strategy: { type: BlueGreen, rollingUpdate: { maxUnavailable: 0, maxSurge: 5 } }`"
     ],
     answer: 2,
-    explanation: "The `RollingUpdate` strategy with `maxUnavailable: 1` ensures at most one Pod is taken down at a time, while `maxSurge: 2` allows up to two additional Pods beyond the desired count during the update. `Recreate` terminates all Pods before creating new ones. `BlueGreen` is not a native Kubernetes strategy type.",
+    explanation: "The `RollingUpdate` strategy with `maxUnavailable: 1` ensures at most one Pod is taken down at a time, while `maxSurge: 2` allows up to two additional Pods beyond the desired count during the update. `Recreate` terminates all Pods before creating new ones. `BlueGreen` is not a native Kubernetes strategy type.\n\nWhy other options are wrong:\n- A: Recreate terminates all Pods first causing downtime; does not allow granular control of unavailability\n- B: maxUnavailable:5 would allow all Pods to be unavailable at once, maxSurge:0 prevents extras\n- D: BlueGreen is not a valid native Kubernetes Deployment strategy type\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl describe deployment <name> | grep -A5 RollingUpdate"
   },
   {
@@ -143,7 +143,7 @@ var questions = [
       "Thanos — a long-term storage solution extending Prometheus with global query capability"
     ],
     answer: 2,
-    explanation: "Prometheus is a CNCF graduated monitoring project that uses a pull-based model to scrape metrics from HTTP endpoints (typically `/metrics`). It stores time-series data and provides PromQL for querying. Fluentd handles logs, Jaeger handles tracing, and Thanos extends Prometheus for long-term storage but does not replace its scraping function.",
+    explanation: "Prometheus is a CNCF graduated monitoring project that uses a pull-based model to scrape metrics from HTTP endpoints (typically `/metrics`). It stores time-series data and provides PromQL for querying. Fluentd handles logs, Jaeger handles tracing, and Thanos extends Prometheus for long-term storage but does not replace its scraping function.\n\nWhy other options are wrong:\n- A: Fluentd is a log aggregation tool, not a metrics collection system\n- B: Jaeger is a distributed tracing platform for request flow analysis, not metrics scraping\n- D: Thanos extends Prometheus with long-term storage but does not replace its scraping function\n\nReference: https://prometheus.io/docs/introduction/overview/",
     verify: "kubectl get pods -n monitoring -l app=prometheus"
   },
   {
@@ -159,7 +159,7 @@ var questions = [
       "Tekton and Buildpacks — CI tools that build and package container images from source code"
     ],
     answer: 0,
-    explanation: "Argo and Flux are both CNCF graduated projects designed specifically for GitOps workflows. They run as controllers inside the cluster, continuously watching Git repositories and reconciling cluster state to match the declared manifests. Helm and Kustomize are manifest management tools, not GitOps controllers. Jenkins and Spinnaker follow a push-based CI/CD model.",
+    explanation: "Argo and Flux are both CNCF graduated projects designed specifically for GitOps workflows. They run as controllers inside the cluster, continuously watching Git repositories and reconciling cluster state to match the declared manifests. Helm and Kustomize are manifest management tools, not GitOps controllers. Jenkins and Spinnaker follow a push-based CI/CD model.\n\nWhy other options are wrong:\n- B: Jenkins and Spinnaker use push-based CI/CD models, not pull-based GitOps reconciliation\n- C: Helm and Kustomize are manifest templating/management tools, not GitOps controllers\n- D: Tekton is a CI/CD pipeline engine and Buildpacks build images; neither is a GitOps controller\n\nReference: https://www.cncf.io/projects/argo/",
     verify: null
   },
   {
@@ -175,7 +175,7 @@ var questions = [
       "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` matching Pod labels"
     ],
     answer: 3,
-    explanation: "Pod anti-affinity with `requiredDuringSchedulingIgnoredDuringExecution` is a hard constraint that prevents Pods matching certain labels from being co-located on the same node. This guarantees the two Pods land on different nodes. Pod affinity co-locates Pods. Node affinity targets specific nodes. A `maxSkew` of 100 would not meaningfully spread Pods.",
+    explanation: "Pod anti-affinity with `requiredDuringSchedulingIgnoredDuringExecution` is a hard constraint that prevents Pods matching certain labels from being co-located on the same node. This guarantees the two Pods land on different nodes. Pod affinity co-locates Pods. Node affinity targets specific nodes. A `maxSkew` of 100 would not meaningfully spread Pods.\n\nWhy other options are wrong:\n- A: podAffinity co-locates Pods on the same node, which is the opposite of the requirement\n- B: nodeAffinity targets specific nodes by label, but does not guarantee Pods land on different nodes\n- C: maxSkew:100 is far too large to enforce meaningful distribution across nodes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.affinity}'"
   },
   {
@@ -191,7 +191,7 @@ var questions = [
       "Use Kubernetes NetworkPolicies to encrypt all traffic and configure retries via Pod annotation declarations"
     ],
     answer: 2,
-    explanation: "A service mesh injects sidecar proxies alongside each application container, providing mTLS, traffic management (canary shifting, retries), and observability without application code changes. API gateways typically handle north-south traffic, not east-west. NetworkPolicies control traffic flow but do not provide encryption or retry logic natively.",
+    explanation: "A service mesh injects sidecar proxies alongside each application container, providing mTLS, traffic management (canary shifting, retries), and observability without application code changes. API gateways typically handle north-south traffic, not east-west. NetworkPolicies control traffic flow but do not provide encryption or retry logic natively.\n\nWhy other options are wrong:\n- A: API gateways handle north-south (external) traffic, not east-west (inter-service) communication\n- B: Adding mTLS libraries to each service requires application code changes, violating the requirement\n- D: NetworkPolicies control traffic flow but do not provide encryption, traffic shifting, or retries\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service-mesh/",
     verify: null
   },
   {
@@ -207,7 +207,7 @@ var questions = [
       "Declarative configuration bypasses the Kubernetes API server, allowing resources to be written to etcd directly"
     ],
     answer: 1,
-    explanation: "The declarative model is central to Kubernetes design. Users specify the desired state (e.g., in YAML manifests), and controllers in the control plane continuously reconcile the actual state to match. This enables self-healing, drift detection, and idempotent apply operations. Imperative commands like `kubectl run` do exist but are not recommended for production management.",
+    explanation: "The declarative model is central to Kubernetes design. Users specify the desired state (e.g., in YAML manifests), and controllers in the control plane continuously reconcile the actual state to match. This enables self-healing, drift detection, and idempotent apply operations. Imperative commands like `kubectl run` do exist but are not recommended for production management.\n\nWhy other options are wrong:\n- A: Declarative config is not about fewer YAML lines; it is about expressing desired end state\n- C: Imperative commands like kubectl run and kubectl create do exist and are supported\n- D: Declarative config goes through the API server; nothing bypasses it to write directly to etcd\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/",
     verify: null
   },
   {
@@ -223,7 +223,7 @@ var questions = [
       "A `StorageClass` that defines a provisioner, creating PersistentVolumes when PVCs reference its name"
     ],
     answer: 3,
-    explanation: "A `StorageClass` defines a provisioner (e.g., `kubernetes.io/aws-ebs`, `pd.csi.storage.gke.io`) and parameters for dynamic volume provisioning. When a PVC references a StorageClass, the provisioner automatically creates a PersistentVolume. Manually created PVs are static provisioning. VolumeSnapshots restore data but require an existing StorageClass for the new PV.",
+    explanation: "A `StorageClass` defines a provisioner (e.g., `kubernetes.io/aws-ebs`, `pd.csi.storage.gke.io`) and parameters for dynamic volume provisioning. When a PVC references a StorageClass, the provisioner automatically creates a PersistentVolume. Manually created PVs are static provisioning. VolumeSnapshots restore data but require an existing StorageClass for the new PV.\n\nWhy other options are wrong:\n- A: Manually created PVs are static provisioning, not dynamic; the admin pre-creates PVs\n- B: ConfigMaps store configuration data, not storage backend parameters for provisioning\n- C: VolumeSnapshots restore existing data but require an existing StorageClass for the new PV\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/",
     verify: "kubectl get storageclass"
   },
   {
@@ -239,7 +239,7 @@ var questions = [
       "Factor XII (Admin processes) — admin and management tasks should run as one-off processes"
     ],
     answer: 0,
-    explanation: "Factor III (Config) of the twelve-factor methodology requires that configuration which varies between environments (database URLs, credentials, feature flags) be stored in environment variables or external configuration stores, not baked into the codebase or container image. Embedding `config.yaml` in the image couples configuration to the build artifact, violating this principle.",
+    explanation: "Factor III (Config) of the twelve-factor methodology requires that configuration which varies between environments (database URLs, credentials, feature flags) be stored in environment variables or external configuration stores, not baked into the codebase or container image. Embedding `config.yaml` in the image couples configuration to the build artifact, violating this principle.\n\nWhy other options are wrong:\n- B: Factor I (Codebase) is about one codebase per app in version control, not config management\n- C: Factor VI (Processes) is about stateless processes, not configuration storage\n- D: Factor XII (Admin processes) is about running admin tasks as one-off processes\n\nReference: https://12factor.net/config",
     verify: null
   },
   {
@@ -255,7 +255,7 @@ var questions = [
       "`Queue` — enqueues the new Job to run after the current one completes it"
     ],
     answer: 2,
-    explanation: "Setting `concurrencyPolicy: Forbid` on a CronJob causes the scheduler to skip creating a new Job if the previous run is still active. `Allow` lets multiple runs overlap, `Replace` kills the current run, and `Queue` is not a valid concurrencyPolicy value in Kubernetes.",
+    explanation: "Setting `concurrencyPolicy: Forbid` on a CronJob causes the scheduler to skip creating a new Job if the previous run is still active. `Allow` lets multiple runs overlap, `Replace` kills the current run, and `Queue` is not a valid concurrencyPolicy value in Kubernetes.\n\nWhy other options are wrong:\n- A: Allow permits concurrent Jobs to overlap without restriction\n- B: Replace terminates the currently running Job and starts the new one immediately\n- D: Queue is not a valid concurrencyPolicy value in Kubernetes CronJob spec\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
     verify: "kubectl get cronjob <name> -o jsonpath='{.spec.concurrencyPolicy}'"
   },
   {
@@ -271,7 +271,7 @@ var questions = [
       "The `default-deny` egress NetworkPolicy blocks all outbound traffic including HTTPS to the external API"
     ],
     answer: 3,
-    explanation: "A `default-deny` egress NetworkPolicy blocks all outbound traffic from Pods in the namespace unless explicitly allowed by another policy. The application cannot reach the external API on port 443 because no egress rule permits it. The fix is to create a NetworkPolicy allowing egress to the external API's CIDR on port 443, and also to port 53 for DNS resolution.",
+    explanation: "A `default-deny` egress NetworkPolicy blocks all outbound traffic from Pods in the namespace unless explicitly allowed by another policy. The application cannot reach the external API on port 443 because no egress rule permits it. The fix is to create a NetworkPolicy allowing egress to the external API's CIDR on port 443, and also to port 53 for DNS resolution.\n\nWhy other options are wrong:\n- A: Missing curl/TLS libraries would cause application errors, not connectivity blocks from network policy\n- B: readinessProbe failures affect traffic routing, not outbound HTTPS connectivity to external APIs\n- C: DNS resolution issues would show specific DNS errors, not general connection failures to port 443\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n <namespace>"
   },
   {
@@ -287,7 +287,7 @@ var questions = [
       "`Headless` — removes the ClusterIP and returns individual Pod IPs directly in DNS"
     ],
     answer: 2,
-    explanation: "A `NodePort` Service exposes the application on a static port (default range 30000-32767) on every node's IP address. Traffic sent to `<NodeIP>:<NodePort>` is forwarded to the Service's backing Pods. `LoadBalancer` also works but provisions additional cloud infrastructure. `ExternalName` maps to a CNAME record and `Headless` services return Pod IPs directly.",
+    explanation: "A `NodePort` Service exposes the application on a static port (default range 30000-32767) on every node's IP address. Traffic sent to `<NodeIP>:<NodePort>` is forwarded to the Service's backing Pods. `LoadBalancer` also works but provisions additional cloud infrastructure. `ExternalName` maps to a CNAME record and `Headless` services return Pod IPs directly.\n\nWhy other options are wrong:\n- A: ExternalName maps a Service to a CNAME DNS record, does not expose on node IPs\n- B: LoadBalancer provisions a cloud LB; while it allocates a NodePort, it adds extra infrastructure\n- D: Headless removes ClusterIP and returns Pod IPs; it does not expose on node IP:port\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.type}'"
   },
   {
@@ -303,7 +303,7 @@ var questions = [
       "Grafana — a visualization and dashboarding tool for metrics, alerts, and log queries"
     ],
     answer: 2,
-    explanation: "Fluentd is a CNCF graduated project that serves as a unified logging layer. It collects logs from various sources, applies filters and transformations (including Kubernetes metadata enrichment), and routes them to backends like Elasticsearch, S3, or Kafka. Prometheus handles metrics, Jaeger handles traces, and Grafana is a visualization tool.",
+    explanation: "Fluentd is a CNCF graduated project that serves as a unified logging layer. It collects logs from various sources, applies filters and transformations (including Kubernetes metadata enrichment), and routes them to backends like Elasticsearch, S3, or Kafka. Prometheus handles metrics, Jaeger handles traces, and Grafana is a visualization tool.\n\nWhy other options are wrong:\n- A: Prometheus scrapes metrics endpoints, not log data\n- B: Jaeger collects distributed traces for latency analysis, not logs\n- D: Grafana is a visualization and dashboarding tool, not a log collection agent\n\nReference: https://www.fluentd.org/architecture",
     verify: "kubectl get pods -n logging -l app=fluentd"
   },
   {
@@ -319,7 +319,7 @@ var questions = [
       "It runs core control loops (ReplicaSet, Deployment, Node controllers) that reconcile actual state toward desired state"
     ],
     answer: 3,
-    explanation: "The `kube-controller-manager` runs a set of controller loops that continuously watch the cluster state through the API server and take action to reconcile actual state with desired state. Examples include the ReplicaSet controller (maintains Pod count), the Node controller (detects node failures), and the Deployment controller (manages rollouts). The API server handles requests; the scheduler assigns Pods to nodes.",
+    explanation: "The `kube-controller-manager` runs a set of controller loops that continuously watch the cluster state through the API server and take action to reconcile actual state with desired state. Examples include the ReplicaSet controller (maintains Pod count), the Node controller (detects node failures), and the Deployment controller (manages rollouts). The API server handles requests; the scheduler assigns Pods to nodes.\n\nWhy other options are wrong:\n- A: The API server serves REST API and handles authentication, not the controller manager\n- B: The kube-scheduler assigns Pods to nodes, not the controller manager\n- C: Image management (pull, cache, GC) is handled by the kubelet and container runtime on each node\n\nReference: https://kubernetes.io/docs/concepts/overview/components/#kube-controller-manager",
     verify: "kubectl get pods -n kube-system -l component=kube-controller-manager"
   },
   {
@@ -335,7 +335,7 @@ var questions = [
       "Helm is a CNCF graduated project that provides persistent storage management for stateful cluster workloads"
     ],
     answer: 0,
-    explanation: "Helm is a CNCF graduated project and the de facto package manager for Kubernetes. It uses charts — collections of templated YAML files — to define, install, version, and upgrade complex Kubernetes applications. Helm simplifies repeatable deployments and enables sharing of application definitions via chart repositories.",
+    explanation: "Helm is a CNCF graduated project and the de facto package manager for Kubernetes. It uses charts — collections of templated YAML files — to define, install, version, and upgrade complex Kubernetes applications. Helm simplifies repeatable deployments and enables sharing of application definitions via chart repositories.\n\nWhy other options are wrong:\n- B: Helm is graduated (not sandbox) and is a package manager, not an image builder\n- C: Helm is graduated (not incubating) and manages charts, not service mesh configurations\n- D: Helm manages application charts, not persistent storage; storage is handled by CSI drivers\n\nReference: https://helm.sh/docs/",
     verify: "helm version"
   },
   {
@@ -351,7 +351,7 @@ var questions = [
       "Use `kubectl patch` on the deployed resources after `helm install` completes to override the values"
     ],
     answer: 2,
-    explanation: "Helm supports value overrides through custom values files (`-f` / `--values`) or inline `--set` flags. This allows users to customize chart behavior without modifying the chart source. Editing `Chart.yaml` changes chart metadata, not configuration values. Patching resources after install bypasses Helm's release management and can cause drift.",
+    explanation: "Helm supports value overrides through custom values files (`-f` / `--values`) or inline `--set` flags. This allows users to customize chart behavior without modifying the chart source. Editing `Chart.yaml` changes chart metadata, not configuration values. Patching resources after install bypasses Helm's release management and can cause drift.\n\nWhy other options are wrong:\n- A: Chart.yaml contains chart metadata (name, version, description), not runtime configuration values\n- B: Modifying templates directly and repackaging violates the principle of chart reusability\n- D: kubectl patch bypasses Helm release management and causes drift between Helm state and cluster\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",
     verify: "helm get values <release-name>"
   },
   {
@@ -367,7 +367,7 @@ var questions = [
       "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
     ],
     answer: 3,
-    explanation: "Taints and tolerations are the correct mechanism for node reservation. A taint with `NoSchedule` effect prevents any Pod that lacks a matching toleration from being scheduled on the node. Only ML Pods with the corresponding toleration can be placed on GPU nodes. `nodeSelector` attracts ML Pods but does not repel others. Priority classes affect preemption, not initial scheduling restrictions.",
+    explanation: "Taints and tolerations are the correct mechanism for node reservation. A taint with `NoSchedule` effect prevents any Pod that lacks a matching toleration from being scheduled on the node. Only ML Pods with the corresponding toleration can be placed on GPU nodes. `nodeSelector` attracts ML Pods but does not repel others. Priority classes affect preemption, not initial scheduling restrictions.\n\nWhy other options are wrong:\n- A: nodeSelector attracts ML Pods to GPU nodes but does not repel non-ML Pods from them\n- B: priorityClassName affects preemption order, not initial scheduling restrictions on specific nodes\n- C: podAntiAffinity on all non-ML Pods requires modifying every non-ML workload, which is impractical\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <gpu-node> | grep -i taint"
   },
   {
@@ -383,7 +383,7 @@ var questions = [
       "`audit` — logs security violations in the API server logs but does not enforce any rules"
     ],
     answer: 0,
-    explanation: "The `restricted` Pod Security Standard is the most hardened built-in profile. It requires containers to run as non-root, drop all capabilities, and disallow privilege escalation. Note that `readOnlyRootFilesystem` is recommended but not required by the restricted profile — it is a best practice rather than an enforced control. The `baseline` profile prevents known escalation vectors but is less strict. `audit` is an enforcement mode, not a profile level.",
+    explanation: "The `restricted` Pod Security Standard is the most hardened built-in profile. It requires containers to run as non-root, drop all capabilities, and disallow privilege escalation. Note that `readOnlyRootFilesystem` is recommended but not required by the restricted profile — it is a best practice rather than an enforced control. The `baseline` profile prevents known escalation vectors but is less strict. `audit` is an enforcement mode, not a profile level.\n\nWhy other options are wrong:\n- B: Baseline prevents known escalations but permits running as root, which is less strict\n- C: Privileged allows unrestricted access with no security enforcement at all\n- D: Audit is an enforcement mode (alongside enforce and warn), not a security profile level\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
     verify: "kubectl get namespace <ns> -o jsonpath='{.metadata.labels}'"
   },
   {
@@ -399,7 +399,7 @@ var questions = [
       "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
     ],
     answer: 0,
-    explanation: "Knative is a CNCF graduated project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero) natively from HTTP requests, while Knative Eventing provides a framework for event-driven architectures using CloudEvents. While both Knative and KEDA are CNCF graduated, KEDA is an autoscaler that plugs into Deployments/Jobs and requires add-ons (like the KEDA HTTP add-on) for HTTP-triggered scale-to-zero. Knative provides the full serverless platform (Serving + Eventing) out of the box.",
+    explanation: "Knative is a CNCF graduated project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero) natively from HTTP requests, while Knative Eventing provides a framework for event-driven architectures using CloudEvents. While both Knative and KEDA are CNCF graduated, KEDA is an autoscaler that plugs into Deployments/Jobs and requires add-ons (like the KEDA HTTP add-on) for HTTP-triggered scale-to-zero. Knative provides the full serverless platform (Serving + Eventing) out of the box.\n\nWhy other options are wrong:\n- B: Argo Workflows orchestrates DAG-based CI/CD pipelines, not serverless workloads with scale-to-zero\n- C: KEDA is an event-driven autoscaler but needs add-ons for HTTP scale-to-zero; not a full serverless platform\n- D: OpenFaaS is an open-source FaaS framework but is not a CNCF graduated project\n\nReference: https://knative.dev/docs/",
     verify: "kubectl get pods -n knative-serving"
   },
   // ── Batch 2: q026–q050  (K8s=12, CO=5, CNA=4, CNO=2, CAD=2) ──
@@ -416,7 +416,7 @@ var questions = [
       "`kubectl get pods --cluster-scope` which corresponds to `GET /api/v1/cluster/pods`"
     ],
     answer: 0,
-    explanation: "The `--all-namespaces` (or `-A`) flag instructs kubectl to list resources across all namespaces. Under the hood, this maps to the API path `GET /api/v1/pods` without a namespace qualifier, which returns Pods from every namespace. The other flags (`--namespace=*`, `--global`, `--cluster-scope`) do not exist in kubectl.",
+    explanation: "The `--all-namespaces` (or `-A`) flag instructs kubectl to list resources across all namespaces. Under the hood, this maps to the API path `GET /api/v1/pods` without a namespace qualifier, which returns Pods from every namespace. The other flags (`--namespace=*`, `--global`, `--cluster-scope`) do not exist in kubectl.\n\nWhy other options are wrong:\n- B: --namespace=* is not a valid kubectl flag; wildcard namespace syntax is not supported\n- C: --global is not a valid kubectl flag; no such API path exists\n- D: --cluster-scope is not a valid kubectl flag; Pods are namespace-scoped resources\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
     verify: "kubectl get pods --all-namespaces"
   },
   {
@@ -432,7 +432,7 @@ var questions = [
       "The container image pull time from the registry to each candidate node on the list"
     ],
     answer: 3,
-    explanation: "The `kube-scheduler` evaluates node resources, taints/tolerations, affinity/anti-affinity rules, topology spread constraints, and priority/preemption. It does not consider container image pull time or network latency to registries. Image pulling happens after scheduling, when the kubelet on the chosen node pulls the image.",
+    explanation: "The `kube-scheduler` evaluates node resources, taints/tolerations, affinity/anti-affinity rules, topology spread constraints, and priority/preemption. It does not consider container image pull time or network latency to registries. Image pulling happens after scheduling, when the kubelet on the chosen node pulls the image.\n\nWhy other options are wrong:\n- A: Node resource capacity and existing requests are core factors the scheduler evaluates (it does consider this)\n- B: Taints and tolerations are a key filter in the scheduler's filtering phase (it does consider this)\n- C: Pod affinity and anti-affinity rules are evaluated during both filtering and scoring phases (it does consider this)\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
     verify: "kubectl get pods -n kube-system -l component=kube-scheduler"
   },
   {
@@ -448,7 +448,7 @@ var questions = [
       "`podman` — a daemonless container engine for running OCI containers cli"
     ],
     answer: 0,
-    explanation: "`containerd` uses `runc` as its default OCI runtime to create and run containers. `runc` is the reference implementation of the OCI Runtime Specification, handling the low-level Linux kernel operations (namespaces, cgroups, seccomp). `dockerd` is the Docker daemon, `cri-o` is a separate CRI implementation, and `podman` is a standalone container engine.",
+    explanation: "`containerd` uses `runc` as its default OCI runtime to create and run containers. `runc` is the reference implementation of the OCI Runtime Specification, handling the low-level Linux kernel operations (namespaces, cgroups, seccomp). `dockerd` is the Docker daemon, `cri-o` is a separate CRI implementation, and `podman` is a standalone container engine.\n\nWhy other options are wrong:\n- B: dockerd is the Docker daemon, a higher-level runtime; containerd does not invoke it\n- C: CRI-O is an alternative CRI runtime implementation, not a binary invoked by containerd\n- D: podman is a standalone daemonless container engine, not invoked by containerd\n\nReference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd",
     verify: "ctr --version && runc --version"
   },
   {
@@ -464,7 +464,7 @@ var questions = [
       "Envoy is a CNCF sandbox project that provides DNS resolution and service discovery for clusters"
     ],
     answer: 0,
-    explanation: "Envoy is a CNCF graduated high-performance L4/L7 proxy originally developed at Lyft. It supports dynamic configuration via xDS APIs, advanced load balancing, circuit breaking, TLS termination, and native support for HTTP/2 and gRPC. It is widely used as a data plane proxy in service meshes like Istio and as an edge/API gateway.",
+    explanation: "Envoy is a CNCF graduated high-performance L4/L7 proxy originally developed at Lyft. It supports dynamic configuration via xDS APIs, advanced load balancing, circuit breaking, TLS termination, and native support for HTTP/2 and gRPC. It is widely used as a data plane proxy in service meshes like Istio and as an edge/API gateway.\n\nWhy other options are wrong:\n- B: Envoy is graduated (not incubating) and is a proxy, not a container runtime\n- C: Envoy is a proxy, not a monitoring tool; Prometheus is the CNCF monitoring project\n- D: Envoy is graduated (not sandbox) and is a proxy, not a DNS/service discovery tool\n\nReference: https://www.envoyproxy.io/docs/envoy/latest/",
     verify: null
   },
   {
@@ -480,7 +480,7 @@ var questions = [
       "Event sourcing — all state changes are stored as immutable events and replayed to determine current state"
     ],
     answer: 1,
-    explanation: "The scenario describes an orchestration-based Saga where a central controller directs the sequence of steps and triggers compensating actions (releasing inventory) when a step fails. In choreography-based Sagas, services react to events without a central coordinator. Two-phase commit uses distributed locking (not compensation). Event sourcing is a data persistence pattern, not a transaction coordination pattern.",
+    explanation: "The scenario describes an orchestration-based Saga where a central controller directs the sequence of steps and triggers compensating actions (releasing inventory) when a step fails. In choreography-based Sagas, services react to events without a central coordinator. Two-phase commit uses distributed locking (not compensation). Event sourcing is a data persistence pattern, not a transaction coordination pattern.\n\nWhy other options are wrong:\n- A: Choreography-based Sagas have no central coordinator; services react autonomously to events\n- C: Two-phase commit uses distributed locking, not compensation; it is a blocking protocol\n- D: Event sourcing is a data persistence pattern storing state changes as events, not a coordination pattern\n\nReference: https://microservices.io/patterns/data/saga.html",
     verify: null
   },
   {
@@ -496,7 +496,7 @@ var questions = [
       "Job with `completions` equal to the number of nodes and `parallelism` set to the total node count"
     ],
     answer: 1,
-    explanation: "A DaemonSet ensures that a copy of a Pod runs on every node in the cluster (or a subset, when using node selectors or tolerations). When nodes are added, the DaemonSet controller automatically schedules a Pod. When nodes are removed, the Pod is garbage collected. Deployments do not automatically match the node count, and Jobs are for finite workloads.",
+    explanation: "A DaemonSet ensures that a copy of a Pod runs on every node in the cluster (or a subset, when using node selectors or tolerations). When nodes are added, the DaemonSet controller automatically schedules a Pod. When nodes are removed, the Pod is garbage collected. Deployments do not automatically match the node count, and Jobs are for finite workloads.\n\nWhy other options are wrong:\n- A: Deployment replicas must be manually adjusted when nodes change; no auto-tracking of node count\n- C: StatefulSet maintains stable identities but does not auto-match node count or track node changes\n- D: Job is for finite workloads with a defined end; it does not run continuously on every node\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
     verify: "kubectl get daemonset -n kube-system"
   },
   {
@@ -512,7 +512,7 @@ var questions = [
       "Cortex — provides horizontally scalable long-term storage for Prometheus metric series"
     ],
     answer: 0,
-    explanation: "Jaeger is a CNCF graduated distributed tracing platform that helps monitor request flows across microservices. It captures trace spans for each service hop, enabling engineers to identify latency bottlenecks, dependency issues, and error propagation. Prometheus collects metrics, Fluentd handles logs, and Cortex is a Prometheus long-term storage backend.",
+    explanation: "Jaeger is a CNCF graduated distributed tracing platform that helps monitor request flows across microservices. It captures trace spans for each service hop, enabling engineers to identify latency bottlenecks, dependency issues, and error propagation. Prometheus collects metrics, Fluentd handles logs, and Cortex is a Prometheus long-term storage backend.\n\nWhy other options are wrong:\n- B: Fluentd aggregates logs, not distributed traces\n- C: Prometheus collects time-series metrics, not request-level traces\n- D: Cortex provides scalable Prometheus storage, not distributed tracing\n\nReference: https://www.jaegertracing.io/docs/",
     verify: null
   },
   {
@@ -528,7 +528,7 @@ var questions = [
       "CoreDNS, which resolves `app.example.com` to the cluster's external IP address for traffic routing"
     ],
     answer: 1,
-    explanation: "An Ingress resource is just a set of routing rules. An Ingress Controller — such as the NGINX Ingress Controller, Traefik, or an Envoy-based controller — must be deployed to read these rules and configure a reverse proxy to handle traffic routing. Without an Ingress Controller, Ingress resources have no effect. `kube-proxy` handles Service-level routing, not HTTP path-based routing.",
+    explanation: "An Ingress resource is just a set of routing rules. An Ingress Controller — such as the NGINX Ingress Controller, Traefik, or an Envoy-based controller — must be deployed to read these rules and configure a reverse proxy to handle traffic routing. Without an Ingress Controller, Ingress resources have no effect. `kube-proxy` handles Service-level routing, not HTTP path-based routing.\n\nWhy other options are wrong:\n- A: NetworkPolicies control Pod-to-Pod traffic, not HTTP path-based routing from external clients\n- C: kube-proxy handles Service-level L4 routing, not HTTP path-based L7 routing for Ingress\n- D: CoreDNS resolves DNS names but does not process HTTP path-based routing rules\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/",
     verify: "kubectl get ingress"
   },
   {
@@ -544,7 +544,7 @@ var questions = [
       "All Pods can communicate across nodes without NAT, and each Pod receives its own unique cluster-routable IP address"
     ],
     answer: 3,
-    explanation: "The Kubernetes networking model requires that every Pod gets its own unique IP address and that all Pods can communicate with each other across nodes without NAT. This flat networking model is implemented by CNI plugins like Calico, Cilium, Flannel, and Weave Net. Services provide stable endpoints, but direct Pod-to-Pod communication is the baseline requirement.",
+    explanation: "The Kubernetes networking model requires that every Pod gets its own unique IP address and that all Pods can communicate with each other across nodes without NAT. This flat networking model is implemented by CNI plugins like Calico, Cilium, Flannel, and Weave Net. Services provide stable endpoints, but direct Pod-to-Pod communication is the baseline requirement.\n\nWhy other options are wrong:\n- A: Pods get their own unique IP, not the host node's IP; Pod IPs are distinct from node IPs\n- B: Direct Pod-to-Pod communication is the baseline requirement; Services provide stable endpoints on top\n- C: Cross-namespace Pod communication is allowed by default; no Ingress resource is needed\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
     verify: "kubectl get pods -o wide"
   },
   {
@@ -560,7 +560,7 @@ var questions = [
       "Both containers are automatically restarted together if either container fails a configured health check probe"
     ],
     answer: 0,
-    explanation: "Containers within the same Pod share the network namespace, meaning they share the same IP address and port space. They can communicate with each other using `localhost` but must bind to different ports to avoid conflicts. Filesystems are separate unless shared via volumes. Resource requests are specified per container, not per Pod.",
+    explanation: "Containers within the same Pod share the network namespace, meaning they share the same IP address and port space. They can communicate with each other using `localhost` but must bind to different ports to avoid conflicts. Filesystems are separate unless shared via volumes. Resource requests are specified per container, not per Pod.\n\nWhy other options are wrong:\n- B: Containers have separate filesystems; sharing requires explicit emptyDir or other volume mounts\n- C: Resource requests and limits are specified per container, not shared at the Pod level\n- D: Container restarts are managed individually; a failing liveness probe restarts only that container\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.podIP}'"
   },
   {
@@ -576,7 +576,7 @@ var questions = [
       "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from Git repositories continuously"
     ],
     answer: 2,
-    explanation: "Tekton is a Kubernetes-native CI/CD framework (a CD Foundation project) that defines pipeline components as Custom Resources: `Task` (a sequence of steps), `Pipeline` (a graph of Tasks), `TaskRun` and `PipelineRun` (execution instances). Each step runs in its own container within a Pod. Argo CD and Flux are GitOps tools, not pipeline engines.",
+    explanation: "Tekton is a Kubernetes-native CI/CD framework (a CD Foundation project) that defines pipeline components as Custom Resources: `Task` (a sequence of steps), `Pipeline` (a graph of Tasks), `TaskRun` and `PipelineRun` (execution instances). Each step runs in its own container within a Pod. Argo CD and Flux are GitOps tools, not pipeline engines.\n\nWhy other options are wrong:\n- A: Jenkins X uses Jenkins pipelines with K8s integration but is not Kubernetes-native CRD-based\n- B: Argo CD is a GitOps tool that syncs Git to clusters, not a CI/CD pipeline engine with Task CRDs\n- D: Flux is a GitOps reconciliation toolkit, not a pipeline engine with Task/PipelineRun resources\n\nReference: https://tekton.dev/docs/",
     verify: "kubectl get tasks.tekton.dev"
   },
   {
@@ -592,7 +592,7 @@ var questions = [
       "Rolling update — replace Pods one by one in sequence until all instances are running the new version"
     ],
     answer: 1,
-    explanation: "A canary deployment sends a small percentage of traffic (e.g., 10%) to the new version while the majority continues hitting the stable version. This allows the team to monitor error rates, latency, and other SLIs before deciding to promote or roll back. Blue-green switches all traffic at once, and rolling updates incrementally replace all Pods without fine-grained traffic control.",
+    explanation: "A canary deployment sends a small percentage of traffic (e.g., 10%) to the new version while the majority continues hitting the stable version. This allows the team to monitor error rates, latency, and other SLIs before deciding to promote or roll back. Blue-green switches all traffic at once, and rolling updates incrementally replace all Pods without fine-grained traffic control.\n\nWhy other options are wrong:\n- A: Recreate terminates all old Pods before creating new ones, causing downtime not traffic percentage control\n- C: Blue-green switches all traffic at once via selector change, not gradual percentage-based shifting\n- D: Rolling update replaces Pods sequentially but without fine-grained traffic percentage control\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",
     verify: null
   },
   {
@@ -608,7 +608,7 @@ var questions = [
       "`backoffLimit: 4` — allows the Job to retry up to 4 times before marking failed"
     ],
     answer: 3,
-    explanation: "The `backoffLimit` field specifies the number of retries before a Job is considered failed. Setting `backoffLimit: 4` means Kubernetes will retry the Job up to 4 times with exponential backoff. `activeDeadlineSeconds` limits total runtime, `completions` sets the required number of successful completions, and `parallelism` controls concurrent Pod execution.",
+    explanation: "The `backoffLimit` field specifies the number of retries before a Job is considered failed. Setting `backoffLimit: 4` means Kubernetes will retry the Job up to 4 times with exponential backoff. `activeDeadlineSeconds` limits total runtime, `completions` sets the required number of successful completions, and `parallelism` controls concurrent Pod execution.\n\nWhy other options are wrong:\n- A: activeDeadlineSeconds limits total Job runtime duration, not retry count\n- B: completions sets the number of successful completions needed, not the retry count\n- C: parallelism controls concurrent Pod count, not retry behavior on failure\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy",
     verify: "kubectl get job <job-name> -o jsonpath='{.spec.backoffLimit}'"
   },
   {
@@ -624,7 +624,7 @@ var questions = [
       "During admission, as a validating webhook that intercepts API requests before persistence to etcd"
     ],
     answer: 3,
-    explanation: "OPA Gatekeeper operates as a Kubernetes validating admission webhook. It intercepts API requests (such as Pod creation) during the admission phase — after authentication and authorization but before the resource is persisted to etcd. If the container image does not match the approved registry pattern, Gatekeeper rejects the request. This prevents non-compliant resources from ever being created.",
+    explanation: "OPA Gatekeeper operates as a Kubernetes validating admission webhook. It intercepts API requests (such as Pod creation) during the admission phase — after authentication and authorization but before the resource is persisted to etcd. If the container image does not match the approved registry pattern, Gatekeeper rejects the request. This prevents non-compliant resources from ever being created.\n\nWhy other options are wrong:\n- A: Gatekeeper operates at admission time, not at runtime monitoring of running containers\n- B: The scheduler assigns Pods to nodes after admission; Gatekeeper acts before scheduling\n- C: Image pull happens after admission and scheduling; Gatekeeper blocks before persistence to etcd\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
     verify: "kubectl get constrainttemplates"
   },
   {
@@ -640,7 +640,7 @@ var questions = [
       "`resourceQuota` per zone namespace to limit the maximum number of Pods allowed in each availability zone segment"
     ],
     answer: 1,
-    explanation: "`topologySpreadConstraints` allow fine-grained control over how Pods are distributed across topology domains (zones, nodes, regions). Setting `maxSkew: 1` means the difference in Pod count between any two zones cannot exceed 1. With `whenUnsatisfiable: DoNotSchedule`, the scheduler will not place a Pod if it would violate the constraint. Pod anti-affinity with `required` would prevent any co-location, which is too restrictive for 6 replicas across 2 zones.",
+    explanation: "`topologySpreadConstraints` allow fine-grained control over how Pods are distributed across topology domains (zones, nodes, regions). Setting `maxSkew: 1` means the difference in Pod count between any two zones cannot exceed 1. With `whenUnsatisfiable: DoNotSchedule`, the scheduler will not place a Pod if it would violate the constraint. Pod anti-affinity with `required` would prevent any co-location, which is too restrictive for 6 replicas across 2 zones.\n\nWhy other options are wrong:\n- A: nodeAffinity preferred weights attract Pods to nodes but do not enforce even distribution across zones\n- C: podAntiAffinity required would prevent any two Pods in the same zone, too restrictive for 6 replicas/2 zones\n- D: ResourceQuota limits aggregate resource usage in a namespace, not Pod count per topology zone\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl get pods -o wide -l app=<app-name>"
   },
   {
@@ -656,7 +656,7 @@ var questions = [
       "Writing application logs to stdout so they can be captured by external logging infrastructure tools"
     ],
     answer: 1,
-    explanation: "Factor VI (Processes) requires that applications execute as stateless processes. Any data that needs to persist must be stored in a stateful backing service (e.g., a database or Redis). Keeping session data in local process memory (sticky sessions) violates this principle because the data is lost when the process restarts or is rescheduled. Using Redis for sessions, environment-based config, and stdout logging all conform to twelve-factor principles.",
+    explanation: "Factor VI (Processes) requires that applications execute as stateless processes. Any data that needs to persist must be stored in a stateful backing service (e.g., a database or Redis). Keeping session data in local process memory (sticky sessions) violates this principle because the data is lost when the process restarts or is rescheduled. Using Redis for sessions, environment-based config, and stdout logging all conform to twelve-factor principles.\n\nWhy other options are wrong:\n- A: Storing session data in Redis is correct because it externalizes state to a backing service\n- C: Using environment variables for config injection is Factor III compliance, not a violation\n- D: Writing logs to stdout follows Factor XI (Logs) and does not violate Factor VI\n\nReference: https://12factor.net/processes",
     verify: null
   },
   {
@@ -672,7 +672,7 @@ var questions = [
       "`metrics.kubernetes.io/scrape: \"true\"` and `metrics.kubernetes.io/path: \"/metrics\"` on the Namespace"
     ],
     answer: 0,
-    explanation: "The standard Prometheus Kubernetes service discovery configuration uses relabeling rules that look for `prometheus.io/scrape: \"true\"` to enable scraping and `prometheus.io/port` to specify the metrics port. Additional annotations like `prometheus.io/path` can override the default `/metrics` path. These are conventions, not built-in Kubernetes features, and must be configured in the Prometheus scrape config.",
+    explanation: "The standard Prometheus Kubernetes service discovery configuration uses relabeling rules that look for `prometheus.io/scrape: \"true\"` to enable scraping and `prometheus.io/port` to specify the metrics port. Additional annotations like `prometheus.io/path` can override the default `/metrics` path. These are conventions, not built-in Kubernetes features, and must be configured in the Prometheus scrape config.\n\nWhy other options are wrong:\n- B: monitoring.k8s.io/enabled is not a standard Prometheus annotation convention\n- C: observability.cncf.io/type is not a real annotation; CNCF does not define such annotations\n- D: metrics.kubernetes.io/scrape is not a standard Prometheus annotation; it is fabricated\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.metadata.annotations}'"
   },
   {
@@ -688,7 +688,7 @@ var questions = [
       "It load-balances traffic across Pods using round-robin at the kernel level via iptables or IPVS rules"
     ],
     answer: 0,
-    explanation: "A headless Service (`clusterIP: None`) does not allocate a virtual IP. Instead, DNS queries for the Service return the IP addresses of all backing Pods as individual A/AAAA records. For StatefulSets, each Pod also gets a stable DNS name (e.g., `pod-0.service.namespace.svc.cluster.local`). This allows clients to discover and connect to specific Pods, which is essential for stateful applications.",
+    explanation: "A headless Service (`clusterIP: None`) does not allocate a virtual IP. Instead, DNS queries for the Service return the IP addresses of all backing Pods as individual A/AAAA records. For StatefulSets, each Pod also gets a stable DNS name (e.g., `pod-0.service.namespace.svc.cluster.local`). This allows clients to discover and connect to specific Pods, which is essential for stateful applications.\n\nWhy other options are wrong:\n- B: Headless Services do not expose on node IPs; that is NodePort behavior\n- C: Headless Services do not create cross-namespace endpoints; they return Pod IPs in the same namespace\n- D: Headless Services do not perform kernel-level load balancing; there is no virtual IP to balance on\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.clusterIP}'"
   },
   {
@@ -704,7 +704,7 @@ var questions = [
       "PVCs are orphaned and become unbound PersistentVolumes that must be manually reclaimed"
     ],
     answer: 2,
-    explanation: "By default, Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplates` when Pods are deleted or the StatefulSet is scaled down. This preserves data so that when the StatefulSet scales back up, the new Pods reattach to their original PVCs. Kubernetes 1.27+ introduced `persistentVolumeClaimRetentionPolicy` to allow configuring automatic PVC deletion on scale-down or StatefulSet deletion.",
+    explanation: "By default, Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplates` when Pods are deleted or the StatefulSet is scaled down. This preserves data so that when the StatefulSet scales back up, the new Pods reattach to their original PVCs. Kubernetes 1.27+ introduced `persistentVolumeClaimRetentionPolicy` to allow configuring automatic PVC deletion on scale-down or StatefulSet deletion.\n\nWhy other options are wrong:\n- A: PVCs are NOT automatically deleted on scale-down; they are retained by default\n- B: There is no backup StorageClass or kubectl restore command for automatic PVC archival\n- D: PVCs remain bound to the PVs; they are not orphaned or made unbound on scale-down\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc -l app=elasticsearch"
   },
   {
@@ -720,7 +720,7 @@ var questions = [
       "The kubelet polls ConfigMap changes every 5 seconds and automatically refreshes both environment variables and volume-mounted data"
     ],
     answer: 2,
-    explanation: "When a ConfigMap is consumed as an environment variable, the value is injected at Pod startup and remains static for the Pod's lifetime. A Pod restart is required to pick up changes. In contrast, ConfigMaps mounted as volumes are updated by the kubelet periodically (with a configurable sync period, defaulting to about 60 seconds). This is a key distinction for configuration management.",
+    explanation: "When a ConfigMap is consumed as an environment variable, the value is injected at Pod startup and remains static for the Pod's lifetime. A Pod restart is required to pick up changes. In contrast, ConfigMaps mounted as volumes are updated by the kubelet periodically (with a configurable sync period, defaulting to about 60 seconds). This is a key distinction for configuration management.\n\nWhy other options are wrong:\n- A: Volume-mounted ConfigMaps ARE eventually propagated to running Pods; not all methods are static\n- B: ConfigMaps can be updated in place; deleting and recreating is not required\n- D: The kubelet sync period defaults to ~60s, not 5s; and env vars are never refreshed automatically\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
     verify: "kubectl describe pod <pod-name>"
   },
   {
@@ -736,7 +736,7 @@ var questions = [
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
     ],
     answer: 0,
-    explanation: "When a node becomes `NotReady` after the node-monitor-grace-period (default 40s), the node controller almost immediately applies the `node.kubernetes.io/unreachable:NoExecute` taint. Once the taint is applied, each Pod's `tolerationSeconds` (default 300s) countdown begins. When that timer expires, the Pod is evicted — marked as `Terminating` — and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.",
+    explanation: "When a node becomes `NotReady` after the node-monitor-grace-period (default 40s), the node controller almost immediately applies the `node.kubernetes.io/unreachable:NoExecute` taint. Once the taint is applied, each Pod's `tolerationSeconds` (default 300s) countdown begins. When that timer expires, the Pod is evicted — marked as `Terminating` — and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.\n\nWhy other options are wrong:\n- B: The scheduler does not immediately reschedule; it waits for tolerationSeconds (default 300s) to expire\n- C: Pods are eventually evicted after tolerationSeconds expires; they do not run indefinitely\n- D: The kubelet on the isolated node cannot detect the partition itself; the control plane manages eviction\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
     verify: "kubectl get nodes"
   },
   {
@@ -752,7 +752,7 @@ var questions = [
       "The `containerd` runtime does not support pulling images from private registries that require authentication creds"
     ],
     answer: 2,
-    explanation: "`ImagePullBackOff` occurs when the kubelet cannot pull the container image. For private registries, the most common causes are: the node cannot reach the registry (network/firewall), or the registry requires authentication and no valid `imagePullSecret` is configured on the Pod or its ServiceAccount. Port conflicts cause runtime errors, not image pull failures. Containerd fully supports private registries.",
+    explanation: "`ImagePullBackOff` occurs when the kubelet cannot pull the container image. For private registries, the most common causes are: the node cannot reach the registry (network/firewall), or the registry requires authentication and no valid `imagePullSecret` is configured on the Pod or its ServiceAccount. Port conflicts cause runtime errors, not image pull failures. Containerd fully supports private registries.\n\nWhy other options are wrong:\n- A: Port conflicts cause runtime errors (CrashLoopBackOff), not ImagePullBackOff\n- B: Resource insufficiency causes Pending state, not ImagePullBackOff\n- D: containerd fully supports private registries with authentication credentials\n\nReference: https://kubernetes.io/docs/concepts/containers/images/#imagepullbackoff",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
@@ -768,7 +768,7 @@ var questions = [
       "A `readinessProbe` that delays traffic routing until the database migration fully completes"
     ],
     answer: 2,
-    explanation: "Init containers run to completion in order before any application containers start. They are ideal for initialization tasks like database migrations, configuration file generation, or waiting for dependencies. `postStart` hooks run after the container starts but do not block other containers. Sidecar containers run alongside the app. Readiness probes control Service traffic, not container startup order.",
+    explanation: "Init containers run to completion in order before any application containers start. They are ideal for initialization tasks like database migrations, configuration file generation, or waiting for dependencies. `postStart` hooks run after the container starts but do not block other containers. Sidecar containers run alongside the app. Readiness probes control Service traffic, not container startup order.\n\nWhy other options are wrong:\n- A: postStart hooks run after the container starts but do not block other containers from starting\n- B: Sidecar containers run continuously alongside the app; they do not run-to-completion before app start\n- D: readinessProbe controls traffic routing to the Pod but does not delay container startup order\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.initContainers[*].name}'"
   },
   {
@@ -784,7 +784,7 @@ var questions = [
       "NATS is a CNCF sandbox secret management tool that stores and distributes encrypted credentials for workloads"
     ],
     answer: 0,
-    explanation: "NATS is a CNCF incubating project that provides a high-performance, lightweight messaging system. It supports multiple communication patterns including publish/subscribe, request/reply, and persistent streaming (via JetStream). NATS is designed for cloud native environments where low-latency, high-throughput messaging is needed between microservices.",
+    explanation: "NATS is a CNCF incubating project that provides a high-performance, lightweight messaging system. It supports multiple communication patterns including publish/subscribe, request/reply, and persistent streaming (via JetStream). NATS is designed for cloud native environments where low-latency, high-throughput messaging is needed between microservices.\n\nWhy other options are wrong:\n- B: NATS is incubating (not graduated) and is a messaging system, not a tracing system\n- C: NATS is incubating (not graduated) and is not a container runtime; it is a messaging system\n- D: NATS is incubating (not sandbox) and is a messaging system, not a secret management tool\n\nReference: https://www.cncf.io/projects/nats/",
     verify: null
   },
   {
@@ -800,7 +800,7 @@ var questions = [
       "Secrets are only protected in transit between API server and kubelet via TLS; they are stored as plaintext in etcd"
     ],
     answer: 2,
-    explanation: "Base64 is a reversible encoding, not encryption. By default, Kubernetes stores Secrets as base64-encoded data in etcd without encryption. To encrypt Secrets at rest, administrators must configure an `EncryptionConfiguration` on the API server, specifying a provider like `aescbc`, `aesgcm`, or a KMS plugin. TLS protects data in transit, but etcd encryption requires explicit configuration.",
+    explanation: "Base64 is a reversible encoding, not encryption. By default, Kubernetes stores Secrets as base64-encoded data in etcd without encryption. To encrypt Secrets at rest, administrators must configure an `EncryptionConfiguration` on the API server, specifying a provider like `aescbc`, `aesgcm`, or a KMS plugin. TLS protects data in transit, but etcd encryption requires explicit configuration.\n\nWhy other options are wrong:\n- A: Base64 is a reversible encoding, not encryption; AES-256 is a separate encryption mechanism\n- B: Secrets are NOT encrypted by default in etcd; encryption at rest requires explicit EncryptionConfiguration\n- D: While TLS protects in-transit data, this option omits that encryption at rest IS available via configuration\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#encrypting-secret-data-at-rest",
     verify: null
   },
   // ── Batch 3: q051–q075  (K8s=12, CO=6, CNA=4, CNO=2, CAD=1) ──
@@ -817,7 +817,7 @@ var questions = [
       "The Git repository HEAD, the staging branch, and the production branch of the main repository"
     ],
     answer: 0,
-    explanation: "When `kubectl apply` is used, Kubernetes performs a three-way strategic merge patch. It compares: (1) the new manifest from the local file, (2) the live object currently stored in the cluster, and (3) the `kubectl.kubernetes.io/last-applied-configuration` annotation on the object, which records the previous apply state. This allows Kubernetes to correctly handle field additions, modifications, and deletions.",
+    explanation: "When `kubectl apply` is used, Kubernetes performs a three-way strategic merge patch. It compares: (1) the new manifest from the local file, (2) the live object currently stored in the cluster, and (3) the `kubectl.kubernetes.io/last-applied-configuration` annotation on the object, which records the previous apply state. This allows Kubernetes to correctly handle field additions, modifications, and deletions.\n\nWhy other options are wrong:\n- B: Helm release secrets and etcd snapshots are not part of the kubectl apply three-way merge\n- C: Container image cache and kubelet memory state are not compared during kubectl apply\n- D: Git branches are not involved in the kubectl apply merge process\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/#server-side-apply",
     verify: "kubectl get deployment <name> -o jsonpath='{.metadata.annotations}'"
   },
   {
@@ -833,7 +833,7 @@ var questions = [
       "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs using BGP"
     ],
     answer: 0,
-    explanation: "IPVS (IP Virtual Server) uses hash tables in the Linux kernel for Service routing decisions, providing O(1) time complexity regardless of the number of Services. In contrast, iptables rules are processed sequentially (O(n)), which causes performance degradation as the number of Services grows. IPVS also supports multiple load-balancing algorithms (round-robin, least connections, etc.).",
+    explanation: "IPVS (IP Virtual Server) uses hash tables in the Linux kernel for Service routing decisions, providing O(1) time complexity regardless of the number of Services. In contrast, iptables rules are processed sequentially (O(n)), which causes performance degradation as the number of Services grows. IPVS also supports multiple load-balancing algorithms (round-robin, least connections, etc.).\n\nWhy other options are wrong:\n- B: IPVS does not encrypt traffic with mTLS; encryption requires a service mesh or TLS certificates\n- C: IPVS does not replace CoreDNS; it handles Service routing, not DNS resolution\n- D: IPVS still uses ClusterIP addresses; it does not eliminate them or use BGP for routing\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#proxy-mode-ipvs",
     verify: "kubectl get configmap kube-proxy -n kube-system -o yaml | grep mode"
   },
   {
@@ -849,7 +849,7 @@ var questions = [
       "The service retries the external API call indefinitely with exponential backoff until a success is returned"
     ],
     answer: 1,
-    explanation: "When a circuit breaker enters the open state, it immediately rejects all outgoing requests to the failing dependency without attempting the call. This prevents cascading failures and resource exhaustion. After a configured timeout, the circuit transitions to half-open, where a limited number of probe requests test whether the dependency has recovered. If successful, the circuit closes; if not, it reopens.",
+    explanation: "When a circuit breaker enters the open state, it immediately rejects all outgoing requests to the failing dependency without attempting the call. This prevents cascading failures and resource exhaustion. After a configured timeout, the circuit transitions to half-open, where a limited number of probe requests test whether the dependency has recovered. If successful, the circuit closes; if not, it reopens.\n\nWhy other options are wrong:\n- A: Forwarding all requests normally describes the closed (normal) state, not the open state\n- C: Sending a single probe request describes the half-open state, not the open state\n- D: Retrying indefinitely with backoff is a retry pattern, not the circuit breaker open state behavior\n\nReference: https://microservices.io/patterns/reliability/circuit-breaker.html",
     verify: null
   },
   {
@@ -865,7 +865,7 @@ var questions = [
       "ReplicaSet — maintains a specified number of identical Pod replicas for a given template selector"
     ],
     answer: 1,
-    explanation: "StatefulSets are designed for stateful workloads that require stable network identities (predictable Pod names like `db-0`, `db-1`), ordered deployment and scaling, and persistent storage that follows the Pod across rescheduling. Each Pod in a StatefulSet is assigned a persistent identifier that is maintained across restarts. Deployments are for stateless workloads.",
+    explanation: "StatefulSets are designed for stateful workloads that require stable network identities (predictable Pod names like `db-0`, `db-1`), ordered deployment and scaling, and persistent storage that follows the Pod across rescheduling. Each Pod in a StatefulSet is assigned a persistent identifier that is maintained across restarts. Deployments are for stateless workloads.\n\nWhy other options are wrong:\n- A: Deployment is for stateless workloads; it does not provide stable network identities or ordered deployment\n- C: DaemonSet runs one Pod per node for system daemons, not for stateful distributed databases\n- D: ReplicaSet maintains identical Pod replicas without stable identities or ordered deployment\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
     verify: "kubectl get statefulset"
   },
   {
@@ -881,7 +881,7 @@ var questions = [
       "A PodSecurityPolicy that grants the ServiceAccount access to Pod resources in the cluster"
     ],
     answer: 2,
-    explanation: "A RoleBinding binds a Role (namespace-scoped permissions) to a subject (User, Group, or ServiceAccount) within a specific namespace. The RoleBinding must be in the same namespace as the Role. A ClusterRoleBinding would grant cluster-wide permissions. NetworkPolicies control Pod network traffic, not API access. PodSecurityPolicies (deprecated in 1.25) controlled security contexts, not API access.",
+    explanation: "A RoleBinding binds a Role (namespace-scoped permissions) to a subject (User, Group, or ServiceAccount) within a specific namespace. The RoleBinding must be in the same namespace as the Role. A ClusterRoleBinding would grant cluster-wide permissions. NetworkPolicies control Pod network traffic, not API access. PodSecurityPolicies (deprecated in 1.25) controlled security contexts, not API access.\n\nWhy other options are wrong:\n- A: ClusterRoleBinding grants cluster-wide permissions; a namespace-scoped Role needs a RoleBinding\n- B: NetworkPolicies control Pod network traffic, not API server access for ServiceAccounts\n- D: PodSecurityPolicies are deprecated (removed in 1.25) and controlled security contexts, not API access\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl get rolebinding -n <namespace>"
   },
   {
@@ -897,7 +897,7 @@ var questions = [
       "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
     ],
     answer: 3,
-    explanation: "The Gateway API improves upon Ingress by introducing a role-oriented resource model: `GatewayClass` (infrastructure provider), `Gateway` (load balancer instance), and `HTTPRoute`/`TLSRoute`/etc. (routing rules). This separation enables better multi-tenancy, cross-namespace routing, and more expressive routing capabilities like header-based matching, traffic splitting, and request mirroring.",
+    explanation: "The Gateway API improves upon Ingress by introducing a role-oriented resource model: `GatewayClass` (infrastructure provider), `Gateway` (load balancer instance), and `HTTPRoute`/`TLSRoute`/etc. (routing rules). This separation enables better multi-tenancy, cross-namespace routing, and more expressive routing capabilities like header-based matching, traffic splitting, and request mirroring.\n\nWhy other options are wrong:\n- A: Gateway API still requires a controller implementation; kube-proxy does not handle L7 routing\n- B: Gateway API does not replace Services/Endpoints; it provides additional routing resources on top\n- C: Gateway API does not encrypt traffic by default; TLS still requires certificates and configuration\n\nReference: https://gateway-api.sigs.k8s.io/",
     verify: "kubectl get gateways.gateway.networking.k8s.io"
   },
   {
@@ -913,7 +913,7 @@ var questions = [
       "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
     ],
     answer: 3,
-    explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.",
+    explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.\n\nWhy other options are wrong:\n- A: OTel supports traces, metrics, AND logs; it is not limited to tracing only\n- B: OTel is vendor-neutral and CNCF graduated, not proprietary to Jaeger; supports multiple export formats\n- C: OTel complements Prometheus and can export metrics in Prometheus format; it does not replace it\n\nReference: https://opentelemetry.io/docs/",
     verify: null
   },
   {
@@ -929,7 +929,7 @@ var questions = [
       "Thanos — extends Prometheus with long-term storage, global querying, and downsampling capabilities"
     ],
     answer: 3,
-    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.",
+    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is now part of the Grafana Mimir lineage; it has a different CNCF and project status\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
     verify: null
   },
   {
@@ -945,7 +945,7 @@ var questions = [
       "`configMap` — mounts configuration data from a ConfigMap resource as files in the container's paths"
     ],
     answer: 2,
-    explanation: "An `emptyDir` volume is created when a Pod is assigned to a node and exists as long as the Pod runs on that node. It is shared by all containers in the Pod, making it ideal for inter-container data sharing. When the Pod is removed, the `emptyDir` data is deleted. `persistentVolumeClaim` is for data that must survive Pod restarts. `hostPath` exposes host directories and poses security risks.",
+    explanation: "An `emptyDir` volume is created when a Pod is assigned to a node and exists as long as the Pod runs on that node. It is shared by all containers in the Pod, making it ideal for inter-container data sharing. When the Pod is removed, the `emptyDir` data is deleted. `persistentVolumeClaim` is for data that must survive Pod restarts. `hostPath` exposes host directories and poses security risks.\n\nWhy other options are wrong:\n- A: PersistentVolumeClaim provisions network-attached storage, overkill for temporary inter-container sharing\n- B: hostPath mounts host directories posing security risks and is not specifically for inter-container sharing\n- D: ConfigMap mounts read-only configuration data, not suitable for writing temporary data between containers\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.volumes}'"
   },
   {
@@ -961,7 +961,7 @@ var questions = [
       "gVisor disables all Linux capabilities and seccomp profiles entirely, making containers fully unprivileged"
     ],
     answer: 0,
-    explanation: "gVisor provides an additional layer of isolation by running a user-space kernel (called Sentry) that intercepts container system calls. Instead of allowing containers to make direct syscalls to the host kernel, gVisor implements a subset of the Linux system call interface in user space. This significantly reduces the host kernel's attack surface. Kata Containers use full VMs, while gVisor uses a user-space kernel approach.",
+    explanation: "gVisor provides an additional layer of isolation by running a user-space kernel (called Sentry) that intercepts container system calls. Instead of allowing containers to make direct syscalls to the host kernel, gVisor implements a subset of the Linux system call interface in user space. This significantly reduces the host kernel's attack surface. Kata Containers use full VMs, while gVisor uses a user-space kernel approach.\n\nWhy other options are wrong:\n- B: gVisor does not encrypt filesystem data; it interposes syscalls for isolation\n- C: gVisor does not use full VMs/QEMU; that describes Kata Containers which use lightweight VMs\n- D: gVisor does not simply disable capabilities/seccomp; it runs a user-space kernel intercepting syscalls\n\nReference: https://gvisor.dev/docs/",
     verify: null
   },
   {
@@ -977,7 +977,7 @@ var questions = [
       "`etcdctl put /backup/trigger true --endpoints=https://127.0.0.1:2379` to write a backup signal key"
     ],
     answer: 1,
-    explanation: "`etcdctl snapshot save` creates a point-in-time snapshot of the etcd database, which contains all cluster state including Pods, Services, ConfigMaps, and Secrets. The command requires TLS certificate parameters when etcd is configured with client certificate authentication. `member list` shows cluster members, `defrag` compacts the database, and `put` writes a key-value pair.",
+    explanation: "`etcdctl snapshot save` creates a point-in-time snapshot of the etcd database, which contains all cluster state including Pods, Services, ConfigMaps, and Secrets. The command requires TLS certificate parameters when etcd is configured with client certificate authentication. `member list` shows cluster members, `defrag` compacts the database, and `put` writes a key-value pair.\n\nWhy other options are wrong:\n- A: member list displays cluster members, it does not create a backup snapshot\n- C: defrag reclaims fragmented storage space, it does not create a backup snapshot\n- D: put writes a key-value pair to etcd, it does not create a backup snapshot\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#snapshot-using-etcdctl-options",
     verify: "ETCDCTL_API=3 etcdctl snapshot status /backup/etcd-snapshot.db"
   },
   {
@@ -993,7 +993,7 @@ var questions = [
       "The Service `sessionAffinity` is set to `ClientIP` by default, which pins all traffic from one client to a single Pod"
     ],
     answer: 2,
-    explanation: "gRPC uses HTTP/2, which multiplexes multiple requests over a single persistent TCP connection. Since `kube-proxy` performs Layer 4 (TCP connection-level) load balancing, all requests on the same connection go to the same backend Pod. To properly load-balance gRPC, teams need L7 load balancing (e.g., via a service mesh like Linkerd or an Envoy-based ingress controller) that can distribute individual gRPC requests across Pods.",
+    explanation: "gRPC uses HTTP/2, which multiplexes multiple requests over a single persistent TCP connection. Since `kube-proxy` performs Layer 4 (TCP connection-level) load balancing, all requests on the same connection go to the same backend Pod. To properly load-balance gRPC, teams need L7 load balancing (e.g., via a service mesh like Linkerd or an Envoy-based ingress controller) that can distribute individual gRPC requests across Pods.\n\nWhy other options are wrong:\n- A: gRPC is supported by K8s Services; the issue is L4 vs L7 load balancing, not protocol support\n- B: Resource limits affect Pod performance, not Service load balancing connection distribution\n- D: sessionAffinity defaults to None, not ClientIP; the issue is HTTP/2 persistent connections\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -1009,7 +1009,7 @@ var questions = [
       "The scheduler splits the Pod across both nodes, running the CPU-intensive portion on Node B only"
     ],
     answer: 1,
-    explanation: "The Kubernetes scheduler only places a Pod on a node that satisfies all resource requests. Node A has only 400m CPU available, which is insufficient for the 500m CPU request. Node B has 600m CPU and 512Mi memory, both exceeding the Pod's requests. Pods cannot be split across nodes. If no node meets the requirements, the Pod stays `Pending`.",
+    explanation: "The Kubernetes scheduler only places a Pod on a node that satisfies all resource requests. Node A has only 400m CPU available, which is insufficient for the 500m CPU request. Node B has 600m CPU and 512Mi memory, both exceeding the Pod's requests. Pods cannot be split across nodes. If no node meets the requirements, the Pod stays `Pending`.\n\nWhy other options are wrong:\n- A: The scheduler does not use best-effort on partial matches; it requires all resource requests to be met\n- C: The Pod does not stay Pending because Node B meets requirements; 'exactly matching' is not required\n- D: Pods cannot be split across nodes; a Pod runs entirely on a single node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
     verify: "kubectl describe node <node-name> | grep -A5 'Allocated resources'"
   },
   {
@@ -1025,7 +1025,7 @@ var questions = [
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
     ],
     answer: 1,
-    explanation: "Factor X (Dev/prod parity) states that the gap between development and production should be kept small across time (deploy frequently), personnel (developers deploy), and tools (use the same backing services). Using SQLite in dev and PostgreSQL in production introduces behavioral differences (e.g., type handling, locking semantics) that lead to bugs that only manifest in production. Containers and tools like Docker Compose make it easy to run the same database in both environments.",
+    explanation: "Factor X (Dev/prod parity) states that the gap between development and production should be kept small across time (deploy frequently), personnel (developers deploy), and tools (use the same backing services). Using SQLite in dev and PostgreSQL in production introduces behavioral differences (e.g., type handling, locking semantics) that lead to bugs that only manifest in production. Containers and tools like Docker Compose make it easy to run the same database in both environments.\n\nWhy other options are wrong:\n- A: Using different databases does cause real issues; behavioral differences lead to production-only bugs\n- C: Factor X explicitly includes backing services like databases and caches, not just application code\n- D: Factor X is about minimizing tooling/service gaps, not about sharing identical physical hardware\n\nReference: https://12factor.net/dev-prod-parity",
     verify: null
   },
   {
@@ -1041,7 +1041,7 @@ var questions = [
       "The percentage of HTTP requests that returned 5xx errors out of all requests"
     ],
     answer: 1,
-    explanation: "The `rate()` function in PromQL calculates the per-second average rate of increase of a counter over the specified time window. `rate(http_requests_total{status=~\"5..\"}[5m])` computes how many HTTP 5xx errors occur per second, averaged over the last 5 minutes. To get a percentage, you would need to divide by the total request rate. The raw counter gives cumulative count.",
+    explanation: "The `rate()` function in PromQL calculates the per-second average rate of increase of a counter over the specified time window. `rate(http_requests_total{status=~\"5..\"}[5m])` computes how many HTTP 5xx errors occur per second, averaged over the last 5 minutes. To get a percentage, you would need to divide by the total request rate. The raw counter gives cumulative count.\n\nWhy other options are wrong:\n- A: The raw counter gives cumulative count; rate() calculates per-second rate, not total count\n- C: rate() returns per-second average over the window, not the maximum in any interval\n- D: To get percentage, you must divide by total request rate; rate() alone gives per-second error count\n\nReference: https://prometheus.io/docs/prometheus/latest/querying/functions/#rate",
     verify: null
   },
   {
@@ -1057,7 +1057,7 @@ var questions = [
       "Pods are created sequentially: `pod-0` must be Running and Ready before `pod-1` starts creating"
     ],
     answer: 3,
-    explanation: "With `podManagementPolicy: OrderedReady` (the default), StatefulSet Pods are created sequentially in ordinal order. `pod-0` must reach Running and Ready state before `pod-1` is created. This ordered startup is important for distributed systems that require a primary node to be available before replicas join. `Parallel` policy would create all Pods simultaneously.",
+    explanation: "With `podManagementPolicy: OrderedReady` (the default), StatefulSet Pods are created sequentially in ordinal order. `pod-0` must reach Running and Ready state before `pod-1` is created. This ordered startup is important for distributed systems that require a primary node to be available before replicas join. `Parallel` policy would create all Pods simultaneously.\n\nWhy other options are wrong:\n- A: Simultaneous creation is the Parallel policy, not OrderedReady\n- B: Pods are created in ascending order (0, 1, 2), not reverse order\n- C: Pod creation order is deterministic (sequential ascending), not random\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.podManagementPolicy}'"
   },
   {
@@ -1073,7 +1073,7 @@ var questions = [
       "OPA Gatekeeper — enforces custom admission policies on Kubernetes API requests via constraint templates"
     ],
     answer: 1,
-    explanation: "Trivy (by Aqua Security) is a comprehensive security scanner that detects OS and language package vulnerabilities in container images, misconfigurations in Kubernetes YAML, Terraform, Dockerfiles, and more. Falco focuses on runtime detection, kube-bench audits cluster setup against CIS benchmarks, and OPA Gatekeeper enforces admission policies.",
+    explanation: "Trivy (by Aqua Security) is a comprehensive security scanner that detects OS and language package vulnerabilities in container images, misconfigurations in Kubernetes YAML, Terraform, Dockerfiles, and more. Falco focuses on runtime detection, kube-bench audits cluster setup against CIS benchmarks, and OPA Gatekeeper enforces admission policies.\n\nWhy other options are wrong:\n- A: Falco monitors runtime syscalls, not static image vulnerabilities or IaC misconfigurations\n- C: kube-bench audits cluster configuration against CIS benchmarks, not container image vulnerabilities\n- D: OPA Gatekeeper enforces admission policies, not image vulnerability scanning or IaC checks\n\nReference: https://trivy.dev/latest/docs/",
     verify: null
   },
   {
@@ -1089,7 +1089,7 @@ var questions = [
       "Nothing happens — CPU limits are advisory only and have no enforcement mechanism in Kubernetes"
     ],
     answer: 0,
-    explanation: "CPU limits in Kubernetes are enforced by the Linux kernel's Completely Fair Scheduler (CFS) via cgroup bandwidth controls. When a container tries to exceed its CPU limit, it is throttled (its CPU time is restricted) but not killed. This differs from memory, where exceeding the limit triggers an OOMKill. CPU requests are used for scheduling decisions, while limits cap actual usage.",
+    explanation: "CPU limits in Kubernetes are enforced by the Linux kernel's Completely Fair Scheduler (CFS) via cgroup bandwidth controls. When a container tries to exceed its CPU limit, it is throttled (its CPU time is restricted) but not killed. This differs from memory, where exceeding the limit triggers an OOMKill. CPU requests are used for scheduling decisions, while limits cap actual usage.\n\nWhy other options are wrong:\n- B: OOMKilled is for memory limit violations, not CPU; CPU is throttled, not killed\n- C: CPU limit violations are handled by CFS throttling; the kubelet does not evict for CPU limit exceeded\n- D: CPU limits are enforced via CFS bandwidth controls in cgroups; they are not advisory\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
     verify: "kubectl top pod <pod-name>"
   },
   {
@@ -1105,7 +1105,7 @@ var questions = [
       "Flux Source Controller monitors Git repos and Kustomize Controller applies manifests to the cluster"
     ],
     answer: 3,
-    explanation: "Flux uses a modular controller architecture. The Source Controller monitors Git repositories (and other sources like Helm repos and S3 buckets) and creates artifacts from them. The Kustomize Controller then takes these artifacts, runs Kustomize if needed, and applies the resulting manifests to the cluster. Together they implement the GitOps reconciliation loop.",
+    explanation: "Flux uses a modular controller architecture. The Source Controller monitors Git repositories (and other sources like Helm repos and S3 buckets) and creates artifacts from them. The Kustomize Controller then takes these artifacts, runs Kustomize if needed, and applies the resulting manifests to the cluster. Together they implement the GitOps reconciliation loop.\n\nWhy other options are wrong:\n- A: Helm Controller watches HelmRepository/HelmRelease resources, not Git repo changes for plain manifests\n- B: Notification Controller sends alerts on events; it does not detect Git changes or apply manifests\n- C: Image Automation Controller updates image tags in Git; it does not detect manifest changes or apply them\n\nReference: https://fluxcd.io/flux/components/",
     verify: "kubectl get gitrepositories.source.toolkit.fluxcd.io"
   },
   {
@@ -1121,7 +1121,7 @@ var questions = [
       "The developer must hard-code the API server URL and a static bearer token in the application configuration"
     ],
     answer: 0,
-    explanation: "By default, Kubernetes mounts a ServiceAccount token at `/var/run/secrets/kubernetes.io/serviceaccount/` in every Pod. This directory contains `token` (a JWT for API authentication), `ca.crt` (the cluster CA certificate), and `namespace` (the Pod's namespace). The API server address is available via the `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` environment variables.",
+    explanation: "By default, Kubernetes mounts a ServiceAccount token at `/var/run/secrets/kubernetes.io/serviceaccount/` in every Pod. This directory contains `token` (a JWT for API authentication), `ca.crt` (the cluster CA certificate), and `namespace` (the Pod's namespace). The API server address is available via the `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` environment variables.\n\nWhy other options are wrong:\n- B: The kubelet does not inject API server TLS certs into /etc/ssl/; the SA mount includes ca.crt\n- C: kube-proxy does not provide an unauthenticated API gateway; it handles Service routing\n- D: Hard-coding credentials is insecure and unnecessary; Kubernetes provides auto-mounted SA tokens\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
     verify: "kubectl exec <pod-name> -- ls /var/run/secrets/kubernetes.io/serviceaccount/"
   },
   {
@@ -1137,7 +1137,7 @@ var questions = [
       "Increase the CPU limit so the application can process memory allocations and garbage collection cycles faster"
     ],
     answer: 0,
-    explanation: "OOMKilled occurs when a container's memory usage exceeds its cgroup memory limit. The Linux kernel's OOM killer terminates the process. The fix is to increase `resources.limits.memory` to accommodate the application's actual memory needs with appropriate headroom. CPU limits do not affect memory behavior. Setting `restartPolicy: Never` does not solve the root cause. Liveness probes cannot prevent OOM kills.",
+    explanation: "OOMKilled occurs when a container's memory usage exceeds its cgroup memory limit. The Linux kernel's OOM killer terminates the process. The fix is to increase `resources.limits.memory` to accommodate the application's actual memory needs with appropriate headroom. CPU limits do not affect memory behavior. Setting `restartPolicy: Never` does not solve the root cause. Liveness probes cannot prevent OOM kills.\n\nWhy other options are wrong:\n- B: Setting restartPolicy:Never stops restarts but does not fix the OOM root cause\n- C: livenessProbe cannot detect or prevent kernel OOM kills; OOM kills happen at the cgroup level\n- D: CPU limits do not affect memory allocation or garbage collection speed in a meaningful way\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits",
     verify: "kubectl describe pod <pod-name> | grep -A2 'Last State'"
   },
   {
@@ -1153,7 +1153,7 @@ var questions = [
       "No — etcd immediately promotes one of the remaining members to operate as a standalone single-node instance"
     ],
     answer: 1,
-    explanation: "etcd uses the Raft consensus algorithm, which requires a majority (quorum) of members to process writes. For a 3-member cluster, quorum is 2 (majority of 3). With 2 members still connected, the cluster can continue accepting reads and writes. The isolated member cannot process requests on its own since it lacks quorum. This is why 3 or 5 member clusters are recommended (tolerating 1 or 2 failures respectively).",
+    explanation: "etcd uses the Raft consensus algorithm, which requires a majority (quorum) of members to process writes. For a 3-member cluster, quorum is 2 (majority of 3). With 2 members still connected, the cluster can continue accepting reads and writes. The isolated member cannot process requests on its own since it lacks quorum. This is why 3 or 5 member clusters are recommended (tolerating 1 or 2 failures respectively).\n\nWhy other options are wrong:\n- A: etcd does not require all members; it requires only a majority quorum for reads and writes\n- C: etcd uses strong consistency via Raft, not eventual consistency; there is no 'eventual consistency mode'\n- D: etcd does not promote a member to standalone; isolated members cannot serve requests without quorum\n\nReference: https://etcd.io/docs/v3.5/faq/#what-is-failure-tolerance",
     verify: "ETCDCTL_API=3 etcdctl member list"
   },
   {
@@ -1169,7 +1169,7 @@ var questions = [
       "Service mesh pattern — distribute proxy functionality across all service instances via sidecar injection"
     ],
     answer: 2,
-    explanation: "The API Gateway pattern provides a single entry point for all external clients. It handles cross-cutting concerns such as authentication, rate limiting, request routing, protocol translation, and response aggregation before forwarding requests to the appropriate backend services. This reduces complexity for clients and centralizes operational concerns. Service meshes handle east-west traffic, while API gateways typically handle north-south traffic.",
+    explanation: "The API Gateway pattern provides a single entry point for all external clients. It handles cross-cutting concerns such as authentication, rate limiting, request routing, protocol translation, and response aggregation before forwarding requests to the appropriate backend services. This reduces complexity for clients and centralizes operational concerns. Service meshes handle east-west traffic, while API gateways typically handle north-south traffic.\n\nWhy other options are wrong:\n- A: Sidecar pattern handles concerns locally per service, not centrally at a single entry point\n- B: BFF creates per-client-type backends, not a single unified entry point for all clients\n- D: Service mesh distributes proxy functionality across services for east-west traffic, not centralized north-south\n\nReference: https://microservices.io/patterns/apigateway.html",
     verify: null
   },
   {
@@ -1185,7 +1185,7 @@ var questions = [
       "It limits the number of API requests per second that can be made to resources within that namespace"
     ],
     answer: 1,
-    explanation: "A `LimitRange` sets resource constraints at the container/Pod level within a namespace. It can define default requests and limits (applied when containers do not specify their own), minimum and maximum resource values, and max ratio between limit and request. It differs from `ResourceQuota`, which limits the aggregate resource consumption of the entire namespace.",
+    explanation: "A `LimitRange` sets resource constraints at the container/Pod level within a namespace. It can define default requests and limits (applied when containers do not specify their own), minimum and maximum resource values, and max ratio between limit and request. It differs from `ResourceQuota`, which limits the aggregate resource consumption of the entire namespace.\n\nWhy other options are wrong:\n- A: Maximum Pod count in a namespace is controlled by ResourceQuota, not LimitRange\n- C: Image restriction by registry URL requires admission controllers like OPA Gatekeeper, not LimitRange\n- D: API rate limiting is handled by API server flags, not LimitRange resources\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
     verify: "kubectl get limitrange -n <namespace>"
   },
   {
@@ -1201,7 +1201,7 @@ var questions = [
       "Azure Managed Disks — premium block storage that supports single-node attachment with RWO access only"
     ],
     answer: 1,
-    explanation: "NFS supports `ReadWriteMany` (RWX) because it is a network filesystem that allows multiple clients (nodes) to mount and write to the same share simultaneously. Block storage solutions like AWS EBS, Azure Managed Disks, and Local PVs only support `ReadWriteOnce` (RWO) — a single node at a time. Other RWX options include CephFS, GlusterFS, and cloud-native file storage services.",
+    explanation: "NFS supports `ReadWriteMany` (RWX) because it is a network filesystem that allows multiple clients (nodes) to mount and write to the same share simultaneously. Block storage solutions like AWS EBS, Azure Managed Disks, and Local PVs only support `ReadWriteOnce` (RWO) — a single node at a time. Other RWX options include CephFS, GlusterFS, and cloud-native file storage services.\n\nWhy other options are wrong:\n- A: AWS EBS is block storage supporting only RWO (single node attachment), not RWX\n- C: Local PV uses local node disks limited to that single node, only RWO\n- D: Azure Managed Disks are block storage supporting only RWO (single node), not RWX\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: "kubectl get pv -o jsonpath='{range .items[*]}{.metadata.name}{\"\\t\"}{.spec.accessModes}{\"\\n\"}{end}'"
   },
   // ── Batch 4: q076–q100  (K8s=11, CO=5, CNA=4, CNO=2, CAD=3) ──
@@ -1218,7 +1218,7 @@ var questions = [
       "Pod creation is rejected because total CPU requests would be 5 (3 + 2), exceeding the quota of 4 total"
     ],
     answer: 3,
-    explanation: "ResourceQuotas enforce aggregate resource constraints across all resources in a namespace. With 3 CPU requests already consumed and the new Pod requesting 2, the total would be 5, exceeding the `requests.cpu: 4` quota. The API server rejects the Pod creation at admission time. ResourceQuotas apply to all resource types (Pods, Deployments, Services, etc.) within the namespace.",
+    explanation: "ResourceQuotas enforce aggregate resource constraints across all resources in a namespace. With 3 CPU requests already consumed and the new Pod requesting 2, the total would be 5, exceeding the `requests.cpu: 4` quota. The API server rejects the Pod creation at admission time. ResourceQuotas apply to all resource types (Pods, Deployments, Services, etc.) within the namespace.\n\nWhy other options are wrong:\n- A: ResourceQuota checks both requests AND limits; even though limit is under 8, requests exceed 4\n- B: ResourceQuota does not throttle; it either admits or rejects the resource creation entirely\n- C: ResourceQuota applies to all resource types in the namespace, including individual Pods\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
     verify: "kubectl describe resourcequota -n dev"
   },
   {
@@ -1234,7 +1234,7 @@ var questions = [
       "CRI-O bundles its own container storage driver and cannot leverage the host filesystem or existing storage config"
     ],
     answer: 2,
-    explanation: "CRI-O is a lightweight, Kubernetes-specific container runtime that implements only the CRI (Container Runtime Interface) needed by the kubelet. Unlike containerd (which also supports Docker workflows), CRI-O focuses solely on running OCI-compliant containers for Kubernetes. It does not include image building or pushing capabilities. Both CRI-O and containerd use OCI-compliant images and can invoke OCI runtimes like `runc`.",
+    explanation: "CRI-O is a lightweight, Kubernetes-specific container runtime that implements only the CRI (Container Runtime Interface) needed by the kubelet. Unlike containerd (which also supports Docker workflows), CRI-O focuses solely on running OCI-compliant containers for Kubernetes. It does not include image building or pushing capabilities. Both CRI-O and containerd use OCI-compliant images and can invoke OCI runtimes like `runc`.\n\nWhy other options are wrong:\n- A: CRI-O does not support the Docker API; it implements only the Kubernetes CRI interface\n- B: CRI-O uses standard OCI images, not a proprietary format; it is fully OCI-compatible\n- D: CRI-O uses containers/storage library and works with host filesystem; it does not bundle a proprietary driver\n\nReference: https://cri-o.io/",
     verify: null
   },
   {
@@ -1250,7 +1250,7 @@ var questions = [
       "gRPC is a CNCF sandbox project providing a durable messaging queue for asynchronous communication use"
     ],
     answer: 0,
-    explanation: "gRPC is a CNCF incubating project originally developed at Google. Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level as of 2025, which is a commonly tested fact. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing.",
+    explanation: "gRPC is a CNCF incubating project originally developed at Google. Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level as of 2025, which is a commonly tested fact. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing.\n\nWhy other options are wrong:\n- B: gRPC is incubating (not graduated) and uses Protocol Buffers over HTTP/2, not XML over HTTP/1.1\n- C: gRPC is part of the CNCF as an incubating project; it is not proprietary Google-only technology\n- D: gRPC is incubating (not sandbox) and is an RPC framework, not a messaging queue\n\nReference: https://www.cncf.io/projects/grpc/",
     verify: null
   },
   {
@@ -1266,7 +1266,7 @@ var questions = [
       "`completions: 1, parallelism: 10` — runs up to 10 Pods in parallel but only needs 1 to succeed total"
     ],
     answer: 0,
-    explanation: "Setting `completions: 100` tells Kubernetes that 100 successful Pod completions are required for the Job to finish. Setting `parallelism: 10` means up to 10 Pods run concurrently at any time. Kubernetes creates new Pods as existing ones complete, maintaining the parallelism level until all 100 completions are achieved.",
+    explanation: "Setting `completions: 100` tells Kubernetes that 100 successful Pod completions are required for the Job to finish. Setting `parallelism: 10` means up to 10 Pods run concurrently at any time. Kubernetes creates new Pods as existing ones complete, maintaining the parallelism level until all 100 completions are achieved.\n\nWhy other options are wrong:\n- B: completions:10,parallelism:100 would only require 10 completions, not 100 items processed\n- C: completions:100,parallelism:100 creates all Pods at once, exceeding the 10 parallel limit\n- D: completions:1 only requires 1 successful completion, insufficient for processing 100 items\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs",
     verify: "kubectl get job <job-name> -o jsonpath='{.spec.completions},{.spec.parallelism}'"
   },
   {
@@ -1282,7 +1282,7 @@ var questions = [
       "Event-driven logging — a controller watches Kubernetes Events and forwards them as structured log entries"
     ],
     answer: 1,
-    explanation: "The node-level logging agent pattern deploys a DaemonSet (e.g., Fluentd, Fluent Bit, or Filebeat) on every node. The agent reads container log files from the standard node path (`/var/log/containers/`) where the container runtime writes stdout/stderr output. This approach requires no application changes and provides cluster-wide log collection. Sidecar logging adds containers per Pod, which uses more resources.",
+    explanation: "The node-level logging agent pattern deploys a DaemonSet (e.g., Fluentd, Fluent Bit, or Filebeat) on every node. The agent reads container log files from the standard node path (`/var/log/containers/`) where the container runtime writes stdout/stderr output. This approach requires no application changes and provides cluster-wide log collection. Sidecar logging adds containers per Pod, which uses more resources.\n\nWhy other options are wrong:\n- A: Sidecar logging injects a container per Pod, not a DaemonSet reading node-level log files\n- C: Application-level logging requires code changes to write directly to a remote service\n- D: Event-driven logging watches K8s Events, not container stdout/stderr log files\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-node-logging-agent",
     verify: "kubectl get daemonset -n logging"
   },
   {
@@ -1298,7 +1298,7 @@ var questions = [
       "`kubectl taint nodes <node> maintenance=true:NoExecute` — evicts Pods lacking toleration"
     ],
     answer: 0,
-    explanation: "`kubectl cordon` marks a node as `SchedulingDisabled` (unschedulable), preventing new Pods from being assigned to it while allowing existing Pods to continue running. This is useful for preparation before maintenance. `kubectl drain` both cordons and evicts Pods. A `NoExecute` taint would actively evict running Pods. Deleting the node removes it from the cluster entirely.",
+    explanation: "`kubectl cordon` marks a node as `SchedulingDisabled` (unschedulable), preventing new Pods from being assigned to it while allowing existing Pods to continue running. This is useful for preparation before maintenance. `kubectl drain` both cordons and evicts Pods. A `NoExecute` taint would actively evict running Pods. Deleting the node removes it from the cluster entirely.\n\nWhy other options are wrong:\n- B: kubectl delete node permanently removes the node from the cluster, not a temporary prevention\n- C: kubectl drain also evicts Pods from the node; the requirement is to keep existing Pods running\n- D: NoExecute taint evicts Pods lacking toleration; the requirement is to keep existing Pods running\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
     verify: "kubectl get nodes"
   },
   {
@@ -1314,7 +1314,7 @@ var questions = [
       "`containerd build` — uses the containerd runtime to build OCI container images directly on the node"
     ],
     answer: 1,
-    explanation: "Kaniko (a Google open-source project) builds container images from Dockerfiles inside a container or Kubernetes Pod without requiring a Docker daemon or privileged access. It executes each Dockerfile command in user space and produces an OCI-compliant image that can be pushed to a registry. Docker-in-Docker requires privileged mode, which is a security concern. `kubectl build` and `containerd build` are not real commands.",
+    explanation: "Kaniko (a Google open-source project) builds container images from Dockerfiles inside a container or Kubernetes Pod without requiring a Docker daemon or privileged access. It executes each Dockerfile command in user space and produces an OCI-compliant image that can be pushed to a registry. Docker-in-Docker requires privileged mode, which is a security concern. `kubectl build` and `containerd build` are not real commands.\n\nWhy other options are wrong:\n- A: Docker-in-Docker requires a full Docker daemon running in a privileged container, a security concern\n- C: kubectl build is not a real kubectl subcommand; it does not exist\n- D: containerd build is not a real command; containerd does not have a build subcommand\n\nReference: https://github.com/GoogleContainerTools/kaniko",
     verify: null
   },
   {
@@ -1330,7 +1330,7 @@ var questions = [
       "Two `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, another with `namespaceSelector` for `monitoring`"
     ],
     answer: 3,
-    explanation: "NetworkPolicy `from` rules use an array of entries. When `podSelector` and `namespaceSelector` are in the same entry, they form an AND condition. To express OR logic (from `frontend` Pods in the same namespace OR from any Pod in `monitoring`), they must be separate entries in the `from` array. The `to` field is for egress rules. Ingress policies require `from` entries.",
+    explanation: "NetworkPolicy `from` rules use an array of entries. When `podSelector` and `namespaceSelector` are in the same entry, they form an AND condition. To express OR logic (from `frontend` Pods in the same namespace OR from any Pod in `monitoring`), they must be separate entries in the `from` array. The `to` field is for egress rules. Ingress policies require `from` entries.\n\nWhy other options are wrong:\n- A: A single from entry with both selectors creates an AND condition, requiring both to match simultaneously\n- B: The to field is for egress rules, not ingress; and the requirement is about incoming traffic\n- C: Egress rules control outbound traffic from Pods; the requirement is about inbound (ingress) traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
     verify: "kubectl get networkpolicy -n <namespace> -o yaml"
   },
   {
@@ -1346,7 +1346,7 @@ var questions = [
       "It is an invalid configuration — Services without selectors are rejected by the Kubernetes API server"
     ],
     answer: 2,
-    explanation: "A Service without a selector does not automatically create Endpoints. By manually creating an Endpoints resource with the same name, you can point the Service to arbitrary IP addresses — including external systems not running in Kubernetes. This is useful for integrating external databases, third-party APIs, or services in other clusters through the standard Kubernetes Service abstraction.",
+    explanation: "A Service without a selector does not automatically create Endpoints. By manually creating an Endpoints resource with the same name, you can point the Service to arbitrary IP addresses — including external systems not running in Kubernetes. This is useful for integrating external databases, third-party APIs, or services in other clusters through the standard Kubernetes Service abstraction.\n\nWhy other options are wrong:\n- A: A Service without selector can still forward traffic when manual Endpoints are created\n- B: Without a selector, the Service does not auto-discover Pods; it does not load-balance across all Pods\n- D: Services without selectors are valid; the API server accepts them for manual endpoint configuration\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -1362,7 +1362,7 @@ var questions = [
       "Hard-code backing service connection strings in the application source code to ensure reliability and avoid config drift issues"
     ],
     answer: 0,
-    explanation: "Factor IV (Backing services) states that backing services (databases, caches, SMTP, message queues) should be treated as attached resources, accessed via URLs or credentials stored in configuration. The application should be able to swap a local PostgreSQL for a managed cloud database (like Amazon RDS) by changing a configuration value without any code changes. This promotes loose coupling and environment portability.",
+    explanation: "Factor IV (Backing services) states that backing services (databases, caches, SMTP, message queues) should be treated as attached resources, accessed via URLs or credentials stored in configuration. The application should be able to swap a local PostgreSQL for a managed cloud database (like Amazon RDS) by changing a configuration value without any code changes. This promotes loose coupling and environment portability.\n\nWhy other options are wrong:\n- B: Embedding drivers is fine, but connection pool/config should not be baked in; backing services should be swappable\n- C: Running all services in the same container violates separation and makes swapping impossible\n- D: Hard-coding connection strings couples the app to specific instances, violating the swappable resource principle\n\nReference: https://12factor.net/backing-services",
     verify: null
   },
   {
@@ -1378,7 +1378,7 @@ var questions = [
       "Building container images using cloud-native build services and pushing finished images to cloud container registry endpoints"
     ],
     answer: 1,
-    explanation: "The `cloud-controller-manager` runs cloud-provider-specific control loops that were previously part of the `kube-controller-manager`. It includes: the Node controller (checks cloud provider if nodes still exist), the Route controller (configures cloud networking routes), and the Service controller (provisions cloud load balancers for `LoadBalancer` Services). This separation allows cloud providers to evolve independently of core Kubernetes.",
+    explanation: "The `cloud-controller-manager` runs cloud-provider-specific control loops that were previously part of the `kube-controller-manager`. It includes: the Node controller (checks cloud provider if nodes still exist), the Route controller (configures cloud networking routes), and the Service controller (provisions cloud load balancers for `LoadBalancer` Services). This separation allows cloud providers to evolve independently of core Kubernetes.\n\nWhy other options are wrong:\n- A: Scheduling, CronJobs, admission webhooks, and quota enforcement are handled by other components\n- C: etcd backups, KMS encryption, and certificate issuance are separate operations, not cloud-controller-manager tasks\n- D: Container image building and pushing are CI/CD tasks, not cloud-controller-manager responsibilities\n\nReference: https://kubernetes.io/docs/concepts/architecture/cloud-controller/",
     verify: "kubectl get pods -n kube-system -l component=cloud-controller-manager"
   },
   {
@@ -1394,7 +1394,7 @@ var questions = [
       "Resource contention — multiple Pods competing for the same finite node resources causing performance degradation"
     ],
     answer: 0,
-    explanation: "Resource slack (or resource waste) refers to the difference between what Pods request (reserve) and what they actually consume. Over-requesting resources leads to underutilized nodes and higher infrastructure costs. FinOps practices involve right-sizing resource requests based on actual usage data from monitoring tools like Prometheus and the Vertical Pod Autoscaler's recommendation engine.",
+    explanation: "Resource slack (or resource waste) refers to the difference between what Pods request (reserve) and what they actually consume. Over-requesting resources leads to underutilized nodes and higher infrastructure costs. FinOps practices involve right-sizing resource requests based on actual usage data from monitoring tools like Prometheus and the Vertical Pod Autoscaler's recommendation engine.\n\nWhy other options are wrong:\n- B: Resource fragmentation is unused capacity that cannot fit Pods due to scheduling, not request vs usage gap\n- C: Resource throttling is kernel CPU restriction when hitting limits, not the gap between requests and usage\n- D: Resource contention is Pods competing for resources causing degradation, not request vs usage gap\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: null
   },
   {
@@ -1410,7 +1410,7 @@ var questions = [
       "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
     ],
     answer: 2,
-    explanation: "The securityContext.readOnlyRootFilesystem: true setting makes the container root filesystem read-only at the kernel level via the OCI runtime. To enforce this across a namespace, teams can use policy engines like OPA Gatekeeper or Kyverno, since the built-in PSS restricted profile only recommends (but does not require) readOnlyRootFilesystem. Writable directories can still be provided via emptyDir volume mounts.",
+    explanation: "The securityContext.readOnlyRootFilesystem: true setting makes the container root filesystem read-only at the kernel level via the OCI runtime. To enforce this across a namespace, teams can use policy engines like OPA Gatekeeper or Kyverno, since the built-in PSS restricted profile only recommends (but does not require) readOnlyRootFilesystem. Writable directories can still be provided via emptyDir volume mounts.\n\nWhy other options are wrong:\n- A: NetworkPolicies control network traffic, not filesystem write operations at the container level\n- B: PVC readOnly makes the volume read-only, not the root filesystem; root FS and PVC are separate\n- D: ConfigMap readOnly makes the ConfigMap mount read-only, not the container's root filesystem\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.containers[0].securityContext.readOnlyRootFilesystem}'"
   },
   {
@@ -1426,7 +1426,7 @@ var questions = [
       "2 replicas — the HPA cannot scale above the current count until the next scheduled evaluation period"
     ],
     answer: 1,
-    explanation: "The HPA uses the formula: `desiredReplicas = ceil(currentReplicas * (currentMetricValue / targetMetricValue))`. With 2 current replicas and 140% average utilization against a 70% target: `ceil(2 * (140/70))` = `ceil(2 * 2)` = 4 replicas. The HPA scales proportionally to bring utilization close to the target, bounded by minReplicas and maxReplicas.",
+    explanation: "The HPA uses the formula: `desiredReplicas = ceil(currentReplicas * (currentMetricValue / targetMetricValue))`. With 2 current replicas and 140% average utilization against a 70% target: `ceil(2 * (140/70))` = `ceil(2 * 2)` = 4 replicas. The HPA scales proportionally to bring utilization close to the target, bounded by minReplicas and maxReplicas.\n\nWhy other options are wrong:\n- A: Doubling the count is coincidentally correct here but ignores the standard formula; the answer description is misleading\n- C: HPA scales proportionally using the formula, not always to max on any target exceedance\n- D: HPA evaluates on a configurable period (default 15s) and can scale above current count immediately\n\nReference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#algorithm-details",
     verify: "kubectl get hpa"
   },
   {
@@ -1442,7 +1442,7 @@ var questions = [
       "Use a CronJob that periodically checks for new versions and automatically switches the Service selector"
     ],
     answer: 1,
-    explanation: "In a blue-green deployment on Kubernetes, both versions run simultaneously as separate Deployments with different labels (e.g., `version: blue` and `version: green`). The Service's `selector` initially points to the blue Pods. To switch traffic, you update the Service selector to match the green Pods. This provides instant cutover and easy rollback by switching the selector back.",
+    explanation: "In a blue-green deployment on Kubernetes, both versions run simultaneously as separate Deployments with different labels (e.g., `version: blue` and `version: green`). The Service's `selector` initially points to the blue Pods. To switch traffic, you update the Service selector to match the green Pods. This provides instant cutover and easy rollback by switching the selector back.\n\nWhy other options are wrong:\n- A: kubectl rollout undo reverts to a previous revision within the same Deployment, not blue-green switching\n- C: Scaling blue to 0 causes downtime; blue-green avoids downtime by running both versions simultaneously\n- D: CronJob-based selector switching is not a standard Kubernetes pattern for blue-green deployments\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.selector}'"
   },
   {
@@ -1458,7 +1458,7 @@ var questions = [
       "Events track network packet flows between Pods for security auditing and network performance monitoring"
     ],
     answer: 2,
-    explanation: "Kubernetes Events are objects that record significant occurrences in the cluster lifecycle. They capture information about Pod scheduling (`Scheduled`), image pulling (`Pulling`, `Pulled`), container lifecycle (`Created`, `Started`, `Killing`), probe failures (`Unhealthy`), and controller actions (`ScalingReplicaSet`). Events are short-lived by default (retained for 1 hour) and are crucial for troubleshooting.",
+    explanation: "Kubernetes Events are objects that record significant occurrences in the cluster lifecycle. They capture information about Pod scheduling (`Scheduled`), image pulling (`Pulling`, `Pulled`), container lifecycle (`Created`, `Started`, `Killing`), probe failures (`Unhealthy`), and controller actions (`ScalingReplicaSet`). Events are short-lived by default (retained for 1 hour) and are crucial for troubleshooting.\n\nWhy other options are wrong:\n- A: Events are not audit logs; audit logs are separate API server feature configured via audit policy\n- B: Events are not application logs; container stdout/stderr are separate from Kubernetes Events\n- D: Events do not track network packet flows; network monitoring requires separate tools like Hubble\n\nReference: https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/",
     verify: "kubectl get events --sort-by='.lastTimestamp'"
   },
   {
@@ -1474,7 +1474,7 @@ var questions = [
       "The container cannot start because mandatory env var references to non-existent Secrets cause `CreateContainerConfigError`"
     ],
     answer: 3,
-    explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.",
+    explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.\n\nWhy other options are wrong:\n- A: The Pod does NOT start normally; mandatory Secret references cause CreateContainerConfigError\n- B: The kubelet does NOT auto-create missing Secrets; the reference must exist or be marked optional\n- C: The container never starts so it cannot crash; CrashLoopBackOff requires the container to start first\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables",
     verify: "kubectl describe pod <pod-name> | grep -A5 Error"
   },
   {
@@ -1490,7 +1490,7 @@ var questions = [
       "`cache-svc.data.svc.cluster.local` — the FQDN includes service name, namespace, and cluster domain"
     ],
     answer: 3,
-    explanation: "Kubernetes DNS follows the pattern `<service-name>.<namespace>.svc.<cluster-domain>`. To reach `cache-svc` in the `data` namespace, the FQDN is `cache-svc.data.svc.cluster.local`. Short names like `cache-svc` only resolve within the same namespace. The cross-namespace form `cache-svc.data` also works due to DNS search domains, but the FQDN is the most explicit and reliable.",
+    explanation: "Kubernetes DNS follows the pattern `<service-name>.<namespace>.svc.<cluster-domain>`. To reach `cache-svc` in the `data` namespace, the FQDN is `cache-svc.data.svc.cluster.local`. Short names like `cache-svc` only resolve within the same namespace. The cross-namespace form `cache-svc.data` also works due to DNS search domains, but the FQDN is the most explicit and reliable.\n\nWhy other options are wrong:\n- A: Short names only resolve within the same namespace; cross-namespace requires at minimum name.namespace\n- B: Service names are scoped to namespaces and are not globally unique; namespace qualification is needed\n- C: The DNS format is service.namespace.svc.cluster.local, not namespace.service.svc.cluster.local\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl exec <pod-name> -- nslookup cache-svc.data.svc.cluster.local"
   },
   {
@@ -1506,7 +1506,7 @@ var questions = [
       "Splitting the monolithic database into shards while keeping the existing application code unchanged"
     ],
     answer: 1,
-    explanation: "The strangler fig pattern (named after the strangler fig tree) involves gradually replacing parts of a monolithic application with microservices. A facade or API gateway routes requests to either the monolith or the new microservice based on the functionality being requested. Over time, as more features are migrated, the monolith shrinks until it can be decommissioned entirely. This approach reduces risk compared to a full rewrite.",
+    explanation: "The strangler fig pattern (named after the strangler fig tree) involves gradually replacing parts of a monolithic application with microservices. A facade or API gateway routes requests to either the monolith or the new microservice based on the functionality being requested. Over time, as more features are migrated, the monolith shrinks until it can be decommissioned entirely. This approach reduces risk compared to a full rewrite.\n\nWhy other options are wrong:\n- A: Rewriting from scratch is a big-bang approach with high risk, not the incremental strangler fig pattern\n- C: Running on separate clusters with no shared traffic does not incrementally replace monolith functionality\n- D: Database sharding is a data partitioning technique, not a monolith-to-microservices migration pattern\n\nReference: https://microservices.io/patterns/refactoring/strangler-application.html",
     verify: null
   },
   {
@@ -1522,7 +1522,7 @@ var questions = [
       "The Pod's resource requests exceed the total combined capacity of all 5 nodes in the cluster group"
     ],
     answer: 1,
-    explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.",
+    explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.\n\nWhy other options are wrong:\n- A: Image not found would show ImagePullBackOff, not scheduling failure messages about node matching\n- C: The message shows 2 control-plane + 3 worker nodes = 5 total, not all 5 being control-plane nodes\n- D: Insufficient resources would show 'Insufficient cpu/memory' messages, not node affinity mismatch\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
     verify: "kubectl describe pod <pod-name> | grep -A10 Events"
   },
   {
@@ -1538,7 +1538,7 @@ var questions = [
       "The CNCF landscape is a dependency graph showing which CNCF projects depend on each other for build and runtime dependencies"
     ],
     answer: 1,
-    explanation: "The CNCF Cloud Native Landscape (landscape.cncf.io) is a comprehensive map that organizes cloud native technologies into categories such as App Definition & Development, Orchestration & Management, Runtime, Provisioning, Observability & Analysis, and more. It includes both CNCF-hosted projects (graduated, incubating, sandbox) and the broader ecosystem of commercial and open-source tools. It helps teams evaluate and select technologies for their platform.",
+    explanation: "The CNCF Cloud Native Landscape (landscape.cncf.io) is a comprehensive map that organizes cloud native technologies into categories such as App Definition & Development, Orchestration & Management, Runtime, Provisioning, Observability & Analysis, and more. It includes both CNCF-hosted projects (graduated, incubating, sandbox) and the broader ecosystem of commercial and open-source tools. It helps teams evaluate and select technologies for their platform.\n\nWhy other options are wrong:\n- A: The landscape includes both CNCF-hosted projects AND commercial/third-party products and vendors\n- C: The landscape is a map of technologies, not a certification program; conformance testing is separate\n- D: The landscape categorizes technologies, not their build/runtime dependency relationships\n\nReference: https://landscape.cncf.io/",
     verify: null
   },
   {
@@ -1554,7 +1554,7 @@ var questions = [
       "Secrets and ServiceAccounts — these are cluster-scoped to allow easy cross-namespace access paths"
     ],
     answer: 2,
-    explanation: "Certain Kubernetes resources are cluster-scoped, meaning they are not bound to any namespace. Examples include Nodes, PersistentVolumes, ClusterRoles, ClusterRoleBindings, Namespaces, StorageClasses, and CustomResourceDefinitions. Resources like Pods, Services, ConfigMaps, Secrets, Deployments, and ServiceAccounts are namespace-scoped.",
+    explanation: "Certain Kubernetes resources are cluster-scoped, meaning they are not bound to any namespace. Examples include Nodes, PersistentVolumes, ClusterRoles, ClusterRoleBindings, Namespaces, StorageClasses, and CustomResourceDefinitions. Resources like Pods, Services, ConfigMaps, Secrets, Deployments, and ServiceAccounts are namespace-scoped.\n\nWhy other options are wrong:\n- A: Pods, Services, ConfigMaps are indeed namespace-scoped, but this option is correct, not a wrong answer to select\n- B: Deployments and DaemonSets are namespace-scoped, not cluster-scoped\n- D: Secrets and ServiceAccounts are namespace-scoped, not cluster-scoped\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/",
     verify: "kubectl api-resources --namespaced=false"
   },
   {
@@ -1570,7 +1570,7 @@ var questions = [
       "`kubectl logs <pod-name> --previous` — shows logs from the previous container instance for crash debugging"
     ],
     answer: 3,
-    explanation: "The `--previous` flag (`-p`) on `kubectl logs` retrieves logs from the previous instance of a container. This is essential for debugging `CrashLoopBackOff` situations where the container has restarted and the current logs are empty or show only startup messages. Note that only one previous instance's logs are retained by the kubelet. For long-term log retention, a logging pipeline (Fluentd, Fluent Bit) is needed.",
+    explanation: "The `--previous` flag (`-p`) on `kubectl logs` retrieves logs from the previous instance of a container. This is essential for debugging `CrashLoopBackOff` situations where the container has restarted and the current logs are empty or show only startup messages. Note that only one previous instance's logs are retained by the kubelet. For long-term log retention, a logging pipeline (Fluentd, Fluent Bit) is needed.\n\nWhy other options are wrong:\n- A: --all-containers shows all containers in the current instance, not previous restart cycles\n- B: --since filters by time but only for the current container instance, not across restarts\n- C: kubectl describe shows Events and container states but not full container logs\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
     verify: "kubectl logs <pod-name> --previous"
   },
   {
@@ -1586,7 +1586,7 @@ var questions = [
       "A new ReplicaSet is created and scaled up while simultaneously scaling down the old ReplicaSet one Pod at a time"
     ],
     answer: 0,
-    explanation: "The `Recreate` strategy terminates all existing Pods before creating new ones with the updated specification. This results in a period of downtime where no Pods are available. It is typically used for applications that cannot run multiple versions simultaneously (e.g., applications with incompatible database schema changes). `RollingUpdate` (the default) performs a gradual replacement to maintain availability.",
+    explanation: "The `Recreate` strategy terminates all existing Pods before creating new ones with the updated specification. This results in a period of downtime where no Pods are available. It is typically used for applications that cannot run multiple versions simultaneously (e.g., applications with incompatible database schema changes). `RollingUpdate` (the default) performs a gradual replacement to maintain availability.\n\nWhy other options are wrong:\n- B: Creating new Pods alongside old ones with gradual traffic shift describes canary or rolling update\n- C: In-place container image swap without restart is not supported in standard Kubernetes\n- D: Creating a new ReplicaSet and scaling down the old one describes the RollingUpdate strategy\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment",
     verify: "kubectl get deployment <name> -o jsonpath='{.spec.strategy.type}'"
   },
   {
@@ -1602,7 +1602,7 @@ var questions = [
       "Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture"
     ],
     answer: 3,
-    explanation: "Both Argo CD and Flux are pull-based GitOps tools. A key difference is that Argo CD includes a rich web UI for application visualization, sync management, and RBAC, making it popular for teams that value visual management. Flux is modular and CLI-first, composed of separate controllers (Source, Kustomize, Helm, Notification, Image Automation), which some teams prefer for its composability and infrastructure-as-code approach. Both support Helm, Kustomize, and plain manifests.",
+    explanation: "Both Argo CD and Flux are pull-based GitOps tools. A key difference is that Argo CD includes a rich web UI for application visualization, sync management, and RBAC, making it popular for teams that value visual management. Flux is modular and CLI-first, composed of separate controllers (Source, Kustomize, Helm, Notification, Image Automation), which some teams prefer for its composability and infrastructure-as-code approach. Both support Helm, Kustomize, and plain manifests.\n\nWhy other options are wrong:\n- A: Both Argo CD and Flux use pull-based (not push-based) GitOps models; they are architecturally similar\n- B: Both Argo CD and Flux support Helm, Kustomize, and plain manifests; neither is limited to one\n- C: Neither requires a separate Git server; both connect to external Git providers like GitHub, GitLab\n\nReference: https://www.cncf.io/projects/argo/",
     verify: null
   }
 ];
