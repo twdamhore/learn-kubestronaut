@@ -1,7 +1,43 @@
 {
   "set": "02",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 7,
+  "issues": [
+    {
+      "id": "s02-q005",
+      "type": "giveaway",
+      "detail": "The SVG diagram explicitly states 'Each key becomes a file. File content = value of the key.' which directly matches option B ('A directory with two files...each holding its value'). The diagram removes any need for Kubernetes knowledge to answer correctly."
+    },
+    {
+      "id": "s02-q030",
+      "type": "giveaway",
+      "detail": "The SVG diagram shows 'Request: 128Mi' and 'Limit: 256Mi' with the label 'Applied automatically to pods without specs'. These exact values appear only in option C ('Request: 128Mi, Limit: 256Mi'), making the answer trivially identifiable from the diagram alone."
+    },
+    {
+      "id": "s02-q053",
+      "type": "giveaway",
+      "detail": "The SVG diagram highlights the 'Admission' box in red (#e63946) with 'Rejected here' pointing to it and a dashed line. This directly reveals the answer is option C ('During admission control'). The color coding and label make the answer obvious without reading the question."
+    },
+    {
+      "id": "s02-q076",
+      "type": "giveaway",
+      "detail": "The SVG diagram labels the two containers with 'items: app-a.conf' and 'items: app-b.conf' and states 'Each volume uses items to select specific keys'. This directly matches option C ('Define two volumes from the same ConfigMap, each using items to select the needed key')."
+    },
+    {
+      "id": "s02-q085",
+      "type": "giveaway",
+      "detail": "The SVG diagram shows numbered steps: '1. LimitRanger Injects 128Mi' -> '2. ResourceQuota Checks total' -> 'Persist to etcd' with text 'LimitRanger runs first (mutating), then ResourceQuota validates the total.' This directly matches option D and makes it trivially answerable."
+    },
+    {
+      "id": "s02-q096",
+      "type": "giveaway",
+      "detail": "The SVG diagram shows 'Fluentd + K8s metadata plugin' with an arrow from 'Kubernetes API' labeled with a dashed line. This directly matches option B ('The Fluentd Kubernetes metadata filter plugin queries the API'). The diagram reveals the answer visually."
+    },
+    {
+      "id": "s02-q100",
+      "type": "giveaway",
+      "detail": "The SVG diagram shows the full chain: 'ConfigMap content changes -> sha256 -> Annotation checksum changes -> Pod Template spec changes -> rollout' with the summary 'ConfigMap change -> new checksum -> pod template change -> rolling update'. This directly matches option B and makes the answer obvious."
+    }
+  ]
 }

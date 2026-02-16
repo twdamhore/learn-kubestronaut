@@ -1,0 +1,402 @@
+{
+  "s02-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: Secrets are for sensitive data; the question specifies non-sensitive values\n- B: Annotations are metadata on resources and cannot be injected into containers as env vars or files\n- C: PVCs provision disk storage for persistent data, not lightweight configuration injection"
+  },
+  "s02-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: ConfigMaps are mutable by default; the immutable field must be explicitly set to true\n- C: The kubelet does not refresh env vars at all; only volume-mounted ConfigMaps get periodic updates\n- D: The container runtime does not cache ConfigMap data separately from the kubelet"
+  },
+  "s02-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets",
+    "wrong": "- B: Opaque is general-purpose and lacks the tls.crt/tls.key validation that Ingress controllers expect\n- C: dockerconfigjson is specifically for container registry pull credentials, not TLS certificates\n- D: ssh-auth stores SSH private keys for SSH authentication, not X.509 TLS certificates"
+  },
+  "s02-q004": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    "wrong": "- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: QoS classification is determined solely by resource spec completeness, not by node availability"
+  },
+  "s02-q005": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume",
+    "wrong": "- A: Kubernetes does not merge ConfigMap keys into a single configmap.yaml file\n- C: ConfigMap keys become files directly in the mount directory, not subdirectories with index files\n- D: No data.json file is produced; each key becomes its own separate file"
+  },
+  "s02-q006": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/#requests-vs-limits",
+    "wrong": "- A: ResourceQuota does not auto-assign defaults; a LimitRange is needed for that\n- B: The pod is not placed in pending; it is outright rejected by the admission controller\n- C: BestEffort pods are not exempt from quota enforcement when compute quotas are active"
+  },
+  "s02-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#configmap-immutable",
+    "wrong": "- A: Annotations are metadata and do not enforce immutability at the API level\n- C: ConfigMaps do not have a spec.readOnly field; immutable is a top-level boolean field\n- D: There is no reserved data.locked key; arbitrary data keys have no enforcement behavior"
+  },
+  "s02-q008": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#information-security-for-secrets",
+    "wrong": "- A: The kubelet caches Secret data locally for mounts, but this is not the authoritative at-rest store\n- B: The API server reads from and writes to etcd; it does not hold objects only in volatile memory\n- D: The container runtime stores image layers, not Kubernetes API objects like Secrets"
+  },
+  "s02-q009": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
+    "wrong": "- B: Having resource specs does not make eviction priority equal; QoS class determines the order\n- C: Memory limits prevent usage beyond the cap but do not protect pods from node-level eviction\n- D: Eviction priority is based on QoS class first, not absolute resource limit values"
+  },
+  "s02-q010": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#define-a-container-environment-variable-with-data-from-a-single-configmap",
+    "wrong": "- B: The value field accepts only a literal string, not a dot-path reference to a ConfigMap\n- C: envFrom with configMapRef imports all keys and does not accept a key selector field\n- D: secretKeyRef references Secrets, not ConfigMaps; using it with a ConfigMap name would fail"
+  },
+  "s02-q011": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_configmap/",
+    "wrong": "- A: The key is never defaulted to the generic string \"data\"; the filename is used\n- B: Keys are not auto-generated as SHA hashes; the filename is used as-is\n- C: The key is the filename, not the ConfigMap name specified in the create command"
+  },
+  "s02-q012": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
+    "wrong": "- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: Mounting the ConfigMap at a path replaces the entire directory; targeting a single file requires subPath"
+  },
+  "s02-q013": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
+    "wrong": "- B: There is no kubectl encrypt command in Kubernetes\n- C: There is no encoded: true field on Secret manifests\n- D: ConfigMaps do not provide built-in encryption and are intended for non-sensitive data"
+  },
+  "s02-q014": {
+    "ref": "https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/",
+    "wrong": "- B: There is no system-managed ConfigMap called node-info in Kubernetes\n- C: resourceFieldRef is for CPU and memory resource values, not node network information\n- D: hostNetwork gives access to the node network namespace but does not directly provide an env var with the IP"
+  },
+  "s02-q015": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#restriction-names-data",
+    "wrong": "- A: Secrets are namespace-scoped, not cluster-scoped; RBAC is not the issue here\n- C: There is no namespace/name prefix syntax for cross-namespace Secret references\n- D: There is no secretNamespace field in the pod spec for cross-namespace Secret access"
+  },
+  "s02-q016": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume",
+    "wrong": "- A: There is no configOverride annotation in Kubernetes\n- B: args can pass small values but is not suitable for replacing entire configuration files\n- C: There is no image.config.override field in the container spec"
+  },
+  "s02-q017": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: ConfigMap volume mounts without subPath do receive automatic updates from the kubelet\n- B: The kubelet sync period is around 60 seconds plus cache TTL, not 10 minutes\n- D: ConfigMaps are mutable by default; no explicit immutable: false setting is needed for updates"
+  },
+  "s02-q018": {
+    "ref": "https://12factor.net/config",
+    "wrong": "- B: Building a separate image per environment violates the twelve-factor principle of one codebase, many deploys\n- C: Shared NFS mounts couple services to a shared filesystem and are not cloud-native\n- D: Hardcoding with compile-time flags embeds config in code, violating Factor III"
+  },
+  "s02-q019": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: Merging into a monolith defeats the benefits of microservices architecture\n- C: A single shared ConfigMap creates tight coupling between all 30 services\n- D: Hardcoding in Dockerfiles violates the principle of externalizing configuration"
+  },
+  "s02-q020": {
+    "ref": "https://external-secrets.io/",
+    "wrong": "- B: Argo CD is a GitOps deployment tool and does not natively encrypt or manage Secrets\n- C: Fluentd is a log aggregation tool and does not handle Secret injection\n- D: Prometheus is a monitoring system and cannot rotate or manage Secrets"
+  },
+  "s02-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: SSH into pods violates immutable infrastructure principles and is a security anti-pattern\n- B: kubectl edit modifies the running resource but may not trigger a pod rollout for ConfigMap changes\n- C: Rebuilding the image for every config change is wasteful when ConfigMaps separate config from code"
+  },
+  "s02-q022": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: CronJob with shell script parsing is fragile, not scalable, and not Kubernetes-native monitoring\n- C: Audit logs capture API events but not quota utilization percentages\n- D: Per-pod sidecars report individual pod usage, not namespace-level quota consumption ratios"
+  },
+  "s02-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: Network Policies control traffic flow rules, not cost tracking or data transfer accounting\n- C: PDBs manage availability during disruptions and are unrelated to compute billing\n- D: Service accounts handle authentication, not billing; cloud providers do not auto-attach billing IDs to them"
+  },
+  "s02-q024": {
+    "ref": "https://helm.sh/docs/chart_template_guide/values_files/",
+    "wrong": "- A: Chart.yaml contains chart metadata (name, version, dependencies), not deployable configuration values\n- B: There is no --config-from flag in Helm\n- C: Hardcoding if/else in templates defeats Helm's values-based templating purpose"
+  },
+  "s02-q025": {
+    "ref": "https://github.com/bitnami-labs/sealed-secrets",
+    "wrong": "- A: Base64 is trivially reversible encoding, not encryption; committing base64 Secrets is insecure\n- C: A separate private repo still stores plaintext credentials, which is a security risk\n- D: Manual kubectl create breaks GitOps principle of Git as the single source of truth"
+  },
+  "s02-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#overview-of-secrets",
+    "wrong": "- A: Kubernetes does not encrypt Secret data with AES-256 by default; base64 is encoding, not encryption\n- C: Secrets are not encrypted with TLS certificates; they are simply base64-encoded in the data field\n- D: Secret values are not hashed; they are base64-encoded and fully reversible"
+  },
+  "s02-q027": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_configmap/",
+    "wrong": "- A: Pasting a 50-line file as a single --from-literal value is impractical and error-prone\n- B: Secrets have the same ~1 MiB size limit as ConfigMaps; converting to JSON for a Secret gains nothing\n- C: Splitting into 50 individual keys adds unnecessary complexity and reassembly logic"
+  },
+  "s02-q028": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- A: CPU is a compressible resource; exceeding CPU limits causes throttling, not OOM killing\n- B: CPU limit violations do not cause pod eviction or rescheduling\n- C: CPU limits are enforced via CFS quota, not advisory; the container is throttled, not allowed to exceed"
+  },
+  "s02-q029": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-envfrom-to-define-all-of-the-configmaps-data-as-container-environment-variables",
+    "wrong": "- A: Linux technically allows periods in env var names but Kubernetes skips them via envFrom validation\n- B: The pod still starts; only the invalid key is skipped with a warning, not a pod startup failure\n- C: Kubernetes does not auto-convert periods to underscores; the key is simply skipped"
+  },
+  "s02-q030": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/limit-range/",
+    "wrong": "- A: The request defaults to the defaultRequest value (128Mi), not the limit value (256Mi)\n- B: Requests do not default to zero; the LimitRange defaultRequest field sets the value\n- D: Pod creation does not fail because LimitRange is specifically designed to inject defaults"
+  },
+  "s02-q031": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
+    "wrong": "- A: This is standard mount overlay behavior, not a kubelet bug\n- B: The container runtime does not perform security cleanup; this is normal Linux mount behavior\n- D: Files beneath a mount point are inaccessible, including with ls -a; the mount fully overlays the path"
+  },
+  "s02-q032": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    "wrong": "- B: Different absolute values across containers do not affect QoS; only per-container request=limit equality matters\n- C: The QoS class is determined by per-container request=limit equality, not by sum totals\n- D: Multiple containers in a pod do not prevent Guaranteed QoS classification"
+  },
+  "s02-q033": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/downward-api/",
+    "wrong": "- A: metadata.name returns the pod name, not the Deployment or ReplicaSet controller name\n- B: metadata.name returns the pod name, not the container name from the spec\n- D: metadata.name returns the pod name; for namespace, use metadata.namespace"
+  },
+  "s02-q034": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
+    "wrong": "- B: Deleting and recreating all Secrets is destructive and unnecessary when key rotation can preserve them\n- C: There is no kubectl rotate-keys command in Kubernetes\n- D: Simply replacing the key without rewriting data leaves existing Secrets encrypted with the old key, not re-encrypted on read"
+  },
+  "s02-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#motivation",
+    "wrong": "- B: Splitting across two ConfigMaps adds complexity and is not the recommended approach for large data\n- C: There is no --max-configmap-size API server flag; the 1 MiB limit is hardcoded\n- D: Secrets have the same ~1 MiB size limit as ConfigMaps, not 10 MiB"
+  },
+  "s02-q036": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: ResourceQuota does not queue pods in Pending state; it immediately rejects creation\n- B: ResourceQuota limits are not automatically increased\n- D: Kubernetes does not auto-reduce resource requests to fit within quota"
+  },
+  "s02-q037": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
+    "wrong": "- A: Guaranteed requires both CPU and memory requests equal to limits, not just memory\n- C: BestEffort requires zero resource specs on all containers; this pod specifies memory\n- D: Kubernetes does not auto-set CPU values from memory specs; a LimitRange would be needed"
+  },
+  "s02-q038": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#secret",
+    "wrong": "- A: A postStart hook could work but has race conditions and is less clean than defaultMode\n- B: Secret volume file permissions default to 0644 but are configurable via defaultMode\n- C: There is no securityContext.filePermissions field in the Kubernetes API"
+  },
+  "s02-q039": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
+    "wrong": "- A: NetworkPolicies control network traffic between pods, not API access patterns for Secrets\n- B: There is no allowEnvSecrets field in ResourceQuota\n- D: RBAC controls who can access Secrets but cannot distinguish how pods consume them (env vs volume)"
+  },
+  "s02-q040": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled",
+    "wrong": "- B: Memory is incompressible and cannot be compressed by increasing limits\n- C: The issue is node-level scheduling based on requests, not a namespace-level ResourceQuota\n- D: Preemption disrupts running workloads and is not the most direct fix for an oversized request"
+  },
+  "s02-q041": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/projected-volumes/",
+    "wrong": "- A: emptyDir with init containers works but adds unnecessary complexity compared to projected volumes\n- B: PVCs provide persistent storage, not configuration source aggregation\n- C: hostPath creates node dependency and is not for combining multiple config sources"
+  },
+  "s02-q042": {
+    "ref": "https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/",
+    "wrong": "- B: resourceFieldRef is for CPU and memory resource values, not network information like pod IP\n- C: There is no built-in POD_NETWORK_IP variable in Kubernetes\n- D: No system ConfigMap exists that holds individual pod IPs; each pod IP is assigned dynamically"
+  },
+  "s02-q043": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: ConfigMaps can be shared between any pods in the same namespace regardless of Deployment ownership\n- C: Kubernetes does not rate-limit ConfigMap read operations\n- D: ConfigMaps are not automatically replicated across namespaces"
+  },
+  "s02-q044": {
+    "ref": "https://www.vaultproject.io/docs/what-is-vault",
+    "wrong": "- A: Vault uses its own storage backend, not etcd; it has a fundamentally different architecture\n- B: Vault complements Kubernetes RBAC; it does not replace cluster-level access control\n- D: Vault is a HashiCorp product, not a CNCF project, and is not required for any Kubernetes certification"
+  },
+  "s02-q045": {
+    "ref": "https://knative.dev/docs/serving/",
+    "wrong": "- B: Embedding API keys in source code is a major security anti-pattern\n- C: Passing keys in URLs risks exposure in logs, browser history, and server-side logs\n- D: API keys are sensitive data and should use Secrets, not ConfigMaps"
+  },
+  "s02-q046": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: There is no DynamicConfigReload feature gate in Kubernetes\n- B: There is no restartPolicy: OnConfigChange in the Kubernetes pod spec\n- C: There is no kubectl apply --live-reload flag"
+  },
+  "s02-q047": {
+    "ref": "https://kubernetes.io/docs/concepts/security/secrets-good-practices/",
+    "wrong": "- B: Kubernetes does not automatically redact Secret values from container logs\n- C: The kubelet does not intercept or modify container log output for Secret redaction\n- D: Env vars from Secrets are fully visible to the application process as regular environment variables"
+  },
+  "s02-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- B: Node-level memory metrics do not show per-container usage or identify which container is at risk\n- C: Pod lifecycle metrics show restarts after the fact, not predictive risk of OOM killing\n- D: CPU metrics are irrelevant for monitoring memory usage and OOM kill risk"
+  },
+  "s02-q049": {
+    "ref": "https://helm.sh/docs/intro/using_helm/",
+    "wrong": "- B: Two separate kubectl commands create a window of inconsistency between image and config\n- C: Manual kubectl edit is error-prone and not suitable for CI/CD automation\n- D: Eventual consistency does not guarantee atomic multi-resource updates"
+  },
+  "s02-q050": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- B: Version-prefixed keys in one ConfigMap adds parsing complexity and risk of accidental cross-version changes\n- C: Toggling flags via env vars in a single ConfigMap creates coupling between versions\n- D: Application-level version detection violates separation of concerns between config and code"
+  },
+  "s02-q051": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_configmap/",
+    "wrong": "- A: --from-file with a directory path includes all files without filtering capabilities\n- B: There is no --exclude flag in kubectl create configmap\n- D: There is no --from-directory or --pattern flag in kubectl create configmap"
+  },
+  "s02-q052": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- A: The request is not zero; it is set equal to the limit, so the pod is not BestEffort\n- C: Kubernetes does not use a half-of-limit default for requests\n- D: Pod creation does not fail; Kubernetes auto-sets requests to match limits"
+  },
+  "s02-q053": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
+    "wrong": "- A: Authentication verifies identity and does not inspect resource specifications\n- B: Authorization checks permissions (RBAC) and does not validate resource spec content\n- D: etcd stores data without policy enforcement; validation happens before persistence"
+  },
+  "s02-q054": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_patch/",
+    "wrong": "- B: There is no kubectl set configmap command in Kubernetes\n- C: There is no kubectl update configmap command in Kubernetes\n- D: There is no kubectl apply configmap --key command in Kubernetes"
+  },
+  "s02-q055": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/limit-range/",
+    "wrong": "- A: LimitRanges do not auto-cap values to fit; they enforce strict boundaries and reject violations\n- B: LimitRanges apply to both CPU and memory resources, not just memory\n- C: The issue is policy enforcement at admission, not scheduling; the pod never reaches the scheduler"
+  },
+  "s02-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#configmap-object",
+    "wrong": "- A: The Kubernetes API uses JSON/YAML serialization and cannot handle raw binary bytes in data fields\n- B: Hexadecimal encoding is not a supported format for binaryData fields\n- D: URL percent-encoding is not a supported format for binaryData fields"
+  },
+  "s02-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    "wrong": "- A: The DaemonSet controller does not require or enforce resource specifications on pods\n- B: Kubernetes does not auto-assign defaults unless a LimitRange exists in the namespace\n- D: Omitting resource requests does not grant host-level privileges; those require securityContext settings"
+  },
+  "s02-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/downward-api/",
+    "wrong": "- A: The Downward API exposes the pod's own label value, not the name of a Service object\n- B: The syntax is valid; the Downward API supports metadata.labels['key'] bracket notation\n- C: The value is the label string, not a hostname derived from DNS"
+  },
+  "s02-q059": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+    "wrong": "- A: Pod eviction is not alphabetical; QoS class and resource usage determine the order\n- B: Eviction follows a deterministic priority based on QoS class, not random selection\n- D: Guaranteed pods are evicted last, not first; they consume the most reserved resources"
+  },
+  "s02-q060": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_configmap/",
+    "wrong": "- A: The two flags produce structurally different ConfigMaps with different key structures\n- C: Both flags support any file extension; --from-env-file is not restricted to .env files\n- D: Neither flag encrypts data; both store values in plaintext in the ConfigMap"
+  },
+  "s02-q061": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: ResourceQuotas are API objects stored in etcd; they are not removed when the controller manager is down\n- B: The scheduler does not take over quota enforcement; the API server admission controller handles it\n- C: Pod creation is not globally blocked; the API server admission controller continues enforcing quotas"
+  },
+  "s02-q062": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled",
+    "wrong": "- B: The scheduler uses requests, not actual usage, for placement decisions\n- C: While CPU is compressible at runtime, the scheduler still uses CPU requests for scheduling\n- D: CPU limits do not affect scheduling decisions; only requests matter for node placement"
+  },
+  "s02-q063": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#secret",
+    "wrong": "- A: Running as root is unnecessary and violates security best practices when permission fixes exist\n- C: Secrets can be mounted into non-root containers; only the file permissions need adjustment\n- D: Privileged mode bypasses all security and is far more than needed for a file permission issue"
+  },
+  "s02-q064": {
+    "ref": "https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#use-environment-variables-to-define-arguments",
+    "wrong": "- A: Both command and args support $(VAR_NAME) substitution, not just command\n- B: Variable substitution works with env vars from any source including Secrets, not just ConfigMaps\n- D: enableServiceLinks controls service-related env vars and is unrelated to $(VAR_NAME) substitution"
+  },
+  "s02-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: Immutability prevents modifications after creation but does not affect key references from pods\n- B: The error message explicitly states the ConfigMap is in the default namespace\n- D: kubectl apply creates ConfigMaps that support key references identically to other creation methods"
+  },
+  "s02-q066": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/projected-volumes/",
+    "wrong": "- A: Duplicate keys in projected volumes do not cause pod startup failure\n- B: Kubernetes does not add automatic suffixes like .configmap or .secret to filenames\n- D: Kubernetes does not merge file contents from multiple sources into a single file"
+  },
+  "s02-q067": {
+    "ref": "https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/#use-container-fields-as-values-for-environment-variables",
+    "wrong": "- A: The divisor produces a plain number, not a converted unit like 0.5Gi\n- B: With a divisor of 1Mi, the value is divided accordingly, not returned in raw bytes\n- C: The divisor strips the unit suffix and returns a plain numeric value"
+  },
+  "s02-q068": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets",
+    "wrong": "- A: kubernetes.io/tls is for TLS certificates, not container registry authentication\n- C: While an Opaque Secret could hold docker config, imagePullSecrets expects dockerconfigjson type\n- D: basic-auth is for basic authentication and serviceAccountName references a ServiceAccount, not a Secret"
+  },
+  "s02-q069": {
+    "ref": "https://12factor.net/config",
+    "wrong": "- A: While ConfigMaps do not support conditional logic, that is not the primary cloud-native rationale\n- C: Code reviews are a secondary benefit, not the primary architectural rationale for config externalization\n- D: Memory and etcd storage differences between approaches are negligible and not the design motivation"
+  },
+  "s02-q070": {
+    "ref": "https://istio.io/latest/docs/concepts/what-is-istio/",
+    "wrong": "- B: Service meshes manage infrastructure concerns (routing, mTLS), not app-specific config like DB URLs\n- C: VirtualServices define traffic routing rules and do not replace application configuration\n- D: ConfigMaps are needed for all services regardless of sidecar injection status"
+  },
+  "s02-q071": {
+    "ref": "https://external-secrets.io/",
+    "wrong": "- B: Manual kubectl export/apply is error-prone, not scalable, and risks Secret exposure\n- C: etcd replication between clusters is not a supported or recommended Kubernetes pattern\n- D: NFS for Secrets is insecure and introduces a single point of failure"
+  },
+  "s02-q072": {
+    "ref": "https://knative.dev/docs/eventing/sources/kafka-source/",
+    "wrong": "- A: Knative Eventing does not automatically inject credentials; they must be explicitly configured\n- B: Kafka topic metadata does not store consumer authentication credentials\n- C: Hard-coding credentials violates security best practices and separation of concerns"
+  },
+  "s02-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: Most tracing SDKs do not automatically detect and reload configuration from files\n- C: The kubelet does not need to be restarted; it periodically syncs ConfigMap data to volumes\n- D: Sampling rate is an application-side setting; restarting only the collector does not change it"
+  },
+  "s02-q074": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- B: Node-level memory and CPU metrics do not identify specific containers being OOM-killed\n- C: Network traffic metrics are unrelated to memory OOM issues\n- D: Deployment replica metrics track availability, not memory-related container terminations"
+  },
+  "s02-q075": {
+    "ref": "https://helm.sh/docs/chart_best_practices/secrets/",
+    "wrong": "- A: b64enc is standard base64 encoding, not a weak or breakable cipher; the risk is elsewhere\n- C: Helm templates can access .Values anywhere, including inside Secret manifest templates\n- D: Kubernetes does not double-encode values that are already base64-encoded in the YAML manifest"
+  },
+  "s02-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
+    "wrong": "- A: Mounting the full ConfigMap in both containers exposes unnecessary files to each container\n- B: subPath is a volumeMount property, not a ConfigMap-level property for splitting by container\n- D: A single ConfigMap can be mounted selectively using the items field on the volume definition"
+  },
+  "s02-q077": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu",
+    "wrong": "- A: The m suffix means millicores, not megabytes of CPU cache memory\n- C: CPU is measured in core fractions, not time allocation in minutes per hour\n- D: Millihertz is not a Kubernetes CPU unit; m stands for millicores"
+  },
+  "s02-q078": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: ConfigMap timestamps show when the CM was updated, not when the pod received the change\n- B: Application logs depend on the app's behavior and may not show config changes\n- D: There is no ConfigMapUpdated event type in Kubernetes"
+  },
+  "s02-q079": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/#object-count-quota",
+    "wrong": "- A: Helm releases are not exempt from ResourceQuota enforcement; quotas apply to all API requests\n- B: Objects are not queued; creation requests are immediately rejected by the admission controller\n- D: ResourceQuotas do not auto-increase their limits to accommodate new resources"
+  },
+  "s02-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "wrong": "- B: The DNS format is service-first, not namespace-first; kubernetes.local is not the domain\n- C: The domain is cluster.local, not internal; and default is a namespace name, not a fixed component\n- D: svc does not lead the DNS name; the order is service.namespace.svc.cluster.local"
+  },
+  "s02-q081": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_patch/",
+    "wrong": "- A: kubectl patch modifies Kubernetes resource fields but cannot parse JSON values stored as strings\n- B: ConfigMap data values are not immutable by default; they can be modified through API operations\n- C: There is no --structured-data flag in kubectl create configmap"
+  },
+  "s02-q082": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#limitranger",
+    "wrong": "- A: The scheduler does not check LimitRanges; it schedules pods based on resource requests already set\n- B: The kubelet runs containers but does not modify pod specs or apply LimitRange defaults\n- D: The controller manager does not patch pods with default values; this is an admission controller function"
+  },
+  "s02-q083": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- A: Memory is incompressible and cannot be throttled like CPU; exceeding limits results in killing\n- B: Memory allocations do not silently fail; the process is terminated by the OOM killer\n- C: There is no warning-only mode for memory limit violations; the consequence is immediate termination"
+  },
+  "s02-q084": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#overview-of-secrets",
+    "wrong": "- A: Secret data values are never shown in plaintext in the data field of kubectl get -o yaml output\n- C: Kubernetes does not mask Secret values with asterisks in kubectl output\n- D: Secret values are base64-encoded, not SHA-256 hashed; they are fully recoverable"
+  },
+  "s02-q085": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
+    "wrong": "- A: LimitRanger (mutating) runs before ResourceQuota (validating), not the other way around\n- B: The pod gets the LimitRange default injected, so it does have a memory request and counts against quota\n- C: Mutating admission controllers run before validating ones; they do not run simultaneously"
+  },
+  "s02-q086": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#editing-a-secret",
+    "wrong": "- A: stringData is not encryption; it is a convenience field for providing plaintext that gets base64-encoded\n- B: Both stringData and data share the same ~1 MiB size limit per Secret\n- C: Both fields exist in the same Secret API version v1; there is no v2 distinction"
+  },
+  "s02-q087": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: Cache invalidation delay would not produce a persistent configmap not found error\n- C: kubelet cache propagation delay is transient and would not produce a persistent not found error\n- D: The question states the ConfigMap was recreated with the same name, ruling out case sensitivity"
+  },
+  "s02-q088": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: hostPath creates node dependency and is not recommended for ephemeral data sharing\n- B: ConfigMap volumes are read-only and cannot be written to by init containers\n- D: PVC is over-engineered for ephemeral data that only needs to last for the pod's lifetime"
+  },
+  "s02-q089": {
+    "ref": "https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/",
+    "wrong": "- A: Dockerfile ENV values are overridden by Kubernetes-defined env vars, not the other way around\n- C: Values are not concatenated; the Kubernetes value replaces the Dockerfile value entirely\n- D: Duplicate environment variable names are allowed; the Kubernetes-set value takes precedence"
+  },
+  "s02-q090": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "wrong": "- B: There is no readOnly metadata field on Kubernetes namespaces\n- C: Encryption at rest protects etcd storage, not API server output; kubectl get still decodes base64\n- D: Removing all Secret permissions would prevent developers from creating Secrets needed for pods"
+  },
+  "s02-q091": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- A: Kubernetes containers do not support memory swap by default; swap is typically disabled on nodes\n- B: Setting requests to zero does not affect limits; the OOM killer enforces the memory limit regardless\n- C: oomScoreAdj is not a container spec field; QoS class influences OOM score automatically"
+  },
+  "s02-q092": {
+    "ref": "https://12factor.net/config",
+    "wrong": "- A: Compiling configuration into the binary makes it impossible to change without rebuilding\n- B: File-based configuration is a valid cloud-native approach; env vars are not the only option\n- C: Manual kubectl management is error-prone and does not follow engineering best practices"
+  },
+  "s02-q093": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
+    "wrong": "- A: --dry-run=server validates API schema rules but not custom organizational policies\n- B: Helm does not have a built-in policy validation engine for organizational policies\n- C: Prometheus monitors after deployment; it cannot prevent non-conforming resources from being created"
+  },
+  "s02-q094": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: A single shared ConfigMap creates tight coupling; changes affect all 15 services simultaneously\n- B: Per-service duplication risks configuration drift when shared values need to be updated\n- D: Namespace annotations cannot be consumed as pod configuration via the Downward API"
+  },
+  "s02-q095": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: etcd does not auto-version resources; there is no kubectl rollback configmap command\n- C: Kubernetes does not create automatic ConfigMap snapshots; version control must be external\n- D: Database-stored config lacks the Git-based diff, review, and rollback workflows"
+  },
+  "s02-q096": {
+    "ref": "https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter",
+    "wrong": "- A: While cgroup files contain resource constraints, Fluentd typically uses the Kubernetes API for this\n- C: Container runtimes do not automatically include resource limits in log output\n- D: The kubelet config does not contain per-pod resource limits; the API server stores this data"
+  },
+  "s02-q097": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: Removing all requests creates BestEffort pods vulnerable to eviction; Kubernetes does not bill directly\n- B: Setting limits to max does not reduce requests, which determine scheduling and cost attribution\n- D: Spot instances help with pricing but do not address the over-provisioning of resource requests"
+  },
+  "s02-q098": {
+    "ref": "https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments",
+    "wrong": "- A: Force-restarting all pods after every sync is wasteful and disrupts stable workloads unnecessarily\n- B: Both Argo CD and Flux support the checksum annotation pattern; switching is not needed\n- D: Manual kubectl rollout restart breaks GitOps automation and requires human intervention"
+  },
+  "s02-q099": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- B: Command-line arguments have size limits and are unsuitable for full configuration files\n- C: Cloud storage adds external dependencies and latency at container startup\n- D: Docker build arguments embed data into the image, violating the requirement to keep it external"
+  },
+  "s02-q100": {
+    "ref": "https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments",
+    "wrong": "- A: The sha256sum generates a hash as an annotation; the ConfigMap remains a separate resource\n- C: SHA-256 is used for change detection, not encryption of the ConfigMap data\n- D: The checksum triggers a rollout on change; it does not validate or block for corruption"
+  }
+}
