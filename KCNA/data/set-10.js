@@ -766,7 +766,7 @@ var questions = [
       "D. Three SRV records mapping to `web-0.web-svc`, `web-1.web-svc`, and `web-2.web-svc` in the default namespace"
     ],
     answer: 2,
-    explanation: "A headless Service (with `clusterIP: None`) does not get a virtual IP. When the Service name is queried via DNS, CoreDNS returns individual A records for each ready pod backing the service. For a StatefulSet with 3 replicas, three A records are returned, each containing a pod's IP address. Additionally, each pod gets a stable DNS hostname (`web-0.web-svc.default.svc.cluster.local`), but a query for the Service itself returns all pod IPs as A records, not SRV records.",
+    explanation: "A headless Service (with `clusterIP: None`) does not get a virtual IP. When the Service name is queried via DNS, CoreDNS returns individual A records for each ready pod backing the service. For a StatefulSet with 3 replicas, three A records are returned, each containing a pod's IP address. Additionally, each pod gets a stable DNS hostname (`web-0.web-svc.default.svc.cluster.local`), but a direct A-record query for the Service name returns all pod IPs as A records. SRV records are also available for headless Services (via `_<port>._<protocol>.<svc>` queries), but option D is incorrect because a direct name query returns A records, not SRV records.",
     verify: "kubectl exec <test-pod> -- nslookup web-svc.default.svc.cluster.local && kubectl get endpoints web-svc"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "D. Only the ReplicaSet for revision 5 is retained; `rollout undo` fails because no previous revision is available"
     ],
     answer: 2,
-    explanation: "The `revisionHistoryLimit` specifies how many old ReplicaSets to retain (not counting the current active one). With a limit of 2, the current ReplicaSet (revision 5) plus 2 old ones (revisions 3 and 4) are kept — revisions 1 and 2 are garbage collected. Running `kubectl rollout undo` without `--to-revision` reverts to the previous revision (4). This creates a new revision number (6) using revision 4's pod template. After the rollback, the retained ReplicaSets would be 4, 5, and 6 (with 6 being active).",
+    explanation: "The `revisionHistoryLimit` specifies how many old ReplicaSets to retain (not counting the current active one). With a limit of 2, the current ReplicaSet (revision 5) plus 2 old ones (revisions 3 and 4) are kept — revisions 1 and 2 are garbage collected. Running `kubectl rollout undo` without `--to-revision` reverts to the previous revision (4). This creates a new revision number (6) using revision 4's pod template. After the rollback, the retained ReplicaSets are revisions 3, 5, and 6 (with 6 being the active revision that uses revision 4's pod template). Revision 4 no longer exists as a separate ReplicaSet — it was re-annotated as revision 6 during the undo operation.",
     verify: "kubectl rollout history deployment/<name> && kubectl get rs -l app=<name> --sort-by=.metadata.annotations.deployment\\.kubernetes\\.io/revision"
   },
   {

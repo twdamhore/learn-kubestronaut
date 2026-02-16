@@ -1557,7 +1557,7 @@ var questions = [
     id: "s04-q098",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A team manages a Redis Sentinel StatefulSet. They need to perform a rolling update but ensure that at least 2 out of 3 Sentinel pods are always running during the update. Which StatefulSet configuration parameter controls this?",
+    text: "A team manages a Redis Sentinel StatefulSet with 3 replicas. They want to explicitly control the maximum number of pods that can be unavailable during a rolling update, rather than relying on the default one-at-a-time behavior. Which StatefulSet rolling update parameter, when enabled via its feature gate, provides this control?",
     diagram: null,
     options: [
       "`spec.minReadySeconds` — ensures each pod is ready for a specified duration before proceeding with rollout",
@@ -1566,7 +1566,7 @@ var questions = [
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
     answer: 1,
-    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate, and remains alpha (disabled by default) through Kubernetes 1.29. Note that the default `OrderedReady` rolling update strategy already updates one pod at a time, so with 3 replicas the default behavior already ensures at most 1 pod is unavailable (i.e., at least 2 running) during a rolling update. However, setting `maxUnavailable: 1` explicitly is the most technically precise way to declare this constraint, making the availability guarantee explicit in the StatefulSet spec rather than relying on implicit default behavior. This is especially important for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational. If the feature gate is not enabled, the field is ignored and the default one-at-a-time behavior applies.",
+    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate, and remains alpha (disabled by default) through Kubernetes 1.29. While the default `OrderedReady` rolling update strategy already updates one pod at a time, `maxUnavailable` is the only parameter that lets you explicitly control update parallelism in a StatefulSet spec. For example, setting `maxUnavailable: 2` would allow two pods to be updated simultaneously, speeding up rollouts at the cost of availability. For quorum-based systems like Redis Sentinel, explicitly setting `maxUnavailable: 1` makes the availability constraint visible in the spec rather than relying on implicit default behavior. The feature gate must be enabled on the API server for this field to take effect; otherwise it is silently ignored.",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {

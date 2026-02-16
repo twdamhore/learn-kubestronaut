@@ -936,7 +936,7 @@ var questions = [
     text: "An operations team notices that a container keeps getting OOM-killed despite the application process using only 500MB of memory. The container has a 2GB memory limit and uses an <code>emptyDir</code> with <code>medium: Memory</code>. What explains the OOM kills?",
     diagram: null,
     options: [
-      "Memory-backed <code>emptyDir</code> volumes count against the container's memory limit, and the kernel OOM killer will terminate the container",
+      "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer will terminate the container",
       "Memory limits in Kubernetes are advisory only and are never actually enforced by the container runtime or kernel cgroup settings",
       "The <code>tmpfs</code> mount completely bypasses cgroup memory accounting and is not tracked by the kernel memory controller",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"

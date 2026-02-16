@@ -1,22 +1,15 @@
 {
   "set": "04",
-  "round": 4,
+  "round": 5,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s04-q060",
+      "id": "s04-q098",
       "type": "ambiguous",
       "severity": "minor",
-      "description": "Option D (answer index 3) says '`csi` inline volume in the pod spec with the `ephemeral` field for per-pod lifecycle use'. This conflates two distinct Kubernetes volume types: (1) CSI inline ephemeral volumes defined via `volumes[].csi` with `driver` and `volumeAttributes` fields, and (2) generic ephemeral volumes defined via `volumes[].ephemeral` with an embedded PVC template. There is no `ephemeral` field inside the `csi` volume type. The phrase 'with the `ephemeral` field' is misleading. Despite this, option D is still clearly the best answer among the four choices, so the answer index is correct.",
-      "suggested_fix": "Change option D to: '`csi` inline ephemeral volume defined directly in the pod spec, created when the pod starts and destroyed when it terminates'. Update the explanation to briefly note the distinction: 'Kubernetes supports two forms of CSI ephemeral volumes: CSI inline volumes (`volumes[].csi`) for simple driver-backed scratch space, and generic ephemeral volumes (`volumes[].ephemeral`) that use an embedded PVC template for more advanced provisioning. Both are created with the pod and destroyed when it terminates.'"
-    },
-    {
-      "id": "s04-q098",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The explanation says maxUnavailable was 'introduced as an alpha feature in Kubernetes 1.24 (requiring the MaxUnavailableStatefulSet feature gate)' but does not clarify that the feature remains alpha through Kubernetes 1.34 (beta is targeted for 1.35). On Kubernetes 1.29, which is the target version for KCNA, this feature gate is alpha and disabled by default. The question presents maxUnavailable as though it is a standard, readily available StatefulSet parameter. Furthermore, the default OrderedReady rolling update strategy already updates one pod at a time, so with 3 replicas the desired behavior (at least 2 pods running during update) is already the default without needing maxUnavailable at all.",
-      "suggested_fix": "Either (a) rework the question to ask about a scenario where the team wants to update 2 pods simultaneously and needs to set maxUnavailable: 2, making the feature gate relevant, and add a note in the explanation that maxUnavailable requires the alpha MaxUnavailableStatefulSet feature gate on K8s 1.29; or (b) change the question to focus on the default OrderedReady rolling update behavior (one pod at a time) as the mechanism that ensures at least 2 of 3 pods remain running, removing the dependency on an alpha feature."
+      "description": "The question asks which StatefulSet configuration parameter ensures at least 2 out of 3 pods are running during a rolling update, and the answer is `maxUnavailable: 1`. However, in Kubernetes 1.29 (the KCNA target version), MaxUnavailableStatefulSet is an alpha feature gate that is disabled by default. The default OrderedReady rolling update already updates one pod at a time, inherently keeping 2 of 3 running. The round-4 fix improved the explanation substantially to caveat the alpha status and note the default behavior, so the explanation is now accurate. The remaining issue is purely one of question design: a well-informed student may reject option B because the feature is alpha and off by default, even though B is the best option among the four choices. This is a minor exam-design concern rather than a factual error.",
+      "suggested_fix": "No code change required. The current explanation is thorough and correct. If desired, the question text could be lightly reframed to ask 'Which field, when the MaxUnavailableStatefulSet feature gate is enabled, explicitly controls the maximum number of unavailable pods during a rolling update?' to remove the ambiguity. Alternatively, accept the question as-is since the explanation sufficiently addresses the nuance."
     }
   ]
 }
