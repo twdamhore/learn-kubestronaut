@@ -1,7 +1,56 @@
 {
   "set": "05",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 6,
+  "issues": [
+    {
+      "id": "s05-q068",
+      "type": "wrong_explanation",
+      "severity": "high",
+      "what": "Explanation incorrectly states baseline profile permits hostPath volumes",
+      "detail": "The explanation says 'Note that the baseline profile does permit hostPath volumes' but according to the official Kubernetes Pod Security Standards documentation (kubernetes.io/docs/concepts/security/pod-security-standards/), the baseline profile ALSO prohibits hostPath volumes. Only the privileged profile allows hostPath. Option D also incorrectly claims 'hostPath volumes are allowed under the baseline profile as long as readOnly: true is set' -- baseline prohibits hostPath regardless of readOnly.",
+      "suggestion": "Change the explanation to: 'The restricted Pod Security Standard prohibits hostPath volumes entirely, as does the baseline profile. HostPath volumes are only permitted under the privileged profile. For log collectors requiring host access, the namespace must use the privileged profile or the Pods must be exempted from enforcement.' Also fix option D to say something like: 'No, but you can apply an exemption for specific Pods in the PSA configuration' to provide a more accurate wrong answer."
+    },
+    {
+      "id": "s05-q004",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram explicitly labels 'REJECTED HERE' at the Admission (PSA) stage and highlights it in red",
+      "detail": "The SVG diagram shows the API request flow through kubectl -> API Server -> Admission (PSA) -> etcd, with the Admission box highlighted in red and text 'REJECTED HERE' below it. This directly reveals the correct answer (C, index 2) without requiring any knowledge.",
+      "suggestion": "Remove the 'REJECTED HERE' text and the red highlighting from the Admission box. Use a neutral question mark or highlight all stages equally so the student must determine the rejection point."
+    },
+    {
+      "id": "s05-q016",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows 'drop: [ALL]' and 'add: [NET_BIND_SERVICE]' with 'Effective: NET_BIND_SERVICE' directly matching answer B",
+      "detail": "The SVG diagram displays two boxes: 'drop: [ALL]' and 'add: [NET_BIND_SERVICE]' leading to 'Effective: NET_BIND_SERVICE' and 'minimal privilege'. This exactly matches option B (index 1), allowing test-takers to select the answer from the diagram alone.",
+      "suggestion": "Remove the diagram or make it generic (e.g., show 'drop: [?]' and 'add: [?]' with 'Effective: ?' so the student must know which capabilities to drop and add)."
+    },
+    {
+      "id": "s05-q053",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows 'UID = 2000' for Container A and 'UID = 1000' for Container B, directly revealing the answer",
+      "detail": "The SVG diagram explicitly shows Container A with 'runAsUser: 2000' and 'UID = 2000', and Container B with '(no override)' and 'UID = 1000'. This directly reveals that the container-level setting (2000) overrides the pod-level (1000), which is the correct answer B (index 1).",
+      "suggestion": "Replace 'UID = 2000' and 'UID = 1000' with 'UID = ?' in both containers so the student must determine the effective UID."
+    },
+    {
+      "id": "s05-q086",
+      "type": "ambiguous",
+      "severity": "medium",
+      "what": "Option D is partially correct since Kubernetes 1.22+ auto-labels namespaces with kubernetes.io/metadata.name",
+      "detail": "Option D states 'No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without using labels.' Since Kubernetes 1.22+, namespaces automatically get the label kubernetes.io/metadata.name matching their name. While the namespaceSelector still technically uses labels (not the metadata.name field directly), the practical effect is that no manual labeling is needed if the policy uses this auto-label. The correct answer C says 'A custom label matching the namespaceSelector' which is true but may confuse students who know about the auto-label.",
+      "suggestion": "Reword option D more clearly to be wrong, e.g., 'No label is needed because namespaceSelector matches by the namespace metadata.name field directly, bypassing labels entirely.' Also update the explanation to mention the kubernetes.io/metadata.name auto-label as an alternative to custom labels."
+    },
+    {
+      "id": "s05-q093",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows request flow Pod -> Webhook -> REJECTED, directly revealing the answer",
+      "detail": "The SVG diagram shows 'Pod (no RC)' flowing through 'Webhook' to 'REJECTED' and includes text 'runtimeClassName required'. This directly reveals the correct answer B (index 1) that the webhook rejects the Pod.",
+      "suggestion": "Remove or simplify the diagram to show 'Pod (no RC)' -> 'Webhook' -> '?' without the 'REJECTED' outcome."
+    }
+  ]
 }

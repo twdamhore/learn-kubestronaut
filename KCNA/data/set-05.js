@@ -14,7 +14,7 @@ var questions = [
       "The ClusterRoleBinding escalates the Role permissions to apply cluster-wide"
     ],
     answer: 0,
-    explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.",
+    explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.\n\nWhy other options are wrong:\n- B: A ClusterRoleBinding with a ClusterRole would grant cluster-wide access, but the scenario uses a Role (not ClusterRole) which cannot be referenced by a ClusterRoleBinding\n- C: The binding itself is invalid; a ClusterRoleBinding cannot reference a namespace-scoped Role, so no access is granted\n- D: No escalation occurs because the binding is rejected by the API server\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl auth can-i list pods --namespace=payments --as=jane 2>&1"
   },
   {
@@ -30,7 +30,7 @@ var questions = [
       "An egress NetworkPolicy in `backend` using `namespaceSelector` matching the `web` namespace on port 8443"
     ],
     answer: 0,
-    explanation: "NetworkPolicy is applied in the namespace of the target Pods. An ingress policy in the `backend` namespace selects Pods with `app: api` and allows ingress from the `web` namespace Pods labeled `app: frontend` on port 8443. The `namespaceSelector` identifies the source namespace.",
+    explanation: "NetworkPolicy is applied in the namespace of the target Pods. An ingress policy in the `backend` namespace selects Pods with `app: api` and allows ingress from the `web` namespace Pods labeled `app: frontend` on port 8443. The `namespaceSelector` identifies the source namespace.\n\nWhy other options are wrong:\n- B: An egress policy in the source namespace controls outbound traffic but does not use namespaceSelector to identify cross-namespace targets correctly here\n- C: The ingress policy must be in the destination namespace (backend), not the source namespace (web)\n- D: An egress policy in the destination namespace does not control traffic flowing into that namespace\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n backend -o yaml"
   },
   {
@@ -46,7 +46,7 @@ var questions = [
       "Kubernetes automatically remaps root UID to the nobody UID 65534"
     ],
     answer: 2,
-    explanation: "When `runAsNonRoot: true` is set and the container image specifies UID 0 (root), the kubelet rejects the container at startup. It does not override the security setting or remap the user. The error message indicates the container attempted to run as root.",
+    explanation: "When `runAsNonRoot: true` is set and the container image specifies UID 0 (root), the kubelet rejects the container at startup. It does not override the security setting or remap the user. The error message indicates the container attempted to run as root.\n\nWhy other options are wrong:\n- A: The container does not override the pod-level runAsNonRoot setting; the kubelet enforces it\n- B: Rejection happens at container startup by the kubelet, not at the admission stage\n- D: Kubernetes does not automatically remap UIDs; no UID remapping mechanism exists for this\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
     verify: "kubectl describe pod <pod-name> | grep -i error"
   },
   {
@@ -62,7 +62,7 @@ var questions = [
       "At runtime enforcement by the container runtime"
     ],
     answer: 2,
-    explanation: "The PodSecurity admission controller evaluates Pods during the admission phase of the API server request lifecycle. A Pod with `privileged: true` violates the `restricted` profile and is rejected before it is persisted to etcd. This happens before scheduling.",
+    explanation: "The PodSecurity admission controller evaluates Pods during the admission phase of the API server request lifecycle. A Pod with `privileged: true` violates the `restricted` profile and is rejected before it is persisted to etcd. This happens before scheduling.\n\nWhy other options are wrong:\n- A: The scheduler is not involved; rejection happens before the Pod is persisted to etcd\n- B: The image pull phase occurs after admission; the Pod never reaches the node\n- D: Runtime enforcement is too late; PSA operates at the API server admission stage\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
     verify: "kubectl label ns production pod-security.kubernetes.io/enforce=restricted"
   },
   {
@@ -78,7 +78,7 @@ var questions = [
       "Trivy, which scans container images for known vulnerabilities"
     ],
     answer: 3,
-    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner for container images, filesystems, and Git repositories. Falco focuses on runtime threat detection, OPA handles policy enforcement, and cert-manager manages TLS certificates.",
+    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner for container images, filesystems, and Git repositories. Falco focuses on runtime threat detection, OPA handles policy enforcement, and cert-manager manages TLS certificates.\n\nWhy other options are wrong:\n- A: Falco monitors runtime syscall activity, not container image vulnerabilities\n- B: OPA evaluates admission policies, not vulnerability scanning\n- C: cert-manager automates TLS certificate management, unrelated to CVE scanning\n\nReference: https://aquasecurity.github.io/trivy/",
     verify: "trivy image nginx:latest"
   },
   {
@@ -94,7 +94,7 @@ var questions = [
       "Run `kubectl token create deployer` to generate an OIDC-based token for the account"
     ],
     answer: 0,
-    explanation: "Starting in Kubernetes 1.24, the `LegacyServiceAccountTokenNoAutoGeneration` feature means Secrets are no longer auto-created for ServiceAccounts. To obtain a long-lived token, you must manually create a Secret of type `kubernetes.io/service-account-token` with the appropriate annotation referencing the ServiceAccount name.",
+    explanation: "Starting in Kubernetes 1.24, the `LegacyServiceAccountTokenNoAutoGeneration` feature means Secrets are no longer auto-created for ServiceAccounts. To obtain a long-lived token, you must manually create a Secret of type `kubernetes.io/service-account-token` with the appropriate annotation referencing the ServiceAccount name.\n\nWhy other options are wrong:\n- B: automountServiceAccountToken controls whether a projected token is mounted in Pods, not whether a long-lived token Secret is created\n- C: In 1.24+, tokens are projected and short-lived (not permanent); they are not auto-generated as Secrets\n- D: kubectl create token generates a short-lived TokenRequest token, not a long-lived Secret-based one\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#manual-secret-management-for-serviceaccounts",
     verify: "kubectl get secrets -n staging -o yaml"
   },
   {
@@ -110,7 +110,7 @@ var questions = [
       "Create Deployments in `dev` but delete them across all other namespaces"
     ],
     answer: 1,
-    explanation: "A RoleBinding can reference a ClusterRole, but the permissions are scoped to the RoleBinding's namespace. Alice can only create and delete Deployments in the `dev` namespace, not cluster-wide. This pattern is commonly used to reuse ClusterRoles across multiple namespaces.",
+    explanation: "A RoleBinding can reference a ClusterRole, but the permissions are scoped to the RoleBinding's namespace. Alice can only create and delete Deployments in the `dev` namespace, not cluster-wide. This pattern is commonly used to reuse ClusterRoles across multiple namespaces.\n\nWhy other options are wrong:\n- A: A RoleBinding scopes permissions to its own namespace, not cluster-wide\n- C: ClusterRoles can be bound by RoleBindings; this is a common and valid pattern\n- D: RBAC does not split verbs across different scopes; all granted verbs apply to the same namespace\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl auth can-i create deployments --as=alice -n dev"
   },
   {
@@ -126,7 +126,7 @@ var questions = [
       "Falco with custom rules that monitor container syscall events"
     ],
     answer: 3,
-    explanation: "Falco is a CNCF runtime security project that monitors system calls made by containers and triggers alerts based on customizable rules. Prometheus monitors metrics, Fluentd aggregates logs, and Jaeger handles distributed tracing -- none of which directly inspect syscall behavior.",
+    explanation: "Falco is a CNCF runtime security project that monitors system calls made by containers and triggers alerts based on customizable rules. Prometheus monitors metrics, Fluentd aggregates logs, and Jaeger handles distributed tracing -- none of which directly inspect syscall behavior.\n\nWhy other options are wrong:\n- A: Prometheus scrapes metrics but does not inspect syscalls within containers\n- B: Fluentd aggregates logs; regex matching on logs is reactive and does not detect syscall anomalies\n- C: Jaeger traces distributed request paths, not container-level system call behavior\n\nReference: https://falco.org/docs/",
     verify: "falco --list | grep syscall"
   },
   {
@@ -142,7 +142,7 @@ var questions = [
       "Mount an `emptyDir` volume at the path where temporary writes are needed"
     ],
     answer: 3,
-    explanation: "Mounting an `emptyDir` volume at the required write path preserves the security benefit of a read-only root filesystem while providing a writable area. Disabling the read-only filesystem weakens security, and `allowPrivilegeEscalation` is unrelated to filesystem write access.",
+    explanation: "Mounting an `emptyDir` volume at the required write path preserves the security benefit of a read-only root filesystem while providing a writable area. Disabling the read-only filesystem weakens security, and `allowPrivilegeEscalation` is unrelated to filesystem write access.\n\nWhy other options are wrong:\n- A: Disabling readOnlyRootFilesystem weakens security and is not recommended\n- B: An initContainer cannot pre-create files on a read-only filesystem; the constraint applies to the overlay\n- C: allowPrivilegeEscalation controls setuid/setgid, not filesystem write permissions\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.volumes}'"
   },
   {
@@ -158,7 +158,7 @@ var questions = [
       "Deploy the image to a staging namespace first before promoting to production"
     ],
     answer: 2,
-    explanation: "Integrating a vulnerability scanner (such as Trivy or Grype) into the CI pipeline and failing the build on critical CVEs prevents vulnerable images from reaching the registry. Image signing verifies provenance but does not block vulnerabilities. Pull policies and staging do not inherently scan for CVEs.",
+    explanation: "Integrating a vulnerability scanner (such as Trivy or Grype) into the CI pipeline and failing the build on critical CVEs prevents vulnerable images from reaching the registry. Image signing verifies provenance but does not block vulnerabilities. Pull policies and staging do not inherently scan for CVEs.\n\nWhy other options are wrong:\n- A: Image signing verifies provenance but does not detect or block vulnerabilities\n- B: imagePullPolicy: Always ensures fresh pulls but does not scan for CVEs\n- D: Staging deployments test functionality but do not inherently scan for vulnerabilities\n\nReference: https://kubernetes.io/docs/concepts/security/supply-chain-security/",
     verify: "trivy image --exit-code 1 --severity CRITICAL myapp:latest"
   },
   {
@@ -174,7 +174,7 @@ var questions = [
       "The Pods are rejected at the admission stage because no valid token exists"
     ],
     answer: 1,
-    explanation: "When `automountServiceAccountToken: false` is set on the ServiceAccount and no override is present in the Pod spec, the kubelet does not mount a token volume. Any attempt to reach the Kubernetes API from within the Pod results in a 401 Unauthorized error.",
+    explanation: "When `automountServiceAccountToken: false` is set on the ServiceAccount and no override is present in the Pod spec, the kubelet does not mount a token volume. Any attempt to reach the Kubernetes API from within the Pod results in a 401 Unauthorized error.\n\nWhy other options are wrong:\n- A: With automountServiceAccountToken: false on the SA, the kubelet does not inject a projected token unless overridden in the Pod spec\n- C: The kubelet does not inject tokens from a local credential store\n- D: The Pod is not rejected at admission; it starts successfully but has no token mounted\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#opt-out-of-api-credential-automounting",
     verify: "kubectl get sa default -o jsonpath='{.automountServiceAccountToken}'"
   },
   {
@@ -190,7 +190,7 @@ var questions = [
       "Rely on network perimeter firewalls to handle all access control"
     ],
     answer: 0,
-    explanation: "Zero-trust security requires that every request is authenticated, authorized, and encrypted regardless of whether it originates from inside or outside the network perimeter. This contrasts with perimeter-based models that implicitly trust internal traffic.",
+    explanation: "Zero-trust security requires that every request is authenticated, authorized, and encrypted regardless of whether it originates from inside or outside the network perimeter. This contrasts with perimeter-based models that implicitly trust internal traffic.\n\nWhy other options are wrong:\n- B: Zero-trust explicitly rejects trusting traffic based on network origin\n- C: Zero-trust requires encryption of all traffic, not just external-facing traffic\n- D: Zero-trust moves beyond perimeter-based security models\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -206,7 +206,7 @@ var questions = [
       "The kubelet adds all `NET_*` capabilities automatically to each new container"
     ],
     answer: 2,
-    explanation: "By default, containers run with a limited set of Linux capabilities defined by the container runtime (e.g., containerd). `CAP_NET_ADMIN` is not in this default set. To use it, you must explicitly add it via `securityContext.capabilities.add` in the container spec.",
+    explanation: "By default, containers run with a limited set of Linux capabilities defined by the container runtime (e.g., containerd). `CAP_NET_ADMIN` is not in this default set. To use it, you must explicitly add it via `securityContext.capabilities.add` in the container spec.\n\nWhy other options are wrong:\n- A: Containers do not receive all capabilities by default; only a limited subset is granted\n- B: CAP_NET_ADMIN is not in the default capability set granted by container runtimes\n- D: The kubelet does not automatically add NET_* capabilities to containers\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
     verify: "kubectl exec <pod> -- cat /proc/1/status | grep Cap"
   },
   {
@@ -222,7 +222,7 @@ var questions = [
       "The Pod spec is mutated by the controller to set `hostNetwork: false`"
     ],
     answer: 2,
-    explanation: "The `baseline` Pod Security Standard prohibits `hostNetwork: true`. When enforcement is enabled, the admission controller rejects the Pod. The `baseline` profile is designed to prevent known privilege escalations, and host networking allows a Pod to access the node's network stack directly.",
+    explanation: "The `baseline` Pod Security Standard prohibits `hostNetwork: true`. When enforcement is enabled, the admission controller rejects the Pod. The `baseline` profile is designed to prevent known privilege escalations, and host networking allows a Pod to access the node's network stack directly.\n\nWhy other options are wrong:\n- A: The Pod is rejected outright when enforce mode is active, not just logged as a warning\n- B: The baseline profile prohibits hostNetwork: true; it does not allow it\n- D: PSA does not mutate Pod specs; it only validates and rejects or allows\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl run test --image=nginx --overrides='{\"spec\":{\"hostNetwork\":true}}' -n apps --dry-run=server"
   },
   {
@@ -238,7 +238,7 @@ var questions = [
       "The `get` verb on Secrets only returns object metadata, not the actual data values"
     ],
     answer: 1,
-    explanation: "Granting `get` and `list` on Secrets allows the user to retrieve the full Secret data, including sensitive values like passwords and API keys. Secret data is base64-encoded but not encrypted at the RBAC level. This is a common security concern that should be carefully scoped.",
+    explanation: "Granting `get` and `list` on Secrets allows the user to retrieve the full Secret data, including sensitive values like passwords and API keys. Secret data is base64-encoded but not encrypted at the RBAC level. This is a common security concern that should be carefully scoped.\n\nWhy other options are wrong:\n- A: Roles can grant access to Secrets; there is no restriction on this resource type\n- C: RoleBindings referencing Secret access do not require cluster-admin approval\n- D: The get verb on Secrets returns the full object including base64-encoded data values\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i get secrets --as=bob -n finance"
   },
   {
@@ -254,7 +254,7 @@ var questions = [
       "Set `capabilities: { drop: [NET_ADMIN, SYS_ADMIN] }` in the container spec"
     ],
     answer: 1,
-    explanation: "To restrict a container to only the `NET_BIND_SERVICE` capability, you must first drop `ALL` capabilities and then add back only `NET_BIND_SERVICE`. Simply adding the capability does not remove the default set. Setting `privileged: true` grants all capabilities regardless of the drop list.",
+    explanation: "To restrict a container to only the `NET_BIND_SERVICE` capability, you must first drop `ALL` capabilities and then add back only `NET_BIND_SERVICE`. Simply adding the capability does not remove the default set. Setting `privileged: true` grants all capabilities regardless of the drop list.\n\nWhy other options are wrong:\n- A: Only adding NET_BIND_SERVICE leaves the default runtime capabilities intact\n- C: Setting privileged: true grants all capabilities regardless of drop list\n- D: Dropping only NET_ADMIN and SYS_ADMIN leaves many other default capabilities active\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.containers[0].securityContext.capabilities}'"
   },
   {
@@ -270,7 +270,7 @@ var questions = [
       "mTLS authenticates both client and server, not just the server side"
     ],
     answer: 3,
-    explanation: "Mutual TLS requires both parties to present certificates, authenticating both client and server. Standard TLS only authenticates the server to the client. This provides identity verification for service-to-service communication, which is critical in zero-trust architectures.",
+    explanation: "Mutual TLS requires both parties to present certificates, authenticating both client and server. Standard TLS only authenticates the server to the client. This provides identity verification for service-to-service communication, which is critical in zero-trust architectures.\n\nWhy other options are wrong:\n- A: mTLS uses the same cipher suites as TLS; the difference is in mutual authentication\n- B: mTLS provides identity verification but does not replace network policies for traffic control\n- C: mTLS has no relationship with etcd secrets rotation\n\nReference: https://kubernetes.io/docs/concepts/services-networking/",
     verify: "istioctl proxy-config secret <pod-name> -n <namespace>"
   },
   {
@@ -286,7 +286,7 @@ var questions = [
       "`RequestResponse` — logs metadata plus request body and response body"
     ],
     answer: 2,
-    explanation: "The `Metadata` audit level records who made the request, what resource was accessed, and the result, but excludes the request and response bodies. This captures user access patterns to Secrets without exposing the Secret data itself in audit logs.",
+    explanation: "The `Metadata` audit level records who made the request, what resource was accessed, and the result, but excludes the request and response bodies. This captures user access patterns to Secrets without exposing the Secret data itself in audit logs.\n\nWhy other options are wrong:\n- A: None disables audit logging entirely and captures no information\n- B: Request level logs the request body, which would include Secret data in create/update requests\n- D: RequestResponse logs both request and response bodies, exposing Secret data\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
     verify: "kubectl get --raw /apis/audit.k8s.io/v1"
   },
   {
@@ -302,7 +302,7 @@ var questions = [
       "A namespace-scoped Role and a cluster-level RoleBinding"
     ],
     answer: 1,
-    explanation: "To grant cluster-wide access, you need a ClusterRole defining the permissions and a ClusterRoleBinding that binds the ClusterRole to the ServiceAccount. A RoleBinding would scope the permissions to a single namespace, and a Role cannot provide cluster-wide access.",
+    explanation: "To grant cluster-wide access, you need a ClusterRole defining the permissions and a ClusterRoleBinding that binds the ClusterRole to the ServiceAccount. A RoleBinding would scope the permissions to a single namespace, and a Role cannot provide cluster-wide access.\n\nWhy other options are wrong:\n- A: Creating Role+RoleBinding per namespace works but is not the most efficient approach for cluster-wide access\n- C: A ClusterRole + RoleBinding scopes permissions to only the RoleBinding's namespace, not all namespaces\n- D: A namespace-scoped Role cannot be referenced by a ClusterRoleBinding\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl get clusterrolebinding -o wide | grep <sa-name>"
   },
   {
@@ -318,7 +318,7 @@ var questions = [
       "Secrets mounted as environment variables are visible only to the init container"
     ],
     answer: 0,
-    explanation: "Storing Secret manifests in Git means the base64-encoded (not encrypted) Secret data is visible to anyone with repository access and persists in Git history. Tools like Sealed Secrets or SOPS are recommended to encrypt Secret data before committing to Git.",
+    explanation: "Storing Secret manifests in Git means the base64-encoded (not encrypted) Secret data is visible to anyone with repository access and persists in Git history. Tools like Sealed Secrets or SOPS are recommended to encrypt Secret data before committing to Git.\n\nWhy other options are wrong:\n- B: GitOps controllers can apply Secret resources from Git repositories without issue\n- C: Kubernetes does not encrypt environment variables automatically; Secrets are base64-encoded only\n- D: Secrets mounted as env vars are visible to the main container, not only initContainers\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#risks",
     verify: "git log --all -p -- '*secret*'"
   },
   {
@@ -334,7 +334,7 @@ var questions = [
       "Client certificate authentication using X.509 certificates"
     ],
     answer: 3,
-    explanation: "By default, kubelets authenticate to the API server using client certificates (X.509). The kubelet presents a certificate signed by the cluster CA, and the API server verifies it. Basic auth and static token files are deprecated, and OIDC is typically used for user authentication.",
+    explanation: "By default, kubelets authenticate to the API server using client certificates (X.509). The kubelet presents a certificate signed by the cluster CA, and the API server verifies it. Basic auth and static token files are deprecated, and OIDC is typically used for user authentication.\n\nWhy other options are wrong:\n- A: Basic auth is deprecated and not the default kubelet authentication method\n- B: Static token files are deprecated and not used by default for kubelet auth\n- C: OIDC is typically used for human user authentication, not kubelet-to-apiserver communication\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/kubelet-authn-authz/",
     verify: "kubectl config view --raw -o jsonpath='{.users[0].user.client-certificate}'"
   },
   {
@@ -350,7 +350,7 @@ var questions = [
       "A policy with `podSelector: {}` and `ingress: [{from: []}]` allowing empty source"
     ],
     answer: 1,
-    explanation: "A default-deny ingress policy uses an empty `podSelector: {}` to select all Pods in the namespace, specifies `policyTypes: [Ingress]`, and omits the `ingress` field entirely. This means no ingress traffic is allowed to any Pod. Note that `ingress: [{}]` (an array with one empty rule) is very different -- it allows all ingress traffic from all sources.",
+    explanation: "A default-deny ingress policy uses an empty `podSelector: {}` to select all Pods in the namespace, specifies `policyTypes: [Ingress]`, and omits the `ingress` field entirely. This means no ingress traffic is allowed to any Pod. Note that `ingress: [{}]` (an array with one empty rule) is very different -- it allows all ingress traffic from all sources.\n\nWhy other options are wrong:\n- A: ingress: [{}] (array with empty object) allows all ingress traffic from all sources\n- C: A podSelector with specific matchLabels only selects Pods with that label, not all Pods\n- D: ingress: [{from: []}] is equivalent to allowing no sources, but the standard default-deny pattern omits ingress entirely\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-ingress-traffic",
     verify: "kubectl get networkpolicy default-deny -n secure -o yaml"
   },
   {
@@ -366,7 +366,7 @@ var questions = [
       "`allowPrivilegeEscalation: false` — blocks setuid binaries from gaining privileges"
     ],
     answer: 3,
-    explanation: "Setting `allowPrivilegeEscalation: false` prevents a process from gaining more privileges than its parent, which blocks `setuid` and `setgid` binaries. `readOnlyRootFilesystem` prevents writes but not privilege escalation. `runAsNonRoot` ensures a non-root UID but does not block setuid.",
+    explanation: "Setting `allowPrivilegeEscalation: false` prevents a process from gaining more privileges than its parent, which blocks `setuid` and `setgid` binaries. `readOnlyRootFilesystem` prevents writes but not privilege escalation. `runAsNonRoot` ensures a non-root UID but does not block setuid.\n\nWhy other options are wrong:\n- A: readOnlyRootFilesystem prevents filesystem writes but does not block setuid privilege escalation\n- B: runAsNonRoot prevents running as root but does not block setuid binaries from escalating\n- C: privileged: false disables privileged mode but a non-privileged container can still use setuid\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.containers[0].securityContext.allowPrivilegeEscalation}'"
   },
   {
@@ -382,7 +382,7 @@ var questions = [
       "The restriction applies to all resource types, not just the named one"
     ],
     answer: 1,
-    explanation: "When `resourceNames` is specified, verbs like `get`, `update`, and `delete` are restricted to the named resources. However, `list` and `watch` cannot be effectively restricted by `resourceNames` because they return collections. The `get` verb is properly scoped to only the `db-credentials` Secret.",
+    explanation: "When `resourceNames` is specified, verbs like `get`, `update`, and `delete` are restricted to the named resources. However, `list` and `watch` cannot be effectively restricted by `resourceNames` because they return collections. The `get` verb is properly scoped to only the `db-credentials` Secret.\n\nWhy other options are wrong:\n- A: If the Role grants only get (not list), the list verb is not granted regardless of resourceNames\n- C: resourceNames is a valid field and is enforced on the specified resources\n- D: The restriction applies only to the resources listed in the same rule, not all resource types\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
     verify: "kubectl get role -n <ns> -o yaml"
   },
   {
@@ -398,7 +398,7 @@ var questions = [
       "Configure an `EncryptionConfiguration` on the kube-apiserver"
     ],
     answer: 3,
-    explanation: "To encrypt Secrets at rest in etcd, you must create an `EncryptionConfiguration` file specifying encryption providers (like `aescbc`, `secretbox`, or a KMS provider) and pass it to the kube-apiserver via `--encryption-provider-config`. TLS on etcd protects data in transit, not at rest.",
+    explanation: "To encrypt Secrets at rest in etcd, you must create an `EncryptionConfiguration` file specifying encryption providers (like `aescbc`, `secretbox`, or a KMS provider) and pass it to the kube-apiserver via `--encryption-provider-config`. TLS on etcd protects data in transit, not at rest.\n\nWhy other options are wrong:\n- A: TLS on etcd endpoints protects data in transit, not data at rest\n- B: There is no --etcd-encryption flag on the kubelet; encryption is configured on the apiserver\n- C: kubectl create secret does not have an --encrypt flag\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
     verify: "ps aux | grep kube-apiserver | grep encryption-provider-config"
   },
   {
@@ -414,7 +414,7 @@ var questions = [
       "Kubernetes returns an error for conflicting overlapping bindings"
     ],
     answer: 0,
-    explanation: "RBAC in Kubernetes is additive. There are no deny rules. All permissions from all Roles bound to a user or ServiceAccount are combined. If any Role grants the permission, the action is allowed. This means multiple RoleBindings expand the user's effective permissions.",
+    explanation: "RBAC in Kubernetes is additive. There are no deny rules. All permissions from all Roles bound to a user or ServiceAccount are combined. If any Role grants the permission, the action is allowed. This means multiple RoleBindings expand the user's effective permissions.\n\nWhy other options are wrong:\n- B: RBAC has no deny rules; permissions are additive, not restrictive\n- C: All RoleBindings take effect simultaneously, not just the first created\n- D: Kubernetes does not error on overlapping or multiple bindings\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings",
     verify: "kubectl auth can-i --list --as=carol -n <namespace>"
   },
   {
@@ -430,7 +430,7 @@ var questions = [
       "The request is processed as `system:anonymous` in `system:unauthenticated`"
     ],
     answer: 3,
-    explanation: "When anonymous authentication is enabled, unauthenticated requests are assigned the username `system:anonymous` and the group `system:unauthenticated`. These identities can then be used in RBAC policies. By default, anonymous users have very limited access.",
+    explanation: "When anonymous authentication is enabled, unauthenticated requests are assigned the username `system:anonymous` and the group `system:unauthenticated`. These identities can then be used in RBAC policies. By default, anonymous users have very limited access.\n\nWhy other options are wrong:\n- A: With anonymous-auth enabled, unauthenticated requests are not rejected but processed as system:anonymous\n- B: The request is not forwarded to an external provider; it is handled locally\n- C: Anonymous requests do not inherit the default ServiceAccount permissions\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#anonymous-requests",
     verify: "kubectl auth can-i --list --as=system:anonymous"
   },
   {
@@ -446,7 +446,7 @@ var questions = [
       "A MutatingWebhookConfiguration that patches Pod security context"
     ],
     answer: 1,
-    explanation: "The Pod Security Admission controller with the `restricted` profile requires containers to set `seccompProfile.type` to `RuntimeDefault` or `Localhost`. Enforcing this on the namespace rejects Pods that use `Unconfined`. LimitRange and ResourceQuota do not govern security contexts.",
+    explanation: "The Pod Security Admission controller with the `restricted` profile requires containers to set `seccompProfile.type` to `RuntimeDefault` or `Localhost`. Enforcing this on the namespace rejects Pods that use `Unconfined`. LimitRange and ResourceQuota do not govern security contexts.\n\nWhy other options are wrong:\n- A: LimitRange controls resource limits and defaults, not security context settings\n- C: ResourceQuota manages resource consumption quotas, not seccomp profiles\n- D: A MutatingWebhookConfiguration could enforce this but is not a built-in Kubernetes resource for this purpose\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
     verify: "kubectl label ns analytics pod-security.kubernetes.io/enforce=restricted --overwrite"
   },
   {
@@ -462,7 +462,7 @@ var questions = [
       "The kubelet resolves DNS on behalf of the Pod before the connection"
     ],
     answer: 2,
-    explanation: "DNS queries use UDP (and sometimes TCP) port 53. If the egress NetworkPolicy only allows port 443, DNS traffic to CoreDNS is blocked. You must explicitly allow egress to the kube-dns Service on port 53 (UDP and TCP) for DNS resolution to work.",
+    explanation: "DNS queries use UDP (and sometimes TCP) port 53. If the egress NetworkPolicy only allows port 443, DNS traffic to CoreDNS is blocked. You must explicitly allow egress to the kube-dns Service on port 53 (UDP and TCP) for DNS resolution to work.\n\nWhy other options are wrong:\n- A: NetworkPolicy does affect DNS traffic; DNS uses UDP/TCP port 53 which must be explicitly allowed\n- B: Pods use CoreDNS via the cluster network, not the node's resolver directly\n- D: The kubelet does not resolve DNS on behalf of Pods; DNS queries go through the Pod's network namespace\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n frontend -o yaml"
   },
   {
@@ -478,7 +478,7 @@ var questions = [
       "It replaces the RBAC system with attribute-based access control rules"
     ],
     answer: 0,
-    explanation: "OPA Gatekeeper registers as a validating admission webhook with the Kubernetes API server. When resources are created or updated, the API server sends the request to Gatekeeper, which evaluates it against Rego policies defined in ConstraintTemplate and Constraint CRDs.",
+    explanation: "OPA Gatekeeper registers as a validating admission webhook with the Kubernetes API server. When resources are created or updated, the API server sends the request to Gatekeeper, which evaluates it against Rego policies defined in ConstraintTemplate and Constraint CRDs.\n\nWhy other options are wrong:\n- B: Gatekeeper runs as a centralized admission webhook, not as a sidecar in each Pod\n- C: Gatekeeper does not modify the apiserver binary; it integrates via the webhook mechanism\n- D: Gatekeeper supplements RBAC with policy enforcement; it does not replace RBAC\n\nReference: https://open-policy-agent.github.io/gatekeeper/website/docs/",
     verify: "kubectl get validatingwebhookconfigurations | grep gatekeeper"
   },
   {
@@ -494,7 +494,7 @@ var questions = [
       "The API server rejects the Pod creation request with a clear error"
     ],
     answer: 3,
-    explanation: "If the referenced ServiceAccount does not exist in the namespace, the API server rejects the Pod creation with an error indicating the ServiceAccount was not found. There is no fallback to the `default` ServiceAccount, and the kubelet does not create ServiceAccounts.",
+    explanation: "If the referenced ServiceAccount does not exist in the namespace, the API server rejects the Pod creation with an error indicating the ServiceAccount was not found. There is no fallback to the `default` ServiceAccount, and the kubelet does not create ServiceAccounts.\n\nWhy other options are wrong:\n- A: There is no fallback to the default ServiceAccount when a named SA is missing\n- B: The Pod is not created at all; the API server rejects the request immediately\n- C: The kubelet does not create ServiceAccount resources automatically\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
     verify: "kubectl run test --image=nginx --overrides='{\"spec\":{\"serviceAccountName\":\"nonexistent\"}}' --dry-run=server"
   },
   {
@@ -510,7 +510,7 @@ var questions = [
       "It merges the matching ClusterRole rules into the `cluster-admin` built-in role"
     ],
     answer: 0,
-    explanation: "Kubernetes uses ClusterRole aggregation to automatically combine rules from ClusterRoles matching specific label selectors into an aggregated ClusterRole. The built-in `admin`, `edit`, and `view` ClusterRoles use this mechanism to allow extensions to add their permissions to these default roles.",
+    explanation: "Kubernetes uses ClusterRole aggregation to automatically combine rules from ClusterRoles matching specific label selectors into an aggregated ClusterRole. The built-in `admin`, `edit`, and `view` ClusterRoles use this mechanism to allow extensions to add their permissions to these default roles.\n\nWhy other options are wrong:\n- B: It does not override the admin role; rules are merged additively\n- C: It does not grant permissions to ServiceAccounts; it extends the admin ClusterRole definition\n- D: The label aggregate-to-admin merges into admin, not cluster-admin\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles",
     verify: "kubectl get clusterrole admin -o yaml | grep aggregation"
   },
   {
@@ -526,7 +526,7 @@ var questions = [
       "`scheduler_binding_errors_total` tracking Pod scheduling errors"
     ],
     answer: 0,
-    explanation: "The `apiserver_request_total` metric tracks all API server requests and includes a `code` label indicating the HTTP status code. Filtering for code `401` identifies failed authentication attempts. The other metrics track kubelet, etcd, or scheduler operations, not API authentication.",
+    explanation: "The `apiserver_request_total` metric tracks all API server requests and includes a `code` label indicating the HTTP status code. Filtering for code `401` identifies failed authentication attempts. The other metrics track kubelet, etcd, or scheduler operations, not API authentication.\n\nWhy other options are wrong:\n- B: kubelet_http_requests_total tracks kubelet HTTP endpoints, not API server authentication\n- C: etcd_request_failed_total tracks etcd operation failures, not auth failures\n- D: scheduler_binding_errors_total tracks scheduling errors, not authentication failures\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /metrics | grep apiserver_request_total"
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "Disabling RBAC and using ABAC for simpler overall policy management"
     ],
     answer: 2,
-    explanation: "Least privilege means granting only the minimum permissions required to perform a task. Creating namespace-scoped Roles with specific verbs and resources for each workload prevents unnecessary access. Cluster-admin and shared ServiceAccounts violate this principle.",
+    explanation: "Least privilege means granting only the minimum permissions required to perform a task. Creating namespace-scoped Roles with specific verbs and resources for each workload prevents unnecessary access. Cluster-admin and shared ServiceAccounts violate this principle.\n\nWhy other options are wrong:\n- A: cluster-admin grants excessive permissions and violates least privilege\n- B: A shared ServiceAccount means all Pods have the same permissions, violating least privilege\n- D: Disabling RBAC removes fine-grained access control entirely\n\nReference: https://kubernetes.io/docs/concepts/security/rbac-good-practices/",
     verify: "kubectl get roles -A -o wide"
   },
   {
@@ -558,7 +558,7 @@ var questions = [
       "In a `kubernetes.io/dockerconfigjson` Secret via `imagePullSecrets` field"
     ],
     answer: 3,
-    explanation: "Kubernetes uses Secrets of type `kubernetes.io/dockerconfigjson` to store registry credentials. These are referenced in the Pod spec via `imagePullSecrets` or can be linked to a ServiceAccount. While kubelet and runtime configs can also hold credentials, the Kubernetes-native approach is through Secrets.",
+    explanation: "Kubernetes uses Secrets of type `kubernetes.io/dockerconfigjson` to store registry credentials. These are referenced in the Pod spec via `imagePullSecrets` or can be linked to a ServiceAccount. While kubelet and runtime configs can also hold credentials, the Kubernetes-native approach is through Secrets.\n\nWhy other options are wrong:\n- A: There is no imagePullConfigMap field; ConfigMaps are not used for registry credentials\n- B: Kubelet config can hold credentials but is not the Kubernetes-native approach\n- C: Container runtime config files are node-level and not managed via Kubernetes resources\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
     verify: "kubectl get secret regcred -o jsonpath='{.type}'"
   },
   {
@@ -574,7 +574,7 @@ var questions = [
       "No, because NetworkPolicies block all cross-namespace traffic by rule"
     ],
     answer: 0,
-    explanation: "A `podSelector` in a NetworkPolicy ingress rule only matches Pods within the same namespace as the policy. To allow traffic from a different namespace, you must add a `namespaceSelector` in the `from` block. Without it, only Pods in the `database` namespace with the matching label are permitted.",
+    explanation: "A `podSelector` in a NetworkPolicy ingress rule only matches Pods within the same namespace as the policy. To allow traffic from a different namespace, you must add a `namespaceSelector` in the `from` block. Without it, only Pods in the `database` namespace with the matching label are permitted.\n\nWhy other options are wrong:\n- B: A podSelector alone only matches Pods in the policy's own namespace, not other namespaces\n- C: Namespace name matching is irrelevant; podSelector does not cross namespace boundaries\n- D: NetworkPolicies do not blanket-block cross-namespace traffic; they require proper selectors\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
     verify: "kubectl describe networkpolicy -n database"
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "A PriorityClass with a high priority value assigned to the sensitive workload Pod"
     ],
     answer: 0,
-    explanation: "Using `nodeSelector` with `disk-encryption: enabled` ensures the scheduler only places the Pod on nodes with that label. Pod affinity rules match based on other Pods, not node labels. Taints repel Pods unless they have matching tolerations, which is the inverse approach.",
+    explanation: "Using `nodeSelector` with `disk-encryption: enabled` ensures the scheduler only places the Pod on nodes with that label. Pod affinity rules match based on other Pods, not node labels. Taints repel Pods unless they have matching tolerations, which is the inverse approach.\n\nWhy other options are wrong:\n- B: Pod affinity matches based on Pod labels on nodes, not node labels for hardware features\n- C: Taints repel Pods that lack tolerations; they do not attract specific workloads to nodes\n- D: PriorityClass affects preemption priority, not node selection\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
     verify: "kubectl get pods -o wide --field-selector spec.nodeName=<node>"
   },
   {
@@ -606,7 +606,7 @@ var questions = [
       "Public Helm repositories enforce RBAC-based access control on chart downloads"
     ],
     answer: 2,
-    explanation: "Helm values files included in the chart are plaintext and visible to anyone who can access the repository. If default values contain passwords or tokens, they are exposed. Sensitive values should be overridden at install time or managed with tools like Helm Secrets plugin.",
+    explanation: "Helm values files included in the chart are plaintext and visible to anyone who can access the repository. If default values contain passwords or tokens, they are exposed. Sensitive values should be overridden at install time or managed with tools like Helm Secrets plugin.\n\nWhy other options are wrong:\n- A: Helm does not automatically encrypt Secret values in chart packages\n- B: Helm chart templates can include Secret resource definitions\n- D: Public Helm repositories do not enforce RBAC; anyone with network access can download charts\n\nReference: https://helm.sh/docs/chart_best_practices/values/",
     verify: "helm show values <chart> | grep -i secret"
   },
   {
@@ -622,7 +622,7 @@ var questions = [
       "gVisor eliminates the need for Linux namespaces and cgroups for isolation"
     ],
     answer: 1,
-    explanation: "gVisor provides an additional layer of isolation by implementing a user-space kernel (Sentry) that intercepts and handles system calls from containers. This reduces the attack surface of the host kernel, as containers do not directly interact with it. It still uses namespaces and cgroups for resource isolation.",
+    explanation: "gVisor provides an additional layer of isolation by implementing a user-space kernel (Sentry) that intercepts and handles system calls from containers. This reduces the attack surface of the host kernel, as containers do not directly interact with it. It still uses namespaces and cgroups for resource isolation.\n\nWhy other options are wrong:\n- A: gVisor does not use dedicated physical CPU cores; it runs in user space\n- C: gVisor does not encrypt container filesystem data at rest\n- D: gVisor still uses Linux namespaces and cgroups alongside its user-space kernel\n\nReference: https://gvisor.dev/docs/",
     verify: "kubectl get runtimeclass"
   },
   {
@@ -638,7 +638,7 @@ var questions = [
       "Nothing, because `pods/exec` is not a valid subresource"
     ],
     answer: 0,
-    explanation: "The `pods/exec` subresource controls access to `kubectl exec` functionality. A ClusterRoleBinding with this permission grants Dave the ability to exec into any Pod in any namespace. This is a highly privileged permission that should be carefully restricted.",
+    explanation: "The `pods/exec` subresource controls access to `kubectl exec` functionality. A ClusterRoleBinding with this permission grants Dave the ability to exec into any Pod in any namespace. This is a highly privileged permission that should be carefully restricted.\n\nWhy other options are wrong:\n- B: pods/exec access is not restricted to self-created Pods; it applies to all Pods\n- C: pods/exec grants exec access, not log viewing (that would be pods/log)\n- D: pods/exec is a valid subresource in Kubernetes RBAC\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
     verify: "kubectl auth can-i create pods/exec --as=dave --all-namespaces"
   },
   {
@@ -654,7 +654,7 @@ var questions = [
       "Distributed tracing spans captured from the running application"
     ],
     answer: 0,
-    explanation: "Kubernetes audit logs record details about API requests including the user, timestamp, resource, verb, and response status. The `RequestResponse` level captures the full request and response bodies. This provides the forensic data needed to trace who deleted the ConfigMap and when.",
+    explanation: "Kubernetes audit logs record details about API requests including the user, timestamp, resource, verb, and response status. The `RequestResponse` level captures the full request and response bodies. This provides the forensic data needed to trace who deleted the ConfigMap and when.\n\nWhy other options are wrong:\n- B: Container logs capture application output, not API server request details\n- C: Prometheus metrics track counters and gauges, not individual API call details with user identity\n- D: Distributed tracing spans track application request flows, not Kubernetes API operations\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
     verify: "kubectl logs -n kube-system kube-apiserver-<node> | grep configmap"
   },
   {
@@ -670,7 +670,7 @@ var questions = [
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Projected tokens do expire; non-expiring tokens are the legacy behavior\n- C: Token expiration is time-based, not tied to Pod termination\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -686,7 +686,7 @@ var questions = [
       "Individual databases do not require any form of user authentication"
     ],
     answer: 2,
-    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.",
+    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies; the concern is blast radius, not securability\n- D: All databases require authentication regardless of whether they are shared or per-service\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -702,7 +702,7 @@ var questions = [
       "Nothing, because `watch` is not a valid RBAC verb for Secret resources"
     ],
     answer: 0,
-    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.",
+    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives updates, unlike list which is one-time\n- D: Watch is a valid RBAC verb for all resources including Secrets\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i watch secrets --as=system:serviceaccount:monitoring:prometheus -n monitoring"
   },
   {
@@ -718,7 +718,7 @@ var questions = [
       "Never, because Secrets mounted into running containers are immutable"
     ],
     answer: 2,
-    explanation: "When a Secret is mounted as a volume, the kubelet periodically syncs the mounted content with the API server. The update delay depends on the kubelet's sync period and cache propagation delay, typically up to a couple of minutes. Secrets mounted as environment variables require a Pod restart.",
+    explanation: "When a Secret is mounted as a volume, the kubelet periodically syncs the mounted content with the API server. The update delay depends on the kubelet's sync period and cache propagation delay, typically up to a couple of minutes. Secrets mounted as environment variables require a Pod restart.\n\nWhy other options are wrong:\n- A: Updates are not immediate; there is a kubelet sync delay\n- B: Volume-mounted Secrets update without Pod restart (unlike env var-mounted Secrets)\n- D: Mounted Secrets are updated by the kubelet; they are not immutable once mounted\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
     verify: "kubectl exec <pod> -- cat /etc/creds/<key>"
   },
   {
@@ -734,7 +734,7 @@ var questions = [
       "Kubernetes NetworkPolicies configured to target the etcd Pod traffic"
     ],
     answer: 1,
-    explanation: "Etcd peers communicate using mutual TLS (mTLS) with peer certificates. Each etcd member presents a certificate signed by a trusted CA, and peers verify each other's identity. This prevents unauthorized nodes from joining the etcd cluster and encrypts data in transit between members.",
+    explanation: "Etcd peers communicate using mutual TLS (mTLS) with peer certificates. Each etcd member presents a certificate signed by a trusted CA, and peers verify each other's identity. This prevents unauthorized nodes from joining the etcd cluster and encrypts data in transit between members.\n\nWhy other options are wrong:\n- A: RBAC policies are a Kubernetes concept; etcd uses its own auth mechanisms and TLS\n- C: IPsec tunnels from the CNI plugin are for Pod networking, not etcd peer communication\n- D: Kubernetes NetworkPolicies apply to Pod traffic, not etcd daemon communication\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#securing-etcd-clusters",
     verify: "kubectl -n kube-system get pod etcd-<node> -o yaml | grep peer"
   },
   {
@@ -750,7 +750,7 @@ var questions = [
       "Use a long-lived token to reduce the frequency of credential rotation"
     ],
     answer: 0,
-    explanation: "Short-lived tokens created via `kubectl create token` expire after a configurable duration, limiting the window of exposure if compromised. Long-lived tokens remain valid indefinitely, ConfigMaps are not encrypted, and `cluster-admin` violates least privilege.",
+    explanation: "Short-lived tokens created via `kubectl create token` expire after a configurable duration, limiting the window of exposure if compromised. Long-lived tokens remain valid indefinitely, ConfigMaps are not encrypted, and `cluster-admin` violates least privilege.\n\nWhy other options are wrong:\n- B: ConfigMaps are not encrypted and are worse than pipeline secret variables for storing tokens\n- C: cluster-admin violates least privilege and increases the impact of a token compromise\n- D: Long-lived tokens increase the window of exposure when compromised\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#token-requests",
     verify: "kubectl create token deploy-sa --duration=1h"
   },
   {
@@ -766,7 +766,7 @@ var questions = [
       "`cluster-admin` — grants full unrestricted access to every resource"
     ],
     answer: 2,
-    explanation: "The built-in `view` ClusterRole grants read-only access to most resources in a namespace. When bound via a ClusterRoleBinding, it allows viewing resources across all namespaces. The `admin` and `edit` roles grant modification permissions, and `cluster-admin` grants full access.",
+    explanation: "The built-in `view` ClusterRole grants read-only access to most resources in a namespace. When bound via a ClusterRoleBinding, it allows viewing resources across all namespaces. The `admin` and `edit` roles grant modification permissions, and `cluster-admin` grants full access.\n\nWhy other options are wrong:\n- A: admin grants read and write access, exceeding the read-only requirement\n- B: edit allows modification of resources, exceeding the read-only requirement\n- D: cluster-admin grants full unrestricted access, far exceeding what is needed\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles",
     verify: "kubectl describe clusterrole view"
   },
   {
@@ -782,7 +782,7 @@ var questions = [
       "Immutable containers do not need RBAC policies for access control purposes"
     ],
     answer: 2,
-    explanation: "Immutable containers prevent runtime modifications from persisting. If an attacker gains access and installs malware or a backdoor, the changes are lost when the container restarts. Combined with `readOnlyRootFilesystem`, this significantly reduces the persistence of attacks.",
+    explanation: "Immutable containers prevent runtime modifications from persisting. If an attacker gains access and installs malware or a backdoor, the changes are lost when the container restarts. Combined with `readOnlyRootFilesystem`, this significantly reduces the persistence of attacks.\n\nWhy other options are wrong:\n- A: Immutability does not inherently make containers run faster\n- B: Immutability does not encrypt filesystems; it prevents persistent modifications\n- D: Immutable containers still need RBAC for API access control\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -798,7 +798,7 @@ var questions = [
       "Remove the `capabilities` block entirely from the security context"
     ],
     answer: 1,
-    explanation: "Binding to ports below 1024 requires the `NET_BIND_SERVICE` capability. The most secure fix is to add only this specific capability while keeping `drop: [ALL]`. Running as root or privileged mode grants far more permissions than needed, and removing the capabilities block restores defaults.",
+    explanation: "Binding to ports below 1024 requires the `NET_BIND_SERVICE` capability. The most secure fix is to add only this specific capability while keeping `drop: [ALL]`. Running as root or privileged mode grants far more permissions than needed, and removing the capabilities block restores defaults.\n\nWhy other options are wrong:\n- A: privileged: true grants all capabilities, far exceeding the minimum needed\n- C: Running as root is overly permissive and unnecessary for port binding\n- D: Removing the capabilities block restores default capabilities but grants more than needed\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.containers[0].securityContext.capabilities}'"
   },
   {
@@ -814,7 +814,7 @@ var questions = [
       "The API server automatically downgrades the referenced ClusterRole to a namespace-scoped Role"
     ],
     answer: 1,
-    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism. Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources.",
+    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism. Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources.\n\nWhy other options are wrong:\n- A: Nodes are cluster-scoped; a namespace RoleBinding cannot effectively grant node permissions, and escalation prevention blocks this\n- C: Permissions are not silently ignored; the API server actively rejects the escalation attempt\n- D: The API server does not downgrade ClusterRoles to namespace-scoped Roles\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
     verify: "kubectl auth can-i create rolebindings --as=developer -n staging"
   },
   {
@@ -830,7 +830,7 @@ var questions = [
       "Only one authentication method can be configured and active at once"
     ],
     answer: 2,
-    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.",
+    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: There is no fixed order; all authenticators are tried and the first success wins\n- B: The order is not randomized; authenticators are tried deterministically\n- D: Multiple authentication methods can be configured and active simultaneously\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
     verify: "kubectl get pods -n kube-system kube-apiserver-<node> -o yaml | grep auth"
   },
   {
@@ -846,7 +846,7 @@ var questions = [
       "The container runtime selects the UID based on what the image specifies"
     ],
     answer: 1,
-    explanation: "Container-level `securityContext` settings override pod-level settings. The container with `runAsUser: 2000` runs as UID 2000, while other containers without a container-level override inherit the pod-level UID 1000. This allows fine-grained control per container.",
+    explanation: "Container-level `securityContext` settings override pod-level settings. The container with `runAsUser: 2000` runs as UID 2000, while other containers without a container-level override inherit the pod-level UID 1000. This allows fine-grained control per container.\n\nWhy other options are wrong:\n- A: Pod-level settings are defaults, not overrides; container-level takes precedence\n- C: Conflicting UIDs between pod and container levels are valid and do not cause errors\n- D: When a container-level runAsUser is set, the image's USER directive is overridden\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
     verify: "kubectl exec <pod> -c <container> -- id"
   },
   {
@@ -862,7 +862,7 @@ var questions = [
       "Egress defaults to whatever the namespace-level default network policy allows"
     ],
     answer: 0,
-    explanation: "When `Egress` is listed in `policyTypes` but no egress rules are provided, all egress traffic from the selected Pods is denied. The `policyTypes` field explicitly declares which directions the policy governs. Including `Egress` without rules creates a default-deny for egress on the selected Pods.",
+    explanation: "When `Egress` is listed in `policyTypes` but no egress rules are provided, all egress traffic from the selected Pods is denied. The `policyTypes` field explicitly declares which directions the policy governs. Including `Egress` without rules creates a default-deny for egress on the selected Pods.\n\nWhy other options are wrong:\n- B: Egress is not allowed when Egress is explicitly listed in policyTypes with no rules\n- C: Listing Egress in policyTypes means egress IS governed by this policy, so it is affected\n- D: There is no namespace-level default policy inheritance mechanism for NetworkPolicies\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o yaml | grep -A5 policyTypes"
   },
   {
@@ -878,7 +878,7 @@ var questions = [
       "It encrypts data with a public key; only the in-cluster controller decrypts"
     ],
     answer: 3,
-    explanation: "Sealed Secrets uses asymmetric encryption. Developers encrypt Secrets using the public key (available to anyone), producing a SealedSecret custom resource safe to commit to Git. Only the Sealed Secrets controller running in the cluster holds the private key to decrypt and create the actual Secret.",
+    explanation: "Sealed Secrets uses asymmetric encryption. Developers encrypt Secrets using the public key (available to anyone), producing a SealedSecret custom resource safe to commit to Git. Only the Sealed Secrets controller running in the cluster holds the private key to decrypt and create the actual Secret.\n\nWhy other options are wrong:\n- A: Sealed Secrets does not use encrypted Git branches; it uses CRDs in the same branch\n- B: Sealed Secrets creates actual Kubernetes Secrets in-cluster, not external vault references\n- C: Double base64 encoding provides no security benefit; Sealed Secrets uses asymmetric encryption\n\nReference: https://github.com/bitnami-labs/sealed-secrets",
     verify: "kubectl get sealedsecrets -A"
   },
   {
@@ -894,7 +894,7 @@ var questions = [
       "Enable verbose logging on the kubelet process to capture security context data"
     ],
     answer: 2,
-    explanation: "OPA Gatekeeper supports an audit mode that periodically evaluates existing resources against constraints. A constraint requiring `runAsNonRoot: true` would flag Pods currently running as root. Prometheus metrics do not expose security context details directly.",
+    explanation: "OPA Gatekeeper supports an audit mode that periodically evaluates existing resources against constraints. A constraint requiring `runAsNonRoot: true` would flag Pods currently running as root. Prometheus metrics do not expose security context details directly.\n\nWhy other options are wrong:\n- A: Manual daily review is not automated detection\n- B: kube_pod_container_status_running does not expose security context details like runAsUser\n- D: Verbose kubelet logging is not a structured or automated detection mechanism\n\nReference: https://open-policy-agent.github.io/gatekeeper/website/docs/audit/",
     verify: "kubectl get constraints -o yaml"
   },
   {
@@ -910,7 +910,7 @@ var questions = [
       "Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt"
     ],
     answer: 3,
-    explanation: "When a Secret referenced by a projected volume is deleted, the kubelet will fail to refresh the volume on its next sync cycle. The existing mounted data remains temporarily, but the kubelet eventually triggers an error and the Pod may fail or the volume becomes stale.",
+    explanation: "When a Secret referenced by a projected volume is deleted, the kubelet will fail to refresh the volume on its next sync cycle. The existing mounted data remains temporarily, but the kubelet eventually triggers an error and the Pod may fail or the volume becomes stale.\n\nWhy other options are wrong:\n- A: Mounted files do not immediately disappear; the kubelet uses cached data temporarily\n- B: The Pod is not immediately terminated; the kubelet logs errors but does not kill the Pod right away\n- C: There is no projected volume controller that recreates deleted Secrets\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
     verify: "kubectl describe pod <pod> | grep -A5 Volumes"
   },
   {
@@ -926,7 +926,7 @@ var questions = [
       "The user can view Pods and also execute commands inside them directly"
     ],
     answer: 3,
-    explanation: "RBAC rules are additive. The user gets `get` on `pods` (view Pod details) and `create` on `pods/exec` (execute commands inside Pods). These are independent permissions that combine. The `pods/exec` subresource requires `create` verb to initiate an exec session.",
+    explanation: "RBAC rules are additive. The user gets `get` on `pods` (view Pod details) and `create` on `pods/exec` (execute commands inside Pods). These are independent permissions that combine. The `pods/exec` subresource requires `create` verb to initiate an exec session.\n\nWhy other options are wrong:\n- A: pods/exec requires the create verb (which is granted), so exec is possible\n- B: RBAC rules are additive and do not conflict with each other\n- C: The user has get on pods, so they can view Pod details in addition to exec\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i create pods/exec --as=<user> -n <namespace>"
   },
   {
@@ -942,7 +942,7 @@ var questions = [
       "Tags cannot be used when pulling images from private container registries"
     ],
     answer: 0,
-    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.",
+    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags can be used with private registries; there is no such restriction\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
     verify: "kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[0].imageID}'"
   },
   {
@@ -958,7 +958,7 @@ var questions = [
       "The gateway cannot enforce per-service rate limiting on individual endpoints"
     ],
     answer: 1,
-    explanation: "Centralizing authentication at the gateway creates a single point of failure. If the gateway is compromised or bypassed, backend services that trust the gateway without performing their own verification are exposed. Defense in depth recommends each service also validates identity tokens.",
+    explanation: "Centralizing authentication at the gateway creates a single point of failure. If the gateway is compromised or bypassed, backend services that trust the gateway without performing their own verification are exposed. Defense in depth recommends each service also validates identity tokens.\n\nWhy other options are wrong:\n- A: TLS termination is handled by the gateway, not individual microservices in this pattern\n- C: Microservices behind a gateway can still use service mesh capabilities\n- D: API gateways can enforce per-service rate limiting; this is not a limitation\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -974,7 +974,7 @@ var questions = [
       "Yes, but the NetworkPolicy forces port 443 to open on the Pod's network interface"
     ],
     answer: 1,
-    explanation: "NetworkPolicy selects target Pods based on labels, not on the ports the containers actually expose. The policy will apply to any Pod matching the selector. However, even if traffic is allowed by the policy, it will be dropped at the network level if no process is listening on port 443.",
+    explanation: "NetworkPolicy selects target Pods based on labels, not on the ports the containers actually expose. The policy will apply to any Pod matching the selector. However, even if traffic is allowed by the policy, it will be dropped at the network level if no process is listening on port 443.\n\nWhy other options are wrong:\n- A: NetworkPolicy selects Pods by label, not by which ports are actively open\n- C: NetworkPolicies are continuously evaluated, not just at Pod creation time\n- D: NetworkPolicies do not force ports to open; they only control traffic flow\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o jsonpath='{.items[*].spec.podSelector}'"
   },
   {
@@ -990,7 +990,7 @@ var questions = [
       "Kata eliminates the need for enforcing Pod Security Standards on workloads"
     ],
     answer: 0,
-    explanation: "Kata Containers runs each Pod inside a lightweight virtual machine, using hardware virtualization (VT-x/AMD-V) to provide stronger isolation than Linux namespaces alone. This creates an additional boundary between the container and the host kernel, reducing the blast radius of container escapes.",
+    explanation: "Kata Containers runs each Pod inside a lightweight virtual machine, using hardware virtualization (VT-x/AMD-V) to provide stronger isolation than Linux namespaces alone. This creates an additional boundary between the container and the host kernel, reducing the blast radius of container escapes.\n\nWhy other options are wrong:\n- B: Kata does not encrypt container images at rest\n- C: Kata uses hardware virtualization in addition to Linux namespaces, not as a replacement\n- D: Kata provides additional isolation but does not eliminate the need for Pod Security Standards\n\nReference: https://katacontainers.io/",
     verify: "kubectl get runtimeclass kata -o yaml"
   },
   {
@@ -1006,7 +1006,7 @@ var questions = [
       "The kube-controller-manager handles the admission in place of the failed webhook"
     ],
     answer: 0,
-    explanation: "With `failurePolicy: Fail`, the API server rejects any request that cannot be evaluated by the webhook. This is the more secure option as it prevents resources from being created without policy evaluation. The alternative, `failurePolicy: Ignore`, would allow requests through.",
+    explanation: "With `failurePolicy: Fail`, the API server rejects any request that cannot be evaluated by the webhook. This is the more secure option as it prevents resources from being created without policy evaluation. The alternative, `failurePolicy: Ignore`, would allow requests through.\n\nWhy other options are wrong:\n- B: With failurePolicy: Fail, Pods are not created normally; requests are rejected\n- C: The API server does not queue requests; it immediately rejects or allows based on the failure policy\n- D: The kube-controller-manager does not handle admission in place of webhooks\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
     verify: "kubectl get validatingwebhookconfigurations -o yaml | grep failurePolicy"
   },
   {
@@ -1022,7 +1022,7 @@ var questions = [
       "Set a namespace annotation that hides Secrets from non-admin users by convention"
     ],
     answer: 1,
-    explanation: "RBAC has no deny rules; permissions are purely additive. Since Kubernetes 1.14, the built-in view ClusterRole excludes Secrets. However, creating a custom Role provides fine-grained control to specify exactly which resource types are accessible.",
+    explanation: "RBAC has no deny rules; permissions are purely additive. Since Kubernetes 1.14, the built-in view ClusterRole excludes Secrets. However, creating a custom Role provides fine-grained control to specify exactly which resource types are accessible.\n\nWhy other options are wrong:\n- A: RBAC has no deny rules; you cannot create a deny rule for Secrets\n- C: resourceNames restricts access to specific named resources, not excludes resource types\n- D: Namespace annotations do not control RBAC access to resources\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl describe clusterrole view | grep secrets"
   },
   {
@@ -1038,7 +1038,7 @@ var questions = [
       "That the container image is smaller than the registry size limit rule"
     ],
     answer: 2,
-    explanation: "Cosign (part of the Sigstore project) verifies that a container image was signed by a trusted key or identity. This confirms the image's provenance -- that it came from a known build pipeline and has not been tampered with. It does not scan for vulnerabilities or enforce runtime settings.",
+    explanation: "Cosign (part of the Sigstore project) verifies that a container image was signed by a trusted key or identity. This confirms the image's provenance -- that it came from a known build pipeline and has not been tampered with. It does not scan for vulnerabilities or enforce runtime settings.\n\nWhy other options are wrong:\n- A: Cosign verifies provenance, not vulnerabilities; use Trivy/Grype for CVE scanning\n- B: Cosign does not check filesystem configuration of container images\n- D: Cosign does not enforce size or format requirements for registry storage\n\nReference: https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
     verify: "cosign verify --key cosign.pub <image>"
   },
   {
@@ -1054,7 +1054,7 @@ var questions = [
       "In the Istio proxy (Envoy) container's access logs for denials"
     ],
     answer: 3,
-    explanation: "The Istio sidecar proxy (Envoy) handles all inbound and outbound traffic for the Pod. Authorization policy denials are logged in the Envoy access logs, which can be accessed via `kubectl logs <pod> -c istio-proxy`. The application container does not see denied requests.",
+    explanation: "The Istio sidecar proxy (Envoy) handles all inbound and outbound traffic for the Pod. Authorization policy denials are logged in the Envoy access logs, which can be accessed via `kubectl logs <pod> -c istio-proxy`. The application container does not see denied requests.\n\nWhy other options are wrong:\n- A: The application container does not see requests denied by the sidecar proxy\n- B: API server audit logs track Kubernetes API calls, not service mesh traffic\n- C: CoreDNS logs track DNS queries, not authorization policy denials\n\nReference: https://istio.io/latest/docs/tasks/observability/logs/access-log/",
     verify: "kubectl logs <pod> -c istio-proxy | grep RBAC"
   },
   {
@@ -1070,7 +1070,7 @@ var questions = [
       "The token is mounted into the Pod but it is expired immediately"
     ],
     answer: 2,
-    explanation: "The Pod spec's `automountServiceAccountToken` field takes precedence over the ServiceAccount's setting. This allows individual Pods to override the default behavior of their ServiceAccount. If the Pod spec explicitly sets it to `true`, the token will be mounted.",
+    explanation: "The Pod spec's `automountServiceAccountToken` field takes precedence over the ServiceAccount's setting. This allows individual Pods to override the default behavior of their ServiceAccount. If the Pod spec explicitly sets it to `true`, the token will be mounted.\n\nWhy other options are wrong:\n- A: The Pod spec setting takes precedence over the ServiceAccount setting, not the other way around\n- B: No error is raised; the Pod spec override is the designed behavior\n- D: The token is mounted normally and is not expired immediately\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#opt-out-of-api-credential-automounting",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.automountServiceAccountToken}'"
   },
   {
@@ -1086,7 +1086,7 @@ var questions = [
       "No, but `hostPath` volumes are allowed under the `baseline` profile as long as `readOnly: true` is set"
     ],
     answer: 1,
-    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. Note that the baseline profile does permit hostPath volumes. For log collectors requiring host access, the namespace must use the baseline profile or the Pods must be exempted from the restricted profile.",
+    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile also prohibits hostPath volumes — only the privileged profile allows them. For log collectors requiring host access, the namespace must use the privileged profile or the Pods must be exempted from the restricted/baseline profile.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile also prohibits hostPath volumes; hostPath is only allowed under the privileged profile\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl label ns logging pod-security.kubernetes.io/enforce=restricted --dry-run=server"
   },
   {
@@ -1102,7 +1102,7 @@ var questions = [
       "Impersonation requests are logged but do not grant actual API permissions"
     ],
     answer: 1,
-    explanation: "The `impersonate` verb allows a user to make API requests as any other user or group, including `system:masters` (cluster-admin). This effectively grants unlimited access and should be treated as equivalent to cluster-admin. It is one of the most privileged permissions in Kubernetes.",
+    explanation: "The `impersonate` verb allows a user to make API requests as any other user or group, including `system:masters` (cluster-admin). This effectively grants unlimited access and should be treated as equivalent to cluster-admin. It is one of the most privileged permissions in Kubernetes.\n\nWhy other options are wrong:\n- A: The impersonate verb on users/groups is cluster-scoped, not limited to a single namespace\n- C: Impersonation works with normal API requests, not just dry-run\n- D: Impersonation grants actual API permissions, not just logged requests\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
     verify: "kubectl auth can-i impersonate users --as=<user>"
   },
   {
@@ -1118,7 +1118,7 @@ var questions = [
       "Patch the vulnerability directly in the production environment without rollback"
     ],
     answer: 0,
-    explanation: "When a security vulnerability is discovered in a canary deployment, the immediate response is to roll back to the known-good version and stop routing traffic to the vulnerable Pods. This minimizes exposure. The vulnerability should then be fixed and re-tested before another deployment attempt.",
+    explanation: "When a security vulnerability is discovered in a canary deployment, the immediate response is to roll back to the known-good version and stop routing traffic to the vulnerable Pods. This minimizes exposure. The vulnerability should then be fixed and re-tested before another deployment attempt.\n\nWhy other options are wrong:\n- B: Increasing canary percentage exposes more users to the vulnerability\n- C: Blocking internet traffic alone does not fix the vulnerability or protect data already exposed\n- D: Patching in production without rollback risks further exposure during the fix\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment",
     verify: "kubectl rollout undo deployment/<name>"
   },
   {
@@ -1134,7 +1134,7 @@ var questions = [
       "RBAC Roles and RoleBindings scoped to each individual tenant namespace"
     ],
     answer: 3,
-    explanation: "Namespaces provide a scope for names but do not automatically isolate API access. RBAC Roles and RoleBindings must be configured per namespace to ensure each tenant's ServiceAccount can only access resources in its own namespace. Without RBAC, the `default` ServiceAccount may have broader access.",
+    explanation: "Namespaces provide a scope for names but do not automatically isolate API access. RBAC Roles and RoleBindings must be configured per namespace to ensure each tenant's ServiceAccount can only access resources in its own namespace. Without RBAC, the `default` ServiceAccount may have broader access.\n\nWhy other options are wrong:\n- A: Kubernetes namespaces do not automatically isolate API access; RBAC must be configured\n- B: Node affinity provides compute isolation but not API-level access control\n- C: gVisor provides runtime isolation but does not control API resource access between tenants\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i --list --as=system:serviceaccount:tenant-a:default -n tenant-b"
   },
   {
@@ -1150,7 +1150,7 @@ var questions = [
       "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
     ],
     answer: 1,
-    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.",
+    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster traffic is subject to NetworkPolicy enforcement; it is not always allowed\n- C: NetworkPolicies affect both internal and external traffic\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o jsonpath='{.items[*].spec.egress}'"
   },
   {
@@ -1166,7 +1166,7 @@ var questions = [
       "An annotation `scheduler.alpha.kubernetes.io/tolerations` on the Pod"
     ],
     answer: 1,
-    explanation: "To be scheduled on a node with a `NoSchedule` taint, a Pod must include a matching toleration. The toleration must match the taint's key, value, and effect. A `nodeSelector` or `nodeAffinity` alone does not override taints. Note that a toleration does not guarantee scheduling on that node; a `nodeSelector` can be added for that.",
+    explanation: "To be scheduled on a node with a `NoSchedule` taint, a Pod must include a matching toleration. The toleration must match the taint's key, value, and effect. A `nodeSelector` or `nodeAffinity` alone does not override taints. Note that a toleration does not guarantee scheduling on that node; a `nodeSelector` can be added for that.\n\nWhy other options are wrong:\n- A: A nodeSelector selects nodes by label but does not override taint repulsion\n- C: nodeAffinity selects nodes but does not override taints; a toleration is still required\n- D: The annotation-based toleration approach is deprecated in favor of the spec.tolerations field\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <node> | grep Taints"
   },
   {
@@ -1182,7 +1182,7 @@ var questions = [
       "Functions cannot access the Kubernetes API during cold start initialization phases"
     ],
     answer: 0,
-    explanation: "When a serverless function scales to zero and a new Pod is created on the next request, it must re-authenticate with any external secret stores or API endpoints. This increases cold-start latency and requires that tokens and credentials are still valid. Projected ServiceAccount tokens handle this by issuing fresh tokens.",
+    explanation: "When a serverless function scales to zero and a new Pod is created on the next request, it must re-authenticate with any external secret stores or API endpoints. This increases cold-start latency and requires that tokens and credentials are still valid. Projected ServiceAccount tokens handle this by issuing fresh tokens.\n\nWhy other options are wrong:\n- B: Secrets remain in etcd regardless of Pod scaling; they are not deleted when Pods scale down\n- C: Scale-to-zero does not affect RBAC configuration for the namespace\n- D: Functions can access the Kubernetes API during cold start via projected ServiceAccount tokens\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
     verify: "kubectl get ksvc -A"
   },
   {
@@ -1198,7 +1198,7 @@ var questions = [
       "Replace the automated monitoring with periodic manual security audit processes"
     ],
     answer: 1,
-    explanation: "Pod Security Admission supports namespace-level exemptions for known system workloads. Configuring exemptions for `kube-system` and other infrastructure namespaces, along with tuning alert thresholds, reduces false positives while maintaining visibility for application namespaces.",
+    explanation: "Pod Security Admission supports namespace-level exemptions for known system workloads. Configuring exemptions for `kube-system` and other infrastructure namespaces, along with tuning alert thresholds, reduces false positives while maintaining visibility for application namespaces.\n\nWhy other options are wrong:\n- A: Disabling all alerts removes security visibility entirely\n- C: Moving system workloads to a separate cluster is excessive and operationally complex\n- D: Manual audits are not scalable and do not provide continuous monitoring\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/#exemptions",
     verify: "kubectl get ns kube-system -o yaml | grep pod-security"
   },
   {
@@ -1214,7 +1214,7 @@ var questions = [
       "An error because wildcard characters are not valid in the `verbs` field"
     ],
     answer: 2,
-    explanation: "The wildcard `*` in the `verbs` field grants all verbs (`get`, `list`, `watch`, `create`, `update`, `patch`, `delete`) on the specified resource. However, subresources like `pods/exec` and `pods/log` are treated as separate resources in RBAC and must be listed explicitly in their own rule with their own verbs. The verb wildcard on `pods` does not extend to `pods/exec` or any other subresource.",
+    explanation: "The wildcard `*` in the `verbs` field grants all verbs (`get`, `list`, `watch`, `create`, `update`, `patch`, `delete`) on the specified resource. However, subresources like `pods/exec` and `pods/log` are treated as separate resources in RBAC and must be listed explicitly in their own rule with their own verbs. The verb wildcard on `pods` does not extend to `pods/exec` or any other subresource.\n\nWhy other options are wrong:\n- A: The wildcard grants all verbs, not just CRUD verbs (includes watch, patch, etc.)\n- B: Subresources like pods/exec must be listed separately; the verb wildcard on pods does not extend to them\n- D: The wildcard * is valid in the verbs field and does not cause an error\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",
     verify: "kubectl get role <role> -o yaml"
   },
   {
@@ -1230,7 +1230,7 @@ var questions = [
       "An HTTP 200 response with a plain-text username string in the body"
     ],
     answer: 2,
-    explanation: "The webhook token authenticator sends a `TokenReview` request to the external endpoint. The webhook must respond with HTTP 200 and a `TokenReview` response that includes the authenticated user's username, UID, and groups. This integrates Kubernetes with external identity systems.",
+    explanation: "The webhook token authenticator sends a `TokenReview` request to the external endpoint. The webhook must respond with HTTP 200 and a `TokenReview` response that includes the authenticated user's username, UID, and groups. This integrates Kubernetes with external identity systems.\n\nWhy other options are wrong:\n- A: The webhook does not return an HTTP redirect; it returns a TokenReview response\n- B: The webhook does not return a JWT; it returns a structured TokenReview API object\n- D: The response is not plain text; it must be a JSON TokenReview object\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#webhook-token-authentication",
     verify: "kubectl get --raw /apis/authentication.k8s.io/v1"
   },
   {
@@ -1246,7 +1246,7 @@ var questions = [
       "The volume is mounted as read-only for any process not in the group 2000"
     ],
     answer: 1,
-    explanation: "Setting `fsGroup: 2000` causes Kubernetes to change the group ownership of all files in mounted volumes to GID 2000 and set the `setgid` bit on directories. This ensures all containers in the Pod can access the files via the supplemental group, regardless of their primary group.",
+    explanation: "Setting `fsGroup: 2000` causes Kubernetes to change the group ownership of all files in mounted volumes to GID 2000 and set the `setgid` bit on directories. This ensures all containers in the Pod can access the files via the supplemental group, regardless of their primary group.\n\nWhy other options are wrong:\n- A: fsGroup does not encrypt filesystems; it changes group ownership\n- C: fsGroup adds a supplemental group for volume access, not a requirement for network access\n- D: fsGroup changes ownership, not mount permissions; processes can still write if they are in the group\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
     verify: "kubectl exec <pod> -- ls -la /mounted-volume"
   },
   {
@@ -1262,7 +1262,7 @@ var questions = [
       "The Pod's ServiceAccount does not have the required permission to read that Secret"
     ],
     answer: 0,
-    explanation: "Kubernetes Secrets are namespace-scoped resources. A Pod can only reference Secrets within its own namespace. The Secret `tls-cert` must be created in the `production` namespace for the Pod to mount it. Cross-namespace Secret access is not supported natively.",
+    explanation: "Kubernetes Secrets are namespace-scoped resources. A Pod can only reference Secrets within its own namespace. The Secret `tls-cert` must be created in the `production` namespace for the Pod to mount it. Cross-namespace Secret access is not supported natively.\n\nWhy other options are wrong:\n- B: The error message clearly states the Secret name, so a typo is not the issue here\n- C: TLS-type Secrets do not require special RBAC roles for Pod mounting\n- D: The Pod references the Secret in its spec; the SA permissions are for API access, not volume mounts\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
     verify: "kubectl get secrets -n production"
   },
   {
@@ -1278,7 +1278,7 @@ var questions = [
       "A secrets management system designed to replace native Kubernetes Secrets"
     ],
     answer: 2,
-    explanation: "SPIFFE (Secure Production Identity Framework For Everyone) defines a standard for workload identity, and SPIRE is its runtime implementation. It issues SPIFFE Verifiable Identity Documents (SVIDs) as X.509 certificates or JWT tokens, enabling workloads to authenticate to each other without application-level credential management.",
+    explanation: "SPIFFE (Secure Production Identity Framework For Everyone) defines a standard for workload identity, and SPIRE is its runtime implementation. It issues SPIFFE Verifiable Identity Documents (SVIDs) as X.509 certificates or JWT tokens, enabling workloads to authenticate to each other without application-level credential management.\n\nWhy other options are wrong:\n- A: SPIFFE is an identity framework, not a vulnerability scanner\n- B: SPIFFE provides workload identity, not network policy enforcement\n- D: SPIFFE issues cryptographic identities, not secrets management\n\nReference: https://spiffe.io/docs/latest/spiffe-about/overview/",
     verify: "kubectl get spiffeids -A"
   },
   {
@@ -1294,7 +1294,7 @@ var questions = [
       "The UID defined in the sidecar's container image Dockerfile entry"
     ],
     answer: 2,
-    explanation: "When a container does not specify its own `runAsUser`, it inherits the pod-level `securityContext` value. The `sidecar` container has no override, so it runs as UID 3000. The `app` container's setting of 1000 applies only to itself. Container-level settings do not affect sibling containers.",
+    explanation: "When a container does not specify its own `runAsUser`, it inherits the pod-level `securityContext` value. The `sidecar` container has no override, so it runs as UID 3000. The `app` container's setting of 1000 applies only to itself. Container-level settings do not affect sibling containers.\n\nWhy other options are wrong:\n- A: Without a container-level override, the sidecar inherits the pod-level UID, not root\n- B: Container-level settings do not propagate to sibling containers\n- D: The pod-level runAsUser overrides the Dockerfile USER directive when no container-level override exists\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
     verify: "kubectl exec <pod> -c sidecar -- id"
   },
   {
@@ -1310,7 +1310,7 @@ var questions = [
       "Env vars are visible in process listings, crash dumps, and logs; volume files are not"
     ],
     answer: 3,
-    explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.",
+    explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.\n\nWhy other options are wrong:\n- A: Neither env vars nor volume mounts are encrypted in transit between components by default\n- B: Volume mounts do not automatically encrypt Secret data; they use tmpfs with file permissions\n- C: Environment variables have no 256-character limit in Kubernetes\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
     verify: "kubectl exec <pod> -- env | grep SECRET"
   },
   {
@@ -1326,7 +1326,7 @@ var questions = [
       "UDP port 53 traffic is restricted only within the same namespace"
     ],
     answer: 1,
-    explanation: "An empty `namespaceSelector: {}` matches all namespaces. Combined with port 53 UDP, this allows DNS traffic to any Pod in any namespace, including CoreDNS in `kube-system`. To also reach external DNS servers, you would need an `ipBlock` rule in addition.",
+    explanation: "An empty `namespaceSelector: {}` matches all namespaces. Combined with port 53 UDP, this allows DNS traffic to any Pod in any namespace, including CoreDNS in `kube-system`. To also reach external DNS servers, you would need an `ipBlock` rule in addition.\n\nWhy other options are wrong:\n- A: An empty namespaceSelector matches all namespaces, not just kube-system\n- C: An empty namespaceSelector matches Pods in namespaces, not external IPs; ipBlock is needed for external DNS\n- D: An empty namespaceSelector matches all namespaces, not just the local namespace\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy allow-dns -o yaml"
   },
   {
@@ -1342,7 +1342,7 @@ var questions = [
       "`rest_client_requests_total{code=\"500\"}`"
     ],
     answer: 0,
-    explanation: "HTTP 403 Forbidden responses from the API server indicate authorization failures. The `apiserver_request_total` metric with the `code=\"403\"` label tracks these denied requests. This can be used in Prometheus alerting rules to detect excessive RBAC denials.",
+    explanation: "HTTP 403 Forbidden responses from the API server indicate authorization failures. The `apiserver_request_total` metric with the `code=\"403\"` label tracks these denied requests. This can be used in Prometheus alerting rules to detect excessive RBAC denials.\n\nWhy other options are wrong:\n- B: kubelet_runtime_operations_errors_total tracks container runtime errors, not authorization failures\n- C: etcd_server_proposals_failed_total tracks etcd consensus failures, not API auth\n- D: rest_client_requests_total tracks outbound client requests, not API server authorization\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /metrics | grep apiserver_request_total | grep 403"
   },
   {
@@ -1358,7 +1358,7 @@ var questions = [
       "Nothing, because `nonResourceURLs` is not a valid field in RBAC rules"
     ],
     answer: 2,
-    explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.",
+    explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.\n\nWhy other options are wrong:\n- A: nonResourceURLs access API server HTTP endpoints, not Pod health checks or metrics targets\n- B: nonResourceURLs are URL paths, not Kubernetes resource types across namespaces\n- D: nonResourceURLs is a valid field in ClusterRole rules\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",
     verify: "kubectl auth can-i get /healthz --as=<user>"
   },
   {
@@ -1374,7 +1374,7 @@ var questions = [
       "No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without using labels"
     ],
     answer: 2,
-    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. Since Kubernetes 1.22+, every namespace automatically gets the `kubernetes.io/metadata.name` label matching its name, so that auto-label is guaranteed and can be used in selectors. However, the question asks about a custom label beyond the auto-assigned one — if the NetworkPolicy's `namespaceSelector` uses a custom label (e.g., `name: app`), the `app` namespace must have that label applied manually.",
+    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. Since Kubernetes 1.22+, every namespace automatically gets the `kubernetes.io/metadata.name` label matching its name, so that auto-label is guaranteed and can be used in selectors. However, the question asks about a custom label beyond the auto-assigned one — if the NetworkPolicy's `namespaceSelector` uses a custom label (e.g., `name: app`), the `app` namespace must have that label applied manually.\n\nWhy other options are wrong:\n- A: kubernetes.io/name is not a standard auto-label; the auto-label is kubernetes.io/metadata.name (since 1.22)\n- B: app.kubernetes.io/managed-by: networkpolicy is not a standard label for namespace matching\n- D: While kubernetes.io/metadata.name exists since 1.22, the namespaceSelector still uses labels (that label), not a direct metadata.name field match\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
     verify: "kubectl get ns app --show-labels"
   },
   {
@@ -1390,7 +1390,7 @@ var questions = [
       "The update is rejected by the API server because the Secret is immutable"
     ],
     answer: 3,
-    explanation: "When a Secret has `immutable: true`, the API server rejects any update to the Secret's `data` or `stringData` fields. This protects against accidental or malicious modifications. To change the values, you must delete and recreate the Secret. Immutable Secrets also improve cluster performance by reducing API server watch load.",
+    explanation: "When a Secret has `immutable: true`, the API server rejects any update to the Secret's `data` or `stringData` fields. This protects against accidental or malicious modifications. To change the values, you must delete and recreate the Secret. Immutable Secrets also improve cluster performance by reducing API server watch load.\n\nWhy other options are wrong:\n- A: Updates are rejected, so there is no Pod restart triggered\n- B: Secrets are not versioned; the update is simply rejected\n- C: The immutable field is enforced by the API server, not advisory\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#secret-immutable",
     verify: "kubectl get secret <name> -o jsonpath='{.immutable}'"
   },
   {
@@ -1406,7 +1406,7 @@ var questions = [
       "It raises an alert to administrators but does not modify the cluster state"
     ],
     answer: 0,
-    explanation: "GitOps tools continuously reconcile the desired state in Git with the actual cluster state. When drift is detected, the tool reverts the resource to match the Git repository. This ensures that manual changes are automatically corrected, maintaining the Git repository as the single source of truth.",
+    explanation: "GitOps tools continuously reconcile the desired state in Git with the actual cluster state. When drift is detected, the tool reverts the resource to match the Git repository. This ensures that manual changes are automatically corrected, maintaining the Git repository as the single source of truth.\n\nWhy other options are wrong:\n- B: Secrets are not excluded from reconciliation by default in Flux or ArgoCD\n- C: GitOps tools update the existing resource, not create duplicate resources\n- D: GitOps tools actively reconcile state, not just alert; auto-correction is the default behavior\n\nReference: https://fluxcd.io/flux/concepts/",
     verify: "kubectl get events --field-selector reason=ReconciliationSucceeded"
   },
   {
@@ -1422,7 +1422,7 @@ var questions = [
       "Env vars and volume mounts with sensitive data remain accessible via kubectl"
     ],
     answer: 3,
-    explanation: "Completed Pods remain in the cluster until garbage collected. Their logs can still be viewed with `kubectl logs`, and `kubectl describe` shows their full spec including environment variables referencing Secrets. Setting `ttlSecondsAfterFinished` on the Job ensures timely cleanup.",
+    explanation: "Completed Pods remain in the cluster until garbage collected. Their logs can still be viewed with `kubectl logs`, and `kubectl describe` shows their full spec including environment variables referencing Secrets. Setting `ttlSecondsAfterFinished` on the Job ensures timely cleanup.\n\nWhy other options are wrong:\n- A: Completed Pods are not immediately removed; they persist until garbage collected or TTL expires\n- B: Volumes are not automatically encrypted at rest for completed Pods\n- C: Completed Pods can be inspected with kubectl describe and kubectl logs\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#ttl-mechanism-for-finished-jobs",
     verify: "kubectl get pods --field-selector=status.phase=Succeeded"
   },
   {
@@ -1438,7 +1438,7 @@ var questions = [
       "Grant cluster-admin access to the deployment pipeline service temporarily"
     ],
     answer: 1,
-    explanation: "Before routing production traffic to the green environment, the security team should verify that all container images are signed by trusted entities and pass admission policy checks (Pod Security Standards, OPA/Gatekeeper). This ensures the new deployment meets security requirements before it serves traffic.",
+    explanation: "Before routing production traffic to the green environment, the security team should verify that all container images are signed by trusted entities and pass admission policy checks (Pod Security Standards, OPA/Gatekeeper). This ensures the new deployment meets security requirements before it serves traffic.\n\nWhy other options are wrong:\n- A: Scanning the old blue environment does not validate the new green deployment\n- C: Disabling NetworkPolicies during transition weakens security\n- D: Granting cluster-admin to the pipeline violates least privilege\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",
     verify: "cosign verify --key cosign.pub <green-image>"
   },
   {
@@ -1454,7 +1454,7 @@ var questions = [
       "Scanning container images for expired or misconfigured SSL certificates"
     ],
     answer: 0,
-    explanation: "Cert-manager is a CNCF project that automates the management and issuance of TLS certificates in Kubernetes. It works with various issuers including Let's Encrypt, HashiCorp Vault, and Venafi. It handles certificate lifecycle including issuance, renewal, and revocation.",
+    explanation: "Cert-manager is a CNCF project that automates the management and issuance of TLS certificates in Kubernetes. It works with various issuers including Let's Encrypt, HashiCorp Vault, and Venafi. It handles certificate lifecycle including issuance, renewal, and revocation.\n\nWhy other options are wrong:\n- B: cert-manager manages TLS certificates for workloads, not RBAC authentication certificates\n- C: cert-manager does not encrypt etcd data; that requires EncryptionConfiguration\n- D: cert-manager does not scan images for certificate issues\n\nReference: https://cert-manager.io/docs/",
     verify: "kubectl get certificates -A"
   },
   {
@@ -1470,7 +1470,7 @@ var questions = [
       "The PDB is automatically adjusted by the controller to allow the drain to proceed"
     ],
     answer: 1,
-    explanation: "PodDisruptionBudgets prevent voluntary disruptions from reducing available replicas below the specified minimum. The `kubectl drain` command respects PDBs and will wait until the disruption can occur without violating the budget. This ensures security-critical workloads maintain availability.",
+    explanation: "PodDisruptionBudgets prevent voluntary disruptions from reducing available replicas below the specified minimum. The `kubectl drain` command respects PDBs and will wait until the disruption can occur without violating the budget. This ensures security-critical workloads maintain availability.\n\nWhy other options are wrong:\n- A: kubectl drain respects PDBs by default and will wait if the budget would be violated\n- C: Kubernetes does not support live migration of Pods between nodes\n- D: PDBs are not automatically adjusted; they are honored as configured\n\nReference: https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
     verify: "kubectl get pdb -o wide"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "The Pod enters a pending state until a runtime class value is assigned"
     ],
     answer: 1,
-    explanation: "A validating admission webhook that requires `runtimeClassName` will reject Pods that do not specify it. This is a common pattern for enforcing that all workloads explicitly declare their runtime, ensuring security-sensitive workloads use hardened runtimes like gVisor or Kata.",
+    explanation: "A validating admission webhook that requires `runtimeClassName` will reject Pods that do not specify it. This is a common pattern for enforcing that all workloads explicitly declare their runtime, ensuring security-sensitive workloads use hardened runtimes like gVisor or Kata.\n\nWhy other options are wrong:\n- A: The webhook rejects the Pod, so it is not created with a default runtime class\n- C: A validating webhook does not mutate Pod specs; that requires a mutating webhook\n- D: The Pod is rejected immediately, not put in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
     verify: "kubectl get validatingwebhookconfigurations -o yaml"
   },
   {
@@ -1502,7 +1502,7 @@ var questions = [
       "Traces show the full request path, helping identify compromised services"
     ],
     answer: 3,
-    explanation: "Distributed tracing captures the flow of requests across service boundaries. During a security incident, trace data reveals which services a request touched, the latency at each hop, and any anomalous patterns. This helps identify the compromised service and the extent of the breach.",
+    explanation: "Distributed tracing captures the flow of requests across service boundaries. During a security incident, trace data reveals which services a request touched, the latency at each hop, and any anomalous patterns. This helps identify the compromised service and the extent of the breach.\n\nWhy other options are wrong:\n- A: Traces do not encrypt data in transit; encryption is handled by mTLS or network-layer security\n- B: Traces complement audit logs but do not replace them for compliance purposes\n- C: Traces are observability data; they do not block or intercept malicious requests\n\nReference: https://opentelemetry.io/docs/concepts/observability-primer/",
     verify: "kubectl get pods -l app=otel-collector"
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "It restricts which groups are allowed to access the cluster at all"
     ],
     answer: 0,
-    explanation: "The `--oidc-groups-claim` flag tells the API server which claim in the OIDC JWT token contains the user's group memberships. These groups are then available for RBAC RoleBindings and ClusterRoleBindings, enabling group-based access control without managing individual user bindings.",
+    explanation: "The `--oidc-groups-claim` flag tells the API server which claim in the OIDC JWT token contains the user's group memberships. These groups are then available for RBAC RoleBindings and ClusterRoleBindings, enabling group-based access control without managing individual user bindings.\n\nWhy other options are wrong:\n- B: --oidc-groups-claim specifies the JWT claim name, not an OIDC scope\n- C: It maps JWT claims to group identities; it does not create Group API objects\n- D: It identifies groups in the token, not restricts which groups can access the cluster\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens",
     verify: "kubectl get pods -n kube-system kube-apiserver-<node> -o yaml | grep oidc"
   },
   {
@@ -1534,7 +1534,7 @@ var questions = [
       "Create a new namespace for each monthly token rotation from the payment provider"
     ],
     answer: 2,
-    explanation: "An external secrets operator (such as External Secrets Operator) syncs secrets from external vaults (HashiCorp Vault, AWS Secrets Manager, etc.) into Kubernetes Secrets. This automates rotation without requiring redeployment or manual intervention, and keeps the source of truth in the vault.",
+    explanation: "An external secrets operator (such as External Secrets Operator) syncs secrets from external vaults (HashiCorp Vault, AWS Secrets Manager, etc.) into Kubernetes Secrets. This automates rotation without requiring redeployment or manual intervention, and keeps the source of truth in the vault.\n\nWhy other options are wrong:\n- A: Hardcoding tokens in source code is insecure and requires redeployment for rotation\n- B: ConfigMaps are not encrypted and are less secure than Secrets for token storage\n- D: Creating a new namespace per rotation is unnecessary overhead and does not solve the rotation problem\n\nReference: https://external-secrets.io/latest/",
     verify: "kubectl get externalsecrets -A"
   },
   {
@@ -1550,7 +1550,7 @@ var questions = [
       "An empty list is returned because the `list` verb was not explicitly granted by Role"
     ],
     answer: 1,
-    explanation: "The `kubectl get configmaps` command uses the `list` verb, which is not granted by this Role. The `get` verb with `resourceNames` only works when the specific resource name is requested (e.g., `kubectl get configmap app-config`). Without `list`, the user cannot enumerate ConfigMaps.",
+    explanation: "The `kubectl get configmaps` command uses the `list` verb, which is not granted by this Role. The `get` verb with `resourceNames` only works when the specific resource name is requested (e.g., `kubectl get configmap app-config`). Without `list`, the user cannot enumerate ConfigMaps.\n\nWhy other options are wrong:\n- A: Only the named resource is accessible via get; list requires its own verb grant\n- C: get does not implicitly include list; they are separate verbs in RBAC\n- D: The request returns a Forbidden error (403), not an empty list\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
     verify: "kubectl auth can-i list configmaps --as=<user> -n <namespace>"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "That the image was signed by a trusted publisher and is untampered"
     ],
     answer: 3,
-    explanation: "Content trust (via Notary or similar signing frameworks) uses digital signatures to verify that an image was published by a trusted entity and has not been modified since signing. This addresses supply chain integrity but does not scan for vulnerabilities or enforce runtime security settings.",
+    explanation: "Content trust (via Notary or similar signing frameworks) uses digital signatures to verify that an image was published by a trusted entity and has not been modified since signing. This addresses supply chain integrity but does not scan for vulnerabilities or enforce runtime security settings.\n\nWhy other options are wrong:\n- A: Content trust verifies provenance and integrity, not vulnerability status\n- B: Content trust does not check image size or format requirements\n- C: Content trust does not inspect container runtime user configuration\n\nReference: https://docs.docker.com/engine/security/trust/",
     verify: "docker trust inspect <image>"
   },
   {
@@ -1582,7 +1582,7 @@ var questions = [
       "The `lookup` function only reads Secret metadata fields, not actual data"
     ],
     answer: 1,
-    explanation: "Helm's `lookup` function queries the Kubernetes API during template rendering. If a chart uses `lookup` to read Secrets, the user or ServiceAccount executing `helm install` must have `get` permissions on Secrets in the target namespace. This is a security consideration when granting Helm access.",
+    explanation: "Helm's `lookup` function queries the Kubernetes API during template rendering. If a chart uses `lookup` to read Secrets, the user or ServiceAccount executing `helm install` must have `get` permissions on Secrets in the target namespace. This is a security consideration when granting Helm access.\n\nWhy other options are wrong:\n- A: The lookup function reads data at render time; it does not cache Secret data in the release object\n- C: lookup functions are available by default in Helm 3, not disabled\n- D: The lookup function reads the full resource including data fields, not just metadata\n\nReference: https://helm.sh/docs/chart_template_guide/functions_and_pipelines/",
     verify: "helm install test-release <chart> --dry-run=server 2>&1"
   },
   {
@@ -1598,7 +1598,7 @@ var questions = [
       "The ClusterRoleBinding is created but marked as pending administrative review"
     ],
     answer: 1,
-    explanation: "Kubernetes RBAC prevents privilege escalation. A user or ServiceAccount can only create RoleBindings or ClusterRoleBindings that grant permissions they already possess. Since the pipeline's ServiceAccount does not have `cluster-admin`, it cannot create a ClusterRoleBinding granting that role.",
+    explanation: "Kubernetes RBAC prevents privilege escalation. A user or ServiceAccount can only create RoleBindings or ClusterRoleBindings that grant permissions they already possess. Since the pipeline's ServiceAccount does not have `cluster-admin`, it cannot create a ClusterRoleBinding granting that role.\n\nWhy other options are wrong:\n- A: RBAC escalation prevention blocks the creation of bindings granting unowned permissions\n- C: There is no built-in manual approval step for RBAC escalation attempts\n- D: The request is denied outright, not created in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
     verify: "kubectl auth can-i create clusterrolebindings --as=system:serviceaccount:<ns>:<sa>"
   },
 ];
