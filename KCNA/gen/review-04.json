@@ -1,15 +1,8 @@
 {
   "set": "04",
-  "round": 5,
+  "round": 6,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s04-q098",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The question asks which StatefulSet configuration parameter ensures at least 2 out of 3 pods are running during a rolling update, and the answer is `maxUnavailable: 1`. However, in Kubernetes 1.29 (the KCNA target version), MaxUnavailableStatefulSet is an alpha feature gate that is disabled by default. The default OrderedReady rolling update already updates one pod at a time, inherently keeping 2 of 3 running. The round-4 fix improved the explanation substantially to caveat the alpha status and note the default behavior, so the explanation is now accurate. The remaining issue is purely one of question design: a well-informed student may reject option B because the feature is alpha and off by default, even though B is the best option among the four choices. This is a minor exam-design concern rather than a factual error.",
-      "suggested_fix": "No code change required. The current explanation is thorough and correct. If desired, the question text could be lightly reframed to ask 'Which field, when the MaxUnavailableStatefulSet feature gate is enabled, explicitly controls the maximum number of unavailable pods during a rolling update?' to remove the ambiguity. Alternatively, accept the question as-is since the explanation sufficiently addresses the nuance."
-    }
-  ]
+  "issues_found": 0,
+  "issues": [],
+  "notes": "Round 6 reviewer incorrectly claimed Longhorn graduated from CNCF in Nov 2024. Verified via official CNCF projects page: Longhorn remains CNCF Incubating as of Feb 2026. The existing questions correctly state Longhorn is incubating and Rook is graduated. s04-q098 is observation-only (question already includes feature gate context)."
 }
