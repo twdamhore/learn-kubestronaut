@@ -490,6 +490,7 @@
     if (!text) return '';
     text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre>$2</pre>');
     text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+    text = text.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
     text = text.replace(/\n/g, '<br>');
     return text;
   }
