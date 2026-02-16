@@ -749,8 +749,8 @@ var questions = [
       "`kube_endpoint_address` with label `ready=\"true\"` from kube-state-metrics equal to zero for the Service",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
-    answer: 2,
-    explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label that indicates whether each address is ready. Counting addresses where `ready=\"true\"` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is a deprecated metric from older kube-state-metrics versions, now replaced by `kube_endpoint_address` with a `ready` label. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
+    answer: 1,
+    explanation: "`kube_endpoint_address_available` from kube-state-metrics exposes the number of ready addresses per Endpoints resource. Alerting when this value equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address` with a ready label is not a standard kube-state-metrics metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
     verify: null
   },
   {

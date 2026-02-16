@@ -1,36 +1,7 @@
 {
   "set": "06",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 4,
-  "issues": [
-    {
-      "id": "s06-q035",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The metric `scheduler_e2e_scheduling_duration_seconds` was deprecated in Kubernetes 1.19 and removed around Kubernetes 1.21-1.23. It does not exist in any currently supported Kubernetes version. The current metrics for measuring scheduling latency are `scheduler_scheduling_attempt_duration_seconds` (measures per-attempt scheduling latency) and `scheduler_pod_scheduling_sli_duration_seconds` (measures end-to-end pod scheduling latency including queue time, added in 1.28). Using a removed metric name in option A could mislead KCNA candidates studying current Kubernetes.",
-      "suggested_fix": "Change option A to: 'A. `scheduler_scheduling_attempt_duration_seconds`' and update the explanation to reference this metric. It measures the latency of each scheduling attempt (filtering + scoring + binding) and is the closest current equivalent to the removed e2e metric."
-    },
-    {
-      "id": "s06-q066",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "description": "The marked correct answer is B (v1.27 through v1.29, i.e., two minor versions back), but since Kubernetes 1.28, the kubelet version skew policy was relaxed to allow kubelet to be up to THREE minor versions older than kube-apiserver (for kubelet >= 1.25). With the API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. Option D (v1.26 through v1.29) is now the correct answer. The official Kubernetes version skew policy page confirms: 'kubelet may be up to three minor versions older than kube-apiserver' with the note that 'kubelet < 1.25 may only be up to two minor versions older.'",
-      "suggested_fix": "Change the answer index from 1 (option B) to 3 (option D). Update the explanation to: 'Since Kubernetes 1.28, the version skew policy allows kubelets to be up to three minor versions older than the API server (for kubelet >= 1.25). With API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server. Note: kubelets older than v1.25 are limited to a two-version skew.'"
-    },
-    {
-      "id": "s06-q083",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The `--pod-eviction-timeout` flag on kube-controller-manager was deprecated in Kubernetes 1.26 and removed in Kubernetes 1.27. While the question hedges with '(or equivalent setting)', the explanation references a 'default 5 minutes' which was the old default for that specific flag. In current Kubernetes (1.27+), node eviction behavior is controlled by the node lifecycle controller using taints (node.kubernetes.io/not-ready and node.kubernetes.io/unreachable with NoExecute effect) and Pod tolerations with tolerationSeconds. The default tolerationSeconds added by the DefaultTolerationSeconds admission controller is 300 seconds (5 minutes), which preserves similar behavior through a different mechanism.",
-      "suggested_fix": "Update the explanation to: 'The pod eviction timeout controls how long the node lifecycle controller waits before evicting Pods from NotReady nodes. In older Kubernetes versions, this was configured via the `--pod-eviction-timeout` flag (default 5 minutes). In current Kubernetes (1.27+), this behavior is managed through NoExecute taints and the default `tolerationSeconds` of 300 seconds applied by the admission controller. This grace period accounts for transient network issues and prevents unnecessary Pod disruption.'"
-    },
-    {
-      "id": "s06-q089",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The question asks 'Which CNCF project specifically addresses re-balancing Pod placement...' but Descheduler is a kubernetes-sigs project (kubernetes-sigs/descheduler), not a standalone CNCF project with its own maturity level. This is the same terminology issue that was fixed in q013 (changed from 'CNCF project' to 'Kubernetes ecosystem project') and q068 (changed to 'Kubernetes SIG project'). Using 'CNCF project' for Descheduler may confuse candidates who look for it in the CNCF landscape.",
-      "suggested_fix": "Change the question text to: 'Which Kubernetes ecosystem project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

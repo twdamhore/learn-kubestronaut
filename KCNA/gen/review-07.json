@@ -1,15 +1,7 @@
 {
   "set": "07",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s07-q086",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "Option C (index 2, the correct answer) states: 'The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and use a read-only root filesystem or seccompProfile'. The Pod Security Standards 'restricted' profile does NOT require a read-only root filesystem (`readOnlyRootFilesystem`). It requires: (1) runAsNonRoot: true, (2) allowPrivilegeEscalation: false, (3) capabilities.drop: ['ALL'] (with only NET_BIND_SERVICE allowed to be added back), and (4) seccompProfile.type set to RuntimeDefault or Localhost. Mentioning 'read-only root filesystem' in the option text is misleading because it suggests this is part of the restricted profile requirements, when in fact only the seccomp profile is required. The explanation text is correct and only mentions capabilities.drop and seccompProfile, but the option text itself could mislead students.",
-      "suggested_fix": "Change the option text from 'The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and use a read-only root filesystem or seccompProfile' to 'The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and set a `seccompProfile` (e.g., `RuntimeDefault`)' to accurately reflect the restricted PSS requirements."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

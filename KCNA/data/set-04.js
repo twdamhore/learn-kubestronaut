@@ -895,7 +895,7 @@ var questions = [
     ],
     answer: 0,
     explanation: "etcd is the sole source of truth for all Kubernetes cluster state, including pod definitions, services, secrets, and configuration. If etcd's storage becomes corrupted or unavailable, the kube-apiserver cannot read or write any cluster state. Running containers may continue executing, but no new operations (scheduling, scaling, updates) can occur until etcd is restored.",
-    verify: "kubectl get componentstatuses"
+    verify: "kubectl get --raw='/readyz?verbose'"
   },
   {
     id: "s04-q057",
@@ -1482,11 +1482,11 @@ var questions = [
     options: [
       "Only the current revision is retained; all previous revisions are immediately deleted after updates",
       "All 8 revisions are retained because Kubernetes never garbage collects ControllerRevision objects",
-      "5 revisions are retained; the 3 oldest non-current revisions are garbage collected automatically",
+      "6 ControllerRevision objects are retained (5 historical plus the current); the 3 oldest are garbage collected",
       "StatefulSets do not use ControllerRevision objects; they track updates via pod template hashes"
     ],
     answer: 2,
-    explanation: "StatefulSets use `ControllerRevision` objects to track revision history. The `revisionHistoryLimit` field (default 10) controls how many old revisions are retained. With a limit of 5, Kubernetes keeps the 5 most recent revisions plus the current one, garbage collecting older revisions. This is analogous to `revisionHistoryLimit` on Deployments with ReplicaSets.",
+    explanation: "StatefulSets use ControllerRevision objects to track revision history. The revisionHistoryLimit field (default 10) controls how many non-current (historical) revisions are retained. With a limit of 5 and 9 total revisions (1 initial + 8 updates), Kubernetes keeps 5 historical revisions plus the current one (6 total), garbage collecting the 3 oldest. This is analogous to revisionHistoryLimit on Deployments with ReplicaSets.",
     verify: "kubectl get controllerrevision -l app=<statefulset>"
   },
   {

@@ -1,22 +1,15 @@
 {
   "set": "08",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s08-q057",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "Option D (answer index 3) states 'OpenTelemetry is a CNCF incubating project providing vendor-neutral APIs and SDKs for traces, metrics, and logs'. OpenTelemetry graduated from the CNCF in early 2024. The functional description of OpenTelemetry is correct and it remains the correct answer, but calling it 'incubating' is factually outdated. Since CNCF project maturity levels are explicitly tested on the KCNA exam, this could mislead students.",
-      "suggested_fix": "Change option text from 'OpenTelemetry is a CNCF incubating project' to 'OpenTelemetry is a CNCF graduated project'. Update the explanation similarly if it references the incubating status."
-    },
-    {
       "id": "s08-q088",
-      "type": "wrong_explanation",
+      "type": "ambiguous",
       "severity": "moderate",
-      "description": "The explanation states: 'When combined with the restricted Pod Security Standard (which recommends this setting), the admission controller can reject Pods that do not set this field.' This is misleading. The PSS restricted profile does NOT enforce readOnlyRootFilesystem — it is only a recommendation, not a required control. The built-in Pod Security admission controller will not reject Pods that omit readOnlyRootFilesystem under the restricted profile. The answer itself (setting readOnlyRootFilesystem: true in securityContext) is correct for enforcing read-only root filesystems at the container level, but the claim about the PSS admission controller rejecting Pods without it is wrong.",
-      "suggested_fix": "Rewrite explanation to: 'The securityContext.readOnlyRootFilesystem: true setting makes the container root filesystem read-only at the kernel level via the OCI runtime. To enforce this across a namespace, teams can use policy engines like OPA Gatekeeper or Kyverno, since the built-in PSS restricted profile only recommends (but does not require) readOnlyRootFilesystem. Writable directories can still be provided via emptyDir volume mounts. NetworkPolicies control network traffic, not filesystem access.'"
+      "description": "The correct answer option (index 2) reads: 'Setting `readOnlyRootFilesystem: true` in `securityContext` combined with `restricted` PSS profile'. The phrase 'combined with restricted PSS profile' implies that the PSS restricted profile contributes to enforcing readOnlyRootFilesystem. However, the PSS restricted profile does NOT enforce readOnlyRootFilesystem — it only recommends it. A test-taker who knows this may hesitate to select this option because the restricted PSS profile will not reject Pods that omit readOnlyRootFilesystem. The explanation was corrected in a prior round and is now accurate, but the answer option text itself still misleadingly suggests PSS restricted helps enforce it. The option should reference only securityContext enforcement, or mention a policy engine (OPA Gatekeeper / Kyverno) as the namespace-wide enforcement mechanism instead of PSS restricted.",
+      "suggested_fix": "Change the answer option text to: 'Setting `readOnlyRootFilesystem: true` in the container `securityContext`, enforced cluster-wide via a policy engine like OPA Gatekeeper or Kyverno'. This removes the misleading PSS restricted reference from the option text. Alternatively, keep the current text but remove 'combined with `restricted` PSS profile', e.g.: 'Setting `readOnlyRootFilesystem: true` in each container's `securityContext` to make the root filesystem read-only at the kernel level'."
     }
   ]
 }

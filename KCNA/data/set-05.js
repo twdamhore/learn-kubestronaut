@@ -670,7 +670,7 @@ var questions = [
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3607 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -1371,7 +1371,7 @@ var questions = [
       "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
       "The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
       "A custom label matching the `namespaceSelector` in the policy, such as `name: app`",
-      "No label is needed because namespaces are matched by their name automatically"
+      "No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without using labels"
     ],
     answer: 2,
     explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. While Kubernetes 1.22+ adds the `kubernetes.io/metadata.name` label automatically, in general the `app` namespace must have a label that matches the selector defined in the NetworkPolicy's ingress `from` block.",

@@ -1,36 +1,22 @@
 {
   "set": "05",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s05-q001",
-      "type": "bad_verify",
-      "severity": "minor",
-      "description": "The verify command 'microk8s kubectl create clusterrolebinding test --clusterrole=pod-reader --user=jane --dry-run=server 2>&1' uses --clusterrole, which means it attempts to create a valid ClusterRoleBinding referencing a ClusterRole. This does NOT demonstrate the error scenario described in the question, which is binding a namespaced Role (not a ClusterRole) via a ClusterRoleBinding. The command would succeed (or fail only because 'pod-reader' ClusterRole doesn't exist), not because of the Role-vs-ClusterRole mismatch that the question tests.",
-      "suggested_fix": "Change verify to a command that demonstrates the actual error, e.g.: kubectl create clusterrolebinding test --clusterrole=nonexistent-role --user=jane --dry-run=server 2>&1  OR add a comment explaining that the kubectl CLI does not support --role for clusterrolebinding, so the error must be demonstrated via a YAML manifest with roleRef.kind set to Role."
-    },
-    {
-      "id": "s05-q025",
-      "type": "bad_verify",
-      "severity": "minor",
-      "description": "The verify command 'kubectl get --raw /healthz/encrypt' references a non-existent API server endpoint. There is no '/healthz/encrypt' health check endpoint in Kubernetes. The encryption-at-rest configuration does not expose a dedicated healthz sub-path.",
-      "suggested_fix": "Change verify to: kubectl get apiserver -o=jsonpath='{.spec.encryption}' --all-namespaces  OR  ps aux | grep kube-apiserver | grep encryption-provider-config  OR  kubectl -n kube-system get pod kube-apiserver-<node> -o yaml | grep encryption-provider-config"
-    },
-    {
       "id": "s05-q042",
-      "type": "bad_verify",
+      "type": "wrong_explanation",
       "severity": "minor",
-      "description": "The verify jsonpath uses '?(@.name==\"kube-api-access\")' but the actual projected volume name in Kubernetes includes a random hash suffix (e.g., 'kube-api-access-abc12'). The exact-match filter will not match any volume, returning an empty result.",
-      "suggested_fix": "Use a broader approach: kubectl get pod <pod> -o yaml | grep -A10 serviceAccountToken  OR use a jsonpath that doesn't rely on exact volume name matching: kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
+      "description": "The explanation states the default projected ServiceAccount token lifetime is 'approximately 1 hour (3607 seconds)'. The parenthetical value 3607 is not a recognized Kubernetes default. The standard default expirationSeconds for projected service account tokens is 3600 seconds (exactly 1 hour). The answer choice ('After 1 hour') is correct, but the explanation text contains an inaccurate specific number.",
+      "suggested_fix": "Change '(3607 seconds)' to '(3600 seconds)' in the explanation text."
     },
     {
-      "id": "s05-q099",
-      "type": "bad_verify",
+      "id": "s05-q086",
+      "type": "ambiguous",
       "severity": "minor",
-      "description": "The verify command 'helm template <chart> --dry-run=server 2>&1' is incorrect. The 'helm template' command renders charts locally and does not support '--dry-run=server'. The --dry-run flag on 'helm template' does not accept 'server' as a value. Furthermore, 'helm template' never contacts the Kubernetes API, so lookup functions always return empty data during template rendering. To actually test lookup behavior against a live cluster, you need 'helm install' or 'helm upgrade' with --dry-run=server.",
-      "suggested_fix": "Change verify to: helm install test-release <chart> --dry-run=server 2>&1  (this contacts the API server and exercises lookup functions while not actually installing)"
+      "description": "The question asks which label must be present on the `app` namespace for a namespaceSelector to match it. Option C ('A custom label matching the namespaceSelector in the policy, such as name: app') is marked correct, and option D ('No label is needed because namespaces are matched by their name automatically') is intended to be wrong. However, since Kubernetes 1.22+ (and the review targets 1.29+), all namespaces automatically receive the label `kubernetes.io/metadata.name: <name>`. A NetworkPolicy namespaceSelector CAN use this built-in label, meaning no manual labeling is required. The explanation itself acknowledges this: 'While Kubernetes 1.22+ adds the kubernetes.io/metadata.name label automatically'. This makes option D partially defensible for modern Kubernetes clusters, creating ambiguity.",
+      "suggested_fix": "Reword option D to be clearly wrong, e.g.: 'No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without labels'. Alternatively, clarify in the question that the policy uses a custom label like 'team: app' rather than the auto-assigned name label."
     }
   ]
 }

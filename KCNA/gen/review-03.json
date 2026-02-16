@@ -1,36 +1,15 @@
 {
   "set": "03",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s03-q037",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'To create an internal AWS NLB, you use a LoadBalancer Service with the aws-load-balancer-internal annotation set to true.' However, the annotation service.beta.kubernetes.io/aws-load-balancer-internal: true alone creates an internal Classic Load Balancer (CLB), not a Network Load Balancer (NLB). To create an NLB, the additional annotation service.beta.kubernetes.io/aws-load-balancer-type: nlb is required. The question text correctly asks for 'an internal-only load balancer' without specifying NLB, but the explanation incorrectly introduces the NLB claim. Additionally, this annotation is deprecated since AWS Load Balancer Controller v2.2.0 in favor of service.beta.kubernetes.io/aws-load-balancer-scheme: internal.",
-      "suggested_fix": "Change the explanation from 'To create an internal AWS NLB' to 'To create an internal AWS load balancer' to match the question text and avoid the inaccurate NLB claim. Also remove the NLB references in the distractors' explanations."
-    },
-    {
-      "id": "s03-q025",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'Rolling back to revision 0 is invalid and does not change the Service type.' However, `helm rollback <release> 0` is valid Helm syntax — when the revision argument is 0, Helm rolls back to the previous release. The statement should instead say that rolling back to the previous release would not introduce the new Service type value, not that the command is invalid.",
-      "suggested_fix": "Change 'Rolling back to revision 0 is invalid' to 'Rolling back to revision 0 (the previous release) would restore the old values and not set the new Service type.'"
-    },
-    {
-      "id": "s03-q034",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The question text was updated to say 'requests to api.example.com time out or fail to connect' but the explanation still contains the leftover phrase 'When it does arrive at a wrong server, a 404 is a common symptom.' This is inconsistent with the question text which describes timeouts/connection failures, not 404 responses. The explanation should match the updated question symptom.",
-      "suggested_fix": "Replace 'When it does arrive at a wrong server, a 404 is a common symptom.' with 'When it does arrive at a wrong server, a timeout or connection failure is the expected result.' to match the question text."
-    },
-    {
       "id": "s03-q047",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states that 'kube_endpoint_address_available is not a standard metric name.' This is inaccurate — kube_endpoint_address_available was a real kube-state-metrics metric (type Gauge) that existed alongside kube_endpoint_address_not_ready. These metrics were deprecated in 2022 and later removed in favor of the kube_endpoint_address metric with a ready label. Saying it is 'not a standard metric name' could confuse students who encounter it in older documentation or clusters running older kube-state-metrics versions.",
-      "suggested_fix": "Change 'kube_endpoint_address_available is not a standard metric name' to 'kube_endpoint_address_available is a deprecated and removed metric from older kube-state-metrics versions, replaced by kube_endpoint_address with a ready label.'"
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The marked answer (option C, index 2) references `kube_endpoint_address` with label `ready=\"true\"` — this metric does not exist in standard kube-state-metrics. The actual kube-state-metrics metrics for Endpoints are `kube_endpoint_address_available` (gauge: number of ready addresses) and `kube_endpoint_address_not_ready` (gauge: number of not-ready addresses). These metrics are NOT deprecated in current kube-state-metrics (v2.10+). Option B (`kube_endpoint_address_available` with a threshold of zero) references a real, current metric that directly solves the use case. The explanation's claim that `kube_endpoint_address_available` is 'a deprecated metric from older kube-state-metrics versions, now replaced by kube_endpoint_address with a ready label' is factually incorrect on both counts: the metric is not deprecated, and its alleged replacement does not exist. Note: kube-state-metrics does expose `kube_endpointslice_endpoints` with a `ready` label for EndpointSlice resources, but this is a different metric name than what option C states.",
+      "suggested_fix": "Change the answer index from 2 to 1 (option B). Update the explanation to: '`kube_endpoint_address_available` from kube-state-metrics exposes the number of ready addresses per Endpoints resource. Alerting when this value equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address` with a ready label is not a standard kube-state-metrics metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.'"
     }
   ]
 }

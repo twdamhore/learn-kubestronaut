@@ -1406,7 +1406,7 @@ var questions = [
     options: [
       "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace",
       "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent writes",
-      "Setting `readOnlyRootFilesystem: true` in `securityContext` combined with `restricted` PSS profile",
+      "Setting `readOnlyRootFilesystem: true` in each container's `securityContext` to make the root filesystem read-only",
       "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
     ],
     answer: 2,

@@ -1,36 +1,22 @@
 {
   "set": "10",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s10-q002",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The option labels are still out of order in the source file (A, C, B, D instead of A, B, C, D). The fixes-10.json has the corrected order but the source file has not been updated. The answer index 1 points to option label 'C' which is factually correct: PSA enforce mode rejects pods at the pod-creation level, so the Deployment object is created but the ReplicaSet fails to create pods. No content issue, purely cosmetic.",
-      "suggested_fix": "Apply the option reordering from fixes-10.json so options read A, B, C, D in sequence."
-    },
-    {
-      "id": "s10-q004",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "The answer claims '4 pods schedule (2 per available zone) and 2 remain Pending'. This count appears incorrect under standard topology spread behavior. With maxSkew:1, zone-c has 1 existing pod (still counted even though its node is NotReady). Zones a and b can each reach 2 pods (skew from zone-c's 1 would be 2-1=1, within maxSkew). That yields 2+2+1=5 running pods total with 1 Pending, not 4 scheduled and 2 Pending. The answer's count of '4' seems to exclude the existing zone-c pod, but the explanation explicitly states that the zone-c pod 'counts in the skew calculation.' The exact outcome also depends on Kubernetes version (nodeTaintsPolicy defaults changed in 1.26) and whether the zone-c pod has been evicted by the unreachable NoExecute taint. Options are also still out of order (A, B, D, C).",
-      "suggested_fix": "Revise the answer to state that 5 of 6 replicas are running (2 in zone-a, 2 in zone-b, 1 already in zone-c) with 1 Pending, or explicitly state the assumption that the zone-c pod has been evicted. Also reorder options to A, B, C, D."
-    },
-    {
-      "id": "s10-q037",
+      "id": "s10-q020",
       "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'With 3 completions, 2 running, and 2 newly failed, the controller will start 2 new pods (after backoff) to reach 4 parallel.' This intermediate state description is slightly misleading. Before the failure event, there were 3 completed + 4 running = 7 pods total (since parallelism=4). After 2 of the 4 running pods fail: 3 completed, 2 still running, 2 failed. The controller then creates 2 replacement pods (after backoff) to restore parallelism to 4. The answer (D) reaches the correct conclusion but the explanation's state accounting could be clearer about the starting state of 4 running pods.",
-      "suggested_fix": "Clarify the explanation: 'With 3 completions and 4 running pods (full parallelism), 2 of the running pods fail simultaneously. This leaves 3 completed, 2 still running, and 2 failed (total failure count now 2 of 6 limit). The controller creates 2 replacement pods with exponential backoff delay to restore parallelism to 4.'"
+      "severity": "moderate",
+      "description": "The question states that resolving the FQDN `api-service.team-b.svc.cluster.local` returns NXDOMAIN, while the short name `api-service.team-b` succeeds. The explanation correctly describes that ndots:5 causes search-domain expansion for names with fewer than 5 dots (the FQDN has 4 dots). However, the premise is flawed: standard glibc/musl resolvers try all search-domain expansions first and then fall back to the literal name. So the FQDN query would eventually succeed (just after wasted search-domain lookups), not return NXDOMAIN permanently. Additionally, option A's text says 'the FQDN bypasses expansion' which directly contradicts the explanation, which correctly states the FQDN does NOT bypass expansion because 4 < ndots:5. The explanation's claim that spurious lookups 'can return NXDOMAIN or mask the correct result' is misleading for most resolver implementations.",
+      "suggested_fix": "Rewrite option A to say something like: 'The pod's ndots:5 setting causes search-domain expansion even for the seemingly-qualified FQDN (4 dots < 5), and the resolver's first attempts with appended search domains fail; a trailing dot would force absolute resolution.' Also consider adjusting the question premise to describe slow resolution or excessive DNS queries rather than a hard NXDOMAIN failure, since the literal name is eventually tried as a fallback in most resolvers."
     },
     {
       "id": "s10-q070",
-      "type": "ambiguous",
+      "type": "wrong_explanation",
       "severity": "minor",
-      "description": "Options A ('EndpointSlice controller takes time to propagate new endpoints to kube-proxy on all nodes, creating stale routing windows') and C ('kube-proxy iptables/IPVS rules on each node update asynchronously after EndpointSlice changes, so stale DNAT rules briefly route traffic to old blue pod IPs') describe the same root cause from two closely related perspectives. A focuses on the propagation source (EndpointSlice controller latency), while C focuses on the consumer (kube-proxy stale rules). The distinction is subtle enough that both could be considered correct. The answer (A, index 0) is a reasonable primary choice but a student could reasonably argue for C. Additionally, the 503 error mechanism in a blue-green switch is nuanced: the blue pods are NOT deleted during the selector switch, so stale rules pointing to blue pods would still be served normally -- the 503s more precisely occur if kube-proxy has a transient state where the old endpoints are removed but new ones are not yet programmed.",
-      "suggested_fix": "Make option C more distinctly wrong by describing a clearly different (incorrect) mechanism, or refine the correct answer to combine both perspectives."
+      "description": "The explanation states that during the blue-green Service selector switch, 'some nodes may still have rules pointing to the old blue pod IPs while the blue pods are no longer selected. Requests hitting stale rules during this window receive 503 errors.' This is misleading because the blue pods are still running and healthy -- they just are no longer selected by the Service. Stale kube-proxy rules pointing to blue pods would still reach live, responsive blue pods and receive valid responses (just from the old version), not 503 errors. The actual cause of 503s is the brief transient window during which kube-proxy has removed old endpoints but has not yet programmed new green endpoints, leaving zero backends for the Service on that node.",
+      "suggested_fix": "Revise the explanation to: 'During the propagation window, kube-proxy on some nodes may have removed the old blue pod endpoints but not yet programmed the new green pod endpoints. Requests arriving during this brief gap find no valid backends and receive 503 errors. This is inherent to the eventual consistency of endpoint propagation across nodes.'"
     }
   ]
 }

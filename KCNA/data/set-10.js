@@ -309,16 +309,16 @@ var questions = [
     id: "s10-q020",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "A cluster uses CoreDNS for service discovery. A pod in namespace `team-a` tries to resolve `api-service.team-b.svc.cluster.local` but receives `NXDOMAIN`. The service exists and has endpoints. Running `nslookup api-service.team-b` from the same pod succeeds. What is the most likely cause of the FQDN resolution failure?",
+    text: "A cluster uses CoreDNS for service discovery. A pod in namespace `team-a` tries to resolve `api-service.team-b.svc.cluster.local` but resolving the FQDN is significantly slower than expected, with DNS debug logs showing unnecessary search-domain lookups. The service exists and has endpoints. Running `nslookup api-service.team-b` from the same pod succeeds quickly. What is the most likely cause of the slow FQDN resolution?",
     diagram: null,
     options: [
-      "A. The pod's `ndots:5` setting resolves the short name via search domains, but the FQDN bypasses expansion and lacks a trailing dot",
+      "A. The pod's `ndots:5` setting causes search-domain expansion even for the seemingly-qualified FQDN (4 dots < 5), and a trailing dot would force absolute resolution",
       "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from the `team-a` namespace pods",
       "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed zone list",
       "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
     ],
     answer: 0,
-    explanation: "In Kubernetes, the default `ndots` value is 5. The resolver counts dots in the queried name: if fewer than 5, it first tries appending each search domain before falling back to the literal name. The short name `api-service.team-b` has 1 dot (< 5), so search domains are appended, and one combination — `api-service.team-b.svc.cluster.local` — resolves correctly. However, the seemingly-qualified name `api-service.team-b.svc.cluster.local` has only 4 dots (still < 5), so the resolver prepends search-domain expansions like `api-service.team-b.svc.cluster.local.team-a.svc.cluster.local` before trying the literal string. These spurious lookups can return NXDOMAIN or mask the correct result. Appending a trailing dot (`api-service.team-b.svc.cluster.local.`) marks the name as an absolute FQDN, bypassing all search-domain expansion regardless of `ndots`.",
+    explanation: "In Kubernetes, the default `ndots` value is 5. The resolver counts dots in the queried name: if fewer than 5, it first tries appending each search domain before falling back to the literal name. The short name `api-service.team-b` has 1 dot (< 5), so search domains are appended, and one combination — `api-service.team-b.svc.cluster.local` — resolves quickly. However, the seemingly-qualified name `api-service.team-b.svc.cluster.local` has only 4 dots (still < 5), so the resolver first tries search-domain expansions like `api-service.team-b.svc.cluster.local.team-a.svc.cluster.local`, each returning NXDOMAIN, before eventually falling back to the literal name which does resolve. This causes significantly slower resolution due to multiple unnecessary DNS round-trips. Appending a trailing dot (`api-service.team-b.svc.cluster.local.`) marks the name as an absolute FQDN, bypassing all search-domain expansion regardless of `ndots` and resolving immediately.",
     verify: "kubectl exec <pod-name> -n team-a -- cat /etc/resolv.conf && kubectl exec <pod-name> -n team-a -- nslookup api-service.team-b.svc.cluster.local."
   },
   {
@@ -1118,7 +1118,7 @@ var questions = [
       "D. The green pods' readiness probes have not yet been verified by the EndpointSlice controller at the moment of the selector switch"
     ],
     answer: 0,
-    explanation: "When the Service selector is updated, the EndpointSlice controller detects the change, computes new endpoints (green pods), and propagates them. However, kube-proxy on each node watches EndpointSlice changes and updates iptables/IPVS rules asynchronously. During this propagation window (typically milliseconds to a few seconds), some nodes may still have rules pointing to the old blue pod IPs while the blue pods are no longer selected. Requests hitting stale rules during this window receive 503 errors. This is inherent to the eventual consistency of endpoint propagation.",
+    explanation: "During the propagation window, kube-proxy on some nodes may have removed the old blue pod endpoints but not yet programmed the new green pod endpoints. Requests arriving during this brief gap find no valid backends and receive 503 errors. This is inherent to the eventual consistency of endpoint propagation across nodes.",
     verify: "kubectl get endpointslices -l kubernetes.io/service-name=<svc-name> -o yaml && kubectl describe svc <svc-name>"
   },
   {

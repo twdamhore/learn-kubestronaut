@@ -1,22 +1,7 @@
 {
   "set": "01",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 2,
-  "issues": [
-    {
-      "id": "s01-q031",
-      "type": "bad_verify",
-      "severity": "minor",
-      "description": "The verify command contains a literal placeholder `<pod-name>` that would fail if executed: `microk8s kubectl describe pod <pod-name> | grep -A5 Events`. Unlike other verify commands in this set that use concrete resource names or list-style queries, this one requires manual substitution and would produce a shell error due to the angle brackets being interpreted as redirection operators.",
-      "suggested_fix": "Replace the verify command with a generic query that works without substitution, such as: `microk8s kubectl get pods --field-selector=status.phase=Pending -o wide` or `microk8s kubectl get events --field-selector reason=Failed --sort-by=.metadata.creationTimestamp`."
-    },
-    {
-      "id": "s01-q047",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states '`etcd` upgrades are typically handled separately but do not need to be first.' This is misleading. In kubeadm-managed clusters (the most common setup), `kubeadm upgrade apply` upgrades etcd BEFORE kube-apiserver because a newer kube-apiserver may require a newer etcd version. The Kubernetes version skew policy specifies supported etcd versions per kube-apiserver release. The marked answer (kube-apiserver first) is still the best choice among the given options because option D's reasoning ('new data schema') is incorrect, and the KCNA curriculum teaches kube-apiserver as the first control plane component to upgrade. However, the explanation should not claim etcd does not need to be first.",
-      "suggested_fix": "Change the etcd sentence in the explanation to: '`etcd` upgrades are often performed before the API server (as kubeadm does automatically), but etcd is sometimes considered a backing store rather than a control plane component proper. Among the core control plane components (API server, controller manager, scheduler), the API server should be upgraded first.'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

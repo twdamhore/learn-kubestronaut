@@ -1,22 +1,15 @@
 {
   "set": "09",
-  "round": 2,
+  "round": 3,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 1,
   "issues": [
-    {
-      "id": "s09-q009",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The explanation states: 'The `restricted` profile requires containers to run as non-root, drop all capabilities, and use a read-only root filesystem among other constraints.' The Pod Security Standards (PSS) restricted profile does NOT enforce readOnlyRootFilesystem. It is listed only as a recommendation/best practice in the PSS documentation, not as a required control. The restricted profile enforces: runAsNonRoot, dropping ALL capabilities (only NET_BIND_SERVICE may be added back), seccompProfile must be set, hostPath/hostNetwork/hostPID/hostIPC are forbidden, privilege escalation is blocked, etc. But readOnlyRootFilesystem is not among the enforced fields. The answer itself (index 1, Pod Security Admission with restricted profile) is correct for enforcing non-root, but the explanation overclaims what the restricted profile requires.",
-      "suggested_fix": "Change the explanation to: 'Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and set a Seccomp profile, among other constraints. It can be applied at the namespace level using labels.' Remove the mention of 'read-only root filesystem' from the enforced requirements."
-    },
     {
       "id": "s09-q020",
       "type": "ambiguous",
       "severity": "moderate",
-      "description": "Option B runs `helm rollback my-release 0` and option C runs `helm rollback my-release` (no revision). Per the Helm documentation and the review guidelines, `helm rollback RELEASE 0` is valid syntax that rolls back to the previous release -- NOT the 'initial installation revision' as option B claims. So option B's description is factually wrong about what revision 0 means, but the command itself would achieve the same result as option C (rolling back to the previous revision). Furthermore, in Helm 3.x, `helm rollback RELEASE` without a revision argument may not work in all versions -- some versions require the REVISION argument and return an error when it is omitted, while newer versions (3.12+) accept it and default to the previous revision. This creates ambiguity: option B has a working command but wrong description, and option C has a correct description but the command may fail depending on Helm version. A well-informed test-taker could reasonably argue for either answer.",
-      "suggested_fix": "Rewrite option B to clearly distinguish it from option C. For example, change option B to: 'Run `helm rollback my-release 1` to roll back to the first revision (initial install)' -- this makes option B unambiguously different (it targets a specific revision, which may or may not be what is wanted depending on how many upgrades happened). Then keep option C as the correct answer. Alternatively, change option C to use `helm rollback my-release 0` and update the explanation to note that revision 0 is a special value meaning 'previous release.'"
+      "description": "The marked answer (index 2, option C) uses `helm rollback my-release` with no REVISION argument. In Helm 3.x, `helm rollback` requires a RELEASE name and takes an optional REVISION positional argument. However, the behavior when REVISION is omitted varies across Helm 3 minor versions: some versions return an error ('requires 2 arguments'), while newer versions (3.12+) accept it and default to the previous revision. Per the review guidelines, `helm rollback RELEASE 0` is the canonical way to roll back to the previous release without specifying a numbered revision. Option C's command may fail on common Helm 3 versions in production. Meanwhile, option B (`helm rollback my-release 1`) is valid syntax and would be correct if this was the first upgrade (rolling back to the original install, which IS the previous revision). Since the question says 'After running helm upgrade', this implies there was exactly one upgrade from the initial install, making revision 1 the previous revision. Both options B and C would achieve the same result in this scenario, but option C uses potentially unreliable syntax while option B uses guaranteed-valid syntax with a correct description.",
+      "suggested_fix": "Change option C to use `helm rollback my-release 0` which is explicitly valid per Helm docs and the review guidelines (revision 0 = previous release). Update the explanation to note that revision 0 is a special value meaning 'roll back to the immediately previous release'. This eliminates any ambiguity about whether omitting the revision argument is valid, while clearly distinguishing option C (roll back to previous, wherever that is) from option B (roll back to revision 1 specifically)."
     }
   ]
 }

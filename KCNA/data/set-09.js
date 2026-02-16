@@ -314,11 +314,11 @@ var questions = [
     options: [
       "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy",
       "Run <code>helm rollback my-release 1</code> to roll back to the first revision, which is the original install before any upgrades",
-      "Run <code>helm rollback my-release</code> to revert to the previous release revision stored in the history",
+      "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 means \"previous release\")",
       "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
     ],
     answer: 2,
-    explanation: "The `helm rollback my-release` command (without specifying a revision number) reverts to the previous release revision. This is the fastest way to restore the previous state because Helm maintains a history of all release revisions and can re-apply the previous manifests. Deleting and reinstalling would cause unnecessary downtime.",
+    explanation: "The `helm rollback my-release 0` command uses revision 0, which is a special value meaning \"roll back to the immediately previous release.\" This is the fastest way to restore the previous state because Helm maintains a history of all release revisions and can re-apply the previous manifests. Option B targets revision 1 specifically, which is the very first install and may not be the immediately previous release if multiple upgrades have occurred. Deleting and reinstalling would cause unnecessary downtime.",
     verify: "helm history my-release"
   },
   {
