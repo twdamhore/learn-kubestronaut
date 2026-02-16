@@ -1,0 +1,402 @@
+{
+  "s10-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: StatefulSet controller does NOT auto-delete PVCs on scale-down; PVCs are retained by design to prevent data loss\n- B: PVCs are not orphaned in the traditional sense; they remain owned but unused, and the reclaim policy only triggers after PVC deletion, not immediately\n- C: PVCs are not marked with a deletionTimestamp; they persist fully intact without any deletion marker until explicitly removed"
+  },
+  "s10-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+    "wrong": "- A: Pods are not created in Pending state; they are rejected at admission entirely by the PSA controller, never reaching the scheduler\n- B: The Deployment object itself is not rejected because PSA operates at the pod level, not on Deployment resources\n- D: PSA does not inject or modify seccomp profiles; it only validates and rejects non-compliant pods"
+  },
+  "s10-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+    "wrong": "- A: Rate limiting on B helps but does not isolate A's connection pool from affecting C; lacks bulkhead isolation\n- C: Full async redesign is not a targeted prevention pattern; it requires a complete architecture overhaul\n- D: Increasing connection pool and adding HPA only delays the cascade; does not break the failure propagation chain"
+  },
+  "s10-q004": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#node-taints-policy",
+    "wrong": "- A: With nodeTaintsPolicy: Ignore, the NotReady zone is included in skew calculation, preventing a 3-3 split; maxSkew:1 would be violated\n- B: Two pods are not Pending; the scheduler can still place pods on healthy zones up to the skew limit (2 per zone)\n- C: nodeTaintsPolicy: Ignore means the NotReady node is NOT excluded from calculation; it is still counted in the topology domain"
+  },
+  "s10-q005": {
+    "ref": "https://opentelemetry.io/docs/concepts/context-propagation/",
+    "wrong": "- B: Different SDK versions do not typically cause disconnected root traces; they use standardized propagation formats like W3C TraceContext\n- C: gRPC fully supports W3C Trace Context propagation via metadata; no custom carrier is needed\n- A: Jaeger sampling drops entire traces, not individual spans; dropped spans would not appear as separate root traces"
+  },
+  "s10-q006": {
+    "ref": "https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity",
+    "wrong": "- A: kube-proxy does not migrate affinity mappings; there is no mechanism to transfer affinity entries between pod endpoints\n- B: Requests do not fail with connection refused; kube-proxy detects the stale endpoint and selects a new backend immediately\n- D: The EndpointSlice controller does not handle session affinity migration; it only manages endpoint sets"
+  },
+  "s10-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: The pod is not evicted by kubelet; with SizeMemoryBackedVolumes GA, the tmpfs is sized to the limit and the kernel returns ENOSPC at the boundary\n- C: sizeLimit on memory-backed emptyDir is NOT advisory; since K8s 1.22 (beta, enabled by default), the kernel enforces the limit via tmpfs sizing\n- D: The container is not OOM-killed because memory-backed emptyDir usage counts against the pod's ephemeral storage, not the container memory cgroup directly (the tmpfs is sized to sizeLimit)"
+  },
+  "s10-q008": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+    "wrong": "- B: selfHeal does not exclude scaling; it reverts all drift including replica count changes\n- C: Argo CD monitors both Git and live cluster state; it does not only watch Git changes\n- D: Argo CD never pushes commits to Git; it applies the Git-defined state to the cluster, not the other way around"
+  },
+  "s10-q009": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: All 3 replicas cannot be created because the third pod's resource request would exceed the ResourceQuota limits for both CPU requests and limits\n- C: The Deployment is not rejected entirely; pods are created individually by the ReplicaSet controller and quota is checked per-pod at admission time\n- B: LimitRange defaults are NOT exempt from ResourceQuota; injected defaults count toward quota consumption like any explicit resource specification"
+  },
+  "s10-q010": {
+    "ref": "https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements#network-requirements",
+    "wrong": "- A: UDP 8472 is for VXLAN encapsulation mode, not IPIP; Calico in IPIP mode uses IP protocol 4, not VXLAN\n- B: TCP 9099 is for health checks and UDP 51820 is for WireGuard; these are not needed for basic IPIP encapsulation mode\n- D: IP protocol 47 is GRE, not IP-in-IP; Calico IPIP uses protocol 4 specifically"
+  },
+  "s10-q011": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-member-etcd-cluster",
+    "wrong": "- A: etcd does not require a supermajority (4 of 5); a simple majority (3 of 5) forms a valid Raft quorum\n- B: The Deployment is not rejected with a timeout; if the leader is offline, the remaining 3 members elect a new leader quickly\n- C: The API server does not require all members healthy; etcd tolerates minority failures and continues serving writes with quorum"
+  },
+  "s10-q012": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/",
+    "wrong": "- B: Storing credentials in the container image violates both security and Factor III; config should be external to the image artifact\n- C: Factor VI (Processes) states processes should be stateless; storing credentials only in process memory means losing them on restart and does not address secure storage\n- D: Factor IV (Backing Services) says treat them as attached resources via URL/config; it does not advocate hardcoding URLs in Deployment specs"
+  },
+  "s10-q013": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#taints-and-tolerations",
+    "wrong": "- A: Using tolerationSeconds with NoExecute only delays eviction temporarily; a log collector DaemonSet needs to remain permanently\n- B: nodeSelector does not prevent eviction from taints; PDBs are not enforced against taint-based evictions\n- D: The annotation scheduler.alpha.kubernetes.io/tolerations is deprecated and no longer valid in modern Kubernetes"
+  },
+  "s10-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#understanding-init-containers",
+    "wrong": "- B: readOnlyRootFilesystem does not affect mounted emptyDir volumes; volume mounts are writable regardless of the root filesystem setting\n- C: Exit code 128 in a Git context is a Git fatal error, not SIGKILL (which would be 137 = 128+9); the symptom points to a Git-level failure\n- D: Both containers mounting the same volume is valid and expected; mount path conflicts do not occur between init and main containers"
+  },
+  "s10-q015": {
+    "ref": "https://prometheus.io/docs/practices/naming/#labels",
+    "wrong": "- A: Increasing memory and enabling WAL compression only delays the problem; it does not address the root cause of unbounded cardinality\n- B: Push-based models do not inherently solve cardinality problems; the label explosion would still occur in the receiving database\n- D: sample_limit drops entire scrapes when exceeded, causing complete data loss for that target rather than selectively handling the problematic label"
+  },
+  "s10-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#cron-job-limitations",
+    "wrong": "- D: Missed runs are never queued for sequential execution; the CronJob controller creates at most one catch-up job for the most recent missed schedule\n- C: The 100-miss threshold causes the CronJob to stop scheduling entirely; it does not trigger catch-up runs\n- B: Missed runs are not silently skipped; the controller checks startingDeadlineSeconds and triggers one catch-up for the most recent missed schedule"
+  },
+  "s10-q017": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/runtime-class/",
+    "wrong": "- D: gVisor is not a kubelet plugin; it is a container runtime shim that must be configured in containerd and mapped via a RuntimeClass object\n- B: RuntimeClass does not require a node annotation; it maps a handler name to a CRI runtime handler configured in the container runtime\n- C: There is no gVisor admission webhook that auto-creates RuntimeClass resources; both containerd config and RuntimeClass must be created manually"
+  },
+  "s10-q018": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
+    "wrong": "- B: Setting level: None for system service accounts could miss legitimate security events like compromised service accounts accessing secrets\n- C: Reducing maxsize and maxbackup limits disk usage but does not reduce log generation rate; it only causes older logs to be rotated out faster\n- D: Changing to level: Request globally still logs full request bodies for all resources, which is still verbose; it also loses response data for all resources"
+  },
+  "s10-q019": {
+    "ref": "https://istio.io/latest/about/service-mesh/",
+    "wrong": "- A: Linkerd uses its own linkerd2-proxy (written in Rust), not Envoy; it would not leverage the team's existing Envoy sidecars\n- B: Open Service Mesh was archived by CNCF in 2023; it is no longer actively maintained or recommended\n- C: Cilium uses eBPF for its service mesh, not Envoy sidecars; it would not work with existing Envoy infrastructure"
+  },
+  "s10-q020": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#ndots",
+    "wrong": "- B: CoreDNS network policies would block all queries equally, not just those with the full suffix; the issue is DNS search domain expansion\n- C: CoreDNS does not have per-namespace zone allowlists; the cluster.local zone serves all namespaces uniformly\n- D: The FQDN query is not forwarded upstream; it eventually resolves locally after unnecessary search domain attempts"
+  },
+  "s10-q021": {
+    "ref": "https://helm.sh/docs/topics/charts_hooks/#hook-deletion-policies",
+    "wrong": "- B: Helm allows re-install with the same release name if the previous release is in failed state; uninstall is not strictly required\n- C: The before-hook-creation policy specifically handles naming conflicts by deleting the old resource before creating a new one\n- D: Helm does not create Jobs with random suffixes; hook resources are created with deterministic names from the chart templates"
+  },
+  "s10-q022": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#serviceaccount-token-volume-projection",
+    "wrong": "- B: Using an init container with TokenRequest and emptyDir is functional but less clean; it requires custom logic and the token is not auto-rotated by the kubelet\n- C: The annotation kubernetes.io/enforce-mountable-secrets does not control token expiration; it restricts which secrets a ServiceAccount can mount\n- D: BoundServiceAccountTokenVolume has been GA since K8s 1.22 and is enabled by default; the option describes it as disabled by default, which is incorrect"
+  },
+  "s10-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
+    "wrong": "- B: Preemption does occur on a per-node basis; the scheduler evaluates nodes individually, not globally\n- C: Preemption does consider PDBs (best effort), but does not ignore them; the scheduler tries to avoid PDB violations when possible\n- D: High-priority pods are not exempt from resource requests; preemption frees resources by evicting lower-priority pods, not by overcommitting"
+  },
+  "s10-q024": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#external-traffic-policy",
+    "wrong": "- A: With externalTrafficPolicy: Local, traffic is NOT forwarded across nodes; only nodes with local pods handle traffic\n- C: Clients do not experience failures because the load balancer health checks remove podless nodes from the target pool before sending traffic\n- D: The Service does not update the load balancer target group directly; the health check mechanism handles node exclusion"
+  },
+  "s10-q025": {
+    "ref": "https://knative.dev/docs/serving/autoscaling/scale-bounds/",
+    "wrong": "- D: target-burst-capacity: -1 disables activator buffering, which worsens cold start latency by not queueing requests during scale-up\n- B: A 30-minute scale-to-zero-grace-period wastes resources during idle periods and does not guarantee a warm instance at request time\n- C: initialScale controls replicas at deploy time; it does not maintain a minimum during ongoing operation after scale-to-zero occurs"
+  },
+  "s10-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- B: maxUnavailable: 0 prevents old pod termination until new pods are Ready; the rollout does not proceed regardless of readiness\n- C: Kubernetes does not automatically roll back; after progressDeadlineSeconds it reports Progressing=False but the rollout remains stalled\n- D: The controller does not begin terminating old pods just because total exceeds desired; it requires new pods to be Ready first"
+  },
+  "s10-q027": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/overview/#services",
+    "wrong": "- A: A sidecar secondary listener is possible but unlikely given the explicit config on port 9090; the question points to hostNetwork as the cause\n- B: TCP TIME_WAIT between restarts of the same container is unlikely because the container network namespace is recreated\n- D: Liveness probes do not create listeners; they connect to existing ports and cannot cause EADDRINUSE conflicts"
+  },
+  "s10-q028": {
+    "ref": "https://microservices.io/patterns/data/saga.html",
+    "wrong": "- A: Retrying indefinitely keeps resources locked and does not address the failure; it can cause resource starvation and timeout cascading\n- C: Marking as partially complete leaves the system in an inconsistent state; compensating transactions are needed to restore consistency\n- D: Two-phase commit is a different pattern than saga; sagas deliberately avoid 2PC because it requires distributed locks and has availability issues"
+  },
+  "s10-q029": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    "wrong": "- A: The system does not ignore user-created globalDefault; only one should exist, and it correctly sets the default for pods without explicit priorityClassName\n- B: System priority classes do not override globalDefault; they must be explicitly referenced by pods needing those priorities\n- D: Pod creation does not fail; Kubernetes accepts exactly one globalDefault PriorityClass and applies it to pods without a priorityClassName"
+  },
+  "s10-q030": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
+    "wrong": "- D: allowedTopologies restricts which zones can create volumes, but it does not make existing zone-scoped EBS volumes cross-zone mountable\n- B: EBS does not support ReadWriteMany at all; changing access mode would not enable cross-zone mounting\n- C: The issue is zone topology mismatch, not stale attachment; manually detaching the PV does not help if the volume is in a different AZ"
+  },
+  "s10-q031": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
+    "wrong": "- A: podSelector alone does not match across namespaces; when combined with namespaceSelector in the same entry, both must match (AND logic)\n- C: namespaceSelector and podSelector in the same array element are AND, not OR; separate list items would be OR\n- D: NetworkPolicy ingress and egress are independent; return traffic for established connections is not blocked by ingress rules"
+  },
+  "s10-q032": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level",
+    "wrong": "- B: Containerd writes logs in text format using the CRI log format, not binary protobuf; no special input plugin is needed\n- C: The log path did not change locations; /var/log/containers and /var/log/pods both still exist, with containers being symlinks to pods\n- D: Log rotation differences do not cause parsing failures; the issue is the CRI log format envelope wrapping the application log content"
+  },
+  "s10-q033": {
+    "ref": "https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/",
+    "wrong": "- A: There is no controller registration API; custom controllers operate independently without registering with kube-controller-manager\n- B: The --controllers flag only controls built-in controllers; the + prefix enables disabled built-in controllers, not custom ones\n- C: Built-in controllers do not have inherent priority over custom controllers; they operate on different resource types with independent reconciliation"
+  },
+  "s10-q034": {
+    "ref": "https://istio.io/latest/docs/reference/config/networking/virtual-service/",
+    "wrong": "- A: Envoy sidecars receive xDS updates from istiod promptly and do not require restart to pick up config changes\n- B: Istiod pushes configuration updates relatively quickly; the propagation delay is typically seconds, not minutes\n- D: VirtualService weight changes are applied at the proxy level; scaling to 0 is not required for the routing change to take effect"
+  },
+  "s10-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: nodeSelector does not take precedence over nodeAffinity; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not override nodeSelector; a node must satisfy both simultaneously\n- D: nodeSelector and nodeAffinity can be used together; the pod spec is valid and both constraints are enforced"
+  },
+  "s10-q036": {
+    "ref": "https://open-policy-agent.github.io/gatekeeper/website/docs/howto/",
+    "wrong": "- B: Gatekeeper does not automatically evaluate all container types; the Rego policy must explicitly iterate initContainers and ephemeralContainers\n- A: Gatekeeper does not silently skip containers; its behavior depends entirely on what the Rego policy iterates\n- D: Gatekeeper does not use warn enforcement for partial compliance unless explicitly configured with enforcementAction: warn"
+  },
+  "s10-q037": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/#handling-pod-and-container-failures",
+    "wrong": "- A: The controller does not create replacements immediately without backoff; exponential backoff delay is applied to failed pod replacements\n- B: The controller does not switch to serial execution mode on simultaneous failures; it continues managing parallelism normally\n- C: The constraint is that running + pending should not exceed parallelism, not that running + completed should not exceed completions; replacements restore parallelism"
+  },
+  "s10-q038": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+    "wrong": "- A: Synchronous REST calls cannot guarantee delivery during B's unavailability; retries have limits and circuit breakers eventually open\n- D: Service mesh retries handle transient failures but do not persist messages across extended outages lasting minutes or hours\n- C: gRPC streaming with server-side retries still fails during extended outages; webhooks for notifications add unnecessary complexity"
+  },
+  "s10-q039": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
+    "wrong": "- A: Read operations (GET, LIST) are typically not affected by validating webhooks; but the key issue is that all matching operations including creates in kube-system are blocked\n- B: The API server does not auto-switch failure policies; failurePolicy: Fail remains in effect regardless of webhook availability\n- D: Operations are not queued; they are immediately rejected with an error when the webhook service is unreachable"
+  },
+  "s10-q040": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container",
+    "wrong": "- A: Adding distroless/debug as the base image requires rebuilding the production image, which changes the production artifact\n- C: Mounting a ConfigMap with a shell binary is impractical; shell binaries have dependencies and ConfigMaps have size limits\n- D: Rebuilding with FROM alpine also requires modifying the production image and includes unnecessary packages in the final artifact"
+  },
+  "s10-q041": {
+    "ref": "https://prometheus.io/docs/practices/alerting/",
+    "wrong": "- A: Raising the threshold to 10% masks real issues at normal traffic volumes where 5% errors would be significant\n- B: Using increase() instead of rate() changes the metric to absolute counts but does not address the statistical significance problem at low volumes\n- C: Increasing the for duration delays all alerts equally, not just low-traffic ones; it could miss genuine issues during normal traffic"
+  },
+  "s10-q042": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes",
+    "wrong": "- A: The first failure does not immediately mark the pod as not ready; failureThreshold: 3 requires three consecutive failures\n- B: Three failures at 5-second intervals starting at T=0 means the third failure is at T=10, not T=15\n- D: The threshold counts from the first failure, not from a previous success; the second failure at T=5 is not the trigger point"
+  },
+  "s10-q043": {
+    "ref": "https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity",
+    "wrong": "- B: IPVS round-robin does not have a warmup period that favors the first backend; it distributes connections sequentially from the start\n- C: IPVS round-robin does not start from the lowest IP each cycle; it maintains a circular pointer across all connections\n- D: kube-proxy does not use consistent hashing internally when rr is configured; IPVS strictly follows the configured scheduling algorithm"
+  },
+  "s10-q044": {
+    "ref": "https://kyverno.io/docs/writing-policies/",
+    "wrong": "- A: OPA/Gatekeeper primarily handles validation; mutation support was added later and it cannot generate resources from triggers\n- B: Falco is a runtime security/threat detection tool, not an admission controller; it cannot mutate, validate, or generate Kubernetes resources\n- D: OPA standalone provides policy decisions but does not have built-in resource generation capability through decision logs"
+  },
+  "s10-q045": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    "wrong": "- C: A Guaranteed pod exceeding memory limits is OOM-killed, not evicted; OOM kill is different from the kubelet eviction process\n- B: CPU value of 4 does not affect QoS classification; QoS depends only on whether requests equal limits, not on absolute values\n- D: BestEffort pods are evicted first during memory pressure, then Burstable, then Guaranteed; the order in option D is reversed"
+  },
+  "s10-q046": {
+    "ref": "https://tekton.dev/docs/pipelines/pipelines/#using-results",
+    "wrong": "- A: PipelineResources are deprecated in Tekton and should not be used for new pipelines; they lack flexibility and are being removed\n- B: Shared PVC with agreed paths works but is less idiomatic than Workspaces; using env vars for image tags is fragile compared to Results\n- D: Tekton Conditions are deprecated (replaced by WhenExpressions); they were for conditional execution, not for passing parameters"
+  },
+  "s10-q047": {
+    "ref": "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#webhook-conversion",
+    "wrong": "- A: The API server does not return the raw stored version directly; it converts to the requested version using the conversion webhook\n- B: The API server does not pre-convert and cache resources; conversion happens on-demand when a different version is requested\n- C: The request is not rejected; the conversion webhook enables serving resources in any served version regardless of stored version"
+  },
+  "s10-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#services",
+    "wrong": "- A: A headless Service has no virtual IP (clusterIP: None); kube-proxy does not handle its traffic and there is no VIP\n- B: Headless Services do not return CNAME records; they return individual A records for each pod, and there is no leader concept\n- D: A direct name query for a headless Service returns A records, not SRV records; SRV records require a specific query format"
+  },
+  "s10-q049": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/",
+    "wrong": "- A: Architecture mismatch produces 'exec format error', not 'executable file not found in $PATH'\n- B: Shell form CMD would invoke /bin/sh -c which also would fail if the binary is missing; switching form does not help\n- D: readOnlyRootFilesystem does not prevent reading existing binaries; it only blocks writes to the root filesystem"
+  },
+  "s10-q050": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/",
+    "wrong": "- B: Building a new image for every code change and deploying via rolling update IS immutable infrastructure; artifacts are never modified in place\n- C: ConfigMaps mounted as volumes providing declarative configuration is consistent with immutable infrastructure principles\n- D: Init containers downloading assets at startup is idempotent initialization, not mutation of a running system"
+  },
+  "s10-q051": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
+    "wrong": "- A: The terminationGracePeriodSeconds does NOT reset after preStop; it is a single budget covering both preStop and SIGTERM handling\n- C: There is no 20-second buffer; the kubelet deducts preStop time from the total grace period with no additional buffer\n- D: The kubelet does not wait indefinitely; after terminationGracePeriodSeconds expires, SIGKILL is sent to forcefully terminate"
+  },
+  "s10-q052": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    "wrong": "- B: PodSecurityPolicy is deprecated and removed since K8s 1.25; allowedHostPaths is not a current mechanism\n- C: Disabling readOnlyRootFilesystem removes an important security layer; OPA cannot enforce filesystem-level write restrictions\n- D: subPath does not bypass readOnlyRootFilesystem; the explanation is incorrect, and the real reason emptyDir works is that volume mounts are independent of root filesystem settings"
+  },
+  "s10-q053": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+    "wrong": "- B: A shared database connection pool could cause contention but would affect throughput, not uniform per-request latency across all replicas\n- C: Backend connection exhaustion would cause errors, not uniform latency increase; and it would worsen with more replicas\n- D: Layer-4 routing causes uneven distribution which affects some requests but not uniform latency increase for every request"
+  },
+  "s10-q054": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- A: Anti-affinity is not per-replica in a special way; it prevents co-location of any matching pods, including within the same Deployment\n- C: The scheduler does not ignore required anti-affinity; required constraints are hard rules that cannot be violated\n- D: Pods do not all remain Pending; the first three can be scheduled one per node without violating anti-affinity"
+  },
+  "s10-q055": {
+    "ref": "https://opentelemetry.io/docs/concepts/sampling/",
+    "wrong": "- B: Increasing head-based sampling to 10% still misses 90% of traces including potentially all error traces; it does not guarantee error capture\n- C: Head-based composite sampling cannot reliably sample errors because the error status is often unknown at span creation time\n- D: A separate trace pipeline bypassing sampling adds complexity and still requires instrumentation changes; it is not a standard approach"
+  },
+  "s10-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/#requests-vs-limits",
+    "wrong": "- A: Both quotas do not reject the Deployment; quota-compute is only checked when pods are created, not when the Deployment object is created\n- B: Both quotas are not checked simultaneously at Deployment creation; only the object count quota applies to the Deployment resource\n- D: Quota enforcement is not deferred to scheduling; it happens at admission time when the specific resource (pod) is created"
+  },
+  "s10-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: hostPort bindings are not isolated per tenant via network namespaces; they bind to the host network directly\n- C: The scheduler prevents scheduling before the pod starts; hostPort conflicts are detected at scheduling time, not at runtime\n- D: Cilium's network policy engine does not handle hostPort allocation; the scheduler's NodePorts filter plugin handles conflicts"
+  },
+  "s10-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/leases/#leader-election",
+    "wrong": "- A: All three instances do NOT process work simultaneously; only the leader performs reconciliation to prevent duplicate work\n- C: The API server does not round-robin controller requests; the controller-manager and scheduler have their own leader election\n- B: Instances do not partition namespaces; a single leader handles all reconciliation across the entire cluster"
+  },
+  "s10-q059": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies",
+    "wrong": "- A: ReadWriteMany PV creates I/O contention and introduces a shared filesystem dependency; it is not the cloud native approach\n- C: StatefulSet with dedicated PVs means each replica only has its own sessions; users routed to different replicas still lose sessions\n- D: sessionAffinity: ClientIP breaks during rolling updates, pod restarts, or scaling; it is a workaround, not a long-term solution"
+  },
+  "s10-q060": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-mode",
+    "wrong": "- A: Adding fstab entries inside the container does not help; the block device has no filesystem to mount in the first place\n- B: Running mkfs in an init container works but requires elevated privileges and adds unnecessary complexity compared to using Filesystem mode\n- D: There is no formatOptions field in StorageClass parameters; filesystem formatting is handled by kubelet with volumeMode: Filesystem"
+  },
+  "s10-q061": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource",
+    "wrong": "- B: pathType: Prefix is relevant but is typically already set; the core issue is that the full path including prefix is forwarded to the backend\n- C: TLS termination at the ingress is standard behavior; backends typically receive HTTP, and api-v2 would be configured to accept HTTP on its backend port\n- D: The ingress controller can route to multiple services under the same host with different path prefixes; this is a core ingress feature"
+  },
+  "s10-q062": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: VPA in UpdateMode: Auto for all namespaces could disrupt production by restarting pods; aggressive autoscaler scale-down may evict production workloads\n- B: LimitRange with lower defaults only affects new pods; existing pods keep their current resource settings unchanged\n- C: Cutting quota to 30% of current levels may be too aggressive without understanding actual usage patterns; it could break legitimate workloads"
+  },
+  "s10-q063": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
+    "wrong": "- B: The partition value is not a batch size; it is a minimum ordinal threshold for which pods receive updates\n- C: Pods below the partition (0, 1, 2) are NOT updated first; only pods at or above the partition value are updated\n- D: The partition does not create fully independent groups; it controls a single rolling update boundary within one StatefulSet"
+  },
+  "s10-q064": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/",
+    "wrong": "- A: Each container does NOT get a full copy; overlayfs shares read-only image layers across all containers using that image\n- C: The second container does not clone the first; all containers independently reference the same shared lower layers with their own upper layer\n- D: Content-addressable storage and snapshots do share underlying layers; the characterization that separate snapshots prevent sharing is incorrect"
+  },
+  "s10-q065": {
+    "ref": "https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions",
+    "wrong": "- A: The API server does not merge changes from different fields; it uses whole-object replacement with resourceVersion checking\n- C: The API server does not queue updates; they are processed independently and the second fails immediately with a 409 conflict\n- D: ownerReferences do not restrict who can update a resource; RBAC controls access, and resourceVersion handles concurrency"
+  },
+  "s10-q066": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- A: Page cache is typically reclaimable and usually does not trigger OOM kill; the more common cause is unreported child process memory\n- B: Kubelet eviction is triggered by node-level memory pressure, not individual container limits; OOMKilled status indicates cgroup limit, not eviction\n- D: Memory fragmentation does not cause the kernel to report higher RSS than actual; fragmentation affects allocation efficiency but not accounting"
+  },
+  "s10-q067": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/",
+    "wrong": "- A: Flux CD does not include a built-in web UI; it requires a separate project like Weave GitOps for visualization\n- B: Jenkins X is not a CNCF project focused on GitOps drift detection; it is a CI/CD platform with limited GitOps capabilities\n- D: Keptn is focused on application lifecycle management and quality gates, not comprehensive GitOps with multi-cluster and Helm support"
+  },
+  "s10-q068": {
+    "ref": "https://github.com/kubernetes-sigs/descheduler#removeduplicates",
+    "wrong": "- B: RemoveDuplicates does not evict all pods; it only evicts the minimum necessary to remove duplicates on overloaded nodes\n- C: RemoveDuplicates handles pods from the same ReplicaSet on the same node, which is exactly this scenario; it does apply here\n- D: RemoveDuplicates does not evaluate anti-affinity scores; it simply identifies and evicts duplicate pods from the same owner on the same node"
+  },
+  "s10-q069": {
+    "ref": "https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
+    "wrong": "- D: Kyverno does not detect digest changes as a supply chain risk per se; it verifies the signature of the current image at admission time\n- B: Running pods are not terminated by image tag changes; Kubernetes resolves tags to digests at pull time and does not re-check\n- C: Kyverno checks signatures at pod admission time, not at policy creation time; every new pod creation triggers verification"
+  },
+  "s10-q070": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#discovering-services",
+    "wrong": "- B: The Service selector change does not immediately terminate all TCP connections; existing connections may be reset but the primary issue is endpoint propagation delay\n- C: The ClusterIP virtual address is NOT reallocated during a selector change; the VIP remains stable while only the backend endpoints change\n- D: If green pods are already running and passing readiness probes, their endpoints are already known; the issue is propagation timing, not readiness"
+  },
+  "s10-q071": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
+    "wrong": "- A: The main container's preStop hook does not run first then both receive SIGTERM; the sidecar receives SIGTERM immediately in parallel\n- B: Both containers do not receive SIGTERM at the same time; the main container's SIGTERM is delayed by its preStop hook execution\n- D: The sidecar is not terminated first before the main preStop; both containers begin their termination sequences simultaneously"
+  },
+  "s10-q072": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
+    "wrong": "- A: The default externalTrafficPolicy is Cluster, not Local; with Cluster policy, all nodes handle NodePort traffic regardless of local pods\n- C: NodePort services listen on all nodes; kube-proxy programs rules on every node, not just nodes with backend pods\n- D: The request is not forwarded to ClusterIP without NAT; DNAT translates the destination to a pod IP, and SNAT is applied for the return path"
+  },
+  "s10-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/#condition",
+    "wrong": "- A: The node is marked Unknown (not NotReady) when heartbeat is lost; NotReady is for specific condition failures like kubelet health check failures\n- C: The node controller does not delete the node object; it marks conditions as Unknown and adds the unreachable taint\n- D: The taint added is node.kubernetes.io/unreachable (not not-ready) because the condition is Unknown (connectivity loss), not False"
+  },
+  "s10-q074": {
+    "ref": "https://keda.sh/docs/latest/concepts/scaling-deployments/",
+    "wrong": "- B: KEDA does not blindly set to maxReplicaCount; it calculates the actual desired count first and then caps at max\n- C: KEDA does not scale linearly or double; it calculates the target directly from the metric value divided by the threshold\n- D: KEDA does not pause scaling after reaching max; it continues evaluating metrics on each interval and adjusts as queue drains"
+  },
+  "s10-q075": {
+    "ref": "https://prometheus-operator.dev/docs/api-reference/api/#monitoring.coreos.com/v1.PrometheusSpec",
+    "wrong": "- B: Empty selector {} means match all in the Prometheus operator, not match nothing; this is correct behavior for selecting all ServiceMonitors\n- C: The Service having the monitoring: enabled label is for ServiceMonitor selection, not for Prometheus discovery; the issue is namespace selection\n- D: Prometheus Operator watches for ServiceMonitor changes dynamically; no restart is needed when new monitors are created"
+  },
+  "s10-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets",
+    "wrong": "- A: PDBs do not prevent Recreate from deleting pods; the Deployment controller uses the Delete API, not the Eviction API\n- C: The Deployment controller does not convert Recreate to RollingUpdate; it deletes all pods simultaneously regardless of PDB\n- D: The update is not blocked; the Recreate strategy proceeds normally because PDBs are only enforced by the Eviction API"
+  },
+  "s10-q077": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+    "wrong": "- A: The database query taking long is possible but the question specifically mentions high CPU load on the node, pointing to cgroup throttling\n- B: The kubelet itself can fork the exec process; the timeout occurs during execution within the container's cgroup, not during fork\n- D: The kubelet probe worker pool is not a documented bottleneck; the specific issue is CPU throttling of the exec process within the container cgroup"
+  },
+  "s10-q078": {
+    "ref": "https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig",
+    "wrong": "- A: Directly querying the monolith's database creates tight coupling between services and violates bounded context principles\n- C: Delaying migration until all dependencies are extracted stalls the entire migration effort and is not practical for large monoliths\n- D: Full database replication via CDC creates data synchronization complexity for what should be a temporary migration dependency"
+  },
+  "s10-q079": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy",
+    "wrong": "- A: It does not run on every modification; it runs again only if a subsequent webhook modified the object after its initial invocation\n- B: The API server does not evaluate whether changes would produce different mutations; it re-invokes whenever the object was modified by another webhook\n- D: With reinvocationPolicy: IfNeeded, the webhook can be invoked more than once; only the default Never policy limits to one invocation"
+  },
+  "s10-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volume-snapshots/",
+    "wrong": "- A: The CSI driver does not quiesce all I/O; standard CSI snapshots are crash-consistent, not application-consistent\n- C: Kubernetes does not run fsfreeze before CSI snapshots; filesystem quiescing is not part of the standard CSI snapshot workflow\n- D: There is no snapshotClass consistency parameter in the standard CSI specification; application consistency requires vendor-specific mechanisms"
+  },
+  "s10-q081": {
+    "ref": "https://gateway-api.sigs.k8s.io/reference/spec/#gateway.networking.k8s.io/v1.HTTPRoute",
+    "wrong": "- A: Whether 20% is dropped with 503s depends on the implementation; some controllers redistribute rather than returning errors\n- B: Whether 100% goes to Service A depends on the specific Gateway controller; the spec does not mandate automatic redistribution\n- D: The HTTPRoute does not become invalid when a backend has zero endpoints; the route remains valid and behavior is implementation-defined"
+  },
+  "s10-q082": {
+    "ref": "https://grafana.com/docs/loki/latest/get-started/labels/bp-labels/",
+    "wrong": "- A: Pod names have bounded cardinality (finite number of pods); while they change on restart, the total count at any time is bounded\n- B: Sidecar containers double the container count but this is bounded; it does not cause unbounded stream explosion\n- C: Loki does not infer namespace from log path automatically; namespace is a valid and useful label with bounded cardinality"
+  },
+  "s10-q083": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- B: ScheduleAnyway does not distribute solely by capacity; topology spread is still considered as a scoring preference\n- C: The result may appear identical to DoNotSchedule when perfect distribution is possible, but the mechanism differs; ScheduleAnyway uses scoring, not hard constraints\n- D: ScheduleAnyway is not purely informational; it actively influences scheduling through the scoring phase of the scheduler"
+  },
+  "s10-q084": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "wrong": "- A: While technically true that get/list/watch is read-only, the security concern is that reading all secrets including SA tokens enables privilege escalation\n- B: Secret values are NOT redacted in list and watch responses; the API server returns full secret data including encoded values in all operations\n- D: There is no secrets/data subresource; secret data is part of the main Secret resource and accessible with standard get/list/watch permissions"
+  },
+  "s10-q085": {
+    "ref": "https://fluxcd.io/flux/components/kustomize/kustomizations/",
+    "wrong": "- B: Flux's kustomize controller does not validate remote base changes against a schema; it applies whatever kustomize build produces\n- C: Flux does not automatically pin remote bases to commit SHAs; it fetches whatever the remote reference points to at build time\n- D: Flux does re-fetch remote bases on each reconciliation; the kustomize build step fetches all remote resources regardless of local repo changes"
+  },
+  "s10-q086": {
+    "ref": "https://metallb.universe.tf/installation/#preparation",
+    "wrong": "- A: strictARP does not prevent kube-proxy from responding to ARP for Service VIPs specifically; it configures the kernel's general ARP behavior on interfaces\n- B: strictARP is not about source IP validation or IP spoofing prevention; it controls ARP response behavior at the network interface level\n- C: The setting is about ARP for any address, not just ClusterIPs; it affects the arp_ignore and arp_announce kernel parameters"
+  },
+  "s10-q087": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/#handling-pod-and-container-failures",
+    "wrong": "- A: restartPolicy: OnFailure only restarts on non-zero exit; exit code 0 (success) does not trigger a restart\n- B: The Job controller does not create a new pod for a successfully completed pod; it counts it toward completions\n- C: The pod phase transitions to Succeeded, not Running with a Terminated container; the pod lifecycle is complete"
+  },
+  "s10-q088": {
+    "ref": "https://docs.cilium.io/en/stable/network/clustermesh/services/",
+    "wrong": "- A: Local services do not always take precedence by default; Cilium merges endpoints globally when the global-service annotation is set\n- C: Service name conflicts do not cause rejection; Cilium intentionally merges same-name services across clusters as a feature\n- D: Cross-cluster access does not require explicit DNS mappings; Cilium transparently merges endpoints into the existing service"
+  },
+  "s10-q089": {
+    "ref": "https://docs.sigstore.dev/cosign/signing/overview/",
+    "wrong": "- A: Notary v2 and Docker Content Trust are separate mechanisms; DCT is Docker-specific and Gatekeeper does not natively verify Notary signatures\n- C: GPG signing in Dockerfiles stored as labels is non-standard; there is no built-in verification mechanism and custom webhooks add maintenance burden\n- D: TUF handles software update distribution, not container image signing; Falco is runtime security, not admission-time signature verification"
+  },
+  "s10-q090": {
+    "ref": "https://helm.sh/docs/helm/helm_upgrade/",
+    "wrong": "- A: Helm does NOT preserve previous release values by default during upgrade; this behavior requires the explicit --reuse-values flag\n- B: While the upgrade does reset to defaults, the full explanation is that --reuse-values changes this behavior, making C the more complete answer\n- D: Helm does not remove keys not present in upgrade values; it uses the chart defaults as the base and merges provided values on top"
+  },
+  "s10-q091": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks",
+    "wrong": "- A: Validating webhooks DO see mutations from mutating webhooks; the admission chain processes mutations first, then validations on the final object\n- C: Kubernetes does not auto-inject LimitRange defaults for webhook-injected containers in the mutation phase; LimitRange applies at the pod-level admission\n- D: There is no partial rollback mechanism; if validation fails, the entire admission request is rejected and no resource is created"
+  },
+  "s10-q092": {
+    "ref": "https://docs.kubecost.com/using-kubecost/navigating-the-kubecost-ui/cost-allocation",
+    "wrong": "- A: Unallocated is not about missing cost labels; it is about the gap between node capacity and pod requests\n- C: System component resources are typically tracked separately and are not the primary driver of Unallocated costs\n- D: Idle resources (requested but unused) are a separate category in Kubecost from Unallocated (unrequested capacity)"
+  },
+  "s10-q093": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit",
+    "wrong": "- A: Three ReplicaSets are retained: 2 old + 1 current, not 3 old ones; the current active ReplicaSet does not count toward the limit\n- B: The limit of 2 means 2 old ReplicaSets plus the current; not current + 1 history\n- D: The current ReplicaSet is always retained; revision 5 exists as the current active RS, so undo can revert to revision 4"
+  },
+  "s10-q094": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
+    "wrong": "- A: Dockerfile USER does NOT take precedence; pod securityContext.runAsUser overrides the image-level USER directive at runtime\n- C: There is no conflict error; Kubernetes simply overrides the image setting with the pod security context value\n- D: Child processes inherit the same UID as the parent; they do not use the Dockerfile USER; all processes run as UID 1000"
+  },
+  "s10-q095": {
+    "ref": "https://microservices.io/patterns/data/transactional-outbox.html",
+    "wrong": "- A: The outbox pattern still requires a message broker; the database is used as an intermediate reliable store, not as a replacement for the broker\n- C: Batching is a potential optimization but not the core problem the pattern solves; the fundamental issue is atomicity of write + publish\n- D: The outbox provides at-least-once delivery, not exactly-once; consumers must handle duplicates via idempotency"
+  },
+  "s10-q096": {
+    "ref": "https://fluxcd.io/flux/guides/sortable-image-tags/",
+    "wrong": "- A: Git commit SHAs are immutable content hashes; force pushes change the branch pointer but the SHA itself still points to the same content\n- C: Base image pinning is a separate supply chain concern; it is not the anti-pattern described in this pipeline\n- D: Storing image tags in manifests vs Helm values is a tooling choice, not a security anti-pattern; both approaches can support rollbacks"
+  },
+  "s10-q097": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-egress-traffic",
+    "wrong": "- A: NetworkPolicy does not implicitly block unspecified policy types; only policy types listed in policyTypes trigger default-deny behavior\n- C: The CNI plugin does not apply default-deny-all to targeted pods; it only enforces the policy types explicitly declared in the NetworkPolicy\n- D: The question states no other NetworkPolicies exist; the egress block is caused by the current policy's policyTypes including Egress with no rules"
+  },
+  "s10-q098": {
+    "ref": "https://opentelemetry.io/docs/collector/deployment/agent/",
+    "wrong": "- A: The batch processor does not cause inconsistent sampling; it batches spans for efficient export but does not affect sampling decisions\n- C: A short decision_wait is a valid concern but the fundamental issue is that spans are split across DaemonSet instances, not timing\n- D: OTLP ordering is not the issue; tail sampling needs complete trace visibility, which requires all spans at one collector instance"
+  },
+  "s10-q099": {
+    "ref": "https://docs.flagger.app/usage/how-it-works#canary-analysis",
+    "wrong": "- A: Flagger does not pause for manual approval by default during automated canary analysis; it follows the configured threshold-based automation\n- B: Flagger does not immediately roll back on the first failure; it uses the threshold mechanism to tolerate transient issues\n- D: Flagger does not reduce canary weight by half on failure; it either retries or rolls back based on the failure threshold count"
+  },
+  "s10-q100": {
+    "ref": "https://www.cncf.io/blog/2024/03/01/cloud-native-maturity-model/",
+    "wrong": "- A: The application has observability AND declarative management via GitOps, so it exceeds Level 3\n- B: While liveness probes provide basic self-healing, Level 5 requires observability-driven automated remediation which is not present\n- C: Liveness probes and HPA are not sufficient for Level 5; Level 5 requires closed-loop auto-remediation integrating observability signals with corrective actions"
+  }
+}

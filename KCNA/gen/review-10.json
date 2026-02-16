@@ -1,32 +1,64 @@
 {
   "set": "10",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 3,
+  "issues_found": 7,
   "issues": [
     {
-      "id": "s10-q007",
-      "type": "wrong_explanation",
+      "id": "s10-q009",
+      "type": "giveaway",
       "severity": "moderate",
-      "what": "SizeMemoryBackedVolumes went GA in 1.32, not 1.28",
-      "detail": "The explanation states 'Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, GA since 1.28)'. SizeMemoryBackedVolumes was beta (enabled by default) since 1.22 but only went GA in Kubernetes 1.32. It remained in beta from 1.22 through 1.31. The behavioral description (ENOSPC at the sizeLimit boundary) is correct because the feature was enabled by default in beta, but the stated GA version is wrong.",
-      "suggestion": "Change 'GA since 1.28' to 'beta since 1.22, GA since 1.32'. For example: 'Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate enabled by default in beta since 1.22, GA since 1.32)'"
+      "what": "Diagram explicitly shows the answer with 'Pod 3 BLOCKED' and the math",
+      "detail": "The SVG diagram labels the third new pod in red with text 'BLOCKED' and shows the exact remaining quota math ('Remaining: 500m req / 1000m lim') and the explanation ('at 3rd pod (2250m > 2000m)'). A student can read the answer directly from the diagram without analyzing the question.",
+      "suggestion": "Remove the explanatory text from the diagram. Show only the ResourceQuota and LimitRange boxes with their values, and the three 'New Pod' boxes without color-coding or 'BLOCKED' labels. Let the student calculate which pod(s) would be blocked."
     },
     {
-      "id": "s10-q044",
+      "id": "s10-q023",
       "type": "wrong_explanation",
-      "severity": "critical",
-      "what": "Kyverno is CNCF Incubating, not graduated",
-      "detail": "The explanation states 'Kyverno is a CNCF project (graduated in 2024)'. Kyverno moved to CNCF Incubating on July 13, 2022, but as of February 2026 it has NOT graduated. There is no CNCF graduation announcement for Kyverno. The project remains at the Incubating maturity level. The answer choice (C) is still correct since it does not claim graduation, but the explanation's parenthetical is factually wrong.",
-      "suggestion": "Change '(graduated in 2024)' to '(Incubating)' in the explanation. For example: 'Kyverno is a CNCF Incubating project that provides all three capabilities natively...'"
+      "severity": "minor",
+      "what": "Explanation says scheduler 'respects PodDisruptionBudgets' during preemption, but this is best-effort only",
+      "detail": "The explanation states the scheduler 'respects PodDisruptionBudgets (PDBs) during preemption — it will not preempt pods if doing so would violate a PDB, unless no alternative exists.' The official Kubernetes documentation states 'Kubernetes supports PDB when preempting Pods, but respecting PDB is best effort.' The answer (A) is still the best choice among the four options, and the trailing clause 'unless no alternative exists' partially captures this nuance. However, option A's text says 'respecting PodDisruptionBudgets' without the best-effort qualifier, which could mislead students into thinking PDB guarantees apply during preemption.",
+      "suggestion": "Revise option A text to: 'The scheduler preempts the lowest-priority pod(s) until enough resources are freed, with best-effort respect for PodDisruptionBudgets'. Update the explanation to clearly state: 'PDB enforcement during preemption is best-effort — the scheduler prefers victims whose PDBs would not be violated, but will still preempt if no alternative exists.'"
     },
     {
-      "id": "s10-q089",
-      "type": "wrong_explanation",
+      "id": "s10-q024",
+      "type": "giveaway",
       "severity": "moderate",
-      "what": "Sigstore is an OpenSSF project, not a CNCF project",
-      "detail": "The explanation states 'cosign (part of the Sigstore project, a CNCF project)'. Sigstore is actually a project under the Open Source Security Foundation (OpenSSF), not under CNCF. Sigstore graduated within OpenSSF in March 2024. While CNCF and OpenSSF both operate under the Linux Foundation umbrella and share some ecosystem overlap, they are distinct organizations with separate project portfolios. Sigstore does not appear on the CNCF graduated, incubating, or sandbox project lists.",
-      "suggestion": "Change 'a CNCF project' to 'an OpenSSF project' in the explanation. For example: 'cosign (part of the Sigstore project, an OpenSSF graduated project) provides keyless or key-based container image signing...'"
+      "what": "Diagram explicitly states 'Health checks fail on Node 3 & 4' and 'LB sends traffic only to Node 1 & 2'",
+      "detail": "The SVG diagram uses green lines to nodes 1 and 2, dashed red lines to nodes 3 and 4, and includes text annotations that directly state the answer mechanism: 'Health checks fail on Node 3 & 4' and 'LB sends traffic only to Node 1 & 2'. This makes the correct answer (B) trivially identifiable without understanding the underlying externalTrafficPolicy concept.",
+      "suggestion": "Simplify the diagram to only show the load balancer, 4 nodes (with pods on nodes 1 and 2 only), and arrows from the LB to all 4 nodes. Remove the text annotations that explain the behavior. Let the student determine which nodes receive traffic."
+    },
+    {
+      "id": "s10-q058",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels show 'CM: Leader/Standby' and 'Sched: Leader/Standby' plus 'Lease Objects' annotation",
+      "detail": "The SVG diagram explicitly labels Control Plane 1 as 'CM: Leader' and 'Sched: Leader', while CP 2 and 3 show 'CM: Standby' and 'Sched: Standby'. It also shows 'Lease Objects in kube-system' and 'Leader election via API'. This directly reveals the answer (D: leader election via Lease objects) without requiring the student to know the mechanism.",
+      "suggestion": "Simplify the diagram to show three Control Plane boxes with generic labels (e.g., 'kube-apiserver', 'kube-cm', 'kube-scheduler' in each) and a question mark for the coordination mechanism. Remove Leader/Standby labels and the Lease annotation."
+    },
+    {
+      "id": "s10-q091",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram shows 'Validating WH: REJECTS' and 'X' blocking path to etcd",
+      "detail": "The SVG diagram explicitly labels the Validating WH box in red with 'REJECTS' text, shows a crossed-out path to etcd, and includes the annotation 'Validating WH sees mutated pod with sidecar missing limits'. This reveals the correct answer (B: the pod is rejected by the validating webhook) without requiring analysis.",
+      "suggestion": "Simplify the diagram to show the admission chain (API Request -> Mutating WH -> Validating WH -> etcd) with the Mutating WH showing '+sidecar (no limits)' but removing the REJECTS label, the X on the path, and the explanatory annotation. Let the student determine the outcome."
+    },
+    {
+      "id": "s10-q097",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram annotation explicitly states 'policyTypes: [Ingress, Egress]' and 'egress rules: (empty = deny all)'",
+      "detail": "The SVG diagram includes a box that explicitly states 'policyTypes: [Ingress, Egress]' and 'egress rules: (empty = deny all)'. This directly reveals the answer (B) by showing the root cause. The question text does not include policyTypes information, but the diagram provides it as a visual hint.",
+      "suggestion": "Remove the policyTypes annotation box from the diagram. Keep only the pod layout showing api, db, and other pods with the traffic arrows. The student should determine the cause from the question context and their understanding of NetworkPolicy semantics."
+    },
+    {
+      "id": "s10-q098",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram annotation states 'Tail sampling on DaemonSet = inconsistent decisions'",
+      "detail": "The bottom text of the SVG diagram reads 'Tail sampling on DaemonSet = inconsistent decisions', which directly reveals the answer (B: DaemonSet means spans arrive at different collector instances). The diagram architecture is helpful context, but the annotation explicitly names the problem.",
+      "suggestion": "Remove the bottom annotation text from the diagram. The diagram already shows the DaemonSet topology with services on different nodes sending to different collectors. Let the student identify why this architecture causes inconsistent sampling decisions."
     }
   ]
 }
