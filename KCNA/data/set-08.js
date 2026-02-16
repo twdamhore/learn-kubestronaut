@@ -727,7 +727,7 @@ var questions = [
     id: "s08-q046",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "After a network partition isolates a worker node from the control plane, the node controller marks the node as `NotReady`. What happens to the Pods running on that node after the `pod-eviction-timeout` (default 5 minutes) expires?",
+    text: "After a network partition isolates a worker node from the control plane, the node controller marks the node as `NotReady` and applies a `node.kubernetes.io/unreachable:NoExecute` taint. What happens to the Pods on that node once their `tolerationSeconds` (default 300 seconds) expires?",
     diagram: null,
     options: [
       "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",

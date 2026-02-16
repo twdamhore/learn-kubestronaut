@@ -1,8 +1,7 @@
 {
   "set": "04",
-  "round": 6,
+  "round": 7,
   "total_reviewed": 100,
   "issues_found": 0,
-  "issues": [],
-  "notes": "Round 6 reviewer incorrectly claimed Longhorn graduated from CNCF in Nov 2024. Verified via official CNCF projects page: Longhorn remains CNCF Incubating as of Feb 2026. The existing questions correctly state Longhorn is incubating and Rook is graduated. s04-q098 is observation-only (question already includes feature gate context)."
+  "issues": []
 }

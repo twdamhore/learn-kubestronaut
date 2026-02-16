@@ -1,7 +1,16 @@
 {
   "set": "08",
-  "round": 4,
+  "round": 7,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s08-q046",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Question text references deprecated `pod-eviction-timeout` flag which was removed in Kubernetes 1.27",
+      "detail": "The question says 'after the `pod-eviction-timeout` (default 5 minutes) expires'. In Kubernetes 1.29+ (the target version per review guidelines), the `--pod-eviction-timeout` kube-controller-manager flag no longer exists. The eviction mechanism is now purely taint-based: the node controller applies `node.kubernetes.io/unreachable:NoExecute` and pods have a default toleration of 300 seconds (5 minutes) via `--default-unreachable-toleration-seconds` on the API server. The answer (index 0) and explanation are correct (they describe taint-based eviction), but the question text uses legacy terminology that could confuse candidates studying for K8s 1.29+ exams.",
+      "suggestion": "Reword the question text to reference the taint-based eviction mechanism instead. For example: 'After a network partition isolates a worker node from the control plane, the node controller marks the node as `NotReady` and applies a `node.kubernetes.io/unreachable:NoExecute` taint. Pods tolerate this taint for 300 seconds by default. What happens to the Pods running on that node after this toleration period expires?'"
+    }
+  ]
 }
