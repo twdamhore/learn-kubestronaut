@@ -456,13 +456,13 @@ var questions = [
     text: "A pod shows `STATUS: Error` and `Exit Code: 1` after running to completion. The pod's `restartPolicy` is `Never`. What will Kubernetes do with this pod?",
     diagram: null,
     options: [
-      "Kubernetes will automatically restart the pod after an exponential back-off delay period has elapsed",
+      "The kubelet overrides the `restartPolicy: Never` and restarts the container after its back-off timer expires",
       "Kubernetes will delete the failed pod and then schedule a replacement pod on a different cluster node",
       "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts",
-      "The pod will transition to `Pending` state and wait for manual intervention from a cluster operator"
+      "The `restartPolicy: Never` causes the scheduler to delete and replace the pod on another node"
     ],
     answer: 2,
-    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: restartPolicy: Never prevents automatic restarts with exponential backoff\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: The pod does not transition to Pending; it stays in its terminal Failed/Error state\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
+    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: The kubelet does not override restartPolicy: Never; it honours the policy and does not restart the container\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: restartPolicy: Never does not trigger deletion or rescheduling; the pod stays on its original node in Failed state\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.restartPolicy}'"
   },
   {
@@ -888,10 +888,10 @@ var questions = [
     text: "A Deployment's rollout is stuck. Running `kubectl rollout status deployment/app` shows `Waiting for deployment \"app\" rollout to finish: 1 out of 3 new replicas have been updated...`. The single new pod is in `CrashLoopBackOff`. What parameter controls how long Kubernetes waits before marking the rollout as failed?",
     diagram: null,
     options: [
-      "`spec.template.spec.terminationGracePeriodSeconds` which controls container shutdown duration",
-      "`spec.strategy.rollingUpdate.maxSurge` which controls extra pods during a rolling update",
-      "`spec.minReadySeconds` which sets minimum time a pod must be ready before proceeding",
-      "`spec.progressDeadlineSeconds` which sets maximum time before rollout is marked failed"
+      "`spec.template.spec.terminationGracePeriodSeconds` — controls container shutdown duration",
+      "`spec.strategy.rollingUpdate.maxSurge` — controls extra pods during a rolling update",
+      "`spec.minReadySeconds` — sets minimum time a pod must be ready before the rollout proceeds; pods that fail this check are not counted",
+      "`spec.progressDeadlineSeconds` — defines the timeout after which a stalled Deployment reports `ProgressDeadlineExceeded`"
     ],
     answer: 3,
     explanation: "`spec.progressDeadlineSeconds` (default 600 seconds) defines how long the Deployment controller waits for progress before reporting the Deployment as `Failed` in its conditions. If no new pods become ready within this period, the condition `Progressing` is set to `False` with reason `ProgressDeadlineExceeded`. Note that Kubernetes does not automatically roll back—it just reports the failure.\n\nWhy other options are wrong:\n- A: terminationGracePeriodSeconds controls shutdown time, not rollout timeout detection\n- B: maxSurge controls how many extra pods are created during update, not the failure timeout\n- C: minReadySeconds controls when a pod is considered available, not when a rollout is marked failed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#progress-deadline-seconds",
