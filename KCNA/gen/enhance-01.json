@@ -1,0 +1,402 @@
+{
+  "s01-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/",
+    "wrong": "- A: `docker run` bypasses the Kubernetes control plane entirely, leaving the container unmanaged.\n- B: Static pods still require a complete Pod spec — you cannot use a bare container definition.\n- C: Using `containerd` directly also circumvents scheduling and lifecycle management."
+  },
+  "s01-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- A: The controller-manager runs controllers (e.g. node controller) but does not assign Pods to nodes.\n- C: etcd is a passive key-value store; it does not trigger scheduling events.\n- D: kube-proxy manages network rules for Services, not Pod scheduling."
+  },
+  "s01-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/",
+    "wrong": "- A: The scheduler assigns Pods to nodes initially; it does not restart crashed containers.\n- B: The container runtime executes containers but does not independently decide to restart them.\n- D: The controller-manager handles higher-level reconciliation (e.g. ReplicaSet), not per-container restarts."
+  },
+  "s01-q004": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/runtime-class/",
+    "wrong": "- A: dockershim was removed in Kubernetes v1.24, so dockerd cannot be used directly without cri-dockerd.\n- B: rkt (Rocket) is deprecated and no longer maintained.\n- D: LXC does not implement the CRI specification and has no Kubernetes bridge module."
+  },
+  "s01-q005": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+    "wrong": "- A: A service mesh is an optional overlay, not a fundamental Kubernetes networking requirement.\n- B: NetworkPolicy is opt-in; by default all Pod-to-Pod traffic is allowed without explicit policies.\n- C: NodePort is a Service type for external access, not a Pod networking requirement."
+  },
+  "s01-q006": {
+    "ref": "https://www.cncf.io/about/who-we-are/",
+    "wrong": "- A: Cloud native does not guarantee lower costs and is not limited to serverless infrastructure.\n- B: Cloud native does not mandate any specific programming language.\n- C: Cloud native does not eliminate the need for operational staff; it empowers them with automation."
+  },
+  "s01-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/",
+    "wrong": "- B: Keeping the catalog in the monolith while exposing it through a Service defeats the purpose of decomposition.\n- C: Sidecars are for cross-cutting concerns (logging, proxying), not business logic like a product catalog.\n- D: Shared libraries create tight compile-time coupling between services, violating microservice independence."
+  },
+  "s01-q008": {
+    "ref": "https://prometheus.io/docs/introduction/overview/",
+    "wrong": "- A: Fluentd is for log aggregation, not metrics collection.\n- B: Grafana is a visualization/dashboard tool that queries data sources like Prometheus; it does not collect or store metrics.\n- D: Jaeger is a distributed tracing system, not a metrics collection tool."
+  },
+  "s01-q009": {
+    "ref": "https://helm.sh/docs/",
+    "wrong": "- A: Static YAML directories lack parameterization and templating for multi-environment use.\n- B: `kubectl create --dry-run` is for validation/generation, not for deployment or parameterization.\n- C: `kubectl patch` modifies existing resources but is not a packaging or templating solution."
+  },
+  "s01-q010": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    "wrong": "- A: A Deployment with restartPolicy Always keeps running indefinitely; it is designed for long-lived services, not batch jobs.\n- B: A standalone Pod lacks the retry management that the Job controller provides.\n- C: A DaemonSet runs one Pod per node and is not suitable for batch processing."
+  },
+  "s01-q011": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/",
+    "wrong": "- A: NodePort exposes the service externally on a static port on all nodes, not just internally.\n- B: LoadBalancer provisions an external load balancer, exposing the service outside the cluster.\n- C: ExternalName maps to an external DNS name via CNAME, not to internal Pods."
+  },
+  "s01-q012": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+    "wrong": "- A: Setting privileged: true grants MORE permissions, not less — this is the opposite of the requirement.\n- C: ResourceQuota controls resource consumption (CPU, memory, Pod count), not security settings.\n- D: LimitRange sets default resource requests and limits, not user IDs or security contexts."
+  },
+  "s01-q013": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/",
+    "wrong": "- A: Worker nodes do not cache the full cluster state; they only know about their own assigned Pods.\n- B: kube-proxy handles Service networking rules, not Pod management.\n- D: The container runtime executes containers but relies on the kubelet for restart and lifecycle decisions."
+  },
+  "s01-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+    "wrong": "- A: ConfigMaps and Secrets store configuration data, not persistent block/file storage.\n- C: StorageClass defines provisioning parameters and VolumeSnapshot captures data snapshots, but neither represents the request/provision abstraction pair.\n- D: emptyDir is ephemeral (lost on Pod deletion) and hostPath ties storage to a specific node."
+  },
+  "s01-q015": {
+    "ref": "https://www.cncf.io/projects/",
+    "wrong": "- A: Incubating is the middle maturity tier, not the highest.\n- C: There is no CNCF maturity level called \"Stable.\"\n- D: There is no CNCF maturity level called \"Enterprise.\""
+  },
+  "s01-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    "wrong": "- A: A sidecar per Pod adds overhead and complexity; it does not automatically cover every node.\n- B: A Deployment with replicas equal to node count does not guarantee one Pod per node and does not adapt to node changes.\n- D: The kubelet writes logs to disk but does not natively forward them to external backends."
+  },
+  "s01-q017": {
+    "ref": "https://opengitops.dev/",
+    "wrong": "- A: A CI pipeline pushing via kubectl apply is push-based, not GitOps-style continuous reconciliation.\n- B: Manual review and application during maintenance windows is not automated or continuously reconciled.\n- C: Webhooks invoking the API server directly are push-based and do not provide ongoing drift detection."
+  },
+  "s01-q018": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/#how-pods-manage-multiple-containers",
+    "wrong": "- B: The ambassador pattern handles proxying external connections, not shared-volume log reading.\n- C: The adapter pattern normalizes output formats; containers do not communicate through a shared ConfigMap.\n- D: Init containers run to completion before main containers start, so they cannot provide ongoing log collection."
+  },
+  "s01-q019": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- B: ResourceQuota manages resource consumption per namespace, not node-level scheduling.\n- C: Hardcoding nodeName bypasses the scheduler entirely and is fragile if that node goes down.\n- D: A custom scheduler profile would affect all Pods, not just ML workloads."
+  },
+  "s01-q020": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
+    "wrong": "- A: Deleting and recreating the Pod without understanding the root cause will likely repeat the crash.\n- B: Scaling to zero and back does not help diagnose the issue.\n- D: You cannot edit a running Pod's restartPolicy; Pods are largely immutable after creation."
+  },
+  "s01-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/cri/",
+    "wrong": "- A: CSI (Container Storage Interface) handles storage provisioning, not runtime communication.\n- B: OCI defines container image and runtime standards at a lower level; it is not the kubelet-to-runtime API.\n- C: CNI (Container Network Interface) handles network configuration for containers, not runtime communication."
+  },
+  "s01-q022": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "wrong": "- A: Secrets are intended for sensitive data like passwords, not for non-sensitive configuration like hostnames.\n- B: Annotations store metadata about objects but cannot be injected into containers as environment variables.\n- C: PersistentVolumeClaims are for persistent storage (block/file), not for configuration data."
+  },
+  "s01-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+    "wrong": "- B: Immutability ensures consistency of artifacts but does not address dynamic scaling to handle load.\n- C: Infrastructure as Code helps with provisioning but does not inherently handle runtime traffic variability.\n- D: Circuit breaking is a resilience pattern for failure handling, not for scaling to meet demand."
+  },
+  "s01-q024": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "wrong": "- A: The Recreate strategy terminates all Pods before creating new ones, causing downtime.\n- B: StatefulSets are for stateful applications; they are not needed for a simple zero-downtime rolling update.\n- C: Manual traffic shifting via a second Deployment and Service selector is error-prone and unnecessary."
+  },
+  "s01-q025": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-clusterip",
+    "wrong": "- A: kube-proxy does not have a special configuration to allow external traffic to ClusterIP services.\n- B: DNS assignment for Services is automatic and does not require restarting kube-dns.\n- C: Ingress is not required for ClusterIP to function within the cluster; ClusterIP works internally on its own."
+  },
+  "s01-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/",
+    "wrong": "- B: The `status` field is managed by Kubernetes at runtime and should not be set by users in manifests.\n- C: `version` and `type` are not valid top-level Kubernetes manifest fields.\n- D: `name` and `labels` belong inside the `metadata` field, not at the top level."
+  },
+  "s01-q027": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/components/#etcd",
+    "wrong": "- A: The API server is stateless; it does not store state in memory — it relies on etcd for persistence.\n- B: The controller-manager runs control loops but does not maintain a state database.\n- D: Kubelets are node agents that manage local Pods; they are not cluster-wide state repositories."
+  },
+  "s01-q028": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+    "wrong": "- A: Deployments do not guarantee ordered deployment, stable identities, or per-replica persistent storage.\n- B: DaemonSets run one Pod per node, not per replica count.\n- D: ReplicaSets do not have a `podManagementPolicy` field — that is a StatefulSet feature."
+  },
+  "s01-q029": {
+    "ref": "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
+    "wrong": "- A: kube-proxy manages Service IP routing rules (iptables/IPVS), not Pod IP assignment.\n- B: The kubelet delegates networking to the CNI plugin; it does not generate random IPs itself.\n- C: The API server does not pre-assign Pod IPs during scheduling."
+  },
+  "s01-q030": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
+    "wrong": "- B: RBAC controls access permissions but does not encrypt data at rest in etcd.\n- C: ConfigMaps do not support native encryption; they are even less protected than Secrets.\n- D: There is no `--encrypt` flag for `kubectl create secret`."
+  },
+  "s01-q031": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
+    "wrong": "- A: Container runtimes do not have a maximum image cache size that blocks new pulls.\n- C: Modern container runtimes support standard OCI images; format incompatibility is extremely rare.\n- D: ImagePullBackOff can occur for multiple reasons (network, auth, missing tag), not just missing tags."
+  },
+  "s01-q032": {
+    "ref": "https://knative.dev/docs/",
+    "wrong": "- A: Istio is a service mesh for traffic management and mTLS, not a serverless platform.\n- B: Helm is a package manager for Kubernetes charts; it does not provide serverless runtime or auto-scaling.\n- C: Prometheus collects and stores metrics; it does not manage or auto-scale serverless workloads."
+  },
+  "s01-q033": {
+    "ref": "https://12factor.net/config",
+    "wrong": "- A: Storing config in code and using branches violates the strict separation principle.\n- B: Bundling environment-specific config into the image means rebuilding for each environment.\n- C: While configuration servers exist, the twelve-factor methodology specifically advocates for environment-based configuration, not centralized servers."
+  },
+  "s01-q034": {
+    "ref": "https://www.jaegertracing.io/docs/",
+    "wrong": "- A: Centralized logging with correlated timestamps can correlate events but lacks built-in request flow visualization.\n- B: Health check endpoints report general service status, not per-request latency across a chain.\n- D: Metric dashboards show aggregate latency over time, not individual request paths through services."
+  },
+  "s01-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/",
+    "wrong": "- B: Scaling down the staging cluster to zero nodes would disrupt all workloads, not just the one being deployed.\n- C: Manual approval is not part of an automatic CI/CD pipeline; it adds a human gate.\n- D: Deleting the existing deployment causes downtime and is unnecessary with rolling updates."
+  },
+  "s01-q036": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    "wrong": "- A: The `Init:0/2` status specifically indicates init containers, not regular containers waiting for resources.\n- B: This status is unrelated to ConfigMap dependencies; it shows init container completion progress.\n- C: This status is unrelated to volume mounting; it shows init container completion progress."
+  },
+  "s01-q037": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- B: Using nodeSelector with unique labels per node is brittle and does not dynamically prevent co-location.\n- C: PodDisruptionBudgets control voluntary disruptions (e.g. drains) but do not influence scheduling decisions.\n- D: Taints repel Pods but cannot directly limit the count of a specific workload per node."
+  },
+  "s01-q038": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "wrong": "- A: Uses `.pod.cluster.local` instead of `.svc.cluster.local` — this is the Pod DNS format, not Service DNS.\n- B: `inventory-api.cluster.local` omits the namespace and `svc` segments, making it invalid for Service DNS.\n- C: Reverses the namespace and service name order — the correct order is `<service>.<namespace>.svc.cluster.local`."
+  },
+  "s01-q039": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    "wrong": "- A: A Deployment with anti-affinity is fragile, does not adapt automatically to node additions, and may not guarantee exactly one per node.\n- B: A StatefulSet with per-node affinity does not automatically schedule on new nodes as they join.\n- D: A CronJob is overly complex and would not provide continuous, immediate coverage of new nodes."
+  },
+  "s01-q040": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    "wrong": "- B: Services route traffic based on selectors but do not restrict which Pods can communicate.\n- C: Ingress handles external HTTP routing, not Pod-to-Pod network traffic restriction.\n- D: ResourceQuotas manage compute resources (CPU, memory, Pod count), not network traffic rules."
+  },
+  "s01-q041": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: emptyDir data is not migrated by the kubelet during rescheduling.\n- B: emptyDir data does not persist on the original node after Pod deletion; it is cleaned up.\n- C: emptyDir data is not stored in etcd; etcd only stores cluster state objects."
+  },
+  "s01-q042": {
+    "ref": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+    "wrong": "- A: Co-locating services in the same Pod does not prevent application-level failures between them.\n- B: Adding replicas improves availability but does not eliminate the possibility of cascading failure.\n- C: Increasing timeouts makes the problem worse by holding resources longer while waiting for a down service."
+  },
+  "s01-q043": {
+    "ref": "https://linkerd.io/",
+    "wrong": "- A: Envoy is a proxy used by service meshes (like Istio) but is not itself a complete service mesh with its own control plane.\n- C: Calico is a CNI plugin for network policy enforcement, not a service mesh.\n- D: CoreDNS provides cluster DNS resolution and service discovery, not mTLS or traffic management."
+  },
+  "s01-q044": {
+    "ref": "https://prometheus.io/docs/alerting/latest/alertmanager/",
+    "wrong": "- A: Prometheus evaluates alerting rules but delegates notification delivery to Alertmanager.\n- B: Grafana can alert but is a visualization tool, not a core part of the Prometheus alerting ecosystem.\n- D: Node Exporter only exposes node-level hardware and OS metrics; it does not trigger alerts."
+  },
+  "s01-q045": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",
+    "wrong": "- A: Blue-green deployment swaps all traffic at once between two full environments, not a percentage.\n- C: A rolling update's maxSurge controls how many extra Pods are created during update, not traffic percentage.\n- D: Client-side feature flags test features at the application level but do not validate infrastructure changes."
+  },
+  "s01-q046": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/",
+    "wrong": "- A: Labels logically group resources but do not provide isolation boundaries or access control.\n- B: Annotations store metadata but do not affect access control or resource visibility.\n- C: ResourceQuotas limit consumption within a namespace but do not provide isolation by themselves."
+  },
+  "s01-q047": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    "wrong": "- A: The scheduler should be upgraded after the API server, not before.\n- B: Kubelets on worker nodes are upgraded last, not first.\n- D: etcd upgrades may happen before or alongside the API server, but among the core control plane triad, the API server goes first."
+  },
+  "s01-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    "wrong": "- B: A separate Job requires external orchestration to coordinate timing with the Deployment.\n- C: A postStart hook runs after the container starts and does not block other containers from starting.\n- D: Sidecar containers run concurrently with the main container; there is no priority-based startup ordering for regular containers."
+  },
+  "s01-q049": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
+    "wrong": "- B: The ClusterIP is only routable within the cluster; external clients cannot use it.\n- C: The `.svc.cluster.local` DNS is only resolvable within the cluster, not from external hosts.\n- D: Pod IPs are internal to the cluster and the application port differs from the NodePort."
+  },
+  "s01-q050": {
+    "ref": "https://opencontainers.org/",
+    "wrong": "- A: The OCI image spec defines image format, not runtime resource limits enforcement.\n- C: Network security policies are not embedded in container images by the OCI spec.\n- D: Image signing and verification are handled by separate projects like Sigstore/cosign and Notary, not the OCI image spec."
+  },
+  "s01-q051": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/",
+    "wrong": "- A: ConfigMaps do not have a `sensitive: true` annotation; they are not designed for sensitive data.\n- B: Annotations are visible in API responses and provide no security features.\n- C: PersistentVolumes are for persistent block/file storage, not for managing credentials."
+  },
+  "s01-q052": {
+    "ref": "https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/",
+    "wrong": "- B: kube-proxy does not serve as a reverse proxy for the API server.\n- C: IP address assignment to Pods is handled by the CNI plugin, not kube-proxy.\n- D: Pod health monitoring and node status reporting are performed by the kubelet, not kube-proxy."
+  },
+  "s01-q053": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment",
+    "wrong": "- A: Deleting and recreating the Deployment causes unnecessary downtime.\n- B: You cannot edit individual Pods managed by a Deployment; the controller will reconcile them back.\n- D: Scaling to zero and back causes downtime and is unnecessarily complex compared to rollout undo."
+  },
+  "s01-q054": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "wrong": "- A: NetworkPolicies control network traffic between Pods, not API access permissions.\n- B: Creating a ServiceAccount does not automatically limit access — RBAC bindings are required.\n- C: The API server configuration does not support per-user namespace restrictions for individual developers."
+  },
+  "s01-q055": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/",
+    "wrong": "- A: Backend Services do not need to be LoadBalancer type; ClusterIP is sufficient for Ingress routing.\n- B: kube-proxy handles L4 Service routing (iptables/IPVS) and does not support HTTP path-based routing.\n- D: Cluster DNS (CoreDNS) resolves Service names but does not implement Ingress routing rules."
+  },
+  "s01-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: The error is about memory, not disk space; image size is unrelated to this scheduling failure.\n- C: PersistentVolumes are for persistent storage and do not have \"memory capacity\" for scheduling.\n- D: The scheduler is working correctly; it is accurately reporting that no node has sufficient memory."
+  },
+  "s01-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+    "wrong": "- A: Pre-provisioned PVs are static provisioning, not dynamic — an admin must manually create them.\n- B: VolumeAttachments are internal objects managed by the attach/detach controller, not user-facing.\n- C: ConfigMaps store configuration key-value pairs, not volume provisioning mappings."
+  },
+  "s01-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/",
+    "wrong": "- A: Image layer caching is about build efficiency, not the core benefit of immutability.\n- B: Version control is still essential for tracking changes; immutable images do not replace it.\n- D: Container runtimes do not support hot-swapping layers without a full container restart."
+  },
+  "s01-q059": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+    "wrong": "- A: A ClusterIP Service with externalTrafficPolicy Local is internal-only; it cannot serve as an external entry point.\n- C: A DaemonSet-based proxy with hostNetwork bypasses Kubernetes networking abstractions and is not the standard pattern.\n- D: kube-proxy does not handle HTTP-level routing or load balancing; ConfigMaps cannot configure it for this purpose."
+  },
+  "s01-q060": {
+    "ref": "https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
+    "wrong": "- B: Cold-start latency is actually a drawback of serverless, not an advantage over containers.\n- C: Serverless functions are typically stateless; they do not include built-in persistent storage backends.\n- D: Isolation guarantees depend on the specific runtime and are not universally stronger in serverless."
+  },
+  "s01-q061": {
+    "ref": "https://coredns.io/",
+    "wrong": "- A: BIND9 is a general-purpose DNS server, not used as a Kubernetes cluster DNS default.\n- B: PowerDNS is not bundled with or used by Kubernetes distributions.\n- C: ExternalDNS synchronizes Kubernetes resources with external DNS providers but is not the internal cluster DNS."
+  },
+  "s01-q062": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/logging/",
+    "wrong": "- A: etcd stores cluster state (API objects), not container stdout/stderr output.\n- B: There is no centralized logging service by default; the kubelet reads local node log files.\n- D: Kubernetes does not automatically create emptyDir volumes for log storage."
+  },
+  "s01-q063": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: Separate clusters add significant operational overhead and are not necessary for cost tracking.\n- C: PodDisruptionBudgets manage availability during voluntary disruptions, not cost tracking.\n- D: PriorityClasses affect scheduling priority and preemption, not cost tracking or allocation."
+  },
+  "s01-q064": {
+    "ref": "https://helm.sh/docs/chart_template_guide/values_files/",
+    "wrong": "- B: Chart.yaml contains chart metadata (name, version, description), not configuration values.\n- C: requirements.yaml (now dependencies in Chart.yaml) lists chart dependencies, not default config.\n- D: There is no special `templates/defaults.yaml` file in the Helm chart structure."
+  },
+  "s01-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/",
+    "wrong": "- B: There is no `OR` operator in kubectl label selectors; commas provide AND logic.\n- C: `--labels` and `--no` are not valid kubectl flags for label filtering.\n- D: `--exclude` is not a valid kubectl flag for label filtering."
+  },
+  "s01-q066": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/",
+    "wrong": "- A: High priority can influence preemption but does not make a Pod immune to kubelet eviction during node pressure.\n- C: terminationGracePeriodSeconds only affects the shutdown process after eviction is decided, not eviction order.\n- D: The annotation `eviction.kubernetes.io/protected: true` does not exist in Kubernetes."
+  },
+  "s01-q067": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer",
+    "wrong": "- B: LoadBalancer is not independent — it builds on NodePort and ClusterIP hierarchically.\n- C: LoadBalancer does not replace the ClusterIP; the service remains internally accessible via ClusterIP.\n- D: Headless Services (clusterIP: None) are incompatible with LoadBalancer type."
+  },
+  "s01-q068": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/",
+    "wrong": "- A: A Deployment runs continuously and is not designed for scheduled, run-to-completion tasks.\n- C: A DaemonSet with a sleep loop wastes resources on every node and is not a scheduling mechanism.\n- D: A Pod with restartPolicy Always never terminates and does not have built-in cron scheduling."
+  },
+  "s01-q069": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
+    "wrong": "- A: `kubectl apply` is designed to update existing resources; it does not reject them.\n- B: `kubectl apply` does not delete and recreate resources; it performs an in-place merge.\n- D: Kubernetes does not create duplicate resources with auto-generated suffixes from `kubectl apply`."
+  },
+  "s01-q070": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    "wrong": "- A: PodSecurityPolicy (PSP) was removed in Kubernetes v1.25 and is no longer available.\n- C: Custom webhooks work but add significant complexity compared to the built-in PSA mechanism.\n- D: The kubelet does not have a global configuration to block all privileged containers."
+  },
+  "s01-q071": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/",
+    "wrong": "- A: Init containers run only at startup and exit; they do not intercept ongoing traffic.\n- B: The ambassador pattern traditionally runs a proxy within the same Pod (not a separate Deployment) for outbound access.\n- D: The adapter pattern normalizes or transforms data formats; it does not describe traffic interception by a mesh proxy."
+  },
+  "s01-q072": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- B: Restarting the scheduler is drastic and unlikely to help if the Pod was never submitted for scheduling.\n- C: Deleting running Pods does not solve the underlying quota issue and may worsen the situation.\n- D: maxSurge only applies during rolling updates, not steady-state replica management."
+  },
+  "s01-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/components/",
+    "wrong": "- A: Incorrectly skips the controller-manager step — the scheduler does not directly receive the Deployment.\n- B: The scheduler does not receive requests first; all requests go through the API server.\n- D: The API server does not create Pods directly — the controller-manager creates ReplicaSets which create Pods."
+  },
+  "s01-q074": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+    "wrong": "- B: Removing from Service endpoints is the behavior of a readinessProbe, not a livenessProbe.\n- C: Kubernetes does not natively send alerts; liveness probe failure triggers container restart.\n- D: Kubernetes does not reschedule the Pod to a different node on liveness failure; it restarts the container in place."
+  },
+  "s01-q075": {
+    "ref": "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+    "wrong": "- A: HPA handles scaling based on metrics, not disruption limits during maintenance.\n- C: ResourceQuotas set maximum limits on resource consumption, not minimum Pod availability.\n- D: Taints and tolerations control scheduling preferences, not disruption budgets."
+  },
+  "s01-q076": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes",
+    "wrong": "- A: Restarting the container is the behavior of a livenessProbe failure, not a readinessProbe failure.\n- B: The Deployment controller does not scale up additional replicas based on readiness probe status.\n- C: The Pod is not deleted or rescheduled; it remains on the same node but is removed from Service endpoints."
+  },
+  "s01-q077": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/components/#node-components",
+    "wrong": "- A: kube-apiserver runs only on control plane nodes, not worker nodes.\n- B: kube-scheduler runs only on control plane nodes, not worker nodes.\n- D: etcd runs on control plane nodes (or dedicated etcd nodes), not on every worker node."
+  },
+  "s01-q078": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: Setting nodeName bypasses the scheduler entirely, which the question explicitly asks to avoid.\n- B: Annotations do not affect scheduling decisions; they are metadata only.\n- D: PodAffinity matches based on other Pods' labels and locations, not node labels — nodeAffinity would be the affinity-based alternative."
+  },
+  "s01-q079": {
+    "ref": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+    "wrong": "- A: VerticalPodAutoscaler adjusts resource requests per Pod (CPU/memory), not replica count.\n- B: A CronJob running kubectl scale is manual automation, not native Kubernetes auto-scaling.\n- D: ResourceQuotas cap resource consumption; they do not trigger scaling events."
+  },
+  "s01-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
+    "wrong": "- A: Headless Services do create DNS records — they return individual Pod IP A records.\n- B: The ClusterIP is not hidden; it is explicitly set to None, meaning no virtual IP is allocated.\n- D: Traffic is not limited to one Pod; DNS returns all Pod IPs for client-side selection."
+  },
+  "s01-q081": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+    "wrong": "- A: There is no replica count limit that requires direct ReplicaSet creation.\n- B: ReplicaSets are not deprecated; they are actively used internally by Deployments.\n- C: StatefulSets handle stateful applications, not ReplicaSets; this claim is incorrect."
+  },
+  "s01-q082": {
+    "ref": "https://docs.docker.com/build/building/multi-stage/",
+    "wrong": "- B: Removing packages from a full image still leaves layer history and produces a larger image.\n- C: Building on the host introduces environment inconsistencies and may include unnecessary dependencies.\n- D: The --squash flag is experimental and does not selectively remove files from earlier layers."
+  },
+  "s01-q083": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "wrong": "- A: A ClusterRole with ClusterRoleBinding grants access across ALL namespaces, not just development.\n- C: NetworkPolicies control network traffic, not API permissions; a Role with all verbs would be overly permissive.\n- D: The annotation `rbac.authorization.kubernetes.io/verbs` does not exist for automatic RBAC binding."
+  },
+  "s01-q084": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/",
+    "wrong": "- A: The error is about execute permissions inside the container, not registry pull authentication.\n- B: readOnlyRootFilesystem prevents writes to the filesystem, not execution of existing files.\n- D: The error is from the container runtime (runc), not a kubelet permission issue."
+  },
+  "s01-q085": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim",
+    "wrong": "- A: The error mentions no StorageClass and no matching PV, not insufficient disk space.\n- B: The kube-scheduler is not involved in PVC binding; PV binding is handled by the PV controller.\n- D: PersistentVolumes are cluster-scoped (not namespaced), so namespace mismatch cannot occur."
+  },
+  "s01-q086": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/",
+    "wrong": "- A: Declarative commands do not skip validation; they are fully validated by the API server.\n- C: Retry logic is handled by Kubernetes controllers, not inherently by the declarative approach itself.\n- D: Declarative management relies on manifest files (YAML/JSON), not command-line flags."
+  },
+  "s01-q087": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/",
+    "wrong": "- B: Synchronous REST calls fail when the target is down; retry logic does not solve message persistence during outages.\n- C: Shared database tables create tight coupling between services and are an anti-pattern.\n- D: gRPC in-memory buffers are lost if either side restarts, failing the durability requirement."
+  },
+  "s01-q088": {
+    "ref": "https://opentelemetry.io/docs/collector/",
+    "wrong": "- A: Prometheus primarily handles metrics; it does not natively support traces or logs.\n- C: Grafana Loki handles logs only, not all three telemetry signal types.\n- D: Fluentd handles log aggregation primarily; it does not natively process distributed traces or metrics."
+  },
+  "s01-q089": {
+    "ref": "https://kubernetes.io/docs/reference/glossary/?fundamental=true",
+    "wrong": "- B: FaaS functions are short-lived and event-driven, not long-running processes with thread pools.\n- C: WebAssembly is an emerging option but not a requirement for FaaS on Kubernetes.\n- D: FaaS functions run on standard nodes; no specialized hardware is needed."
+  },
+  "s01-q090": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/",
+    "wrong": "- A: Metrics Server collects CPU and memory, not disk I/O or network metrics; its primary consumer is HPA, not Prometheus.\n- C: Metrics Server does not collect GPU utilization or all container metrics; the scheduler does not consume its data.\n- D: Metrics Server collects resource metrics from kubelets, not application-level metrics via HTTP scraping."
+  },
+  "s01-q091": {
+    "ref": "https://www.w3.org/TR/trace-context/",
+    "wrong": "- B: Environment variables are static and set at Pod startup; they cannot carry per-request trace context.\n- C: Kubernetes annotations on Pods are not updated per request and cannot propagate trace context.\n- D: The CNI plugin handles network configuration, not application-level trace data in IP headers."
+  },
+  "s01-q092": {
+    "ref": "https://kubernetes.io/docs/concepts/security/overview/",
+    "wrong": "- A: Scanning only at build misses new vulnerabilities discovered after the image is built.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual scanning is unreliable and does not scale with automated deployment pipelines."
+  },
+  "s01-q093": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/app_status/",
+    "wrong": "- A: OutOfSync in this scenario is caused by manual cluster edits, not by new Git changes.\n- C: Argo CD connectivity issues would show a different status, not OutOfSync.\n- D: Application errors produce a \"Degraded\" health status, not an OutOfSync sync status."
+  },
+  "s01-q094": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "wrong": "- A: Updating the image on a single Deployment performs a rolling update, not a blue-green switch.\n- C: Weighted routing via Ingress is more characteristic of canary deployments, not blue-green.\n- D: Scaling down blue before green is verified causes downtime; blue-green requires both running simultaneously."
+  },
+  "s01-q095": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
+    "wrong": "- A: Labels are used for identifying and selecting resources in queries and controllers, not for arbitrary metadata.\n- C: Finalizers control deletion behavior by blocking garbage collection until a process clears them, not for metadata storage.\n- D: Environment variables are inside containers and not easily accessible to external tools inspecting API objects."
+  },
+  "s01-q096": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: Resource requests are guaranteed allocations used by the scheduler, not soft limits.\n- C: Kubernetes does not automatically provision new nodes; that requires a cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after."
+  },
+  "s01-q097": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
+    "wrong": "- A: ExternalName Services do not get a ClusterIP and do not proxy traffic.\n- C: kube-proxy does not handle ExternalName resolution; it is purely a DNS CNAME response.\n- D: Services can reference external resources via ExternalName; it is a supported feature."
+  },
+  "s01-q098": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_exec/",
+    "wrong": "- A: `kubectl attach` connects to the stdin of an already running process, which may not be a shell.\n- C: `kubectl debug` creates an ephemeral or copy-based debugging environment, which is more complex than exec.\n- D: `kubectl logs` only reads container output; it cannot execute commands inside the container."
+  },
+  "s01-q099": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
+    "wrong": "- A: kube-proxy manages network rules for Services; it does not generate or distribute authentication tokens.\n- C: The kubelet does not create API keys for Pods; it mounts projected service account tokens.\n- D: The container runtime executes containers but does not handle authentication or certificate creation."
+  },
+  "s01-q100": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/working-with-objects/",
+    "wrong": "- A: They are not identical; `create` is imperative and `apply` is declarative with different behaviors.\n- C: Both can create resources; `kubectl apply` creates if absent and updates if present.\n- D: Both `kubectl create` and `kubectl apply` can accept YAML input; `create` also supports generators."
+  }
+}

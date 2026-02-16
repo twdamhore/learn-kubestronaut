@@ -1,7 +1,56 @@
 {
   "set": "01",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 6,
+  "issues": [
+    {
+      "id": "s01-q004",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "CRI keyword in stem matches only one option",
+      "detail": "The question stem contains 'Container Runtime Interface (CRI)' and 'CRI' explicitly. Only option C ('containerd with the CRI plugin enabled') contains the term 'CRI'. A test-taker can pattern-match the keyword without understanding container runtimes.",
+      "suggestion": "Remove the explicit 'CRI' abbreviation from the question stem or add 'CRI' into one or more distractor options. For example, rephrase option A to mention 'using the legacy CRI-shim adapter' or option B to reference 'the CRI-compatible appc specification'."
+    },
+    {
+      "id": "s01-q010",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Number '3' in stem matches only one option",
+      "detail": "The stem says 'retrying on failure up to 3 times'. Only option D contains the number 3 ('backoffLimit: 3'). A test-taker can match the number without understanding Jobs or backoffLimit semantics.",
+      "suggestion": "Change the retry count in the stem to a different number (e.g. 'a configurable number of times') or add numeric values to the distractor options. Alternatively, rephrase the stem to say 'with a configurable retry limit' and let the correct option demonstrate the right field."
+    },
+    {
+      "id": "s01-q018",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels 'Sidecar Container' and correct answer is sidecar pattern",
+      "detail": "The SVG diagram explicitly labels the second container as 'Sidecar Container'. The correct answer (option A) is 'The sidecar pattern'. The diagram directly reveals the answer without requiring any knowledge.",
+      "suggestion": "Rename the container in the diagram to something neutral like 'Helper Container' or 'Container B' so that identifying the pattern requires knowledge, not just reading the diagram label."
+    },
+    {
+      "id": "s01-q024",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Numbers in stem (5 replicas, at least 4 available) map to only one option",
+      "detail": "The stem says '5 replicas' and 'at least 4 Pods are always available'. Only option D ('maxUnavailable: 1') maps to 5-1=4. The arithmetic makes elimination trivial without understanding rolling update mechanics.",
+      "suggestion": "Remove the specific '4 Pods' requirement from the stem or adjust the numbers so multiple options could superficially match. For example, use 'ensuring minimal disruption' instead of specifying the exact number."
+    },
+    {
+      "id": "s01-q036",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "'Init:0/2' in stem, only one option mentions init containers",
+      "detail": "The stem contains 'Init:0/2' and only option D mentions 'init containers'. The keyword 'Init' in the status directly maps to the correct answer. A test-taker can match the prefix without understanding Pod phases.",
+      "suggestion": "Add 'init' terminology to one or more distractors, e.g. 'The Pod has 2 containers in their initialization phase due to resource constraints' or rephrase the question to describe the behavior without showing the raw status string."
+    },
+    {
+      "id": "s01-q047",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Upgrade order: etcd is typically upgraded before API server",
+      "detail": "The Kubernetes documentation and kubeadm upgrade process upgrade etcd BEFORE the API server. The question's correct answer (C: kube-apiserver first) is only correct if you exclude etcd from 'control plane components'. Option D (etcd first) is arguably correct per the official upgrade sequence. The explanation acknowledges this ambiguity but dismisses it.",
+      "suggestion": "Rephrase the question to explicitly ask about 'the core control plane triad (API server, controller-manager, scheduler)' to exclude etcd from consideration, or change the question to ask which component among the three non-etcd control plane components should be upgraded first."
+    }
+  ]
 }
