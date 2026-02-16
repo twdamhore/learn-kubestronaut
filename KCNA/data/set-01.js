@@ -56,8 +56,8 @@ var questions = [
     text: "A DevOps engineer is setting up a new Kubernetes cluster and needs to choose a container runtime. The cluster must comply with the Kubernetes Container Runtime Interface (CRI). Which of the following is a valid CRI-compliant runtime that Kubernetes can use natively since v1.24?",
     diagram: null,
     options: [
-      "`dockerd` using the built-in dockershim adapter",
-      "`rkt` (Rocket) with the appc specification",
+      "`dockerd` bypassing the CRI layer entirely via the built-in dockershim adapter",
+      "`rkt` (Rocket) with a pre-CRI container format based on the appc specification",
       "`containerd` with the CRI plugin enabled",
       "`LXC` with the Kubernetes bridge module"
     ],
@@ -149,7 +149,7 @@ var questions = [
     id: "s01-q010",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A data processing team needs to run a batch job that processes a dataset and then exits. They want Kubernetes to ensure the job runs to completion, retrying on failure up to 3 times. Which workload resource should they use?",
+    text: "A data processing team needs to run a batch job that processes a dataset and then exits. They want Kubernetes to ensure the job runs to completion, retrying on failure a configurable number of times. Which workload resource should they use?",
     diagram: null,
     options: [
       "A Deployment with `replicas: 1` and a restart policy set to `Always`",
@@ -158,7 +158,7 @@ var questions = [
       "A Job resource with `backoffLimit: 3` and the default restart policy"
     ],
     answer: 3,
-    explanation: "A Kubernetes Job is designed for batch workloads that run to completion. Setting `backoffLimit: 3` tells Kubernetes to retry the Job up to 3 times if it fails. A Deployment is for long-running services and would restart the Pod indefinitely. A DaemonSet ensures a Pod runs on every matching node, which is not suitable for batch processing. A standalone Pod lacks the retry management that the Job controller provides.\n\nWhy other options are wrong:\n- A: A Deployment with restartPolicy Always keeps running indefinitely; it is designed for long-lived services, not batch jobs.\n- B: A standalone Pod lacks the retry management that the Job controller provides.\n- C: A DaemonSet runs one Pod per node and is not suitable for batch processing.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    explanation: "A Kubernetes Job is designed for batch workloads that run to completion. The `backoffLimit` field (e.g., `backoffLimit: 3`) tells Kubernetes how many times to retry the Job if it fails. A Deployment is for long-running services and would restart the Pod indefinitely. A DaemonSet ensures a Pod runs on every matching node, which is not suitable for batch processing. A standalone Pod lacks the retry management that the Job controller provides.\n\nWhy other options are wrong:\n- A: A Deployment with restartPolicy Always keeps running indefinitely; it is designed for long-lived services, not batch jobs.\n- B: A standalone Pod lacks the retry management that the Job controller provides.\n- C: A DaemonSet runs one Pod per node and is not suitable for batch processing.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/",
     verify: "microk8s kubectl create job test-job --image=busybox --dry-run=client -o yaml -- echo done"
   },
   {
@@ -278,7 +278,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
     text: "A developer defines a Pod with two containers: an application container and a logging sidecar that reads the application's log files from a shared volume. What is this multi-container pattern called, and how do the containers within the Pod communicate?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="360" height="160" rx="10" fill="#333" stroke="#326CE5" stroke-width="2"/><text x="200" y="45" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Pod</text><rect x="40" y="60" width="140" height="50" rx="6" fill="#0db7ed" stroke="#fff" stroke-width="1.5"/><text x="110" y="90" text-anchor="middle" fill="white" font-size="12">App Container</text><rect x="220" y="60" width="140" height="50" rx="6" fill="#FF9800" stroke="#fff" stroke-width="1.5"/><text x="290" y="90" text-anchor="middle" fill="white" font-size="12">Sidecar Container</text><rect x="100" y="130" width="200" height="35" rx="6" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/><text x="200" y="152" text-anchor="middle" fill="white" font-size="12">Shared Volume (emptyDir)</text><line x1="110" y1="110" x2="160" y2="130" stroke="#aaa" stroke-width="1.5"/><line x1="290" y1="110" x2="240" y2="130" stroke="#aaa" stroke-width="1.5"/></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="360" height="160" rx="10" fill="#333" stroke="#326CE5" stroke-width="2"/><text x="200" y="45" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Pod</text><rect x="40" y="60" width="140" height="50" rx="6" fill="#0db7ed" stroke="#fff" stroke-width="1.5"/><text x="110" y="90" text-anchor="middle" fill="white" font-size="12">App Container</text><rect x="220" y="60" width="140" height="50" rx="6" fill="#FF9800" stroke="#fff" stroke-width="1.5"/><text x="290" y="90" text-anchor="middle" fill="white" font-size="12">Helper Container</text><rect x="100" y="130" width="200" height="35" rx="6" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/><text x="200" y="152" text-anchor="middle" fill="white" font-size="12">Shared Volume (emptyDir)</text><line x1="110" y1="110" x2="160" y2="130" stroke="#aaa" stroke-width="1.5"/><line x1="290" y1="110" x2="240" y2="130" stroke="#aaa" stroke-width="1.5"/></svg>',
     options: [
       "The sidecar pattern; containers share the same network namespace and can share volumes",
       "The ambassador pattern; containers communicate via Kubernetes Service DNS with proxying",
@@ -373,7 +373,7 @@ var questions = [
     id: "s01-q024",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A team needs to deploy a new version of their application with zero downtime. They currently have a Deployment running 5 replicas. They want Kubernetes to gradually replace old Pods with new ones, ensuring at least 4 Pods are always available during the update. Which strategy and configuration should they use?",
+    text: "A team needs to deploy a new version of their application with zero downtime. They currently have a Deployment running 5 replicas. They want Kubernetes to gradually replace old Pods with new ones, ensuring minimal disruption during updates. Which strategy and configuration should they use?",
     diagram: null,
     options: [
       "Set the Deployment strategy to `Recreate` with a `minReadySeconds` value of 30 for safe transitions",
@@ -568,13 +568,13 @@ var questions = [
     text: "A developer notices that their application Pod has been assigned to a node but the container is not yet running. The Pod status shows `Init:0/2`. What does this status indicate?",
     diagram: null,
     options: [
-      "The Pod has 2 regular containers and neither has started yet due to node resource constraints",
-      "The Pod is waiting for 2 ConfigMap dependencies that have not been created in the namespace",
+      "The Pod's 2 containers are stuck in their initialization phase due to node resource constraints",
+      "The init process (PID 1) inside each of the Pod's 2 containers failed to start properly",
       "The Pod requires 2 volumes to be mounted and neither is currently available on the assigned node",
       "The Pod has 2 init containers that must complete before main containers start; none have finished"
     ],
     answer: 3,
-    explanation: "The `Init:0/2` status means the Pod has 2 init containers, and 0 of them have completed so far. Init containers run sequentially before any regular containers start. Each init container must complete successfully before the next one begins. This status does not relate to regular containers, volumes, or ConfigMaps. Init containers are commonly used for tasks like waiting for dependencies, running database migrations, or copying configuration files.\n\nWhy other options are wrong:\n- A: The `Init:0/2` status specifically indicates init containers, not regular containers waiting for resources.\n- B: This status is unrelated to ConfigMap dependencies; it shows init container completion progress.\n- C: This status is unrelated to volume mounting; it shows init container completion progress.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    explanation: "The `Init:0/2` status means the Pod has 2 init containers, and 0 of them have completed so far. Init containers run sequentially before any regular containers start. Each init container must complete successfully before the next one begins. This status does not relate to regular containers, volumes, or ConfigMaps. Init containers are commonly used for tasks like waiting for dependencies, running database migrations, or copying configuration files.\n\nWhy other options are wrong:\n- A: The `Init:` prefix specifically refers to Kubernetes init containers, not regular containers stuck during their startup phase.\n- B: The `Init:` prefix refers to Kubernetes init containers, not the PID 1 init process inside regular containers.\n- C: This status is unrelated to volume mounting; it shows init container completion progress.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: null
   },
   {
@@ -741,7 +741,7 @@ var questions = [
     id: "s01-q047",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "During a cluster upgrade, the team needs to understand the order of component upgrades. The Kubernetes documentation recommends a specific upgrade order for control plane components. Which component should typically be upgraded first?",
+    text: "During a cluster upgrade, the team needs to understand the order of component upgrades. After etcd has been upgraded separately, the Kubernetes documentation recommends a specific upgrade order for the remaining non-etcd control plane components (API server, controller-manager, scheduler). Which of these components should typically be upgraded first?",
     diagram: null,
     options: [
       "The `kube-scheduler`, because it must understand new scheduling features before other components",
@@ -750,7 +750,7 @@ var questions = [
       "The `etcd` cluster, because it must support the new data schema before any component can be upgraded"
     ],
     answer: 2,
-    explanation: "The recommended Kubernetes upgrade order starts with the `kube-apiserver` because all other control plane components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes. `etcd` upgrades are often performed before the API server (as kubeadm does automatically), but etcd is sometimes considered a backing store rather than a control plane component proper. Among the core control plane components (API server, controller manager, scheduler), the API server should be upgraded first.\n\nWhy other options are wrong:\n- A: The scheduler should be upgraded after the API server, not before.\n- B: Kubelets on worker nodes are upgraded last, not first.\n- D: etcd upgrades may happen before or alongside the API server, but among the core control plane triad, the API server goes first.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    explanation: "After etcd is upgraded separately (which kubeadm handles automatically before other components), the recommended upgrade order for the remaining control plane components starts with the `kube-apiserver` because all other components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes.\n\nWhy other options are wrong:\n- A: The scheduler should be upgraded after the API server, not before.\n- B: Kubelets on worker nodes are upgraded last, not first.\n- D: etcd is upgraded separately before the API server triad; the question specifically asks about the non-etcd control plane components.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
     verify: "microk8s kubectl version"
   },
   {
