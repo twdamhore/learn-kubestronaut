@@ -1,0 +1,402 @@
+{
+  "s07-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-restarts",
+    "wrong": "- A: ImagePullBackOff is a separate status caused by image pull failures, not container crashes\n- B: Disk pressure causes pod eviction with status Evicted, not CrashLoopBackOff\n- D: Readiness probe failures remove pods from endpoints but do not cause CrashLoopBackOff status"
+  },
+  "s07-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: A missing image produces ImagePullBackOff or ErrImagePull, not Pending with Insufficient cpu\n- B: NetworkPolicy affects pod traffic, not scheduling; a blocked pod would still be scheduled\n- D: A nodeSelector mismatch produces a different message mentioning node label match failure"
+  },
+  "s07-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/",
+    "wrong": "- A: Restarting kubelet does not fix a missing image in the registry\n- B: Deleting a ServiceAccount is unrelated to image pull failures\n- C: Memory limits do not affect image pulling; the pull uses kubelet resources, not the container's"
+  },
+  "s07-q004": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/#exceed-a-container-s-memory-limit",
+    "wrong": "- A: Liveness probe timeout causes a restart with Reason: Killing, not OOMKilled with exit code 137\n- B: Disk space exhaustion causes DiskPressure eviction, not OOMKilled\n- D: Startup probe failure causes restart with a different reason, not OOMKilled"
+  },
+  "s07-q005": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes",
+    "wrong": "- A: Missing resource limits causes throttling but does not make READY show 0/1 while Running\n- B: Cordoned nodes prevent new scheduling; existing Running pods remain and stay Ready\n- C: DNS resolution failures would cause application-level errors, not 0/1 READY status"
+  },
+  "s07-q006": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/",
+    "wrong": "- A: kubectl logs shows container stdout/stderr output, not an interactive shell\n- C: kubectl attach connects to the main process stdin, not a new shell session\n- D: kubectl port-forward creates a network tunnel, not a shell session"
+  },
+  "s07-q007": {
+    "ref": "https://12factor.net/logs",
+    "wrong": "- B: SSHing into nodes bypasses Kubernetes abstractions and does not scale in cloud native environments\n- C: Persistent volumes for logs add complexity; cron-based collection is fragile and not cloud native\n- D: Disabling restarts loses self-healing and container filesystems are ephemeral anyway"
+  },
+  "s07-q008": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination-forced",
+    "wrong": "- B: kubectl drain evicts pods but cannot force-remove pods stuck in Terminating on unreachable nodes\n- C: cordon/uncordon controls scheduling, not stuck Terminating pods\n- D: rollout restart creates new pods but does not remove stuck Terminating pod objects from etcd"
+  },
+  "s07-q009": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
+    "wrong": "- A: Without -c in multi-container pods, older versions error out; newer versions default to first container, not necessarily the desired one\n- B: kubectl describe does not show container logs; it shows events and resource metadata\n- D: kubectl exec cat reads files inside the container, but the app may not write to that path and this is not the kubectl logs mechanism"
+  },
+  "s07-q010": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    "wrong": "- A: Missing image pull secrets cause ImagePullBackOff, not taint-related scheduling failure\n- B: nodeAffinity mismatch produces a different scheduling message about affinity rules, not taints\n- C: Admission controller blocks produce Forbidden errors at API level, not scheduling failures"
+  },
+  "s07-q011": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    "wrong": "- A: Init containers do not manage or restart main containers; they run before main containers start\n- C: If init completed successfully, the status would not be Init:CrashLoopBackOff\n- D: Eviction shows status Evicted, not Init:CrashLoopBackOff"
+  },
+  "s07-q012": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/",
+    "wrong": "- A: Base image issues would cause build or startup failures, not timeouts from running healthy pods\n- B: The scheduler does not move pods between namespaces; namespaces are metadata, not placement\n- C: Pod security policies do not cause timeout errors between services"
+  },
+  "s07-q013": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions",
+    "wrong": "- A: PodScheduled=True contradicts this; the pod is already assigned to a node\n- B: Initialized=True contradicts this; all init containers have completed\n- D: Volume mount failures typically prevent Initialized from becoming True or show ContainerCreating status"
+  },
+  "s07-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    "wrong": "- A: Readiness probes are unrelated to securityContext runAsNonRoot settings\n- B: ClusterRoleBinding grants API access, not OS-level root bypass for containers\n- D: privileged: true is a severe security anti-pattern that escalates privileges rather than fixing root cause"
+  },
+  "s07-q015": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#min-ready-seconds",
+    "wrong": "- B: Recreate strategy causes downtime by terminating all old pods before creating new ones\n- C: terminationGracePeriodSeconds helps in-flight requests but does not prevent premature old pod termination\n- D: PDB with maxUnavailable 100% removes all protection and worsens the scenario"
+  },
+  "s07-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: nodeSelector targets a node but cannot override the NoSchedule taint blocking placement\n- B: This annotation is not a valid Kubernetes scheduling mechanism\n- D: GPU resource request helps with device allocation but does not overcome the taint"
+  },
+  "s07-q017": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/",
+    "wrong": "- A: kube-scheduler handles pod placement, not DNS; IP connectivity working rules out network isolation\n- B: kube-proxy manages Service iptables/IPVS rules, not DNS resolution\n- D: etcd stores cluster state, not DNS records; CoreDNS reads from the API server, not etcd directly"
+  },
+  "s07-q018": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
+    "wrong": "- A: sort-by gives a one-time snapshot, not a continuously updating view\n- C: kubectl top shows CPU/memory metrics, not restart counts or status changes\n- D: field-selector on events shows historical events, not live pod status updates"
+  },
+  "s07-q019": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-http-request",
+    "wrong": "- A: ImagePullBackOff is about image pulling, completely unrelated to probe behavior\n- B: This describes readiness probe behavior, not liveness; liveness failures cause restarts, not just readiness changes\n- C: Liveness and readiness probes operate independently; liveness does not wait for readiness"
+  },
+  "s07-q020": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container",
+    "wrong": "- B: kubectl cp cannot work if the container has no shell or tar binary to receive files\n- C: kubectl exec fails on distroless images because there is no shell binary to execute\n- D: replace --force restarts the pod entirely, losing the current runtime state being debugged"
+  },
+  "s07-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- A: Different ReplicaSet hashes (6d8f9b vs 7c4e2a) prove pods belong to different ReplicaSets\n- C: Deployment-managed pods follow the naming pattern; the third pod matches the deployment name\n- D: A scale-down terminates pods gracefully, not with CrashLoopBackOff status"
+  },
+  "s07-q022": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim",
+    "wrong": "- B: Storage class provisioning issues cause Pending PVC status, not pod-level PVC not found\n- C: PVCs with ReadWriteOnce can be bound to one node but the error says not found, not already bound\n- D: Disk space on nodes is not related to PVC not found errors"
+  },
+  "s07-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
+    "wrong": "- A: The API server does not cache container images; image caching happens at the node level\n- B: The deployment controller does detect spec changes, but the tag string did not change here\n- C: All container runtimes support the latest tag; this is not a runtime limitation"
+  },
+  "s07-q024": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/logging/#sidecar-container-with-logging-agent",
+    "wrong": "- B: hostPath volumes couple logs to node filesystem, creating node dependency and security risks\n- C: kubelet does not have built-in auto-detection of application log files inside containers\n- D: restartPolicy Never prevents self-healing; container filesystem is ephemeral and lost on pod deletion"
+  },
+  "s07-q025": {
+    "ref": "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
+    "wrong": "- A: kube-apiserver communication issues produce different errors like connection refused, not NetworkReady=false\n- B: kube-scheduler does not register nodes; kubelet self-registers with the API server\n- D: Worker nodes do not run etcd; etcd is on control plane nodes and does not store network readiness state"
+  },
+  "s07-q026": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
+    "wrong": "- A: Pod annotations do not contain error codes injected by the scheduler\n- C: Kubelet certificate issues would prevent the entire node from functioning, not cause individual pod crashes\n- D: ownerReferences identify the parent but do not explain why the container is crashing"
+  },
+  "s07-q027": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
+    "wrong": "- A: Deleting PVC loses all data; StatefulSet recreates PVC but the new volume still has root ownership\n- B: Scaling to 0 and back does not change volume ownership; the same PVC is reattached\n- C: imagePullPolicy has nothing to do with file permissions on mounted volumes"
+  },
+  "s07-q028": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/",
+    "wrong": "- B: NetworkPolicy is not needed for ClusterIP Service access by default; it would only matter if deny-all policies exist\n- C: --enable-aggregator-routing is for API aggregation, not Service routing\n- D: Pods do not need ClusterIP annotations; the Service selector is what links Services to pods"
+  },
+  "s07-q029": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
+    "wrong": "- A: restartPolicy: Never prevents automatic restarts with exponential backoff\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: The pod does not transition to Pending; it stays in its terminal Failed/Error state"
+  },
+  "s07-q030": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- B: Node affinity does not override memory checks; these are independent constraints on different nodes\n- C: The scheduler message explicitly lists only two issues; there is no hidden third issue\n- D: nodeSelector misconfiguration would not cause false memory reports on other nodes"
+  },
+  "s07-q031": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/cri/",
+    "wrong": "- A: kube-scheduler operates at the API level and does not interact with OCI runtimes\n- B: kube-apiserver admission happens before scheduling; OCI errors occur during container creation on nodes\n- C: CNI errors produce different messages about network setup, not OCI runtime create failures"
+  },
+  "s07-q032": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#restrictions",
+    "wrong": "- A: An empty string would occur if the key exists but is empty; a missing key causes CreateContainerConfigError\n- C: Kubernetes never injects default values for missing ConfigMap keys\n- D: The scheduler does not wait for ConfigMap keys; this is a kubelet container creation error"
+  },
+  "s07-q033": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    "wrong": "- A: Completed with exit code 0 means success, not a crash; a crash would show Error or Failed\n- B: Job pods are supposed to terminate; Running would be abnormal for a completed Job\n- D: backoffLimit only matters for failed runs; a Completed pod with 0 restarts clearly succeeded on first attempt"
+  },
+  "s07-q034": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_top_pod/",
+    "wrong": "- A: kubectl describe shows resource requests/limits, not actual real-time usage\n- B: --show-metrics is not a valid kubectl flag; kubectl get does not display resource usage\n- D: ResourceQuota shows namespace-level allocation limits, not per-pod real-time consumption"
+  },
+  "s07-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
+    "wrong": "- A: externalTrafficPolicy is a Service-level field, not a pod annotation\n- B: NET_ADMIN capability is for network administration, not required for NodePort functionality\n- C: hostNetwork bypasses pod networking but does not directly relate to NodePort external access issues"
+  },
+  "s07-q036": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    "wrong": "- B: DaemonSet update strategy affects how updates roll out, not memory usage on a specific node\n- C: Different container runtime versions do not typically cause significant memory overhead differences\n- D: kube-proxy uses minimal memory and is unlikely to cause OOMKill of other pods"
+  },
+  "s07-q037": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes",
+    "wrong": "- A: startupProbe does not replace the readiness probe; it temporarily disables both liveness and readiness\n- B: startupProbe allows up to 300s (30x10), not 30s; it does not continuously monitor after success\n- D: startupProbe has no interaction with the scheduler; it runs on the kubelet, not during scheduling"
+  },
+  "s07-q038": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
+    "wrong": "- B: kubelet does not have a setting to ignore image pull secrets\n- C: The latest tag does not bypass authentication on private registries\n- D: Secret data only needs to be base64-encoded once; double encoding would corrupt the credentials"
+  },
+  "s07-q039": {
+    "ref": "https://www.jaegertracing.io/docs/latest/getting-started/",
+    "wrong": "- A: More replicas might help if the issue is load, but does not help identify the latency source\n- B: Restarting pods is a shotgun approach that does not diagnose the root cause of intermittent failures\n- D: CPU limits can cause throttling but adding them does not diagnose the existing latency problem"
+  },
+  "s07-q040": {
+    "ref": "https://helm.sh/docs/helm/helm_rollback/",
+    "wrong": "- B: Uninstall then install loses release history and is disruptive; rollback is faster and preserves history\n- C: helm template + kubectl delete removes resources but does not restore the previous version\n- D: --reset-values resets to chart defaults, not to the previous working release revision"
+  },
+  "s07-q041": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/",
+    "wrong": "- B: etcd encryption does not cause connection refused on port 6443\n- C: RBAC failures return HTTP 403 Forbidden, not TCP connection refused\n- D: Ingress controllers handle external HTTP traffic, not kubectl API server communication"
+  },
+  "s07-q042": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "wrong": "- A: Slash-based notation is not used in Kubernetes DNS\n- B: namespace/service-name path notation is not a DNS format\n- C: Double-dash notation is not part of Kubernetes DNS naming conventions"
+  },
+  "s07-q043": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
+    "wrong": "- A: kubectl logs captures both stdout and stderr; empty logs means neither stream received output\n- B: Log rotation does not delete previous container logs that quickly; kubelet retains them\n- D: kubelet does not have a flag to disable container log capture"
+  },
+  "s07-q044": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
+    "wrong": "- A: restartPolicy Always means the container is always restarted, never reaching terminal Completed\n- C: The kubelet restarts the container in place; the ReplicaSet does not create a new pod for restarts\n- D: Exit code 0 is a valid success exit; kubelet does not mark it as Failed under Always policy"
+  },
+  "s07-q045": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/logging/#cluster-level-logging-architectures",
+    "wrong": "- B: --since only filters logs within the current or previous container instance, not across replaced pods\n- C: kubectl describe does not store log lines; it shows events and resource metadata only\n- D: kubectl get events captures event objects, not full container log output"
+  },
+  "s07-q046": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/",
+    "wrong": "- A: kube_pod_status_phase shows pod phase, not memory usage trends for detecting leaks\n- C: node_memory_MemAvailable_bytes is node-level and lacks per-container granularity\n- D: restart count is reactive and only increases after OOM has already occurred"
+  },
+  "s07-q047": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate",
+    "wrong": "- A: Services route to pods, not individual containers; if the pod is not ready, no traffic is sent\n- C: sessionAffinity: ClientIP affects session routing, not partial readiness behavior\n- D: Kubernetes does not terminate the entire pod when one container crashes; it restarts just that container"
+  },
+  "s07-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: ConfigMap volume mounts are updated automatically by the kubelet, not immutable after creation\n- B: The kubelet sync period is approximately 60 seconds, not 24 hours\n- D: kube-controller-manager does not need restarting for ConfigMap propagation"
+  },
+  "s07-q049": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
+    "wrong": "- B: ArgoCD does not update Git; Git is the source of truth in GitOps, not the cluster state\n- C: ArgoCD does not compute averages; it enforces the exact state declared in Git\n- D: ArgoCD does not mark as failed for drift; it marks as OutOfSync and reconciles on next sync"
+  },
+  "s07-q050": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
+    "wrong": "- A: Forbid only checks previous Jobs from the same CronJob, not all Jobs in the namespace\n- B: Terminating the running Job describes the Replace policy, not Forbid\n- C: Forbid does not queue; it simply skips the scheduled run entirely"
+  },
+  "s07-q051": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes",
+    "wrong": "- A: Liveness probe failures cause restarts, not readiness failures; this is a readiness probe scenario\n- C: Readiness failures do not cause eviction or rescheduling\n- D: Readiness probes have direct operational impact by controlling Service endpoint membership"
+  },
+  "s07-q052": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/",
+    "wrong": "- A: Allocatable is not total minus current usage; it is total minus reserved amounts, calculated at node startup\n- B: LimitRange restricts per-pod limits, not the node-level allocatable value\n- C: ResourceQuota is a namespace-level constraint, not a node-level allocatable property"
+  },
+  "s07-q053": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: Increasing limits does not free up schedulable CPU; requests are what the scheduler uses\n- B: Recreate strategy does not add capacity; it would cause downtime and does not solve Insufficient cpu\n- D: system-node-critical priority is for system components, not application workloads; misuse causes disruption"
+  },
+  "s07-q054": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-tcp-liveness-probe",
+    "wrong": "- A: The kernel binds the port only when the application calls listen(); the process must be ready to accept connections\n- C: Readiness and liveness probes operate independently; readiness does not gate the TCP check\n- D: Readiness probe failures do not cause the kubelet to kill the container; that is the liveness probe's role"
+  },
+  "s07-q055": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    "wrong": "- B: This is a consequence of option A (DNS uses egress), not a separate root cause explanation\n- C: Egress rules are defined in the same NetworkPolicy resource, not in a separate required resource\n- D: If the CNI did not support NetworkPolicy, traffic would flow freely, not be blocked"
+  },
+  "s07-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#progress-deadline-seconds",
+    "wrong": "- A: terminationGracePeriodSeconds controls shutdown time, not rollout timeout detection\n- B: maxSurge controls how many extra pods are created during update, not the failure timeout\n- C: minReadySeconds controls when a pod is considered available, not when a rollout is marked failed"
+  },
+  "s07-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/#multi-architecture-images-with-image-indexes",
+    "wrong": "- B: Kubernetes version and Docker build version compatibility is not a cause of exec format error\n- C: All modern runtimes support OCI image format; exec format error is about binary architecture\n- D: Security context does not cause exec format error; it would produce permission denied or similar"
+  },
+  "s07-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    "wrong": "- A: Pod names are functional in StatefulSets; they determine PVC binding and DNS hostname\n- B: The old pod is fully deleted before the new one is created; there is no overlap or DNS conflict\n- D: Kubelet does not refuse previously used names; StatefulSets specifically reuse ordinal names"
+  },
+  "s07-q059": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+    "wrong": "- B: CNI does not revoke pod IPs during normal operation; IP is stable for the pod's lifetime\n- C: The API server does not directly reach pod IPs for liveness probes; the kubelet performs probes locally\n- D: The liveness probe path is in the running pod spec; it would not change without a pod update"
+  },
+  "s07-q060": {
+    "ref": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+    "wrong": "- A: Increasing timeouts worsens cascading failures by keeping more connections open longer\n- B: Adding replicas may help if load is the issue, but does not break the cascade when the service is genuinely slow\n- C: Deploying all services in one pod violates microservice principles and creates a single point of failure"
+  },
+  "s07-q061": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage",
+    "wrong": "- A: PersistentVolumes are separate from ephemeral storage and have their own lifecycle\n- B: etcd is on control plane nodes and its data directory is not related to node DiskPressure\n- D: Network-attached CSI volumes are not ephemeral storage; they are persistent and externally managed"
+  },
+  "s07-q062": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/",
+    "wrong": "- A: Restarting kubelet does not create a missing ConfigMap; the ConfigMap must exist\n- C: ServiceAccount does not block volume mounts; it is unrelated to ConfigMap mounting\n- D: volumeClaimTemplate is for PVC provisioning, not ConfigMaps"
+  },
+  "s07-q063": {
+    "ref": "https://opentelemetry.io/docs/concepts/signals/traces/",
+    "wrong": "- A: Debug logging adds volume but does not show timing across network components and proxies\n- C: CPU metrics show resource usage but cannot explain request-level latency across network hops\n- D: kubectl top shows aggregate pod metrics, not per-request timing through the network stack"
+  },
+  "s07-q064": {
+    "ref": "https://kubernetes.io/docs/tasks/run-application/access-api-from-pod/",
+    "wrong": "- B: Missing SA token volume causes authentication failures (401), not TLS handshake errors\n- C: NetworkPolicy blocking would cause connection timeout, not TLS handshake error\n- D: The API server accepts connections from pods by default via the kubernetes Service"
+  },
+  "s07-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/",
+    "wrong": "- A: kubectl move is not a valid command; pods cannot be moved between namespaces\n- B: secretRef.namespace does not exist in the pod spec; Secrets are namespace-scoped\n- D: ClusterRoleBinding grants API access but pods can only mount Secrets from their own namespace"
+  },
+  "s07-q066": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy",
+    "wrong": "- A: The Job stops retrying at backoffLimit; it does not continue indefinitely\n- C: Kubernetes does not send alerts via the event system for Job failures; it marks the Job as Failed\n- D: The Job controller does not auto-delete the Job resource; it remains for inspection"
+  },
+  "s07-q067": {
+    "ref": "https://falco.org/docs/rules/default-rules/",
+    "wrong": "- A: Pulling images from untrusted registries triggers different Falco rules, not the terminal shell rule\n- C: CMD starting a shell at boot is the container's normal entrypoint, not an interactive terminal session\n- D: Security context cannot be modified at runtime; this is not what triggers the terminal shell alert"
+  },
+  "s07-q068": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+    "wrong": "- A: OOMKill shows Reason: OOMKilled with exit code 137; eviction shows Reason: Evicted with a different message\n- B: HPA scaling down shows normal pod termination, not Evicted status with resource pressure message\n- C: PDB violations block evictions; they do not cause evictions with resource pressure messages"
+  },
+  "s07-q069": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- B: emptyDir volumes can be mounted by multiple containers in the same pod simultaneously\n- C: Different mount paths access the same underlying volume data; the mount path is just the view into the pod\n- D: emptyDir volumes are read-write by default, not read-only"
+  },
+  "s07-q070": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+    "wrong": "- A: Kubernetes does not pause pods; preempted pods are terminated\n- B: Pod migration is not a Kubernetes feature; pods are terminated and recreated, not live-migrated\n- D: Preemption only terminates the pod, not its owning controller; the controller persists and creates replacements"
+  },
+  "s07-q071": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/",
+    "wrong": "- B: Prometheus is not a prerequisite for Metrics Server; they are independent systems\n- C: Metrics Server does not use node labels for discovery; it uses the kubelet's metrics endpoint\n- D: There is no --enable-top-command flag for kube-apiserver"
+  },
+  "s07-q072": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/",
+    "wrong": "- A: Protocol mismatch is rare and would not produce empty endpoints; endpoints are based on selector match\n- B: Running in a different cluster is not plausible if the Service was created in this cluster\n- C: kube-proxy routes traffic after endpoints are populated; empty endpoints means the selector does not match"
+  },
+  "s07-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/init-containers/#understanding-init-containers",
+    "wrong": "- B: Init containers run sequentially, not in parallel; each must complete before the next starts\n- C: Init containers run in forward order as listed in the spec, not reverse\n- D: Init container execution order is deterministic based on spec order, never random"
+  },
+  "s07-q074": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",
+    "wrong": "- A: Increasing canary percentage exposes more users to errors, the opposite of risk mitigation\n- B: There is no built-in auto-healing mechanism for application-level 500 errors in canary deployments\n- C: Deleting and redeploying is disruptive and does not investigate root cause first"
+  },
+  "s07-q075": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/",
+    "wrong": "- A: api-key is a Secret name reference, not a binary; the error message explicitly says secret not found\n- C: Encryption at rest does not cause not found errors; it would cause decryption errors if misconfigured\n- D: api-key is not a reserved name in Kubernetes; any valid string can be used as a Secret name"
+  },
+  "s07-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: The error explicitly mentions exceeded quota, not insufficient node resources\n- B: LimitRange restricts individual pod limits, not namespace-wide totals; the error names compute-quota\n- D: Cluster-wide capacity is separate from namespace ResourceQuota enforcement"
+  },
+  "s07-q077": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- A: Architecture restrictions use nodeSelector or nodeAffinity, not topology spread constraints\n- B: Pod count limits per node use node resource capacity, not topology spread constraints\n- C: Network communication restrictions use NetworkPolicy, not topology spread constraints"
+  },
+  "s07-q078": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    "wrong": "- A: maxUnavailable: 0 explicitly prevents terminating old pods before new ones are Ready\n- C: Kubernetes does not automatically revert; it only reports failure via progressDeadlineSeconds\n- D: The Deployment controller does not dynamically increase maxSurge; it follows the configured strategy"
+  },
+  "s07-q079": {
+    "ref": "https://knative.dev/docs/serving/autoscaling/scale-bounds/",
+    "wrong": "- B: CPU limits may help but do not eliminate cold starts when scaling from zero instances\n- C: Converting to a Deployment abandons serverless benefits; minScale: 1 preserves the serverless model\n- D: Disabling health checks removes safety mechanisms and does not address the timeout during cold start"
+  },
+  "s07-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/controller/",
+    "wrong": "- B: Existing containers keep running under kubelet management; kube-controller-manager does not control the runtime\n- C: All controllers (ReplicaSet, Deployment, Job, DaemonSet, etc.) are affected, not just DaemonSet\n- D: The scheduler handles pod placement only; it does not take over controller responsibilities"
+  },
+  "s07-q081": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: Writes do not silently fail; the data is written but the kubelet detects the overage and evicts\n- B: emptyDir volumes do not auto-expand; sizeLimit is a hard enforcement boundary\n- D: sizeLimit is enforced by the kubelet; it is not merely advisory"
+  },
+  "s07-q082": {
+    "ref": "https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
+    "wrong": "- B: ArgoCD supports webhooks for real-time notification of Git changes\n- C: Maximum Deployment count is not a standard Kubernetes or ArgoCD limitation\n- D: Git repositories do not need restarting; ArgoCD polls or receives webhooks automatically"
+  },
+  "s07-q083": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
+    "wrong": "- A: Headless Services return pod IPs, not node IPs\n- B: Headless Services have no cluster IP at all (clusterIP: None), so no VIPs are allocated\n- C: kube-proxy instances are not exposed via DNS for any Service type"
+  },
+  "s07-q084": {
+    "ref": "https://istio.io/latest/docs/concepts/security/#peer-authentication",
+    "wrong": "- B: mTLS encryption overhead is minimal; CPU is unlikely to be the cause of connection reset errors\n- C: The API server is not involved in pod-to-pod mTLS; the sidecar proxies handle it\n- D: Service port definitions do not need TLS annotations; the sidecar proxy transparently handles mTLS"
+  },
+  "s07-q085": {
+    "ref": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command",
+    "wrong": "- A: SIGTERM is sent during pod termination, not by liveness probes; liveness triggers SIGKILL after threshold\n- C: This describes readiness probe behavior, not liveness; liveness failures cause container restart, not endpoint removal\n- D: The kubelet does not wait indefinitely; it checks at each periodSeconds and counts failures toward the threshold"
+  },
+  "s07-q086": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+    "wrong": "- A: hostNetwork: true violates the restricted profile; it must be false or unset\n- B: Resource limits set to zero is not a requirement; the restricted profile does not mandate specific limit values\n- D: The restricted profile does not require the default ServiceAccount; custom ServiceAccounts are allowed"
+  },
+  "s07-q087": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
+    "wrong": "- B: Opening individual terminal windows is manual, tedious, and does not scale well\n- C: Piping kubectl get pods output to a script adds unnecessary complexity vs the built-in -l selector\n- D: Deploying a new DaemonSet is heavy-weight for ad-hoc debugging and takes time to set up"
+  },
+  "s07-q088": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
+    "wrong": "- A: The kubelet sends SIGTERM first, not SIGKILL; immediate SIGKILL only happens after the grace period\n- B: The pod is removed from endpoints at the start of termination; it does not continue serving for the full period\n- D: Readiness probe is not suspended; the pod is marked as terminating and removed from endpoints"
+  },
+  "s07-q089": {
+    "ref": "https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
+    "wrong": "- A: Manual production changes are widely considered an anti-pattern in cloud native operations\n- B: kubectl exec fully supports interactive clients like psql with -it flags\n- C: NetworkPolicy does not automatically block interactive sessions based on namespace naming"
+  },
+  "s07-q090": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    "wrong": "- A: OOMKill shows exit code 137 with OOMKilled reason, not an eviction after exactly 5 minutes\n- C: Kubernetes does not perform live pod migration; pods are terminated and recreated\n- D: PDB does not have a minimum uptime threshold; it protects against voluntary disruptions"
+  },
+  "s07-q091": {
+    "ref": "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
+    "wrong": "- B: Image pull failure shows different event messages about pull errors, not network plugin failures\n- C: Kubelet authentication issues prevent node registration, not pod sandbox creation\n- D: kube-proxy creates iptables rules for Services, not for pod sandbox network setup"
+  },
+  "s07-q092": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: 15-20% utilization at 3x expected cost is not optimal; it indicates significant waste\n- B: Low utilization from kubectl top is from the Metrics Server, which is reliable when installed\n- D: Node-level metrics are highly relevant; they show overall cluster utilization and capacity waste"
+  },
+  "s07-q093": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
+    "wrong": "- A: Applications cannot choose exit code 137; it is set by the kernel when delivering SIGKILL (128+9)\n- C: Read-only filesystem causes I/O errors with different exit codes, not SIGKILL\n- D: Exit code 137 is a kernel signal response, not a binary bug specific to an image"
+  },
+  "s07-q094": {
+    "ref": "https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/",
+    "wrong": "- B: Hostname conflicts are possible but much less common; the error typically mentions the specific cause\n- C: Kubernetes API server does not have a maximum node limit that would reject registrations\n- D: Missing container runtime prevents kubelet from starting containers but not from registering with the API server"
+  },
+  "s07-q095": {
+    "ref": "https://helm.sh/docs/helm/helm_install/",
+    "wrong": "- A: Template syntax errors produce different error messages about rendering failures\n- B: Repository index corruption is unrelated to local chart installation from a directory path\n- C: API version incompatibility produces errors about unknown API versions, not resource already exists"
+  },
+  "s07-q096": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#external-traffic-policy",
+    "wrong": "- A: externalTrafficPolicy: Local is not deprecated; it is actively supported and commonly used\n- B: hostNetwork: true is not required for Local policy; they are independent settings\n- D: CNI plugins handle pod networking, not Service traffic policy; kube-proxy handles externalTrafficPolicy"
+  },
+  "s07-q097": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout_undo/",
+    "wrong": "- B: rollout restart creates a new revision, not a rollback to a specific old revision\n- C: kubectl set image changes the image but does not support a --revision flag for rollback\n- D: kubectl apply with a YAML file requires having the correct version manifest and --force is disruptive"
+  },
+  "s07-q098": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-admission/",
+    "wrong": "- A: Helm validates chart syntax, not runtime admission; it cannot block kubectl apply or other tools\n- B: Prometheus monitors metrics, not admission control; it can alert but cannot prevent deployment\n- C: Falco detects runtime violations after deployment, not at admission time; it cannot prevent creation"
+  },
+  "s07-q099": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "wrong": "- A: kube-proxy does update iptables for new Services; the issue is client-side IP caching, not kube-proxy\n- B: Pods do not need restarts for iptables; DNS resolution happens per-request and adapts to new IPs\n- D: ExternalName is for CNAME mapping to external services, not for handling ClusterIP changes"
+  },
+  "s07-q100": {
+    "ref": "https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
+    "wrong": "- B: imagePullPolicy: Always retries but introduces latency and does not guarantee the image exists yet\n- C: initialDelaySeconds on probes is unrelated to image availability in the registry\n- D: Pre-caching all images on nodes is impractical and does not solve the race between push and deploy"
+  }
+}
