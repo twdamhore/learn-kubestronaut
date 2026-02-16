@@ -25,11 +25,11 @@ var questions = [
     diagram: null,
     options: [
       "A. The Deployment is created but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
-      "C. The Deployment object is created, but the ReplicaSet fails to create pods because of the missing seccomp profile field",
       "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of `RuntimeDefault` or `Localhost`",
+      "C. The Deployment object is created, but the ReplicaSet fails to create pods because of the missing seccomp profile field",
       "D. The pods are created with a default `RuntimeDefault` seccomp profile automatically injected by the Pod Security Admission controller"
     ],
-    answer: 1,
+    answer: 2,
     explanation: "Under Pod Security Admission in `enforce` mode with the `restricted` profile, the `seccompProfile` must be explicitly set to `RuntimeDefault` or `Localhost`. The Deployment object itself is created (it is not a pod-level resource), but when the ReplicaSet controller attempts to create pods, those pods are rejected by the admission controller. This results in the ReplicaSet logging creation failures while the Deployment appears to exist normally.",
     verify: "kubectl get events -n <namespace> --field-selector reason=FailedCreate"
   },
@@ -58,11 +58,11 @@ var questions = [
     options: [
       "A. 3 pods on us-east-1a and 3 on us-east-1b; the topology constraint is satisfied across the two available zones",
       "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate the skew",
-      "D. 4 pods schedule (2 per available zone) and 2 remain Pending because `maxSkew: 1` includes the unavailable zone",
-      "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely"
+      "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely",
+      "D. 5 pods run (2 in us-east-1a, 2 in us-east-1b, 1 existing in us-east-1c) and 1 remains Pending because `maxSkew: 1` includes the unavailable zone"
     ],
-    answer: 2,
-    explanation: "With `topologySpreadConstraints`, Kubernetes considers all topology domains that have matching pods or are valid scheduling targets. Since the `us-east-1c` zone still has 1 existing pod (from the original 3 replicas before the node went NotReady), it counts in the skew calculation. With `maxSkew: 1` and `DoNotSchedule`, the scheduler cannot place pods such that any domain differs by more than 1 from another. The existing pod on the NotReady node constrains distribution, resulting in only 4 of the 6 new pods being schedulable (2 per healthy zone), leaving 2 Pending.",
+    answer: 3,
+    explanation: "With `topologySpreadConstraints`, Kubernetes considers all topology domains that have matching pods, including those on NotReady nodes. The original 3 replicas were distributed 1 per zone. When the us-east-1c node goes NotReady, its pod still counts in the skew calculation (assuming it has not been evicted). With `maxSkew: 1` and `DoNotSchedule`, the scheduler can place pods on zones a and b until each has 2 pods (skew of 2\u22121=1, within maxSkew). This yields 2+2+1=5 running pods total. The 6th pod cannot be scheduled on any healthy zone without exceeding maxSkew (that would create a skew of 3\u22121=2), so 1 pod remains Pending.",
     verify: "kubectl get pods -o wide --sort-by=.spec.nodeName && kubectl get nodes --show-labels"
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "D. The controller creates 2 replacement pods with exponential backoff delay, incrementing the total failure count to 2 out of the 6 limit"
     ],
     answer: 3,
-    explanation: "When pods fail, the Job controller tracks the total number of failures against `backoffLimit`. Both failures are counted, bringing the total to 2. The controller will create replacement pods to maintain up to `parallelism` concurrent pods, but applies an exponential backoff delay between retries. With 3 completions, 2 running, and 2 newly failed, the controller will start 2 new pods (after backoff) to reach 4 parallel, since 5 more completions are needed. The backoff starts at 10 seconds and doubles up to 6 minutes.",
+    explanation: "When pods fail, the Job controller tracks the total number of failures against `backoffLimit`. With 3 completions and 4 running pods (full parallelism), 2 of the running pods fail simultaneously. This leaves 3 completed, 2 still running, and 2 failed (total failure count now 2 of 6 limit). The controller creates 2 replacement pods with exponential backoff delay to restore parallelism to 4, since 7 more completions are still needed. The backoff starts at 10 seconds and doubles up to 6 minutes.",
     verify: "kubectl describe job <job-name> | grep -E 'Completions|Parallelism|Failed|Succeeded'"
   },
   {
@@ -1114,7 +1114,7 @@ var questions = [
     options: [
       "A. The EndpointSlice controller takes time to propagate new endpoints to kube-proxy on all nodes, creating stale routing windows",
       "B. The Service selector change causes all existing TCP connections to terminate immediately, and reconnecting clients see 503 errors",
-      "C. kube-proxy iptables/IPVS rules on each node update asynchronously after EndpointSlice changes, so stale DNAT rules briefly route traffic to old blue pod IPs",
+      "C. The Service's `ClusterIP` virtual address is reallocated during the selector change, causing DNS resolution failures until the new VIP propagates to all CoreDNS caches",
       "D. The green pods' readiness probes have not yet been verified by the EndpointSlice controller at the moment of the selector switch"
     ],
     answer: 0,

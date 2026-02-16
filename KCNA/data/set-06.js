@@ -552,13 +552,13 @@ var questions = [
     text: "You want to monitor the scheduling latency of Pods in your cluster. Which metric exposed by the kube-scheduler is most relevant?",
     diagram: null,
     options: [
-      "A. `scheduler_e2e_scheduling_duration_seconds`",
+      "A. `scheduler_scheduling_attempt_duration_seconds`",
       "B. `kubelet_pod_start_duration_seconds` metric name",
       "C. `apiserver_request_duration_seconds` metric name",
       "D. `etcd_request_duration_seconds` metric name type"
     ],
     answer: 0,
-    explanation: "`scheduler_e2e_scheduling_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase.",
+    explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.",
     verify: null
   },
   {
@@ -1053,8 +1053,8 @@ var questions = [
       "C. v1.28 and v1.29 versions only",
       "D. v1.26 through v1.29 inclusive"
     ],
-    answer: 1,
-    explanation: "The Kubernetes version skew policy allows kubelets to be up to two minor versions older than the API server. With API server at v1.29, supported kubelet versions are v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server.",
+    answer: 3,
+    explanation: "Since Kubernetes 1.28, the version skew policy allows kubelets to be up to three minor versions older than the API server (for kubelet >= 1.25). With API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server. Note: kubelets older than v1.25 are limited to a two-version skew.",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -1326,7 +1326,7 @@ var questions = [
       "D. It sets the timeout for Pod readiness probes before marking Pods as not available yet"
     ],
     answer: 2,
-    explanation: "The pod eviction timeout (default 5 minutes) determines how long the node lifecycle controller waits after a node becomes `NotReady` before evicting its Pods. This grace period accounts for transient network issues and prevents unnecessary Pod disruption.",
+    explanation: "The pod eviction timeout (default 5 minutes) determines how long the node lifecycle controller waits after a node becomes `NotReady` before evicting its Pods. This grace period accounts for transient network issues and prevents unnecessary Pod disruption. Note: the `--pod-eviction-timeout` flag was deprecated and removed in Kubernetes 1.27+. In modern clusters, eviction is controlled via NoExecute taints applied automatically to NotReady nodes and the `tolerationSeconds` field on Pod tolerations (default 300s).",
     verify: "kubectl -n kube-system get pod kube-controller-manager-<node> -o yaml | grep eviction"
   },
   {
@@ -1413,7 +1413,7 @@ var questions = [
     id: "s06-q089",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which CNCF project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?",
+    text: "Which Kubernetes ecosystem project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?",
     diagram: null,
     options: [
       "A. Descheduler for rebalancing Pods",

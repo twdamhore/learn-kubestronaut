@@ -1221,7 +1221,7 @@ var questions = [
     text: "A platform team wants to set up alerts for pods that are repeatedly being OOM-killed. They suspect some containers have memory limits set too low. Which combination of metrics and Kubernetes resource information is most useful?",
     diagram: null,
     options: [
-      "`kube_pod_container_status_restarts_total` filtered by OOMKilled reason, plus `kube_pod_container_resource_limits` for memory",
+      "`kube_pod_container_status_restarts_total` with `kube_pod_container_status_last_terminated_reason` for OOMKilled, plus `kube_pod_container_resource_limits` for memory",
       "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health and available capacity",
       "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod network traffic analysis",
       "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica tracking"

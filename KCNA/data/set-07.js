@@ -1370,7 +1370,7 @@ var questions = [
     options: [
       "The pod must specify `hostNetwork: true` to comply with the restricted policy's network isolation requirements list",
       "The pod must have resource limits set to zero to meet the restricted policy's compute allocation constraints spec",
-      "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and use a read-only root filesystem or seccompProfile",
+      "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and set a `seccompProfile` (e.g., `RuntimeDefault`)",
       "The pod must use the `default` ServiceAccount and not a custom one to satisfy the restricted policy identity checks"
     ],
     answer: 2,

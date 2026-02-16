@@ -1,35 +1,22 @@
 {
   "set": "01",
+  "round": 2,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s01-q026",
-      "type": "ambiguous",
+      "id": "s01-q031",
+      "type": "bad_verify",
       "severity": "minor",
-      "description": "The correct answer states that every Kubernetes resource manifest requires `apiVersion`, `kind`, `metadata`, and `spec`. While this is the standard teaching for KCNA, it is not strictly true for ALL resources. ConfigMap and Secret use `data`/`stringData` instead of `spec`. Similarly, resources like Event, Binding, and ComponentStatus do not have a `spec` field. Among the given options, option 0 is still the best answer, but the absolute phrasing ('every Kubernetes resource manifest') could mislead advanced students.",
-      "suggested_fix": "Consider softening the question text from 'Every Kubernetes object manifest must include certain top-level fields' to 'Most Kubernetes workload manifests include certain top-level fields' or add a note in the explanation acknowledging that some resources like ConfigMap use `data` instead of `spec`."
+      "description": "The verify command contains a literal placeholder `<pod-name>` that would fail if executed: `microk8s kubectl describe pod <pod-name> | grep -A5 Events`. Unlike other verify commands in this set that use concrete resource names or list-style queries, this one requires manual substitution and would produce a shell error due to the angle brackets being interpreted as redirection operators.",
+      "suggested_fix": "Replace the verify command with a generic query that works without substitution, such as: `microk8s kubectl get pods --field-selector=status.phase=Pending -o wide` or `microk8s kubectl get events --field-selector reason=Failed --sort-by=.metadata.creationTimestamp`."
     },
     {
-      "id": "s01-q038",
-      "type": "wrong_explanation",
-      "severity": "critical",
-      "description": "The explanation text contains a contradictory error. It says 'The fourth option omits the namespace and `svc` components' but the fourth option (index 3) IS the correct answer. The explanation is criticizing its own correct answer. The statement about omitting namespace and svc components actually describes option 1 (`inventory-api.cluster.local` as short name), which is missing the `production.svc` part of the FQDN. Additionally, the explanation never explains why option 1 is wrong.",
-      "suggested_fix": "Replace 'The fourth option omits the namespace and `svc` components.' with 'The second option (`inventory-api.cluster.local`) omits the namespace and `svc` components, making it an invalid DNS name for Kubernetes Services.'"
-    },
-    {
-      "id": "s01-q065",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The explanation states: 'Specifying `-l` twice would result in only the last value being used, not an AND combination.' This is factually incorrect. kubectl does support multiple `-l` flags and combines them with AND logic. For example, `kubectl get pods -l app=frontend -l tier!=api` would work and produce the same result as the comma-separated form. The correct answer (option 0, comma-separated selectors) is still the canonical and preferred way, but option 3 (`kubectl get pods -l app=frontend -l tier!=api`) would also work, making this question have two correct answers.",
-      "suggested_fix": "Change the explanation from 'Specifying `-l` twice would result in only the last value being used, not an AND combination.' to 'While specifying `-l` twice is technically supported, the comma-separated form within a single `-l` flag is the canonical and recommended syntax.' Also consider rewording option 3 to something clearly incorrect, such as using an invalid selector syntax."
-    },
-    {
-      "id": "s01-q066",
+      "id": "s01-q047",
       "type": "wrong_explanation",
       "severity": "minor",
-      "description": "The explanation states: 'Priority affects scheduling preemption but not kubelet eviction order.' This is not entirely accurate. The kubelet's eviction manager does consider Pod priority when evicting Pods under resource pressure. Within the same QoS class, Pods with lower priority are evicted first. The correct answer (Guaranteed QoS via requests=limits) is still the best answer since QoS class is the primary factor, but the explanation's claim that priority does not affect eviction order is misleading.",
-      "suggested_fix": "Change 'Priority affects scheduling preemption but not kubelet eviction order.' to 'While Pod priority can influence eviction order within the same QoS class, the QoS class itself is the primary factor the kubelet considers during eviction, making Guaranteed QoS the strongest protection.'"
+      "description": "The explanation states '`etcd` upgrades are typically handled separately but do not need to be first.' This is misleading. In kubeadm-managed clusters (the most common setup), `kubeadm upgrade apply` upgrades etcd BEFORE kube-apiserver because a newer kube-apiserver may require a newer etcd version. The Kubernetes version skew policy specifies supported etcd versions per kube-apiserver release. The marked answer (kube-apiserver first) is still the best choice among the given options because option D's reasoning ('new data schema') is incorrect, and the KCNA curriculum teaches kube-apiserver as the first control plane component to upgrade. However, the explanation should not claim etcd does not need to be first.",
+      "suggested_fix": "Change the etcd sentence in the explanation to: '`etcd` upgrades are often performed before the API server (as kubeadm does automatically), but etcd is sometimes considered a backing store rather than a control plane component proper. Among the core control plane components (API server, controller manager, scheduler), the API server should be upgraded first.'"
     }
   ]
 }

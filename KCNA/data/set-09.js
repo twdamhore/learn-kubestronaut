@@ -142,7 +142,7 @@ var questions = [
       "Set <code>privileged: false</code> in the container's resource limits section to prevent root-level access"
     ],
     answer: 1,
-    explanation: "Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and use a read-only root filesystem among other constraints. It can be applied at the namespace level using labels.",
+    explanation: "Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and set a Seccomp profile, among other constraints. It can be applied at the namespace level using labels.",
     verify: "kubectl label namespace production pod-security.kubernetes.io/enforce=restricted"
   },
   {
@@ -313,7 +313,7 @@ var questions = [
     diagram: null,
     options: [
       "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy",
-      "Run <code>helm rollback my-release 0</code> to roll back to the initial installation revision of the release",
+      "Run <code>helm rollback my-release 1</code> to roll back to the first revision, which is the original install before any upgrades",
       "Run <code>helm rollback my-release</code> to revert to the previous release revision stored in the history",
       "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
     ],

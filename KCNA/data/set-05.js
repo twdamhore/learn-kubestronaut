@@ -15,7 +15,7 @@ var questions = [
     ],
     answer: 0,
     explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.",
-    verify: "microk8s kubectl create clusterrolebinding test --clusterrole=pod-reader --user=jane --dry-run=server 2>&1"
+    verify: "kubectl auth can-i list pods --namespace=payments --as=jane 2>&1"
   },
   {
     id: "s05-q002",
@@ -399,7 +399,7 @@ var questions = [
     ],
     answer: 3,
     explanation: "To encrypt Secrets at rest in etcd, you must create an `EncryptionConfiguration` file specifying encryption providers (like `aescbc`, `secretbox`, or a KMS provider) and pass it to the kube-apiserver via `--encryption-provider-config`. TLS on etcd protects data in transit, not at rest.",
-    verify: "kubectl get --raw /healthz/encrypt"
+    verify: "ps aux | grep kube-apiserver | grep encryption-provider-config"
   },
   {
     id: "s05-q026",
@@ -671,7 +671,7 @@ var questions = [
     ],
     answer: 1,
     explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3607 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
-    verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[?(@.name==\"kube-api-access\")].projected.sources[0].serviceAccountToken.expirationSeconds}'"
+    verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
     id: "s05-q043",
@@ -1583,7 +1583,7 @@ var questions = [
     ],
     answer: 1,
     explanation: "Helm's `lookup` function queries the Kubernetes API during template rendering. If a chart uses `lookup` to read Secrets, the user or ServiceAccount executing `helm install` must have `get` permissions on Secrets in the target namespace. This is a security consideration when granting Helm access.",
-    verify: "helm template <chart> --dry-run=server 2>&1"
+    verify: "helm install test-release <chart> --dry-run=server 2>&1"
   },
   {
     id: "s05-q100",

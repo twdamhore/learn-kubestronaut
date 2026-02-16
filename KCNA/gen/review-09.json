@@ -1,49 +1,22 @@
 {
   "set": "09",
+  "round": 2,
   "total_reviewed": 100,
-  "issues_found": 6,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s09-q013",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "Option A says 'The last two services are not propagating trace context headers in outgoing requests.' For the first two services to show spans but the last two to not, the actual root cause is that context is not being propagated FROM service 2 TO service 3 (i.e., service 2 is not injecting or service 3 is not extracting the traceparent header). Saying 'the last two services are not propagating' is imprecise -- if services 3 and 4 fail to extract incoming context, their spans appear in separate traces. The answer is essentially correct in spirit but the wording could mislead students about where exactly the propagation break occurs.",
-      "suggested_fix": "Rephrase option A to 'Trace context headers (e.g., traceparent) are not being propagated between the second and third services, causing downstream spans to appear in separate traces' or keep as-is but update the explanation to clarify that the break point is between services 2 and 3."
-    },
-    {
-      "id": "s09-q023",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "The question asks 'Which of the following could cause this?' for an NXDOMAIN on a valid Service DNS name. Both option A ('headless Service with no backing Pods, so no DNS A records exist') and option D (answer, 'dnsPolicy set to None without dnsConfig') are factually valid causes of NXDOMAIN. CoreDNS does return NXDOMAIN for headless Services with no ready endpoints. Since the question uses 'could cause' phrasing, two options are correct, which makes this ambiguous for an exam question.",
-      "suggested_fix": "Change option A to something clearly wrong, e.g., 'The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS' or add wording to the question stem clarifying that the Service has healthy backing Pods (e.g., 'The Service my-svc exists in namespace my-ns with healthy endpoints')."
-    },
-    {
-      "id": "s09-q046",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "Options A and C overlap significantly. Option A: 'CI/CD pipelines bypass audit trails and allow cluster state to diverge from version-controlled manifests.' Option C: 'Direct cluster access from CI/CD pipelines creates security risks and bypasses proper audit trail mechanisms.' Both mention audit trail issues, and the explanation itself covers both security risks (from option C) and state drift (from option A). A student could reasonably argue either is the 'primary risk.' The correct answer (A) focuses on drift while the explanation emphasizes security credentials, creating inconsistency.",
-      "suggested_fix": "Make option C clearly different from option A, e.g., 'The kubectl apply command cannot handle container images built by CI/CD pipelines because of registry authentication restrictions' or rephrase option A to be more distinct, e.g., 'The push-based model gives CI/CD credentials to the cluster, risks state drift from Git, and lacks a reconciliation mechanism to detect manual changes.'"
-    },
-    {
-      "id": "s09-q042",
+      "id": "s09-q009",
       "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation says the NetworkPolicy needs 'podSelector: {}' (matching all Pods), 'policyTypes: [\"Ingress\"]', and 'an empty ingress: [] field.' While this works, the canonical default-deny-ingress NetworkPolicy from the Kubernetes docs omits the ingress field entirely rather than setting it to an empty array. Both approaches work, but stating that an empty ingress array is required could confuse students who see examples that omit the field entirely. The option text says 'empty ingress array' which is technically one valid approach.",
-      "suggested_fix": "Update the explanation to mention that either omitting the ingress field or setting it to an empty array achieves the same default-deny effect, and that the key requirement is specifying policyTypes: [Ingress] with no ingress allow rules."
+      "severity": "moderate",
+      "description": "The explanation states: 'The `restricted` profile requires containers to run as non-root, drop all capabilities, and use a read-only root filesystem among other constraints.' The Pod Security Standards (PSS) restricted profile does NOT enforce readOnlyRootFilesystem. It is listed only as a recommendation/best practice in the PSS documentation, not as a required control. The restricted profile enforces: runAsNonRoot, dropping ALL capabilities (only NET_BIND_SERVICE may be added back), seccompProfile must be set, hostPath/hostNetwork/hostPID/hostIPC are forbidden, privilege escalation is blocked, etc. But readOnlyRootFilesystem is not among the enforced fields. The answer itself (index 1, Pod Security Admission with restricted profile) is correct for enforcing non-root, but the explanation overclaims what the restricted profile requires.",
+      "suggested_fix": "Change the explanation to: 'Pod Security Admission (PSA) is the built-in Kubernetes admission controller that enforces Pod Security Standards. The `restricted` profile requires containers to run as non-root, drop all capabilities, and set a Seccomp profile, among other constraints. It can be applied at the namespace level using labels.' Remove the mention of 'read-only root filesystem' from the enforced requirements."
     },
     {
       "id": "s09-q020",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "Option B says 'Run helm rollback my-release 0 to roll back to the initial installation revision of the release.' According to the Helm docs, revision 0 is a special value that means 'the previous release' (same as omitting the revision number), NOT the initial installation revision. So option B is wrong for the right reasons (it IS wrong), but a student who knows that revision 0 means 'previous release' might be confused about why it is listed as wrong -- the reason it is wrong is that '0' does not mean 'initial installation,' it means 'previous.' This is fine as a distractor. No change needed, just noting the subtlety.",
-      "suggested_fix": "No change strictly needed. The distractor is effective because it contains a factual error (claiming revision 0 = initial installation)."
-    },
-    {
-      "id": "s09-q059",
       "type": "ambiguous",
-      "severity": "minor",
-      "description": "The question states the container is consuming 4GB despite a 2GB limit. The correct answer (A) says tmpfs counts against the memory limit and OOM killer will terminate. But the premise implies the container IS running at 4GB, which should be impossible if the cgroup limit is enforced at 2GB. The explanation hedges by saying 'The reported 4GB likely indicates the container will soon be OOM-killed,' but monitoring tools generally report cgroup-limited usage, not above-limit usage. The scenario is slightly unrealistic. A more accurate scenario would describe repeated OOM kills or the container being killed after writing to tmpfs.",
-      "suggested_fix": "Rephrase the question to: 'An operations team notices that a container keeps getting OOM-killed despite the application process using only 500MB of memory. The container has a 2GB memory limit and uses an emptyDir with medium: Memory. What explains the OOM kills?' This makes the scenario more realistic."
+      "severity": "moderate",
+      "description": "Option B runs `helm rollback my-release 0` and option C runs `helm rollback my-release` (no revision). Per the Helm documentation and the review guidelines, `helm rollback RELEASE 0` is valid syntax that rolls back to the previous release -- NOT the 'initial installation revision' as option B claims. So option B's description is factually wrong about what revision 0 means, but the command itself would achieve the same result as option C (rolling back to the previous revision). Furthermore, in Helm 3.x, `helm rollback RELEASE` without a revision argument may not work in all versions -- some versions require the REVISION argument and return an error when it is omitted, while newer versions (3.12+) accept it and default to the previous revision. This creates ambiguity: option B has a working command but wrong description, and option C has a correct description but the command may fail depending on Helm version. A well-informed test-taker could reasonably argue for either answer.",
+      "suggested_fix": "Rewrite option B to clearly distinguish it from option C. For example, change option B to: 'Run `helm rollback my-release 1` to roll back to the first revision (initial install)' -- this makes option B unambiguously different (it targets a specific revision, which may or may not be what is wanted depending on how many upgrades happened). Then keep option C as the correct answer. Alternatively, change option C to use `helm rollback my-release 0` and update the explanation to note that revision 0 is a special value meaning 'previous release.'"
     }
   ]
 }

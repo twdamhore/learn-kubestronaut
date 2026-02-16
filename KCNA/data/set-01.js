@@ -495,7 +495,7 @@ var questions = [
     ],
     answer: 1,
     explanation: "The `ImagePullBackOff` status means the kubelet failed to pull the container image. Even if the image exists and the registry is accessible from outside the cluster, the cluster nodes themselves need network access to the registry. For private registries, the Pod or ServiceAccount must have `imagePullSecrets` configured. Container runtimes do not have a maximum cache size that blocks pulls. Image format incompatibility is extremely rare with modern runtimes. The error can occur for multiple reasons, not just missing tags.",
-    verify: "microk8s kubectl describe pod <pod-name> | grep -A5 Events"
+    verify: "microk8s kubectl get events --field-selector reason=Failed --sort-by=.metadata.creationTimestamp"
   },
   {
     id: "s01-q032",
@@ -750,7 +750,7 @@ var questions = [
       "The `etcd` cluster, because it must support the new data schema before any component can be upgraded"
     ],
     answer: 2,
-    explanation: "The recommended Kubernetes upgrade order starts with the `kube-apiserver` because all other control plane components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes. `etcd` upgrades are typically handled separately but do not need to be first.",
+    explanation: "The recommended Kubernetes upgrade order starts with the `kube-apiserver` because all other control plane components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes. `etcd` upgrades are often performed before the API server (as kubeadm does automatically), but etcd is sometimes considered a backing store rather than a control plane component proper. Among the core control plane components (API server, controller manager, scheduler), the API server should be upgraded first.",
     verify: "microk8s kubectl version"
   },
   {

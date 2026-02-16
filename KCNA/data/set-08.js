@@ -910,10 +910,10 @@ var questions = [
       "OpenTelemetry only supports distributed tracing; separate libraries are needed for metrics collection and log aggregation",
       "OpenTelemetry is a proprietary standard owned by Jaeger that only supports data export in Jaeger's native format",
       "OpenTelemetry replaces Prometheus entirely and cannot export metrics data in the Prometheus exposition text format",
-      "OpenTelemetry is a CNCF incubating project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
+      "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
     ],
     answer: 3,
-    explanation: "OpenTelemetry (OTel) is a CNCF incubating project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.",
+    explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.",
     verify: null
   },
   {
@@ -1410,7 +1410,7 @@ var questions = [
       "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
     ],
     answer: 2,
-    explanation: "The `securityContext.readOnlyRootFilesystem: true` setting makes the container's root filesystem read-only. When combined with the `restricted` Pod Security Standard (which recommends this setting), the admission controller can reject Pods that do not set this field. Writable directories can still be provided via `emptyDir` volume mounts. NetworkPolicies control network traffic, not filesystem access.",
+    explanation: "The securityContext.readOnlyRootFilesystem: true setting makes the container root filesystem read-only at the kernel level via the OCI runtime. To enforce this across a namespace, teams can use policy engines like OPA Gatekeeper or Kyverno, since the built-in PSS restricted profile only recommends (but does not require) readOnlyRootFilesystem. Writable directories can still be provided via emptyDir volume mounts.",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.containers[0].securityContext.readOnlyRootFilesystem}'"
   },
   {

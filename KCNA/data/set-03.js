@@ -398,7 +398,7 @@ var questions = [
       "`helm rollback <release> 0` then redeploy with the new type set in a values override"
     ],
     answer: 0,
-    explanation: "Helm's `--set` flag overrides chart values at upgrade time, letting you change `service.type` without editing template files. Patching with kubectl after the upgrade works but bypasses Helm's state tracking. `--reuse-values --force` reuses previous values without changing the type. Rolling back to revision 0 is invalid and does not change the Service type.",
+    explanation: "Helm's `--set` flag overrides chart values at upgrade time, letting you change `service.type` without editing template files. Patching with kubectl after the upgrade works but bypasses Helm's state tracking. `--reuse-values --force` reuses previous values without changing the type. Rolling back to revision 0 (the previous release) would restore the old values and not set the new Service type.",
     verify: "helm get values <release>"
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
     ],
     answer: 0,
-    explanation: "If the DNS for `api.example.com` does not resolve to the Ingress controller's IP, the request will either not arrive or arrive at a different server. When it does arrive at a wrong server, a 404 is a common symptom. The Service type does not prevent Ingress routing. Most Ingress controllers support host-based routing by default. While a NetworkPolicy could block traffic, a DNS misconfiguration is the most common cause of this symptom.",
+    explanation: "If the DNS for `api.example.com` does not resolve to the Ingress controller's IP, the request will either not arrive or arrive at a different server. When DNS does not point to the Ingress controller, requests either time out or fail to connect. The Service type does not prevent Ingress routing. Most Ingress controllers support host-based routing by default. While a NetworkPolicy could block traffic, a DNS misconfiguration is the most common cause of this symptom.",
     verify: "kubectl get ingress -o wide"
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution "
     ],
     answer: 2,
-    explanation: "To create an internal AWS NLB, you use a `LoadBalancer` Service with the `aws-load-balancer-internal` annotation set to `\"true\"`. `NodePort` does not provision cloud load balancers regardless of annotations. `ClusterIP` with `externalIPs` requires manual IP management and does not create an NLB. `ExternalName` maps DNS but does not provision infrastructure.",
+    explanation: "To create an internal AWS load balancer, you use a `LoadBalancer` Service with the `aws-load-balancer-internal` annotation set to `\"true\"`. `NodePort` does not provision cloud load balancers regardless of annotations. `ClusterIP` with `externalIPs` requires manual IP management and does not create a cloud load balancer. `ExternalName` maps DNS but does not provision infrastructure.",
     verify: "kubectl get svc <service-name> -o jsonpath='{.metadata.annotations}'"
   },
   {
@@ -750,7 +750,7 @@ var questions = [
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label that indicates whether each address is ready. Counting addresses where `ready=\"true\"` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
+    explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label that indicates whether each address is ready. Counting addresses where `ready=\"true\"` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is a deprecated metric from older kube-state-metrics versions, now replaced by `kube_endpoint_address` with a `ready` label. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
     verify: null
   },
   {

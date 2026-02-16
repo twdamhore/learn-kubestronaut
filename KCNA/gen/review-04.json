@@ -1,56 +1,22 @@
 {
   "set": "04",
+  "round": 2,
   "total_reviewed": 100,
-  "issues_found": 7,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s04-q013",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'MinIO and OpenEBS are CNCF sandbox/incubating projects focused on different storage paradigms.' MinIO is NOT a CNCF project (not sandbox, incubating, or graduated). MinIO appears in the CNCF landscape but is not a formally hosted CNCF project. OpenEBS is currently a CNCF Sandbox project (re-admitted in October 2024 after being archived). The correct answer (Rook as a CNCF graduated project) is accurate, but the explanation is misleading about the other options' CNCF status.",
-      "suggested_fix": "Change explanation to: 'Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF sandbox project focused on container-attached storage.'"
-    },
-    {
-      "id": "s04-q043",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "The question asks 'Which PV field enables this selective binding?' implying there IS a PV field for label-based matching, but the correct answer (option 0) says 'spec.selector on PVs is not valid — only PVCs support selector fields for matching labels.' This is technically correct — PVs do not have spec.selector — but the question is misleading because it asks 'Which PV field enables this?' when the answer is 'there is no such PV field.' Also, option 1 (spec.claimRef) IS a valid PV field for selective binding (by name, not label), making it a reasonable answer for a student who interprets 'selective binding' broadly. The question should be clearer about asking specifically about label-based matching FROM the PV side.",
-      "suggested_fix": "Reword the question to: 'An administrator wants to pre-provision PVs that can only be claimed by PVCs matching a specific label selector. Which resource supports label-based matching for PV-PVC binding?' and adjust options accordingly, making the correct answer clearly about PVCs having spec.selector to match PV labels."
-    },
-    {
-      "id": "s04-q048",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'When the kubelet detects that disk usage exceeds the eviction threshold (default 85%)...' The default hard eviction threshold for nodefs.available is 10% (i.e., DiskPressure triggers at 90% usage), and for imagefs.available is 15% (triggers at 85% usage). The 85% figure cited in the explanation applies only to imagefs, not to the overall DiskPressure condition for the root filesystem. The correct answer (option 3) itself is accurate; only the parenthetical in the explanation is imprecise.",
-      "suggested_fix": "Change '(default 85%)' to '(default: nodefs.available < 10%, imagefs.available < 15%)' or simply remove the specific percentage to avoid confusion."
-    },
-    {
-      "id": "s04-q075",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The explanation states 'The persistentVolumeClaimRetentionPolicy field (stable in Kubernetes 1.27+)...' This is incorrect. The StatefulSetAutoDeletePVC feature was alpha in 1.23, promoted to beta in 1.27, and only graduated to stable/GA in Kubernetes 1.32. Stating it is 'stable in 1.27+' could mislead students into thinking it was GA at that point when it was actually beta and required no explicit feature gate enablement but was not yet stable.",
-      "suggested_fix": "Change '(stable in Kubernetes 1.27+)' to '(beta in Kubernetes 1.27, stable/GA in Kubernetes 1.32)'"
-    },
-    {
-      "id": "s04-q096",
+      "id": "s04-q001",
       "type": "wrong_answer",
-      "severity": "moderate",
-      "description": "Option 3 (the correct answer) states: 'ReadWriteOncePod restricts the volume to a single pod cluster-wide, while ReadWriteOnce allows many'. The phrasing 'while ReadWriteOnce allows many' is misleading. ReadWriteOnce restricts the volume to a single NODE, not 'allows many.' While multiple pods on that same node can mount it (which is accurate), saying 'allows many' without qualification suggests many nodes, which is wrong. The explanation correctly clarifies the difference, but the answer option text itself is misleading.",
-      "suggested_fix": "Change option 3 text to: '`ReadWriteOncePod` restricts the volume to a single pod cluster-wide, while `ReadWriteOnce` allows multiple pods on the same node'"
+      "severity": "critical",
+      "description": "The marked correct answer (index 0) claims that a PV with only `ReadWriteMany` access mode satisfies a PVC requesting `ReadWriteOnce`. This is incorrect. Kubernetes uses the function `AccessModesContainedInAll` to check whether the PV's access modes list literally contains every access mode requested by the PVC. A PV with `accessModes: [ReadWriteMany]` does NOT contain the string/constant `ReadWriteOnce`, so the PVC will remain Pending. The explanation incorrectly states RWX is a 'superset that includes ReadWriteOnce semantics' — while this may be true from a storage capability standpoint, Kubernetes performs literal set-containment matching on access mode values, not capability-based reasoning. A PV that supports RWX must explicitly list `[ReadWriteOnce, ReadWriteMany]` in its accessModes to satisfy a PVC requesting RWO.",
+      "suggested_fix": "Change answer to 1. Update explanation to: 'A PVC binds to a PV when the PV meets or exceeds the requested capacity AND the PV's accessModes list contains all access modes requested by the PVC. Kubernetes performs literal set matching via the `AccessModesContainedInAll` check, not capability-based reasoning. A PV with only `[ReadWriteMany]` does not contain `ReadWriteOnce` in its list, so the PVC stays Pending. To satisfy a PVC requesting ReadWriteOnce, the PV must explicitly include ReadWriteOnce in its accessModes array (e.g., `[ReadWriteOnce, ReadWriteMany]`). The capacity difference (10Gi PV vs 5Gi PVC) is not the issue here.'"
     },
     {
-      "id": "s04-q098",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The explanation states 'Starting with Kubernetes 1.24, StatefulSets support maxUnavailable in the rolling update strategy.' The maxUnavailable field was introduced as an ALPHA feature in Kubernetes 1.24 requiring the MaxUnavailableStatefulSet feature gate to be explicitly enabled. It only became beta (enabled by default) in Kubernetes 1.35. Saying it is supported 'starting with 1.24' without noting the alpha/feature-gate requirement is misleading for KCNA students, as most clusters would not have this feature enabled until 1.35.",
-      "suggested_fix": "Change explanation to: 'The maxUnavailable field was introduced as an alpha feature in Kubernetes 1.24 (requiring the MaxUnavailableStatefulSet feature gate) and became beta (enabled by default) in Kubernetes 1.35. Setting maxUnavailable: 1 ensures that at most 1 pod is unavailable during the update, maintaining a minimum of 2 running pods. This is critical for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational.'"
-    },
-    {
-      "id": "s04-q056",
+      "id": "s04-q089",
       "type": "ambiguous",
-      "severity": "minor",
-      "description": "Option 0 (the correct answer) says 'The control plane becomes non-functional since all cluster state is stored in the etcd data store.' Option 1 says 'Only new pod creation is affected by the outage; currently running pods continue operating normally.' In reality, BOTH are partially true: the control plane becomes non-functional (correct) but currently running workloads DO continue operating (also correct, as kubelet continues running pods). The question's best answer is 0, but option 1 contains a true partial statement that could confuse students. The explanation does correctly note that running containers continue executing.",
-      "suggested_fix": "Make option 1 more clearly wrong, e.g., 'Only new pod creation is affected; the API server falls back to a read-only cache mode and continues serving existing state'"
+      "severity": "moderate",
+      "description": "The marked correct answer (index 0) states 'The runtime creates an anonymous `emptyDir`-like volume at the path, managed by the container runtime.' This is accurate for Docker but NOT for containerd, which is the default container runtime in modern Kubernetes clusters. Containerd does not create anonymous volumes for VOLUME instructions in Dockerfiles. The VOLUME instruction metadata is preserved in the OCI image spec but containerd in Kubernetes mode does not act on it — writes to that path simply go to the container's writable layer, same as any other path. Option 2 ('The VOLUME instruction from the Dockerfile is completely ignored') is arguably more correct for containerd-based Kubernetes clusters. The answer depends on which container runtime is in use, making it ambiguous.",
+      "suggested_fix": "Reword the question to clarify the runtime context, or change the correct answer to index 2 and update the explanation: 'In Kubernetes, the VOLUME instruction from a Dockerfile is effectively ignored. Unlike standalone Docker, where the Docker daemon creates anonymous volumes, Kubernetes container runtimes (containerd, CRI-O) do not create anonymous volumes for VOLUME instructions. Writes to the specified path go to the container writable overlay layer like any other path. For persistent or shared storage in Kubernetes, volumes must be explicitly defined in the pod spec.'"
     }
   ]
 }

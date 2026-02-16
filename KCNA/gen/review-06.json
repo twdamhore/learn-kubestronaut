@@ -1,70 +1,36 @@
 {
   "set": "06",
+  "round": 2,
   "total_reviewed": 100,
-  "issues_found": 9,
+  "issues_found": 4,
   "issues": [
     {
-      "id": "s06-q013",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The question states 'a CNCF graduated project' but Cluster API is a Kubernetes SIG project (kubernetes-sigs/cluster-api), not a standalone CNCF project with its own maturity level (sandbox/incubating/graduated). It does not appear on the CNCF graduated projects list. The explanation also calls it 'a CNCF project' without qualification. Meanwhile, Helm (option B) IS a CNCF graduated project. The functional description fits Cluster API, but the 'CNCF graduated project' framing is incorrect.",
-      "suggested_fix": "Remove 'graduated' from the question text. Change to: 'A company uses a Kubernetes ecosystem project to manage their cluster lifecycle, including provisioning, upgrading, and scaling Kubernetes clusters declaratively. Which project is this?' Also update explanation to say 'Cluster API is a Kubernetes SIG project' instead of 'a CNCF project'."
-    },
-    {
-      "id": "s06-q016",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The answer says 'kubectl drain ignores DaemonSet-managed Pods by default behavior' but this is misleading. By default, kubectl drain does NOT ignore DaemonSet pods - it FAILS with an error about DaemonSet-managed pods. The --ignore-daemonsets flag must be explicitly passed for drain to proceed (skipping DaemonSet pods). Without the flag, drain errors out rather than silently ignoring them. The explanation contradicts itself by saying the flag 'must be passed' while the answer option says it happens 'by default'.",
-      "suggested_fix": "Reword option D to: 'D. `kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed' or clarify the explanation to note that drain errors out by default when encountering DaemonSet pods."
-    },
-    {
-      "id": "s06-q022",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states 'The --force flag bypasses PDBs but risks service disruption.' This is incorrect. The --force flag does NOT bypass PDBs. It only forces deletion of standalone pods (not managed by a controller). To bypass PDBs, the --disable-eviction flag is needed, which forces deletion instead of using the eviction API. The correct answer (A: scale up replicas) is still right, but the explanation's characterization of --force is wrong.",
-      "suggested_fix": "Change the explanation sentence to: 'The `--disable-eviction` flag bypasses PDBs by using delete instead of the eviction API, but risks service disruption. The `--force` flag only handles standalone pods not managed by a controller.'"
-    },
-    {
       "id": "s06-q035",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The metric name 'scheduler_scheduling_algorithm_duration_seconds' was deprecated in Kubernetes 1.20 and removed in 1.23. The current equivalent is 'scheduler_framework_extension_point_duration_seconds'. While the concept of monitoring scheduling latency is correct, the specific metric name is outdated and could mislead students studying for the KCNA if they look it up in current documentation.",
-      "suggested_fix": "Update option A to use the current metric name: 'scheduler_framework_extension_point_duration_seconds' or 'scheduler_e2e_scheduling_duration_seconds' which measures end-to-end scheduling latency."
-    },
-    {
-      "id": "s06-q039",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "description": "The question asks 'Which CNCF project provides a Kubernetes-native way to declaratively manage etcd clusters, including automated backups and restore operations?' The correct answer is set to C (Velero), but Velero does NOT manage etcd clusters. Velero backs up Kubernetes resources via the Kubernetes API, not etcd directly. The question specifically asks about 'declaratively managing etcd clusters' which is what the etcd-operator (option A) was designed to do. Velero has no etcd cluster management capabilities. The explanation incorrectly claims Velero provides 'backup and restore capabilities including etcd data' - Velero backs up Kubernetes API objects, not etcd data directly.",
-      "suggested_fix": "Either change the question to ask about 'Kubernetes resource backup and restore' (making Velero the correct answer), or change the answer to A (etcd-operator) and note it is deprecated. Better approach: rewrite the question to: 'Which CNCF project provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes?' with answer C (Velero)."
-    },
-    {
-      "id": "s06-q047",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "description": "The correct answer (index 1) states 'B. Priority value of 2000000000, the highest built-in priority class' but system-node-critical actually has a priority value of 2000001000, not 2000000000. The value 2000000000 belongs to system-cluster-critical. The explanation correctly states the value is 2000001000 but contradicts the selected answer option. None of the provided options have the correct value (2000001000).",
-      "suggested_fix": "Change option B to: 'B. Priority value of 2000001000, the highest built-in priority class' to match the actual value of system-node-critical. The explanation is already correct."
-    },
-    {
-      "id": "s06-q068",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The question asks 'Which CNCF project extends the Kubernetes scheduler with custom scheduling plugins?' The answer is Scheduler Plugins (scheduling-plugins), which is a kubernetes-sigs project, not a standalone CNCF project. While it exists within the CNCF ecosystem (as part of Kubernetes), calling it 'a CNCF project' may confuse students who understand CNCF projects as those with sandbox/incubating/graduated status. Additionally, Volcano (option D) IS actually a CNCF incubating project that provides batch scheduling capabilities.",
-      "suggested_fix": "Reword the question to 'Which Kubernetes SIG project extends...' or consider whether Volcano (which is an actual CNCF project) might be a more accurate answer depending on the intent of the question."
-    },
-    {
-      "id": "s06-q094",
-      "type": "ambiguous",
+      "type": "wrong_explanation",
       "severity": "moderate",
-      "description": "The question conflates two different scheduling concepts. It starts with 'A Pod anti-affinity rule specifies topologyKey' but then references 'whenUnsatisfiable: DoNotSchedule' which is a topologySpreadConstraints field, NOT a pod anti-affinity field. Pod anti-affinity uses 'requiredDuringSchedulingIgnoredDuringExecution' or 'preferredDuringSchedulingIgnoredDuringExecution', not 'whenUnsatisfiable'. The explanation further mixes them by saying 'hard anti-affinity (required) at the zone topology level'. This conflation could teach students incorrect associations between these distinct scheduling features.",
-      "suggested_fix": "Either make the question purely about pod anti-affinity (remove the 'whenUnsatisfiable: DoNotSchedule' reference and use 'requiredDuringSchedulingIgnoredDuringExecution' instead) or make it purely about topologySpreadConstraints (remove the 'pod anti-affinity rule' reference). For example: 'A Pod uses a requiredDuringSchedulingIgnoredDuringExecution pod anti-affinity with topologyKey: topology.kubernetes.io/zone. If all zones already have a matching Pod, what happens?'"
+      "description": "The metric `scheduler_e2e_scheduling_duration_seconds` was deprecated in Kubernetes 1.19 and removed around Kubernetes 1.21-1.23. It does not exist in any currently supported Kubernetes version. The current metrics for measuring scheduling latency are `scheduler_scheduling_attempt_duration_seconds` (measures per-attempt scheduling latency) and `scheduler_pod_scheduling_sli_duration_seconds` (measures end-to-end pod scheduling latency including queue time, added in 1.28). Using a removed metric name in option A could mislead KCNA candidates studying current Kubernetes.",
+      "suggested_fix": "Change option A to: 'A. `scheduler_scheduling_attempt_duration_seconds`' and update the explanation to reference this metric. It measures the latency of each scheduling attempt (filtering + scoring + binding) and is the closest current equivalent to the removed e2e metric."
     },
     {
-      "id": "s06-q098",
+      "id": "s06-q066",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The marked correct answer is B (v1.27 through v1.29, i.e., two minor versions back), but since Kubernetes 1.28, the kubelet version skew policy was relaxed to allow kubelet to be up to THREE minor versions older than kube-apiserver (for kubelet >= 1.25). With the API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. Option D (v1.26 through v1.29) is now the correct answer. The official Kubernetes version skew policy page confirms: 'kubelet may be up to three minor versions older than kube-apiserver' with the note that 'kubelet < 1.25 may only be up to two minor versions older.'",
+      "suggested_fix": "Change the answer index from 1 (option B) to 3 (option D). Update the explanation to: 'Since Kubernetes 1.28, the version skew policy allows kubelets to be up to three minor versions older than the API server (for kubelet >= 1.25). With API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server. Note: kubelets older than v1.25 are limited to a two-version skew.'"
+    },
+    {
+      "id": "s06-q083",
       "type": "wrong_explanation",
       "severity": "minor",
-      "description": "The explanation states 'When a pre-upgrade hook fails, Helm aborts the upgrade and the release remains at its current version.' While the core concept is correct, the Helm documentation specifies that when a hook fails, the upgrade is marked as FAILED, not that the release simply 'remains at its previous version.' The release status becomes FAILED, and the previously deployed release remains active. This is a minor but potentially confusing distinction for students who might think the release status is unchanged.",
-      "suggested_fix": "Update explanation to: 'When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed.'"
+      "description": "The `--pod-eviction-timeout` flag on kube-controller-manager was deprecated in Kubernetes 1.26 and removed in Kubernetes 1.27. While the question hedges with '(or equivalent setting)', the explanation references a 'default 5 minutes' which was the old default for that specific flag. In current Kubernetes (1.27+), node eviction behavior is controlled by the node lifecycle controller using taints (node.kubernetes.io/not-ready and node.kubernetes.io/unreachable with NoExecute effect) and Pod tolerations with tolerationSeconds. The default tolerationSeconds added by the DefaultTolerationSeconds admission controller is 300 seconds (5 minutes), which preserves similar behavior through a different mechanism.",
+      "suggested_fix": "Update the explanation to: 'The pod eviction timeout controls how long the node lifecycle controller waits before evicting Pods from NotReady nodes. In older Kubernetes versions, this was configured via the `--pod-eviction-timeout` flag (default 5 minutes). In current Kubernetes (1.27+), this behavior is managed through NoExecute taints and the default `tolerationSeconds` of 300 seconds applied by the admission controller. This grace period accounts for transient network issues and prevents unnecessary Pod disruption.'"
+    },
+    {
+      "id": "s06-q089",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question asks 'Which CNCF project specifically addresses re-balancing Pod placement...' but Descheduler is a kubernetes-sigs project (kubernetes-sigs/descheduler), not a standalone CNCF project with its own maturity level. This is the same terminology issue that was fixed in q013 (changed from 'CNCF project' to 'Kubernetes ecosystem project') and q068 (changed to 'Kubernetes SIG project'). Using 'CNCF project' for Descheduler may confuse candidates who look for it in the CNCF landscape.",
+      "suggested_fix": "Change the question text to: 'Which Kubernetes ecosystem project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?'"
     }
   ]
 }

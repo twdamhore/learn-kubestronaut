@@ -13,8 +13,8 @@ var questions = [
       "The PVC binds but is capped at 5Gi and the remaining 5Gi is split off into a separate new PV object",
       "The PVC fails with an error because Kubernetes does not permit over-provisioning on PV capacity"
     ],
-    answer: 0,
-    explanation: "A PVC binds to a PV when the PV meets or exceeds the requested capacity and supports the requested access modes. `ReadWriteMany` is a superset that includes `ReadWriteOnce` semantics, so the PV satisfies the claim. The PV will not be split; the PVC gets the full 10Gi PV even though it only requested 5Gi.",
+    answer: 1,
+    explanation: "A PVC binds to a PV when the PV meets or exceeds the requested capacity AND the PV's accessModes list contains all access modes requested by the PVC. Kubernetes performs literal set matching, not capability-based reasoning. A PV with only [ReadWriteMany] does not contain ReadWriteOnce in its list, so the PVC stays Pending. To satisfy a PVC requesting ReadWriteOnce, the PV must explicitly include ReadWriteOnce in its accessModes array. The capacity difference (10Gi PV vs 5Gi PVC) is not the issue here.",
     verify: "kubectl get pv,pvc"
   },
   {
@@ -1421,8 +1421,8 @@ var questions = [
       "The VOLUME instruction from the Dockerfile is completely ignored by the Kubernetes pod specification",
       "The pod fails to start because no explicit volume is configured in the pod spec for the VOLUME path"
     ],
-    answer: 0,
-    explanation: "Docker's `VOLUME` instruction creates an anonymous volume managed by the container runtime, not by Kubernetes. In a Kubernetes context, this creates a writable directory managed by the runtime (similar to `emptyDir` behavior), but it is not a Kubernetes-managed volume. For production use, explicitly defining volumes in the pod spec is recommended for predictable behavior.",
+    answer: 2,
+    explanation: "In Kubernetes, the VOLUME instruction from a Dockerfile is effectively ignored. Unlike standalone Docker, where the Docker daemon creates anonymous volumes, Kubernetes container runtimes (containerd, CRI-O) do not create anonymous volumes for VOLUME instructions. Writes to the specified path go to the container writable overlay layer like any other path. For persistent or shared storage in Kubernetes, volumes must be explicitly defined in the pod spec.",
     verify: null
   },
   {
