@@ -14,7 +14,7 @@ var questions = [
       "`ExternalName` — maps a DNS CNAME record to an external endpoint target"
     ],
     answer: 0,
-    explanation: "`ClusterIP` is the default Service type and allocates an internal-only virtual IP, making it the least-exposure option for in-cluster communication. `NodePort` exposes the service on every node's IP at a static port, adding unnecessary external surface. `LoadBalancer` provisions an external cloud load balancer, which is overkill here. `ExternalName` does not route to pods at all — it returns a CNAME record pointing to an external DNS name.",
+    explanation: "`ClusterIP` is the default Service type and allocates an internal-only virtual IP, making it the least-exposure option for in-cluster communication. `NodePort` exposes the service on every node's IP at a static port, adding unnecessary external surface. `LoadBalancer` provisions an external cloud load balancer, which is overkill here. `ExternalName` does not route to pods at all — it returns a CNAME record pointing to an external DNS name.\n\nWhy other options are wrong:\n- B: NodePort opens a static port on every node, adding external attack surface beyond what is needed for in-cluster communication.\n- C: LoadBalancer provisions a cloud-managed external LB, adding unnecessary exposure and cost.\n- D: ExternalName maps a DNS CNAME to an external endpoint and does not route to in-cluster pods at all.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.type}'"
   },
   {
@@ -30,7 +30,7 @@ var questions = [
       "The container runtime tunnels the packet back to the API server which then routes it to the pod"
     ],
     answer: 1,
-    explanation: "kube-proxy runs on every node and maintains iptables or IPVS rules that can forward traffic to pod endpoints across the cluster, regardless of whether a pod is local. Kubelet does not spawn proxy pods. CoreDNS resolves names but does not redirect live TCP/UDP connections. The API server is a control-plane component and is not in the data path for service traffic.",
+    explanation: "kube-proxy runs on every node and maintains iptables or IPVS rules that can forward traffic to pod endpoints across the cluster, regardless of whether a pod is local. Kubelet does not spawn proxy pods. CoreDNS resolves names but does not redirect live TCP/UDP connections. The API server is a control-plane component and is not in the data path for service traffic.\n\nWhy other options are wrong:\n- A: The kubelet does not spawn temporary proxy pods; it manages pod lifecycle, not service traffic routing.\n- C: CoreDNS resolves DNS names but does not redirect live TCP/UDP connections at the packet level.\n- D: The API server is a control-plane component and is not in the data path for service traffic.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -46,7 +46,7 @@ var questions = [
       "An `Ingress` resource with path-based rules and an Ingress controller deployed in the cluster"
     ],
     answer: 3,
-    explanation: "An `Ingress` resource lets you define host- and path-based routing rules that direct traffic to different backend Services. An Ingress controller (e.g., NGINX, Traefik) implements these rules. `LoadBalancer` Services operate at L4 and cannot inspect URL paths. `NodePort` does not support path-based routing. `NetworkPolicy` controls which pods can communicate but does not perform L7 routing.",
+    explanation: "An `Ingress` resource lets you define host- and path-based routing rules that direct traffic to different backend Services. An Ingress controller (e.g., NGINX, Traefik) implements these rules. `LoadBalancer` Services operate at L4 and cannot inspect URL paths. `NodePort` does not support path-based routing. `NetworkPolicy` controls which pods can communicate but does not perform L7 routing.\n\nWhy other options are wrong:\n- A: NetworkPolicy controls access between pods but cannot perform L7 URL path-based routing.\n- B: LoadBalancer Services operate at L4 and have no built-in mechanism for inspecting URL paths.\n- C: NodePort does not support path-based routing; it simply opens a port on each node.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: "kubectl get ingress"
   },
   {
@@ -62,7 +62,7 @@ var questions = [
       "`payment.finance.svc.cluster.local`"
     ],
     answer: 3,
-    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. Since the `payment` Service is in the `finance` namespace, the correct FQDN is `payment.finance.svc.cluster.local`. The first option uses the wrong namespace (store instead of finance). The second option reverses the service and namespace. The third option has an invalid DNS format.",
+    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. Since the `payment` Service is in the `finance` namespace, the correct FQDN is `payment.finance.svc.cluster.local`. The first option uses the wrong namespace (store instead of finance). The second option reverses the service and namespace. The third option has an invalid DNS format.\n\nWhy other options are wrong:\n- A: Uses the wrong namespace (`store` instead of `finance`), so the DNS name would not resolve to the payment Service.\n- B: Reverses the service and namespace order; the correct pattern is `<service>.<namespace>`, not `<namespace>.<service>`.\n- C: Invalid DNS format; `cluster.local` must precede `svc`, not follow the namespace.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl exec frontend -n store -- nslookup payment.finance.svc.cluster.local"
   },
   {
@@ -78,7 +78,7 @@ var questions = [
       "The Service's `selector` labels do not match the labels on the running pods"
     ],
     answer: 3,
-    explanation: "A Service with `<none>` endpoints almost always indicates a selector mismatch — the labels in `spec.selector` do not match any pod's `metadata.labels`. The ClusterIP is allocated synchronously at creation time. CoreDNS reads Service/Endpoint objects but does not write them. kube-proxy programs forwarding rules but does not affect endpoint registration.",
+    explanation: "A Service with `<none>` endpoints almost always indicates a selector mismatch — the labels in `spec.selector` do not match any pod's `metadata.labels`. The ClusterIP is allocated synchronously at creation time. CoreDNS reads Service/Endpoint objects but does not write them. kube-proxy programs forwarding rules but does not affect endpoint registration.\n\nWhy other options are wrong:\n- A: kube-proxy programs forwarding rules but does not affect endpoint registration; endpoints exist even before kube-proxy starts.\n- B: The ClusterIP is allocated synchronously when the Service is created; it is never in a pending state.\n- C: CoreDNS reads Service/Endpoint objects for DNS resolution but does not write or manage them.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors",
     verify: "kubectl describe svc <service-name> | grep Selector"
   },
   {
@@ -94,7 +94,7 @@ var questions = [
       "The kube-proxy `ConfigMap` or startup flags, setting the `mode: ipvs` field"
     ],
     answer: 3,
-    explanation: "kube-proxy's proxy mode is configured in its own `ConfigMap` (typically `kube-proxy` in `kube-system`) or via its `--proxy-mode` flag. Kubelet does not control kube-proxy's mode. kube-controller-manager has no `--proxy-mode` flag. The CNI plugin handles pod network interface setup, not service proxying.",
+    explanation: "kube-proxy's proxy mode is configured in its own `ConfigMap` (typically `kube-proxy` in `kube-system`) or via its `--proxy-mode` flag. Kubelet does not control kube-proxy's mode. kube-controller-manager has no `--proxy-mode` flag. The CNI plugin handles pod network interface setup, not service proxying.\n\nWhy other options are wrong:\n- A: The kubelet manages pod lifecycle on the node; it has no `proxyMode` configuration field.\n- B: CNI plugin configuration handles pod network interface setup, not service proxying mode.\n- C: The kube-controller-manager does not have a `--proxy-mode` flag; it manages cluster-level controllers.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl get configmap kube-proxy -n kube-system -o yaml | grep mode"
   },
   {
@@ -110,7 +110,7 @@ var questions = [
       "The policy is rejected by the API server because it must define both ingress and egress rules"
     ],
     answer: 0,
-    explanation: "When a `NetworkPolicy` only lists `Ingress` in `policyTypes` (or omits `policyTypes` and only defines ingress rules), it restricts inbound traffic according to its rules but does not affect egress at all — egress remains fully open. A policy does not implicitly deny directions it does not cover. Partial egress blocking is not a default behavior. The policy is syntactically valid.",
+    explanation: "When a `NetworkPolicy` only lists `Ingress` in `policyTypes` (or omits `policyTypes` and only defines ingress rules), it restricts inbound traffic according to its rules but does not affect egress at all — egress remains fully open. A policy does not implicitly deny directions it does not cover. Partial egress blocking is not a default behavior. The policy is syntactically valid.\n\nWhy other options are wrong:\n- B: A NetworkPolicy does not implicitly deny directions not covered by its policyTypes list.\n- C: Partial egress blocking (e.g., internet-only block) is not a default behavior of any NetworkPolicy.\n- D: The API server accepts policies that define only ingress or only egress rules; both are not required.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o yaml"
   },
   {
@@ -126,7 +126,7 @@ var questions = [
       "CoreDNS when it registers the pod's A record and assigns a virtual address"
     ],
     answer: 1,
-    explanation: "The CNI (Container Network Interface) plugin is called by the container runtime when setting up the pod's network namespace. It allocates an IP from the node's pod CIDR and configures the interface. The scheduler selects a node but does not assign IPs. The API server stores the pod spec but IP assignment happens at runtime. CoreDNS reads pod IPs after they are assigned; it does not assign them.",
+    explanation: "The CNI (Container Network Interface) plugin is called by the container runtime when setting up the pod's network namespace. It allocates an IP from the node's pod CIDR and configures the interface. The scheduler selects a node but does not assign IPs. The API server stores the pod spec but IP assignment happens at runtime. CoreDNS reads pod IPs after they are assigned; it does not assign them.\n\nWhy other options are wrong:\n- A: The kube-scheduler selects a target node for the pod but does not assign IP addresses.\n- C: The kube-apiserver persists the Pod object but IP assignment occurs at container runtime, not at API write time.\n- D: CoreDNS reads pod IPs after assignment to create DNS records; it does not assign addresses.\n\nReference: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.podIP}'"
   },
   {
@@ -142,7 +142,7 @@ var questions = [
       "Only if both pods are in the same namespace and share an identical network policy selector"
     ],
     answer: 1,
-    explanation: "The Kubernetes networking model mandates that every pod gets a unique, routable IP and that pods can communicate directly across nodes without NAT. CNI plugins like Calico implement this requirement using BGP, VXLAN, or IP-in-IP overlays. kube-proxy handles Service traffic, not direct pod-to-pod traffic. Neither Services nor namespace boundaries affect this fundamental guarantee.",
+    explanation: "The Kubernetes networking model mandates that every pod gets a unique, routable IP and that pods can communicate directly across nodes without NAT. CNI plugins like Calico implement this requirement using BGP, VXLAN, or IP-in-IP overlays. kube-proxy handles Service traffic, not direct pod-to-pod traffic. Neither Services nor namespace boundaries affect this fundamental guarantee.\n\nWhy other options are wrong:\n- A: kube-proxy handles Service-level traffic (ClusterIP, NodePort), not direct pod-to-pod communication, and does not perform source NAT on pod traffic.\n- C: A LoadBalancer Service is for external access; it is not needed for basic pod-to-pod communication across nodes.\n- D: Namespace boundaries and network policy selectors do not affect the fundamental pod-to-pod networking guarantee.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
     verify: null
   },
   {
@@ -158,7 +158,7 @@ var questions = [
       "`spec.sessionAffinity: ClientIP` to bind clients to one pod"
     ],
     answer: 3,
-    explanation: "`sessionAffinity: ClientIP` configures the Service to route all requests from the same client IP to the same backend pod for a configurable timeout. There is no `selector.sticky` field. `externalTrafficPolicy: Local` avoids extra hops for external traffic but does not guarantee session stickiness. `StatefulSet` is a workload kind, not a Service field.",
+    explanation: "`sessionAffinity: ClientIP` configures the Service to route all requests from the same client IP to the same backend pod for a configurable timeout. There is no `selector.sticky` field. `externalTrafficPolicy: Local` avoids extra hops for external traffic but does not guarantee session stickiness. `StatefulSet` is a workload kind, not a Service field.\n\nWhy other options are wrong:\n- A: There is no `spec.selector.sticky` field in the Kubernetes Service API.\n- B: `externalTrafficPolicy: Local` avoids extra hops for external traffic but does not guarantee session stickiness.\n- C: `StatefulSet` is a workload controller kind, not a Service type or field; it cannot be used in `spec.type`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#proxy-mode-userspace",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.sessionAffinity}'"
   },
   {
@@ -174,7 +174,7 @@ var questions = [
       "A TXT record containing the connection string"
     ],
     answer: 0,
-    explanation: "`ExternalName` Services work exclusively at the DNS level — CoreDNS returns a CNAME record that maps the Service's cluster DNS name to the value in `spec.externalName`. No ClusterIP is allocated for `ExternalName` Services, so there is no A record with a virtual IP. SRV and TXT records are not used for this purpose.",
+    explanation: "`ExternalName` Services work exclusively at the DNS level — CoreDNS returns a CNAME record that maps the Service's cluster DNS name to the value in `spec.externalName`. No ClusterIP is allocated for `ExternalName` Services, so there is no A record with a virtual IP. SRV and TXT records are not used for this purpose.\n\nWhy other options are wrong:\n- B: ExternalName Services do not get a ClusterIP allocation, so there is no A record with a virtual IP.\n- C: SRV records are not returned for ExternalName Services; only a CNAME is provided.\n- D: TXT records are not used by Kubernetes DNS for Service resolution.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.externalName}'"
   },
   {
@@ -190,7 +190,7 @@ var questions = [
       "A service mesh such as Istio or Linkerd for traffic management"
     ],
     answer: 3,
-    explanation: "Service meshes like Istio inject a sidecar proxy (e.g., Envoy) into each pod and configure iptables rules within the pod's network namespace to intercept traffic for mutual TLS, retries, and observability. CNI plugins configure pod-level networking at creation time but do not inject proxies. kube-proxy manages Service-level rules on the node, not inside pod namespaces. PodDisruptionBudgets control voluntary disruptions, not traffic.",
+    explanation: "Service meshes like Istio inject a sidecar proxy (e.g., Envoy) into each pod and configure iptables rules within the pod's network namespace to intercept traffic for mutual TLS, retries, and observability. CNI plugins configure pod-level networking at creation time but do not inject proxies. kube-proxy manages Service-level rules on the node, not inside pod namespaces. PodDisruptionBudgets control voluntary disruptions, not traffic.\n\nWhy other options are wrong:\n- A: CNI plugins like Flannel configure pod networking at creation time but do not inject sidecar proxies into pods.\n- B: PodDisruptionBudgets control voluntary disruptions (e.g., node drain) and have nothing to do with traffic interception.\n- C: kube-proxy manages Service-level forwarding rules on the node, not iptables rules inside individual pod network namespaces.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
     verify: null
   },
   {
@@ -206,7 +206,7 @@ var questions = [
       "To load-balance traffic across Service endpoints by wrapping packets in VXLAN encapsulation"
     ],
     answer: 0,
-    explanation: "VXLAN encapsulation wraps pod-to-pod packets in UDP so they can traverse a physical network that is unaware of the pod CIDR ranges. It does not provide encryption — that requires additional configuration like WireGuard or IPsec. NetworkPolicy enforcement depends on the CNI's data plane (iptables, eBPF), not VXLAN itself. Load balancing across endpoints is handled by kube-proxy.",
+    explanation: "VXLAN encapsulation wraps pod-to-pod packets in UDP so they can traverse a physical network that is unaware of the pod CIDR ranges. It does not provide encryption — that requires additional configuration like WireGuard or IPsec. NetworkPolicy enforcement depends on the CNI's data plane (iptables, eBPF), not VXLAN itself. Load balancing across endpoints is handled by kube-proxy.\n\nWhy other options are wrong:\n- B: VXLAN does not provide encryption by default; TLS or WireGuard must be configured separately.\n- C: NetworkPolicy enforcement depends on the CNI's data plane (iptables, eBPF), not on VXLAN metadata.\n- D: Load balancing across Service endpoints is handled by kube-proxy, not VXLAN encapsulation.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
     verify: null
   },
   {
@@ -222,7 +222,7 @@ var questions = [
       "Only pods configured with `hostNetwork: true` are eligible to receive the Service's traffic flow"
     ],
     answer: 2,
-    explanation: "`externalTrafficPolicy: Local` tells kube-proxy to only forward external traffic to pods on the local node, avoiding an extra network hop and preserving the original client source IP. It does not restrict the load balancer to a zone. It affects external-to-Service SNAT, not all internal traffic. `hostNetwork` is unrelated to this policy.",
+    explanation: "`externalTrafficPolicy: Local` tells kube-proxy to only forward external traffic to pods on the local node, avoiding an extra network hop and preserving the original client source IP. It does not restrict the load balancer to a zone. It affects external-to-Service SNAT, not all internal traffic. `hostNetwork` is unrelated to this policy.\n\nWhy other options are wrong:\n- A: The setting does not restrict the cloud LB to a single availability zone; it controls how kube-proxy routes traffic.\n- B: The setting affects external-to-Service SNAT behavior, not all cluster-internal traffic.\n- D: `hostNetwork: true` is a pod spec setting unrelated to `externalTrafficPolicy`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#external-traffic-policy",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.externalTrafficPolicy}'"
   },
   {
@@ -238,7 +238,7 @@ var questions = [
       "Apply a policy in `finance` on `app: payment` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443 for all sources"
     ],
     answer: 0,
-    explanation: "The policy should be applied to the target pods (`app: payment` in `finance`) and allow ingress only from pods matching `role: gateway` in the `web` namespace on port 8443. Option B applies an egress policy on the source side but does not restrict who can reach payment pods. Option C is too broad — it allows any pod. Option D allows any IP including external traffic, violating least-privilege.",
+    explanation: "The policy should be applied to the target pods (`app: payment` in `finance`) and allow ingress only from pods matching `role: gateway` in the `web` namespace on port 8443. Option B applies an egress policy on the source side but does not restrict who can reach payment pods. Option C is too broad — it allows any pod. Option D allows any IP including external traffic, violating least-privilege.\n\nWhy other options are wrong:\n- B: An egress policy on the source side does not restrict who else can reach the payment pods from other namespaces.\n- C: Allowing ingress from any pod on port 8443 is too broad and violates the least-privilege requirement.\n- D: Allowing ingress from `ipBlock: 0.0.0.0/0` permits any IP including external traffic, violating the security mandate.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n finance -o yaml"
   },
   {
@@ -254,7 +254,7 @@ var questions = [
       "`my-svc.alpha.svc.cluster.local`"
     ],
     answer: 3,
-    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.",
+    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.\n\nWhy other options are wrong:\n- A: Uses the `default` namespace, but the pod is in `alpha`; the first search domain uses the pod's own namespace.\n- B: `my-svc.cluster.local` skips the `svc` segment; this is not the first search domain tried.\n- C: `my-svc.svc.cluster.local` omits the namespace; the first search domain is `<namespace>.svc.cluster.local`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl exec <pod> -n alpha -- cat /etc/resolv.conf"
   },
   {
@@ -270,7 +270,7 @@ var questions = [
       "A records like `cache-0.cache.<ns>.svc.cluster.local` for each pod"
     ],
     answer: 3,
-    explanation: "A headless Service combined with a StatefulSet creates individual A records for each pod following the pattern `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. This gives each pod a stable DNS identity. CNAME records to node IPs are not created. While a DNS query on the Service name returns all pod IPs, individual pod A records are the distinguishing feature. SRV records exist too, but A records are also created.",
+    explanation: "A headless Service combined with a StatefulSet creates individual A records for each pod following the pattern `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. This gives each pod a stable DNS identity. CNAME records to node IPs are not created. While a DNS query on the Service name returns all pod IPs, individual pod A records are the distinguishing feature. SRV records exist too, but A records are also created.\n\nWhy other options are wrong:\n- A: Both SRV and A records are created for StatefulSet pods behind a headless Service; A records are not omitted.\n- B: CNAME records mapping to node IPs are not created; the A records point to individual pod IPs.\n- C: While the Service-level DNS query returns all pod IPs, the distinguishing feature is individual per-pod A records.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
     verify: "kubectl exec <pod> -- nslookup cache-0.cache.<namespace>.svc.cluster.local"
   },
   {
@@ -286,7 +286,7 @@ var questions = [
       "Each microservice opens a direct TCP socket to every other microservice pod IP for communication"
     ],
     answer: 2,
-    explanation: "Cloud native principles favor loose coupling through well-defined Service abstractions and APIs. Kubernetes Services provide stable endpoints that decouple consumers from individual pod IPs. Sharing a pod eliminates independent deployability. Shared NFS polling is fragile and slow. Direct pod IP connections break when pods reschedule and bypass the Service abstraction.",
+    explanation: "Cloud native principles favor loose coupling through well-defined Service abstractions and APIs. Kubernetes Services provide stable endpoints that decouple consumers from individual pod IPs. Sharing a pod eliminates independent deployability. Shared NFS polling is fragile and slow. Direct pod IP connections break when pods reschedule and bypass the Service abstraction.\n\nWhy other options are wrong:\n- A: Placing all microservices in a single pod eliminates independent deployability and scalability.\n- B: Shared NFS polling is fragile, slow, and tightly couples services through a filesystem interface.\n- D: Direct pod IP connections break when pods reschedule and bypass the Service abstraction for stable endpoints.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -302,7 +302,7 @@ var questions = [
       "Multus — a meta-plugin that attaches multiple network interfaces to pods"
     ],
     answer: 0,
-    explanation: "Cilium is a CNCF graduated project that uses eBPF for high-performance networking and has full `NetworkPolicy` support plus extended policy features. Flannel is a simple overlay CNI that does not enforce `NetworkPolicy`. kube-router supports policies via iptables but does not use eBPF. Multus is a meta-CNI plugin that attaches multiple interfaces to pods but delegates actual networking to other plugins.",
+    explanation: "Cilium is a CNCF graduated project that uses eBPF for high-performance networking and has full `NetworkPolicy` support plus extended policy features. Flannel is a simple overlay CNI that does not enforce `NetworkPolicy`. kube-router supports policies via iptables but does not use eBPF. Multus is a meta-CNI plugin that attaches multiple interfaces to pods but delegates actual networking to other plugins.\n\nWhy other options are wrong:\n- B: Flannel is a simple overlay CNI focused on basic connectivity; it does not enforce NetworkPolicy.\n- C: kube-router supports NetworkPolicy via iptables but does not use an eBPF dataplane.\n- D: Multus is a meta-plugin that attaches multiple network interfaces to pods but delegates actual networking to other CNI plugins.\n\nReference: https://www.cncf.io/projects/cilium/",
     verify: null
   },
   {
@@ -318,7 +318,7 @@ var questions = [
       "Deploying a service mesh that handles mTLS, retries, and circuit breaking via sidecars"
     ],
     answer: 3,
-    explanation: "A service mesh (e.g., Istio, Linkerd) injects sidecar proxies that transparently handle mTLS, retries, circuit breaking, and observability without application code changes. `NetworkPolicy` controls access but does not handle encryption, retries, or circuit breaking. Readiness probes determine if a pod can serve traffic but do not perform retries. CronJob certificate rotation does not address retries or circuit breaking.",
+    explanation: "A service mesh (e.g., Istio, Linkerd) injects sidecar proxies that transparently handle mTLS, retries, circuit breaking, and observability without application code changes. `NetworkPolicy` controls access but does not handle encryption, retries, or circuit breaking. Readiness probes determine if a pod can serve traffic but do not perform retries. CronJob certificate rotation does not address retries or circuit breaking.\n\nWhy other options are wrong:\n- A: NetworkPolicy controls pod-to-pod access at L3/L4 but cannot handle mTLS, retries, or circuit breaking.\n- B: readinessProbe determines if a pod can serve traffic; it does not perform retries or circuit breaking.\n- C: A CronJob for certificate rotation addresses only one concern and does not handle retries or circuit breaking.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -334,7 +334,7 @@ var questions = [
       "Increasing the Service's `spec.sessionAffinity` timeout to keep connections routed properly"
     ],
     answer: 0,
-    explanation: "`terminationGracePeriodSeconds` gives a pod time to shut down gracefully after receiving SIGTERM, allowing it to drain in-flight requests. `minReadySeconds` delays marking new pods as available but does not help terminating pods. A PDB with `maxUnavailable: 0` prevents voluntary disruptions entirely but does not address graceful draining during scaling. Session affinity timeout governs routing stickiness, not shutdown behavior.",
+    explanation: "`terminationGracePeriodSeconds` gives a pod time to shut down gracefully after receiving SIGTERM, allowing it to drain in-flight requests. `minReadySeconds` delays marking new pods as available but does not help terminating pods. A PDB with `maxUnavailable: 0` prevents voluntary disruptions entirely but does not address graceful draining during scaling. Session affinity timeout governs routing stickiness, not shutdown behavior.\n\nWhy other options are wrong:\n- B: `minReadySeconds` delays marking new pods as available during rollouts; it does not help terminating pods drain requests.\n- C: A PDB with `maxUnavailable: 0` prevents voluntary disruptions entirely but does not address graceful draining during scaling.\n- D: Session affinity timeout governs routing stickiness for client IP binding, not pod shutdown behavior.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.terminationGracePeriodSeconds}'"
   },
   {
@@ -350,7 +350,7 @@ var questions = [
       "Set `spec.publishNotReadyAddresses: true` on the Service to expose latency response headers"
     ],
     answer: 1,
-    explanation: "Service mesh sidecar proxies intercept all traffic and can report L7 metrics such as request latency, status codes, and throughput to Prometheus without code changes. `kubectl top service` does not exist. kube-proxy operates at L4 and iptables logs do not contain request latency. `publishNotReadyAddresses` controls whether not-ready pods appear in DNS, not latency measurement.",
+    explanation: "Service mesh sidecar proxies intercept all traffic and can report L7 metrics such as request latency, status codes, and throughput to Prometheus without code changes. `kubectl top service` does not exist. kube-proxy operates at L4 and iptables logs do not contain request latency. `publishNotReadyAddresses` controls whether not-ready pods appear in DNS, not latency measurement.\n\nWhy other options are wrong:\n- A: `kubectl top service` does not exist as a command; `kubectl top` works only for pods and nodes.\n- C: kube-proxy operates at L4 and iptables logs do not contain HTTP request latency information.\n- D: `publishNotReadyAddresses` controls whether not-ready pods appear in DNS; it does not expose latency headers.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -366,7 +366,7 @@ var questions = [
       "Creating a `NetworkPolicy` that logs all denied connections between services"
     ],
     answer: 0,
-    explanation: "Distributed tracing (e.g., using OpenTelemetry, Jaeger) propagates trace IDs across service boundaries, allowing you to see a waterfall view of where time is spent per service. Debug logs are verbose and hard to correlate across services. Liveness probes detect failures but do not measure latency. NetworkPolicy logging shows denied traffic, not latency sources.",
+    explanation: "Distributed tracing (e.g., using OpenTelemetry, Jaeger) propagates trace IDs across service boundaries, allowing you to see a waterfall view of where time is spent per service. Debug logs are verbose and hard to correlate across services. Liveness probes detect failures but do not measure latency. NetworkPolicy logging shows denied traffic, not latency sources.\n\nWhy other options are wrong:\n- B: DEBUG-level logs are verbose and very difficult to correlate across multiple services for latency analysis.\n- C: livenessProbe checks detect failures and trigger restarts but do not measure or report latency between services.\n- D: NetworkPolicy logging shows denied connections, not latency sources or timing data.\n\nReference: https://opentelemetry.io/docs/concepts/signals/traces/",
     verify: null
   },
   {
@@ -382,7 +382,7 @@ var questions = [
       "Use a service mesh or Ingress controller that supports weighted traffic splitting rules"
     ],
     answer: 3,
-    explanation: "A service mesh (e.g., Istio VirtualService) or advanced Ingress controller (e.g., NGINX with canary annotations) can split traffic by weight. There is no `spec.weight` field on a Service. NetworkPolicy cannot perform traffic shaping or percentage-based routing. Scaling to 10% replicas approximates the ratio but is imprecise and couples deployment with traffic management.",
+    explanation: "A service mesh (e.g., Istio VirtualService) or advanced Ingress controller (e.g., NGINX with canary annotations) can split traffic by weight. There is no `spec.weight` field on a Service. NetworkPolicy cannot perform traffic shaping or percentage-based routing. Scaling to 10% replicas approximates the ratio but is imprecise and couples deployment with traffic management.\n\nWhy other options are wrong:\n- A: There is no `spec.weight` field on a Kubernetes Service resource.\n- B: NetworkPolicy cannot perform traffic shaping or percentage-based routing; it only allows or denies traffic.\n- C: Scaling to 10% replicas roughly approximates the ratio but is imprecise and tightly couples deployment with traffic management.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -398,7 +398,7 @@ var questions = [
       "`helm rollback <release> 0` then redeploy with the new type set in a values override"
     ],
     answer: 0,
-    explanation: "Helm's `--set` flag overrides chart values at upgrade time, letting you change `service.type` without editing template files. Patching with kubectl after the upgrade works but bypasses Helm's state tracking. `--reuse-values --force` reuses previous values without changing the type. Rolling back to revision 0 (the previous release) would restore the old values and not set the new Service type.",
+    explanation: "Helm's `--set` flag overrides chart values at upgrade time, letting you change `service.type` without editing template files. Patching with kubectl after the upgrade works but bypasses Helm's state tracking. `--reuse-values --force` reuses previous values without changing the type. Rolling back to revision 0 (the previous release) would restore the old values and not set the new Service type.\n\nWhy other options are wrong:\n- B: Patching with kubectl after an upgrade works but bypasses Helm's state tracking, causing drift.\n- C: `--reuse-values --force` reuses the previous values without changing the Service type.\n- D: Rolling back to revision 0 restores the prior state and does not set the new Service type.\n\nReference: https://helm.sh/docs/helm/helm_upgrade/",
     verify: "helm get values <release>"
   },
   {
@@ -414,7 +414,7 @@ var questions = [
       "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal` to the Service"
     ],
     answer: 0,
-    explanation: "On bare-metal clusters, there is no cloud provider to provision an external load balancer, so `LoadBalancer` Services stay `Pending`. MetalLB is a widely used solution that allocates IPs from a configured pool and announces them via ARP or BGP. Switching to `NodePort` is a workaround but does not solve the `LoadBalancer` requirement. Restarting kube-controller-manager does not help without an actual provider. The `internal` annotation is for cloud environments to create internal LBs.",
+    explanation: "On bare-metal clusters, there is no cloud provider to provision an external load balancer, so `LoadBalancer` Services stay `Pending`. MetalLB is a widely used solution that allocates IPs from a configured pool and announces them via ARP or BGP. Switching to `NodePort` is a workaround but does not solve the `LoadBalancer` requirement. Restarting kube-controller-manager does not help without an actual provider. The `internal` annotation is for cloud environments to create internal LBs.\n\nWhy other options are wrong:\n- B: Restarting the kube-controller-manager with `--cloud-provider=external` does not help without an actual LB provider implementation.\n- C: Switching to NodePort is a workaround, not a solution for the LoadBalancer requirement.\n- D: The `internal` annotation is for cloud environments to create internal LBs; it has no effect on bare-metal.\n\nReference: https://metallb.universe.tf/",
     verify: "kubectl get svc -o wide"
   },
   {
@@ -430,7 +430,7 @@ var questions = [
       "kube-proxy doubles the health check frequency for that endpoint until the probe succeeds"
     ],
     answer: 1,
-    explanation: "When a readiness probe fails, the Endpoints controller removes the pod's IP from the associated Endpoints object, causing kube-proxy to stop forwarding traffic to that pod. The pod is not terminated — that would require a failed liveness probe. Services do not switch ports. kube-proxy does not control probe frequency; the kubelet does.",
+    explanation: "When a readiness probe fails, the Endpoints controller removes the pod's IP from the associated Endpoints object, causing kube-proxy to stop forwarding traffic to that pod. The pod is not terminated — that would require a failed liveness probe. Services do not switch ports. kube-proxy does not control probe frequency; the kubelet does.\n\nWhy other options are wrong:\n- A: The pod is not terminated when a readiness probe fails; only a failed liveness probe triggers termination.\n- C: Services do not automatically switch ports; they forward to the configured targetPort.\n- D: kube-proxy does not control probe frequency; the kubelet manages probe scheduling.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -446,7 +446,7 @@ var questions = [
       "A static pod managed directly by kubelet on each node"
     ],
     answer: 2,
-    explanation: "CoreDNS is deployed as a `Deployment` (usually with 2 replicas for HA) fronted by a `ClusterIP` Service named `kube-dns` in the `kube-system` namespace. It is not a DaemonSet because it does not need to run on every node. It is not a StatefulSet because DNS state is ephemeral. While some control-plane components run as static pods, CoreDNS uses a standard Deployment.",
+    explanation: "CoreDNS is deployed as a `Deployment` (usually with 2 replicas for HA) fronted by a `ClusterIP` Service named `kube-dns` in the `kube-system` namespace. It is not a DaemonSet because it does not need to run on every node. It is not a StatefulSet because DNS state is ephemeral. While some control-plane components run as static pods, CoreDNS uses a standard Deployment.\n\nWhy other options are wrong:\n- A: CoreDNS is not a DaemonSet; it does not need to run on every node.\n- B: CoreDNS is not a StatefulSet; DNS state is ephemeral and does not require persistent storage.\n- D: CoreDNS is not a static pod; it is managed by a standard Deployment in `kube-system`.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/",
     verify: "kubectl get deployment coredns -n kube-system"
   },
   {
@@ -462,7 +462,7 @@ var questions = [
       "In etcd directly, accessible only by the kube-apiserver component at runtime"
     ],
     answer: 2,
-    explanation: "Ingress TLS configuration references a Kubernetes `Secret` of type `kubernetes.io/tls` that contains `tls.crt` and `tls.key` fields. The Ingress controller reads this Secret to configure TLS. ConfigMaps are for non-sensitive data. Storing certs directly on the controller filesystem is not the standard approach. While Secrets are stored in etcd, they are accessed through the API server as Secret objects, not directly.",
+    explanation: "Ingress TLS configuration references a Kubernetes `Secret` of type `kubernetes.io/tls` that contains `tls.crt` and `tls.key` fields. The Ingress controller reads this Secret to configure TLS. ConfigMaps are for non-sensitive data. Storing certs directly on the controller filesystem is not the standard approach. While Secrets are stored in etcd, they are accessed through the API server as Secret objects, not directly.\n\nWhy other options are wrong:\n- A: ConfigMaps are for non-sensitive configuration data; TLS certificates and keys are sensitive and belong in Secrets.\n- B: Storing certs directly on the controller filesystem is not the standard Kubernetes approach; it bypasses declarative management.\n- D: While Secrets are stored in etcd, they are accessed through the API server as Secret objects, not accessed directly from etcd.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls",
     verify: "kubectl get secret <tls-secret-name> -o yaml"
   },
   {
@@ -478,7 +478,7 @@ var questions = [
       "The policy is invalid and will be rejected by the Kubernetes API server"
     ],
     answer: 2,
-    explanation: "An empty `podSelector: {}` matches all pods within the namespace where the `NetworkPolicy` is created — in this case, `production`. NetworkPolicies are namespace-scoped, so it never applies to other namespaces. An empty selector matches all pods, not just unlabeled ones. The syntax is valid.",
+    explanation: "An empty `podSelector: {}` matches all pods within the namespace where the `NetworkPolicy` is created — in this case, `production`. NetworkPolicies are namespace-scoped, so it never applies to other namespaces. An empty selector matches all pods, not just unlabeled ones. The syntax is valid.\n\nWhy other options are wrong:\n- A: NetworkPolicies are namespace-scoped and never apply across all namespaces in the cluster.\n- B: An empty `podSelector: {}` matches all pods in the namespace, not just unlabeled ones.\n- D: An empty podSelector is valid syntax and is accepted by the API server.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n production"
   },
   {
@@ -494,7 +494,7 @@ var questions = [
       "49152–65535 which is the IANA dynamic and private port range"
     ],
     answer: 2,
-    explanation: "The default `NodePort` range is 30000–32767, as defined by the kube-apiserver's `--service-node-port-range` flag. Ports 80–443 are well-known ports typically reserved for web servers. The range 1024–65535 covers unprivileged ports but is too broad. The ephemeral port range 49152–65535 is used by the OS for outbound connections, not by Kubernetes for NodePort Services.",
+    explanation: "The default `NodePort` range is 30000–32767, as defined by the kube-apiserver's `--service-node-port-range` flag. Ports 80–443 are well-known ports typically reserved for web servers. The range 1024–65535 covers unprivileged ports but is too broad. The ephemeral port range 49152–65535 is used by the OS for outbound connections, not by Kubernetes for NodePort Services.\n\nWhy other options are wrong:\n- A: Ports 80-443 are well-known ports for HTTP/HTTPS, not the NodePort allocation range.\n- B: 1024-65535 covers the entire non-privileged port range, which is far broader than the NodePort range.\n- D: 49152-65535 is the IANA dynamic/private port range used by the OS for outbound connections, not by Kubernetes.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.ports[0].nodePort}'"
   },
   {
@@ -510,7 +510,7 @@ var questions = [
       "A CNAME record pointing to the first ready pod in the endpoint list for the svc"
     ],
     answer: 2,
-    explanation: "A headless Service (`clusterIP: None`) causes CoreDNS to return A records for each individual pod endpoint rather than a single virtual IP. This allows clients to discover all backend pod IPs directly. It does not return `0.0.0.0`. DNS records are still created. CNAME records are used by `ExternalName` Services, not headless ones.",
+    explanation: "A headless Service (`clusterIP: None`) causes CoreDNS to return A records for each individual pod endpoint rather than a single virtual IP. This allows clients to discover all backend pod IPs directly. It does not return `0.0.0.0`. DNS records are still created. CNAME records are used by `ExternalName` Services, not headless ones.\n\nWhy other options are wrong:\n- A: A headless Service does not return `0.0.0.0`; it returns actual pod endpoint IPs.\n- B: DNS records are still created for headless Services; they are not bypassed.\n- D: CNAME records are used by ExternalName Services, not by headless Services.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
     verify: "kubectl exec <pod> -- nslookup <headless-service>.<namespace>.svc.cluster.local"
   },
   {
@@ -526,7 +526,7 @@ var questions = [
       "kube-scheduler — the component that assigns pods to nodes in a cluster"
     ],
     answer: 1,
-    explanation: "kube-proxy watches the API server for Service and Endpoint changes and updates iptables, IPVS, or userspace proxy rules on each node to implement service routing. The kubelet manages pod lifecycle. The scheduler assigns pods to nodes. The kube-controller-manager runs controllers like the Endpoints controller but does not program node-level forwarding rules.",
+    explanation: "kube-proxy watches the API server for Service and Endpoint changes and updates iptables, IPVS, or userspace proxy rules on each node to implement service routing. The kubelet manages pod lifecycle. The scheduler assigns pods to nodes. The kube-controller-manager runs controllers like the Endpoints controller but does not program node-level forwarding rules.\n\nWhy other options are wrong:\n- A: The kubelet manages pod lifecycle on nodes but does not program network forwarding rules.\n- C: The kube-controller-manager runs controllers (including the Endpoints controller) but does not program node-level forwarding rules.\n- D: The kube-scheduler assigns pods to nodes and has no role in network forwarding rule programming.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl get daemonset kube-proxy -n kube-system"
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
     ],
     answer: 0,
-    explanation: "If the DNS for `api.example.com` does not resolve to the Ingress controller's IP, the request will either not arrive or arrive at a different server. When DNS does not point to the Ingress controller, requests either time out or fail to connect. The Service type does not prevent Ingress routing. Most Ingress controllers support host-based routing by default. While a NetworkPolicy could block traffic, a DNS misconfiguration is the most common cause of this symptom.",
+    explanation: "If the DNS for `api.example.com` does not resolve to the Ingress controller's IP, the request will either not arrive or arrive at a different server. When DNS does not point to the Ingress controller, requests either time out or fail to connect. The Service type does not prevent Ingress routing. Most Ingress controllers support host-based routing by default. While a NetworkPolicy could block traffic, a DNS misconfiguration is the most common cause of this symptom.\n\nWhy other options are wrong:\n- B: Using a LoadBalancer Service type for the backend does not prevent Ingress routing; Ingress can route to any Service type.\n- C: Most Ingress controllers support both host-based and path-based routing by default.\n- D: While a NetworkPolicy could theoretically block traffic, DNS misconfiguration is the most common cause of this symptom.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: "kubectl get ingress -o wide"
   },
   {
@@ -558,7 +558,7 @@ var questions = [
       "The CNI plugin creates a virtual bridge between the two container endpoints"
     ],
     answer: 0,
-    explanation: "All containers in a pod share the same network namespace, meaning they share the same IP address and can reach each other on `localhost` using different ports. They do not get separate IPs. While shared volumes are a valid communication method, the network namespace is the networking answer. The CNI plugin assigns the pod IP but does not create bridges between co-located containers.",
+    explanation: "All containers in a pod share the same network namespace, meaning they share the same IP address and can reach each other on `localhost` using different ports. They do not get separate IPs. While shared volumes are a valid communication method, the network namespace is the networking answer. The CNI plugin assigns the pod IP but does not create bridges between co-located containers.\n\nWhy other options are wrong:\n- B: Containers in the same pod share a single IP address; they do not get separate IPs.\n- C: Shared volumes (like emptyDir) are a valid IPC method but not the networking mechanism; the question asks about network interfaces.\n- D: The CNI plugin assigns the pod IP but does not create virtual bridges between co-located containers within the same pod.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
     verify: null
   },
   {
@@ -574,7 +574,7 @@ var questions = [
       "Pods are scheduled only in the zone with the most available resources for the workload"
     ],
     answer: 1,
-    explanation: "Topology-aware routing (previously called Topology Aware Hints) allows kube-proxy to prefer endpoints in the same zone as the requesting pod, reducing cross-zone traffic and latency. It does not encrypt traffic. It does not replicate Services across clusters. Scheduling decisions are made by the kube-scheduler based on different criteria, not Service annotations.",
+    explanation: "Topology-aware routing (previously called Topology Aware Hints) allows kube-proxy to prefer endpoints in the same zone as the requesting pod, reducing cross-zone traffic and latency. It does not encrypt traffic. It does not replicate Services across clusters. Scheduling decisions are made by the kube-scheduler based on different criteria, not Service annotations.\n\nWhy other options are wrong:\n- A: Topology-aware routing does not encrypt traffic; IPsec requires separate configuration.\n- C: The setting does not replicate Services across clusters; it affects endpoint preference within a single cluster.\n- D: Scheduling decisions are made by the kube-scheduler, not influenced by Service annotations.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/",
     verify: "kubectl get svc <service-name> -o yaml | grep topology"
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution "
     ],
     answer: 2,
-    explanation: "To create an internal AWS load balancer, you use a `LoadBalancer` Service with the `aws-load-balancer-internal` annotation set to `\"true\"`. `NodePort` does not provision cloud load balancers regardless of annotations. `ClusterIP` with `externalIPs` requires manual IP management and does not create a cloud load balancer. `ExternalName` maps DNS but does not provision infrastructure.",
+    explanation: "To create an internal AWS load balancer, you use a `LoadBalancer` Service with the `aws-load-balancer-internal` annotation set to `\"true\"`. `NodePort` does not provision cloud load balancers regardless of annotations. `ClusterIP` with `externalIPs` requires manual IP management and does not create a cloud load balancer. `ExternalName` maps DNS but does not provision infrastructure.\n\nWhy other options are wrong:\n- A: ClusterIP with `externalIPs` requires manual IP management and does not provision a cloud load balancer.\n- B: NodePort does not provision cloud load balancers regardless of annotations applied to it.\n- D: ExternalName maps DNS but does not provision any infrastructure or load balancer.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer",
     verify: "kubectl get svc <service-name> -o jsonpath='{.metadata.annotations}'"
   },
   {
@@ -606,7 +606,7 @@ var questions = [
       "A hardcoded Google Public DNS address configured in the base image"
     ],
     answer: 2,
-    explanation: "The `nameserver` entry in a pod's `resolv.conf` points to the `ClusterIP` of the `kube-dns` Service (which fronts CoreDNS) in the `kube-system` namespace. This is typically `10.96.0.10` in default kubeadm clusters. It is not a node-local cache by default. The API server uses a different IP. Google DNS uses `8.8.8.8`, not `10.96.0.10`.",
+    explanation: "The `nameserver` entry in a pod's `resolv.conf` points to the `ClusterIP` of the `kube-dns` Service (which fronts CoreDNS) in the `kube-system` namespace. This is typically `10.96.0.10` in default kubeadm clusters. It is not a node-local cache by default. The API server uses a different IP. Google DNS uses `8.8.8.8`, not `10.96.0.10`.\n\nWhy other options are wrong:\n- A: By default, Kubernetes does not run a node-local DNS cache daemon; the nameserver entry points to the cluster DNS Service.\n- B: The kube-apiserver has its own ClusterIP (often 10.96.0.1 in kubeadm), which is different from the DNS Service IP.\n- D: Google Public DNS uses 8.8.8.8 and 8.8.4.4, not addresses in the 10.96.x.x service CIDR range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl get svc kube-dns -n kube-system"
   },
   {
@@ -622,7 +622,7 @@ var questions = [
       "A dedicated `NetworkPolicy` using a VLAN selector for interface isolation"
     ],
     answer: 1,
-    explanation: "Multus is a CNI meta-plugin that enables attaching multiple network interfaces to a pod by delegating to different CNI plugins for each interface. kube-proxy handles Service forwarding, not pod interfaces. CoreDNS manages DNS resolution. NetworkPolicy controls traffic flow rules but cannot attach additional interfaces.",
+    explanation: "Multus is a CNI meta-plugin that enables attaching multiple network interfaces to a pod by delegating to different CNI plugins for each interface. kube-proxy handles Service forwarding, not pod interfaces. CoreDNS manages DNS resolution. NetworkPolicy controls traffic flow rules but cannot attach additional interfaces.\n\nWhy other options are wrong:\n- A: kube-proxy handles Service forwarding rules; dual-stack support is about IP address families, not multiple network interfaces.\n- C: CoreDNS manages DNS resolution and has no capability to attach network interfaces to pods.\n- D: NetworkPolicy controls traffic flow rules at L3/L4 but cannot attach additional network interfaces to pods.\n\nReference: https://github.com/k8snetworkplumbingwg/multus-cni",
     verify: null
   },
   {
@@ -638,7 +638,7 @@ var questions = [
       "Whether CoreDNS pods are in `CrashLoopBackOff` and unable to resolve pod DNS registrations"
     ],
     answer: 1,
-    explanation: "When new pods fail at `ContainerCreating`, the most common cause after a CNI upgrade is missing or misconfigured CNI binaries (`/opt/cni/bin/`) or config files (`/etc/cni/net.d/`). Existing pods retain their network setup. kube-proxy mode does not affect pod creation. The `--network-plugin` flag was removed in Kubernetes 1.24 along with dockershim; in current versions the kubelet has no such flag. CoreDNS issues would cause DNS failures, not pod creation failures.",
+    explanation: "When new pods fail at `ContainerCreating`, the most common cause after a CNI upgrade is missing or misconfigured CNI binaries (`/opt/cni/bin/`) or config files (`/etc/cni/net.d/`). Existing pods retain their network setup. kube-proxy mode does not affect pod creation. The `--network-plugin` flag was removed in Kubernetes 1.24 along with dockershim; in current versions the kubelet has no such flag. CoreDNS issues would cause DNS failures, not pod creation failures.\n\nWhy other options are wrong:\n- A: kube-proxy mode (IPVS vs. iptables) does not affect pod creation or the ContainerCreating state.\n- C: The `--network-plugin=cni` flag was removed in Kubernetes 1.24; in current versions the kubelet has no such flag.\n- D: CoreDNS issues cause DNS failures in running pods, not pod creation failures at the ContainerCreating stage.\n\nReference: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
@@ -654,7 +654,7 @@ var questions = [
       "The policy has no effect because it has no rules and is treated as a no-op"
     ],
     answer: 0,
-    explanation: "When a NetworkPolicy selects pods and lists both `Ingress` and `Egress` in `policyTypes` but defines no rules, it acts as a default-deny for both directions. Kubernetes NetworkPolicy is whitelist-based: once a pod is selected, only explicitly allowed traffic is permitted. An empty rule set means nothing is allowed. The policy absolutely has an effect.",
+    explanation: "When a NetworkPolicy selects pods and lists both `Ingress` and `Egress` in `policyTypes` but defines no rules, it acts as a default-deny for both directions. Kubernetes NetworkPolicy is whitelist-based: once a pod is selected, only explicitly allowed traffic is permitted. An empty rule set means nothing is allowed. The policy absolutely has an effect.\n\nWhy other options are wrong:\n- B: Kubernetes NetworkPolicy is whitelist-based; once a pod is selected with policyTypes, only explicitly allowed traffic is permitted.\n- C: Both directions are denied, not just egress; the policy lists both Ingress and Egress in policyTypes.\n- D: The policy has a clear effect (default deny both directions); it is not a no-op.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o yaml"
   },
   {
@@ -670,7 +670,7 @@ var questions = [
       "IPVS eliminates the need for a CNI plugin by handling all pod networking within the kernel"
     ],
     answer: 0,
-    explanation: "IPVS uses hash tables in the Linux kernel for O(1) lookup time when routing connections to backends, whereas iptables uses sequential chain evaluation that degrades linearly with the number of rules. This makes IPVS significantly better for clusters with thousands of Services. IPVS does not provide TLS termination or encryption. A CNI plugin is still required for pod networking.",
+    explanation: "IPVS uses hash tables in the Linux kernel for O(1) lookup time when routing connections to backends, whereas iptables uses sequential chain evaluation that degrades linearly with the number of rules. This makes IPVS significantly better for clusters with thousands of Services. IPVS does not provide TLS termination or encryption. A CNI plugin is still required for pod networking.\n\nWhy other options are wrong:\n- B: IPVS does not provide TLS termination at the kernel level; it is a Layer 4 load balancer.\n- C: IPVS does not encrypt inter-node traffic; encryption requires separate mechanisms like IPsec or WireGuard.\n- D: A CNI plugin is still required for pod networking; IPVS only handles Service-level load balancing.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl get configmap kube-proxy -n kube-system -o yaml | grep mode"
   },
   {
@@ -686,7 +686,7 @@ var questions = [
       "CoreDNS with endpoint slices for service name resolution"
     ],
     answer: 2,
-    explanation: "Cilium can fully replace kube-proxy by implementing Service load balancing directly in eBPF, offering better performance and richer identity-based policies. Flannel is a simple overlay and cannot replace kube-proxy. Calico with iptables dataplane still relies on kube-proxy for Service routing. CoreDNS is a DNS server and does not handle packet forwarding.",
+    explanation: "Cilium can fully replace kube-proxy by implementing Service load balancing directly in eBPF, offering better performance and richer identity-based policies. Flannel is a simple overlay and cannot replace kube-proxy. Calico with iptables dataplane still relies on kube-proxy for Service routing. CoreDNS is a DNS server and does not handle packet forwarding.\n\nWhy other options are wrong:\n- A: Flannel is a simple overlay CNI that cannot replace kube-proxy.\n- B: Calico with iptables dataplane still relies on kube-proxy for Service routing.\n- D: CoreDNS is a DNS server for name resolution; it does not handle packet forwarding or replace kube-proxy.\n\nReference: https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/",
     verify: null
   },
   {
@@ -702,7 +702,7 @@ var questions = [
       "By setting resource `limits` on the pod to throttle CPU and request handling"
     ],
     answer: 2,
-    explanation: "Cloud native best practices push cross-cutting concerns like rate limiting to infrastructure components such as Ingress controllers or API gateways, keeping application code focused on business logic. NetworkPolicy cannot perform rate limiting — it only allows or denies traffic. CPU limits throttle compute, not request rates. Application-level middleware works but couples the concern to code.",
+    explanation: "Cloud native best practices push cross-cutting concerns like rate limiting to infrastructure components such as Ingress controllers or API gateways, keeping application code focused on business logic. NetworkPolicy cannot perform rate limiting — it only allows or denies traffic. CPU limits throttle compute, not request rates. Application-level middleware works but couples the concern to code.\n\nWhy other options are wrong:\n- A: Implementing rate limiting as custom middleware in each container couples the cross-cutting concern to application code.\n- B: NetworkPolicy only allows or denies traffic; it cannot perform rate limiting or count connections per second.\n- D: CPU resource limits throttle compute resources, not request rates; a pod can still accept unlimited requests within its CPU budget.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: null
   },
   {
@@ -718,7 +718,7 @@ var questions = [
       "The bulkhead pattern, which limits the number of pods in a Deployment to isolate the failures"
     ],
     answer: 1,
-    explanation: "The circuit breaker pattern monitors failure rates and temporarily stops sending requests to a failing or slow service after a threshold is exceeded, preventing cascading failures. Timeouts help but requests still attempt the slow service. Retries without a circuit breaker would make the problem worse by adding load to the struggling service. Bulkhead isolates resource pools but does not stop traffic to failing services — and it is not about pod count limits.",
+    explanation: "The circuit breaker pattern monitors failure rates and temporarily stops sending requests to a failing or slow service after a threshold is exceeded, preventing cascading failures. Timeouts help but requests still attempt the slow service. Retries without a circuit breaker would make the problem worse by adding load to the struggling service. Bulkhead isolates resource pools but does not stop traffic to failing services — and it is not about pod count limits.\n\nWhy other options are wrong:\n- A: Timeouts limit wait time but still allow requests to reach the slow service; they do not stop the cascade.\n- C: Retries without a circuit breaker would make the problem worse by adding load to the already struggling service.\n- D: Bulkhead isolates resource pools but does not stop traffic to failing services; and it is not about limiting pod count.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -734,7 +734,7 @@ var questions = [
       "Gateway API — the standards-based routing project"
     ],
     answer: 3,
-    explanation: "Gateway API is the CNCF/Kubernetes SIG-Network project that provides a role-oriented, expressive API for routing as the evolution of the Ingress resource. It supports advanced features like traffic splitting, header-based routing, and cross-namespace references. Envoy Gateway is an implementation of Gateway API, not the specification itself. Contour and Ambassador are Ingress controllers/implementations, not the standard API.",
+    explanation: "Gateway API is the CNCF/Kubernetes SIG-Network project that provides a role-oriented, expressive API for routing as the evolution of the Ingress resource. It supports advanced features like traffic splitting, header-based routing, and cross-namespace references. Envoy Gateway is an implementation of Gateway API, not the specification itself. Contour and Ambassador are Ingress controllers/implementations, not the standard API.\n\nWhy other options are wrong:\n- A: Envoy Gateway is an implementation of Gateway API, not the specification/standard itself.\n- B: Ambassador is an Ingress controller/API gateway product, not the standards-based routing API.\n- C: Contour is an Envoy-powered Ingress controller implementation, not the successor standard to the Ingress API.\n\nReference: https://gateway-api.sigs.k8s.io/",
     verify: null
   },
   {
@@ -750,7 +750,7 @@ var questions = [
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "`kube_endpoint_address` is a kube-state-metrics metric that exposes one time series per endpoint address with a `ready` label (`true` or `false`). Alerting when `count(kube_endpoint_address{ready='true', namespace='...', endpoint='...'}) == 0` for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
+    explanation: "`kube_endpoint_address` is a kube-state-metrics metric that exposes one time series per endpoint address with a `ready` label (`true` or `false`). Alerting when `count(kube_endpoint_address{ready='true', namespace='...', endpoint='...'}) == 0` for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_address_available` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/service/endpoint-metrics.md",
     verify: null
   },
   {
@@ -766,7 +766,7 @@ var questions = [
       "The kubelet logs showing image pull progress and container start events on nodes"
     ],
     answer: 0,
-    explanation: "kube-proxy logs show when iptables or IPVS rules are updated and when endpoint changes occur, which directly correlates with network connectivity changes. Scheduler logs show placement decisions, which are relevant only at scheduling time. etcd audit logs are about API-level operations. Kubelet image pull logs are about container images, not network connectivity.",
+    explanation: "kube-proxy logs show when iptables or IPVS rules are updated and when endpoint changes occur, which directly correlates with network connectivity changes. Scheduler logs show placement decisions, which are relevant only at scheduling time. etcd audit logs are about API-level operations. Kubelet image pull logs are about container images, not network connectivity.\n\nWhy other options are wrong:\n- B: kube-scheduler logs show pod placement decisions, which are relevant only at scheduling time, not during network issues.\n- C: etcd audit logs are about API-level key-value operations, not network connectivity.\n- D: Kubelet image pull logs are about container image downloading, not network connectivity between pods.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl logs -n kube-system -l k8s-app=kube-proxy --tail=50"
   },
   {
@@ -782,7 +782,7 @@ var questions = [
       "Argo CD deletes the Ingress resource entirely and creates a new one from the Git definition"
     ],
     answer: 1,
-    explanation: "Argo CD continuously compares the live cluster state with the desired state in Git. When it detects drift from a manual edit, it reverts the resource to match the Git source of truth on the next sync. Argo CD does not push changes to Git. It manages resources throughout their lifecycle, not just at creation. It patches in place rather than deleting and recreating.",
+    explanation: "Argo CD continuously compares the live cluster state with the desired state in Git. When it detects drift from a manual edit, it reverts the resource to match the Git source of truth on the next sync. Argo CD does not push changes to Git. It manages resources throughout their lifecycle, not just at creation. It patches in place rather than deleting and recreating.\n\nWhy other options are wrong:\n- A: Argo CD does not push changes to Git; Git is the source of truth and Argo CD only reads from it.\n- C: Argo CD manages resources throughout their lifecycle, not just at initial creation time.\n- D: Argo CD patches resources in place to match the Git state; it does not delete and recreate them.\n\nReference: https://argo-cd.readthedocs.io/en/stable/",
     verify: null
   },
   {
@@ -798,7 +798,7 @@ var questions = [
       "Edit the Ingress to point to a new Service while the old Deployment is still running and ready"
     ],
     answer: 1,
-    explanation: "`kubectl set image` combined with a `RollingUpdate` strategy incrementally replaces old pods with new ones, ensuring continuous availability. Deleting and recreating causes downtime. Scaling to zero before updating guarantees downtime. Editing the Ingress alone does not update the pod image and creates a split configuration that is hard to manage.",
+    explanation: "`kubectl set image` combined with a `RollingUpdate` strategy incrementally replaces old pods with new ones, ensuring continuous availability. Deleting and recreating causes downtime. Scaling to zero before updating guarantees downtime. Editing the Ingress alone does not update the pod image and creates a split configuration that is hard to manage.\n\nWhy other options are wrong:\n- A: Deleting and recreating a Deployment causes downtime while old pods are removed and new ones start.\n- C: Scaling to zero before updating guarantees a period of zero availability (downtime).\n- D: Editing the Ingress alone does not update the pod image; it only changes routing without deploying new code.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl rollout status deployment/<name>"
   },
   {
@@ -814,7 +814,7 @@ var questions = [
       "Port 80 on the Ingress controller's listening socket"
     ],
     answer: 2,
-    explanation: "The `port` field is the Service's listening port, while `targetPort` is the port on the backend pod's container where traffic is forwarded. A request to ClusterIP:80 is routed to pod-IP:8080. It does not arrive on port 80 of the pod. The node port is only relevant for `NodePort` Services. The Ingress controller is a separate resource.",
+    explanation: "The `port` field is the Service's listening port, while `targetPort` is the port on the backend pod's container where traffic is forwarded. A request to ClusterIP:80 is routed to pod-IP:8080. It does not arrive on port 80 of the pod. The node port is only relevant for `NodePort` Services. The Ingress controller is a separate resource.\n\nWhy other options are wrong:\n- A: Traffic does not arrive on port 80 of the backend pod; the `targetPort` field (8080) determines the destination port.\n- B: The node port is only relevant for NodePort Services; the request goes directly to the pod's container, not to a node port.\n- D: The Ingress controller is a separate resource; this question is about direct ClusterIP Service routing.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.ports[0].targetPort}'"
   },
   {
@@ -830,7 +830,7 @@ var questions = [
       "500 endpoints per slice"
     ],
     answer: 1,
-    explanation: "The default maximum number of endpoints per EndpointSlice is 100. When a Service has more endpoints, the EndpointSlice controller creates additional slices. This design improves scalability by allowing incremental updates to smaller objects. 1000, 250, and 500 are not the default limits.",
+    explanation: "The default maximum number of endpoints per EndpointSlice is 100. When a Service has more endpoints, the EndpointSlice controller creates additional slices. This design improves scalability by allowing incremental updates to smaller objects. 1000, 250, and 500 are not the default limits.\n\nWhy other options are wrong:\n- A: 1000 endpoints per slice is not the default; it is the configurable maximum upper bound.\n- C: 250 is not the default maximum endpoints per EndpointSlice.\n- D: 500 is not the default maximum endpoints per EndpointSlice.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
     verify: "kubectl get endpointslices -l kubernetes.io/service-name=<service>"
   },
   {
@@ -846,7 +846,7 @@ var questions = [
       "`spec.selector.sourceIP` matching allowed client IP ranges"
     ],
     answer: 0,
-    explanation: "`spec.loadBalancerSourceRanges` accepts a list of CIDR blocks and instructs the cloud load balancer (or kube-proxy on bare metal) to only allow traffic from those ranges. There is no `Restricted` value for `externalTrafficPolicy`. `allowed-ips` is not a standard annotation. Selectors match pod labels, not source IPs.",
+    explanation: "`spec.loadBalancerSourceRanges` accepts a list of CIDR blocks and instructs the cloud load balancer (or kube-proxy on bare metal) to only allow traffic from those ranges. There is no `Restricted` value for `externalTrafficPolicy`. `allowed-ips` is not a standard annotation. Selectors match pod labels, not source IPs.\n\nWhy other options are wrong:\n- B: There is no `externalTrafficPolicy: Restricted` value; valid values are `Cluster` and `Local`.\n- C: `metadata.annotations.allowed-ips` is not a standard Kubernetes annotation for source IP restriction.\n- D: `spec.selector` matches pod labels for backend selection, not client source IP ranges.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#restricting-traffic-to-specific-clients",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.loadBalancerSourceRanges}'"
   },
   {
@@ -862,7 +862,7 @@ var questions = [
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"
     ],
     answer: 3,
-    explanation: "NetworkPolicy rules evaluate based on label matching. The sending pod matches `role: frontend` in the ingress rule's `from.podSelector`, so traffic is allowed. There is no restriction preventing a pod from matching both the source and target selectors. NetworkPolicy does not perform set exclusion. Ingress rules do not require corresponding egress rules to function (unless egress is separately restricted).",
+    explanation: "NetworkPolicy rules evaluate based on label matching. The sending pod matches `role: frontend` in the ingress rule's `from.podSelector`, so traffic is allowed. There is no restriction preventing a pod from matching both the source and target selectors. NetworkPolicy does not perform set exclusion. Ingress rules do not require corresponding egress rules to function (unless egress is separately restricted).\n\nWhy other options are wrong:\n- A: There is no restriction preventing a pod from matching both the source and destination selectors of the same policy.\n- B: Ingress rules do not require corresponding egress rules to function unless egress is separately restricted by another policy.\n- C: NetworkPolicy does not perform set exclusion; it evaluates label matching independently for each selector.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {
@@ -878,7 +878,7 @@ var questions = [
       "It routes requests not matching any defined host or path rule to the `fallback-svc` backend"
     ],
     answer: 3,
-    explanation: "The `defaultBackend` in an Ingress resource acts as a catch-all, handling any request that does not match a specific host or path rule defined in the Ingress rules. It is not a health check endpoint. It does not perform protocol redirects. It has the lowest priority, not the highest — specific rules are evaluated first.",
+    explanation: "The `defaultBackend` in an Ingress resource acts as a catch-all, handling any request that does not match a specific host or path rule defined in the Ingress rules. It is not a health check endpoint. It does not perform protocol redirects. It has the lowest priority, not the highest — specific rules are evaluated first.\n\nWhy other options are wrong:\n- A: The defaultBackend is not a health check endpoint; it is a catch-all routing target.\n- B: It does not redirect HTTPS to HTTP; it routes unmatched requests to the specified backend.\n- C: The defaultBackend has the lowest priority, not the highest; specific host/path rules are evaluated first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#default-backend",
     verify: "kubectl get ingress <name> -o jsonpath='{.spec.defaultBackend}'"
   },
   {
@@ -894,7 +894,7 @@ var questions = [
       "The kubelet when it joins the cluster during the boot process"
     ],
     answer: 0,
-    explanation: "The kube-controller-manager runs the node IPAM controller, which allocates a pod CIDR range from the cluster CIDR to each node. The API server stores this allocation but does not perform the assignment logic. CoreDNS handles DNS, not IP allocation. The kubelet reports node status but does not determine the pod CIDR.",
+    explanation: "The kube-controller-manager runs the node IPAM controller, which allocates a pod CIDR range from the cluster CIDR to each node. The API server stores this allocation but does not perform the assignment logic. CoreDNS handles DNS, not IP allocation. The kubelet reports node status but does not determine the pod CIDR.\n\nWhy other options are wrong:\n- B: The kube-apiserver stores the pod CIDR allocation but does not perform the assignment logic itself.\n- C: CoreDNS handles DNS resolution; it does not allocate IP address ranges to nodes.\n- D: The kubelet reports node status but does not determine or assign the pod CIDR range.\n\nReference: https://kubernetes.io/docs/concepts/architecture/controller/",
     verify: "kubectl get node <node-name> -o jsonpath='{.spec.podCIDR}'"
   },
   {
@@ -910,7 +910,7 @@ var questions = [
       "It restricts internal pod-to-Service traffic to endpoints on the same node as the client pod"
     ],
     answer: 3,
-    explanation: "`internalTrafficPolicy: Local` tells kube-proxy to only route cluster-internal traffic to endpoints running on the same node as the client pod, similar to `externalTrafficPolicy: Local` but for internal traffic. It does not affect ClusterIP allocation, namespace accessibility, or kube-proxy mode selection.",
+    explanation: "`internalTrafficPolicy: Local` tells kube-proxy to only route cluster-internal traffic to endpoints running on the same node as the client pod, similar to `externalTrafficPolicy: Local` but for internal traffic. It does not affect ClusterIP allocation, namespace accessibility, or kube-proxy mode selection.\n\nWhy other options are wrong:\n- A: The setting does not force the Service to use a ClusterIP from a local subnet; ClusterIP allocation is separate.\n- B: The setting does not affect namespace-level network boundaries; it controls kube-proxy endpoint selection.\n- C: The setting does not change kube-proxy's proxy mode (iptables vs. IPVS); it only affects endpoint filtering.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.internalTrafficPolicy}'"
   },
   {
@@ -926,7 +926,7 @@ var questions = [
       "The pod alternates between CoreDNS and the node's DNS resolver in a random sequence pattern"
     ],
     answer: 2,
-    explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.",
+    explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.\n\nWhy other options are wrong:\n- A: External names are not blocked; CoreDNS forwards unresolved queries to upstream DNS servers.\n- B: `Default` policy uses node DNS settings; `ClusterFirst` sends queries to CoreDNS first.\n- D: There is no random alternation between DNS resolvers; `ClusterFirst` always queries CoreDNS first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.dnsPolicy}'"
   },
   {
@@ -942,7 +942,7 @@ var questions = [
       "The policies conflict with each other and therefore all ingress traffic is denied by default"
     ],
     answer: 2,
-    explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.",
+    explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on port number; both policies are applied equally.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n <namespace>"
   },
   {
@@ -958,7 +958,7 @@ var questions = [
       "The pod enters an error state because `dnsConfig` and `dnsPolicy` cannot be used in the same pod"
     ],
     answer: 1,
-    explanation: "`dnsConfig` fields are merged with the settings generated by the `dnsPolicy`. When using `ClusterFirst`, the default search domains are preserved, and custom entries from `dnsConfig` (such as additional search domains or nameservers) are appended. They are not replaced or ignored. `dnsConfig` and `dnsPolicy` are designed to work together.",
+    explanation: "`dnsConfig` fields are merged with the settings generated by the `dnsPolicy`. When using `ClusterFirst`, the default search domains are preserved, and custom entries from `dnsConfig` (such as additional search domains or nameservers) are appended. They are not replaced or ignored. `dnsConfig` and `dnsPolicy` are designed to work together.\n\nWhy other options are wrong:\n- A: Custom search domains are appended, not replaced; the default cluster domains are preserved.\n- C: `dnsConfig` is not ignored; it is designed to work with any `dnsPolicy` to add custom DNS settings.\n- D: `dnsConfig` and `dnsPolicy` are designed to be used together; the pod does not enter an error state.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config",
     verify: "kubectl exec <pod> -- cat /etc/resolv.conf"
   },
   {
@@ -974,7 +974,7 @@ var questions = [
       "They replace kube-proxy by routing traffic directly to pods using kernel-level eBPF forwarding"
     ],
     answer: 1,
-    explanation: "The legacy `Endpoints` resource stores all endpoints in a single object. For Services with many backends, any single pod change triggers a full object update and watch notification. `EndpointSlices` split endpoints into smaller chunks (default 100), so updates only affect the relevant slice. They do not enable multi-cluster. They do not cache on nodes or replace kube-proxy.",
+    explanation: "The legacy `Endpoints` resource stores all endpoints in a single object. For Services with many backends, any single pod change triggers a full object update and watch notification. `EndpointSlices` split endpoints into smaller chunks (default 100), so updates only affect the relevant slice. They do not enable multi-cluster. They do not cache on nodes or replace kube-proxy.\n\nWhy other options are wrong:\n- A: EndpointSlices do not enable multi-cluster Service spanning; that requires federation or multi-cluster tools.\n- C: EndpointSlices do not cache data on nodes; they are API objects stored in etcd and watched by kube-proxy.\n- D: EndpointSlices do not replace kube-proxy; kube-proxy watches EndpointSlices to program forwarding rules.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
     verify: "kubectl get endpointslices -l kubernetes.io/service-name=<svc>"
   },
   {
@@ -990,7 +990,7 @@ var questions = [
       "`tolerations` matching the zone taint to allow pods on nodes in specific zones"
     ],
     answer: 1,
-    explanation: "`topologySpreadConstraints` distribute pods evenly across topology domains like zones. Setting `topologyKey: topology.kubernetes.io/zone` ensures pods are spread across zones. `nodeSelector` pins pods to one specific zone label value. Pod affinity with hostname key co-locates pods on the same node. Tolerations allow pods to run on tainted nodes but do not control distribution.",
+    explanation: "`topologySpreadConstraints` distribute pods evenly across topology domains like zones. Setting `topologyKey: topology.kubernetes.io/zone` ensures pods are spread across zones. `nodeSelector` pins pods to one specific zone label value. Pod affinity with hostname key co-locates pods on the same node. Tolerations allow pods to run on tainted nodes but do not control distribution.\n\nWhy other options are wrong:\n- A: `nodeSelector` pins pods to nodes with a specific label value, concentrating them in one zone instead of spreading.\n- C: `podAffinity` with hostname topologyKey co-locates pods on the same node, the opposite of spreading across zones.\n- D: `tolerations` allow pods to run on tainted nodes but do not control distribution across topology domains.\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.topologySpreadConstraints}'"
   },
   {
@@ -1006,7 +1006,7 @@ var questions = [
       "Configuring routing so the pod can reach other pods across cluster nodes"
     ],
     answer: 2,
-    explanation: "kube-proxy manages iptables/IPVS rules for Service routing, not the CNI plugin. During a CNI `ADD`, the plugin allocates an IP, creates veth pairs (or equivalent), attaches them to the pod and host namespaces, and configures routes. Programming Service-level forwarding rules is kube-proxy's responsibility.",
+    explanation: "kube-proxy manages iptables/IPVS rules for Service routing, not the CNI plugin. During a CNI `ADD`, the plugin allocates an IP, creates veth pairs (or equivalent), attaches them to the pod and host namespaces, and configures routes. Programming Service-level forwarding rules is kube-proxy's responsibility.\n\nWhy other options are wrong:\n- A: Allocating an IP address is a responsibility of the CNI plugin during the ADD operation.\n- B: Creating a veth pair is a responsibility of the CNI plugin during the ADD operation.\n- D: Configuring routing is a responsibility of the CNI plugin during the ADD operation.\n\nReference: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
     verify: null
   },
   {
@@ -1022,7 +1022,7 @@ var questions = [
       "BGP peering allows pods to use IPv6 addresses exclusively, which VXLAN does not support at all"
     ],
     answer: 0,
-    explanation: "With BGP peering, Calico advertises pod CIDR routes to physical routers, making pod IPs natively routable without the overhead of VXLAN encapsulation (extra headers, MTU reduction). BGP does not provide encryption — that requires separate configuration. kube-proxy is still needed for Service routing. Both BGP and VXLAN modes support IPv6.",
+    explanation: "With BGP peering, Calico advertises pod CIDR routes to physical routers, making pod IPs natively routable without the overhead of VXLAN encapsulation (extra headers, MTU reduction). BGP does not provide encryption — that requires separate configuration. kube-proxy is still needed for Service routing. Both BGP and VXLAN modes support IPv6.\n\nWhy other options are wrong:\n- B: BGP peering does not encrypt traffic by default; encryption requires separate configuration like WireGuard or IPsec.\n- C: BGP peering does not replace kube-proxy; kube-proxy is still needed for Service-level load balancing.\n- D: Both BGP and VXLAN modes support IPv6; BGP is not required exclusively for IPv6 addressing.\n\nReference: https://docs.tigera.io/calico/latest/networking/configuring/bgp",
     verify: null
   },
   {
@@ -1038,7 +1038,7 @@ var questions = [
       "Check that the CoreDNS pods are running and the `kube-dns` Service has valid endpoints"
     ],
     answer: 3,
-    explanation: "If a pod cannot resolve any DNS names, the first check should be the health of CoreDNS pods and the `kube-dns` Service endpoints. If CoreDNS is not running or the Service has no endpoints, DNS resolution will fail cluster-wide. Restarting the API server is drastic and unlikely to help. The pod's Service is unrelated to DNS resolution. Memory limits on the application pod do not affect DNS resolution.",
+    explanation: "If a pod cannot resolve any DNS names, the first check should be the health of CoreDNS pods and the `kube-dns` Service endpoints. If CoreDNS is not running or the Service has no endpoints, DNS resolution will fail cluster-wide. Restarting the API server is drastic and unlikely to help. The pod's Service is unrelated to DNS resolution. Memory limits on the application pod do not affect DNS resolution.\n\nWhy other options are wrong:\n- A: Increasing the pod's memory limit does not affect DNS resolution; DNS queries are handled by CoreDNS, not the pod's memory.\n- B: Deleting and recreating the pod's Service does not fix DNS resolution; the issue is with the DNS server, not the Service.\n- C: Restarting the kube-apiserver is drastic and unlikely to fix DNS issues; CoreDNS operates independently.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/",
     verify: "kubectl get pods -n kube-system -l k8s-app=kube-dns"
   },
   {
@@ -1054,7 +1054,7 @@ var questions = [
       "The pod shares the node's network namespace and uses the node's IP address for traffic"
     ],
     answer: 3,
-    explanation: "Setting `hostNetwork: true` causes the pod to share the host's network namespace. The pod uses the node's IP address and sees all network interfaces on the host. It does not get a separate namespace. No Service is created automatically. The pod can communicate with any reachable network, not just local pods.",
+    explanation: "Setting `hostNetwork: true` causes the pod to share the host's network namespace. The pod uses the node's IP address and sees all network interfaces on the host. It does not get a separate namespace. No Service is created automatically. The pod can communicate with any reachable network, not just local pods.\n\nWhy other options are wrong:\n- A: With `hostNetwork: true`, the pod does NOT get its own network namespace; it shares the host's.\n- B: No Service is automatically created; hostNetwork pods use the node's IP directly.\n- C: The pod can communicate with any reachable network endpoint, not just pods on the same node.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.hostNetwork}'"
   },
   {
@@ -1070,7 +1070,7 @@ var questions = [
       "The database connection succeeds; the external API connection is blocked"
     ],
     answer: 3,
-    explanation: "The policy allows egress only to `10.0.5.0/24` on port 5432. The database at `10.0.5.10:5432` falls within this CIDR and port, so it succeeds. The external API at `203.0.113.50:443` is outside the allowed CIDR and port, so it is blocked. NetworkPolicy applies to both TCP and UDP. Private vs. public CIDR is irrelevant to policy enforcement.",
+    explanation: "The policy allows egress only to `10.0.5.0/24` on port 5432. The database at `10.0.5.10:5432` falls within this CIDR and port, so it succeeds. The external API at `203.0.113.50:443` is outside the allowed CIDR and port, so it is blocked. NetworkPolicy applies to both TCP and UDP. Private vs. public CIDR is irrelevant to policy enforcement.\n\nWhy other options are wrong:\n- A: NetworkPolicy applies to both TCP and UDP; egress policies do not only block UDP.\n- B: The database connection succeeds because `10.0.5.10:5432` falls within the allowed CIDR and port.\n- C: Both connections are not blocked; the one matching the CIDR and port rule succeeds.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {
@@ -1086,7 +1086,7 @@ var questions = [
       "`/opt/cni/config/` on each worker node"
     ],
     answer: 2,
-    explanation: "The standard CNI configuration directory is `/etc/cni/net.d/`. The container runtime (e.g., containerd, CRI-O) reads configuration files from this directory to determine which CNI plugin to invoke and with what parameters. CNI binaries are stored in `/opt/cni/bin/`. The other paths are not standard CNI locations.",
+    explanation: "The standard CNI configuration directory is `/etc/cni/net.d/`. The container runtime (e.g., containerd, CRI-O) reads configuration files from this directory to determine which CNI plugin to invoke and with what parameters. CNI binaries are stored in `/opt/cni/bin/`. The other paths are not standard CNI locations.\n\nWhy other options are wrong:\n- A: `/var/lib/kubelet/cni/` is not the standard CNI configuration directory.\n- B: `/etc/kubernetes/cni/` is not the standard CNI configuration directory.\n- D: `/opt/cni/config/` does not exist; CNI binaries are in `/opt/cni/bin/` and config is in `/etc/cni/net.d/`.\n\nReference: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
     verify: null
   },
   {
@@ -1102,7 +1102,7 @@ var questions = [
       "Event-driven architecture for asynchronous message handling"
     ],
     answer: 1,
-    explanation: "Exposing health endpoints and using them for traffic routing exemplifies observability and health signaling, which enables self-healing behavior — unhealthy instances are automatically removed from the load balancing pool. Infrastructure as Code concerns declarative provisioning. Immutable infrastructure means not modifying running instances. Event-driven architecture is about asynchronous message passing.",
+    explanation: "Exposing health endpoints and using them for traffic routing exemplifies observability and health signaling, which enables self-healing behavior — unhealthy instances are automatically removed from the load balancing pool. Infrastructure as Code concerns declarative provisioning. Immutable infrastructure means not modifying running instances. Event-driven architecture is about asynchronous message passing.\n\nWhy other options are wrong:\n- A: Infrastructure as Code concerns declarative provisioning and configuration management, not health signaling.\n- C: Immutable infrastructure means not modifying running instances; it is not about health endpoints.\n- D: Event-driven architecture is about asynchronous message passing, not health-based routing.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes",
     verify: null
   },
   {
@@ -1118,7 +1118,7 @@ var questions = [
       "The Ingress controller retries the request indefinitely until a backend pod finally appears"
     ],
     answer: 1,
-    explanation: "When a Knative service is scaled to zero, the activator component (part of the Knative data plane) buffers incoming requests while signaling the autoscaler to create pods. Once a pod is ready, the activator forwards the buffered request. Requests are not rejected. CoreDNS does not queue requests. The Ingress controller does not handle this logic — Knative has its own routing layer.",
+    explanation: "When a Knative service is scaled to zero, the activator component (part of the Knative data plane) buffers incoming requests while signaling the autoscaler to create pods. Once a pod is ready, the activator forwards the buffered request. Requests are not rejected. CoreDNS does not queue requests. The Ingress controller does not handle this logic — Knative has its own routing layer.\n\nWhy other options are wrong:\n- A: The request is not immediately rejected with 503; Knative's activator buffers it while scaling up.\n- C: CoreDNS does not queue requests; DNS simply resolves names and has no request buffering capability.\n- D: The Ingress controller does not handle scale-to-zero logic; Knative has its own routing and activator layer.\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
     verify: null
   },
   {
@@ -1134,7 +1134,7 @@ var questions = [
       "Open Service Mesh — a lightweight SMI-compatible service mesh tool"
     ],
     answer: 2,
-    explanation: "Linkerd is a CNCF graduated service mesh that uses a lightweight Rust-based proxy (linkerd2-proxy) designed for minimal latency and resource consumption. Istio uses Envoy, a C++-based proxy. Consul Connect is a HashiCorp product, not a CNCF project. Open Service Mesh was archived and also used Envoy sidecars.",
+    explanation: "Linkerd is a CNCF graduated service mesh that uses a lightweight Rust-based proxy (linkerd2-proxy) designed for minimal latency and resource consumption. Istio uses Envoy, a C++-based proxy. Consul Connect is a HashiCorp product, not a CNCF project. Open Service Mesh was archived and also used Envoy sidecars.\n\nWhy other options are wrong:\n- A: Istio uses Envoy (C++-based proxy), not a Rust-based micro-proxy.\n- B: Consul Connect is a HashiCorp product, not a CNCF project.\n- D: Open Service Mesh was archived and also used Envoy sidecars, not a Rust-based proxy.\n\nReference: https://www.cncf.io/projects/linkerd/",
     verify: null
   },
   {
@@ -1150,7 +1150,7 @@ var questions = [
       "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely"
     ],
     answer: 0,
-    explanation: "gRPC uses HTTP/2 with multiplexed streams over a single connection, reducing connection overhead and latency compared to REST with HTTP/1.1. Switching to `NodePort` adds extra hops. Setting `dnsPolicy: None` without alternatives breaks name resolution. Putting all services in one pod defeats the purpose of microservices and eliminates independent scaling.",
+    explanation: "gRPC uses HTTP/2 with multiplexed streams over a single connection, reducing connection overhead and latency compared to REST with HTTP/1.1. Switching to `NodePort` adds extra hops. Setting `dnsPolicy: None` without alternatives breaks name resolution. Putting all services in one pod defeats the purpose of microservices and eliminates independent scaling.\n\nWhy other options are wrong:\n- B: Replacing ClusterIP with NodePort adds extra network hops and does not reduce east-west latency.\n- C: Setting `dnsPolicy: None` without proper alternatives breaks name resolution entirely.\n- D: Running all microservices in a single pod defeats the purpose of microservices and eliminates independent scaling.\n\nReference: https://grpc.io/docs/what-is-grpc/introduction/",
     verify: null
   },
   {
@@ -1166,7 +1166,7 @@ var questions = [
       "No built-in metric exists; the engineer should use CNI-level flow logs or eBPF-based monitoring"
     ],
     answer: 3,
-    explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.",
+    explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
     verify: null
   },
   {
@@ -1182,7 +1182,7 @@ var questions = [
       "In the CoreDNS configuration by adding the `log` plugin to the Corefile config"
     ],
     answer: 3,
-    explanation: "CoreDNS supports query logging through its `log` plugin, which can be added to the Corefile (stored as a ConfigMap in `kube-system`). This logs all DNS queries processed by the cluster DNS. There is no universal `DNS_LOG` environment variable. The API server does not log DNS queries. NetworkPolicy does not have a standard `log` annotation for DNS.",
+    explanation: "CoreDNS supports query logging through its `log` plugin, which can be added to the Corefile (stored as a ConfigMap in `kube-system`). This logs all DNS queries processed by the cluster DNS. There is no universal `DNS_LOG` environment variable. The API server does not log DNS queries. NetworkPolicy does not have a standard `log` annotation for DNS.\n\nWhy other options are wrong:\n- A: There is no `--dns-audit-log` flag on the kube-apiserver.\n- B: NetworkPolicy does not have a standard `log: true` annotation for DNS query logging.\n- C: There is no universal `DNS_LOG` environment variable that enables DNS query logging in containers.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/",
     verify: "kubectl get configmap coredns -n kube-system -o yaml"
   },
   {
@@ -1198,7 +1198,7 @@ var questions = [
       "Argo CD generates a default allow-all policy for any new workloads it detects in the repo"
     ],
     answer: 1,
-    explanation: "In a cluster with default-deny NetworkPolicies, any pod without an explicit allow policy will have all ingress (and/or egress) traffic blocked. GitOps manages whatever resources are in the repository, including NetworkPolicies. Ingress controllers do not create NetworkPolicies. Argo CD deploys what is in Git — it does not auto-generate policies.",
+    explanation: "In a cluster with default-deny NetworkPolicies, any pod without an explicit allow policy will have all ingress (and/or egress) traffic blocked. GitOps manages whatever resources are in the repository, including NetworkPolicies. Ingress controllers do not create NetworkPolicies. Argo CD deploys what is in Git — it does not auto-generate policies.\n\nWhy other options are wrong:\n- A: GitOps manages any Kubernetes resources stored in the repository, not just Deployments.\n- C: Ingress controllers do not auto-create NetworkPolicies for new workloads.\n- D: Argo CD deploys exactly what is in Git; it does not auto-generate default allow-all policies.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n <namespace>"
   },
   {
@@ -1214,7 +1214,7 @@ var questions = [
       "`mysubdomain.<namespace>.svc.cluster.local` resolving to pod IP"
     ],
     answer: 0,
-    explanation: "When a pod sets `hostname` and `subdomain`, and a headless Service matching the subdomain name exists, Kubernetes creates an A record at `<hostname>.<subdomain>.<namespace>.svc.cluster.local`. The order is hostname first, then subdomain. The pod DNS format (`*.pod.cluster.local`) exists but uses the pod IP with dashes, not the hostname. The Service-level record resolves to all matching pods, not just this one.",
+    explanation: "When a pod sets `hostname` and `subdomain`, and a headless Service matching the subdomain name exists, Kubernetes creates an A record at `<hostname>.<subdomain>.<namespace>.svc.cluster.local`. The order is hostname first, then subdomain. The pod DNS format (`*.pod.cluster.local`) exists but uses the pod IP with dashes, not the hostname. The Service-level record resolves to all matching pods, not just this one.\n\nWhy other options are wrong:\n- B: The order is hostname first, then subdomain; `mysubdomain.myhost` reverses the correct order.\n- C: The pod DNS format `*.pod.cluster.local` uses dashes in the pod IP, not the hostname set in the spec.\n- D: The Service-level record resolves to all matching pods; it is not the per-pod stable DNS record.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods-hostname-and-subdomain-fields",
     verify: "kubectl exec <pod> -- nslookup myhost.mysubdomain.<namespace>.svc.cluster.local"
   },
   {
@@ -1230,7 +1230,7 @@ var questions = [
       "Set the `spec.externalIPs` field to the node's private IP and configure a `NodePort` entry"
     ],
     answer: 0,
-    explanation: "An Ingress resource (with an Ingress controller already deployed) can route external HTTP/HTTPS traffic to a `ClusterIP` Service without changing the Service type. Patching a public IP onto a ClusterIP is not valid — ClusterIPs are from the service CIDR. ReadinessGates control pod readiness, not external access. Setting `externalIPs` is possible but the option incorrectly mentions also configuring a NodePort, which changes the type.",
+    explanation: "An Ingress resource (with an Ingress controller already deployed) can route external HTTP/HTTPS traffic to a `ClusterIP` Service without changing the Service type. Patching a public IP onto a ClusterIP is not valid — ClusterIPs are from the service CIDR. ReadinessGates control pod readiness, not external access. Setting `externalIPs` is possible but the option incorrectly mentions also configuring a NodePort, which changes the type.\n\nWhy other options are wrong:\n- B: ClusterIPs are from the service CIDR; you cannot patch a public IP onto a ClusterIP.\n- C: readinessGates control pod readiness conditions; they do not expose Services externally.\n- D: The option incorrectly combines `externalIPs` with configuring a NodePort, which would change the Service type.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: "kubectl get ingress"
   },
   {
@@ -1246,7 +1246,7 @@ var questions = [
       "The Linux conntrack table races between simultaneous A and AAAA queries, causing one to drop"
     ],
     answer: 3,
-    explanation: "A well-known Linux DNS issue in Kubernetes involves the glibc resolver sending A and AAAA queries simultaneously on the same UDP socket. A conntrack race condition can cause one packet to be dropped, resulting in a 5-second timeout before a retry succeeds. This is mitigated by using `single-request-reopen` in `resolv.conf` or NodeLocal DNS Cache. Too many upstream resolvers is unusual. A high `ndots` value causes extra DNS query attempts, adding latency, but does not explain the characteristic intermittent 5-second delays that match the DNS retry timeout triggered by conntrack race conditions. kube-proxy does not throttle DNS.",
+    explanation: "A well-known Linux DNS issue in Kubernetes involves the glibc resolver sending A and AAAA queries simultaneously on the same UDP socket. A conntrack race condition can cause one packet to be dropped, resulting in a 5-second timeout before a retry succeeds. This is mitigated by using `single-request-reopen` in `resolv.conf` or NodeLocal DNS Cache. Too many upstream resolvers is unusual. A high `ndots` value causes extra DNS query attempts, adding latency, but does not explain the characteristic intermittent 5-second delays that match the DNS retry timeout triggered by conntrack race conditions. kube-proxy does not throttle DNS.\n\nWhy other options are wrong:\n- A: Too many upstream resolvers is an unusual configuration and would not cause the characteristic intermittent 5-second delays.\n- B: A high `ndots` value causes extra DNS query attempts but does not explain the specific 5-second timeout pattern from conntrack races.\n- C: kube-proxy does not throttle or rate-limit DNS traffic; it manages Service-level forwarding rules.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/",
     verify: "kubectl exec <pod> -- cat /etc/resolv.conf"
   },
   {
@@ -1262,7 +1262,7 @@ var questions = [
       "Deploy separate CoreDNS instances per namespace so tenants cannot resolve each other's services"
     ],
     answer: 1,
-    explanation: "NetworkPolicy with a default deny-all rule in each namespace, combined with ingress/egress rules that only allow traffic from/to pods within the same namespace, effectively isolates tenants. ResourceQuotas limit resource consumption, not network communication. DNS policies do not restrict traffic flow. Separate CoreDNS instances add complexity without enforcing isolation.",
+    explanation: "NetworkPolicy with a default deny-all rule in each namespace, combined with ingress/egress rules that only allow traffic from/to pods within the same namespace, effectively isolates tenants. ResourceQuotas limit resource consumption, not network communication. DNS policies do not restrict traffic flow. Separate CoreDNS instances add complexity without enforcing isolation.\n\nWhy other options are wrong:\n- A: ResourceQuotas limit resource consumption (CPU, memory, pod count), not network communication between namespaces.\n- C: `dnsPolicy` controls which DNS server a pod uses; it does not restrict network traffic flow between namespaces.\n- D: Separate CoreDNS instances add complexity but do not enforce network-level traffic isolation between tenants.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n tenant-a"
   },
   {
@@ -1278,7 +1278,7 @@ var questions = [
       "It runs a local caching agent on each node that serves cached responses and falls back to CoreDNS"
     ],
     answer: 3,
-    explanation: "NodeLocal DNS Cache runs as a DaemonSet with a DNS caching agent on each node. Pods query the local cache first. Cache hits are served without contacting CoreDNS, reducing its load and improving latency. It does not replace CoreDNS. It does not pre-populate all records. While it may avoid the Service VIP, the key benefit is caching, not just direct IP routing.",
+    explanation: "NodeLocal DNS Cache runs as a DaemonSet with a DNS caching agent on each node. Pods query the local cache first. Cache hits are served without contacting CoreDNS, reducing its load and improving latency. It does not replace CoreDNS. It does not pre-populate all records. While it may avoid the Service VIP, the key benefit is caching, not just direct IP routing.\n\nWhy other options are wrong:\n- A: NodeLocal DNS Cache does not replace CoreDNS; it caches locally and falls back to CoreDNS for cache misses.\n- B: It does not pre-populate all DNS records from etcd; it caches records as they are queried on demand.\n- C: While it may bypass the kube-dns Service VIP, the primary benefit is caching, not just direct IP routing.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/",
     verify: "kubectl get daemonset node-local-dns -n kube-system"
   },
   {
@@ -1294,7 +1294,7 @@ var questions = [
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
     ],
     answer: 3,
-    explanation: "kube-proxy programs rules (often called hairpin or loopback NAT) that intercept traffic destined for the Service's external load balancer IP from within the cluster and route it directly to the endpoints without the traffic leaving the cluster. The request does not go to the actual cloud LB. It does not fail. The API server is not in the data path.",
+    explanation: "kube-proxy programs rules (often called hairpin or loopback NAT) that intercept traffic destined for the Service's external load balancer IP from within the cluster and route it directly to the endpoints without the traffic leaving the cluster. The request does not go to the actual cloud LB. It does not fail. The API server is not in the data path.\n\nWhy other options are wrong:\n- A: The request does not go to the cloud load balancer; kube-proxy intercepts it locally with hairpin NAT rules.\n- B: The kube-apiserver is a control-plane component and is not in the data path for service traffic.\n- C: The request does not fail; kube-proxy handles hairpin routing for in-cluster access to external LB IPs.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.status.loadBalancer.ingress}'"
   },
   {
@@ -1310,7 +1310,7 @@ var questions = [
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
     ],
     answer: 3,
-    explanation: "The `ingressClassName` field references an `IngressClass` resource. The controller that manages that class processes the Ingress. Only the NGINX controller with class `nginx` will handle it; the Traefik controller ignores it. The API server does not load-balance Ingress assignments. Installation order is irrelevant.",
+    explanation: "The `ingressClassName` field references an `IngressClass` resource. The controller that manages that class processes the Ingress. Only the NGINX controller with class `nginx` will handle it; the Traefik controller ignores it. The API server does not load-balance Ingress assignments. Installation order is irrelevant.\n\nWhy other options are wrong:\n- A: Installation order does not determine which controller processes an Ingress; the IngressClass name match does.\n- B: Both controllers do not process the same Ingress simultaneously; only the matching class controller handles it.\n- C: The kube-apiserver does not assign Ingress resources based on controller load.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class",
     verify: "kubectl get ingressclass"
   },
   {
@@ -1326,7 +1326,7 @@ var questions = [
       "The Service stops performing health checks on backend pods and includes all endpoints"
     ],
     answer: 2,
-    explanation: "Setting `publishNotReadyAddresses: true` causes the Endpoints controller to include all pods matching the selector, even those that have not passed their readiness probe. This is useful for StatefulSet headless Services where peers need to discover each other before becoming ready. It does not include only crashing pods. It does not publish node IPs. Readiness probes still run; the difference is whether unready pods appear in Endpoints.",
+    explanation: "Setting `publishNotReadyAddresses: true` causes the Endpoints controller to include all pods matching the selector, even those that have not passed their readiness probe. This is useful for StatefulSet headless Services where peers need to discover each other before becoming ready. It does not include only crashing pods. It does not publish node IPs. Readiness probes still run; the difference is whether unready pods appear in Endpoints.\n\nWhy other options are wrong:\n- A: All matching pods are included in Endpoints, not only those in CrashLoopBackOff.\n- B: The Service still publishes pod IPs, not node IPs, in the Endpoints object.\n- D: Readiness probes still run; the setting controls whether unready pods appear in Endpoints, not whether probes execute.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
     verify: "kubectl get svc <svc> -o jsonpath='{.spec.publishNotReadyAddresses}'"
   },
   {
@@ -1342,7 +1342,7 @@ var questions = [
       "`ServiceAccount` for pod identity management"
     ],
     answer: 2,
-    explanation: "The `Endpoints` (and the newer `EndpointSlice`) resources store the IP addresses of pods that back a Service. kube-proxy watches these resources and updates iptables/IPVS rules accordingly. ConfigMaps store configuration data. Secrets store sensitive data. ServiceAccounts provide pod identity for API access.",
+    explanation: "The `Endpoints` (and the newer `EndpointSlice`) resources store the IP addresses of pods that back a Service. kube-proxy watches these resources and updates iptables/IPVS rules accordingly. ConfigMaps store configuration data. Secrets store sensitive data. ServiceAccounts provide pod identity for API access.\n\nWhy other options are wrong:\n- A: ConfigMaps store generic key-value configuration data, not service-to-pod endpoint mappings.\n- B: Secrets store sensitive credential data, not service endpoint IP mappings.\n- D: ServiceAccounts provide pod identity for API access, not service endpoint routing information.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -1358,7 +1358,7 @@ var questions = [
       "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
     ],
     answer: 3,
-    explanation: "The `appProtocol` field is a hint to load balancers and proxies about the protocol spoken by the backend. `kubernetes.io/h2c` indicates cleartext HTTP/2, allowing Ingress controllers or service meshes to establish HTTP/2 connections to the backends. It does not mandate TLS. It does not upgrade clients. kube-proxy operates at L4 and does not use this field.",
+    explanation: "The `appProtocol` field is a hint to load balancers and proxies about the protocol spoken by the backend. `kubernetes.io/h2c` indicates cleartext HTTP/2, allowing Ingress controllers or service meshes to establish HTTP/2 connections to the backends. It does not mandate TLS. It does not upgrade clients. kube-proxy operates at L4 and does not use this field.\n\nWhy other options are wrong:\n- A: `appProtocol` does not mandate TLS; `h2c` specifically means cleartext HTTP/2 without TLS.\n- B: kube-proxy operates at L4 and does not use the `appProtocol` field for its communication with the API server.\n- C: The field is a hint to proxies, not an automatic upgrade mechanism for clients.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#application-protocol",
     verify: "kubectl get svc <svc> -o jsonpath='{.spec.ports[0].appProtocol}'"
   },
   {
@@ -1374,7 +1374,7 @@ var questions = [
       "Each pod must explicitly request an IPv6 address in its spec alongside the IPv4 address field"
     ],
     answer: 1,
-    explanation: "Dual-stack requires coordinated configuration across multiple components: the API server needs dual-stack service CIDRs, the controller-manager needs dual pod CIDRs, kube-proxy needs to handle both address families, and the CNI plugin must assign both IPv4 and IPv6 addresses. Configuring only the CNI is insufficient. iptables supports IPv6 via ip6tables. Pods receive both addresses automatically when dual-stack is enabled.",
+    explanation: "Dual-stack requires coordinated configuration across multiple components: the API server needs dual-stack service CIDRs, the controller-manager needs dual pod CIDRs, kube-proxy needs to handle both address families, and the CNI plugin must assign both IPv4 and IPv6 addresses. Configuring only the CNI is insufficient. iptables supports IPv6 via ip6tables. Pods receive both addresses automatically when dual-stack is enabled.\n\nWhy other options are wrong:\n- A: Configuring only the CNI plugin is insufficient; multiple control-plane components also need dual-stack configuration.\n- C: iptables supports IPv6 via ip6tables; dual-stack is not limited to IPVS mode.\n- D: Pods receive both addresses automatically when dual-stack is enabled cluster-wide; no per-pod spec is needed.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dual-stack/",
     verify: "kubectl get nodes -o jsonpath='{.items[0].spec.podCIDRs}'"
   },
   {
@@ -1390,7 +1390,7 @@ var questions = [
       "The CNI plugin does not support `NodePort` Services and drops traffic at the network overlay"
     ],
     answer: 2,
-    explanation: "If the NodePort works internally but not externally, the most common cause is a firewall or cloud security group blocking external traffic on that port. kube-proxy must be running since it works internally. Session affinity does not block clients. All CNI plugins support NodePort since it is handled by kube-proxy, not the CNI.",
+    explanation: "If the NodePort works internally but not externally, the most common cause is a firewall or cloud security group blocking external traffic on that port. kube-proxy must be running since it works internally. Session affinity does not block clients. All CNI plugins support NodePort since it is handled by kube-proxy, not the CNI.\n\nWhy other options are wrong:\n- A: kube-proxy must be running since the Service works internally; if it were down, internal access would also fail.\n- B: `sessionAffinity: ClientIP` only controls routing stickiness; it does not block connections from any source.\n- D: CNI plugins do not interfere with NodePort Services; NodePort is handled by kube-proxy at the node level.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
     verify: null
   },
   {
@@ -1406,7 +1406,7 @@ var questions = [
       "No, because `dnsPolicy: None` fully disables all DNS resolution capabilities inside the pod"
     ],
     answer: 2,
-    explanation: "With `dnsPolicy: None`, the pod uses only the nameservers specified in `dnsConfig`. Since `8.8.8.8` (Google Public DNS) has no knowledge of `*.svc.cluster.local` names, cluster-internal Service names will fail to resolve. kube-proxy does not intercept DNS. Not all queries go through CoreDNS when `None` is set. `dnsPolicy: None` does not disable DNS — it requires explicit configuration via `dnsConfig`.",
+    explanation: "With `dnsPolicy: None`, the pod uses only the nameservers specified in `dnsConfig`. Since `8.8.8.8` (Google Public DNS) has no knowledge of `*.svc.cluster.local` names, cluster-internal Service names will fail to resolve. kube-proxy does not intercept DNS. Not all queries go through CoreDNS when `None` is set. `dnsPolicy: None` does not disable DNS — it requires explicit configuration via `dnsConfig`.\n\nWhy other options are wrong:\n- A: kube-proxy does not intercept DNS queries; it manages Service-level iptables/IPVS forwarding rules.\n- B: With `dnsPolicy: None`, queries are NOT routed through CoreDNS; they go only to the specified nameservers.\n- D: `dnsPolicy: None` does not disable DNS; it requires the user to provide explicit DNS configuration via `dnsConfig`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
     verify: "kubectl exec <pod> -- nslookup kubernetes.default.svc.cluster.local"
   },
   {
@@ -1422,7 +1422,7 @@ var questions = [
       "No, because `ipBlock` rules do not apply to private IP ranges within the cluster network"
     ],
     answer: 1,
-    explanation: "The `except` field in an `ipBlock` excludes a subset of the CIDR. While `10.0.5.15` is within `10.0.0.0/8`, it is also within the excepted `10.0.5.0/24` range, so it is blocked. The `except` field applies to both ingress and egress. `ipBlock` works with any valid CIDR regardless of whether it is private or public.",
+    explanation: "The `except` field in an `ipBlock` excludes a subset of the CIDR. While `10.0.5.15` is within `10.0.0.0/8`, it is also within the excepted `10.0.5.0/24` range, so it is blocked. The `except` field applies to both ingress and egress. `ipBlock` works with any valid CIDR regardless of whether it is private or public.\n\nWhy other options are wrong:\n- A: While `10.0.5.15` is within `10.0.0.0/8`, it falls within the `except` block and is therefore excluded.\n- C: The `except` clause applies to both ingress and egress rules, not just egress.\n- D: `ipBlock` rules apply to any valid CIDR regardless of whether it is a private or public IP range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {
@@ -1438,7 +1438,7 @@ var questions = [
       "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem` on every pod in the cluster"
     ],
     answer: 0,
-    explanation: "Zero-trust networking assumes no implicit trust within the network. This requires default-deny policies (no communication unless explicitly allowed), mutual TLS for encrypted and authenticated service-to-service communication, and identity-based authorization. NodePort with passwords is perimeter-based, not zero-trust. ResourceQuotas and LimitRanges address resource management. PodSecurityAdmission handles pod security contexts, not network trust.",
+    explanation: "Zero-trust networking assumes no implicit trust within the network. This requires default-deny policies (no communication unless explicitly allowed), mutual TLS for encrypted and authenticated service-to-service communication, and identity-based authorization. NodePort with passwords is perimeter-based, not zero-trust. ResourceQuotas and LimitRanges address resource management. PodSecurityAdmission handles pod security contexts, not network trust.\n\nWhy other options are wrong:\n- B: NodePort with passwords is a perimeter-based approach, not zero-trust; it relies on network boundary security.\n- C: ResourceQuotas and LimitRanges address resource management, not network trust or identity verification.\n- D: PodSecurityAdmission handles pod security contexts (filesystem, capabilities), not network-level trust or authentication.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {
@@ -1454,7 +1454,7 @@ var questions = [
       "Hubble — a Cilium component for eBPF-based flow logs and service maps"
     ],
     answer: 3,
-    explanation: "Hubble is the observability component of Cilium that uses eBPF to provide flow visibility, DNS monitoring, and service dependency maps without sidecar injection. Prometheus collects metrics but does not capture network flows. Fluentd aggregates logs. Thanos extends Prometheus for long-term storage and multi-cluster queries.",
+    explanation: "Hubble is the observability component of Cilium that uses eBPF to provide flow visibility, DNS monitoring, and service dependency maps without sidecar injection. Prometheus collects metrics but does not capture network flows. Fluentd aggregates logs. Thanos extends Prometheus for long-term storage and multi-cluster queries.\n\nWhy other options are wrong:\n- A: Prometheus collects and stores metrics but does not generate network flow logs or service dependency maps.\n- B: Thanos provides long-term storage and global querying for Prometheus data, not network flow visibility.\n- C: Fluentd is a log aggregation tool that collects and routes log data, not network flow data.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
     verify: null
   },
   {
@@ -1470,7 +1470,7 @@ var questions = [
       "On the Ingress using controller-specific annotations for per-path timeouts"
     ],
     answer: 3,
-    explanation: "Ingress controllers like NGINX support annotations (e.g., `nginx.ingress.kubernetes.io/proxy-read-timeout`) or per-path configuration snippets that allow different timeout values. ClusterIP Services do not have timeout settings. `terminationGracePeriodSeconds` controls pod shutdown, not request timeouts. CoreDNS handles DNS, not HTTP timeouts.",
+    explanation: "Ingress controllers like NGINX support annotations (e.g., `nginx.ingress.kubernetes.io/proxy-read-timeout`) or per-path configuration snippets that allow different timeout values. ClusterIP Services do not have timeout settings. `terminationGracePeriodSeconds` controls pod shutdown, not request timeouts. CoreDNS handles DNS, not HTTP timeouts.\n\nWhy other options are wrong:\n- A: CoreDNS handles DNS resolution; it has no per-path TTL configuration for HTTP timeouts.\n- B: `terminationGracePeriodSeconds` controls pod shutdown duration, not HTTP request timeouts.\n- C: ClusterIP Services do not have timeout settings; timeouts are configured at the proxy/ingress layer.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: "kubectl get ingress <name> -o yaml | grep -i timeout"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "The Ingress controller proxying external requests to backends"
     ],
     answer: 1,
-    explanation: "The `kubelet_http_requests_duration_seconds_bucket` metric is exposed by the kubelet. Increasing latency for health check requests indicates the kubelet's HTTP server on that node is under pressure, possibly due to high pod count, disk I/O, or resource contention. The scheduler, CoreDNS, and Ingress controller have their own separate metrics.",
+    explanation: "The `kubelet_http_requests_duration_seconds_bucket` metric is exposed by the kubelet. Increasing latency for health check requests indicates the kubelet's HTTP server on that node is under pressure, possibly due to high pod count, disk I/O, or resource contention. The scheduler, CoreDNS, and Ingress controller have their own separate metrics.\n\nWhy other options are wrong:\n- A: The kube-scheduler has its own metrics; `kubelet_http_requests_duration_seconds_bucket` is a kubelet metric.\n- C: CoreDNS has its own DNS-specific metrics, not kubelet HTTP metrics.\n- D: The Ingress controller has its own latency metrics; this metric is specifically from the kubelet's HTTP server.\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: null
   },
   {
@@ -1502,7 +1502,7 @@ var questions = [
       "kube-proxy adds the missing header using iptables MARK rules on the packet metadata fields"
     ],
     answer: 2,
-    explanation: "Distributed tracing relies on context propagation headers being forwarded by every service in the call chain. If one service drops the header, downstream spans cannot be correlated with the upstream trace, resulting in broken traces. Tracing frameworks do use request ID or trace context headers. The Ingress controller only handles the initial request. kube-proxy operates at L4 and cannot inject HTTP headers.",
+    explanation: "Distributed tracing relies on context propagation headers being forwarded by every service in the call chain. If one service drops the header, downstream spans cannot be correlated with the upstream trace, resulting in broken traces. Tracing frameworks do use request ID or trace context headers. The Ingress controller only handles the initial request. kube-proxy operates at L4 and cannot inject HTTP headers.\n\nWhy other options are wrong:\n- A: Tracing frameworks rely on context propagation headers like `X-Request-ID`; they do not ignore them.\n- B: The Ingress controller only handles the initial request; it does not re-inject headers for downstream service calls.\n- D: kube-proxy operates at L4 and cannot inspect or inject HTTP headers into application-level traffic.\n\nReference: https://opentelemetry.io/docs/concepts/signals/traces/",
     verify: null
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "Restart kube-proxy on all nodes to clear the faulty rules and restore the prior configuration"
     ],
     answer: 0,
-    explanation: "Following GitOps practices, the correct response is to fix the faulty NetworkPolicy in the Git repository and let the GitOps tool (e.g., Argo CD) sync the corrected version. Argo Rollouts monitors application metrics but does not directly detect NetworkPolicy issues. Deleting all policies is too broad and removes intentional restrictions. Restarting kube-proxy does not affect NetworkPolicy enforcement, which is handled by the CNI plugin.",
+    explanation: "Following GitOps practices, the correct response is to fix the faulty NetworkPolicy in the Git repository and let the GitOps tool (e.g., Argo CD) sync the corrected version. Argo Rollouts monitors application metrics but does not directly detect NetworkPolicy issues. Deleting all policies is too broad and removes intentional restrictions. Restarting kube-proxy does not affect NetworkPolicy enforcement, which is handled by the CNI plugin.\n\nWhy other options are wrong:\n- B: Argo Rollouts monitors application metrics (like error rates) but does not directly detect NetworkPolicy issues.\n- C: Deleting all NetworkPolicies is too broad and removes intentional security restrictions.\n- D: Restarting kube-proxy does not affect NetworkPolicy enforcement, which is handled by the CNI plugin.\n\nReference: https://argo-cd.readthedocs.io/en/stable/",
     verify: null
   },
   {
@@ -1534,7 +1534,7 @@ var questions = [
       "Change the blue Service's selector to match the green pods' label values"
     ],
     answer: 0,
-    explanation: "In a blue/green deployment with separate Services, switching traffic is done by updating the Ingress resource to route to the green Service. This provides an instant cutover. Scaling blue to zero removes the fallback option. Deleting the blue Service also removes rollback capability. Changing the blue Service's selector is essentially Option A but done at the Service level rather than Ingress level and can be confusing.",
+    explanation: "In a blue/green deployment with separate Services, switching traffic is done by updating the Ingress resource to route to the green Service. This provides an instant cutover. Scaling blue to zero removes the fallback option. Deleting the blue Service also removes rollback capability. Changing the blue Service's selector is essentially Option A but done at the Service level rather than Ingress level and can be confusing.\n\nWhy other options are wrong:\n- B: Scaling blue to zero removes the fallback option if the green deployment has issues.\n- C: Deleting the blue Service removes rollback capability and is irreversible without recreation.\n- D: Changing the blue Service's selector works but is confusing and less clean than updating the Ingress.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: "kubectl get ingress <name> -o yaml"
   },
   {
@@ -1550,7 +1550,7 @@ var questions = [
       "`helm template <chart> | kubectl apply -f -` to render and apply"
     ],
     answer: 0,
-    explanation: "`helm install --set` overrides values at install time, enabling conditional templates like NetworkPolicy rendering. There is no `--enable-network-policy` flag in Helm. `kubectl apply` does not accept `--set` flags. `helm template` followed by `kubectl apply` would use defaults and not enable the policy unless values are also overridden.",
+    explanation: "`helm install --set` overrides values at install time, enabling conditional templates like NetworkPolicy rendering. There is no `--enable-network-policy` flag in Helm. `kubectl apply` does not accept `--set` flags. `helm template` followed by `kubectl apply` would use defaults and not enable the policy unless values are also overridden.\n\nWhy other options are wrong:\n- B: There is no `--enable-network-policy` flag in the Helm CLI.\n- C: `kubectl apply` does not accept Helm's `--set` flags; it is not a Helm command.\n- D: `helm template` followed by `kubectl apply` uses default values and would not enable the NetworkPolicy unless values are overridden.\n\nReference: https://helm.sh/docs/helm/helm_install/",
     verify: "helm get values <release>"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "No ClusterIP is assigned — PreferDualStack turns it into a headless Service automatically"
     ],
     answer: 2,
-    explanation: "`PreferDualStack` requests both IPv4 and IPv6 ClusterIPs when the cluster supports dual-stack. The primary IP family (listed first in `spec.ipFamilies`) is determined by the cluster's default configuration. If dual-stack is not available, it gracefully falls back to single-stack. It does not force single-family or become headless.",
+    explanation: "`PreferDualStack` requests both IPv4 and IPv6 ClusterIPs when the cluster supports dual-stack. The primary IP family (listed first in `spec.ipFamilies`) is determined by the cluster's default configuration. If dual-stack is not available, it gracefully falls back to single-stack. It does not force single-family or become headless.\n\nWhy other options are wrong:\n- A: `PreferDualStack` requests both families when available; it does not default to only IPv4.\n- B: `PreferDualStack` does not default to IPv6 only; the primary family depends on cluster configuration.\n- D: `PreferDualStack` does not turn the Service into a headless Service; ClusterIPs are still assigned.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dual-stack/",
     verify: "kubectl get svc <svc> -o jsonpath='{.spec.clusterIPs}'"
   },
   {
@@ -1582,7 +1582,7 @@ var questions = [
       "It presents a self-signed certificate and lets the backend handle TLS termination on its own"
     ],
     answer: 1,
-    explanation: "The Ingress controller uses the SNI field from the TLS ClientHello to determine which hostname the client is requesting, then selects the matching TLS Secret to present the correct certificate. It does not always use the first entry. Certificates are not dynamically combined. The Ingress controller handles TLS termination, not the backend.",
+    explanation: "The Ingress controller uses the SNI field from the TLS ClientHello to determine which hostname the client is requesting, then selects the matching TLS Secret to present the correct certificate. It does not always use the first entry. Certificates are not dynamically combined. The Ingress controller handles TLS termination, not the backend.\n\nWhy other options are wrong:\n- A: The controller does not always use the first TLS entry; it matches based on the requested hostname via SNI.\n- C: Certificates are not dynamically combined into a single SAN certificate by the Ingress controller.\n- D: The Ingress controller handles TLS termination; it does not present a self-signed cert and delegate to backends.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls",
     verify: "kubectl get ingress <name> -o jsonpath='{.spec.tls}'"
   },
   {
@@ -1598,7 +1598,7 @@ var questions = [
       "`ServiceTopology` to filter endpoints by zone and reduce the overall Endpoints object size"
     ],
     answer: 2,
-    explanation: "`EndpointSlices` were introduced to solve the scalability problem of large Endpoints objects. They split the endpoint list into smaller slices (default 100 per slice), allowing incremental updates instead of rewriting a single large object. HPA reduces pods but does not solve the API efficiency issue. Topology spread is for scheduling. ServiceTopology (deprecated in favor of topology-aware hints) filters endpoints but does not solve the object size problem.",
+    explanation: "`EndpointSlices` were introduced to solve the scalability problem of large Endpoints objects. They split the endpoint list into smaller slices (default 100 per slice), allowing incremental updates instead of rewriting a single large object. HPA reduces pods but does not solve the API efficiency issue. Topology spread is for scheduling. ServiceTopology (deprecated in favor of topology-aware hints) filters endpoints but does not solve the object size problem.\n\nWhy other options are wrong:\n- A: HPA adjusts pod count based on load metrics but does not solve the API efficiency issue of large Endpoints objects.\n- B: Topology spread constraints distribute pods across failure domains for scheduling, not for API object efficiency.\n- D: ServiceTopology (deprecated) filtered endpoints by zone for routing, not for reducing Endpoints object size.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
     verify: "kubectl get endpointslices -l kubernetes.io/service-name=<svc>"
   },
 ];

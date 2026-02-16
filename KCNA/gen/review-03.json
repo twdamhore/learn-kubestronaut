@@ -1,7 +1,32 @@
 {
   "set": "03",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 3,
+  "issues": [
+    {
+      "id": "s03-q003",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram labels the correct answer",
+      "detail": "The SVG diagram has the word 'Ingress' prominently displayed as the top-level routing component. Since the correct answer (D) is 'An Ingress resource with path-based rules', a test-taker can pattern-match the diagram label to the only option containing 'Ingress' without understanding the concept.",
+      "suggestion": "Replace the 'Ingress' text in the diagram with a generic label like 'L7 Router' or '?' to avoid directly naming the answer. The diagram structure (path-based fan-out to two services) is pedagogically valuable and should be kept."
+    },
+    {
+      "id": "s03-q041",
+      "type": "giveaway",
+      "severity": "major",
+      "what": "Diagram explicitly shows the answer",
+      "detail": "The SVG diagram shows 'Ingress blocked' and 'Egress blocked' with red X marks, and the text 'policyTypes: [Ingress, Egress] — no rules defined'. This directly reveals that answer A ('All ingress and egress traffic is denied') is correct. A student can read the answer from the diagram without understanding NetworkPolicy semantics.",
+      "suggestion": "Replace the diagram with a neutral one that shows the policy applied to the pods without indicating blocked/allowed status — e.g., show the pod with the policy label and arrows with question marks for both directions. Alternatively, remove the diagram entirely since the question text is self-sufficient."
+    },
+    {
+      "id": "s03-q076",
+      "type": "giveaway",
+      "severity": "major",
+      "what": "Diagram contains the exact DNS name from the correct answer",
+      "detail": "The SVG diagram includes the text 'DNS: myhost.mysubdomain.<ns>.svc.cluster.local' at the bottom, which is exactly the pattern in option A. A test-taker can simply read the answer from the diagram without understanding the hostname/subdomain DNS mechanics.",
+      "suggestion": "Remove the DNS line from the diagram or replace it with a generic '?' label. Keep the diagram showing the headless Service and pod with hostname/subdomain fields, but let the student derive the DNS name themselves."
+    }
+  ]
 }
