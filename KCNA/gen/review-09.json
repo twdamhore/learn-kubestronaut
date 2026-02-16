@@ -1,15 +1,22 @@
 {
   "set": "09",
-  "round": 3,
+  "round": 4,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s09-q020",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "The marked answer (index 2, option C) uses `helm rollback my-release` with no REVISION argument. In Helm 3.x, `helm rollback` requires a RELEASE name and takes an optional REVISION positional argument. However, the behavior when REVISION is omitted varies across Helm 3 minor versions: some versions return an error ('requires 2 arguments'), while newer versions (3.12+) accept it and default to the previous revision. Per the review guidelines, `helm rollback RELEASE 0` is the canonical way to roll back to the previous release without specifying a numbered revision. Option C's command may fail on common Helm 3 versions in production. Meanwhile, option B (`helm rollback my-release 1`) is valid syntax and would be correct if this was the first upgrade (rolling back to the original install, which IS the previous revision). Since the question says 'After running helm upgrade', this implies there was exactly one upgrade from the initial install, making revision 1 the previous revision. Both options B and C would achieve the same result in this scenario, but option C uses potentially unreliable syntax while option B uses guaranteed-valid syntax with a correct description.",
-      "suggested_fix": "Change option C to use `helm rollback my-release 0` which is explicitly valid per Helm docs and the review guidelines (revision 0 = previous release). Update the explanation to note that revision 0 is a special value meaning 'roll back to the immediately previous release'. This eliminates any ambiguity about whether omitting the revision argument is valid, while clearly distinguishing option C (roll back to previous, wherever that is) from option B (roll back to revision 1 specifically)."
+      "id": "s09-q059",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states that tmpfs-backed emptyDir memory usage 'is charged to the container's cgroup and counts against its memory limit.' Technically, memory-backed emptyDir volumes are mounted at the pod sandbox level, and their tmpfs usage is charged to the pod-level cgroup, not a specific container's cgroup. In practice, because the question describes a single-container Pod, the effect is the same (the pod-level cgroup limit equals the container's memory limit, and the OOM killer terminates the container). However, in multi-container Pods the distinction matters: the tmpfs usage is shared across the pod cgroup rather than attributed to any one container. The answer index (0) is correct -- this is only an imprecision in the explanation wording.",
+      "suggested_fix": "Change 'This memory usage is charged to the container's cgroup and counts against its memory limit' to 'This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit).' The rest of the explanation is correct."
+    },
+    {
+      "id": "s09-q005",
+      "type": "bad_verify",
+      "severity": "minor",
+      "description": "The verify command `kubectl get pods -l app=prometheus -o yaml | grep -A10 relabel` inspects the Pod spec YAML, which does not contain Prometheus relabeling rules. Relabeling configuration lives in the Prometheus configuration (prometheus.yml or the Prometheus Operator's ServiceMonitor/PodMonitor CRDs), not in the Pod spec. This command would return no useful output for verifying whether relabeling rules are correctly filtering on the prometheus.io/scrape annotation.",
+      "suggested_fix": "Change the verify command to something that actually inspects the Prometheus scrape configuration, such as: `kubectl get configmap prometheus-config -n monitoring -o yaml | grep -A10 relabel` or `kubectl exec -n monitoring <prometheus-pod> -- cat /etc/prometheus/prometheus.yml | grep -A10 relabel` or for Prometheus Operator setups: `kubectl get podmonitor,servicemonitor -A`."
     }
   ]
 }

@@ -1,15 +1,7 @@
 {
   "set": "08",
-  "round": 3,
+  "round": 4,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s08-q088",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "description": "The correct answer option (index 2) reads: 'Setting `readOnlyRootFilesystem: true` in `securityContext` combined with `restricted` PSS profile'. The phrase 'combined with restricted PSS profile' implies that the PSS restricted profile contributes to enforcing readOnlyRootFilesystem. However, the PSS restricted profile does NOT enforce readOnlyRootFilesystem — it only recommends it. A test-taker who knows this may hesitate to select this option because the restricted PSS profile will not reject Pods that omit readOnlyRootFilesystem. The explanation was corrected in a prior round and is now accurate, but the answer option text itself still misleadingly suggests PSS restricted helps enforce it. The option should reference only securityContext enforcement, or mention a policy engine (OPA Gatekeeper / Kyverno) as the namespace-wide enforcement mechanism instead of PSS restricted.",
-      "suggested_fix": "Change the answer option text to: 'Setting `readOnlyRootFilesystem: true` in the container `securityContext`, enforced cluster-wide via a policy engine like OPA Gatekeeper or Kyverno'. This removes the misleading PSS restricted reference from the option text. Alternatively, keep the current text but remove 'combined with `restricted` PSS profile', e.g.: 'Setting `readOnlyRootFilesystem: true` in each container's `securityContext` to make the root filesystem read-only at the kernel level'."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

@@ -109,8 +109,8 @@ var questions = [
       "C. The pod continues running since `sizeLimit` on memory-backed `emptyDir` volumes is advisory, not enforced",
       "D. The container is OOM-killed because memory-backed `emptyDir` usage counts against the container memory cgroup"
     ],
-    answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem. The `sizeLimit` is enforced by the kubelet's eviction manager during periodic checks (not at write time). The data is written successfully to tmpfs, but when the kubelet detects the volume exceeds `sizeLimit`, it evicts the pod. The enforcement is not instantaneous — there is a window where the volume can exceed its limit before detection.",
+    answer: 1,
+    explanation: "Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, GA since 1.28), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted — the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to 50% of node memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Volumes' && kubectl get events --field-selector involvedObject.name=<pod-name>"
   },
   {
@@ -1045,16 +1045,16 @@ var questions = [
     id: "s10-q066",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A pod runs normally for hours, then is suddenly terminated with reason `OOMKilled`. The container's `resources.limits.memory` is set to `512Mi`. Prometheus metrics show the container's resident memory (RSS) peaked at 480Mi, well below the limit. What explains the OOM kill despite being under the memory limit?",
+    text: "A pod runs normally for hours, then is suddenly terminated with reason `OOMKilled`. The container's `resources.limits.memory` is set to `512Mi`. The application's built-in `/metrics` endpoint reports its own RSS peaked at 480Mi, well below the limit. What explains the OOM kill despite being under the memory limit?",
     diagram: null,
     options: [
       "A. The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit",
       "B. The kubelet's eviction threshold was triggered before the container reached its limit, killing the largest memory consumer pod",
-      "C. The container spawned child processes whose memory is not tracked by Prometheus but is counted in the cgroup memory total",
+      "C. The container spawned child processes whose memory is not reported by the application's /metrics endpoint but is counted in the cgroup memory total",
       "D. Memory fragmentation caused the kernel to report higher memory usage than actual RSS, triggering the OOM kill prematurely"
     ],
     answer: 2,
-    explanation: "The container memory limit is enforced at the cgroup level, which accounts for all processes within the cgroup — including child processes, subshells, and forked workers. If the main process uses 480Mi RSS but spawns child processes that consume additional memory, the total cgroup memory can exceed 512Mi. Prometheus typically scrapes metrics for the main process only (via `/proc/<pid>/status`), missing child process memory. The cgroup's `memory.current` file shows the true total. This is common with applications that fork worker processes.",
+    explanation: "The container memory limit is enforced at the cgroup level, which accounts for all processes within the cgroup — including child processes, subshells, and forked workers. The application's own `/metrics` endpoint typically reports RSS for the main process only (e.g., by reading `/proc/self/status` or using a language runtime's memory API), so it would show 480Mi. However, if the application spawns child processes that consume additional memory, their RSS is not captured by the main process's self-reported metrics but is counted in the cgroup's total memory. When the combined memory of all processes exceeds 512Mi, the kernel's OOM killer terminates the container. Note that cAdvisor-based metrics (like `container_memory_rss`) would include all processes in the cgroup and would show the true total — this scenario specifically involves application-level self-reported metrics, which only track the main process.",
     verify: "kubectl exec <pod-name> -- cat /sys/fs/cgroup/memory.current && kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {

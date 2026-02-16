@@ -1,22 +1,22 @@
 {
   "set": "10",
-  "round": 3,
+  "round": 4,
   "total_reviewed": 100,
   "issues_found": 2,
   "issues": [
     {
-      "id": "s10-q020",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "description": "The question states that resolving the FQDN `api-service.team-b.svc.cluster.local` returns NXDOMAIN, while the short name `api-service.team-b` succeeds. The explanation correctly describes that ndots:5 causes search-domain expansion for names with fewer than 5 dots (the FQDN has 4 dots). However, the premise is flawed: standard glibc/musl resolvers try all search-domain expansions first and then fall back to the literal name. So the FQDN query would eventually succeed (just after wasted search-domain lookups), not return NXDOMAIN permanently. Additionally, option A's text says 'the FQDN bypasses expansion' which directly contradicts the explanation, which correctly states the FQDN does NOT bypass expansion because 4 < ndots:5. The explanation's claim that spurious lookups 'can return NXDOMAIN or mask the correct result' is misleading for most resolver implementations.",
-      "suggested_fix": "Rewrite option A to say something like: 'The pod's ndots:5 setting causes search-domain expansion even for the seemingly-qualified FQDN (4 dots < 5), and the resolver's first attempts with appended search domains fail; a trailing dot would force absolute resolution.' Also consider adjusting the question premise to describe slow resolution or excessive DNS queries rather than a hard NXDOMAIN failure, since the literal name is eventually tried as a fallback in most resolvers."
+      "id": "s10-q007",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The marked answer is A (index 0): 'The write succeeds but the pod is evicted by the kubelet when it detects the volume exceeds its size limit.' This was accurate for older Kubernetes versions, but since K8s 1.28 the feature gate SizeMemoryBackedVolumes is GA and locked on (it was beta/on-by-default since 1.22). With this feature enabled, the kubelet mounts the tmpfs with an explicit size= option matching sizeLimit (256Mi). The kernel enforces this at the filesystem level, so writing 300Mi to a 256Mi tmpfs fails with ENOSPC at the 256Mi boundary -- the write itself is rejected before the eviction manager ever runs. The correct answer is B (index 1): 'The write operation fails with an I/O error at the 256Mi boundary, behaving like a full filesystem on disk.' The explanation's claim that 'data is written successfully to tmpfs, but when the kubelet detects the volume exceeds sizeLimit, it evicts the pod' is wrong for K8s 1.29+.",
+      "suggested_fix": "Change answer from 0 to 1. Rewrite the explanation to: 'Since Kubernetes 1.22+ (SizeMemoryBackedVolumes feature, GA since 1.28), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted -- the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to 50% of node memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.'"
     },
     {
-      "id": "s10-q070",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states that during the blue-green Service selector switch, 'some nodes may still have rules pointing to the old blue pod IPs while the blue pods are no longer selected. Requests hitting stale rules during this window receive 503 errors.' This is misleading because the blue pods are still running and healthy -- they just are no longer selected by the Service. Stale kube-proxy rules pointing to blue pods would still reach live, responsive blue pods and receive valid responses (just from the old version), not 503 errors. The actual cause of 503s is the brief transient window during which kube-proxy has removed old endpoints but has not yet programmed new green endpoints, leaving zero backends for the Service on that node.",
-      "suggested_fix": "Revise the explanation to: 'During the propagation window, kube-proxy on some nodes may have removed the old blue pod endpoints but not yet programmed the new green pod endpoints. Requests arriving during this brief gap find no valid backends and receive 503 errors. This is inherent to the eventual consistency of endpoint propagation across nodes.'"
+      "id": "s10-q066",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question states 'Prometheus metrics show the container's resident memory (RSS) peaked at 480Mi' and the container was OOMKilled with a 512Mi limit. The marked answer is C (index 2): child processes whose memory is not tracked by Prometheus. The explanation claims 'Prometheus typically scrapes metrics for the main process only (via /proc/<pid>/status).' However, standard Kubernetes monitoring uses cAdvisor (exposed by the kubelet), which reports cgroup-level memory metrics (container_memory_rss) that include ALL processes in the cgroup -- child processes included. If the team is using cAdvisor-based metrics (the standard approach), then child process memory would already be included in the 480Mi figure, and option A (page cache counted in cgroup memory) would be the more likely cause. The answer is only correct if the team uses custom application-level metrics that query a single PID's /proc/<pid>/status. The question does not clarify which Prometheus metrics source is used, making both A and C defensible depending on interpretation.",
+      "suggested_fix": "Clarify the monitoring setup in the question to make option C unambiguous. For example, change 'Prometheus metrics show the container's resident memory (RSS) peaked at 480Mi' to 'Application-level metrics exported by the main process via its /metrics endpoint show its own RSS peaked at 480Mi' -- this makes it clear that only the main process's memory is observed, not the full cgroup. Alternatively, adjust the explanation to acknowledge that standard cAdvisor metrics include child processes, and explain that the scenario assumes application-level self-reported metrics."
     }
   ]
 }

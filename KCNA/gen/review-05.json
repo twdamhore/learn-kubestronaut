@@ -1,22 +1,7 @@
 {
   "set": "05",
-  "round": 3,
+  "round": 4,
   "total_reviewed": 100,
-  "issues_found": 2,
-  "issues": [
-    {
-      "id": "s05-q042",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "description": "The explanation states the default projected ServiceAccount token lifetime is 'approximately 1 hour (3607 seconds)'. The parenthetical value 3607 is not a recognized Kubernetes default. The standard default expirationSeconds for projected service account tokens is 3600 seconds (exactly 1 hour). The answer choice ('After 1 hour') is correct, but the explanation text contains an inaccurate specific number.",
-      "suggested_fix": "Change '(3607 seconds)' to '(3600 seconds)' in the explanation text."
-    },
-    {
-      "id": "s05-q086",
-      "type": "ambiguous",
-      "severity": "minor",
-      "description": "The question asks which label must be present on the `app` namespace for a namespaceSelector to match it. Option C ('A custom label matching the namespaceSelector in the policy, such as name: app') is marked correct, and option D ('No label is needed because namespaces are matched by their name automatically') is intended to be wrong. However, since Kubernetes 1.22+ (and the review targets 1.29+), all namespaces automatically receive the label `kubernetes.io/metadata.name: <name>`. A NetworkPolicy namespaceSelector CAN use this built-in label, meaning no manual labeling is required. The explanation itself acknowledges this: 'While Kubernetes 1.22+ adds the kubernetes.io/metadata.name label automatically'. This makes option D partially defensible for modern Kubernetes clusters, creating ambiguity.",
-      "suggested_fix": "Reword option D to be clearly wrong, e.g.: 'No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without labels'. Alternatively, clarify in the question that the policy uses a custom label like 'team: app' rather than the auto-assigned name label."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

@@ -79,7 +79,7 @@ var questions = [
     ],
     answer: 3,
     explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.",
-    verify: "kubectl get pods -l app=prometheus -o yaml | grep -A10 relabel"
+    verify: "kubectl get configmap prometheus-config -n monitoring -o yaml | grep -A10 relabel"
   },
   {
     id: "s09-q006",
@@ -942,7 +942,7 @@ var questions = [
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the container's cgroup and counts against its memory limit. Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.",
+    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {

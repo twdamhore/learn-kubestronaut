@@ -1,15 +1,7 @@
 {
   "set": "03",
-  "round": 3,
+  "round": 4,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s03-q047",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "description": "The marked answer (option C, index 2) references `kube_endpoint_address` with label `ready=\"true\"` — this metric does not exist in standard kube-state-metrics. The actual kube-state-metrics metrics for Endpoints are `kube_endpoint_address_available` (gauge: number of ready addresses) and `kube_endpoint_address_not_ready` (gauge: number of not-ready addresses). These metrics are NOT deprecated in current kube-state-metrics (v2.10+). Option B (`kube_endpoint_address_available` with a threshold of zero) references a real, current metric that directly solves the use case. The explanation's claim that `kube_endpoint_address_available` is 'a deprecated metric from older kube-state-metrics versions, now replaced by kube_endpoint_address with a ready label' is factually incorrect on both counts: the metric is not deprecated, and its alleged replacement does not exist. Note: kube-state-metrics does expose `kube_endpointslice_endpoints` with a `ready` label for EndpointSlice resources, but this is a different metric name than what option C states.",
-      "suggested_fix": "Change the answer index from 2 to 1 (option B). Update the explanation to: '`kube_endpoint_address_available` from kube-state-metrics exposes the number of ready addresses per Endpoints resource. Alerting when this value equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address` with a ready label is not a standard kube-state-metrics metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

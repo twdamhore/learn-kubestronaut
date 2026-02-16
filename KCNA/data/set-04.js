@@ -955,7 +955,7 @@ var questions = [
       "`persistentVolumeClaim` with `readOnly: true` set on the volume mount in the pod spec definition",
       "`emptyDir` with a CSI-backed storage medium specified in the volume configuration field of the pod",
       "`hostPath` pointing to the CSI driver's mount directory on the node's local filesystem path",
-      "`csi` inline volume in the pod spec with the `ephemeral` field for per-pod lifecycle use"
+      "`csi` inline volume in the pod spec, allowing the CSI driver to provision per-pod ephemeral storage"
     ],
     answer: 3,
     explanation: "CSI ephemeral volumes allow defining CSI-backed volumes directly in the pod spec without creating a separate PVC. The volume is created when the pod is scheduled and destroyed when the pod terminates. This is useful for injecting secrets, identity tokens, or temporary scratch space from a CSI driver. Not all CSI drivers support this feature.",
@@ -1566,7 +1566,7 @@ var questions = [
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
     answer: 1,
-    explanation: "The maxUnavailable field was introduced as an alpha feature in Kubernetes 1.24 (requiring the MaxUnavailableStatefulSet feature gate). StatefulSets support `maxUnavailable` in the rolling update strategy. Setting `maxUnavailable: 1` ensures that at most 1 pod is unavailable during the update, maintaining a minimum of 2 running pods. This is critical for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational.",
+    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate, and remains alpha (disabled by default) through Kubernetes 1.29. Note that the default `OrderedReady` rolling update strategy already updates one pod at a time, so with 3 replicas the default behavior already ensures at most 1 pod is unavailable (i.e., at least 2 running) during a rolling update. However, setting `maxUnavailable: 1` explicitly is the most technically precise way to declare this constraint, making the availability guarantee explicit in the StatefulSet spec rather than relying on implicit default behavior. This is especially important for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational. If the feature gate is not enabled, the field is ignored and the default one-at-a-time behavior applies.",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {
