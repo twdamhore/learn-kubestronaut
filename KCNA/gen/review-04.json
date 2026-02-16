@@ -1,7 +1,56 @@
 {
   "set": "04",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 6,
+  "issues": [
+    {
+      "id": "s04-q089",
+      "type": "ambiguous",
+      "severity": "medium",
+      "what": "Answer C says VOLUME instruction is 'completely ignored' but containerd creates anonymous bind-mounted volumes for VOLUME paths",
+      "detail": "The correct answer (C, index 2) states the Dockerfile VOLUME instruction is 'completely ignored by the Kubernetes pod specification.' While Kubernetes itself does not act on VOLUME instructions, containerd (the default CRI runtime) actually creates anonymous bind-mounted host directories at VOLUME paths. This makes option A ('The runtime creates an anonymous emptyDir-like volume at the path, managed by the container runtime') more technically accurate at the runtime level. The answer is defensible from a Kubernetes-spec perspective but misleading because it says 'completely ignored' when the runtime does create volumes.",
+      "suggestion": "Reword option C to 'The VOLUME instruction has no effect on the Kubernetes pod specification and writes go to the container writable layer or runtime-managed anonymous mounts' OR change the correct answer to A and update the explanation to note that containerd creates anonymous bind mounts for VOLUME paths, though these are runtime-managed and not Kubernetes volumes."
+    },
+    {
+      "id": "s04-q002",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram directly shows 'PV (Released)' with 'Data retained' and 'Retain policy' label",
+      "detail": "The SVG diagram explicitly shows the PV transitioning to 'Released' state with text 'Data retained' and 'Retain policy', which maps exactly to option D (index 3). A test-taker can select the correct answer by reading the diagram alone without understanding the concept.",
+      "suggestion": "Remove the explicit 'Released' and 'Data retained' text from the diagram, replacing with a question mark or generic 'PV (?)' to avoid revealing the answer."
+    },
+    {
+      "id": "s04-q005",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows 'StatefulSet Controller' with per-pod PVCs named data-db-0/1/2, directly revealing the answer",
+      "detail": "The SVG diagram displays 'StatefulSet Controller' at the top with three pods (db-0, db-1, db-2) each with their own PVC (data-db-0, data-db-1, data-db-2) bound to individual PVs. This directly shows the correct answer is StatefulSet with volumeClaimTemplates (option C, index 2).",
+      "suggestion": "Make the diagram generic by removing the 'StatefulSet Controller' label and using neutral labels like 'Controller ?' to avoid directly revealing the workload type."
+    },
+    {
+      "id": "s04-q009",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows exact PV lifecycle phases 'Available -> Bound -> Released -> Failed' matching option D",
+      "detail": "The SVG diagram literally renders the four PV phases in sequence: Available, Bound, Released, Failed with arrows between them. This is an exact match with option D (index 3, the correct answer). Test-takers can read the answer from the diagram without any domain knowledge.",
+      "suggestion": "Remove the diagram entirely for this question, or replace phase labels with question marks (e.g., 'Phase 1 -> Phase 2 -> Phase 3 -> Phase 4') so the student must know the actual phase names."
+    },
+    {
+      "id": "s04-q014",
+      "type": "giveaway",
+      "severity": "low",
+      "what": "Diagram shows 'No PV yet' and 'Pod scheduled triggers provisioning' revealing the answer",
+      "detail": "The SVG diagram shows 'PVC (Pending)' connected to 'No PV yet' with a '?' marker, and a separate box labeled 'Pod scheduled triggers provisioning'. This directly reveals that no PV exists until a pod is scheduled (option C, index 2).",
+      "suggestion": "Simplify the diagram to show just the PVC in Pending state without the 'No PV yet' and 'Pod scheduled triggers provisioning' text, or remove the diagram."
+    },
+    {
+      "id": "s04-q098",
+      "type": "ambiguous",
+      "severity": "low",
+      "what": "Question asks about maxUnavailable which is an alpha/beta feature gate, potentially confusing for KCNA scope",
+      "detail": "The MaxUnavailableStatefulSet feature gate was alpha in Kubernetes 1.24 and has progressed to beta. The question is well-constructed and the answer (B) is correct, but the explanation states it 'remains alpha (disabled by default) through Kubernetes 1.29' which may be outdated — the feature has since progressed to beta. The question's premise ('when enabled via its feature gate') appropriately qualifies this, but the explanation should be updated for accuracy.",
+      "suggestion": "Update the explanation to reflect the current feature gate status (beta as of recent Kubernetes versions) rather than stating it remains alpha through 1.29."
+    }
+  ]
 }

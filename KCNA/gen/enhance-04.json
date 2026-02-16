@@ -1,0 +1,402 @@
+{
+  "s04-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- A: RWX on the PV does not satisfy RWO on the PVC; Kubernetes performs literal set matching on access mode lists, not capability reasoning\n- C: Kubernetes never splits a PV into smaller PVs; the PVC gets the full PV capacity\n- D: Over-provisioning (PV larger than PVC request) is permitted; the PVC simply gets the entire PV"
+  },
+  "s04-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#retain",
+    "wrong": "- A: The Delete policy deletes the PV and storage, not Retain; Retain preserves both\n- B: Released PVs do not return to Available automatically; the claimRef must be manually removed\n- C: There is no Failed state triggered by PVC deletion; Failed occurs only when automatic reclamation fails"
+  },
+  "s04-q003": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: StatefulSet replicas do not share a single PVC; each gets its own via volumeClaimTemplates\n- C: PVC names are deterministic, not random; they follow the template-statefulset-ordinal pattern\n- D: The volumeClaimTemplate name is part of the PVC name, not just the StatefulSet name and ordinal"
+  },
+  "s04-q004": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: medium: Memory uses RAM (tmpfs), not local SSD; the default (no medium) uses disk\n- B: tmpfs data does not persist across pod restarts; it is lost when the pod is evicted or deleted\n- D: tmpfs-backed emptyDir usage does count against the container's memory resource limit"
+  },
+  "s04-q005": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: Deployments do not support volumeClaimTemplates; this is a StatefulSet-only feature\n- B: DaemonSet with hostPath provides one pod per node but lacks dedicated persistent volume management\n- D: A shared PVC across replicas does not provide per-replica storage isolation"
+  },
+  "s04-q006": {
+    "ref": "https://12factor.net/backing-services",
+    "wrong": "- A: Storing data in local container filesystems violates factor VI (processes should be stateless) and factor IV (backing services as attached resources)\n- B: Embedding drivers violates the principle of treating backing services as swappable attached resources\n- D: In-memory-only storage is not a data persistence strategy; it conflicts with the concept of durable backing services"
+  },
+  "s04-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    "wrong": "- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: There is no default 10Gi PVC limit; PVC sizes are constrained only by ResourceQuota if configured"
+  },
+  "s04-q008": {
+    "ref": "https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    "wrong": "- A: container_fs_writes_total tracks filesystem writes per container, not PV-specific disk usage\n- B: kube_pod_container_resource_requests reports resource request values from pod specs, not actual volume usage\n- C: node_filesystem_avail_bytes measures node-level filesystem availability, not per-PV disk usage"
+  },
+  "s04-q009": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#phase",
+    "wrong": "- A: Pending and Terminated are not valid PV phases; PVs start in Available, not Pending\n- B: Created, Unbound, and Deleted are not valid PV phase names in Kubernetes\n- C: Claimed and Recycled are not valid PV phase names; the correct terms are Bound and Released"
+  },
+  "s04-q010": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    "wrong": "- A: ConfigMap volume mounts are updated by the kubelet without pod restart; they are not static after initial mount\n- B: The API server does not push changes directly; the kubelet pulls updates on its sync interval\n- C: No new pod is created by a controller for ConfigMap updates; the kubelet refreshes the files in-place"
+  },
+  "s04-q011": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- B: PVCs from volumeClaimTemplates are not managed by Helm's release lifecycle and are not automatically deleted\n- C: Helm does not convert PVCs to emptyDir volumes; there is no such cleanup mechanism\n- D: Helm does not archive PVCs into backup secrets; PVCs simply persist in the namespace"
+  },
+  "s04-q012": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- B: PVCs with Recycle policy are overkill for temporary sharing and Recycle is deprecated\n- C: hostPath exposes the host filesystem and is a security risk; it is not recommended for temporary data\n- D: NFS adds unnecessary complexity for ephemeral intra-pod sharing between two containers"
+  },
+  "s04-q013": {
+    "ref": "https://www.cncf.io/projects/rook/",
+    "wrong": "- A: Longhorn is a CNCF incubating project, not graduated; it provides block storage but has not reached graduated status\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF sandbox project, not graduated"
+  },
+  "s04-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
+    "wrong": "- A: No PV is provisioned yet, so none can be in Available state; provisioning is deferred\n- B: Provisioning and binding are both deferred until a pod is scheduled; the PVC stays Pending\n- D: WaitForFirstConsumer does not require a pod reference at PVC creation time; it waits for a pod to be scheduled"
+  },
+  "s04-q015": {
+    "ref": "https://kubernetes-csi.github.io/docs/external-attacher.html",
+    "wrong": "- A: The kube-scheduler decides which node a pod runs on but does not attach volumes to nodes\n- B: The kubelet's CSI node plugin handles mounting (NodeStageVolume/NodePublishVolume) after attachment, not the initial attach\n- C: The PV controller manages binding lifecycle, not the volume attachment to specific nodes"
+  },
+  "s04-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#local",
+    "wrong": "- A: Local volumes are not replicated across nodes; data exists only on the specific node\n- B: Local volumes cannot be migrated transparently; the data is physically tied to the node's disk\n- C: The scheduler respects volume topology constraints; it does not ignore them for resource optimization"
+  },
+  "s04-q017": {
+    "ref": "https://microservices.io/patterns/data/database-per-service.html",
+    "wrong": "- A: A shared database creates tight coupling between services, violating microservices principles\n- B: Shared NFS volumes do not provide data ownership boundaries; they create implicit coupling\n- D: emptyDir volumes are ephemeral and lose data on pod restart; they are unsuitable for databases"
+  },
+  "s04-q018": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
+    "wrong": "- B: Application logs alone miss infrastructure-level storage issues like CSI driver failures\n- C: Scheduler logs show pod placement decisions, not storage I/O errors or data corruption details\n- D: API server audit logs show API request timing, not storage-level I/O or corruption diagnostics"
+  },
+  "s04-q019": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1",
+    "wrong": "- A: An empty string is explicitly different from omitting storageClassName; it opts out of the default class\n- B: An empty string is a valid value; the API server does not reject it\n- D: No dynamic provisioning occurs with an empty string StorageClass; only pre-existing classless PVs match"
+  },
+  "s04-q020": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    "wrong": "- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted; they expose raw host filesystem paths to the container\n- D: The pod does not crash due to /etc being protected; containers can mount any host path if permitted"
+  },
+  "s04-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#deployment-and-scaling-guarantees",
+    "wrong": "- B: OrderedReady requires sequential readiness; pods are not created in parallel under this policy\n- C: Both web-3 and web-4 wait; there is no partial ordering where only one waits\n- D: The StatefulSet is not automatically rolled back; it waits for the blocked pod to become ready"
+  },
+  "s04-q022": {
+    "ref": "https://rook.io/docs/rook/latest/Getting-Started/intro/",
+    "wrong": "- A: Manual backup scripts with local storage lack self-healing and automated replication\n- B: A single NFS server is a single point of failure and does not provide self-healing distributed storage\n- D: Disabling persistence entirely is not viable for stateful applications requiring data durability"
+  },
+  "s04-q023": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: volumeClaimTemplates are immutable; existing PVCs cannot be resized via StatefulSet spec updates\n- B: Old PVCs are not deleted during spec changes; the update is rejected entirely by the API server\n- C: The GitOps controller cannot automatically recreate the StatefulSet to bypass the immutability constraint"
+  },
+  "s04-q024": {
+    "ref": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/#my-pod-is-stuck-waiting",
+    "wrong": "- A: Image pull issues produce ImagePullBackOff events, not FailedMount events\n- C: Resource scheduling issues cause Pending state, not ContainerCreating with FailedMount\n- D: RBAC permission errors would result in Forbidden API errors, not volume mount timeout events"
+  },
+  "s04-q025": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    "wrong": "- A: The Service DNS resolves to all pods; it does not automatically route to a specific replica\n- B: Pods do not get direct cluster-level DNS entries by name alone; they need the headless Service domain\n- C: The naming format uses pod-name.service-name, not service-name-ordinal"
+  },
+  "s04-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    "wrong": "- B: Kubernetes does not convert or change a PV's StorageClass to match a PVC\n- C: Matching capacity and access modes is necessary but not sufficient; storageClassName must also match\n- D: PVCs can and must include a storageClassName field to control which PVs they bind to"
+  },
+  "s04-q027": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim",
+    "wrong": "- A: The PV controller does not format or partition storage devices; that is handled by CSI drivers or kubelet\n- B: Pod scheduling is handled by kube-scheduler, not the PV controller in kube-controller-manager\n- C: Encryption at rest is managed by the API server's EncryptionConfiguration, not the PV controller"
+  },
+  "s04-q028": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volume-snapshot-classes/",
+    "wrong": "- A: SnapshotSchedule is not a built-in Kubernetes CRD; scheduling is handled by external tools like Velero\n- B: The snapshot-controller runs cluster-wide as a single deployment, not per namespace\n- D: There is no snapshot: enabled annotation on StorageClass; VolumeSnapshotClass is the required resource"
+  },
+  "s04-q029": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- B: ReadWriteOnce limits mounting to a single node, not allowing multi-node read-write access\n- C: ReadOnlyMany allows multi-node access but is read-only; it does not permit write operations\n- D: ReadWriteOncePod restricts to a single pod, not allowing multi-pod or multi-node access"
+  },
+  "s04-q030": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    "wrong": "- B: A ClusterIP Service with session affinity hides individual pod identities behind a virtual IP\n- C: An Ingress handles external HTTP traffic and does not provide internal pod-to-pod discovery\n- D: A NodePort Service exposes pods externally on node ports; it does not provide DNS-based peer discovery"
+  },
+  "s04-q031": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- B: emptyDir volumes are ephemeral and lose data on pod restart; they are not suitable for persistent file storage\n- C: Horizontal scaling is possible with RWX storage or object stores; persistence does not prevent scaling\n- D: Multiple pods on different nodes cannot mount the same RWO volume; writing to separate directories does not solve the node restriction"
+  },
+  "s04-q032": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#parallel-pod-management",
+    "wrong": "- A: Parallel policy affects both creation and termination, not just termination order\n- B: Parallel policy does not change PVC behavior; each replica still gets its own dedicated PVC\n- C: Pods still retain stable ordinal identities and dedicated PVCs, unlike Deployment replicas"
+  },
+  "s04-q033": {
+    "ref": "https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    "wrong": "- A: kube_persistentvolume_capacity_bytes and kube_persistentvolume_used_bytes are not real metrics from kube-state-metrics\n- B: node_disk_io_time_seconds_total and node_disk_read_bytes_total measure node-level disk I/O, not PV capacity/usage\n- D: container_fs_usage_bytes and container_fs_limit_bytes track container overlay filesystem usage, not mounted PV volumes"
+  },
+  "s04-q034": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets",
+    "wrong": "- A: Secret volume files are not encrypted on-disk; they are stored as plain-text on tmpfs in RAM\n- B: Secret data is decoded from base64 before writing to the volume; it is not kept in base64 format\n- C: Secret files are readable by the container process at the standard mount path, not in a protected kubelet-only directory"
+  },
+  "s04-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#allow-volume-expansion",
+    "wrong": "- A: There is no reclaimPolicy: Expand value; reclaim policies are Delete, Retain, or Recycle\n- B: Volume expansion is controlled at the StorageClass level, not per-PVC via annotations\n- C: volumeBindingMode controls when provisioning occurs, not whether expansion is allowed"
+  },
+  "s04-q036": {
+    "ref": "https://longhorn.io/docs/",
+    "wrong": "- A: Longhorn uses local node disks directly; it does not require an external Ceph cluster as backend\n- B: Longhorn primarily provides ReadWriteOnce block volumes; RWX support is secondary via NFS\n- C: Longhorn does not replace the kubelet; it integrates via a CSI driver alongside the kubelet"
+  },
+  "s04-q037": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    "wrong": "- B: Kubernetes does not prefer larger PVs; it selects the smallest PV that meets the request\n- C: PVs larger than the request are valid matches; the PVC is not rejected for size mismatch\n- D: Selection is not random; the PV controller has a deterministic best-fit algorithm preferring smaller PVs"
+  },
+  "s04-q038": {
+    "ref": "https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait",
+    "wrong": "- A: Fixed sleep times are unreliable; PVC binding may take longer or shorter than 60 seconds\n- C: Kubernetes does not guarantee immediate binding, especially with WaitForFirstConsumer or missing PVs\n- D: StatefulSet replica count indicates pod count, not whether the underlying PVCs are bound to PVs"
+  },
+  "s04-q039": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#deployment-and-scaling-guarantees",
+    "wrong": "- A: Scale-down removes the highest ordinals first, not the lowest; pod-0 and pod-1 are retained\n- B: With OrderedReady, pods are terminated one at a time in reverse order, not simultaneously\n- D: Pod selection for termination is deterministic (reverse ordinal), not random"
+  },
+  "s04-q040": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+    "wrong": "- B: The restricted profile does not silently ignore hostPath; it actively rejects the pod creation\n- C: The restricted profile does not allow read-only hostPath access; hostPath is entirely prohibited\n- D: The restricted profile restricts many settings including volume types, not just CPU and memory"
+  },
+  "s04-q041": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
+    "wrong": "- A: WaitForFirstConsumer explicitly considers pod topology constraints when provisioning the PV\n- B: PVs are not provisioned in all zones; they are created in the specific zone where the pod is scheduled\n- D: WaitForFirstConsumer delays provisioning until the pod is scheduled; it does not provision immediately"
+  },
+  "s04-q042": {
+    "ref": "https://microservices.io/patterns/data/event-sourcing.html",
+    "wrong": "- A: Event Sourcing still requires persistent storage for the event store; it does not eliminate persistence\n- B: Events are stored individually; they are not compressed or deduplicated into a single record\n- C: Event Sourcing gives each service its own event store; services do not share database schemas"
+  },
+  "s04-q043": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector",
+    "wrong": "- B: claimRef pre-binds by name, not by label selector; it is a different binding mechanism\n- C: nodeAffinity controls node placement for volume access, not PVC-to-PV label matching\n- D: storageClassName is a class-based filter, not a label-based selector mechanism"
+  },
+  "s04-q044": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: Container image layers are read-only; writes go to the overlay upper layer, not the image itself\n- C: No PVC is automatically created for container filesystem writes; PVCs must be explicitly defined\n- D: /tmp inside containers is not backed by tmpfs by default; it uses the overlay writable layer on disk"
+  },
+  "s04-q045": {
+    "ref": "https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    "wrong": "- B: kube_pod_container_resource_limits / kube_pod_resource_requests compares pod resource specs, not PV usage\n- C: node_filesystem_size_bytes - node_filesystem_free_bytes measures node filesystem usage, not specific PV volumes\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage"
+  },
+  "s04-q046": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#recycle",
+    "wrong": "- A: The Delete policy permanently removes PV and storage; Recycle scrubs and makes Available instead\n- B: Recycle does not archive data; it performs rm -rf and returns the PV to Available state\n- D: Retain keeps the PV in Released state indefinitely; Recycle actively cleans and recycles the volume"
+  },
+  "s04-q047": {
+    "ref": "https://helm.sh/docs/helm/helm_install/",
+    "wrong": "- B: --replace-provisioner is not a valid Helm flag; Helm uses --set for value overrides\n- C: --force-value is not a valid Helm flag; the correct flag is --set\n- D: --env is not a valid Helm flag; Helm values are set via --set or -f values files"
+  },
+  "s04-q048": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+    "wrong": "- A: DiskPressure has real effects on scheduling and eviction; it is not informational-only\n- B: Pods are evicted selectively based on priority and resource usage, not all terminated simultaneously\n- C: The node is not permanently cordoned; the taint is removed when disk pressure is resolved"
+  },
+  "s04-q049": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- B: Serverless functions in Kubernetes can technically access persistent and ephemeral storage\n- C: PVs are not automatically deleted when functions scale to zero; PVCs persist independently of pods\n- D: Knative does not restrict volumes to emptyDir only; PVCs can be configured in the pod template"
+  },
+  "s04-q050": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/projected-volumes/",
+    "wrong": "- B: Projected volumes also support downwardAPI and serviceAccountToken, not just configMap and secret\n- C: PersistentVolumeClaims cannot be included in projected volumes; only configMap, secret, downwardAPI, and serviceAccountToken\n- D: emptyDir and hostPath cannot be projected; they are separate volume types with different lifecycles"
+  },
+  "s04-q051": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector",
+    "wrong": "- A: PV labels are not purely advisory; they are used in PVC selector matching to filter eligible PVs\n- C: Label selectors do not trigger dynamic provisioning; they filter among existing static PVs\n- D: PVC spec.selector is a valid field; label-based selection is fully supported on PVCs"
+  },
+  "s04-q052": {
+    "ref": "https://kubernetes-csi.github.io/docs/deploying.html",
+    "wrong": "- A: Creating and deleting volumes is handled by the Controller plugin service, not the Node plugin\n- B: Driver registration with the API server is handled by the node-driver-registrar sidecar, not the Node plugin service itself\n- C: Pod scheduling is handled by kube-scheduler; the CSI Node plugin does not schedule pods"
+  },
+  "s04-q053": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
+    "wrong": "- A: Not all pods are updated; the partition value determines which ordinals receive the update\n- C: Pods below the partition value (0, 1, 2) keep the old revision; they are not updated\n- D: Pods at or above the partition value are updated immediately; the partition does not block all updates"
+  },
+  "s04-q054": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#using-subpath",
+    "wrong": "- A: subPath does not create subdirectories inside the ConfigMap resource; it selects a key from the existing ConfigMap\n- B: subPath mounts do NOT receive automatic ConfigMap updates; this is a key limitation\n- C: subPath does not restrict to read-only mode; read-only is controlled separately by the readOnly volumeMount field"
+  },
+  "s04-q055": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+    "wrong": "- A: Managed services are not always cheaper; cost depends on usage patterns and scale\n- C: StatefulSets fully support persistent storage via PVCs and volumeClaimTemplates\n- D: Managed services run outside the Kubernetes cluster in the cloud provider's infrastructure"
+  },
+  "s04-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/overview/components/#etcd",
+    "wrong": "- B: The API server does not have a read-only cache fallback mode; it depends on etcd for all operations\n- C: Control plane components do not have sufficient local caches to continue operating normally without etcd\n- D: There is no automatic in-memory backup store switchover; etcd must be restored for the cluster to function"
+  },
+  "s04-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/",
+    "wrong": "- A: This event does not indicate a syntax error; the PVC was accepted and is waiting for provisioning\n- B: This event is about volume provisioning, not node disk space; the provisioner has not created the PV\n- D: The PVC is in Pending state, not bound; the event message reflects the current waiting condition"
+  },
+  "s04-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#csi",
+    "wrong": "- B: CSI is not about container image formats; OCI (Open Container Initiative) standardizes image formats\n- C: CSI is not about network policies; CNI (Container Network Interface) handles container networking\n- D: CSI does not specify CPU/memory management; resource management is handled by the kubelet and scheduler"
+  },
+  "s04-q059": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    "wrong": "- A: Multiple access modes on a PV describe capabilities; they do not enable multi-PVC binding\n- C: ReadOnlyMany allows multi-node read access for a single PVC, not multiple PVCs binding to one PV\n- D: StorageClass does not change the one-to-one PV-PVC binding rule; it only affects provisioning"
+  },
+  "s04-q060": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volumes",
+    "wrong": "- A: readOnly on a PVC mount controls read-write access, not ephemeral lifecycle behavior\n- B: emptyDir does not support a CSI-backed storage medium; medium can be empty (disk) or Memory (tmpfs)\n- C: hostPath mounts a node directory and is not related to CSI ephemeral volume provisioning"
+  },
+  "s04-q061": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims",
+    "wrong": "- A: Deleting and recreating the PVC would lose existing data; in-place expansion is supported\n- C: Editing the PV directly does not trigger CSI expansion; the PVC is the correct resource to modify\n- D: Creating a second PVC adds complexity; volume expansion is the simpler and correct approach"
+  },
+  "s04-q062": {
+    "ref": "https://opentelemetry.io/docs/concepts/signals/traces/",
+    "wrong": "- B: HTTP status codes indicate success/failure but do not reveal whether latency is caused by storage I/O\n- C: Replica count is a configuration value, not a trace attribute that reveals storage performance\n- D: The image tag identifies the version but does not provide runtime performance information about storage"
+  },
+  "s04-q063": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: PVC retention is an intentional design feature for data safety, not a bug\n- C: PVCs can be deleted; they are not permanently immutable resources in the cluster\n- D: The kubelet is not involved in PVC deletion; PVCs are API objects managed by the controller-manager"
+  },
+  "s04-q064": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#downwardapi",
+    "wrong": "- A: The downwardAPI volume type exposes data as files, not as environment variables (envFrom is separate)\n- B: There is no Unix socket database interface for downwardAPI data; it uses plain files\n- D: There is no HTTP endpoint served by downwardAPI volumes; data is exposed as mounted files"
+  },
+  "s04-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/",
+    "wrong": "- A: Cheapest storage may not meet performance or durability requirements for the workload\n- C: Local volumes provide maximum performance but lack availability if the node fails\n- D: Object storage has higher latency and may not suit all workloads that need block-level I/O patterns"
+  },
+  "s04-q066": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
+    "wrong": "- A: StatefulSets can have multiple Services pointing to the same pods via label selectors\n- C: Both Services can use the same selector; pods do not need different labels\n- D: Load balancing across StatefulSet replicas is a common and valid pattern for read traffic"
+  },
+  "s04-q067": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
+    "wrong": "- B: Recreate strategy does not exist for StatefulSets; it would also cause total cluster unavailability\n- C: Deleting and recreating the StatefulSet loses stability guarantees and causes full downtime\n- D: Scaling to 0 causes full downtime; the partition approach allows zero-downtime rolling updates"
+  },
+  "s04-q068": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    "wrong": "- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: RWO PVs can be moved between nodes; the issue is stale VolumeAttachment, not a permanent restriction"
+  },
+  "s04-q069": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage",
+    "wrong": "- A: Ephemeral storage limits control local node disk usage, not PersistentVolume claim sizes\n- C: Ephemeral storage limits do not constrain container image pull sizes\n- D: Ephemeral storage limits do not apply to tmpfs-backed emptyDir volumes; those count against memory"
+  },
+  "s04-q070": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#retain",
+    "wrong": "- A: Released PVs with Retain policy are not garbage collected automatically; they persist indefinitely\n- B: Changing reclaimPolicy on a Released PV to Delete does not retroactively delete it and its storage\n- C: Restarting kube-controller-manager does not trigger garbage collection of Released PVs with Retain policy"
+  },
+  "s04-q071": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#local",
+    "wrong": "- A: Local PVs are physically on one node; cross-node volume access is not possible with local volumes\n- C: ReadWriteMany does not help local PVs; local storage is inherently tied to a single node's disk\n- D: Kubernetes does not split a pod's containers across multiple nodes; a pod always runs on one node"
+  },
+  "s04-q072": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    "wrong": "- A: The kube-apiserver does not send notification events directly to pods about cluster membership changes\n- C: PVCs contain data written by the application, not Kafka cluster configuration for new member discovery\n- D: Existing brokers can discover new members via DNS lookups without requiring a full restart of all pods"
+  },
+  "s04-q073": {
+    "ref": "https://velero.io/docs/main/file-system-backup/",
+    "wrong": "- A: Velero backs up both resource manifests and PV data, not just YAML definitions\n- B: Velero does not replace PVs with emptyDir; it preserves volume configurations during backup\n- D: Velero can perform consistent backups without requiring PVs to be unmounted from pods"
+  },
+  "s04-q074": {
+    "ref": "https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    "wrong": "- A: This metric reports phase status, not I/O throughput; throughput comes from kubelet_volume_stats metrics\n- C: This metric reports per-PVC phase, not the cumulative count of all PVCs ever created in the cluster\n- D: This metric reports lifecycle phase, not actual storage consumption; capacity usage comes from different metrics"
+  },
+  "s04-q075": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention",
+    "wrong": "- B: This is the opposite of what the configuration specifies; whenDeleted is Delete and whenScaled is Retain\n- C: The configuration distinguishes between delete and scale-down operations; not all PVCs are always deleted\n- D: persistentVolumeClaimRetentionPolicy is a valid field (GA in Kubernetes 1.32)"
+  },
+  "s04-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reserving-a-persistentvolume",
+    "wrong": "- B: claimRef does not cause PV deletion; it reserves the PV for a specific PVC by name and namespace\n- C: claimRef is functional and enforces binding; it is not merely informational metadata\n- D: The PV does not auto-create the referenced PVC; the PVC must be created separately"
+  },
+  "s04-q077": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volume-pvc-datasource/",
+    "wrong": "- A: Cloning creates a new independent PV; it does not share the underlying storage via symbolic links\n- C: The source PVC is not deleted during cloning; both PVCs exist independently after the operation\n- D: Volume cloning is supported for PVCs via CSI drivers; it is not limited to emptyDir volumes"
+  },
+  "s04-q078": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/",
+    "wrong": "- B: A 3-member etcd cluster tolerates 1 failure; quorum (2 of 3) is maintained so the cluster continues\n- C: etcd does not automatically provision new storage or replicate to a replacement disk without admin action\n- D: Kubernetes does not have an in-memory fallback mode; it relies on etcd as the sole state store"
+  },
+  "s04-q079": {
+    "ref": "https://microservices.io/patterns/data/saga.html",
+    "wrong": "- A: Saga provides eventual consistency via compensating transactions; it does not eliminate consistency guarantees\n- C: Saga does not skip validation; each local transaction includes its own validation and integrity checks\n- D: 2PC works with modern databases but is less suitable for cloud-native due to distributed lock overhead"
+  },
+  "s04-q080": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#claims-as-volumes",
+    "wrong": "- A: readOnly on volumeMount does not conflict with the PVC access mode; they operate at different levels\n- B: The readOnly flag is respected by the kubelet; it is not ignored when the PVC allows writes\n- C: The PVC access mode is not changed; readOnly on the mount is a container-level setting"
+  },
+  "s04-q081": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/",
+    "wrong": "- A: readOnly on volume mounts prevents container writes but does not encrypt data stored in etcd\n- C: base64 is an encoding scheme, not encryption; it provides no security for data at rest\n- D: TLS on etcd encrypts data in transit between clients and servers, not data stored on disk"
+  },
+  "s04-q082": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    "wrong": "- A: A Deployment restarts continuously and does not have run-to-completion semantics for migrations\n- B: A CronJob running every minute is wasteful and does not provide a clean one-time execution model\n- D: A DaemonSet runs on every node, which is unnecessary for a database migration targeting one database"
+  },
+  "s04-q083": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#on-delete",
+    "wrong": "- B: RollingUpdate updates pods automatically in reverse ordinal order; OnDelete requires manual deletion\n- C: OnDelete does not update any pods automatically; it waits for manual deletion of each pod\n- D: OnDelete does not require draining nodes; it simply delays recreation until the pod is deleted"
+  },
+  "s04-q084": {
+    "ref": "https://microservices.io/patterns/data/database-per-service.html",
+    "wrong": "- A: Monolithic data architecture is the opposite; it uses a single shared database across all services\n- C: Data mesh is an organizational approach to analytical data; it is broader than database technology choice\n- D: Database sharding splits one database for scalability; polyglot persistence uses different database types"
+  },
+  "s04-q085": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#phase",
+    "wrong": "- A: Lost state is not a creation failure; it means the PV the PVC was bound to no longer exists\n- B: PVCs do not transition between namespaces; Lost indicates the bound PV is gone, not a migration state\n- C: Lost is not related to ResourceQuota eviction; it specifically indicates a missing bound PV"
+  },
+  "s04-q086": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#nfs",
+    "wrong": "- A: Access mode affects PV-PVC binding, but the question states the pod is already running and reading works; the issue is OS-level permissions\n- B: NFS volumes are not always read-only in Kubernetes; they respect the access mode and NFS export settings\n- D: The kubelet fully supports read and write operations on NFS volumes via the in-tree plugin and CSI"
+  },
+  "s04-q087": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    "wrong": "- A: StatefulSet pod logs differ per replica as each has its own state, data, and behavior\n- C: Fluentd does not use ordinal index for sorting log entries; timestamps determine chronological order\n- D: Log rotation is configured by the container runtime or logging agent, not by StatefulSet ordinal indices"
+  },
+  "s04-q088": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- A: nodeSelector to a single zone places all pods in one zone; it does not distribute across zones\n- C: Three separate StatefulSets add management complexity and break the single-StatefulSet cluster model\n- D: podAntiAffinity with hostname topology prevents node co-location but does not ensure zone-level distribution"
+  },
+  "s04-q089": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/",
+    "wrong": "- B: Kubernetes does not automatically create PVCs for VOLUME instructions in Dockerfiles\n- C: The VOLUME instruction is not completely ignored; containerd creates anonymous bind-mounted volumes for VOLUME paths\n- D: The pod does not fail to start; it runs normally regardless of whether explicit volumes are defined for those paths"
+  },
+  "s04-q090": {
+    "ref": "https://etcd.io/docs/v3.5/learning/data_model/",
+    "wrong": "- B: etcd prioritizes consistency over availability; it is a CP system in CAP theorem terms\n- C: Causal consistency is weaker than etcd's linearizable consistency guarantee\n- D: BASE is an eventual consistency model; etcd's Raft protocol provides strong consistency"
+  },
+  "s04-q091": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#mount-options",
+    "wrong": "- B: Mount options are not passed to the storage backend during provisioning; they are used at mount time\n- C: The API server does not use mount options for validation; they are consumed by the kubelet at mount time\n- D: Mount options are not stored as PVC annotations; they are applied by the kubelet when mounting the volume"
+  },
+  "s04-q092": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: Directly editing live resources bypasses GitOps principles of declarative, Git-driven configuration\n- C: Deleting all PVCs causes data loss; PVCs do not get recreated by Argo CD with new settings\n- D: Changing StorageClass provisioner does not migrate existing PVCs; provisioner changes only affect new PVs"
+  },
+  "s04-q093": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#revision-history-limit",
+    "wrong": "- A: The revisionHistoryLimit allows retaining multiple historical revisions, not just the current one\n- B: Kubernetes garbage collects old ControllerRevisions beyond the limit; it does not retain all indefinitely\n- D: StatefulSets do use ControllerRevision objects to track revision history, unlike Deployments which use ReplicaSets"
+  },
+  "s04-q094": {
+    "ref": "https://www.kubecost.com/",
+    "wrong": "- A: Monitoring total cost without per-team breakdown does not support team-level cost allocation or accountability\n- C: Fixed budgets without tracking or enforcement do not provide visibility into actual storage consumption\n- D: Cloud provider billing dashboards typically do not automatically map disk charges to Kubernetes namespaces"
+  },
+  "s04-q095": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#delete",
+    "wrong": "- A: The Retain policy preserves the PV in Released state; the Delete policy removes both PV and storage\n- C: The Delete policy removes the underlying cloud disk alongside the PV object, not just the PV\n- D: The Delete policy does not make the PV Available for reuse; both PV and storage are permanently removed"
+  },
+  "s04-q096": {
+    "ref": "https://kubernetes.io/blog/2023/12/18/read-write-once-pod-access-mode-ga/",
+    "wrong": "- A: ReadWriteOncePod and ReadWriteOnce are distinct; RWOP restricts to a single pod while RWO restricts to a single node\n- B: ReadWriteOncePod allows only one pod to access the volume, not multiple pods with one writer\n- C: ReadWriteOncePod works with PersistentVolumeClaims via CSI drivers; it is not limited to ephemeral volumes"
+  },
+  "s04-q097": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    "wrong": "- A: PVCs with ReadWriteMany add unnecessary overhead for temporary data that does not need to persist\n- C: hostPath introduces security risks and portability concerns; it is not recommended for temporary storage\n- D: NFS adds network complexity for simple ephemeral scratch space needed only during function execution"
+  },
+  "s04-q098": {
+    "ref": "https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/",
+    "wrong": "- A: minReadySeconds controls how long a pod must be ready before proceeding, not the maximum unavailable count\n- C: The replica count defines how many pods should run, not how many can be unavailable during updates\n- D: revisionHistoryLimit controls retained ControllerRevision objects, not update parallelism"
+  },
+  "s04-q099": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/storage-classes/#parameters",
+    "wrong": "- A: The scheduler does not have a disk I/O priority mechanism controlled by StorageClass parameters\n- B: The kubelet does not enforce I/O rate limits based on StorageClass parameters; IOPS is a cloud disk setting\n- D: StorageClass parameters like type and iops configure the disk itself, not cross-zone replication"
+  },
+  "s04-q100": {
+    "ref": "https://helm.sh/docs/topics/charts_hooks/",
+    "wrong": "- A: Helm does not proceed with uninstall if a pre-delete hook fails; it aborts to protect data\n- C: Helm does not selectively delete resources; the entire uninstall is aborted on hook failure\n- D: Helm does not retry hooks with exponential backoff; the hook runs once and its failure aborts the operation"
+  }
+}
