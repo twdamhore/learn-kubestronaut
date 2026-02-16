@@ -1,16 +1,7 @@
 {
   "set": "09",
-  "round": 10,
+  "round": 11,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s09-q072",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "what": "The explanation incorrectly states that Trivy was 'donated to CNCF'; Trivy is not a CNCF project",
-      "detail": "The explanation says 'Trivy (by Aqua Security, donated to CNCF) is a comprehensive vulnerability scanner.' However, Trivy has not been donated to or accepted by the CNCF. It is not listed as a CNCF Sandbox, Incubating, or Graduated project. Trivy remains an independent open-source project maintained by Aqua Security. The question premise also asks for 'a CNCF-hosted solution,' which creates a mismatch with the correct answer. Among the four options, Trivy is still the best answer for container image vulnerability scanning (Falco is runtime detection, OPA Gatekeeper is policy enforcement, cert-manager is certificate management), but the CNCF attribution in the explanation is factually incorrect.",
-      "suggestion": "Remove the parenthetical '(by Aqua Security, donated to CNCF)' from the explanation. Replace with '(by Aqua Security)' or 'Trivy is a widely adopted open-source vulnerability scanner.' Also consider softening the question stem from 'CNCF-hosted solution' to 'cloud-native solution' or 'solution that integrates with their Kubernetes workflow' to avoid the factual mismatch."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

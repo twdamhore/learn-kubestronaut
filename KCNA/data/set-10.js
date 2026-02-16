@@ -53,7 +53,7 @@ var questions = [
     id: "s10-q004",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "A cluster has three nodes labeled `zone=us-east-1a`, `zone=us-east-1b`, and `zone=us-east-1c`. A Deployment with 3 replicas specifies `topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: zone`, and `whenUnsatisfiable: DoNotSchedule`. Node `us-east-1c` becomes `NotReady`. When the Deployment is scaled to 6 replicas, how are the new pods distributed?",
+    text: "A cluster has three nodes labeled `zone=us-east-1a`, `zone=us-east-1b`, and `zone=us-east-1c`. A Deployment with 3 replicas specifies `topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: zone`, `whenUnsatisfiable: DoNotSchedule`, and `nodeTaintsPolicy: Ignore`. Node `us-east-1c` becomes `NotReady`. When the Deployment is scaled to 6 replicas, how are the new pods distributed?",
     diagram: null,
     options: [
       "A. 3 pods on us-east-1a and 3 on us-east-1b; the topology constraint is satisfied across the two available zones",
@@ -62,7 +62,7 @@ var questions = [
       "D. 5 pods run (2 in us-east-1a, 2 in us-east-1b, 1 existing in us-east-1c) and 1 remains Pending because `maxSkew: 1` includes the unavailable zone"
     ],
     answer: 3,
-    explanation: "With `topologySpreadConstraints`, Kubernetes considers all topology domains that have matching pods, including those on NotReady nodes. The original 3 replicas were distributed 1 per zone. When the us-east-1c node goes NotReady, its pod still counts in the skew calculation (assuming it has not been evicted). With `maxSkew: 1` and `DoNotSchedule`, the scheduler can place pods on zones a and b until each has 2 pods (skew of 2\u22121=1, within maxSkew). This yields 2+2+1=5 running pods total. The 6th pod cannot be scheduled on any healthy zone without exceeding maxSkew (that would create a skew of 3\u22121=2), so 1 pod remains Pending.",
+    explanation: "With `nodeTaintsPolicy: Ignore`, the scheduler includes tainted (NotReady) nodes in the topology spread calculation even though pods cannot be scheduled there. The original 3 replicas were distributed 1 per zone. When us-east-1c goes NotReady, its pod still counts in the skew calculation. With `maxSkew: 1` and `DoNotSchedule`, the scheduler can place pods on zones a and b until each has 2 pods (skew of 2\u22121=1, within maxSkew). This yields 2+2+1=5 running pods. The 6th pod cannot be scheduled on any healthy zone without exceeding maxSkew (that would create a skew of 3\u22121=2), so 1 pod remains Pending. Note: since K8s 1.27, the default `nodeTaintsPolicy` is `Honor`, which would exclude the NotReady zone and allow 3+3 distribution across the two healthy zones.",
     verify: "kubectl get pods -o wide --sort-by=.spec.nodeName && kubectl get nodes --show-labels"
   },
   {

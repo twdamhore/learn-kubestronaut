@@ -1,15 +1,7 @@
 {
   "set": "03",
-  "round": 10,
+  "round": 11,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s03-q047",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "what": "The marked answer (index 1) references `kube_endpoint_address_available`, which does not exist as a kube-state-metrics metric. The actual kube-state-metrics endpoint metric is `kube_endpoint_address` with a `ready` label (values \"true\" or \"false\"). Option C (index 2) describes `kube_endpoint_address` with label `ready=\"true\"` — this is the real metric. The explanation incorrectly claims that `kube_endpoint_address` with a ready label is not a standard metric name, when in fact it is the canonical metric, and `kube_endpoint_address_available` is the non-existent one.",
-      "fix": "Change answer from 1 to 2. Update option B text to something clearly wrong (e.g., `kube_endpoint_address_available` does not exist). Update the explanation to state that `kube_endpoint_address` with the `ready=\"true\"` label from kube-state-metrics is the correct metric for monitoring endpoint readiness per Service."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

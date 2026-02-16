@@ -69,7 +69,7 @@ var questions = [
     id: "s05-q005",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A security team wants to scan container images for known CVEs before they are deployed into the cluster. Which CNCF project is specifically designed for container image vulnerability scanning?",
+    text: "A security team wants to scan container images for known CVEs before they are deployed into the cluster. Which open-source tool is specifically designed for container image vulnerability scanning?",
     diagram: null,
     options: [
       "Falco, which monitors runtime syscall activity in containers",
@@ -78,7 +78,7 @@ var questions = [
       "Trivy, which scans container images for known vulnerabilities"
     ],
     answer: 3,
-    explanation: "Trivy is a CNCF project that provides comprehensive vulnerability scanning for container images, filesystems, and Git repositories. Falco focuses on runtime threat detection, OPA handles policy enforcement, and cert-manager manages TLS certificates.",
+    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner for container images, filesystems, and Git repositories. Falco focuses on runtime threat detection, OPA handles policy enforcement, and cert-manager manages TLS certificates.",
     verify: "trivy image nginx:latest"
   },
   {
