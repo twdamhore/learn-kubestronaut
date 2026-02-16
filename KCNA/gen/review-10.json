@@ -1,7 +1,32 @@
 {
   "set": "10",
-  "round": 12,
+  "round": 13,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 3,
+  "issues": [
+    {
+      "id": "s10-q007",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "what": "SizeMemoryBackedVolumes went GA in 1.32, not 1.28",
+      "detail": "The explanation states 'Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, GA since 1.28)'. SizeMemoryBackedVolumes was beta (enabled by default) since 1.22 but only went GA in Kubernetes 1.32. It remained in beta from 1.22 through 1.31. The behavioral description (ENOSPC at the sizeLimit boundary) is correct because the feature was enabled by default in beta, but the stated GA version is wrong.",
+      "suggestion": "Change 'GA since 1.28' to 'beta since 1.22, GA since 1.32'. For example: 'Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate enabled by default in beta since 1.22, GA since 1.32)'"
+    },
+    {
+      "id": "s10-q044",
+      "type": "wrong_explanation",
+      "severity": "critical",
+      "what": "Kyverno is CNCF Incubating, not graduated",
+      "detail": "The explanation states 'Kyverno is a CNCF project (graduated in 2024)'. Kyverno moved to CNCF Incubating on July 13, 2022, but as of February 2026 it has NOT graduated. There is no CNCF graduation announcement for Kyverno. The project remains at the Incubating maturity level. The answer choice (C) is still correct since it does not claim graduation, but the explanation's parenthetical is factually wrong.",
+      "suggestion": "Change '(graduated in 2024)' to '(Incubating)' in the explanation. For example: 'Kyverno is a CNCF Incubating project that provides all three capabilities natively...'"
+    },
+    {
+      "id": "s10-q089",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "what": "Sigstore is an OpenSSF project, not a CNCF project",
+      "detail": "The explanation states 'cosign (part of the Sigstore project, a CNCF project)'. Sigstore is actually a project under the Open Source Security Foundation (OpenSSF), not under CNCF. Sigstore graduated within OpenSSF in March 2024. While CNCF and OpenSSF both operate under the Linux Foundation umbrella and share some ecosystem overlap, they are distinct organizations with separate project portfolios. Sigstore does not appear on the CNCF graduated, incubating, or sandbox project lists.",
+      "suggestion": "Change 'a CNCF project' to 'an OpenSSF project' in the explanation. For example: 'cosign (part of the Sigstore project, an OpenSSF graduated project) provides keyless or key-based container image signing...'"
+    }
+  ]
 }

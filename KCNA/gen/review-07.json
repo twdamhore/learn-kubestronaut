@@ -1,7 +1,16 @@
 {
   "set": "07",
-  "round": 12,
+  "round": 13,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s07-q090",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "what": "Explanation incorrectly states that node.kubernetes.io/not-ready is applied 'when the node loses connectivity'. Connectivity loss specifically triggers node.kubernetes.io/unreachable:NoExecute, not the not-ready taint. The not-ready taint is applied when the node condition becomes NotReady for reasons such as kubelet failures or failed health checks, but NOT specifically for network connectivity loss.",
+      "correction": "Change '(e.g., node.kubernetes.io/not-ready when the node loses connectivity)' to '(e.g., node.kubernetes.io/not-ready when the node becomes NotReady due to kubelet issues or health check failures — note that connectivity loss specifically triggers node.kubernetes.io/unreachable instead)'",
+      "answer_correct": true
+    }
+  ]
 }

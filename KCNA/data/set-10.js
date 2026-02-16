@@ -110,7 +110,7 @@ var questions = [
       "D. The container is OOM-killed because memory-backed `emptyDir` usage counts against the container memory cgroup"
     ],
     answer: 1,
-    explanation: "Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, GA since 1.28), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted — the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to 50% of node memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.",
+    explanation: "Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, beta since 1.22 and GA since 1.32), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted — the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to 50% of node memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Volumes' && kubectl get events --field-selector involvedObject.name=<pod-name>"
   },
   {
@@ -702,7 +702,7 @@ var questions = [
       "C. Kyverno — it provides validate, mutate, and generate policy rules within a single policy definition using Kubernetes-native declarative syntax"
     ],
     answer: 3,
-    explanation: "Kyverno is a CNCF project (graduated in 2024) that provides all three capabilities natively: `validate` rules for admission control, `mutate` rules for modifying resources (e.g., injecting labels, setting defaults), and `generate` rules for creating new resources when triggers are matched (e.g., creating a NetworkPolicy whenever a new namespace is created). OPA/Gatekeeper primarily handles validation (and mutation was added later) but does not generate resources. Falco is a runtime security tool, not an admission controller.",
+    explanation: "Kyverno is a CNCF Incubating project that provides all three capabilities natively: `validate` rules for admission control, `mutate` rules for modifying resources (e.g., injecting labels, setting defaults), and `generate` rules for creating new resources when triggers are matched (e.g., creating a NetworkPolicy whenever a new namespace is created). OPA/Gatekeeper primarily handles validation (and mutation was added later) but does not generate resources. Falco is a runtime security tool, not an admission controller.",
     verify: "kubectl get clusterpolicy -o wide && kubectl get policyreport -A"
   },
   {
@@ -1422,7 +1422,7 @@ var questions = [
       "D. TUF (The Update Framework) for signing and distribution, with Falco for runtime image integrity verification"
     ],
     answer: 1,
-    explanation: "cosign (part of the Sigstore project, a CNCF project) provides keyless or key-based container image signing and stores signatures as OCI artifacts alongside images in any OCI-compliant registry. For Kubernetes admission-time verification, Kyverno (CNCF graduated) or the Sigstore policy-controller can verify cosign signatures before allowing pod creation. This provides a complete chain: build pipeline signs with cosign, signatures are stored in the registry, and the admission controller verifies signatures. Notary v2 is an alternative signing mechanism but is not as widely adopted for this specific workflow.",
+    explanation: "cosign (part of the Sigstore project, an OpenSSF project under the Linux Foundation) provides keyless or key-based container image signing and stores signatures as OCI artifacts alongside images in any OCI-compliant registry. For Kubernetes admission-time verification, Kyverno (CNCF Incubating) or the Sigstore policy-controller can verify cosign signatures before allowing pod creation. This provides a complete chain: build pipeline signs with cosign, signatures are stored in the registry, and the admission controller verifies signatures. Notary v2 is an alternative signing mechanism but is not as widely adopted for this specific workflow.",
     verify: "cosign verify --key <key-file> <image>:<tag> && kubectl get clusterpolicy -o yaml | grep verifyImages"
   },
   {

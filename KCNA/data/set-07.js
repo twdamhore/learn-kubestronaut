@@ -1438,7 +1438,7 @@ var questions = [
       "A `PodDisruptionBudget` allowed the eviction after the 300-second minimum uptime threshold was reached for the workload"
     ],
     answer: 1,
-    explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node loses connectivity), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.",
+    explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node's `Ready` condition becomes `False`), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.",
     verify: "kubectl get events --field-selector reason=TaintManagerEviction"
   },
   {

@@ -181,7 +181,7 @@ var questions = [
     id: "s06-q012",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "What is the effect of the taint <code>node.kubernetes.io/not-ready:NoExecute</code> that Kubernetes automatically applies to a node that loses connectivity?",
+    text: "What is the effect of the taint <code>node.kubernetes.io/unreachable:NoExecute</code> that Kubernetes automatically applies to a node that loses connectivity?",
     diagram: null,
     options: [
       "A. New Pods are prevented from scheduling but existing Pods continue to run on the node",

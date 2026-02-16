@@ -1,7 +1,15 @@
 {
   "set": "06",
-  "round": 12,
+  "round": 13,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s06-q012",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Question stem says the taint `node.kubernetes.io/not-ready:NoExecute` is 'automatically applied to a node that loses connectivity', but connectivity loss triggers the `node.kubernetes.io/unreachable:NoExecute` taint, not `not-ready`. The `not-ready` taint is applied when the node condition is `False` (kubelet reports unhealthy), whereas `unreachable` is applied when the condition is `Unknown` (node controller cannot reach the node). The answer (B) is correct for the effect of a NoExecute taint, but the scenario linking `not-ready` to connectivity loss is imprecise.",
+      "fix": "Change the question stem from 'that Kubernetes automatically applies to a node that loses connectivity' to 'that Kubernetes automatically applies to a node whose Ready condition becomes False' or change the taint to `node.kubernetes.io/unreachable:NoExecute` to match the connectivity-loss scenario."
+    }
+  ]
 }

@@ -1,7 +1,16 @@
 {
   "set": "09",
-  "round": 12,
+  "round": 13,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s09-q067",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "what": "Explanation references wrong taint for network partition scenario",
+      "detail": "The scenario describes a network partition where the kubelet cannot reach the kube-apiserver. In this case, the node controller cannot receive heartbeats, so the Ready condition becomes Unknown (not False). This maps to the taint node.kubernetes.io/unreachable:NoExecute, not node.kubernetes.io/not-ready:NoExecute. The not-ready taint is applied when the Ready condition is explicitly False (kubelet is running but unhealthy), while the unreachable taint is applied when Ready is Unknown (connectivity loss). The explanation incorrectly states 'default 5 minutes via node.kubernetes.io/not-ready toleration' when it should reference node.kubernetes.io/unreachable.",
+      "suggestion": "Change the explanation to: 'When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller sets the Ready condition to Unknown, marking the node as NotReady. The node.kubernetes.io/unreachable:NoExecute taint is applied. After the default toleration period (300 seconds via the automatically added node.kubernetes.io/unreachable:NoExecute toleration), the control plane starts evicting Pods from the unreachable node.'"
+    }
+  ]
 }

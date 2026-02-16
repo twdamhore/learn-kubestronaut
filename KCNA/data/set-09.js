@@ -1070,7 +1070,7 @@ var questions = [
       "The Pods are instantly rescheduled to other available nodes in the cluster without any termination delay"
     ],
     answer: 0,
-    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady`. After the configured toleration period (default 5 minutes via `node.kubernetes.io/not-ready` toleration), the control plane starts evicting Pods from the unreachable node.",
+    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady` (Ready condition becomes `Unknown`). The `node.kubernetes.io/unreachable:NoExecute` taint is applied, and after the configured toleration period (default 5 minutes), the control plane starts evicting Pods from the unreachable node.",
     verify: "kubectl get node <node-name> -o jsonpath='{.status.conditions[?(@.type==\"Ready\")].status}'"
   },
   {
