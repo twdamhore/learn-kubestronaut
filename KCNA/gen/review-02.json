@@ -1,0 +1,42 @@
+{
+  "set": "02",
+  "total_reviewed": 100,
+  "issues_found": 5,
+  "issues": [
+    {
+      "id": "s02-q047",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 1, which selects option B: 'No concern — Kubernetes automatically redacts Secret values from all container log output by default.' However, the explanation clearly states 'Kubernetes does not perform any log redaction' and describes the correct behavior as: Secret values appear in plaintext in logs. The correct answer should be option A (index 0): 'The Secret value appears in plaintext in logs, potentially exposing it through log aggregation pipelines.' The answer and explanation directly contradict each other.",
+      "suggested_fix": "Change answer from 1 to 0"
+    },
+    {
+      "id": "s02-q063",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question states that Secret volume files have mode 0644 (rw-r--r--) and a non-root user (UID 1000) 'cannot read the files.' This premise is factually incorrect: with mode 0644, the 'others' permission bits grant read access, so UID 1000 would be able to read the files. The default Secret volume defaultMode in Kubernetes is 0644, which is world-readable. The premise should use a more restrictive mode like 0600 (rw-------) to create the scenario described where the non-root user actually cannot read the files. The correct answer (option B, index 1) and explanation are appropriate fixes for the general problem, but the question setup is misleading.",
+      "suggested_fix": "Change the question premise from 'mode 0644' to 'mode 0600' so the scenario is consistent: a non-root user truly cannot read files with mode 0600 (owner-only read/write)."
+    },
+    {
+      "id": "s02-q012",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "Option D states 'Mount the ConfigMap volume directly; it is always read-only by default without extra settings.' This is factually correct — ConfigMap volumes in Kubernetes are indeed read-only by default (attempts to write return 'Read-only file system'). While the selected answer (option A, index 0) is the BEST answer because it also addresses using subPath to mount a single file at a specific path, option D's claim is not actually wrong. A student who knows ConfigMap volumes are read-only by default could reasonably choose D. The explanation partially acknowledges this: 'ConfigMap volume mounts are effectively read-only by default (writes are not persisted)' — but this phrasing is slightly inaccurate; they are not just 'effectively' read-only, they ARE read-only.",
+      "suggested_fix": "Rephrase option D to be more clearly wrong, e.g., 'Mount the ConfigMap volume directly at /app/config/settings.yaml; no extra configuration is needed since volumes always mount at the exact file path.' This would make it clearly wrong by conflating directory mounts with file-level mounts. Alternatively, update the explanation to more explicitly state that while ConfigMap mounts are read-only by default, option A is correct because subPath is needed to place a single file without replacing the directory."
+    },
+    {
+      "id": "s02-q021",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question asks about immutable infrastructure principles for a configuration change. Option C ('Build a new container image with the updated configuration and then perform a rolling update') is a valid immutable infrastructure approach — in strict immutable infrastructure, you replace the entire artifact (image) rather than changing configuration externally. Option D ('Create a new ConfigMap version, then trigger a Deployment rollout by updating the reference') is the more practical Kubernetes-native approach. Both are defensible answers. The explanation acknowledges option C follows immutable principles but argues D is better for configuration changes. For a KCNA exam, D is the more expected answer, but the ambiguity between C and D could confuse students who strictly interpret immutable infrastructure.",
+      "suggested_fix": "Rephrase option C to make it clearly suboptimal, e.g., 'Build a new container image with the updated configuration baked in, requiring a new image build for every config change across all environments.' This makes the inefficiency of this approach more apparent."
+    },
+    {
+      "id": "s02-q031",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The correct answer (option C, index 2) states 'Mounting a volume at a path replaces the directory contents.' The explanation then says 'The original files from the Dockerfile are not deleted — they are simply hidden behind the mount.' This is technically accurate (Linux mount semantics), but it partially validates option D which says 'The files still exist but are hidden beneath the mount point.' The explanation then says 'The files are not revealed by ls -a because the mount fully replaces the directory view' — this correctly distinguishes from option D (which wrongly claims ls -a would show them). However, the explanation's acknowledgment that files are 'hidden behind the mount' could confuse students into thinking option D was partially correct. The distinction between C and D is subtle and rests entirely on whether ls -a would show the files.",
+      "suggested_fix": "Clarify the explanation to say: 'From the container's perspective, the volume mount completely replaces the directory. The original files from the Dockerfile exist in the image layer but are completely inaccessible once the volume is mounted over the path — no command run inside the container can see them. This is standard Linux mount overlay behavior.'"
+    }
+  ]
+}

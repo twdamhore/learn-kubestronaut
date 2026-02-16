@@ -197,7 +197,7 @@ var questions = [
     id: "s06-q013",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A company uses a CNCF graduated project to manage their cluster lifecycle, including provisioning, upgrading, and scaling Kubernetes clusters declaratively. Which project is this?",
+    text: "A company uses a Kubernetes ecosystem project to manage their cluster lifecycle, including provisioning, upgrading, and scaling Kubernetes clusters declaratively. Which project is this?",
     diagram: null,
     options: [
       "A. Cluster API, for lifecycle management",
@@ -206,7 +206,7 @@ var questions = [
       "D. Flux, for continuous reconciliation sync"
     ],
     answer: 0,
-    explanation: "Cluster API is a CNCF project that provides declarative APIs for cluster creation, configuration, and management. It enables treating cluster infrastructure as Kubernetes resources, supporting lifecycle operations like upgrades and scaling across multiple providers.",
+    explanation: "Cluster API is a Kubernetes SIG project that provides declarative APIs for cluster creation, configuration, and management. It enables treating cluster infrastructure as Kubernetes resources, supporting lifecycle operations like upgrades and scaling across multiple providers.",
     verify: null
   },
   {
@@ -251,7 +251,7 @@ var questions = [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
       "B. DaemonSet Pods automatically include tolerations for all taints",
       "C. The drain command cannot evict any Pods in the `kube-system` namespace",
-      "D. `kubectl drain` ignores DaemonSet-managed Pods by default behavior"
+      "D. `kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.",
@@ -350,7 +350,7 @@ var questions = [
       "D. Use `--delete-emptydir-data` to attempt overriding PDB restrictions"
     ],
     answer: 0,
-    explanation: "Scaling up replicas increases the number of available Pods, allowing the PDB's `minAvailable` or `maxUnavailable` threshold to be met during eviction. The `--force` flag bypasses PDBs but risks service disruption. Deleting the PDB removes an important safety mechanism.",
+    explanation: "Scaling up replicas increases the number of available Pods, allowing the PDB's `minAvailable` or `maxUnavailable` threshold to be met during eviction. The `--disable-eviction` flag bypasses PDBs by using delete instead of the eviction API, but risks service disruption. The `--force` flag only handles standalone pods not managed by a controller. Deleting the PDB removes an important safety mechanism.",
     verify: "kubectl get pdb -A"
   },
   {
@@ -552,13 +552,13 @@ var questions = [
     text: "You want to monitor the scheduling latency of Pods in your cluster. Which metric exposed by the kube-scheduler is most relevant?",
     diagram: null,
     options: [
-      "A. `scheduler_scheduling_algorithm_duration_seconds`",
+      "A. `scheduler_e2e_scheduling_duration_seconds`",
       "B. `kubelet_pod_start_duration_seconds` metric name",
       "C. `apiserver_request_duration_seconds` metric name",
       "D. `etcd_request_duration_seconds` metric name type"
     ],
     answer: 0,
-    explanation: "`scheduler_scheduling_algorithm_duration_seconds` measures the time the scheduling algorithm takes to find a suitable node for a Pod. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase.",
+    explanation: "`scheduler_e2e_scheduling_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase.",
     verify: null
   },
   {
@@ -613,7 +613,7 @@ var questions = [
     id: "s06-q039",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which CNCF project provides a Kubernetes-native way to declaratively manage etcd clusters, including automated backups and restore operations?",
+    text: "Which CNCF project provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes?",
     diagram: null,
     options: [
       "A. etcd-operator from the CoreOS project",
@@ -622,7 +622,7 @@ var questions = [
       "D. Stash, a backup and recovery tooling"
     ],
     answer: 2,
-    explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes clusters, including etcd data and persistent volumes. While the etcd-operator was historically used, Velero has become the standard for cluster-level backup and disaster recovery in the CNCF ecosystem.",
+    explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes via the Kubernetes API. It enables disaster recovery, data migration, and cluster portability. Velero does not manage etcd directly but works at the Kubernetes resource level.",
     verify: null
   },
   {
@@ -745,7 +745,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Priority value of 1000, scheduled before default-priority Pods only",
-      "B. Priority value of 2000000000, the highest built-in priority class",
+      "B. Priority value of 2000001000, the highest built-in priority class",
       "C. Same as default priority but with guaranteed resource allocation",
       "D. Priority value of 100000000, ranked above the cluster-critical one"
     ],
@@ -1077,7 +1077,7 @@ var questions = [
     id: "s06-q068",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which CNCF project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
+    text: "Which Kubernetes SIG project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
     diagram: null,
     options: [
       "A. Scheduler Plugins (scheduling-plugins)",
@@ -1493,7 +1493,7 @@ var questions = [
     id: "s06-q094",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "A Pod anti-affinity rule specifies <code>topologyKey: topology.kubernetes.io/zone</code>. If all zones already have a matching Pod, and <code>whenUnsatisfiable: DoNotSchedule</code> is set on the topology spread, what happens?",
+    text: "A Pod anti-affinity rule specifies <code>topologyKey: topology.kubernetes.io/zone</code> with <code>requiredDuringSchedulingIgnoredDuringExecution</code>. If all zones already have a matching Pod, what happens?",
     diagram: null,
     options: [
       "A. The Pod remains in `Pending` state until more zones become available",
@@ -1566,7 +1566,7 @@ var questions = [
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
     answer: 2,
-    explanation: "When a `pre-upgrade` hook fails, Helm aborts the upgrade and the release remains at its current version. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.",
+    explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.",
     verify: "helm history <release-name>"
   },
   {

@@ -1,0 +1,857 @@
+[
+  {
+    "id": "s02-q001",
+    "options": [
+      "A Secret with `type: Opaque` storing base64-encoded connection strings for sensitive workloads",
+      "An annotation on the Deployment manifest that holds the connection string as metadata",
+      "A PersistentVolumeClaim that stores configuration data on a provisioned disk volume",
+      "A ConfigMap referenced as environment variables or mounted as a volume in the pod"
+    ]
+  },
+  {
+    "id": "s02-q002",
+    "options": [
+      "Env vars from a ConfigMap are set at pod creation; the pod must restart to see changes",
+      "ConfigMaps are immutable by default so the update was silently rejected by the API server",
+      "The kubelet refreshes env vars every 60 seconds so the operator just needs to wait longer",
+      "The container runtime caches ConfigMap data and requires a full `kubectl rollout restart`"
+    ]
+  },
+  {
+    "id": "s02-q003",
+    "options": [
+      "`kubernetes.io/dockerconfigjson` — intended for storing container registry credentials",
+      "`Opaque` — the general-purpose Secret type that accepts any arbitrary key-value pair",
+      "`kubernetes.io/tls` — requires `tls.crt` and `tls.key` fields for certificate data",
+      "`kubernetes.io/ssh-auth` — the standard type for any key-based authentication method"
+    ]
+  },
+  {
+    "id": "s02-q004",
+    "options": [
+      "`Guaranteed` — because at least one container has equal requests and limits set for resources",
+      "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
+      "`BestEffort` — because one container is entirely missing memory request specifications",
+      "`Burstable` — but only when the node has sufficient available resources to schedule this pod"
+    ]
+  },
+  {
+    "id": "s02-q005",
+    "options": [
+      "A single file called `configmap.yaml` that combines both keys and their corresponding values",
+      "A directory with two files, `app.properties` and `logging.conf`, each holding its value",
+      "Two subdirectories named after the keys, each containing an `index` file with the data",
+      "A single JSON file at `/etc/config/data.json` containing both key-value pairs merged"
+    ]
+  },
+  {
+    "id": "s02-q006",
+    "options": [
+      "The pod is created and Kubernetes auto-assigns default CPU values derived from the ResourceQuota",
+      "The pod is scheduled but placed in pending state until the administrator adds a LimitRange object",
+      "The pod is created with `BestEffort` QoS class and its resources do not count against the quota",
+      "Pod creation is rejected because CPU quota exists but the pod specifies no CPU requests/limits"
+    ]
+  },
+  {
+    "id": "s02-q007",
+    "options": [
+      "`metadata.annotations: {\"immutable\": \"true\"}` set on the ConfigMap resource definition",
+      "`spec.readOnly: true` declared at the top level of the ConfigMap resource specification",
+      "`immutable: true` at the top level of the ConfigMap spec to prevent any future changes",
+      "`data.locked: \"true\"` as a reserved key that prevents further edits to the ConfigMap"
+    ]
+  },
+  {
+    "id": "s02-q008",
+    "options": [
+      "The kubelet's local cache on the node where the pod is currently running and scheduled",
+      "The kube-apiserver's in-memory store which is cleared each time the server is restarted",
+      "etcd, the cluster's key-value store that persists all Kubernetes API objects at rest",
+      "The container runtime's internal image layer filesystem storage on the scheduling node"
+    ]
+  },
+  {
+    "id": "s02-q009",
+    "options": [
+      "Both pods have equal eviction priority since they both have resource values explicitly specified in their spec",
+      "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
+      "This pod is protected from eviction because it has a memory limit set which prevents any OOM killing action",
+      "The pod with the higher absolute memory limit is always evicted first, regardless of its assigned QoS class"
+    ]
+  },
+  {
+    "id": "s02-q010",
+    "options": [
+      "`env: [{name: BACKEND_URL, valueFrom: {configMapKeyRef: {name: app-config, key: backend.url}}}]`",
+      "`env: [{name: BACKEND_URL, value: configMap.app-config.backend.url}]` with inline dot-path resolution",
+      "`envFrom: [{configMapRef: {name: app-config, key: backend.url}}]` to import with direct key selection",
+      "`env: [{name: BACKEND_URL, valueFrom: {secretKeyRef: {name: app-config, key: backend.url}}}]`"
+    ]
+  },
+  {
+    "id": "s02-q011",
+    "options": [
+      "The key will be `data` since `--from-file` always uses a generic key name by default",
+      "The key will be auto-generated as a SHA hash of the file contents for uniqueness",
+      "The key will be `nginx-conf`, matching the ConfigMap name that was specified on create",
+      "The key will be `nginx.conf` because the filename becomes the key name by default"
+    ]
+  },
+  {
+    "id": "s02-q012",
+    "options": [
+      "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
+      "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
+      "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
+      "Mount the ConfigMap volume directly; it is always read-only by default without extra settings"
+    ]
+  },
+  {
+    "id": "s02-q013",
+    "options": [
+      "Switch all Secrets to ConfigMaps since ConfigMaps provide built-in encryption at rest by default",
+      "Run `kubectl encrypt secret <name>` to individually encrypt each Secret with cluster-level keys",
+      "Set `encoded: true` on each Secret manifest to enable automatic AES-256 encryption at storage",
+      "Enable etcd encryption at rest by configuring an `EncryptionConfiguration` on the API server"
+    ]
+  },
+  {
+    "id": "s02-q014",
+    "options": [
+      "Use `env.valueFrom.fieldRef` with `fieldPath: status.hostIP` to expose the node's IP address",
+      "Use `env.valueFrom.configMapKeyRef` pointing to a system-managed ConfigMap named `node-info`",
+      "Use `env.valueFrom.resourceFieldRef` with `resource: node.ip` to reference the node address",
+      "Set `hostNetwork: true` on the pod so the container reads the node's network interfaces directly"
+    ]
+  },
+  {
+    "id": "s02-q016",
+    "options": [
+      "Add a `configOverride` annotation to the pod spec that points to the new file content to inject",
+      "Pass the new configuration as a command-line argument using the `args` field in container spec",
+      "Use the `image.config.override` field in the container spec to specify runtime replacement files",
+      "Mount a ConfigMap as a volume at `/etc/app` so ConfigMap data replaces the directory contents"
+    ]
+  },
+  {
+    "id": "s02-q018",
+    "options": [
+      "Store config in environment variables injected at runtime via ConfigMaps or Secrets",
+      "Embed all possible configurations in the container image, building one per each environment",
+      "Use a shared NFS mount across all pods to store a single centralized configuration file path",
+      "Hardcode the production configuration and use compile-time build flags for other environments"
+    ]
+  },
+  {
+    "id": "s02-q019",
+    "options": [
+      "Merge all 30 services into a monolith to reduce the total number of ConfigMaps needed in the cluster",
+      "Use a centralized config tool like Spring Cloud Config or Consul, integrated with Kubernetes APIs",
+      "Store all configurations in a single large ConfigMap shared across every service in the namespace",
+      "Eliminate ConfigMaps entirely and hardcode all configuration values in each service's Dockerfile"
+    ]
+  },
+  {
+    "id": "s02-q020",
+    "options": [
+      "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments",
+      "Argo CD encrypts Secrets during GitOps synchronization when deploying to target clusters",
+      "Fluentd collects Secret data from application logs and injects them into destination pods",
+      "External Secrets Operator syncs secrets from stores like AWS Secrets Manager into clusters"
+    ]
+  },
+  {
+    "id": "s02-q021",
+    "options": [
+      "SSH into each running pod and manually update the configuration files in place on the filesystem",
+      "Use `kubectl edit` to modify the running Deployment and let pods pick up the changes dynamically",
+      "Build a new container image with the updated configuration and then perform a rolling update",
+      "Create a new ConfigMap version, then trigger a Deployment rollout by updating the reference"
+    ]
+  },
+  {
+    "id": "s02-q022",
+    "options": [
+      "Write a CronJob that runs `kubectl describe resourcequota` and parses output with a shell script",
+      "Use Prometheus `kube_resourcequota` metrics and create alerting rules on usage-to-hard ratios",
+      "Enable the Kubernetes audit log, then configure filters to capture ResourceQuota-related events",
+      "Deploy a sidecar container in every pod that reports its own CPU usage to a central database"
+    ]
+  },
+  {
+    "id": "s02-q023",
+    "options": [
+      "ResourceQuotas and requests define per-namespace compute allocations that map to cost attribution",
+      "Network Policies track inter-namespace data transfer which serves as the primary cost driver metric",
+      "Pod Disruption Budgets control pod replacement rates which directly affects compute billing costs",
+      "Service accounts carry billing identifiers attached automatically by the underlying cloud provider"
+    ]
+  },
+  {
+    "id": "s02-q024",
+    "options": [
+      "In the `Chart.yaml` file, which supports per-environment overrides natively within Helm's schema",
+      "In a ConfigMap that Helm reads at install time using the `--config-from` flag for each release",
+      "Directly in manifests inside `templates/` with `if/else` blocks to handle each environment path",
+      "In separate values files (e.g., `values-dev.yaml`, `values-prod.yaml`) passed with `-f` flag"
+    ]
+  },
+  {
+    "id": "s02-q025",
+    "options": [
+      "Commit Secrets as base64-encoded values since Git does not display binary data in plain diffs",
+      "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts",
+      "Store Secrets in a separate private Git repository with tightly restricted team access controls",
+      "Avoid storing Secrets in Git entirely and create them manually via `kubectl create secret` each time"
+    ]
+  },
+  {
+    "id": "s02-q026",
+    "options": [
+      "Yes, Kubernetes encrypts Secret data with AES-256 before storing it in the manifest output format",
+      "No, the value is only base64-encoded, not encrypted; anyone can decode it with `base64 --decode`",
+      "Yes, it is encrypted with the cluster TLS certificate and can only be decoded by the API server",
+      "No, but the data is hashed using SHA-256, meaning the original value cannot ever be recovered"
+    ]
+  },
+  {
+    "id": "s02-q027",
+    "options": [
+      "Use `--from-literal` with the entire file content pasted as a single escaped string on the CLI",
+      "Convert the YAML to JSON and store it as a Secret since Secrets support larger data payloads",
+      "Split the file into 50 individual keys, one per line, and reassemble them inside the container",
+      "Use `--from-file=config.yaml` to create the ConfigMap; file content stored under that key"
+    ]
+  },
+  {
+    "id": "s02-q028",
+    "options": [
+      "The container is OOM-killed because it exceeded its CPU limit beyond the allowed specification",
+      "The pod is evicted from the node and rescheduled to a node with more available CPU capacity",
+      "The container freely uses 1.5 cores because CPU limits are advisory and not strictly enforced",
+      "The container is throttled to 1 CPU core; limits are enforced via CFS throttling, not killing"
+    ]
+  },
+  {
+    "id": "s02-q029",
+    "options": [
+      "The period in `database.host` is invalid for env var names, so this key is skipped with a warning event on the pod",
+      "`envFrom` only supports keys starting with a letter containing alphanumeric characters; the pod will fail to start",
+      "The period is automatically converted to an underscore by the kubelet, creating the key `database_host` in the env",
+      "No issue arises because environment variables in Linux fully support any characters including periods in key names"
+    ]
+  },
+  {
+    "id": "s02-q030",
+    "options": [
+      "Request: 256Mi, Limit: 256Mi — the default limit value is used for both fields automatically",
+      "The pod creation fails because the developer must explicitly specify resource values when quota exists",
+      "Request: 0, Limit: 256Mi — requests default to zero when not specified by the pod specification",
+      "Request: 128Mi, Limit: 256Mi — the LimitRange injects defaults for unspecified resource fields"
+    ]
+  },
+  {
+    "id": "s02-q031",
+    "options": [
+      "A bug in the kubelet accidentally deleted the extra files during the ConfigMap mount process on the node",
+      "The container runtime performs a security cleanup of any directory where a ConfigMap volume is mounted",
+      "Mounting a volume at a path replaces the directory contents; only the ConfigMap data exists there",
+      "The files still exist but are hidden beneath the mount point; running `ls -a /config` would show them"
+    ]
+  },
+  {
+    "id": "s02-q032",
+    "options": [
+      "`Guaranteed` — every container has requests equal to limits for both CPU and memory",
+      "`Burstable` — because the containers each have different resource values from one another",
+      "`Guaranteed` — but only because the total sum of requests equals the total sum of limits",
+      "`Burstable` — because more than one container definition is specified inside the pod spec"
+    ]
+  },
+  {
+    "id": "s02-q033",
+    "options": [
+      "The name of the Deployment or ReplicaSet controller that originally created the pod",
+      "The name of the specific container defined within the pod's specification manifest",
+      "The actual pod name with the generated suffix (e.g., `myapp-7d4b8c6f9-x2k4p`)",
+      "The namespace in which the pod is currently running inside the Kubernetes cluster"
+    ]
+  },
+  {
+    "id": "s02-q034",
+    "options": [
+      "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all Secrets with a replace command",
+      "Delete all existing Secrets and recreate them from scratch — Kubernetes will re-encrypt on creation using the new key automatically",
+      "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically without any manual steps",
+      "Replace the old key with the new one in the `EncryptionConfiguration` and restart the API server; data re-encrypts on the next read"
+    ]
+  },
+  {
+    "id": "s02-q035",
+    "options": [
+      "Split the data across two ConfigMaps and merge them inside the container at startup using an init container script",
+      "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB of data",
+      "Increase the ConfigMap size limit by modifying the API server's `--max-configmap-size` startup configuration flag",
+      "Use a Secret instead of a ConfigMap, which supports up to 10 MiB of data storage for larger configuration files"
+    ]
+  },
+  {
+    "id": "s02-q036",
+    "options": [
+      "The pod is created but placed in `Pending` state until other pods are evicted to free up namespace quota",
+      "The pod is created and the ResourceQuota is automatically increased to accommodate the new pod request",
+      "The pod creation is rejected by the admission controller because 1.5Gi + 700Mi exceeds the 2Gi quota",
+      "The pod is created but with its memory request automatically reduced to 500Mi to fit within the quota"
+    ]
+  },
+  {
+    "id": "s02-q037",
+    "options": [
+      "`Guaranteed` — because memory requests are equal to memory limits for the container",
+      "`Burstable` — because CPU requests and limits are not specified for the container",
+      "`BestEffort` — because CPU has no specifications at all in the pod's resource spec",
+      "`Guaranteed` — because Kubernetes defaults CPU values to match memory specifications"
+    ]
+  },
+  {
+    "id": "s02-q038",
+    "options": [
+      "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control permissions",
+      "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
+      "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
+      "File permissions in Secret volumes are always `0644` and cannot be changed by any configuration"
+    ]
+  },
+  {
+    "id": "s02-q039",
+    "options": [
+      "A NetworkPolicy that blocks all access to the Kubernetes Secrets API from pods in the namespace",
+      "Setting `allowEnvSecrets: false` in the namespace's ResourceQuota spec to block env var mounts",
+      "A validating admission webhook or policy engine like OPA Gatekeeper or Kyverno for enforcement",
+      "Configuring RBAC to deny `get` verb access to Secrets for all users within the namespace scope"
+    ]
+  },
+  {
+    "id": "s02-q040",
+    "options": [
+      "Reduce the pod's memory request to 2Gi or less, or add a node with enough memory",
+      "Increase the pod's memory limit to allow Kubernetes to compress memory usage on the node",
+      "Delete the ResourceQuota in the namespace to remove the memory restriction from the pods",
+      "Set `priorityClassName: system-cluster-critical` to preempt lower-priority existing pods"
+    ]
+  },
+  {
+    "id": "s02-q041",
+    "options": [
+      "An `emptyDir` volume with an init container that copies data from each ConfigMap and Secret source",
+      "A `persistentVolumeClaim` that aggregates data from multiple ConfigMap and Secret sources together",
+      "A `hostPath` volume that maps to a pre-populated directory on the node's local disk filesystem path",
+      "A `projected` volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount"
+    ]
+  },
+  {
+    "id": "s02-q042",
+    "options": [
+      "`env: [{name: POD_IP, valueFrom: {fieldRef: {fieldPath: status.podIP}}}]` via Downward API",
+      "`env: [{name: POD_IP, valueFrom: {resourceFieldRef: {resource: network.ip}}}]` for network data",
+      "`env: [{name: POD_IP, value: \"$(POD_NETWORK_IP)\"}]` referencing the built-in network variable",
+      "`env: [{name: POD_IP, valueFrom: {configMapKeyRef: {name: kube-system-info, key: pod-ip}}}]`"
+    ]
+  },
+  {
+    "id": "s02-q043",
+    "options": [
+      "ConfigMaps cannot be shared between pods that belong to different Deployments within a namespace",
+      "Shared ConfigMaps are automatically replicated across namespaces causing eventual data inconsistency",
+      "Kubernetes rate-limits ConfigMap read operations so sharing would cause pod performance degradation",
+      "Sharing ConfigMaps creates tight coupling; changes to Service B's config could break Service A"
+    ]
+  },
+  {
+    "id": "s02-q044",
+    "options": [
+      "Vault stores secrets in etcd alongside Kubernetes Secrets so there is no real architectural difference between them",
+      "Vault fully replaces Kubernetes RBAC by managing all access control policies for the entire cluster independently",
+      "Vault provides dynamic secret generation, fine-grained access control, audit logging, and automatic rotation",
+      "Vault is the only CNCF-graduated project for secret management and is a mandatory requirement for CKS certification"
+    ]
+  },
+  {
+    "id": "s02-q045",
+    "options": [
+      "Store keys in Kubernetes Secrets and reference them as env vars in the Knative Service spec",
+      "Embed the API keys directly in the function source code so they are always available at runtime",
+      "Pass the API keys as query parameters in the event trigger URL for the Knative function endpoint",
+      "Store the API keys in a public ConfigMap so all serverless functions in the namespace can share"
+    ]
+  },
+  {
+    "id": "s02-q046",
+    "options": [
+      "Use a sidecar that watches the mounted ConfigMap volume for changes and signals the process",
+      "Set `restartPolicy: OnConfigChange` on the pod spec to make Kubernetes restart it on config updates",
+      "Use `kubectl apply --live-reload` to push ConfigMap changes directly into running container processes",
+      "Enable the `DynamicConfigReload` feature gate on the kubelet to allow automatic config propagation"
+    ]
+  },
+  {
+    "id": "s02-q047",
+    "options": [
+      "The Secret value appears in plaintext in logs, potentially exposing it through log aggregation pipelines",
+      "No concern — Kubernetes automatically redacts Secret values from all container log output by default",
+      "The kubelet intercepts container log output and replaces any Secret values with `[REDACTED]` markers",
+      "Env vars from Secrets are not visible to the application process so they cannot be logged by the app"
+    ]
+  },
+  {
+    "id": "s02-q048",
+    "options": [
+      "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for memory data",
+      "`node_memory_MemTotal_bytes` and `node_memory_MemFree_bytes` for node-level memory availability data",
+      "`kube_pod_status_phase` and `kube_pod_container_status_restarts_total` for pod lifecycle monitoring",
+      "`container_cpu_usage_seconds_total` and `container_cpu_cfs_throttled_seconds_total` for CPU metrics"
+    ]
+  },
+  {
+    "id": "s02-q050",
+    "options": [
+      "Use a single ConfigMap and toggle feature flags with environment variables set on each individual pod",
+      "Store both versions' configuration in one ConfigMap with keys prefixed by version number for routing",
+      "Create versioned ConfigMaps (`config-v1`, `config-v2`) and have each Deployment reference its own",
+      "Use a single ConfigMap and rely on the application to detect its own version and load correct flags"
+    ]
+  },
+  {
+    "id": "s02-q051",
+    "options": [
+      "`kubectl create configmap app-config --from-file=./configs/` which automatically filters non-config files",
+      "`kubectl create configmap app-config --from-file=./configs/ --exclude=*.md` to skip markdown files",
+      "`kubectl create configmap app-config --from-file=db.conf --from-file=cache.conf` for specific files",
+      "`kubectl create configmap app-config --from-directory=./configs/ --pattern=*.conf` with glob filter"
+    ]
+  },
+  {
+    "id": "s02-q052",
+    "options": [
+      "Zero is assigned as the request and the pod becomes `BestEffort` quality of service class",
+      "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
+      "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
+      "The pod creation fails because requests must be explicitly specified whenever limits are set"
+    ]
+  },
+  {
+    "id": "s02-q053",
+    "options": [
+      "During authentication — the API server checks resource specs before authenticating the user identity",
+      "During authorization — RBAC evaluates whether the user is allowed to create pods without limits set",
+      "During admission control — validating webhooks inspect the pod spec after authn and authz complete",
+      "After persistence — etcd rejects the pod after it has been stored because it violates policy rules"
+    ]
+  },
+  {
+    "id": "s02-q054",
+    "options": [
+      "`kubectl patch configmap feature-flags -p '{\"data\":{\"beta-api\":\"true\"}}'` to update the key",
+      "`kubectl set configmap feature-flags beta-api=true` to directly set the value on the resource",
+      "`kubectl update configmap feature-flags --from-literal=beta-api=true` for in-place value update",
+      "`kubectl apply configmap feature-flags --key=beta-api --value=true` for targeted field changes"
+    ]
+  },
+  {
+    "id": "s02-q055",
+    "options": [
+      "The pod is created but the CPU limit is automatically capped at 2 cores by the LimitRange enforcer",
+      "The LimitRange is ignored because it only applies to memory resources, not CPU specifications",
+      "The pod is created in `Pending` state until a node with 4 CPUs becomes available for scheduling",
+      "Pod creation is rejected because the container CPU limit exceeds the LimitRange max of 2 cores"
+    ]
+  },
+  {
+    "id": "s02-q056",
+    "options": [
+      "Raw binary bytes — Kubernetes handles the encoding transparently on behalf of the user",
+      "Hexadecimal string representation of the binary data with no additional encoding needed",
+      "Base64-encoded string — `binaryData` fields must be base64-encoded before submission",
+      "URL-encoded string using percent-encoding for all non-ASCII bytes in the binary content"
+    ]
+  },
+  {
+    "id": "s02-q057",
+    "options": [
+      "The DaemonSet controller will refuse to create any pods without explicit resource specifications in the spec",
+      "Kubernetes automatically assigns default resources to DaemonSet pods based on the node's total capacity",
+      "The agent pods could be scheduled on nodes with insufficient resources and get OOM-killed or CPU-starved",
+      "Without resource requests the pods run with host-level privileges and gain unlimited resource access rights"
+    ]
+  },
+  {
+    "id": "s02-q058",
+    "options": [
+      "The name of the Kubernetes Service object that is associated with and routes traffic to this pod",
+      "This is invalid syntax — the Downward API does not support label field references in fieldPath",
+      "The pod's hostname as derived from the Service DNS entry registered in the cluster's CoreDNS",
+      "The value of the `app.kubernetes.io/name` label that is set on the pod itself at creation"
+    ]
+  },
+  {
+    "id": "s02-q059",
+    "options": [
+      "Pods are evicted alphabetically by name to ensure deterministic and repeatable behavior on every node",
+      "Pods are evicted randomly — there is no guaranteed or deterministic order during node pressure events",
+      "`BestEffort` pods are evicted first, then `Burstable` exceeding requests, then `Guaranteed` pods",
+      "`Guaranteed` pods are evicted first because they consume the most predictable and reserved resources"
+    ]
+  },
+  {
+    "id": "s02-q060",
+    "options": [
+      "There is no difference — both flags produce the same ConfigMap structure with identical keys and values in output",
+      "`--from-env-file` creates one key per line (e.g., `DB_HOST`); `--from-file` stores the whole file as one key",
+      "`--from-env-file` only supports `.env` file extensions while `--from-file` supports any arbitrary file extension",
+      "`--from-env-file` encrypts the values before storing them while `--from-file` stores them in plaintext as given"
+    ]
+  },
+  {
+    "id": "s02-q061",
+    "options": [
+      "All ResourceQuotas are immediately removed from the cluster and pods can be created without any limits",
+      "The scheduler takes over ResourceQuota enforcement as a fallback mechanism until recovery completes",
+      "All pod creation is blocked across the entire cluster until the controller manager fully recovers",
+      "The API server still enforces quotas via admission control, but quota usage tracking may go stale"
+    ]
+  },
+  {
+    "id": "s02-q062",
+    "options": [
+      "No — the total requested would be 4.5 CPU, exceeding the 4 CPU allocatable capacity on this node",
+      "Yes — the scheduler looks at actual usage, not requests, and the node likely has spare CPU available",
+      "Yes — CPU is compressible, so the scheduler ignores CPU requests when making scheduling decisions",
+      "It depends on whether the existing pods have CPU limits set in addition to their resource requests"
+    ]
+  },
+  {
+    "id": "s02-q063",
+    "options": [
+      "Set `runAsUser: 0` in the securityContext to run as root, as this is the only way to read Secret mount volumes",
+      "Use `defaultMode: 0444` on the Secret volume to make files world-readable, or set `fsGroup` in securityContext",
+      "Secrets cannot be mounted into non-root containers at all — use environment variables as the workaround instead",
+      "Add `privileged: true` to the container securityContext to bypass all file permission checks on mounted volumes"
+    ]
+  },
+  {
+    "id": "s02-q064",
+    "options": [
+      "No — `args` does not support variable substitution; only the `command` field supports it in pod specs",
+      "No — variable substitution in `args` only works with ConfigMap values, not with Secret-sourced values",
+      "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` using env vars",
+      "Yes — but only if the `enableServiceLinks` field is explicitly set to `true` on the pod specification"
+    ]
+  },
+  {
+    "id": "s02-q065",
+    "options": [
+      "The ConfigMap was created with `--from-file` so the key is the filename, not `username` as expected",
+      "The pod and ConfigMap are in different namespaces despite both appearing to be in `default` namespace",
+      "The ConfigMap is immutable and new keys like `username` cannot be added after the initial creation",
+      "ConfigMaps created with `kubectl apply` do not support direct key references from pod specifications"
+    ]
+  },
+  {
+    "id": "s02-q066",
+    "options": [
+      "The pod fails to start because duplicate keys are not allowed in projected volume source definitions",
+      "Both files are created with automatic suffixes: `config.yaml.configmap` and `config.yaml.secret`",
+      "The last source in the projected volume `sources` list wins; its `config.yaml` overwrites the other",
+      "Kubernetes automatically merges the contents of both `config.yaml` files into a single combined file"
+    ]
+  },
+  {
+    "id": "s02-q068",
+    "options": [
+      "Secret type `kubernetes.io/tls` referenced in the pod's `imagePullSecrets` field for registry authentication",
+      "Secret type `kubernetes.io/dockerconfigjson` referenced in the pod's `imagePullSecrets` field at spec level",
+      "Secret type `Opaque` referenced in the pod's `volumes` field with a mount at `/root/.docker/config.json` path",
+      "Secret type `kubernetes.io/basic-auth` referenced in the pod's `serviceAccountName` field for authentication"
+    ]
+  },
+  {
+    "id": "s02-q069",
+    "options": [
+      "Kubernetes does not support conditional logic inside ConfigMaps so if/else is not valid for configuration management at all",
+      "Externalizing config separates concerns: app logic stays environment-agnostic while config is managed independently",
+      "Using if/else logic in the application would require a full code review for every single environment configuration change",
+      "ConfigMaps per environment use less cluster memory and etcd storage than a single ConfigMap with embedded conditionals"
+    ]
+  },
+  {
+    "id": "s02-q070",
+    "options": [
+      "No — the service mesh manages all configuration including application-specific settings like database URLs and feature flags",
+      "Yes — the mesh handles network config (routing, mTLS, retries) but app config (DB URLs, flags) still needs ConfigMaps",
+      "No — Istio's VirtualService resources replace ConfigMaps for all configuration needs across every service in the mesh",
+      "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
+    ]
+  },
+  {
+    "id": "s02-q071",
+    "options": [
+      "Use an external secrets operator that syncs from a shared store (e.g., Vault) into each cluster",
+      "Manually export Secrets with `kubectl get secret -o yaml` and apply them to the other target cluster",
+      "Configure etcd replication between clusters so Secrets are automatically shared across all nodes",
+      "Store Secrets in a shared NFS volume that is mounted by both clusters for synchronized access"
+    ]
+  },
+  {
+    "id": "s02-q072",
+    "options": [
+      "The Knative Eventing system automatically injects credentials for all configured event sources by default",
+      "Store credentials in the Kafka topic metadata where the Knative eventing system reads them on connect",
+      "Hard-code the credentials in the Knative Service YAML as environment variable literals in the spec",
+      "Reference the Secret in the KafkaSource CR, which passes credentials to the event source connector"
+    ]
+  },
+  {
+    "id": "s02-q073",
+    "options": [
+      "Nothing extra is needed — the tracing SDK automatically detects file changes and reloads its configuration",
+      "The app must watch the mounted file for changes and reinitialize the tracing provider when it updates",
+      "The kubelet must be restarted on the node to propagate ConfigMap changes to the volume mount inside",
+      "The tracing collector must be restarted — application-side configuration changes are entirely irrelevant"
+    ]
+  },
+  {
+    "id": "s02-q074",
+    "options": [
+      "`kube_pod_container_status_restarts_total` filtered by OOMKilled reason, combined with `resource_limits` for memory",
+      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health and available capacity",
+      "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod network traffic analysis",
+      "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica tracking"
+    ]
+  },
+  {
+    "id": "s02-q075",
+    "options": [
+      "The `b64enc` function uses weak encoding that can be easily broken by modern decoding tools and scripts",
+      "The plaintext password is stored in the Helm release secret, which contains rendered manifests/values",
+      "Helm templates cannot access `.Values` inside Secret manifests due to template rendering restrictions",
+      "Base64 encoding in templates causes Helm to double-encode the value when creating the Kubernetes Secret"
+    ]
+  },
+  {
+    "id": "s02-q076",
+    "options": [
+      "Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory",
+      "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name",
+      "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
+      "Create two separate ConfigMaps because a single ConfigMap cannot be mounted selectively in different containers"
+    ]
+  },
+  {
+    "id": "s02-q077",
+    "options": [
+      "100 megabytes of CPU cache memory available to the container for processing workloads",
+      "100 millicores, equivalent to 10% of one CPU core's total available processing time",
+      "100 minutes of CPU time allocated to the container per hour of scheduled runtime",
+      "100 millihertz, meaning the container's CPU runs at 100 cycles per second of clock"
+    ]
+  },
+  {
+    "id": "s02-q078",
+    "options": [
+      "`kubectl exec <pod> -- cat /path/to/file` to check if the mounted file reflects the updated data",
+      "`kubectl logs <pod>` to verify whether the application logged the new configuration values at load",
+      "`kubectl describe configmap <name>` to compare the update timestamp with the pod creation time",
+      "`kubectl get events` to find a ConfigMapUpdated event associated with the pod in the namespace"
+    ]
+  },
+  {
+    "id": "s02-q079",
+    "options": [
+      "All 3 ConfigMaps are created because Helm releases are exempt from ResourceQuota enforcement rules",
+      "Only 1 ConfigMap is created and the remaining 2 are queued until additional quota space is freed",
+      "The Helm install fails because ConfigMap creations are rejected by the quota admission controller",
+      "The ResourceQuota automatically increases its count limit to accommodate the incoming Helm release"
+    ]
+  },
+  {
+    "id": "s02-q080",
+    "options": [
+      "`<service-name>.<namespace>.svc.cluster.local` is the fully qualified DNS format",
+      "`<namespace>.<service-name>.kubernetes.local` following namespace-first DNS convention",
+      "`<service-name>.default.svc.internal` using the internal DNS resolution subdomain",
+      "`svc.<namespace>.<service-name>.cluster.local` with the svc prefix leading the name"
+    ]
+  },
+  {
+    "id": "s02-q081",
+    "options": [
+      "Yes — `kubectl patch` can target individual fields within a ConfigMap data value using JSON path expression syntax",
+      "No — ConfigMap data values are immutable after creation and can only be replaced by deleting and recreating them",
+      "Yes — but only if the ConfigMap was originally created with the `--structured-data` flag to enable nested patching",
+      "No — `kubectl patch` operates on Kubernetes fields, not data value contents; the entire value must be replaced"
+    ]
+  },
+  {
+    "id": "s02-q082",
+    "options": [
+      "The kube-scheduler checks LimitRanges during pod scheduling and injects default resource values",
+      "The kubelet on the target node applies default resource values when starting the container runtime",
+      "The LimitRanger admission controller in the API server mutates the pod spec during creation time",
+      "The kube-controller-manager monitors pods and patches them with default values after pod creation"
+    ]
+  },
+  {
+    "id": "s02-q083",
+    "options": [
+      "The container is throttled and its memory allocations are slowed down until usage drops below the configured limit",
+      "The excess memory allocation silently fails and returns null to the application without killing the container process",
+      "The container continues running but Kubernetes logs a warning and triggers an alert to the cluster administrator",
+      "The container process is killed by the OOM killer, and the pod's `restartPolicy` determines if it gets restarted"
+    ]
+  },
+  {
+    "id": "s02-q085",
+    "options": [
+      "The ResourceQuota rejects the pod because it has no memory specification, and the LimitRange never runs its admission logic",
+      "The pod is created with no memory request and does not count against the ResourceQuota since no memory was requested",
+      "Both admission controllers run simultaneously and the LimitRange default conflicts with the ResourceQuota check logic",
+      "The LimitRanger first injects the 128Mi default, then the ResourceQuota controller checks if the total fits in 1Gi"
+    ]
+  },
+  {
+    "id": "s02-q086",
+    "options": [
+      "`stringData` stores values as encrypted strings while `data` stores them as plaintext without any encoding applied",
+      "`stringData` supports larger values up to 10 MiB compared to `data` which has a 1 MiB limit per Secret resource",
+      "`stringData` is only available in Secret version `v2` while `data` is the legacy `v1` field from earlier releases",
+      "`stringData` accepts plaintext that Kubernetes auto-encodes to base64 before storage; `data` needs pre-encoding"
+    ]
+  },
+  {
+    "id": "s02-q087",
+    "options": [
+      "Kubernetes caches ConfigMap references and the internal cache has not been invalidated yet after the recreation",
+      "The ConfigMap was recreated in a different namespace than the pod, so the reference cannot be resolved by name",
+      "The pod was created before the ConfigMap was recreated and the kubelet ConfigMap cache has a propagation delay",
+      "The ConfigMap name is case-sensitive and it was likely recreated with different capitalization in the name field"
+    ]
+  },
+  {
+    "id": "s02-q088",
+    "options": [
+      "A `hostPath` volume pointing to a shared directory on the node filesystem for data exchange between containers",
+      "A `configMap` volume that the init container populates at runtime by writing data into the mounted path",
+      "An `emptyDir` volume shared between the init container and the main container within the same pod",
+      "A `persistentVolumeClaim` that the init container writes to and the main container reads from at startup"
+    ]
+  },
+  {
+    "id": "s02-q089",
+    "options": [
+      "The Dockerfile `ENV` value takes precedence because it is part of the immutable container image layer",
+      "The Kubernetes-defined environment variable overrides the Dockerfile `ENV` value at container start",
+      "The container sees both values concatenated with a colon separator at the environment variable key",
+      "An error occurs because duplicate environment variable names are not allowed in container runtimes"
+    ]
+  },
+  {
+    "id": "s02-q090",
+    "options": [
+      "Remove `get` and `list` verbs for Secrets from the Role, but keep `create` and pod Secret references",
+      "Set `readOnly: true` on the namespace metadata to prevent reading any resource data including Secret contents",
+      "Enable Secret encryption at rest on the cluster — this prevents `kubectl get` from displaying decoded values",
+      "Remove all Secret permissions from the Role — pods can still mount Secrets without RBAC user authorization"
+    ]
+  },
+  {
+    "id": "s02-q091",
+    "options": [
+      "Add a memory swap configuration to the container runtime to handle the overflow beyond the set limit",
+      "Reduce the memory request to zero so Kubernetes does not track or enforce memory usage on the pod",
+      "Set `oomScoreAdj: -1000` on the container security context to prevent the OOM killer from acting",
+      "Increase the memory limit to at least 300Mi to match baseline usage and account for runtime spikes"
+    ]
+  },
+  {
+    "id": "s02-q092",
+    "options": [
+      "Configuration files should be compiled into the application binary for maximum runtime performance and efficiency",
+      "All configuration must be stored in environment variables only — file-based configuration is not cloud-native",
+      "Configuration should only be managed by a dedicated operations team using manual `kubectl` commands directly",
+      "ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"
+    ]
+  },
+  {
+    "id": "s02-q093",
+    "options": [
+      "Use `kubectl apply --dry-run=server` which validates all resources against organizational policies automatically",
+      "Use Helm's built-in policy validation engine that checks all manifests before deployment to the cluster",
+      "Use Prometheus to alert when non-conforming resources are detected running inside the Kubernetes cluster",
+      "Use OPA Gatekeeper or Kyverno to evaluate resources against custom policies during admission control"
+    ]
+  },
+  {
+    "id": "s02-q094",
+    "options": [
+      "Create a single shared ConfigMap referenced by all 15 services, accepting the coupling trade-off to reduce duplication",
+      "Continue with per-service ConfigMaps to maintain loose coupling — configuration duplication is acceptable as a trade-off",
+      "Use Helm library templates or Kustomize overlays to generate per-service ConfigMaps from a shared base definition",
+      "Store the Redis configuration in an annotation on the namespace object and read it via the Downward API in each pod"
+    ]
+  },
+  {
+    "id": "s02-q095",
+    "options": [
+      "ConfigMaps stored in etcd auto-version all changes, enabling `kubectl rollback configmap` to restore any prior version easily",
+      "ConfigMaps in Git provide version history, diff capability, and rollback; Deployment rollbacks restore config versions",
+      "Kubernetes automatically creates ConfigMap snapshots before every change, stored in a dedicated backup volume on the cluster",
+      "There is no advantage over database-stored configuration — it provides the same versioning and rollback capabilities fully"
+    ]
+  },
+  {
+    "id": "s02-q096",
+    "options": [
+      "Fluentd reads resource limits directly from the container's `/proc/cgroups` file on the node filesystem for enrichment",
+      "The Fluentd Kubernetes metadata filter plugin queries the API to enrich logs with pod metadata and resource specs",
+      "Resource limits are automatically included in every log line by the container runtime without extra configuration",
+      "Fluentd reads the node's kubelet configuration file to determine pod resource limits for log enrichment purposes"
+    ]
+  },
+  {
+    "id": "s02-q097",
+    "options": [
+      "Remove all resource requests to reduce costs — Kubernetes bills infrastructure based on requested resources only",
+      "Set all resource limits to the maximum node capacity to ensure no compute resource waste across the cluster",
+      "Right-size resource requests based on observed usage data, reducing over-provisioning with a safety margin",
+      "Move all workloads to spot instances since over-provisioning only matters when using on-demand instances"
+    ]
+  },
+  {
+    "id": "s02-q098",
+    "options": [
+      "Configure Argo CD to force-restart all pods after every sync operation completes on the target cluster",
+      "Argo CD does not support ConfigMap change detection — switch to Flux which has this feature built in",
+      "Use a checksum annotation on the pod template so ConfigMap changes alter the spec and trigger rollout",
+      "Manually run `kubectl rollout restart` after each ConfigMap change to update pods with new config"
+    ]
+  },
+  {
+    "id": "s02-q099",
+    "options": [
+      "Create a ConfigMap from the generated file in CI and reference it in the Deployment manifest",
+      "Pass the entire generated file content as a command-line argument to the container's entrypoint cmd",
+      "Store the file in a cloud storage bucket and have the container download it at startup on each boot",
+      "Use Docker build arguments to embed the file in a hidden layer of the image during the build stage"
+    ]
+  },
+  {
+    "id": "s02-q100",
+    "options": [
+      "It embeds the ConfigMap content directly in the pod template, eliminating the need for a separate ConfigMap resource entirely",
+      "Any ConfigMap content change updates the hash annotation, altering the pod template and triggering a rolling update",
+      "It encrypts the ConfigMap data using SHA-256 for security purposes so that sensitive configuration is protected at rest",
+      "It validates ConfigMap content against a known checksum and blocks the deployment if the content is corrupted or tampered"
+    ]
+  }
+]

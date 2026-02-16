@@ -1,0 +1,1862 @@
+[
+  {
+    "id": "s01-q001",
+    "qIndex": 0,
+    "text": "A startup is deploying its first application on Kubernetes. The team needs to run a single instance of their web server container. A junior engineer suggests creating a standalone container directly on a node. What is the correct Kubernetes approach to run this workload?",
+    "options": [
+      "Use `docker run` on the worker node to start the container directly",
+      "Add the container definition to the kubelet's static configuration directory without a Pod spec",
+      "SSH into the node and use `containerd` to start the container with the correct namespace",
+      "Create a Pod manifest that wraps the container and submit it to the API server"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      95,
+      88,
+      78
+    ],
+    "avgLen": 82,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q002",
+    "qIndex": 1,
+    "text": "A platform team is troubleshooting why newly created Pods remain in a `Pending` state. They discover that no worker nodes are registered with the cluster. Which control plane component is responsible for assigning Pods to nodes once they become available?",
+    "options": [
+      "The `kube-controller-manager`, which monitors node health and assigns workloads",
+      "The `etcd` datastore, which triggers scheduling events when Pod objects are created",
+      "The `kube-scheduler`, which watches for unscheduled Pods and binds them to suitable nodes",
+      "The `kube-proxy`, which routes Pod creation requests to available nodes"
+    ],
+    "answer": 2,
+    "lengths": [
+      79,
+      83,
+      89,
+      71
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q003",
+    "qIndex": 2,
+    "text": "An SRE team notices that when a container inside a Pod crashes, Kubernetes automatically restarts it. They want to understand this behavior better. Which component running on each node is directly responsible for ensuring containers within Pods are running as specified?",
+    "options": [
+      "The `kube-scheduler`, which reschedules crashed containers on the same node",
+      "The container runtime interface (CRI) daemon, which independently monitors and restarts containers",
+      "The `kube-controller-manager` via the ReplicaSet controller",
+      "The `kubelet`, which ensures containers described in PodSpecs are running and healthy"
+    ],
+    "answer": 3,
+    "lengths": [
+      75,
+      98,
+      59,
+      85
+    ],
+    "avgLen": 79,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q004",
+    "qIndex": 3,
+    "text": "A DevOps engineer is setting up a new Kubernetes cluster and needs to choose a container runtime. The cluster must comply with the Kubernetes Container Runtime Interface (CRI). Which of the following is a valid CRI-compliant runtime that Kubernetes can use natively since v1.24?",
+    "options": [
+      "`dockerd` using the built-in dockershim adapter",
+      "`rkt` (Rocket) with the appc specification",
+      "`containerd` with the CRI plugin enabled",
+      "`LXC` with the Kubernetes bridge module"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      42,
+      40,
+      39
+    ],
+    "avgLen": 42,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q005",
+    "qIndex": 4,
+    "text": "A team is debugging network connectivity between two Pods running on different nodes in their cluster. Pod A on Node 1 cannot reach Pod B on Node 2. Which Kubernetes networking requirement states that all Pods must be able to communicate with each other without NAT?",
+    "options": [
+      "The Service mesh specification, which requires sidecar proxies for all inter-pod traffic",
+      "The network namespace isolation rule, which requires explicit NetworkPolicy objects to allow any cross-node traffic",
+      "The NodePort requirement, which mandates that all Pod traffic routes through the node's external IP address",
+      "The Kubernetes flat networking model, where every Pod gets a unique cluster-wide IP and can reach any other Pod directly"
+    ],
+    "answer": 3,
+    "lengths": [
+      88,
+      115,
+      107,
+      120
+    ],
+    "avgLen": 108,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q006",
+    "qIndex": 5,
+    "text": "A CTO is evaluating whether to adopt cloud native principles for their organization's software platform. They want to understand the core benefit that distinguishes cloud native applications from traditional monolithic deployments. Which statement best describes the primary advantage?",
+    "options": [
+      "Cloud native applications always cost less to operate because they exclusively use serverless infrastructure",
+      "Cloud native applications must be written in Go or Rust to achieve the required performance characteristics",
+      "Cloud native applications eliminate the need for any operational staff because they are fully self-healing",
+      "Cloud native applications are designed to be loosely coupled, resilient, and scalable, enabling frequent and reliable changes through automation"
+    ],
+    "answer": 3,
+    "lengths": [
+      108,
+      107,
+      106,
+      144
+    ],
+    "avgLen": 116,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q007",
+    "qIndex": 6,
+    "text": "A development team is breaking a monolithic e-commerce application into microservices on Kubernetes. They are deciding how to handle the product catalog, which is currently a module within the monolith. What is the recommended microservices approach for this component?",
+    "options": [
+      "Deploy the catalog as a separate service with its own database, communicating via well-defined APIs",
+      "Keep the catalog module in the monolith but expose it through a Kubernetes Service object to simulate independence",
+      "Deploy the catalog code as a sidecar container inside every Pod that needs product data",
+      "Create a shared library for the catalog logic and embed it in all consuming microservices at build time"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      114,
+      87,
+      103
+    ],
+    "avgLen": 101,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q008",
+    "qIndex": 7,
+    "text": "An operations team has deployed a Kubernetes cluster and wants to set up monitoring for cluster-level metrics such as CPU usage, memory consumption, and Pod counts. Which tool from the CNCF ecosystem is the de facto standard for collecting and querying time-series metrics in Kubernetes environments?",
+    "options": [
+      "Fluentd, which collects and forwards metric data from nodes",
+      "Grafana, which collects metrics directly from kubelets and stores them in its internal database",
+      "Prometheus, which scrapes metric endpoints and stores time-series data",
+      "Jaeger, which provides distributed metrics collection and aggregation"
+    ],
+    "answer": 2,
+    "lengths": [
+      59,
+      95,
+      70,
+      69
+    ],
+    "avgLen": 73,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q010",
+    "qIndex": 9,
+    "text": "A data processing team needs to run a batch job that processes a dataset and then exits. They want Kubernetes to ensure the job runs to completion, retrying on failure up to 3 times. Which workload resource should they use?",
+    "options": [
+      "A Deployment with `replicas: 1` and a restart policy of `Always`",
+      "A standalone Pod with `restartPolicy: OnFailure` and manual monitoring",
+      "A DaemonSet configured to run only on nodes with the `batch-processing` label",
+      "A Job resource with `backoffLimit: 3` and the default restart policy"
+    ],
+    "answer": 3,
+    "lengths": [
+      64,
+      70,
+      77,
+      68
+    ],
+    "avgLen": 70,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q011",
+    "qIndex": 10,
+    "text": "A team has deployed a web application as a Deployment with 3 replicas. Internal services in the cluster need to access this application using a stable DNS name. Which Service type provides a stable internal cluster IP and DNS entry without exposing the application outside the cluster?",
+    "options": [
+      "A `NodePort` Service, which assigns a static port on all cluster nodes",
+      "A `LoadBalancer` Service with the `internal` annotation set to `true`",
+      "An `ExternalName` Service, which creates a CNAME record pointing to the Deployment",
+      "A `ClusterIP` Service, which is the default type and provides an internal virtual IP"
+    ],
+    "answer": 3,
+    "lengths": [
+      70,
+      69,
+      82,
+      84
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q013",
+    "qIndex": 12,
+    "text": "During a disaster recovery drill, the team shuts down the `etcd` cluster to simulate a failure. They observe that the API server becomes unresponsive, but existing Pods on worker nodes continue running. Why do the Pods keep running despite `etcd` being down?",
+    "options": [
+      "Worker nodes cache the full cluster state locally and operate independently of the control plane",
+      "The `kube-proxy` takes over Pod management when the control plane is unavailable",
+      "The `kubelet` on each node continues managing already-running Pods using its local state, even without control plane connectivity",
+      "Pods are managed by the container runtime which has no dependency on any Kubernetes component"
+    ],
+    "answer": 2,
+    "lengths": [
+      96,
+      80,
+      129,
+      93
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q014",
+    "qIndex": 13,
+    "text": "A stateful application requires persistent storage that survives Pod restarts and rescheduling. The team wants to decouple the storage request from the actual storage provisioning. Which pair of Kubernetes resources provides this abstraction?",
+    "options": [
+      "`ConfigMap` for storage configuration and `Secret` for storage credentials",
+      "`emptyDir` volume for temporary storage and `hostPath` volume for persistent storage",
+      "`StorageClass` for provisioning and `VolumeSnapshot` for the request",
+      "`PersistentVolume` (PV) for the actual storage and `PersistentVolumeClaim` (PVC) for the request"
+    ],
+    "answer": 3,
+    "lengths": [
+      74,
+      84,
+      68,
+      96
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q015",
+    "qIndex": 14,
+    "text": "A company is evaluating CNCF projects for their cloud native stack. They want to adopt only projects that have demonstrated widespread production adoption and meet the CNCF's highest maturity standard. What is the highest maturity level a CNCF project can achieve?",
+    "options": [
+      "Incubating, which indicates the project is production-ready and widely adopted",
+      "Graduated, which signifies the project has met rigorous maturity, adoption, and governance criteria",
+      "Stable, which means the project's API is frozen and no breaking changes will occur",
+      "Enterprise, which certifies the project for regulated industry use"
+    ],
+    "answer": 1,
+    "lengths": [
+      78,
+      99,
+      82,
+      66
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q016",
+    "qIndex": 15,
+    "text": "An SRE team needs to aggregate logs from all containers running across a Kubernetes cluster into a centralized logging backend. They want the solution to run automatically on every node without manual scheduling. Which Kubernetes pattern and resource combination is most appropriate?",
+    "options": [
+      "Deploy a logging agent as a sidecar container inside every application Pod",
+      "Deploy a single logging Deployment with `replicas` equal to the number of nodes",
+      "Run a logging agent as a DaemonSet so that one instance runs on each node automatically",
+      "Configure the kubelet to forward all container logs to the backend directly"
+    ],
+    "answer": 2,
+    "lengths": [
+      74,
+      79,
+      87,
+      75
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q017",
+    "qIndex": 16,
+    "text": "A team wants to adopt GitOps for managing their Kubernetes deployments. They want the cluster state to always match the desired state defined in a Git repository, with automatic reconciliation when drift is detected. Which describes the core GitOps principle?",
+    "options": [
+      "Developers push changes to Git, and a CI pipeline runs `kubectl apply` to deploy changes directly to the cluster",
+      "Operations staff manually review Git diffs and apply approved changes using `kubectl` during maintenance windows",
+      "The Git repository triggers webhooks that invoke the Kubernetes API server directly to create resources",
+      "An agent running in the cluster continuously reconciles the actual cluster state with the desired state declared in a Git repository"
+    ],
+    "answer": 3,
+    "lengths": [
+      112,
+      112,
+      103,
+      132
+    ],
+    "avgLen": 115,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q018",
+    "qIndex": 17,
+    "text": "A developer defines a Pod with two containers: an application container and a logging sidecar that reads the application's log files from a shared volume. What is this multi-container pattern called, and how do the containers within the Pod communicate?",
+    "options": [
+      "The sidecar pattern; containers share the same network namespace and can share volumes within the Pod",
+      "The ambassador pattern; containers communicate via the Kubernetes Service DNS",
+      "The adapter pattern; containers communicate through a shared ConfigMap that is updated in real time",
+      "The init container pattern; the logging container runs first and then passes control to the application"
+    ],
+    "answer": 0,
+    "lengths": [
+      101,
+      77,
+      99,
+      103
+    ],
+    "avgLen": 95,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q019",
+    "qIndex": 18,
+    "text": "A team has a machine learning workload that requires GPU nodes. They want to ensure these Pods are scheduled only on nodes equipped with GPUs, while other workloads avoid those nodes. Which combination of Kubernetes scheduling features should they use?",
+    "options": [
+      "Apply a `nodeSelector` on the ML Pods to target GPU nodes, and add taints to GPU nodes with tolerations on the ML Pods",
+      "Use a `ResourceQuota` to reserve GPU nodes exclusively for ML workloads",
+      "Set `nodeName` directly in the ML Pod specs to hardcode the GPU node names",
+      "Configure the `kube-scheduler` with a custom profile that only considers GPU nodes for all Pods"
+    ],
+    "answer": 0,
+    "lengths": [
+      118,
+      71,
+      74,
+      95
+    ],
+    "avgLen": 90,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q020",
+    "qIndex": 19,
+    "text": "A Pod is stuck in `CrashLoopBackOff` status. The operations team needs to investigate why the container keeps crashing. What is the most effective first step to diagnose the issue?",
+    "options": [
+      "Delete the Pod and recreate it, since `CrashLoopBackOff` is usually a transient error",
+      "Scale the Deployment to zero replicas and back to one to trigger a fresh pull of the container image",
+      "Check the container logs using `kubectl logs <pod-name>` and examine the previous container's logs with the `--previous` flag",
+      "Edit the Pod spec to add `restartPolicy: Never` so the container does not restart before investigation"
+    ],
+    "answer": 2,
+    "lengths": [
+      85,
+      100,
+      125,
+      102
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q021",
+    "qIndex": 20,
+    "text": "A Kubernetes administrator needs to understand the relationship between the kubelet and the container runtime. Which interface specification defines how the kubelet communicates with container runtimes like `containerd` and `CRI-O`?",
+    "options": [
+      "The Container Runtime Interface (CRI), a gRPC-based API defined by the Kubernetes project",
+      "The Open Container Initiative (OCI) Runtime Specification",
+      "The Container Network Interface (CNI), which handles both networking and runtime communication",
+      "The Container Storage Interface (CSI), which manages runtime lifecycle and storage operations"
+    ],
+    "answer": 0,
+    "lengths": [
+      89,
+      57,
+      94,
+      93
+    ],
+    "avgLen": 83,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q022",
+    "qIndex": 21,
+    "text": "A team wants to store non-sensitive application configuration such as database hostnames and feature flags, and inject them into multiple Pods without hardcoding values in the Pod spec. Which Kubernetes resource is designed for this purpose?",
+    "options": [
+      "A `Secret` with `type: Opaque` to store the configuration key-value pairs",
+      "An `Annotation` on the Deployment object containing the configuration values in JSON format",
+      "A `PersistentVolumeClaim` that references a shared configuration file on network storage",
+      "A `ConfigMap` that stores configuration data as key-value pairs and can be mounted as volumes or environment variables"
+    ],
+    "answer": 3,
+    "lengths": [
+      73,
+      91,
+      88,
+      118
+    ],
+    "avgLen": 93,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q023",
+    "qIndex": 22,
+    "text": "An architect is designing a cloud native application that must handle variable traffic loads efficiently. During peak hours traffic increases 10x, and during off-hours the application is nearly idle. Which cloud native design principle directly addresses this requirement?",
+    "options": [
+      "Horizontal scalability — designing stateless services that can scale out by adding more instances to handle increased load",
+      "Immutability — building container images that cannot be modified at runtime ensures consistent scaling behavior",
+      "Infrastructure as Code — defining all infrastructure in version-controlled templates enables faster provisioning",
+      "Circuit breaking — automatically stopping traffic to failing services prevents cascade failures during peak load"
+    ],
+    "answer": 0,
+    "lengths": [
+      122,
+      111,
+      112,
+      112
+    ],
+    "avgLen": 114,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q024",
+    "qIndex": 23,
+    "text": "A team needs to deploy a new version of their application with zero downtime. They currently have a Deployment running 5 replicas. They want Kubernetes to gradually replace old Pods with new ones, ensuring at least 4 Pods are always available during the update. Which strategy and configuration should they use?",
+    "options": [
+      "Set the Deployment strategy to `Recreate` with a `minReadySeconds` value of 30",
+      "Use a StatefulSet instead of a Deployment because StatefulSets support ordered rolling updates natively",
+      "Create a new Deployment alongside the old one and manually shift traffic using a Service selector change",
+      "Set the Deployment strategy to `RollingUpdate` with `maxUnavailable: 1` and `maxSurge: 1`"
+    ],
+    "answer": 3,
+    "lengths": [
+      78,
+      103,
+      104,
+      89
+    ],
+    "avgLen": 94,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q025",
+    "qIndex": 24,
+    "text": "A developer deploys a Service of type `ClusterIP` for their backend application and tries to access it from their local workstation using the ClusterIP address. The connection times out. Why can't they reach the service?",
+    "options": [
+      "The `ClusterIP` Service is only accessible from within the cluster network, not from external networks",
+      "The Service has not been assigned a DNS name yet and requires a `kube-dns` restart",
+      "ClusterIP Services require a corresponding Ingress resource to handle any traffic",
+      "The `kube-proxy` must be manually configured to allow external traffic to ClusterIP Services"
+    ],
+    "answer": 0,
+    "lengths": [
+      102,
+      82,
+      81,
+      92
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q028",
+    "qIndex": 27,
+    "text": "A team manages a Redis cache that requires stable network identities and ordered deployment. When scaling from 3 to 5 replicas, new instances must be created sequentially (redis-3, then redis-4) and each must have its own persistent storage. Which workload resource should they use?",
+    "options": [
+      "A Deployment with a `PersistentVolumeClaim` template in the Pod spec",
+      "A DaemonSet with node affinity rules to place one Redis instance per designated node",
+      "A StatefulSet with a `volumeClaimTemplates` section and a headless Service",
+      "A ReplicaSet with `podManagementPolicy: OrderedReady` and individual PVC names"
+    ],
+    "answer": 2,
+    "lengths": [
+      68,
+      84,
+      74,
+      78
+    ],
+    "avgLen": 76,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q029",
+    "qIndex": 28,
+    "text": "A Kubernetes cluster uses a CNI plugin for Pod networking. A network engineer notices that Pods can communicate across nodes but wonders how each Pod receives its IP address. Which component is responsible for allocating IP addresses to Pods?",
+    "options": [
+      "The `kube-proxy`, which assigns IPs from the Service CIDR range to each new Pod",
+      "The `kubelet`, which generates random IPs from the node's host network range",
+      "The `kube-apiserver`, which pre-assigns Pod IPs during the scheduling phase",
+      "The CNI plugin, which allocates IPs from the configured Pod CIDR range when a Pod is created on a node"
+    ],
+    "answer": 3,
+    "lengths": [
+      79,
+      76,
+      75,
+      102
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q030",
+    "qIndex": 29,
+    "text": "A team stores database passwords in Kubernetes `Secret` objects. A security reviewer points out that Secrets are only base64-encoded, not encrypted, by default. What additional measure should the team implement to protect Secret data at rest in `etcd`?",
+    "options": [
+      "Enable encryption at rest for `etcd` by configuring an `EncryptionConfiguration` resource on the API server",
+      "Configure RBAC to restrict access to Secrets, which automatically enables AES encryption",
+      "Store Secrets as `ConfigMaps` instead, since ConfigMaps support native encryption in `etcd`",
+      "Use `kubectl create secret --encrypt` flag to encrypt the Secret before storing it"
+    ],
+    "answer": 0,
+    "lengths": [
+      107,
+      88,
+      91,
+      82
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q031",
+    "qIndex": 30,
+    "text": "After deploying a new application, a Pod is stuck in `ImagePullBackOff` status. The team verifies that the image name is correct and the registry is accessible from their laptops. What is the most likely cause within the cluster context?",
+    "options": [
+      "The node's container runtime has reached its maximum image cache size and cannot pull new images",
+      "The cluster nodes cannot reach the container registry, or the Pod lacks the required `imagePullSecrets` for a private registry",
+      "The `kube-scheduler` has placed the Pod on a node that does not support the container image format",
+      "The `ImagePullBackOff` status always indicates the image tag does not exist in the registry"
+    ],
+    "answer": 1,
+    "lengths": [
+      96,
+      126,
+      98,
+      91
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q032",
+    "qIndex": 31,
+    "text": "A startup wants to run event-driven functions on Kubernetes that automatically scale to zero when idle and scale up on incoming requests. They want to avoid managing infrastructure for scaling. Which CNCF project enables serverless workloads on Kubernetes?",
+    "options": [
+      "Istio, which provides automatic scaling and traffic management for serverless workloads",
+      "Helm, which packages serverless functions as charts for easy deployment and scaling",
+      "Prometheus, which triggers auto-scaling based on custom metric thresholds",
+      "Knative, which provides serving and eventing components for serverless workloads on Kubernetes"
+    ],
+    "answer": 3,
+    "lengths": [
+      87,
+      83,
+      73,
+      94
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q033",
+    "qIndex": 32,
+    "text": "A team is adopting the twelve-factor app methodology for their cloud native applications. They need to decide how to handle application configuration that varies between environments (development, staging, production). What does the twelve-factor methodology recommend?",
+    "options": [
+      "Store configuration in code alongside the application, using Git branches for different environments",
+      "Use a centralized configuration server that the application queries at startup",
+      "Bundle environment-specific configuration files into the container image at build time",
+      "Store configuration in the environment, strictly separated from the application code"
+    ],
+    "answer": 3,
+    "lengths": [
+      100,
+      78,
+      86,
+      84
+    ],
+    "avgLen": 87,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q034",
+    "qIndex": 33,
+    "text": "A microservices team is troubleshooting high latency in a request that flows through 5 services. They need to identify which service is causing the bottleneck. Which observability technique allows them to track a single request as it propagates through multiple services?",
+    "options": [
+      "Centralized logging with correlated timestamps across all services",
+      "Health check endpoints on each service that report response times",
+      "Distributed tracing, which propagates trace context across service boundaries to track request flow",
+      "Metric dashboards showing average latency per service over the last hour"
+    ],
+    "answer": 2,
+    "lengths": [
+      66,
+      65,
+      99,
+      72
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q035",
+    "qIndex": 34,
+    "text": "A team is building a CI/CD pipeline for their Kubernetes application. They want the pipeline to automatically build a container image on every commit, run tests, and deploy to a staging cluster. Which step should occur immediately BEFORE deploying to the cluster?",
+    "options": [
+      "Push the built container image to a container registry so the cluster can pull it during deployment",
+      "Scale down the staging cluster to zero nodes to prevent conflicts during deployment",
+      "Manually approve the build artifacts in a change management system",
+      "Run `kubectl delete` on the existing deployment to ensure a clean deployment target"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      83,
+      66,
+      83
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q036",
+    "qIndex": 35,
+    "text": "A developer notices that their application Pod has been assigned to a node but the container is not yet running. The Pod status shows `Init:0/2`. What does this status indicate?",
+    "options": [
+      "The Pod has 2 regular containers and neither has started due to resource constraints",
+      "The Pod is waiting for 2 ConfigMap dependencies that have not been created in the namespace",
+      "The Pod requires 2 volumes to be mounted and neither is available on the assigned node",
+      "The Pod has 2 init containers that must complete successfully before the main containers start, and none have completed yet"
+    ],
+    "answer": 3,
+    "lengths": [
+      84,
+      91,
+      86,
+      123
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q037",
+    "qIndex": 36,
+    "text": "A platform team wants to ensure that two replicas of their web application Pod never run on the same node, to improve availability during node failures. Which scheduling feature should they configure?",
+    "options": [
+      "Pod anti-affinity with `topologyKey: kubernetes.io/hostname` to spread Pods across nodes",
+      "A `nodeSelector` with unique labels on each node targeted by each replica",
+      "A `PodDisruptionBudget` with `maxUnavailable: 1` to prevent co-location",
+      "A taint on each node that only tolerates a single Pod from the Deployment"
+    ],
+    "answer": 0,
+    "lengths": [
+      88,
+      73,
+      71,
+      73
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q038",
+    "qIndex": 37,
+    "text": "A frontend application needs to discover and communicate with a backend Service named `inventory-api` in the `production` namespace. The frontend is deployed in the same namespace. What DNS name should the frontend use to reach the backend?",
+    "options": [
+      "`inventory-api.production.pod.cluster.local`",
+      "`inventory-api.cluster.local`",
+      "`production.inventory-api.svc.cluster.local`",
+      "`inventory-api` or `inventory-api.production.svc.cluster.local`"
+    ],
+    "answer": 3,
+    "lengths": [
+      44,
+      29,
+      44,
+      63
+    ],
+    "avgLen": 45,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q039",
+    "qIndex": 38,
+    "text": "A monitoring team needs to deploy a log collector agent on every node in the cluster, including new nodes that are added later. The agent should run exactly one instance per node. Which workload resource should they use?",
+    "options": [
+      "A Deployment with `replicas` set to the current number of nodes and a `podAntiAffinity` rule",
+      "A StatefulSet with node affinity rules targeting each node by hostname",
+      "A DaemonSet, which automatically schedules one Pod on every node in the cluster",
+      "A CronJob that periodically checks for new nodes and creates Pods on unmonitored nodes"
+    ],
+    "answer": 2,
+    "lengths": [
+      92,
+      70,
+      79,
+      86
+    ],
+    "avgLen": 82,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q040",
+    "qIndex": 39,
+    "text": "A cluster administrator wants to restrict network traffic so that only frontend Pods can communicate with backend Pods in the same namespace. All other traffic to the backend should be denied. Which Kubernetes resource should they create?",
+    "options": [
+      "A `NetworkPolicy` with an ingress rule that allows traffic only from Pods with the frontend label",
+      "A `Service` with a selector that only matches frontend Pods",
+      "An `Ingress` resource with path-based routing rules for frontend traffic",
+      "A `ResourceQuota` that limits network bandwidth for non-frontend Pods"
+    ],
+    "answer": 0,
+    "lengths": [
+      97,
+      59,
+      72,
+      69
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q041",
+    "qIndex": 40,
+    "text": "A developer creates a Pod with an `emptyDir` volume shared between two containers. Later, the Pod is rescheduled to a different node. What happens to the data stored in the `emptyDir` volume?",
+    "options": [
+      "The data is automatically migrated to the new node by the kubelet",
+      "The data persists on the original node and can be manually mounted on the new node",
+      "The data is preserved in `etcd` and restored when the Pod starts on the new node",
+      "The data is lost because `emptyDir` volumes have the same lifecycle as the Pod and are deleted when the Pod is removed from a node"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      82,
+      80,
+      130
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q042",
+    "qIndex": 41,
+    "text": "A team operating a microservices architecture on Kubernetes notices that when the payment service goes down, the order service also fails because it synchronously calls the payment service. This creates a cascading failure across the entire system. Which pattern should they implement to prevent this?",
+    "options": [
+      "Deploy both services in the same Pod so they share a network namespace and never experience network failures",
+      "Add more replicas of the payment service to ensure it never goes down",
+      "Increase the timeout value on the order service's HTTP client to give the payment service more time to respond",
+      "Implement the circuit breaker pattern in the order service to fail fast when the payment service is unavailable"
+    ],
+    "answer": 3,
+    "lengths": [
+      108,
+      69,
+      110,
+      111
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q044",
+    "qIndex": 43,
+    "text": "A team has Prometheus running in their cluster and wants to set up alerts when Pod CPU usage exceeds 80% for more than 5 minutes. Which component in the Prometheus ecosystem is responsible for handling alerting rules and sending notifications?",
+    "options": [
+      "The Prometheus server itself, which sends email and Slack notifications directly when rules trigger",
+      "Grafana, which evaluates Prometheus alerting rules and dispatches notifications",
+      "Alertmanager, which receives alerts from Prometheus and handles deduplication, grouping, and routing to notification channels",
+      "Node Exporter, which monitors node metrics and triggers alerts when thresholds are exceeded"
+    ],
+    "answer": 2,
+    "lengths": [
+      99,
+      79,
+      125,
+      91
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q045",
+    "qIndex": 44,
+    "text": "A product team wants to test a new feature with 5% of their production traffic before rolling it out to all users. They need to route a small percentage of requests to the new version while keeping 95% on the stable version. Which deployment strategy best supports this?",
+    "options": [
+      "A blue-green deployment with two full environments and a DNS switch at 5%",
+      "A canary deployment where a small number of new version Pods receive a controlled percentage of traffic",
+      "A rolling update with `maxSurge: 5%` to gradually replace old Pods",
+      "An A/B test using client-side feature flags with no infrastructure changes"
+    ],
+    "answer": 1,
+    "lengths": [
+      73,
+      103,
+      66,
+      74
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q046",
+    "qIndex": 45,
+    "text": "An operations team wants to organize cluster resources by project. They need to isolate the resources of Project A from Project B so that each team can only see and manage their own resources. Which Kubernetes concept provides this resource isolation boundary?",
+    "options": [
+      "Labels and selectors, which logically group resources and restrict visibility",
+      "Annotations, which tag resources with project ownership metadata for access control",
+      "Resource quotas, which isolate resources by limiting CPU and memory per project",
+      "Namespaces, which provide a scope for resource names and can be used with RBAC to enforce access boundaries"
+    ],
+    "answer": 3,
+    "lengths": [
+      77,
+      83,
+      79,
+      107
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q047",
+    "qIndex": 46,
+    "text": "During a cluster upgrade, the team needs to understand the order of component upgrades. The Kubernetes documentation recommends a specific upgrade order for control plane components. Which component should typically be upgraded first?",
+    "options": [
+      "The `kube-scheduler`, because it must understand new scheduling features before other components",
+      "The `kubelet` on worker nodes, because they must be ready for new Pod specifications",
+      "The `kube-apiserver`, because all other components communicate through it and it must support the new API version",
+      "The `etcd` cluster, because it must support the new data schema before any component is upgraded"
+    ],
+    "answer": 2,
+    "lengths": [
+      96,
+      84,
+      113,
+      96
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q048",
+    "qIndex": 47,
+    "text": "A team needs to run a database migration script exactly once before their main application starts in each Pod. The migration must complete successfully before the application container begins. Which Kubernetes feature provides this sequential startup behavior?",
+    "options": [
+      "A `postStart` lifecycle hook on the application container",
+      "A Job resource that runs before the Deployment is created",
+      "An init container that runs the migration script and must exit successfully before the main container starts",
+      "A sidecar container with a higher `priority` value to ensure it starts first"
+    ],
+    "answer": 2,
+    "lengths": [
+      57,
+      57,
+      108,
+      76
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q049",
+    "qIndex": 48,
+    "text": "A team wants to expose their web application to external traffic. They set up a Service of type `NodePort`. After deployment, the Service is assigned NodePort 31234. How can external clients access the application?",
+    "options": [
+      "By sending requests to `<any-node-ip>:31234`, as `kube-proxy` routes NodePort traffic to the backing Pods",
+      "By sending requests to `<cluster-ip>:31234` from outside the cluster network",
+      "Only through a DNS lookup of `<service-name>.svc.cluster.local:31234`",
+      "By connecting to the Pod IP directly on port 31234"
+    ],
+    "answer": 0,
+    "lengths": [
+      105,
+      76,
+      69,
+      50
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q050",
+    "qIndex": 49,
+    "text": "A security team requires that all container images in the cluster must conform to the OCI (Open Container Initiative) image specification. What does the OCI image specification define?",
+    "options": [
+      "The runtime behavior of containers including CPU and memory limits enforcement",
+      "The format for container images including the image manifest, filesystem layers, and configuration",
+      "The network security policies that container images must embed for Kubernetes compliance",
+      "The signing and verification process for container images in production registries"
+    ],
+    "answer": 1,
+    "lengths": [
+      78,
+      98,
+      88,
+      82
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q051",
+    "qIndex": 50,
+    "text": "A developer wants to pass sensitive information like API keys to their application running in a Pod. They consider using environment variables but are concerned about security. Which Kubernetes resource is specifically designed for storing and injecting sensitive data?",
+    "options": [
+      "A `ConfigMap` with a `sensitive: true` annotation to enable encryption",
+      "An `Annotation` on the Pod with the sensitive data, which is hidden from `kubectl get` output",
+      "A `PersistentVolume` containing an encrypted file with the credentials",
+      "A `Secret`, which stores data in base64 encoding and can be mounted as volumes or environment variables with access controls via RBAC"
+    ],
+    "answer": 3,
+    "lengths": [
+      70,
+      93,
+      70,
+      133
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q052",
+    "qIndex": 51,
+    "text": "A new team member asks what role `kube-proxy` plays in the cluster. They observe that every node runs a `kube-proxy` Pod. What is the primary function of `kube-proxy`?",
+    "options": [
+      "It maintains network rules on nodes that implement Service abstractions, routing traffic from Service IPs to Pod endpoints",
+      "It serves as a reverse proxy that load-balances external traffic to the API server",
+      "It assigns IP addresses to Pods and manages the Pod network namespace lifecycle",
+      "It monitors Pod health and reports node status to the control plane"
+    ],
+    "answer": 0,
+    "lengths": [
+      122,
+      82,
+      79,
+      67
+    ],
+    "avgLen": 88,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q053",
+    "qIndex": 52,
+    "text": "A team has a Deployment with 3 replicas running version `v1.0` of their application. They update the image to `v1.1`, but the new version has a critical bug. They need to quickly revert to the previous working version. What is the fastest way to rollback?",
+    "options": [
+      "Delete the Deployment and recreate it with the `v1.0` image tag specified in the manifest",
+      "Manually edit each Pod to change the image back to `v1.0` using `kubectl edit pod`",
+      "Use `kubectl rollout undo deployment/<name>` to revert to the previous revision automatically",
+      "Scale the Deployment to 0 replicas, update the image to `v1.0`, then scale back to 3"
+    ],
+    "answer": 2,
+    "lengths": [
+      89,
+      82,
+      93,
+      84
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q055",
+    "qIndex": 54,
+    "text": "A team deploys an Ingress resource to route HTTP traffic to different backend Services based on URL paths. The Ingress routes `/api` to the API service and `/web` to the frontend service. However, traffic is not being routed. What additional component is required for Ingress resources to function?",
+    "options": [
+      "A `LoadBalancer` Service for each backend that the Ingress routes to",
+      "A `kube-proxy` upgrade to support HTTP path-based routing natively",
+      "An Ingress controller, such as NGINX Ingress Controller, that watches for Ingress resources and configures routing rules",
+      "A DNS server running inside the cluster that maps Ingress hostnames to Pod IPs"
+    ],
+    "answer": 2,
+    "lengths": [
+      68,
+      66,
+      120,
+      78
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q056",
+    "qIndex": 55,
+    "text": "A Pod is in the `Pending` state and has been for several minutes. Running `kubectl describe pod` shows the event: `0/3 nodes are available: 3 Insufficient memory`. What is the root cause and how should the team resolve it?",
+    "options": [
+      "The Pod's image is too large for the nodes' disk space; use a smaller base image",
+      "The Pod's memory request exceeds the available allocatable memory on all nodes; either reduce the request or add nodes with more memory",
+      "The Pod is waiting for a PersistentVolume with sufficient memory capacity",
+      "The `kube-scheduler` is misconfigured and cannot calculate memory availability correctly"
+    ],
+    "answer": 1,
+    "lengths": [
+      80,
+      135,
+      73,
+      88
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q057",
+    "qIndex": 56,
+    "text": "A team needs dynamically provisioned storage for their PostgreSQL StatefulSet. They want the storage to be automatically created when a PVC is submitted, without an administrator manually creating PersistentVolumes. Which Kubernetes resource enables this?",
+    "options": [
+      "A `PersistentVolume` with `reclaimPolicy: Retain` that is pre-provisioned by an administrator",
+      "A `VolumeAttachment` resource that connects cloud storage to Pods on demand",
+      "A `ConfigMap` that maps PVC names to cloud provider volume IDs for automatic binding",
+      "A `StorageClass` with a provisioner that dynamically creates PersistentVolumes when PVCs are created"
+    ],
+    "answer": 3,
+    "lengths": [
+      93,
+      75,
+      84,
+      100
+    ],
+    "avgLen": 88,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q058",
+    "qIndex": 57,
+    "text": "A team practices immutable infrastructure by building new container images for every code change instead of modifying running containers. A colleague questions this approach, arguing it wastes time rebuilding images. What is the primary benefit of immutable infrastructure?",
+    "options": [
+      "It reduces container image sizes because only changed layers need to be rebuilt",
+      "It eliminates the need for version control since each image is a complete, self-contained deployment",
+      "It ensures consistency and reproducibility — every deployment uses a known, tested artifact, eliminating configuration drift",
+      "It allows faster rollbacks because the container runtime can hot-swap layers without restarting"
+    ],
+    "answer": 2,
+    "lengths": [
+      79,
+      100,
+      124,
+      95
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q059",
+    "qIndex": 58,
+    "text": "A team is designing an API gateway for their microservices architecture on Kubernetes. The gateway should handle cross-cutting concerns like authentication, rate limiting, and request routing. Which Kubernetes resource type is commonly used as the entry point for external HTTP/HTTPS traffic to microservices?",
+    "options": [
+      "A `ClusterIP` Service with external traffic policy set to `Local`",
+      "An `Ingress` resource paired with an Ingress controller that handles routing, TLS termination, and can integrate with authentication",
+      "A `DaemonSet` running an HTTP proxy on every node with `hostNetwork: true`",
+      "A `ConfigMap` that defines routing rules consumed by `kube-proxy` for HTTP load balancing"
+    ],
+    "answer": 1,
+    "lengths": [
+      65,
+      132,
+      74,
+      89
+    ],
+    "avgLen": 90,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q060",
+    "qIndex": 59,
+    "text": "A team is evaluating whether to use serverless functions or traditional Kubernetes Deployments for a new event-processing pipeline. The pipeline receives bursts of events every few hours but is idle most of the time. Which characteristic makes serverless the better fit for this workload?",
+    "options": [
+      "Serverless platforms can automatically scale to zero during idle periods, reducing infrastructure costs for bursty workloads",
+      "Serverless functions have lower cold-start latency than traditional containers",
+      "Serverless functions support stateful processing with built-in persistent storage",
+      "Serverless runtimes provide stronger isolation guarantees than container-based Deployments"
+    ],
+    "answer": 0,
+    "lengths": [
+      124,
+      78,
+      81,
+      90
+    ],
+    "avgLen": 93,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q061",
+    "qIndex": 60,
+    "text": "A team needs a lightweight, Kubernetes-native way to handle DNS resolution within their cluster. Which CNCF graduated project serves as the default DNS server for Kubernetes clusters?",
+    "options": [
+      "BIND9, configured as a Kubernetes add-on for internal DNS resolution",
+      "PowerDNS, which is bundled with Kubernetes distributions for service discovery",
+      "ExternalDNS, which manages DNS records for Kubernetes Services and Ingresses",
+      "CoreDNS, a flexible DNS server that is the default cluster DNS provider in Kubernetes"
+    ],
+    "answer": 3,
+    "lengths": [
+      68,
+      78,
+      76,
+      85
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q062",
+    "qIndex": 61,
+    "text": "A team needs to understand where container logs are stored on a Kubernetes node by default. When a developer runs `kubectl logs <pod-name>`, where does the kubelet retrieve those logs from?",
+    "options": [
+      "From `etcd`, where all container stdout/stderr output is stored as part of the Pod status",
+      "From a centralized logging service that the kubelet queries via the Kubernetes API",
+      "From the container runtime's log files on the node, typically stored in `/var/log/containers/` as symlinks to the actual log files",
+      "From the Pod's `emptyDir` volume, which Kubernetes automatically creates for log storage"
+    ],
+    "answer": 2,
+    "lengths": [
+      89,
+      82,
+      130,
+      88
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q063",
+    "qIndex": 62,
+    "text": "A team is running multiple projects on a shared Kubernetes cluster and needs to track resource consumption per project for cost allocation. Which combination of Kubernetes features helps them attribute costs to specific teams or projects?",
+    "options": [
+      "Use separate clusters for each project to ensure complete cost isolation",
+      "Use namespaces per project combined with `ResourceQuotas` and labels, then leverage metrics from tools like Kubecost to attribute costs",
+      "Use `PodDisruptionBudgets` per project to control spending during disruptions",
+      "Use `PriorityClasses` to assign cost tiers, where higher-priority Pods cost more"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      135,
+      77,
+      80
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q064",
+    "qIndex": 63,
+    "text": "A team is using Helm to manage their Kubernetes deployments. They need to understand the structure of a Helm chart. Which file within a Helm chart defines the default configuration values that templates use during rendering?",
+    "options": [
+      "`values.yaml`, which defines default configuration values that can be overridden at install time",
+      "`Chart.yaml`, which contains both metadata and default configuration values",
+      "`requirements.yaml`, which lists dependencies and their default settings",
+      "`templates/defaults.yaml`, which is a special template that initializes all values"
+    ],
+    "answer": 0,
+    "lengths": [
+      96,
+      75,
+      72,
+      82
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q065",
+    "qIndex": 64,
+    "text": "A developer attaches labels `app: frontend` and `tier: web` to their Pod. Later, they need to query all Pods with the label `app: frontend` but NOT `tier: api`. Which `kubectl` command correctly filters using these label selectors?",
+    "options": [
+      "`kubectl get pods -l app=frontend,tier!=api`",
+      "`kubectl get pods -l app=frontend OR tier!=api`",
+      "`kubectl get pods --labels app=frontend --exclude tier=api`",
+      "`kubectl get pods -l app=frontend -l tier!=api`"
+    ],
+    "answer": 0,
+    "lengths": [
+      44,
+      47,
+      59,
+      47
+    ],
+    "avgLen": 49,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q066",
+    "qIndex": 65,
+    "text": "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which field in the Pod spec influences eviction priority, and what value makes a Pod least likely to be evicted?",
+    "options": [
+      "Set `spec.priority` to a high value; the scheduler never evicts high-priority Pods",
+      "Set resource `requests` equal to `limits` (Guaranteed QoS class), making the Pod least likely to be evicted during resource pressure",
+      "Set `spec.terminationGracePeriodSeconds` to a very high value to delay eviction indefinitely",
+      "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction"
+    ],
+    "answer": 1,
+    "lengths": [
+      82,
+      132,
+      92,
+      79
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q067",
+    "qIndex": 66,
+    "text": "A team deploys a LoadBalancer Service in a cloud-managed Kubernetes cluster. They notice that the Service has both a ClusterIP and an external IP. A new engineer is confused about how the LoadBalancer type relates to other Service types. Which statement is correct?",
+    "options": [
+      "LoadBalancer builds on top of NodePort, which in turn builds on ClusterIP, so a LoadBalancer Service has all three",
+      "LoadBalancer is independent of ClusterIP and NodePort; it creates a completely separate traffic path",
+      "LoadBalancer replaces ClusterIP with an external IP, so the Service is no longer accessible from inside the cluster",
+      "LoadBalancer only works with headless Services that have no ClusterIP"
+    ],
+    "answer": 0,
+    "lengths": [
+      114,
+      100,
+      115,
+      69
+    ],
+    "avgLen": 100,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q068",
+    "qIndex": 67,
+    "text": "A team needs to run a report-generation task every day at midnight. The task should create a Pod, run the report, and then the Pod should terminate. If the task fails, it should retry up to 2 times. Which Kubernetes resource should they use?",
+    "options": [
+      "A Deployment with a custom cron script inside the container",
+      "A CronJob that creates a Job on the defined schedule, with the Job's `backoffLimit` set to 2",
+      "A DaemonSet with a sleep loop that checks the system time and runs at midnight",
+      "A Pod with a `restartPolicy: Always` and a crontab entry inside the container"
+    ],
+    "answer": 1,
+    "lengths": [
+      59,
+      92,
+      78,
+      77
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q069",
+    "qIndex": 68,
+    "text": "A developer uses `kubectl apply -f deployment.yaml` to create a Deployment. A few minutes later, they modify the YAML file and run the same command again. What happens?",
+    "options": [
+      "Kubernetes rejects the command because the Deployment already exists and cannot be modified with `apply`",
+      "Kubernetes deletes the existing Deployment and creates a new one from the updated file",
+      "Kubernetes performs a three-way merge, comparing the last applied configuration, the live state, and the new file to update only the changed fields",
+      "Kubernetes creates a duplicate Deployment with an auto-generated suffix"
+    ],
+    "answer": 2,
+    "lengths": [
+      104,
+      86,
+      147,
+      71
+    ],
+    "avgLen": 102,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q070",
+    "qIndex": 69,
+    "text": "A security-conscious team wants to prevent any Pod from running with escalated privileges in their cluster. They need a cluster-wide policy that rejects Pod specs with `privileged: true` or capabilities like `SYS_ADMIN`. Which approach is recommended in modern Kubernetes?",
+    "options": [
+      "Configure `PodSecurityPolicy` (PSP) objects to define allowed security contexts",
+      "Use Pod Security Admission (PSA) with the `restricted` profile enforced at the namespace level",
+      "Deploy a custom webhook that intercepts all Pod creation requests and inspects security contexts",
+      "Set `allowPrivilegeEscalation: false` in the kubelet configuration to block all privileged Pods"
+    ],
+    "answer": 1,
+    "lengths": [
+      79,
+      94,
+      96,
+      95
+    ],
+    "avgLen": 91,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q071",
+    "qIndex": 70,
+    "text": "A team is running a service mesh in their cluster and notices that each application Pod has an additional container they did not define. This container intercepts all network traffic to and from the application container. What is this pattern called?",
+    "options": [
+      "The init container pattern, which sets up network rules before the application starts",
+      "The ambassador pattern, where an external proxy runs as a separate Deployment",
+      "The sidecar proxy pattern, where an injected container (like Envoy) transparently handles service-to-service communication",
+      "The adapter pattern, which transforms outgoing traffic to a standard protocol"
+    ],
+    "answer": 2,
+    "lengths": [
+      85,
+      77,
+      122,
+      77
+    ],
+    "avgLen": 90,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q072",
+    "qIndex": 71,
+    "text": "After creating a Deployment, the team notices that the desired number of replicas is 3 but only 2 Pods are running. The third Pod shows a status of `Pending`. Running `kubectl describe pod` reveals no events. What should they check next?",
+    "options": [
+      "Check whether the namespace has a `ResourceQuota` that has been exceeded, preventing the third Pod from being created",
+      "Restart the `kube-scheduler` to force re-evaluation of all pending Pods",
+      "Delete the other 2 running Pods so the ReplicaSet recreates all 3 at once",
+      "Check the Deployment's `maxSurge` setting, which may be limiting the number of Pods"
+    ],
+    "answer": 0,
+    "lengths": [
+      117,
+      71,
+      73,
+      83
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q073",
+    "qIndex": 72,
+    "text": "A team needs to understand how the various control plane components interact. When a user runs `kubectl create deployment nginx --image=nginx`, which sequence of events correctly describes what happens in the control plane?",
+    "options": [
+      "API server creates the Deployment → scheduler assigns the Deployment to a node → kubelet creates the Pods and containers",
+      "API server stores the Deployment in etcd → Deployment controller creates a ReplicaSet → ReplicaSet controller creates Pods → scheduler binds Pods to nodes → kubelet starts the containers",
+      "Scheduler receives the request first → assigns nodes → API server creates the Deployment and Pods → kubelet starts containers",
+      "API server creates Pods directly → scheduler assigns them to nodes → controller manager monitors their health"
+    ],
+    "answer": 1,
+    "lengths": [
+      120,
+      186,
+      125,
+      109
+    ],
+    "avgLen": 135,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q075",
+    "qIndex": 74,
+    "text": "A team operates a Deployment with `replicas: 5`. During a planned maintenance window, they need to ensure at least 3 Pods remain running at all times while nodes are being drained. Which resource should they configure?",
+    "options": [
+      "A `HorizontalPodAutoscaler` with a minimum of 3 replicas",
+      "A `PodDisruptionBudget` with `minAvailable: 3` to limit voluntary disruptions",
+      "A `ResourceQuota` with `pods: 3` minimum in the namespace",
+      "A node taint with `NoExecute` effect and a `tolerationSeconds` of 3600"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      77,
+      57,
+      70
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q076",
+    "qIndex": 75,
+    "text": "A team configures a `readinessProbe` on their application Pods. The probe checks if the application has loaded its cache and is ready to serve traffic. What happens when the readiness probe fails?",
+    "options": [
+      "The kubelet restarts the container to force the application to reinitialize",
+      "The Deployment scales up an additional replica to compensate for the unready Pod",
+      "The Pod is deleted and rescheduled on another node with more resources",
+      "The Pod is removed from the endpoints of all Services, so it stops receiving traffic until the probe passes again"
+    ],
+    "answer": 3,
+    "lengths": [
+      75,
+      80,
+      70,
+      113
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q077",
+    "qIndex": 76,
+    "text": "A team is designing a multi-node Kubernetes cluster. They want to understand which components run on worker nodes versus control plane nodes. Which set of components runs on every worker node?",
+    "options": [
+      "`kubelet`, `kube-proxy`, and a container runtime",
+      "`kubelet`, `kube-proxy`, and `kube-scheduler`",
+      "`kube-apiserver`, `kubelet`, and a container runtime",
+      "`etcd`, `kubelet`, and `kube-proxy`"
+    ],
+    "answer": 0,
+    "lengths": [
+      48,
+      45,
+      52,
+      35
+    ],
+    "avgLen": 45,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q078",
+    "qIndex": 77,
+    "text": "A team wants to ensure their Pod is scheduled on a node in the `us-east-1a` availability zone. They have labeled their nodes with `topology.kubernetes.io/zone=us-east-1a`. Which Pod spec configuration achieves this without bypassing the scheduler?",
+    "options": [
+      "Set `spec.nodeName` to one of the nodes in `us-east-1a`",
+      "Add an annotation `scheduler.kubernetes.io/zone: us-east-1a` to the Pod",
+      "Use `spec.nodeSelector` with `topology.kubernetes.io/zone: us-east-1a`",
+      "Configure a `PodAffinity` rule that attracts the Pod to the `us-east-1a` label"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      71,
+      70,
+      78
+    ],
+    "avgLen": 69,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q079",
+    "qIndex": 78,
+    "text": "A team needs to scale their web application based on CPU utilization. When average CPU usage across all Pods exceeds 70%, they want Kubernetes to automatically add more replicas. Which resource automates this?",
+    "options": [
+      "A `VerticalPodAutoscaler` that increases the CPU requests of existing Pods",
+      "A `HorizontalPodAutoscaler` (HPA) targeting 70% average CPU utilization with a Deployment as the scale target",
+      "A `CronJob` that periodically checks CPU usage and runs `kubectl scale` commands",
+      "A `ResourceQuota` with a CPU threshold that triggers scaling when exceeded"
+    ],
+    "answer": 1,
+    "lengths": [
+      74,
+      109,
+      80,
+      74
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q080",
+    "qIndex": 79,
+    "text": "A team creates a headless Service by setting `clusterIP: None`. They want to understand how this differs from a regular ClusterIP Service. What is the behavior of a headless Service?",
+    "options": [
+      "It does not create any DNS records, so Pods must discover each other using environment variables only",
+      "It creates a ClusterIP but hides it from `kubectl get svc` output for security purposes",
+      "DNS queries for the Service name return the individual Pod IPs instead of a single virtual IP, enabling direct Pod-to-Pod communication",
+      "It disables load balancing entirely, routing all traffic to only the first Pod in the endpoint list"
+    ],
+    "answer": 2,
+    "lengths": [
+      101,
+      87,
+      135,
+      99
+    ],
+    "avgLen": 106,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q081",
+    "qIndex": 80,
+    "text": "A developer wants to understand the relationship between a ReplicaSet and a Deployment. They notice that creating a Deployment also creates a ReplicaSet. Should they ever create ReplicaSets directly?",
+    "options": [
+      "Yes, ReplicaSets should be created directly when you need more than 10 replicas for performance reasons",
+      "No, because ReplicaSets are deprecated and will be removed in a future Kubernetes version",
+      "Yes, ReplicaSets are required for stateful applications where Deployments cannot be used",
+      "No, Deployments should be used instead of direct ReplicaSets because Deployments manage ReplicaSets and add rolling update and rollback capabilities"
+    ],
+    "answer": 3,
+    "lengths": [
+      103,
+      89,
+      88,
+      148
+    ],
+    "avgLen": 107,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q082",
+    "qIndex": 81,
+    "text": "A team is building container images and wants to ensure they follow best practices for minimal image size and security. Which approach produces the smallest and most secure container image?",
+    "options": [
+      "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final stage",
+      "Use a full Ubuntu base image and remove unnecessary packages with `apt-get remove` in the final layer",
+      "Build the application on the host machine and copy the binary into a `latest` tagged image",
+      "Use `--squash` flag to compress all layers into one, eliminating all unused files"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      101,
+      90,
+      81
+    ],
+    "avgLen": 93,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s01-q083",
+    "qIndex": 82,
+    "text": "A cluster administrator needs to create a service account that can list and get Pods in the `development` namespace but cannot delete or create them. Which RBAC resources should they create?",
+    "options": [
+      "A `ClusterRole` with `get` and `list` verbs on Pods, and a `ClusterRoleBinding` to the service account",
+      "A `Role` in the `development` namespace with `get` and `list` verbs on Pods, and a `RoleBinding` to the service account in the same namespace",
+      "A `Role` with all verbs on Pods, then create a `NetworkPolicy` to restrict write operations",
+      "A `ServiceAccount` with the annotation `rbac.authorization.kubernetes.io/verbs: get,list`"
+    ],
+    "answer": 1,
+    "lengths": [
+      102,
+      141,
+      91,
+      89
+    ],
+    "avgLen": 106,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q084",
+    "qIndex": 83,
+    "text": "A team deploys a new Pod, but it enters the `RunContainerError` state. Running `kubectl describe pod` shows the error: `failed to create containerd task: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: exec: \"/app/start.sh\": permission denied`. What is the issue?",
+    "options": [
+      "The container runtime does not have permission to pull the image from the registry",
+      "The Pod's `securityContext` has `readOnlyRootFilesystem: true`, preventing the script from running",
+      "The entrypoint script `/app/start.sh` is not executable inside the container image — the file lacks execute permissions",
+      "The `kubelet` does not have permission to create containers on this node"
+    ],
+    "answer": 2,
+    "lengths": [
+      82,
+      98,
+      119,
+      72
+    ],
+    "avgLen": 93,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q085",
+    "qIndex": 84,
+    "text": "A team has a PersistentVolumeClaim that is stuck in `Pending` state. Running `kubectl describe pvc` shows the event: `no persistent volumes available for this claim and no storage class is set`. What is the most likely cause?",
+    "options": [
+      "The PVC requests more storage than any node has available disk space",
+      "The `kube-scheduler` cannot find a node with the requested volume type",
+      "The PVC does not specify a `storageClassName` and there is no default StorageClass, and no manually provisioned PV matches the claim",
+      "The PVC is in a different namespace than the PersistentVolume it should bind to"
+    ],
+    "answer": 2,
+    "lengths": [
+      68,
+      70,
+      132,
+      79
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q086",
+    "qIndex": 85,
+    "text": "A team is debating whether to use declarative or imperative approaches for managing their Kubernetes resources. The senior engineer advocates for declarative management. What is the key advantage of the declarative approach?",
+    "options": [
+      "Declarative commands execute faster because they skip validation against the API server",
+      "Declarative configuration describes the desired end state, enabling version control, audit trails, and reproducible deployments",
+      "Declarative manifests automatically retry failed operations until the desired state is achieved",
+      "Declarative management eliminates the need for YAML files by using command-line flags"
+    ],
+    "answer": 1,
+    "lengths": [
+      87,
+      127,
+      95,
+      85
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q087",
+    "qIndex": 86,
+    "text": "A team is migrating from a monolith to microservices and needs to decide how services communicate. They need reliable asynchronous communication where messages are not lost if a service is temporarily down. Which pattern should they adopt?",
+    "options": [
+      "Asynchronous messaging through a message broker (like NATS or RabbitMQ) that persists messages until they are consumed",
+      "Synchronous REST API calls with retry logic and exponential backoff",
+      "Shared database tables where services write messages for each other to read",
+      "gRPC streaming connections that buffer messages in memory during downtime"
+    ],
+    "answer": 0,
+    "lengths": [
+      118,
+      67,
+      75,
+      73
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q088",
+    "qIndex": 87,
+    "text": "A team needs to collect OpenTelemetry traces, metrics, and logs from their Kubernetes applications. They want a vendor-neutral, unified collection pipeline that can export data to multiple backends. Which CNCF project provides this?",
+    "options": [
+      "Prometheus, which supports traces, metrics, and logs through its multi-signal receiver",
+      "OpenTelemetry Collector, which receives, processes, and exports telemetry data in a vendor-neutral way",
+      "Grafana Loki, which provides unified collection of all three signal types",
+      "Fluentd, which has been extended to handle traces and metrics in addition to logs"
+    ],
+    "answer": 1,
+    "lengths": [
+      86,
+      102,
+      73,
+      81
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q089",
+    "qIndex": 88,
+    "text": "A team is evaluating Function-as-a-Service (FaaS) platforms that run on Kubernetes. They want to write small functions triggered by HTTP requests or events without managing Pods or Deployments. Which characteristic is fundamental to the FaaS model?",
+    "options": [
+      "Functions are long-running processes that handle multiple requests concurrently in a thread pool",
+      "Functions are short-lived, event-driven units of compute that the platform scales automatically, including to zero",
+      "Functions must be compiled to WebAssembly (Wasm) for compatibility with Kubernetes runtimes",
+      "Functions require dedicated nodes with specialized hardware to execute efficiently"
+    ],
+    "answer": 1,
+    "lengths": [
+      96,
+      114,
+      91,
+      82
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q090",
+    "qIndex": 89,
+    "text": "A team deploys the Kubernetes Metrics Server in their cluster. They notice that `kubectl top pods` now shows CPU and memory usage. Which resource metrics does the Metrics Server collect, and what is its primary consumer?",
+    "options": [
+      "It collects disk I/O and network metrics, primarily used by Prometheus for alerting",
+      "It collects CPU and memory usage metrics from kubelets, primarily consumed by the `HorizontalPodAutoscaler` and `kubectl top`",
+      "It collects all container metrics including GPU utilization, primarily used by the kube-scheduler",
+      "It collects application-level metrics via HTTP scraping, primarily used by Grafana dashboards"
+    ],
+    "answer": 1,
+    "lengths": [
+      83,
+      125,
+      97,
+      93
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q091",
+    "qIndex": 90,
+    "text": "A team is instrumenting their microservices for distributed tracing. They need to propagate trace context across service boundaries so that all spans from a single request are correlated. How is trace context typically propagated between services?",
+    "options": [
+      "Through HTTP headers (like `traceparent` from the W3C Trace Context standard) that each service forwards to downstream calls",
+      "Through shared environment variables that all Pods in the cluster can read",
+      "Through Kubernetes annotations on the Pod objects that services query via the API server",
+      "Through the CNI plugin, which embeds trace IDs in the IP packet headers"
+    ],
+    "answer": 0,
+    "lengths": [
+      124,
+      74,
+      88,
+      71
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q092",
+    "qIndex": 91,
+    "text": "A team wants to ensure their container images do not contain known security vulnerabilities before deploying to production. At which stage of the CI/CD pipeline should vulnerability scanning occur?",
+    "options": [
+      "Only during the build stage, because scanning at other stages would slow down the pipeline",
+      "Only in production, where a runtime scanner monitors containers for vulnerabilities after deployment",
+      "At multiple stages: during the build (scan the image), before deployment (admission control), and continuously in the registry (detect newly discovered CVEs)",
+      "Only when developers request it manually, to avoid blocking automated pipelines"
+    ],
+    "answer": 2,
+    "lengths": [
+      90,
+      100,
+      157,
+      79
+    ],
+    "avgLen": 107,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q093",
+    "qIndex": 92,
+    "text": "A team uses Argo CD for GitOps-based deployments. They notice that after manually editing a Deployment in the cluster using `kubectl edit`, Argo CD shows the application as `OutOfSync`. What does this status mean?",
+    "options": [
+      "The Git repository has been updated with changes that have not been applied to the cluster",
+      "The live cluster state differs from the desired state declared in the Git repository, because the manual edit introduced drift",
+      "Argo CD has lost connectivity to the Git repository and cannot verify the current state",
+      "The application has errors and Argo CD cannot determine the correct state"
+    ],
+    "answer": 1,
+    "lengths": [
+      90,
+      126,
+      87,
+      73
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q094",
+    "qIndex": 93,
+    "text": "A team wants to perform a blue-green deployment for their application on Kubernetes. They have the current version (blue) running and want to deploy the new version (green) alongside it, then switch all traffic at once. How can they implement this using native Kubernetes resources?",
+    "options": [
+      "Use a single Deployment and update the image tag, which performs a blue-green switch automatically",
+      "Deploy two separate Deployments (blue and green) and switch traffic by updating the Service's selector to point from the blue Pods to the green Pods",
+      "Use an Ingress resource with weighted routing set to 0% blue and 100% green",
+      "Scale the blue Deployment to zero and the green Deployment to the desired replica count simultaneously"
+    ],
+    "answer": 1,
+    "lengths": [
+      98,
+      148,
+      75,
+      102
+    ],
+    "avgLen": 106,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q095",
+    "qIndex": 94,
+    "text": "A team needs to add metadata to their Pod that is used by external tooling but should not affect Kubernetes scheduling or routing. They want to store information like the Git commit SHA and the team responsible for the application. Which Kubernetes feature should they use?",
+    "options": [
+      "Labels, which are used for organizing and selecting resources",
+      "Annotations, which store arbitrary non-identifying metadata that external tools and libraries can access",
+      "Finalizers, which attach metadata that persists until explicitly removed",
+      "Environment variables in the Pod spec that external tools read via the Kubernetes API"
+    ],
+    "answer": 1,
+    "lengths": [
+      61,
+      104,
+      72,
+      85
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q096",
+    "qIndex": 95,
+    "text": "A team has a Deployment with `replicas: 3` and a resource request of 500m CPU per Pod. The cluster has 2 nodes, each with 1 CPU allocatable. The team tries to scale to 5 replicas. What happens?",
+    "options": [
+      "All 5 replicas start successfully because resource requests are soft limits",
+      "Only 4 replicas can be scheduled (2 per node at 500m each); the 5th Pod remains Pending due to insufficient CPU",
+      "Kubernetes automatically provisions a new node to handle the additional replicas",
+      "The scale operation is rejected by the API server because it exceeds the cluster capacity"
+    ],
+    "answer": 1,
+    "lengths": [
+      75,
+      111,
+      80,
+      89
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q097",
+    "qIndex": 96,
+    "text": "A team creates an `ExternalName` Service pointing to `legacy-db.example.com`. When Pods query this Service by its internal name, what response do they receive from the cluster DNS?",
+    "options": [
+      "The ClusterIP assigned to the Service, which proxies traffic to the external hostname",
+      "A CNAME record that resolves to `legacy-db.example.com`, with no ClusterIP or proxy involved",
+      "A direct TCP connection to the external hostname, handled by kube-proxy",
+      "An error, because Services cannot point to external resources outside the cluster"
+    ],
+    "answer": 1,
+    "lengths": [
+      85,
+      92,
+      71,
+      81
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q098",
+    "qIndex": 97,
+    "text": "A developer is debugging their application and needs to execute a shell command inside a running container. Which `kubectl` command allows them to open an interactive terminal session in the container?",
+    "options": [
+      "`kubectl attach <pod-name> --stdin --tty` to connect to the running process's stdin",
+      "`kubectl exec -it <pod-name> -- /bin/sh` to start an interactive shell in the container",
+      "`kubectl debug <pod-name> --copy-to=debug-pod` to create a debug copy of the Pod",
+      "`kubectl logs -f <pod-name>` to follow the container's interactive output"
+    ],
+    "answer": 1,
+    "lengths": [
+      83,
+      87,
+      80,
+      73
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q099",
+    "qIndex": 98,
+    "text": "A team is investigating API server authentication. They discover that Pods can authenticate to the Kubernetes API using tokens. Which mechanism provides these tokens to Pods automatically?",
+    "options": [
+      "The `kube-proxy` generates and distributes authentication tokens to all Pods",
+      "The `ServiceAccount` mechanism, which automatically mounts a projected token volume into each Pod",
+      "The kubelet generates a unique API key for each Pod and stores it in an environment variable",
+      "The container runtime creates a certificate for each container signed by the cluster CA"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      97,
+      92,
+      87
+    ],
+    "avgLen": 88,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s01-q100",
+    "qIndex": 99,
+    "text": "A team wants to understand the different ways to create Kubernetes resources. They compare `kubectl create` and `kubectl apply`. A colleague argues they are interchangeable. Which statement correctly describes the difference?",
+    "options": [
+      "They are identical in behavior; `create` is an alias for `apply`",
+      "`kubectl create` is imperative and fails if the resource already exists, while `kubectl apply` is declarative and creates or updates the resource based on the desired state",
+      "`kubectl create` is for initial creation only and `kubectl apply` is for updates only; neither can do both",
+      "`kubectl apply` requires YAML input while `kubectl create` works only with command-line flags"
+    ],
+    "answer": 1,
+    "lengths": [
+      64,
+      172,
+      106,
+      93
+    ],
+    "avgLen": 109,
+    "correctIsLongest": true
+  }
+]

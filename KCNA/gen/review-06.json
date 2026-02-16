@@ -1,0 +1,70 @@
+{
+  "set": "06",
+  "total_reviewed": 100,
+  "issues_found": 9,
+  "issues": [
+    {
+      "id": "s06-q013",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The question states 'a CNCF graduated project' but Cluster API is a Kubernetes SIG project (kubernetes-sigs/cluster-api), not a standalone CNCF project with its own maturity level (sandbox/incubating/graduated). It does not appear on the CNCF graduated projects list. The explanation also calls it 'a CNCF project' without qualification. Meanwhile, Helm (option B) IS a CNCF graduated project. The functional description fits Cluster API, but the 'CNCF graduated project' framing is incorrect.",
+      "suggested_fix": "Remove 'graduated' from the question text. Change to: 'A company uses a Kubernetes ecosystem project to manage their cluster lifecycle, including provisioning, upgrading, and scaling Kubernetes clusters declaratively. Which project is this?' Also update explanation to say 'Cluster API is a Kubernetes SIG project' instead of 'a CNCF project'."
+    },
+    {
+      "id": "s06-q016",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The answer says 'kubectl drain ignores DaemonSet-managed Pods by default behavior' but this is misleading. By default, kubectl drain does NOT ignore DaemonSet pods - it FAILS with an error about DaemonSet-managed pods. The --ignore-daemonsets flag must be explicitly passed for drain to proceed (skipping DaemonSet pods). Without the flag, drain errors out rather than silently ignoring them. The explanation contradicts itself by saying the flag 'must be passed' while the answer option says it happens 'by default'.",
+      "suggested_fix": "Reword option D to: 'D. `kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed' or clarify the explanation to note that drain errors out by default when encountering DaemonSet pods."
+    },
+    {
+      "id": "s06-q022",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states 'The --force flag bypasses PDBs but risks service disruption.' This is incorrect. The --force flag does NOT bypass PDBs. It only forces deletion of standalone pods (not managed by a controller). To bypass PDBs, the --disable-eviction flag is needed, which forces deletion instead of using the eviction API. The correct answer (A: scale up replicas) is still right, but the explanation's characterization of --force is wrong.",
+      "suggested_fix": "Change the explanation sentence to: 'The `--disable-eviction` flag bypasses PDBs by using delete instead of the eviction API, but risks service disruption. The `--force` flag only handles standalone pods not managed by a controller.'"
+    },
+    {
+      "id": "s06-q035",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The metric name 'scheduler_scheduling_algorithm_duration_seconds' was deprecated in Kubernetes 1.20 and removed in 1.23. The current equivalent is 'scheduler_framework_extension_point_duration_seconds'. While the concept of monitoring scheduling latency is correct, the specific metric name is outdated and could mislead students studying for the KCNA if they look it up in current documentation.",
+      "suggested_fix": "Update option A to use the current metric name: 'scheduler_framework_extension_point_duration_seconds' or 'scheduler_e2e_scheduling_duration_seconds' which measures end-to-end scheduling latency."
+    },
+    {
+      "id": "s06-q039",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The question asks 'Which CNCF project provides a Kubernetes-native way to declaratively manage etcd clusters, including automated backups and restore operations?' The correct answer is set to C (Velero), but Velero does NOT manage etcd clusters. Velero backs up Kubernetes resources via the Kubernetes API, not etcd directly. The question specifically asks about 'declaratively managing etcd clusters' which is what the etcd-operator (option A) was designed to do. Velero has no etcd cluster management capabilities. The explanation incorrectly claims Velero provides 'backup and restore capabilities including etcd data' - Velero backs up Kubernetes API objects, not etcd data directly.",
+      "suggested_fix": "Either change the question to ask about 'Kubernetes resource backup and restore' (making Velero the correct answer), or change the answer to A (etcd-operator) and note it is deprecated. Better approach: rewrite the question to: 'Which CNCF project provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes?' with answer C (Velero)."
+    },
+    {
+      "id": "s06-q047",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The correct answer (index 1) states 'B. Priority value of 2000000000, the highest built-in priority class' but system-node-critical actually has a priority value of 2000001000, not 2000000000. The value 2000000000 belongs to system-cluster-critical. The explanation correctly states the value is 2000001000 but contradicts the selected answer option. None of the provided options have the correct value (2000001000).",
+      "suggested_fix": "Change option B to: 'B. Priority value of 2000001000, the highest built-in priority class' to match the actual value of system-node-critical. The explanation is already correct."
+    },
+    {
+      "id": "s06-q068",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question asks 'Which CNCF project extends the Kubernetes scheduler with custom scheduling plugins?' The answer is Scheduler Plugins (scheduling-plugins), which is a kubernetes-sigs project, not a standalone CNCF project. While it exists within the CNCF ecosystem (as part of Kubernetes), calling it 'a CNCF project' may confuse students who understand CNCF projects as those with sandbox/incubating/graduated status. Additionally, Volcano (option D) IS actually a CNCF incubating project that provides batch scheduling capabilities.",
+      "suggested_fix": "Reword the question to 'Which Kubernetes SIG project extends...' or consider whether Volcano (which is an actual CNCF project) might be a more accurate answer depending on the intent of the question."
+    },
+    {
+      "id": "s06-q094",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question conflates two different scheduling concepts. It starts with 'A Pod anti-affinity rule specifies topologyKey' but then references 'whenUnsatisfiable: DoNotSchedule' which is a topologySpreadConstraints field, NOT a pod anti-affinity field. Pod anti-affinity uses 'requiredDuringSchedulingIgnoredDuringExecution' or 'preferredDuringSchedulingIgnoredDuringExecution', not 'whenUnsatisfiable'. The explanation further mixes them by saying 'hard anti-affinity (required) at the zone topology level'. This conflation could teach students incorrect associations between these distinct scheduling features.",
+      "suggested_fix": "Either make the question purely about pod anti-affinity (remove the 'whenUnsatisfiable: DoNotSchedule' reference and use 'requiredDuringSchedulingIgnoredDuringExecution' instead) or make it purely about topologySpreadConstraints (remove the 'pod anti-affinity rule' reference). For example: 'A Pod uses a requiredDuringSchedulingIgnoredDuringExecution pod anti-affinity with topologyKey: topology.kubernetes.io/zone. If all zones already have a matching Pod, what happens?'"
+    },
+    {
+      "id": "s06-q098",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states 'When a pre-upgrade hook fails, Helm aborts the upgrade and the release remains at its current version.' While the core concept is correct, the Helm documentation specifies that when a hook fails, the upgrade is marked as FAILED, not that the release simply 'remains at its previous version.' The release status becomes FAILED, and the previously deployed release remains active. This is a minor but potentially confusing distinction for students who might think the release status is unchanged.",
+      "suggested_fix": "Update explanation to: 'When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed.'"
+    }
+  ]
+}

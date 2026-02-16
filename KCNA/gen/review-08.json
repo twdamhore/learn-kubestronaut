@@ -1,0 +1,91 @@
+{
+  "set": "08",
+  "total_reviewed": 100,
+  "issues_found": 12,
+  "issues": [
+    {
+      "id": "s08-q006",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The explanation states 'Cilium is a CNCF incubating project' but Cilium graduated from the CNCF in October 2023. Since CNCF maturity levels are explicitly tested on the KCNA exam, this outdated classification could mislead students. The selected answer (index 3) is still the correct choice, and option B's claim that Cilium 'requires Envoy sidecars in every Pod' remains false, so the answer index is fine.",
+      "suggested_fix": "Change explanation from 'Cilium is a CNCF incubating project' to 'Cilium is a CNCF graduated project'"
+    },
+    {
+      "id": "s08-q007",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "Both the answer option (index 1) and the explanation describe Falco as 'CNCF incubating'. Falco graduated from the CNCF in February 2024. The functional description of Falco is correct, and it remains the correct answer to the question, but the maturity level is wrong. Since CNCF project maturity is a KCNA exam topic, this could mislead students.",
+      "suggested_fix": "Update option text from 'Falco — a cloud native runtime security tool detecting anomalous behavior via kernel events' to include 'CNCF graduated' or similar. Update explanation from 'Falco is a CNCF incubating project' to 'Falco is a CNCF graduated project'"
+    },
+    {
+      "id": "s08-q023",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 2, which points to 'Use podAntiAffinity on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload'. However, the explanation clearly describes taints and tolerations as the correct mechanism: 'Taints and tolerations are the correct mechanism for node reservation. A taint with NoSchedule effect prevents any Pod that lacks a matching toleration from being scheduled on the node.' This matches option index 3: 'Apply a taint gpu=true:NoSchedule to GPU nodes and add a matching toleration only to ML workload Pod specs'. The answer index is off by one.",
+      "suggested_fix": "Change answer from 2 to 3"
+    },
+    {
+      "id": "s08-q025",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The answer option describes Knative as 'CNCF incubating'. Knative graduated from the CNCF in September 2025. The answer (index 0, Knative) is still the correct choice for the question about serverless on Kubernetes, but the maturity level in the option text is outdated. The explanation text does not explicitly state the maturity level, so only the option text needs updating.",
+      "suggested_fix": "Update option text from 'Knative — provides serverless Serving and Eventing with scale-to-zero on Kubernetes' to reflect graduated status. Also update explanation reference if desired."
+    },
+    {
+      "id": "s08-q047",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 1, which points to 'The kube-scheduler cannot find a node with enough available resources to schedule and pull the image properly'. This is wrong — scheduling issues cause Pending state, not ImagePullBackOff. The explanation correctly describes option index 2: 'The node lacks network access to internal-registry.corp.com or the Pod lacks a valid imagePullSecret for it' as the cause. The answer index is off by one.",
+      "suggested_fix": "Change answer from 1 to 2"
+    },
+    {
+      "id": "s08-q062",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 3, which points to 'The Service sessionAffinity is set to ClientIP by default, which pins all traffic from one client to a single Pod'. This is factually incorrect — the default sessionAffinity is None, not ClientIP. The explanation correctly describes the HTTP/2 persistent connection issue (option index 2): 'gRPC uses HTTP/2, which multiplexes multiple requests over a single persistent TCP connection. Since kube-proxy performs Layer 4 load balancing, all requests on the same connection go to the same backend Pod.' The answer index is off by one.",
+      "suggested_fix": "Change answer from 3 to 2"
+    },
+    {
+      "id": "s08-q092",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 2, which points to 'The Pod is scheduled but transitions to CrashLoopBackOff as the application fails to read the missing credentials'. This is wrong — the container never starts when a mandatory Secret reference is missing. The explanation correctly describes option index 3: 'The container cannot start because mandatory env var references to non-existent Secrets cause CreateContainerConfigError'. CrashLoopBackOff would require the container to actually start and crash, which does not happen in this scenario.",
+      "suggested_fix": "Change answer from 2 to 3"
+    },
+    {
+      "id": "s08-q095",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 2, which points to 'The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster'. But the scheduling message clearly states '2 node(s) had taint {node-role.kubernetes.io/control-plane: }, 3 node(s) didn't match Pod's node affinity/selector' — meaning 3 nodes are workers that don't match affinity, not control-plane nodes. The explanation correctly describes option index 1: 'The Pod has a nodeSelector or nodeAffinity not matching any worker node, plus control-plane taints'. The answer index is off by one.",
+      "suggested_fix": "Change answer from 2 to 1"
+    },
+    {
+      "id": "s08-q097",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 1, which points to 'Deployments and DaemonSets — these exist at the cluster level and reference namespaces via labels'. This is factually incorrect — Deployments and DaemonSets are namespace-scoped resources, not cluster-scoped. The explanation correctly describes option index 2: 'Nodes, PersistentVolumes, ClusterRoles, and Namespaces themselves — these are cluster-scoped'. The answer index is off by one.",
+      "suggested_fix": "Change answer from 1 to 2"
+    },
+    {
+      "id": "s08-q100",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The answer index is 2, which points to 'Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers'. This is factually incorrect — Argo CD does not require a separate Git server; it connects directly to external Git providers like GitHub, GitLab, etc. The explanation correctly describes option index 3: 'Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture'. The answer index is off by one.",
+      "suggested_fix": "Change answer from 2 to 3"
+    },
+    {
+      "id": "s08-q030",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question describes a Saga pattern where 'if the payment step fails, the system must compensate by releasing the reserved inventory' but does not explicitly describe a central orchestrator directing the steps. The described compensation behavior exists in both orchestration-based and choreography-based Sagas. The answer (orchestration-based, index 1) is defensible since the question implies a directed sequence, but a student familiar with choreography-based Sagas could argue that event-driven compensation is also valid for this scenario.",
+      "suggested_fix": "Add clearer language to the question indicating a central controller, e.g., 'A central order service coordinates the multi-step process...'"
+    },
+    {
+      "id": "s08-q024",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states the restricted PSS profile requires 'use a read-only root filesystem (recommended)'. The parenthetical '(recommended)' is accurate — readOnlyRootFilesystem is NOT required by the restricted profile, only recommended. However, the answer option text says 'requires non-root execution, drops all capabilities, disallows escalation' — all of which are actual requirements of restricted PSS, making the answer correct. The explanation could be clearer about what is required vs. recommended to avoid confusion.",
+      "suggested_fix": "Clarify in explanation that readOnlyRootFilesystem is a recommendation of the restricted profile, not a hard requirement, to avoid student confusion"
+    }
+  ]
+}

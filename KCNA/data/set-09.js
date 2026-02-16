@@ -200,13 +200,13 @@ var questions = [
     text: "A distributed tracing system using Jaeger shows incomplete traces for requests that pass through 4 microservices. The first two services show spans, but the last two do not. All services are instrumented with OpenTelemetry SDKs. What is the most likely cause?",
     diagram: null,
     options: [
-      "The last two services are not propagating trace context headers (e.g., <code>traceparent</code>) in outgoing requests",
+      "Service 2 is not propagating trace context headers (e.g., <code>traceparent</code>) in its outgoing requests to Service 3, breaking the trace chain",
       "Jaeger does not support more than 2 spans per trace due to its default storage configuration limits",
       "The Jaeger collector has run out of available storage space and is dropping newly received span data",
       "OpenTelemetry only supports tracing for gRPC-based services and cannot instrument HTTP-based endpoints"
     ],
     answer: 0,
-    explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. If the last two services do not forward the trace context in their outgoing requests, new spans are created as separate traces rather than being linked to the original trace. This is the most common cause of incomplete traces.",
+    explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. Since spans appear for Services 1 and 2 but not 3 and 4, the break point is between Services 2 and 3 — Service 2 is not forwarding trace context headers in its outgoing requests. Without those headers, Services 3 and 4 create new independent traces instead of joining the original one. This is the most common cause of incomplete traces.",
     verify: null
   },
   {
@@ -360,7 +360,7 @@ var questions = [
     text: "A Kubernetes cluster runs CoreDNS for service discovery. An application Pod attempts to resolve the DNS name <code>my-svc.my-ns.svc.cluster.local</code> but receives <code>NXDOMAIN</code>. The Service <code>my-svc</code> exists in namespace <code>my-ns</code>. Which of the following could cause this?",
     diagram: null,
     options: [
-      "The Service was created as a headless Service with no backing Pods, so no DNS A records exist for it",
+      "The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
       "DNS resolution only works with Service ClusterIP addresses and does not support name-based lookups",
       "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
@@ -670,7 +670,7 @@ var questions = [
       "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace object"
     ],
     answer: 2,
-    explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods), `policyTypes: [\"Ingress\"]`, and an empty `ingress: []` field creates a default-deny ingress rule for the entire namespace. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.",
+    explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods) and `policyTypes: [\"Ingress\"]` creates a default-deny ingress rule for the entire namespace. Either omitting the `ingress` field entirely or setting it to an empty array (`ingress: []`) achieves the same default-deny effect — both result in no ingress being allowed. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.",
     verify: "kubectl get networkpolicy -n team-beta -o yaml"
   },
   {
@@ -730,7 +730,7 @@ var questions = [
     options: [
       "CI/CD pipelines bypass audit trails and allow cluster state to diverge from version-controlled manifests",
       "The <code>kubectl apply</code> command is deprecated and will be removed in upcoming future Kubernetes versions",
-      "Direct cluster access from CI/CD pipelines creates security risks and bypasses proper audit trail mechanisms",
+      "The kubectl apply command cannot handle container images built by CI/CD pipelines because of registry authentication restrictions",
       "Container registries cannot be accessed from within CI/CD pipelines due to network isolation constraints"
     ],
     answer: 0,
@@ -933,7 +933,7 @@ var questions = [
     id: "s09-q059",
     domain: "Container Orchestration",
     subsection: "Container Runtimes",
-    text: "An operations team notices that a container in their cluster is consuming 4GB of memory despite having a limit of 2GB. After investigation, they find the container is using <code>tmpfs</code> mounts backed by <code>emptyDir</code> with <code>medium: Memory</code>. Why does this appear to exceed the memory limit?",
+    text: "An operations team notices that a container keeps getting OOM-killed despite the application process using only 500MB of memory. The container has a 2GB memory limit and uses an <code>emptyDir</code> with <code>medium: Memory</code>. What explains the OOM kills?",
     diagram: null,
     options: [
       "Memory-backed <code>emptyDir</code> volumes count against the container's memory limit, and the kernel OOM killer will terminate the container",
@@ -942,7 +942,7 @@ var questions = [
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the container's cgroup and counts against its memory limit. If the container's process memory plus tmpfs usage exceeds the limit, the kernel's OOM killer terminates the container. The reported 4GB likely indicates the container will soon be OOM-killed.",
+    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the container's cgroup and counts against its memory limit. Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {

@@ -1,0 +1,1982 @@
+[
+  {
+    "id": "s09-q001",
+    "qIndex": 0,
+    "text": "A developer notices that a Pod in the <code>monitoring</code> namespace has been restarting repeatedly. The Pod spec includes a liveness probe that performs an HTTP GET on <code>/healthz</code> at port 8080. The application inside the container actually listens on port 9090. What is the most likely cause of the restarts?",
+    "options": [
+      "The liveness probe is targeting the wrong port, causing health checks to fail and the kubelet to restart the container",
+      "The readiness probe is misconfigured, so traffic is not routed to the Pod",
+      "The container runtime is crashing due to an incompatible image format",
+      "The scheduler is evicting the Pod because of resource pressure on the node"
+    ],
+    "answer": 0,
+    "lengths": [
+      118,
+      73,
+      69,
+      74
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q003",
+    "qIndex": 2,
+    "text": "A microservices application uses a ClusterIP Service for internal communication between the <code>order-service</code> and <code>payment-service</code>. The order-service tries to reach the payment-service using the DNS name <code>payment-service.billing</code>, but receives a connection timeout. Both services are healthy. Which of the following is the most likely cause?",
+    "options": [
+      "ClusterIP Services cannot be used for inter-Pod communication",
+      "ClusterIP addresses are only accessible from outside the cluster",
+      "The order-service container image does not support DNS resolution",
+      "The payment-service is deployed in a namespace different from <code>billing</code>, so the DNS name does not resolve"
+    ],
+    "answer": 3,
+    "lengths": [
+      61,
+      64,
+      65,
+      116
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q004",
+    "qIndex": 3,
+    "text": "Your organization is evaluating CNCF projects for a new observability stack. The architect wants to use a single vendor-neutral telemetry collection framework that supports traces, metrics, and logs. Which CNCF project best fits this requirement?",
+    "options": [
+      "Prometheus, because it natively supports traces and logs alongside metrics",
+      "Jaeger, because it provides a unified collection pipeline for all telemetry types",
+      "OpenTelemetry, because it provides a unified set of APIs, SDKs, and collectors for traces, metrics, and logs",
+      "Fluentd, because it can collect and forward all three signal types with built-in trace correlation"
+    ],
+    "answer": 2,
+    "lengths": [
+      74,
+      81,
+      108,
+      98
+    ],
+    "avgLen": 90,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q005",
+    "qIndex": 4,
+    "text": "A platform team configures Prometheus to scrape metrics from application Pods. They add the annotation <code>prometheus.io/scrape: \"true\"</code> to their Pod spec, but Prometheus is not collecting metrics. The Prometheus configuration uses <code>kubernetes_sd_configs</code> with role <code>pod</code>. What should they check first?",
+    "options": [
+      "Whether the Prometheus server has enough CPU and memory allocated",
+      "Whether the Pods have a readiness probe defined",
+      "Whether the Prometheus Operator CRDs are installed in the cluster",
+      "Whether the relabeling rules in the Prometheus config are set to filter on the <code>prometheus.io/scrape</code> annotation and the correct port annotation exists"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      47,
+      65,
+      162
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q006",
+    "qIndex": 5,
+    "text": "An SRE team adopts Argo CD for GitOps-based deployments. After pushing a manifest change to the Git repository, Argo CD shows the application status as <code>OutOfSync</code> but does not automatically deploy the change. What is the most likely reason?",
+    "options": [
+      "Argo CD requires Flux to be installed as a co-controller for automatic syncing",
+      "The application sync policy is set to <code>manual</code> rather than <code>automated</code>",
+      "Git webhooks are not supported by Argo CD for change detection",
+      "The Argo CD application manifest is missing the <code>repoURL</code> field"
+    ],
+    "answer": 1,
+    "lengths": [
+      78,
+      92,
+      62,
+      74
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q007",
+    "qIndex": 6,
+    "text": "A team has a Service of type <code>NodePort</code> configured for their web application. The Service's <code>nodePort</code> is set to 30080, and the target Pod listens on port 8080. A user accesses <code>http://&lt;node-ip&gt;:30080</code> but receives no response. The Pods are running and pass readiness checks. Which action would most effectively diagnose this issue?",
+    "options": [
+      "Verify the Service selector labels match the Pod labels using <code>kubectl get endpoints</code>",
+      "Restart the kube-proxy DaemonSet to refresh iptables rules",
+      "Change the Service type from NodePort to LoadBalancer",
+      "Increase the <code>nodePort</code> range in the API server configuration"
+    ],
+    "answer": 0,
+    "lengths": [
+      96,
+      58,
+      53,
+      72
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q008",
+    "qIndex": 7,
+    "text": "In a highly available Kubernetes control plane, multiple instances of the kube-controller-manager run across different master nodes. How does Kubernetes ensure that only one instance actively reconciles resources at a time?",
+    "options": [
+      "Each controller-manager instance is assigned a unique subset of resource types to manage",
+      "The kube-apiserver serializes all controller-manager requests and routes them to a single instance",
+      "The instances use leader election via a Lease object in the <code>kube-system</code> namespace, and only the leader performs reconciliation",
+      "A separate etcd watcher process distributes work across controller-manager instances in a round-robin fashion"
+    ],
+    "answer": 2,
+    "lengths": [
+      88,
+      98,
+      139,
+      109
+    ],
+    "avgLen": 109,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q009",
+    "qIndex": 8,
+    "text": "A security audit reveals that Pods in the <code>production</code> namespace are running containers as the root user. The team wants to enforce that all containers must run as a non-root user. Which Kubernetes mechanism should they use?",
+    "options": [
+      "Add a <code>NetworkPolicy</code> that blocks traffic from root-user containers",
+      "Set <code>privileged: false</code> in the container's resource limits",
+      "Create a <code>ResourceQuota</code> that limits the number of root containers",
+      "Configure a <code>Pod Security Admission</code> controller with the <code>restricted</code> profile on the namespace"
+    ],
+    "answer": 3,
+    "lengths": [
+      78,
+      69,
+      77,
+      116
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q010",
+    "qIndex": 9,
+    "text": "A cloud-native e-commerce platform has decomposed its monolith into 15 microservices. The team notices that a failure in the payment service causes cascading timeouts across the order, inventory, and notification services. Which pattern best addresses this problem?",
+    "options": [
+      "Implementing synchronous retries with exponential backoff across all services",
+      "Merging the payment and order services back into a single monolith to reduce network hops",
+      "Adding a circuit breaker pattern to prevent cascading failures by failing fast when the downstream service is unavailable",
+      "Deploying all services onto a single node to eliminate network latency"
+    ],
+    "answer": 2,
+    "lengths": [
+      77,
+      89,
+      121,
+      70
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q011",
+    "qIndex": 10,
+    "text": "A data-processing Pod requires a GPU node for its workload. The cluster has nodes labeled <code>accelerator=nvidia-tesla-v100</code>. The Pod spec uses a <code>nodeSelector</code> with <code>accelerator: nvidia-tesla-a100</code>. What happens when this Pod is submitted?",
+    "options": [
+      "The scheduler assigns it to one of the V100 nodes since both are NVIDIA GPUs",
+      "The Pod remains in <code>Pending</code> state because no node matches the exact label <code>accelerator: nvidia-tesla-a100</code>",
+      "The Pod is scheduled but the container fails to start due to driver incompatibility",
+      "The scheduler automatically creates the missing label on the most suitable node"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      129,
+      83,
+      79
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q012",
+    "qIndex": 11,
+    "text": "A Kubernetes cluster uses containerd as the container runtime. An operator notices that <code>docker ps</code> on a worker node shows no running containers despite multiple Pods being active. Why is this expected?",
+    "options": [
+      "The Pods are using a virtual machine runtime like Kata Containers instead of Docker",
+      "The kubelet only creates containers during Pod initialization and then hands them off to the kernel",
+      "Docker and containerd share the same container store but <code>docker ps</code> requires root privileges",
+      "Containerd manages containers independently of the Docker daemon, so <code>docker ps</code> does not list containerd-managed containers"
+    ],
+    "answer": 3,
+    "lengths": [
+      83,
+      99,
+      104,
+      135
+    ],
+    "avgLen": 105,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q013",
+    "qIndex": 12,
+    "text": "A distributed tracing system using Jaeger shows incomplete traces for requests that pass through 4 microservices. The first two services show spans, but the last two do not. All services are instrumented with OpenTelemetry SDKs. What is the most likely cause?",
+    "options": [
+      "Jaeger does not support more than 2 spans per trace",
+      "The last two services are not propagating the trace context headers (e.g., <code>traceparent</code>) in their outgoing HTTP requests",
+      "The Jaeger collector has run out of storage space for new spans",
+      "OpenTelemetry only supports tracing for gRPC, not HTTP-based services"
+    ],
+    "answer": 1,
+    "lengths": [
+      51,
+      132,
+      63,
+      69
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q014",
+    "qIndex": 13,
+    "text": "An application team creates a ConfigMap named <code>app-config</code> and mounts it as a volume in their Pod at <code>/etc/config</code>. They update the ConfigMap data using <code>kubectl edit configmap app-config</code>. After a few minutes, the files in the mounted volume reflect the new values. However, the application still uses the old configuration. Why?",
+    "options": [
+      "ConfigMap volume mounts are immutable after Pod creation and never update",
+      "Updated ConfigMaps require a new PersistentVolumeClaim to propagate changes",
+      "The application reads its configuration only at startup and does not watch for file changes on disk",
+      "The kubelet only syncs ConfigMap updates during node restarts"
+    ],
+    "answer": 2,
+    "lengths": [
+      73,
+      75,
+      99,
+      61
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q015",
+    "qIndex": 14,
+    "text": "A StatefulSet with 3 replicas uses a <code>volumeClaimTemplate</code> to provision PersistentVolumeClaims. When the StatefulSet is scaled down from 3 to 1 replica, what happens to the PVCs associated with the removed Pods?",
+    "options": [
+      "All three PVCs are deleted and reprovisioned when the StatefulSet scales back up",
+      "The PVCs are migrated to the remaining Pod to consolidate storage",
+      "The PVCs for the removed Pods are retained, allowing data to persist if the StatefulSet is scaled back up",
+      "The PVCs are marked as <code>Released</code> and the underlying storage is immediately reclaimed"
+    ],
+    "answer": 2,
+    "lengths": [
+      80,
+      65,
+      105,
+      96
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q016",
+    "qIndex": 15,
+    "text": "A CronJob is configured with <code>concurrencyPolicy: Forbid</code> and a schedule of <code>*/5 * * * *</code>. A Job triggered at 10:00 takes 7 minutes to complete. What happens at 10:05 when the next scheduled run is due?",
+    "options": [
+      "A second Job is created and runs concurrently with the first one",
+      "The CronJob controller terminates the 10:00 Job and starts the 10:05 Job",
+      "The 10:05 Job is queued and starts immediately after the 10:00 Job completes",
+      "The 10:05 run is skipped entirely because the previous Job is still active"
+    ],
+    "answer": 3,
+    "lengths": [
+      64,
+      72,
+      76,
+      74
+    ],
+    "avgLen": 72,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q017",
+    "qIndex": 16,
+    "text": "A team is migrating a legacy application to a cloud-native architecture. The application writes session state to local disk and requires sticky sessions via IP affinity. According to the twelve-factor app methodology, which principle is being violated?",
+    "options": [
+      "Factor VI (Processes) — applications should be stateless and share-nothing, storing session data in a backing service",
+      "Factor III (Config) — configuration should be stored in environment variables",
+      "Factor XI (Logs) — logs should be treated as event streams",
+      "Factor IX (Disposability) — processes should start fast and shut down gracefully"
+    ],
+    "answer": 0,
+    "lengths": [
+      117,
+      77,
+      58,
+      80
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q018",
+    "qIndex": 17,
+    "text": "A Pod is in <code>CrashLoopBackOff</code> state. Running <code>kubectl logs</code> shows the message: <code>Error: failed to connect to database at db-host:5432</code>. The database Pod is running and accessible from other Pods in the same namespace. What should you investigate next?",
+    "options": [
+      "Check whether the crashing Pod's container image includes the correct database driver and whether <code>db-host</code> resolves to the correct Service",
+      "Restart the kube-dns Pods to force a DNS cache refresh",
+      "Increase the database Pod's CPU and memory limits to handle more connections",
+      "Delete and recreate the crashing Pod since <code>CrashLoopBackOff</code> is an unrecoverable state"
+    ],
+    "answer": 0,
+    "lengths": [
+      150,
+      54,
+      76,
+      98
+    ],
+    "avgLen": 95,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q019",
+    "qIndex": 18,
+    "text": "An administrator notices that the <code>kube-apiserver</code> is responding slowly to requests. Upon investigation, etcd latency is significantly elevated. Which of the following is the most impactful optimization for etcd performance in a production cluster?",
+    "options": [
+      "Running etcd on nodes with fast SSD storage to reduce disk I/O latency for its write-ahead log",
+      "Increasing the number of etcd cluster members from 3 to 7 to distribute the read load",
+      "Disabling etcd authentication to reduce per-request overhead",
+      "Configuring etcd to use an in-memory store instead of persistent storage"
+    ],
+    "answer": 0,
+    "lengths": [
+      94,
+      85,
+      60,
+      72
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q020",
+    "qIndex": 19,
+    "text": "A team manages their application using a Helm chart. After running <code>helm upgrade my-release ./my-chart</code>, they discover a critical bug in the new version. They need to immediately revert to the previous working state. What is the fastest correct action?",
+    "options": [
+      "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version",
+      "Run <code>helm rollback my-release 0</code> to roll back to the initial installation",
+      "Run <code>helm rollback my-release</code> to revert to the previous release revision",
+      "Manually edit each Kubernetes resource to match the previous chart's templates"
+    ],
+    "answer": 2,
+    "lengths": [
+      106,
+      84,
+      84,
+      78
+    ],
+    "avgLen": 88,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q021",
+    "qIndex": 20,
+    "text": "A namespace called <code>staging</code> has a ResourceQuota configured with <code>requests.cpu: 4</code> and <code>limits.cpu: 8</code>. A developer tries to create a Pod without specifying any CPU requests or limits. What happens?",
+    "options": [
+      "The Pod is created successfully with default CPU values assigned by the scheduler",
+      "The ResourceQuota is automatically adjusted to accommodate the Pod",
+      "The Pod is created but remains in <code>Pending</code> state until a LimitRange is defined",
+      "The Pod creation is rejected by the API server because every container must specify CPU requests and limits when a ResourceQuota with compute constraints exists"
+    ],
+    "answer": 3,
+    "lengths": [
+      81,
+      66,
+      90,
+      160
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q022",
+    "qIndex": 21,
+    "text": "A NetworkPolicy is applied to the <code>backend</code> namespace that allows ingress traffic only from Pods with the label <code>role: frontend</code>. A Pod in the <code>monitoring</code> namespace with the label <code>role: prometheus</code> needs to scrape metrics from backend Pods. What must be added to allow this traffic?",
+    "options": [
+      "A new NetworkPolicy rule with a <code>namespaceSelector</code> matching the <code>monitoring</code> namespace and a <code>podSelector</code> matching <code>role: prometheus</code>",
+      "An annotation on the Prometheus Pod to bypass NetworkPolicy restrictions",
+      "A ServiceAccount with elevated privileges for the Prometheus Pod",
+      "A DNS policy exception in the CoreDNS ConfigMap"
+    ],
+    "answer": 0,
+    "lengths": [
+      179,
+      72,
+      64,
+      47
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q023",
+    "qIndex": 22,
+    "text": "A Kubernetes cluster runs CoreDNS for service discovery. An application Pod attempts to resolve the DNS name <code>my-svc.my-ns.svc.cluster.local</code> but receives <code>NXDOMAIN</code>. The Service <code>my-svc</code> exists in namespace <code>my-ns</code>. Which of the following could cause this?",
+    "options": [
+      "The Service was created as a headless Service with no backing Pods, so no A records exist",
+      "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix",
+      "DNS resolution only works with Service ClusterIP addresses, not names",
+      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
+    ],
+    "answer": 3,
+    "lengths": [
+      89,
+      70,
+      69,
+      120
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q024",
+    "qIndex": 23,
+    "text": "A startup uses Knative Serving to deploy a serverless API on Kubernetes. The API handles bursty traffic with periods of zero requests. After a period of inactivity, the first request to the API takes 8 seconds to complete. Subsequent requests take 200ms. What explains this behavior?",
+    "options": [
+      "Knative's load balancer requires 8 seconds to reconfigure its routing tables",
+      "The Knative autoscaler scaled the workload to zero replicas during inactivity, causing a cold start delay when the first request triggers a scale-up",
+      "The Kubernetes DNS cache expired and required 8 seconds to repopulate",
+      "The container image is re-pulled from the registry on every cold start"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      148,
+      69,
+      70
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q025",
+    "qIndex": 24,
+    "text": "A team deploys a DaemonSet that runs a log collector agent on every node. They add a new node to the cluster with the taint <code>dedicated=monitoring:NoSchedule</code>. The DaemonSet Pod is not scheduled on the new node. What change to the DaemonSet spec would fix this?",
+    "options": [
+      "Add a <code>nodeSelector</code> matching the new node's hostname label",
+      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> to the DaemonSet Pod template",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code>",
+      "Remove the DaemonSet's resource requests to ensure it fits on any node"
+    ],
+    "answer": 1,
+    "lengths": [
+      70,
+      95,
+      72,
+      70
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q026",
+    "qIndex": 25,
+    "text": "A developer creates a Pod with two containers: an <code>nginx</code> web server and a <code>fluentbit</code> sidecar for log shipping. The fluentbit container reads logs from a shared <code>emptyDir</code> volume. If the nginx container crashes and restarts, what happens to the log data in the <code>emptyDir</code> volume?",
+    "options": [
+      "The <code>emptyDir</code> volume is deleted and recreated when any container in the Pod restarts",
+      "The data is lost because <code>emptyDir</code> volumes are bound to individual containers, not Pods",
+      "The <code>emptyDir</code> volume persists for the lifetime of the Pod, so the data remains intact across container restarts",
+      "The kubelet moves the <code>emptyDir</code> data to a PersistentVolume before the container restart"
+    ],
+    "answer": 2,
+    "lengths": [
+      96,
+      99,
+      123,
+      99
+    ],
+    "avgLen": 104,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q027",
+    "qIndex": 26,
+    "text": "A cluster administrator wants to ensure that Pods from two different applications, <code>app-a</code> and <code>app-b</code>, are never placed on the same node. Which scheduling mechanism should they use?",
+    "options": [
+      "Pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code> using the <code>kubernetes.io/hostname</code> topology key",
+      "Node affinity with <code>preferredDuringSchedulingIgnoredDuringExecution</code> targeting different node labels",
+      "A PriorityClass that assigns higher priority to <code>app-a</code> Pods",
+      "Taints on all nodes with tolerations only for one application at a time"
+    ],
+    "answer": 0,
+    "lengths": [
+      141,
+      111,
+      71,
+      71
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q028",
+    "qIndex": 27,
+    "text": "A Kubernetes cluster stores TLS certificates for mutual TLS between microservices. The team currently uses Kubernetes Secrets of type <code>kubernetes.io/tls</code>. A security review finds that etcd is not encrypted at rest. What is the recommended remediation?",
+    "options": [
+      "Move all TLS certificates to ConfigMaps, which are encrypted by default",
+      "Enable encryption at rest for the kube-apiserver by configuring an <code>EncryptionConfiguration</code> resource with an appropriate encryption provider",
+      "Switch to using environment variables instead of mounted Secrets",
+      "Deploy a separate etcd cluster exclusively for Secret storage"
+    ],
+    "answer": 1,
+    "lengths": [
+      71,
+      152,
+      64,
+      61
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q029",
+    "qIndex": 28,
+    "text": "A platform engineering team is building an internal developer platform and wants to use a CNCF project that provides a declarative, GitOps-compatible way to define CI/CD pipelines as Kubernetes custom resources. Which project should they evaluate?",
+    "options": [
+      "Tekton, which defines CI/CD pipeline components (Tasks, Pipelines, PipelineRuns) as Kubernetes CRDs",
+      "Prometheus, which provides pipeline monitoring through its alerting rules",
+      "Envoy, which routes CI/CD pipeline traffic between build stages",
+      "Harbor, which stores pipeline definitions alongside container images"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      73,
+      63,
+      68
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q030",
+    "qIndex": 29,
+    "text": "A platform team deploys Fluent Bit as a DaemonSet to collect container logs from every node. They configure Fluent Bit to read from <code>/var/log/containers/*.log</code> and forward to Elasticsearch. After a node restart, Fluent Bit re-sends all existing logs, creating duplicates. How should they prevent this?",
+    "options": [
+      "Configure Elasticsearch to deduplicate log entries using document IDs",
+      "Enable Fluent Bit's <code>storage.type</code> as <code>filesystem</code> and configure the <code>DB</code> parameter on the tail input to persist file read offsets across restarts",
+      "Switch from Fluent Bit to Fluentd, which automatically handles offset tracking",
+      "Reduce Fluent Bit's buffer size to minimize the volume of re-sent logs"
+    ],
+    "answer": 1,
+    "lengths": [
+      69,
+      179,
+      78,
+      70
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q031",
+    "qIndex": 30,
+    "text": "A junior engineer asks why the Kubernetes control plane runs <code>kube-proxy</code> on every node as a DaemonSet. What is the primary role of <code>kube-proxy</code>?",
+    "options": [
+      "It acts as a reverse proxy for the kube-apiserver, load-balancing API requests across control plane nodes",
+      "It encrypts all Pod-to-Pod traffic using mutual TLS certificates managed by the cluster CA",
+      "It monitors node health and reports status back to the kube-controller-manager",
+      "It maintains network rules on each node (using iptables or IPVS) that enable Service-based routing to backend Pods"
+    ],
+    "answer": 3,
+    "lengths": [
+      105,
+      90,
+      78,
+      114
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q032",
+    "qIndex": 31,
+    "text": "An engineer runs <code>kubectl top pods</code> in a namespace and receives the error: <code>error: Metrics API not available</code>. The cluster was set up using kubeadm. What component is most likely missing?",
+    "options": [
+      "The Prometheus server, which provides the Metrics API endpoint",
+      "The Metrics Server, which implements the Kubernetes resource metrics API (<code>metrics.k8s.io</code>)",
+      "The kube-state-metrics exporter, which exposes Pod-level resource usage",
+      "The cAdvisor binary, which must be installed separately on each node"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      102,
+      71,
+      68
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q033",
+    "qIndex": 32,
+    "text": "A team uses labels extensively for organizing resources. They apply the label <code>env: production</code> to Pods, Services, and Deployments. An operator runs <code>kubectl get all -l env=production</code> but notices that ConfigMaps with the same label are not listed. Why?",
+    "options": [
+      "ConfigMaps do not support labels in Kubernetes",
+      "Label selectors cannot filter ConfigMaps because they are namespace-scoped resources",
+      "The <code>kubectl get all</code> command does not include ConfigMaps; it only returns a predefined subset of resource types like Pods, Services, Deployments, and ReplicaSets",
+      "The <code>-l</code> flag only works with workload resources, not configuration resources"
+    ],
+    "answer": 2,
+    "lengths": [
+      46,
+      84,
+      173,
+      88
+    ],
+    "avgLen": 98,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q034",
+    "qIndex": 33,
+    "text": "A team wants to deploy a new version of their API server using a blue-green deployment strategy on Kubernetes. They currently have a <code>v1</code> Deployment behind a Service. Which approach correctly implements blue-green?",
+    "options": [
+      "Use a single Deployment and perform a rolling update with <code>maxSurge: 100%</code>",
+      "Create a second Deployment (<code>v2</code>) with a different label (e.g., <code>version: v2</code>), verify it is healthy, then update the Service selector from <code>version: v1</code> to <code>version: v2</code>",
+      "Use a CronJob to periodically swap traffic between v1 and v2 Pods",
+      "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect"
+    ],
+    "answer": 1,
+    "lengths": [
+      85,
+      214,
+      65,
+      84
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q035",
+    "qIndex": 34,
+    "text": "A batch processing system uses Kubernetes Jobs with <code>completions: 10</code> and <code>parallelism: 3</code>. After 7 successful completions, one of the running Pods fails. What does the Job controller do?",
+    "options": [
+      "The entire Job is marked as failed and all remaining Pods are terminated",
+      "The failed Pod is restarted in place without creating a new Pod",
+      "The Job controller creates a replacement Pod to maintain progress toward 10 completions, while keeping up to 3 Pods running in parallel",
+      "The Job pauses and waits for manual intervention before continuing"
+    ],
+    "answer": 2,
+    "lengths": [
+      72,
+      63,
+      135,
+      66
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q036",
+    "qIndex": 35,
+    "text": "A security-focused organization requires strong workload isolation and considers using a sandbox container runtime. Their Kubernetes cluster uses containerd. Which runtime option provides VM-level isolation while remaining compatible with the Kubernetes CRI?",
+    "options": [
+      "Kata Containers, which runs each container inside a lightweight virtual machine while implementing the CRI interface through containerd shims",
+      "gVisor (runsc), which interposes a user-space kernel to intercept system calls, providing application-level sandboxing",
+      "runc, because it uses Linux namespaces and cgroups for complete VM-equivalent isolation",
+      "Docker-in-Docker, which nests Docker engines to isolate container processes"
+    ],
+    "answer": 0,
+    "lengths": [
+      141,
+      118,
+      87,
+      75
+    ],
+    "avgLen": 105,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q037",
+    "qIndex": 36,
+    "text": "An Ingress resource is configured with the following rules: path <code>/api</code> routes to <code>api-service:8080</code> and path <code>/web</code> routes to <code>web-service:3000</code>. A user sends a request to <code>/api/v1/users</code>. With the default <code>pathType: Prefix</code>, which backend receives the request?",
+    "options": [
+      "Neither backend receives the request because <code>/api/v1/users</code> is not an exact match for <code>/api</code>",
+      "The Ingress controller returns a 404 because the path <code>/api/v1/users</code> is not explicitly defined",
+      "The request is load-balanced equally between both backends",
+      "The request is routed to <code>api-service:8080</code> because <code>/api/v1/users</code> matches the <code>/api</code> prefix"
+    ],
+    "answer": 3,
+    "lengths": [
+      115,
+      106,
+      58,
+      126
+    ],
+    "avgLen": 101,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q038",
+    "qIndex": 37,
+    "text": "A team is containerizing their application and debating how to handle configuration. One engineer suggests baking database credentials into the container image for simplicity. According to cloud-native best practices, why is this problematic?",
+    "options": [
+      "Container images cannot contain text files, so credentials must be injected at runtime",
+      "Baking credentials into the image violates the principle of separating configuration from code, creates a security risk if the image is shared, and requires rebuilding the image for every environment",
+      "Container registries automatically strip credential files from uploaded images",
+      "Kubernetes does not mount the container filesystem, so embedded files are inaccessible"
+    ],
+    "answer": 1,
+    "lengths": [
+      86,
+      199,
+      78,
+      86
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q039",
+    "qIndex": 38,
+    "text": "During a cluster upgrade, an administrator needs to safely remove a node for maintenance. They run <code>kubectl drain node-3</code>. What actions does this command perform?",
+    "options": [
+      "It cordons the node to prevent new Pods from being scheduled, then evicts all non-DaemonSet, non-mirror Pods by respecting PodDisruptionBudgets",
+      "It stops the kubelet process on the node and archives all container logs",
+      "It deletes the node object from the cluster, permanently removing it from the API server",
+      "It moves all running containers from the node to other nodes without restarting them"
+    ],
+    "answer": 0,
+    "lengths": [
+      143,
+      72,
+      88,
+      84
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q040",
+    "qIndex": 39,
+    "text": "A Prometheus query <code>rate(http_requests_total{status=~\"5..\"}[5m])</code> returns the per-second rate of HTTP 5xx errors over the last 5 minutes. The SRE team wants to calculate the error rate as a percentage of total requests. Which PromQL expression correctly computes this?",
+    "options": [
+      "<code>rate(http_requests_total{status=~\"5..\"}[5m]) * 100</code>",
+      "<code>sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) * 100</code>",
+      "<code>count(http_requests_total{status=~\"5..\"}) / count(http_requests_total) * 100</code>",
+      "<code>histogram_quantile(0.99, rate(http_requests_total[5m]))</code>"
+    ],
+    "answer": 1,
+    "lengths": [
+      63,
+      105,
+      89,
+      68
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q041",
+    "qIndex": 40,
+    "text": "An application Pod has a readiness probe configured as a TCP socket check on port 5432. The container starts but the application takes 30 seconds to initialize its database connection pool. During those 30 seconds, what is the Pod's status from the Service's perspective?",
+    "options": [
+      "The Pod receives traffic immediately because it is in <code>Running</code> state",
+      "The Service sends traffic but marks responses as degraded",
+      "The Pod is terminated after 30 seconds due to failing the readiness probe",
+      "The Pod is not added to the Service's Endpoints until the readiness probe succeeds, so no traffic is routed to it during initialization"
+    ],
+    "answer": 3,
+    "lengths": [
+      80,
+      57,
+      73,
+      135
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q042",
+    "qIndex": 41,
+    "text": "A multi-tenant Kubernetes cluster has two teams, each with their own namespace: <code>team-alpha</code> and <code>team-beta</code>. By default, Pods in both namespaces can communicate freely. The cluster admin wants to implement a default-deny ingress policy for the <code>team-beta</code> namespace. Which NetworkPolicy achieves this?",
+    "options": [
+      "A NetworkPolicy with an empty <code>podSelector</code> and an empty <code>ingress</code> array (no rules), applied to the <code>team-beta</code> namespace",
+      "A NetworkPolicy that selects all Pods and sets <code>policyTypes: [\"Egress\"]</code> with no egress rules",
+      "Deleting the default ServiceAccount in the <code>team-beta</code> namespace",
+      "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace"
+    ],
+    "answer": 0,
+    "lengths": [
+      154,
+      104,
+      75,
+      100
+    ],
+    "avgLen": 108,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q043",
+    "qIndex": 42,
+    "text": "A service mesh is deployed using Istio in a Kubernetes cluster. The platform team wants to implement traffic mirroring to test a new version of the <code>recommendation-service</code> with production traffic without affecting users. Which Istio resource supports this?",
+    "options": [
+      "A <code>Gateway</code> resource configured with dual upstream backends",
+      "A <code>DestinationRule</code> with <code>trafficPolicy.loadBalancer.simple: ROUND_ROBIN</code> across both versions",
+      "A <code>VirtualService</code> with a <code>mirror</code> field that duplicates traffic to the new version while continuing to serve responses from the stable version",
+      "A <code>PeerAuthentication</code> policy that routes encrypted traffic to the test version"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      116,
+      165,
+      90
+    ],
+    "avgLen": 110,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q044",
+    "qIndex": 43,
+    "text": "A Deployment with the annotation <code>deployment.kubernetes.io/revision: \"5\"</code> has been updated multiple times. The team wants to roll back to revision 3. Which command achieves this?",
+    "options": [
+      "<code>kubectl rollout undo deployment/my-app --to-revision=3</code>",
+      "<code>kubectl rollout restart deployment/my-app --revision=3</code>",
+      "<code>kubectl apply -f deployment-v3.yaml --force</code>",
+      "<code>kubectl set image deployment/my-app --rollback=3</code>"
+    ],
+    "answer": 0,
+    "lengths": [
+      67,
+      67,
+      56,
+      61
+    ],
+    "avgLen": 63,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q045",
+    "qIndex": 44,
+    "text": "A Kubernetes cluster has three nodes with the following allocatable CPU: node-1 (4 cores), node-2 (8 cores), node-3 (2 cores). A new Pod requests <code>resources.requests.cpu: 3</code>. Which nodes are eligible for scheduling this Pod (ignoring all other constraints)?",
+    "options": [
+      "Only node-2, because it has the most available CPU",
+      "All three nodes, because the scheduler overcommits resources based on limits",
+      "None, because CPU requests must be specified in millicores",
+      "node-1 and node-2, because both have at least 3 allocatable CPU cores"
+    ],
+    "answer": 3,
+    "lengths": [
+      50,
+      76,
+      58,
+      69
+    ],
+    "avgLen": 63,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q046",
+    "qIndex": 45,
+    "text": "A development team uses a CI/CD pipeline that builds container images, pushes them to a registry, and then directly calls <code>kubectl apply</code> to update Deployments in the production cluster. A senior engineer raises concerns about this approach. What is the primary risk?",
+    "options": [
+      "The <code>kubectl apply</code> command is deprecated and will be removed in future Kubernetes versions",
+      "Container registries cannot be accessed from within CI/CD pipelines",
+      "Direct cluster access from CI/CD pipelines creates security risks, bypasses audit trails, and makes it difficult to track what is deployed since the cluster state diverges from version-controlled manifests",
+      "The <code>kubectl apply</code> command does not support Deployment resources"
+    ],
+    "answer": 2,
+    "lengths": [
+      102,
+      67,
+      205,
+      76
+    ],
+    "avgLen": 113,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q047",
+    "qIndex": 46,
+    "text": "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
+    "options": [
+      "A single A record for the Service name that load-balances across all Pod IPs",
+      "Only SRV records are created for headless Services; A records are not supported",
+      "No DNS records because headless Services do not participate in the DNS system",
+      "Individual A records for each Pod: <code>cassandra-0.cassandra.database.svc.cluster.local</code>, <code>cassandra-1.cassandra.database.svc.cluster.local</code>, and <code>cassandra-2.cassandra.database.svc.cluster.local</code>, plus an A record for the Service returning all Pod IPs"
+    ],
+    "answer": 3,
+    "lengths": [
+      76,
+      79,
+      77,
+      282
+    ],
+    "avgLen": 129,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q048",
+    "qIndex": 47,
+    "text": "An operator creates a Namespace with the label <code>environment: production</code> and applies a LimitRange that sets default CPU requests to <code>100m</code> and default CPU limits to <code>500m</code>. A developer deploys a Pod in this namespace specifying only <code>resources.requests.cpu: 200m</code> but no limits. What CPU limit is applied to the Pod?",
+    "options": [
+      "No CPU limit is applied; the Pod runs without a limit",
+      "The CPU limit is set equal to the request: <code>200m</code>",
+      "The LimitRange default limit of <code>500m</code> is applied since the developer did not specify a limit",
+      "The Pod creation fails because both requests and limits must be explicitly specified"
+    ],
+    "answer": 2,
+    "lengths": [
+      53,
+      60,
+      104,
+      84
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q049",
+    "qIndex": 48,
+    "text": "A Kubernetes cluster uses a StorageClass with <code>reclaimPolicy: Delete</code>. A developer deletes a PersistentVolumeClaim (PVC) that was bound to a PersistentVolume (PV) dynamically provisioned by this StorageClass. What happens to the PV and the underlying storage?",
+    "options": [
+      "The PV transitions to <code>Released</code> state and can be rebound to a new PVC",
+      "The PV is retained but the underlying storage is wiped clean",
+      "The PV remains bound to the deleted PVC indefinitely until manually cleaned up",
+      "The PV and its underlying storage are automatically deleted by the provisioner"
+    ],
+    "answer": 3,
+    "lengths": [
+      81,
+      60,
+      78,
+      78
+    ],
+    "avgLen": 74,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q050",
+    "qIndex": 49,
+    "text": "A DevOps team uses Grafana for visualization and needs to create dashboards that show both Prometheus metrics and Elasticsearch logs in a unified view. Which Grafana feature enables this?",
+    "options": [
+      "Grafana data sources, which allow configuring multiple backends (Prometheus, Elasticsearch, Loki, etc.) and querying them in the same dashboard using different panels",
+      "Grafana Alertmanager integration, which unifies data from all sources into a single alert stream",
+      "Grafana Mimir, which converts all telemetry data into a single format before visualization",
+      "Grafana Agent, which replaces both Prometheus and Elasticsearch with a unified collection pipeline"
+    ],
+    "answer": 0,
+    "lengths": [
+      166,
+      96,
+      90,
+      98
+    ],
+    "avgLen": 113,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q051",
+    "qIndex": 50,
+    "text": "A developer runs <code>kubectl apply -f deployment.yaml</code> and the Deployment is created. Minutes later, another team member runs <code>kubectl edit deployment my-app</code> and changes the replica count. The next time the first developer runs <code>kubectl apply -f deployment.yaml</code> (which still has the original replica count), what happens to the replica count?",
+    "options": [
+      "The replica count remains at the value set by <code>kubectl edit</code> because <code>kubectl apply</code> only updates fields present in the last-applied annotation",
+      "The command fails with a conflict error because the live state differs from the local file",
+      "Kubernetes automatically chooses the higher replica count to avoid disruption",
+      "The replica count reverts to the value in <code>deployment.yaml</code> because <code>kubectl apply</code> uses a three-way merge that compares the file, the last-applied annotation, and the live state"
+    ],
+    "answer": 3,
+    "lengths": [
+      165,
+      90,
+      77,
+      200
+    ],
+    "avgLen": 133,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q052",
+    "qIndex": 51,
+    "text": "A Kubernetes cluster uses RBAC for access control. A developer has a Role that grants <code>get</code>, <code>list</code>, and <code>watch</code> permissions on Pods in the <code>dev</code> namespace. They attempt to run <code>kubectl exec -it my-pod -- /bin/bash</code> in that namespace but receive a <code>Forbidden</code> error. What additional permission is needed?",
+    "options": [
+      "The <code>exec</code> verb on the <code>pods</code> resource",
+      "The <code>update</code> verb on the <code>pods</code> resource",
+      "The <code>create</code> verb on the <code>pods/exec</code> subresource",
+      "Cluster-admin privileges because <code>kubectl exec</code> requires cluster-wide access"
+    ],
+    "answer": 2,
+    "lengths": [
+      60,
+      62,
+      70,
+      87
+    ],
+    "avgLen": 70,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q053",
+    "qIndex": 52,
+    "text": "A team configures a Horizontal Pod Autoscaler (HPA) targeting 70% average CPU utilization for their Deployment with <code>minReplicas: 2</code> and <code>maxReplicas: 10</code>. Current average CPU utilization across 4 replicas is 90%. How does the HPA calculate the desired replica count?",
+    "options": [
+      "It doubles the current replica count to 8",
+      "It adds 1 replica at a time until utilization drops below 70%",
+      "It immediately scales to <code>maxReplicas</code> (10) because utilization exceeds the target",
+      "It uses the formula <code>ceil(currentReplicas * (currentUtilization / targetUtilization))</code>, resulting in <code>ceil(4 * (90/70)) = ceil(5.14) = 6</code> replicas"
+    ],
+    "answer": 3,
+    "lengths": [
+      41,
+      61,
+      93,
+      168
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q054",
+    "qIndex": 53,
+    "text": "An engineering team instruments their microservices with OpenTelemetry and exports traces to Jaeger. They notice that a particular API endpoint has high latency but cannot identify which downstream service is the bottleneck. Which Jaeger feature helps them most?",
+    "options": [
+      "The Jaeger alerting system, which sends notifications when latency exceeds a threshold",
+      "The trace timeline view (Gantt chart), which visualizes the duration and nesting of individual spans across all services in a single request",
+      "The Jaeger metric aggregator, which computes average latency per service",
+      "The Jaeger log correlator, which links log entries to specific trace spans"
+    ],
+    "answer": 1,
+    "lengths": [
+      86,
+      140,
+      72,
+      74
+    ],
+    "avgLen": 93,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q055",
+    "qIndex": 54,
+    "text": "A team deploys a Service mesh using Envoy sidecars injected into every Pod. They notice that inter-service latency has increased by 2-5ms per hop. What is the most likely explanation for this latency increase?",
+    "options": [
+      "Each request is proxied through the local Envoy sidecar, which adds overhead for TLS termination, routing decisions, and telemetry collection",
+      "Envoy replaces the kube-proxy iptables rules, causing slower packet processing",
+      "Envoy sidecars consume all available CPU on the node, starving the application containers",
+      "The service mesh disables TCP connection reuse, forcing a new TCP handshake for every request"
+    ],
+    "answer": 0,
+    "lengths": [
+      141,
+      78,
+      89,
+      93
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q056",
+    "qIndex": 55,
+    "text": "A cluster administrator runs <code>kubectl get componentstatuses</code> (deprecated) and sees that the scheduler component shows as <code>Unhealthy</code>. Which impact does a non-functioning kube-scheduler have on the cluster?",
+    "options": [
+      "Existing running Pods are terminated because the scheduler manages Pod lifecycle",
+      "The kube-apiserver stops accepting new Pod creation requests",
+      "All Services lose their ClusterIP addresses because the scheduler allocates them",
+      "New Pods remain in <code>Pending</code> state because no component assigns them to nodes, but existing Pods continue to run unaffected"
+    ],
+    "answer": 3,
+    "lengths": [
+      80,
+      60,
+      80,
+      134
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q057",
+    "qIndex": 56,
+    "text": "A platform team practices infrastructure as code (IaC) and stores all Kubernetes manifests in a Git repository. They want to ensure that any manual change made to the cluster (e.g., via <code>kubectl edit</code>) is detected and reverted automatically. Which approach achieves this?",
+    "options": [
+      "Use a CronJob that periodically runs <code>kubectl apply</code> against all manifests in the Git repository",
+      "Deploy a GitOps controller (such as Argo CD or Flux) with automated sync and self-healing enabled, which continuously reconciles the cluster state with the Git repository",
+      "Configure RBAC to prevent all manual changes by removing edit permissions from every user",
+      "Set all Kubernetes resources to immutable using finalizers"
+    ],
+    "answer": 1,
+    "lengths": [
+      107,
+      170,
+      89,
+      58
+    ],
+    "avgLen": 106,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q058",
+    "qIndex": 57,
+    "text": "A cluster has nodes in three availability zones: <code>zone-a</code>, <code>zone-b</code>, and <code>zone-c</code>. A Deployment with 6 replicas needs Pods spread evenly across zones. Which Kubernetes feature achieves this?",
+    "options": [
+      "Pod affinity rules with <code>topologyKey: topology.kubernetes.io/zone</code>",
+      "Node affinity rules that prefer nodes in each zone equally",
+      "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code>",
+      "Setting <code>replicas: 2</code> in three separate Deployments, one per zone"
+    ],
+    "answer": 2,
+    "lengths": [
+      77,
+      58,
+      114,
+      76
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q059",
+    "qIndex": 58,
+    "text": "An operations team notices that a container in their cluster is consuming 4GB of memory despite having a limit of 2GB. After investigation, they find the container is using <code>tmpfs</code> mounts backed by <code>emptyDir</code> with <code>medium: Memory</code>. Why does this appear to exceed the memory limit?",
+    "options": [
+      "Memory-backed <code>emptyDir</code> volumes count against the container's memory limit, and the kernel OOM killer will eventually terminate the container",
+      "Memory limits in Kubernetes are advisory only and are never enforced by the container runtime",
+      "The <code>tmpfs</code> mount bypasses cgroup memory accounting entirely",
+      "Memory-backed <code>emptyDir</code> volumes count against the Pod-level memory overhead, not the container limit, so they appear as excess usage in node-level metrics"
+    ],
+    "answer": 0,
+    "lengths": [
+      153,
+      93,
+      71,
+      166
+    ],
+    "avgLen": 121,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s09-q060",
+    "qIndex": 59,
+    "text": "A team creates an Ingress resource with TLS termination. The Ingress references a Secret of type <code>kubernetes.io/tls</code> containing <code>tls.crt</code> and <code>tls.key</code>. Users report certificate warnings when accessing the site via HTTPS. Which of the following is the most likely cause?",
+    "options": [
+      "The Ingress controller does not support TLS termination",
+      "Kubernetes Secrets cannot store TLS certificates larger than 1KB",
+      "The certificate in the Secret does not match the hostname specified in the Ingress <code>tls.hosts</code> field, causing a hostname mismatch error",
+      "The Ingress resource requires a separate <code>CertificateSigningRequest</code> object to enable TLS"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      64,
+      146,
+      100
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q061",
+    "qIndex": 60,
+    "text": "A Prometheus instance is configured with a <code>scrape_interval</code> of 15 seconds and a <code>scrape_timeout</code> of 10 seconds. One target consistently takes 12 seconds to respond to scrape requests. What is the impact on Prometheus metrics collection for this target?",
+    "options": [
+      "Prometheus waits the full 12 seconds and successfully collects the metrics",
+      "Prometheus marks the scrape as failed because the 12-second response time exceeds the 10-second <code>scrape_timeout</code>, and the <code>up</code> metric for this target reads <code>0</code>",
+      "Prometheus automatically increases the timeout for slow targets",
+      "The target is permanently removed from the scrape configuration after 3 consecutive timeouts"
+    ],
+    "answer": 1,
+    "lengths": [
+      74,
+      192,
+      63,
+      92
+    ],
+    "avgLen": 105,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q062",
+    "qIndex": 61,
+    "text": "An engineer deploys a new Pod and it enters <code>ImagePullBackOff</code> state. Running <code>kubectl describe pod</code> shows the event: <code>Failed to pull image \"registry.internal.com/app:v2.0\": rpc error: code = Unknown desc = Error response from daemon: unauthorized</code>. What is the most likely fix?",
+    "options": [
+      "Create or update an <code>imagePullSecret</code> in the namespace and reference it in the Pod spec or the default ServiceAccount",
+      "Recreate the Pod with a <code>hostNetwork: true</code> setting to access the private registry",
+      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries only serve the latest tag",
+      "Add the registry URL to the CoreDNS configuration as a custom upstream resolver"
+    ],
+    "answer": 0,
+    "lengths": [
+      128,
+      93,
+      117,
+      79
+    ],
+    "avgLen": 104,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q063",
+    "qIndex": 62,
+    "text": "A Kubernetes cluster runs version 1.28. A developer creates a Pod using the <code>apps/v1</code> API group for a Deployment and the <code>v1</code> API group for a ConfigMap. What determines which API group and version is used for a particular resource?",
+    "options": [
+      "The developer can freely choose any API group for any resource type",
+      "The API group is determined by the namespace the resource is created in",
+      "All resources use the <code>v1</code> API group by default and other groups are deprecated",
+      "Each resource type is defined in a specific API group, and the API server only accepts requests using the correct group and version for that resource"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      71,
+      90,
+      149
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q064",
+    "qIndex": 63,
+    "text": "A team migrates from a monolithic REST API to microservices. They need a communication pattern where a service publishes events that multiple consumer services can process independently and asynchronously. Which pattern is most appropriate?",
+    "options": [
+      "Synchronous HTTP request-response between all services",
+      "Event-driven architecture using a message broker (such as NATS, Kafka, or RabbitMQ) with a publish-subscribe pattern",
+      "Shared database tables where services poll for new records",
+      "gRPC bidirectional streaming between each pair of services"
+    ],
+    "answer": 1,
+    "lengths": [
+      54,
+      116,
+      58,
+      58
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q065",
+    "qIndex": 64,
+    "text": "A team has a Deployment with <code>revisionHistoryLimit: 3</code>. After performing 7 rolling updates, how many old ReplicaSets are retained in the cluster?",
+    "options": [
+      "7 old ReplicaSets, one for each historical revision",
+      "0 old ReplicaSets, because Kubernetes automatically cleans up all inactive ReplicaSets",
+      "3 old ReplicaSets, as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
+      "1 old ReplicaSet, representing only the immediately previous version"
+    ],
+    "answer": 2,
+    "lengths": [
+      51,
+      86,
+      104,
+      68
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q066",
+    "qIndex": 65,
+    "text": "A Pod spec includes <code>automountServiceAccountToken: false</code>. What is the effect of this setting?",
+    "options": [
+      "The Pod cannot communicate with any other Pods in the cluster",
+      "The Pod uses the default ServiceAccount but with read-only permissions",
+      "The Pod is prevented from pulling images from private container registries",
+      "The Pod's containers do not have the ServiceAccount token mounted at <code>/var/run/secrets/kubernetes.io/serviceaccount</code>, preventing automatic API server authentication"
+    ],
+    "answer": 3,
+    "lengths": [
+      61,
+      70,
+      74,
+      175
+    ],
+    "avgLen": 95,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q067",
+    "qIndex": 66,
+    "text": "The kubelet on a worker node cannot reach the kube-apiserver due to a network partition. What happens to the Pods running on that node?",
+    "options": [
+      "All Pods on the node are immediately terminated by the container runtime",
+      "The kubelet automatically restarts all Pods to attempt reconnection",
+      "Pods continue to run on the node, but the node is marked as <code>NotReady</code> after the node lease expires, and after the pod-eviction-timeout the control plane begins evicting Pods (marking them for deletion)",
+      "The Pods are instantly rescheduled to other available nodes"
+    ],
+    "answer": 2,
+    "lengths": [
+      72,
+      67,
+      213,
+      59
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q068",
+    "qIndex": 67,
+    "text": "A team implements a canary deployment by running 1 canary Pod alongside 9 stable Pods behind the same Service. They notice that the canary receives approximately 10% of traffic, which is expected. After monitoring for 30 minutes with no errors, they want to gradually increase canary traffic to 50% without changing the number of Pods. Which approach allows this?",
+    "options": [
+      "Scale the canary Deployment to 9 replicas to achieve a 50/50 Pod ratio",
+      "Use a service mesh (like Istio) or Ingress controller that supports weighted routing to send 50% of traffic to the canary regardless of Pod count",
+      "Modify the Kubernetes Service to use <code>sessionAffinity: ClientIP</code> with a 50% hash ring",
+      "Create two separate Services and configure DNS round-robin between them"
+    ],
+    "answer": 1,
+    "lengths": [
+      70,
+      145,
+      96,
+      71
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q069",
+    "qIndex": 68,
+    "text": "A team uses <code>kubectl create secret generic db-creds --from-literal=password=MyS3cret</code> to create a Secret. They later inspect the Secret with <code>kubectl get secret db-creds -o yaml</code> and see the value <code>TXlTM2NyZXQ=</code>. Is the password securely encrypted?",
+    "options": [
+      "Yes, Kubernetes automatically encrypts Secret values using AES-256 before storing them",
+      "Yes, the Secret is encrypted using the cluster's built-in PKI infrastructure",
+      "No, but the value is hashed, so the original password cannot be recovered",
+      "No, the value is only base64-encoded (not encrypted), and base64 is a reversible encoding that provides no security; encryption at rest must be configured separately"
+    ],
+    "answer": 3,
+    "lengths": [
+      86,
+      76,
+      73,
+      165
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q070",
+    "qIndex": 69,
+    "text": "After upgrading a Deployment's container image, all new Pods are stuck in <code>Pending</code> state. Running <code>kubectl describe pod</code> shows: <code>0/3 nodes are available: 3 Insufficient cpu</code>. The existing Pods from the old ReplicaSet are still running. What is happening?",
+    "options": [
+      "The new container image requires a different CPU architecture than the cluster nodes support",
+      "The cluster has run out of IP addresses in the Pod CIDR range",
+      "The updated Pod spec requests more CPU than any node can provide, and since <code>maxUnavailable: 0</code> prevents old Pods from being terminated first, new Pods cannot be scheduled",
+      "The kube-scheduler is not running and cannot assign Pods to nodes"
+    ],
+    "answer": 2,
+    "lengths": [
+      92,
+      61,
+      182,
+      65
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q071",
+    "qIndex": 70,
+    "text": "An application team creates an <code>ExternalName</code> Service pointing to <code>db.legacy-datacenter.example.com</code>. A Pod resolves this Service name and attempts to connect. What does Kubernetes return for a DNS lookup of this Service?",
+    "options": [
+      "The ClusterIP address of the Service, which the kube-proxy forwards to the external hostname",
+      "An A record containing the IP address of the external hostname, pre-resolved by CoreDNS",
+      "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client then resolves to the external IP",
+      "The Service returns an error because ExternalName Services cannot resolve external hostnames"
+    ],
+    "answer": 2,
+    "lengths": [
+      92,
+      87,
+      123,
+      92
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q072",
+    "qIndex": 71,
+    "text": "A security team wants to scan container images for known vulnerabilities before they are deployed to the Kubernetes cluster. They need a CNCF-hosted solution that integrates with their existing CI/CD pipeline and container registry. Which project should they consider?",
+    "options": [
+      "Falco, which detects runtime security threats in running containers",
+      "Trivy, which scans container images, filesystem, and Git repositories for vulnerabilities, misconfigurations, and secrets",
+      "OPA Gatekeeper, which enforces admission control policies on Kubernetes resources",
+      "cert-manager, which manages TLS certificates for workloads"
+    ],
+    "answer": 1,
+    "lengths": [
+      67,
+      121,
+      81,
+      58
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q073",
+    "qIndex": 72,
+    "text": "A developer creates a PersistentVolumeClaim requesting <code>10Gi</code> of storage with <code>accessModes: [ReadWriteMany]</code>. The only available StorageClass provisions AWS EBS volumes. What happens?",
+    "options": [
+      "The PVC is bound to a 10Gi EBS volume that supports ReadWriteMany access",
+      "The provisioner automatically creates an NFS share on top of the EBS volume",
+      "The PVC is created with <code>ReadWriteOnce</code> mode, silently ignoring the requested access mode",
+      "The PVC remains in <code>Pending</code> state because AWS EBS volumes only support <code>ReadWriteOnce</code> access mode and cannot satisfy <code>ReadWriteMany</code>"
+    ],
+    "answer": 3,
+    "lengths": [
+      72,
+      75,
+      100,
+      167
+    ],
+    "avgLen": 104,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q074",
+    "qIndex": 73,
+    "text": "A team uses an init container to pre-populate a shared volume with configuration data before the main application container starts. The init container exits with code 0, but the main container fails to find the expected files. What is the most likely issue?",
+    "options": [
+      "The init container and the main container are mounting different volumes or different <code>mountPath</code> values, so the files are written to one location and read from another",
+      "Init containers cannot share volumes with the main container",
+      "Init container data is automatically cleared when the main container starts",
+      "The init container's exit code 0 indicates it encountered an error during execution"
+    ],
+    "answer": 0,
+    "lengths": [
+      179,
+      60,
+      75,
+      83
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q075",
+    "qIndex": 74,
+    "text": "A Pod has a <code>PriorityClass</code> with a value of 1000000, while most other Pods in the cluster use the default priority of 0. When the cluster is at full capacity and this high-priority Pod is submitted, what does the scheduler do?",
+    "options": [
+      "The Pod is placed in a queue and waits for capacity to free up naturally",
+      "The scheduler preempts (evicts) lower-priority Pods to make room for the high-priority Pod",
+      "The Pod is rejected because the cluster has no available resources",
+      "The scheduler splits the Pod's resource requests across multiple nodes"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      90,
+      66,
+      70
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q076",
+    "qIndex": 75,
+    "text": "A developer defines a Pod with two containers that both try to bind to port 8080. The Pod is created but one container enters a <code>CrashLoopBackOff</code> state. Why does this happen?",
+    "options": [
+      "Kubernetes randomly selects which container gets the port and terminates the other",
+      "Containers within the same Pod share the same network namespace and IP address, so the second container fails to bind to port 8080 because it is already in use",
+      "Each container in a Pod gets its own IP address, so port conflicts are impossible",
+      "The kube-proxy detects the conflict and reassigns one container to a different port"
+    ],
+    "answer": 1,
+    "lengths": [
+      82,
+      159,
+      81,
+      83
+    ],
+    "avgLen": 101,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q077",
+    "qIndex": 76,
+    "text": "A cluster uses Calico as the CNI plugin with <code>NetworkPolicy</code> enforcement enabled. A developer creates a Pod in the <code>app</code> namespace but does not create any NetworkPolicies in that namespace. What is the default network behavior for that Pod?",
+    "options": [
+      "All ingress and egress traffic is denied by default when a CNI with NetworkPolicy support is installed",
+      "Only egress traffic is allowed; ingress requires an explicit NetworkPolicy",
+      "The Pod can only communicate with Pods in the same namespace",
+      "All ingress and egress traffic is allowed because no NetworkPolicy selects this Pod; Kubernetes follows a default-allow model until a policy is applied"
+    ],
+    "answer": 3,
+    "lengths": [
+      102,
+      74,
+      60,
+      151
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q078",
+    "qIndex": 77,
+    "text": "A company is designing a new cloud-native platform and debates between using a monolithic API gateway versus a service mesh for managing inter-service communication. For a microservices architecture with 50+ services requiring mutual TLS, retries, and circuit breaking, which approach is more suitable and why?",
+    "options": [
+      "A monolithic API gateway, because it provides a single control point for all traffic policies and is simpler to manage than distributed proxies",
+      "A service mesh, because it embeds network functionality (mTLS, retries, circuit breaking) directly into the data plane via sidecar proxies, handling east-west traffic without requiring application code changes",
+      "Neither; these features should be implemented directly in each microservice's application code for maximum control",
+      "A DNS-based load balancer, because it natively supports mTLS and retry logic at the DNS resolution layer"
+    ],
+    "answer": 1,
+    "lengths": [
+      143,
+      209,
+      114,
+      104
+    ],
+    "avgLen": 143,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q079",
+    "qIndex": 78,
+    "text": "A platform team wants to implement structured logging across all microservices in their Kubernetes cluster. Currently, some services log in JSON format while others use unstructured plain text. They use Fluentd to collect and parse logs. What is the primary benefit of standardizing on JSON-formatted structured logs?",
+    "options": [
+      "JSON logs consume significantly less storage space than plain text logs",
+      "Fluentd cannot parse plain text log formats under any circumstances",
+      "Structured JSON logs enable consistent parsing, filtering, and querying in log aggregation systems without writing custom regex parsers for each service's log format",
+      "JSON is the only format supported by Elasticsearch for log indexing"
+    ],
+    "answer": 2,
+    "lengths": [
+      71,
+      67,
+      165,
+      67
+    ],
+    "avgLen": 93,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q080",
+    "qIndex": 79,
+    "text": "A cluster administrator wants to understand the flow of a Pod creation request. They submit a Deployment manifest via <code>kubectl apply</code>. In which order do the control plane components process this request?",
+    "options": [
+      "kubectl sends the manifest to the scheduler, which forwards it to the API server for storage",
+      "The API server authenticates/authorizes the request and stores the Deployment in etcd; the Deployment controller creates a ReplicaSet and Pods; the scheduler assigns Pods to nodes; the kubelet on each assigned node starts the containers",
+      "The kubelet directly receives the manifest from kubectl, creates the Pods, and reports back to the API server",
+      "etcd receives the manifest first, triggers the controller manager, which then notifies the API server"
+    ],
+    "answer": 1,
+    "lengths": [
+      92,
+      236,
+      109,
+      101
+    ],
+    "avgLen": 135,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q081",
+    "qIndex": 80,
+    "text": "A team uses Flux CD for GitOps-based deployments. They store their Kubernetes manifests in a Git repository and configure Flux to reconcile every 5 minutes. A developer accidentally pushes a broken manifest that causes Pod crashes. The team fixes the issue and pushes a corrected manifest. What is the maximum time before Flux applies the fix?",
+    "options": [
+      "Immediately, because Flux receives a Git webhook notification for every push",
+      "Up to 5 minutes, matching the configured reconciliation interval, unless a webhook or manual reconciliation trigger is configured",
+      "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed",
+      "The fix is never applied automatically; Flux requires manual approval for all changes after a failure"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      129,
+      95,
+      101
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q082",
+    "qIndex": 81,
+    "text": "A team runs a Deployment with a <code>strategy.type: Recreate</code>. They update the container image. What is the behavior during the update?",
+    "options": [
+      "New Pods are created first, then old Pods are terminated once the new ones are ready",
+      "Pods are replaced one at a time, similar to a rolling update but with longer grace periods",
+      "All existing Pods are terminated simultaneously, and then new Pods are created, causing a brief period of downtime",
+      "The Deployment is paused until an administrator manually approves the update"
+    ],
+    "answer": 2,
+    "lengths": [
+      84,
+      90,
+      114,
+      76
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q083",
+    "qIndex": 82,
+    "text": "A cluster administrator needs to restrict which container registries can be used for pulling images in the production namespace. They want to enforce that only images from <code>registry.company.com</code> are allowed. Which approach is most effective?",
+    "options": [
+      "Configure an <code>imagePullPolicy: Never</code> on all Pods to prevent pulling from external registries",
+      "Set a NetworkPolicy that blocks outbound traffic to all registries except <code>registry.company.com</code>",
+      "Create a ResourceQuota that limits the number of images from external registries",
+      "Use an admission controller (such as OPA Gatekeeper or Kyverno) with a policy that validates the image repository prefix on all Pod creation requests"
+    ],
+    "answer": 3,
+    "lengths": [
+      104,
+      107,
+      80,
+      149
+    ],
+    "avgLen": 110,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q084",
+    "qIndex": 83,
+    "text": "A team configures a Service of type <code>LoadBalancer</code> in a bare-metal Kubernetes cluster (no cloud provider). After creation, the Service shows <code>EXTERNAL-IP</code> as <code>&lt;pending&gt;</code> indefinitely. What is the likely cause and solution?",
+    "options": [
+      "The Service YAML is malformed and needs the <code>loadBalancerIP</code> field specified",
+      "The kube-proxy needs to be restarted to detect the LoadBalancer Service",
+      "Bare-metal clusters do not have a cloud load balancer provisioner by default; a solution like MetalLB must be installed to allocate external IPs for LoadBalancer Services",
+      "LoadBalancer Services are only supported in Kubernetes versions 1.25 and above"
+    ],
+    "answer": 2,
+    "lengths": [
+      87,
+      71,
+      170,
+      78
+    ],
+    "avgLen": 102,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q085",
+    "qIndex": 84,
+    "text": "A team has 12 microservices that each need to implement authentication, rate limiting, and request logging. Rather than duplicating this logic in every service, which cloud-native pattern centralizes these cross-cutting concerns?",
+    "options": [
+      "Implementing a shared library that all services import and compile into their binaries",
+      "Deploying a single monolithic proxy that all external and internal traffic must traverse",
+      "Using an API gateway or service mesh that handles authentication, rate limiting, and logging at the infrastructure layer, outside of individual service code",
+      "Adding these features as init containers in each Pod"
+    ],
+    "answer": 2,
+    "lengths": [
+      86,
+      88,
+      156,
+      52
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q086",
+    "qIndex": 85,
+    "text": "A FinOps team wants to track Kubernetes cluster costs by team and application. They need to attribute compute costs (CPU and memory) to individual teams. Which approach provides the most accurate cost allocation?",
+    "options": [
+      "Dividing the total cluster cost equally among all teams",
+      "Using namespace-level resource quotas combined with labels to track actual resource usage per team, and using tools like Kubecost or OpenCost to map usage to costs",
+      "Assigning each team a dedicated node pool and billing based on node count regardless of utilization",
+      "Monitoring only the number of Pods per team since all Pods consume equal resources"
+    ],
+    "answer": 1,
+    "lengths": [
+      55,
+      163,
+      99,
+      82
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q087",
+    "qIndex": 86,
+    "text": "A developer creates a Pod with <code>restartPolicy: Never</code> that runs a data processing script. The script encounters an error and the container exits with code 1. What happens to the Pod?",
+    "options": [
+      "The Pod remains in <code>Failed</code> status, and the container is not restarted because the restart policy is <code>Never</code>",
+      "The kubelet restarts the container with exponential backoff",
+      "The Pod is automatically deleted by the garbage collector",
+      "The Pod transitions to <code>Succeeded</code> status because it completed execution"
+    ],
+    "answer": 0,
+    "lengths": [
+      130,
+      59,
+      57,
+      83
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q088",
+    "qIndex": 87,
+    "text": "A StatefulSet named <code>redis</code> with 3 replicas performs a rolling update. <code>redis-2</code> updates successfully, but <code>redis-1</code> fails readiness checks and remains in a crash loop. What happens to <code>redis-0</code>?",
+    "options": [
+      "<code>redis-0</code> is updated simultaneously with <code>redis-1</code> since they are in the same update batch",
+      "<code>redis-0</code> is terminated preemptively to free resources for <code>redis-1</code>",
+      "<code>redis-0</code> is updated regardless of <code>redis-1</code>'s status because the StatefulSet does not enforce ordering during updates",
+      "<code>redis-0</code> is not updated because the StatefulSet controller processes Pods in reverse ordinal order and waits for each Pod to be ready before proceeding to the next"
+    ],
+    "answer": 3,
+    "lengths": [
+      112,
+      90,
+      140,
+      175
+    ],
+    "avgLen": 129,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q089",
+    "qIndex": 88,
+    "text": "A team maintains a Helm chart with a <code>values.yaml</code> that sets <code>replicaCount: 3</code>. For their staging environment, they want to override this to 1 replica without modifying the chart. What is the correct approach?",
+    "options": [
+      "Edit the <code>values.yaml</code> file in the chart source and change <code>replicaCount</code> to 1",
+      "Use <code>helm install my-release ./my-chart --set replicaCount=1</code> or provide a separate values file with <code>-f staging-values.yaml</code> to override the default",
+      "Create a Kustomize overlay that patches the Helm template output",
+      "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code>"
+    ],
+    "answer": 1,
+    "lengths": [
+      100,
+      171,
+      64,
+      102
+    ],
+    "avgLen": 109,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q090",
+    "qIndex": 89,
+    "text": "A node in the cluster has the taint <code>node.kubernetes.io/memory-pressure:NoSchedule</code> applied automatically by the kubelet. What caused this taint to appear?",
+    "options": [
+      "An administrator manually tainted the node during a maintenance window",
+      "The kube-scheduler applied the taint because too many Pods were already running on the node",
+      "The kubelet detected that available memory on the node has fallen below the eviction threshold and applied the taint to prevent new Pods from being scheduled",
+      "The taint was added by the kube-controller-manager due to a failed node health check"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      91,
+      157,
+      84
+    ],
+    "avgLen": 101,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q091",
+    "qIndex": 90,
+    "text": "A Kubernetes cluster is configured with multiple RuntimeClasses: <code>runc</code> (default), <code>gvisor</code>, and <code>kata</code>. A Pod spec includes <code>runtimeClassName: gvisor</code>. What does this configure?",
+    "options": [
+      "The Pod's containers use the gVisor (runsc) handler, which provides a user-space kernel sandbox for system call interception, instead of the default runc runtime",
+      "The Pod is scheduled only on nodes that have gVisor hardware acceleration",
+      "The Pod uses gVisor's built-in container image format instead of OCI images",
+      "The kubelet downloads and installs the gVisor runtime before starting the Pod"
+    ],
+    "answer": 0,
+    "lengths": [
+      161,
+      73,
+      75,
+      77
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q092",
+    "qIndex": 91,
+    "text": "A Pod spec includes a <code>terminationGracePeriodSeconds: 60</code> setting. The Pod receives a termination signal due to a Deployment scale-down. What happens during these 60 seconds?",
+    "options": [
+      "The kubelet immediately kills the container and waits 60 seconds before removing the Pod object",
+      "The scheduler waits 60 seconds before finding a replacement node for the Pod",
+      "The container receives a SIGTERM signal and has 60 seconds to shut down gracefully; if it does not exit within this period, the kubelet sends a SIGKILL to forcefully terminate it",
+      "The Pod continues to receive new traffic for 60 seconds before being removed from the Service"
+    ],
+    "answer": 2,
+    "lengths": [
+      95,
+      76,
+      178,
+      93
+    ],
+    "avgLen": 111,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q093",
+    "qIndex": 92,
+    "text": "A team evaluates KEDA (Kubernetes Event-Driven Autoscaling) for their event-processing workload that consumes messages from an Apache Kafka topic. How does KEDA differ from the standard Horizontal Pod Autoscaler?",
+    "options": [
+      "KEDA replaces the HPA entirely and cannot coexist with it in the same cluster",
+      "KEDA can scale workloads based on external event sources (such as Kafka topic lag, queue depth, or custom metrics) and supports scaling to zero, while the standard HPA is limited to CPU/memory metrics and a minimum of 1 replica",
+      "KEDA only supports scaling CronJobs, not Deployments or StatefulSets",
+      "KEDA provides faster scaling by bypassing the Kubernetes API server entirely"
+    ],
+    "answer": 1,
+    "lengths": [
+      77,
+      227,
+      68,
+      76
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q094",
+    "qIndex": 93,
+    "text": "A team deploys kube-state-metrics in their cluster alongside Prometheus. What type of metrics does kube-state-metrics expose that Prometheus node_exporter and cAdvisor do not?",
+    "options": [
+      "Kubernetes object state metrics such as Deployment replica counts, Pod phase, Job completion status, and node conditions derived from the Kubernetes API",
+      "Node CPU utilization and memory usage at the hardware level",
+      "Container-level resource consumption metrics such as CPU throttling and memory working set",
+      "Network bandwidth metrics for inter-Pod communication"
+    ],
+    "answer": 0,
+    "lengths": [
+      152,
+      59,
+      90,
+      53
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q095",
+    "qIndex": 94,
+    "text": "An operator uses <code>kubectl annotate pod my-pod description=\"web server\"</code> to add an annotation. Another team member tries to use this annotation in a <code>nodeSelector</code> to influence scheduling. Does this work?",
+    "options": [
+      "Yes, annotations and labels are interchangeable for scheduling purposes",
+      "Yes, but only if the annotation key follows the DNS naming convention",
+      "No, annotations can only be added to namespaces, not Pods",
+      "No, annotations are arbitrary metadata that cannot be used by selectors or scheduling constraints; only labels are used for selection and scheduling"
+    ],
+    "answer": 3,
+    "lengths": [
+      71,
+      69,
+      57,
+      148
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q096",
+    "qIndex": 95,
+    "text": "A team runs a Pod with <code>hostNetwork: true</code> in its spec. The application inside the Pod binds to port 80. What are the networking implications?",
+    "options": [
+      "The Pod receives a dedicated ClusterIP that routes traffic on port 80",
+      "The Pod creates a virtual network interface on the host that NATs traffic to port 80",
+      "The Pod shares the host node's network namespace, binding directly to the node's IP on port 80, which means only one such Pod can run per node on that port",
+      "The Pod can only communicate with other Pods using <code>hostNetwork: true</code>"
+    ],
+    "answer": 2,
+    "lengths": [
+      69,
+      84,
+      155,
+      81
+    ],
+    "avgLen": 97,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q097",
+    "qIndex": 96,
+    "text": "A team uses Kustomize to manage environment-specific configurations. They have a base Deployment manifest and overlays for <code>dev</code>, <code>staging</code>, and <code>production</code>. The production overlay needs to change the replica count from 1 (base) to 5 and add a production-specific environment variable. How does Kustomize handle this?",
+    "options": [
+      "Kustomize directly modifies the base manifest files for each environment",
+      "Each overlay contains patch files (strategic merge patches or JSON patches) that are applied on top of the base resources at build time, producing environment-specific manifests without modifying the base",
+      "Kustomize generates Helm charts from the base and injects values per environment",
+      "Each overlay must contain a complete copy of all base manifests with the modifications applied"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      204,
+      80,
+      94
+    ],
+    "avgLen": 113,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q098",
+    "qIndex": 97,
+    "text": "A Kubernetes cluster uses the <code>admission webhook</code> mechanism. A ValidatingWebhookConfiguration is configured to validate all Pod creation requests. If the webhook endpoint is unreachable, what happens to Pod creation attempts by default?",
+    "options": [
+      "Pod creation proceeds normally because webhooks are advisory only",
+      "The API server retries the webhook indefinitely until it becomes available",
+      "All admission webhooks are automatically disabled when any single webhook is unreachable",
+      "The behavior depends on the <code>failurePolicy</code> field: if set to <code>Fail</code> (the default), Pod creation is rejected; if set to <code>Ignore</code>, Pod creation proceeds"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      74,
+      88,
+      183
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q099",
+    "qIndex": 98,
+    "text": "A team deploys a Pod with a <code>startupProbe</code> that checks <code>/ready</code> on port 8080 with <code>failureThreshold: 30</code> and <code>periodSeconds: 10</code>. The application takes approximately 4 minutes to initialize. How does the startup probe interact with the liveness and readiness probes?",
+    "options": [
+      "All three probes run simultaneously from the moment the container starts",
+      "The startup probe replaces both liveness and readiness probes entirely",
+      "The startup probe runs first and has up to 300 seconds (30 * 10) to succeed; liveness and readiness probes are disabled until the startup probe succeeds, preventing premature restarts during slow initialization",
+      "The startup probe only affects the readiness probe; the liveness probe runs from container start"
+    ],
+    "answer": 2,
+    "lengths": [
+      72,
+      70,
+      210,
+      96
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s09-q100",
+    "qIndex": 99,
+    "text": "A platform team wants to implement policy-as-code for their Kubernetes cluster. They need to enforce rules such as \"all Pods must have resource limits\" and \"no privileged containers in production namespaces.\" Which CNCF approach is most appropriate?",
+    "options": [
+      "Writing custom shell scripts that run as CronJobs to scan and delete non-compliant resources",
+      "Configuring RBAC rules to prevent users from creating Pods without resource limits",
+      "Adding NetworkPolicies that block traffic from non-compliant Pods",
+      "Using a policy engine such as OPA Gatekeeper or Kyverno that integrates with the Kubernetes admission controller to validate and mutate resources declaratively at creation time"
+    ],
+    "answer": 3,
+    "lengths": [
+      92,
+      82,
+      65,
+      176
+    ],
+    "avgLen": 104,
+    "correctIsLongest": true
+  }
+]

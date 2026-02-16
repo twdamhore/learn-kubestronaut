@@ -15,7 +15,7 @@ var questions = [
     ],
     answer: 0,
     explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.",
-    verify: "kubectl create clusterrolebinding test --role=pod-reader --user=jane 2>&1"
+    verify: "microk8s kubectl create clusterrolebinding test --clusterrole=pod-reader --user=jane --dry-run=server 2>&1"
   },
   {
     id: "s05-q002",
@@ -344,13 +344,13 @@ var questions = [
     text: "A default-deny NetworkPolicy is applied to the `secure` namespace. After applying it, existing Pods in the namespace can no longer communicate with each other. Which NetworkPolicy spec creates this default-deny behavior for ingress?",
     diagram: null,
     options: [
-      "A policy with `podSelector: {}` and an empty `ingress: []` array in the spec",
+      "A policy with `podSelector: {}` and `ingress: [{}]` allowing traffic from all sources",
       "A policy with `podSelector: {}`, `policyTypes: [Ingress]`, and no `ingress` field",
       "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rule list",
       "A policy with `podSelector: {}` and `ingress: [{from: []}]` allowing empty source"
     ],
     answer: 1,
-    explanation: "A default-deny ingress policy uses an empty `podSelector: {}` to select all Pods in the namespace, specifies `policyTypes: [Ingress]`, and omits the `ingress` field entirely. This means no ingress traffic is allowed to any Pod. Including an empty `ingress: []` array has the same effect, but the canonical form omits it.",
+    explanation: "A default-deny ingress policy uses an empty `podSelector: {}` to select all Pods in the namespace, specifies `policyTypes: [Ingress]`, and omits the `ingress` field entirely. This means no ingress traffic is allowed to any Pod. Note that `ingress: [{}]` (an array with one empty rule) is very different -- it allows all ingress traffic from all sources.",
     verify: "kubectl get networkpolicy default-deny -n secure -o yaml"
   },
   {
@@ -670,7 +670,7 @@ var questions = [
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of 1 hour and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3607 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[?(@.name==\"kube-api-access\")].projected.sources[0].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -814,7 +814,7 @@ var questions = [
       "The API server automatically downgrades the referenced ClusterRole to a namespace-scoped Role"
     ],
     answer: 1,
-    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism.",
+    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism. Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources.",
     verify: "kubectl auth can-i create rolebindings --as=developer -n staging"
   },
   {
@@ -907,7 +907,7 @@ var questions = [
       "The mounted Secret files immediately disappear from the running container",
       "The Pod is immediately terminated by the kubelet due to missing Secret",
       "The projected volume controller recreates the missing Secret automatically",
-      "Existing mounted data remains until the next kubelet sync, then Pod fails"
+      "Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt"
     ],
     answer: 3,
     explanation: "When a Secret referenced by a projected volume is deleted, the kubelet will fail to refresh the volume on its next sync cycle. The existing mounted data remains temporarily, but the kubelet eventually triggers an error and the Pod may fail or the volume becomes stale.",
@@ -1022,7 +1022,7 @@ var questions = [
       "Set a namespace annotation that hides Secrets from non-admin users by convention"
     ],
     answer: 1,
-    explanation: "RBAC has no deny rules; permissions are purely additive. The `view` ClusterRole includes Secret access, so you cannot use it directly. Instead, create a custom Role that explicitly grants `get`, `list`, and `watch` on each resource type except Secrets, then bind it to the group.",
+    explanation: "RBAC has no deny rules; permissions are purely additive. Since Kubernetes 1.14, the built-in view ClusterRole excludes Secrets. However, creating a custom Role provides fine-grained control to specify exactly which resource types are accessible.",
     verify: "kubectl describe clusterrole view | grep secrets"
   },
   {
@@ -1086,7 +1086,7 @@ var questions = [
       "No, but mounting `hostPath` is allowed under the `baseline` profile"
     ],
     answer: 1,
-    explanation: "The `restricted` Pod Security Standard prohibits `hostPath` volumes entirely, regardless of whether they are read-only. The `baseline` profile also restricts `hostPath`. For log collectors requiring host access, the namespace must use a less restrictive profile or the Pods must be exempted.",
+    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. Note that the baseline profile does permit hostPath volumes. For log collectors requiring host access, the namespace must use the baseline profile or the Pods must be exempted from the restricted profile.",
     verify: "kubectl label ns logging pod-security.kubernetes.io/enforce=restricted --dry-run=server"
   },
   {
@@ -1214,7 +1214,7 @@ var questions = [
       "An error because wildcard characters are not valid in the `verbs` field"
     ],
     answer: 2,
-    explanation: "The wildcard `*` in the `verbs` field grants all verbs (`get`, `list`, `watch`, `create`, `update`, `patch`, `delete`) on the specified resource. However, subresources like `pods/exec` and `pods/log` must be listed separately in their own rule. The wildcard covers the base resource only.",
+    explanation: "The wildcard `*` in the `verbs` field grants all verbs (`get`, `list`, `watch`, `create`, `update`, `patch`, `delete`) on the specified resource. However, subresources like `pods/exec` and `pods/log` are treated as separate resources in RBAC and must be listed explicitly in their own rule with their own verbs. The verb wildcard on `pods` does not extend to `pods/exec` or any other subresource.",
     verify: "kubectl get role <role> -o yaml"
   },
   {

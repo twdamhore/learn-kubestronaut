@@ -1,0 +1,821 @@
+[
+  {
+    "id": "s10-q001",
+    "options": [
+      "A. The PVCs for replicas 3 and 4 are automatically deleted along with the backing PersistentVolumes by the controller",
+      "B. The PVCs are orphaned and the StorageClass reclaim policy immediately triggers deletion of the associated PVs",
+      "C. The PVCs are marked with a `deletionTimestamp` but remain in the namespace until the StatefulSet is fully deleted",
+      "D. The PVCs remain intact and must be manually deleted; underlying PVs are reclaimed only after PVC deletion"
+    ]
+  },
+  {
+    "id": "s10-q002",
+    "options": [
+      "A. The Deployment is created but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
+      "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of `RuntimeDefault` or `Localhost`",
+      "C. The Deployment object is created, but the ReplicaSet fails to create pods because of the missing seccomp profile field",
+      "D. The pods are created with a default `RuntimeDefault` seccomp profile automatically injected by the Pod Security Admission controller"
+    ]
+  },
+  {
+    "id": "s10-q003",
+    "options": [
+      "A. Rate limiting on Service B ingress combined with retry logic using exponential backoff in Service A",
+      "B. Circuit breaker in Service A for calls to B, combined with bulkhead isolation to protect calls to C",
+      "C. Asynchronous messaging between all three services with a persistent dead-letter queue for failures",
+      "D. Increasing the connection pool size in Service A and adding horizontal pod autoscaling to Service B"
+    ]
+  },
+  {
+    "id": "s10-q004",
+    "options": [
+      "A. 3 pods on us-east-1a and 3 on us-east-1b; the topology constraint is satisfied across the two available zones",
+      "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate the skew",
+      "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely",
+      "D. 4 pods schedule (2 per available zone) and 2 remain Pending because `maxSkew: 1` includes the unavailable zone"
+    ]
+  },
+  {
+    "id": "s10-q005",
+    "options": [
+      "A. The Jaeger collector is dropping spans because of sampling rate limits configured at the agent collection level",
+      "B. Service A and B use different OpenTelemetry SDK versions, causing incompatible span ID format encodings",
+      "C. The gRPC protocol does not support W3C Trace Context propagation natively and requires a custom carrier",
+      "D. Service B's OpenTelemetry SDK is not extracting trace context headers from the incoming gRPC metadata"
+    ]
+  },
+  {
+    "id": "s10-q006",
+    "options": [
+      "A. Session affinity is preserved because `kube-proxy` migrates the affinity mapping to the new replacement pod endpoint",
+      "B. Requests fail with connection refused until the `timeoutSeconds` expires and the client IP affinity table is refreshed",
+      "C. The affinity is broken when the old endpoint is removed; the next request is balanced to a new pod with fresh affinity",
+      "D. The session affinity entry is migrated to the replacement pod automatically by the EndpointSlice controller on update"
+    ]
+  },
+  {
+    "id": "s10-q007",
+    "options": [
+      "A. The write succeeds but the pod is evicted by the kubelet when it detects the volume exceeds its size limit",
+      "B. The write operation fails with an I/O error at the 256Mi boundary, behaving like a full filesystem on disk",
+      "C. The pod continues running since `sizeLimit` on memory-backed `emptyDir` volumes is advisory, not enforced",
+      "D. The container is OOM-killed because memory-backed `emptyDir` usage counts against the container memory cgroup"
+    ]
+  },
+  {
+    "id": "s10-q008",
+    "options": [
+      "A. Argo CD detects the drift and reverts the replica count to the value defined in Git within the next sync",
+      "B. Argo CD marks the application as `OutOfSync` but does not revert because scaling is excluded from self-heal",
+      "C. The manual change persists because Argo CD only watches for Git changes, not for drift in the live cluster",
+      "D. Argo CD pushes a new Git commit reverting the replica count to maintain the repository as source of truth"
+    ]
+  },
+  {
+    "id": "s10-q009",
+    "options": [
+      "A. All 3 replicas are created because LimitRange defaults are injected and the total resource usage stays within quota",
+      "B. All 3 replicas are created because defaults injected by the LimitRange are completely exempt from ResourceQuota checks",
+      "C. The Deployment is rejected entirely because quota availability must be validated for all 3 replicas simultaneously",
+      "D. Only 2 replicas are created; the third is blocked because total CPU requests would exceed the ResourceQuota limit"
+    ]
+  },
+  {
+    "id": "s10-q010",
+    "options": [
+      "A. UDP port 8472 for VXLAN encapsulation traffic between the Calico-managed cluster nodes",
+      "B. TCP port 9099 for Calico health check probes and UDP port 51820 for WireGuard tunnels",
+      "C. IP protocol 4 (IP-in-IP) between node IPs, plus TCP port 179 for BGP peering sessions",
+      "D. IP protocol 47 (GRE) between node IP addresses and TCP port 179 for BGP route exchange"
+    ]
+  },
+  {
+    "id": "s10-q014",
+    "options": [
+      "A. Exit code 128 indicates a Git fatal error, meaning the repository URL is unreachable or authentication credentials have failed",
+      "B. The `emptyDir` volume is not writable by the init container due to a `readOnlyRootFilesystem: true` security context on the pod",
+      "C. Exit code 128 means the init container received SIGKILL, likely because it exceeded its memory limit during the git clone",
+      "D. The shared volume mount paths conflict because both containers use the same `mountPath`, causing failures on container restart"
+    ]
+  },
+  {
+    "id": "s10-q015",
+    "options": [
+      "A. Increase Prometheus memory allocation and enable WAL compression to reduce the storage footprint of high-cardinality time series data",
+      "B. Switch to a push-based metrics model where pods send metrics directly to a time-series database that handles high cardinality natively",
+      "C. Use `metric_relabel_configs` to drop the `request_id` label before ingestion, and use distributed tracing for per-request data",
+      "D. Add `sample_limit` to the scrape config to cap time series per target and configure recording rules to aggregate high-cardinality data"
+    ]
+  },
+  {
+    "id": "s10-q017",
+    "options": [
+      "D. Add gVisor as a plugin in the kubelet configuration file and restart the kubelet service; the `RuntimeClass` is auto-generated from plugin registration",
+      "B. Create a `RuntimeClass` object with `handler: gvisor` and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable the sandbox runtime",
+      "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd runtime handler on detection",
+      "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` with `handler: runsc`"
+    ]
+  },
+  {
+    "id": "s10-q018",
+    "options": [
+      "A. Change the level to `Metadata` for secrets and add a `RequestResponse` rule only for `delete` and `create` verbs",
+      "B. Set `level: None` for secrets accessed by system service accounts and keep `RequestResponse` for user-initiated requests",
+      "C. Reduce `--audit-log-maxsize` and `--audit-log-maxbackup` flags to limit disk usage while keeping the same audit level",
+      "D. Change to `level: Request` globally and rely on external SIEM tools to reconstruct response bodies from request data"
+    ]
+  },
+  {
+    "id": "s10-q019",
+    "options": [
+      "A. Linkerd, because it is a graduated CNCF mesh providing mTLS, traffic splitting, and multi-cluster support with its own proxy",
+      "B. Open Service Mesh, because it is a CNCF project designed as a lightweight Envoy-based control plane with SMI compatibility",
+      "C. Cilium, because it is a graduated CNCF project providing eBPF-based service mesh with mTLS and multi-cluster networking",
+      "D. Istio, because it is a graduated CNCF project that uses Envoy as its data plane and provides all three required features"
+    ]
+  },
+  {
+    "id": "s10-q020",
+    "options": [
+      "A. The pod's `ndots:5` setting resolves the short name via search domains, but the FQDN bypasses expansion and lacks a trailing dot",
+      "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from the `team-a` namespace pods",
+      "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed zone list",
+      "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
+    ]
+  },
+  {
+    "id": "s10-q021",
+    "options": [
+      "A. Helm deletes the failed Job before creating a new one, as `before-hook-creation` removes previous hook resources",
+      "B. Helm fails because the release name already exists in `failed` state and must be removed with `helm uninstall` first",
+      "C. The existing failed Job blocks new hook Job creation, causing a naming conflict and a `helm install` error message",
+      "D. Helm ignores the existing Job and creates a new Job with a randomly generated suffix appended to the resource name"
+    ]
+  },
+  {
+    "id": "s10-q022",
+    "options": [
+      "A. Disable `automountServiceAccountToken` and use a projected volume with `serviceAccountToken` source, `expirationSeconds: 3600`, and the API audience",
+      "B. Use a TokenRequest API call from an init container to generate a short-lived token, store it in a shared `emptyDir`, and read it from the app container",
+      "C. Configure the ServiceAccount annotation `kubernetes.io/enforce-mountable-secrets` and set the token `exp` claim via a custom admission webhook",
+      "D. Enable the `BoundServiceAccountTokenVolume` feature gate (disabled by default) and set `--service-account-max-token-expiration` to 1 hour on the API server"
+    ]
+  },
+  {
+    "id": "s10-q025",
+    "options": [
+      "A. Set `minScale: 1` in the revision template to keep at least one warm instance running at all times for the service",
+      "B. Configure `scale-to-zero-grace-period` to 30 minutes globally in the Knative `config-autoscaler` ConfigMap settings",
+      "C. Set `initialScale` to 3 and enable `allow-zero-initial-scale` to handle burst traffic after the first cold start event",
+      "D. Use `minScale: 0` with `target-burst-capacity: -1` to disable activator buffering and let the autoscaler handle scaling"
+    ]
+  },
+  {
+    "id": "s10-q026",
+    "options": [
+      "A. One new pod (surge) is created but never becomes Ready; the 5 old pods keep running and the rollout stalls",
+      "B. The rollout creates new pods one at a time regardless of readiness since `maxUnavailable: 0` only prevents deletions",
+      "C. The rollout immediately rolls back to the previous version automatically after `progressDeadlineSeconds` is exceeded",
+      "D. The rollout creates 6 pods total (5 old + 1 new) then begins terminating old pods because total exceeds desired count"
+    ]
+  },
+  {
+    "id": "s10-q027",
+    "options": [
+      "A. The `sidecar` container has a secondary listener binding to port 8080 in addition to its configured primary port 9090",
+      "B. A previous `app` container instance has not released port 8080 due to TCP TIME_WAIT, and the restart is too fast",
+      "C. The pod has `hostNetwork: true`, and another pod on the same node is already bound to port 8080 on the host",
+      "D. Both containers share a network namespace, and the `app` container's liveness probe on port 8080 creates a conflict"
+    ]
+  },
+  {
+    "id": "s10-q028",
+    "options": [
+      "A. Retry the shipping service call with exponential backoff until it succeeds, keeping the saga open indefinitely",
+      "B. Execute compensating transactions in reverse: release the inventory reservation, then refund the payment",
+      "C. Mark the saga as partially complete and let eventual consistency reconcile service state asynchronously",
+      "D. Roll back using a two-phase commit protocol across all three services to ensure an atomic reversal"
+    ]
+  },
+  {
+    "id": "s10-q029",
+    "options": [
+      "A. Priority 0, because only one `globalDefault` PriorityClass can exist and the system ignores user-created default values",
+      "B. Priority 2000000000, because system priority classes always take precedence over any user-defined global default values",
+      "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to pods without an explicit assignment",
+      "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class"
+    ]
+  },
+  {
+    "id": "s10-q030",
+    "options": [
+      "D. The StorageClass must have `allowedTopologies` set to all availability zones for the volume to be mountable across zones",
+      "B. EBS volumes require `ReadWriteMany` access mode for cross-zone mounting; change the access mode in the PVC specification",
+      "C. The PV is still attached to the old node; manually detach it with `kubectl patch pv` removing the volumeattachments finalizer",
+      "A. EBS volumes are zone-scoped; add `nodeAffinity` matching the volume's AZ or use `volumeBindingMode: WaitForFirstConsumer`"
+    ]
+  },
+  {
+    "id": "s10-q031",
+    "options": [
+      "A. Yes, the `podSelector` matches the source pod's `role: frontend` label regardless of the originating namespace label",
+      "B. No, `namespaceSelector` and `podSelector` under the same `from` entry form an AND condition \u2014 both must match",
+      "C. Yes, `namespaceSelector` and `podSelector` in the same array element are evaluated as an OR condition by the CNI",
+      "D. No, the egress policy does not include a rule allowing return traffic responses back to the frontend pod in staging"
+    ]
+  },
+  {
+    "id": "s10-q032",
+    "options": [
+      "A. Containerd uses the CRI log format wrapping JSON output, causing the regex parser to fail on the CRI envelope structure",
+      "B. Containerd writes logs in binary protobuf format instead of text, requiring a specialized Fluentd input plugin for decoding",
+      "C. The upgrade changed the log path from `/var/log/containers/` to `/var/log/pods/` and Fluentd reads from the old location",
+      "D. Containerd rotates log files more aggressively than Docker, and Fluentd loses its file position tracking during rotation"
+    ]
+  },
+  {
+    "id": "s10-q033",
+    "options": [
+      "A. The custom controller must register with the `kube-controller-manager` via the controller registration API to avoid resource conflicts",
+      "B. The `--controllers` flag must include the custom controller name prefixed with `+` to enable it alongside the disabled built-in controllers",
+      "C. Built-in controllers have priority over custom controllers for the same resource type, potentially causing reconciliation conflicts on CRDs",
+      "D. The custom controller operates independently with its own informer cache; the `--controllers` flag only affects built-in controllers"
+    ]
+  },
+  {
+    "id": "s10-q034",
+    "options": [
+      "A. Envoy sidecars cache VirtualService routing config and require a proxy restart to pick up newly updated traffic weights",
+      "B. The Istio control plane (istiod) takes time to push the updated routing configuration to all Envoy sidecars in the mesh",
+      "C. Long-lived HTTP/2 or gRPC connections established before the weight change continue routing to the canary until closed",
+      "D. The VirtualService weight change requires the canary Deployment to be scaled to 0 replicas to stop receiving live traffic"
+    ]
+  },
+  {
+    "id": "s10-q036",
+    "options": [
+      "A. The pod is admitted because Gatekeeper only validates the primary container specifications, not init containers in the pod spec",
+      "B. The pod is rejected because Gatekeeper evaluates all containers including init, ephemeral, and regular containers in the spec",
+      "C. The result depends on the Rego policy \u2014 if it only iterates `input.review.object.spec.containers`, init containers are skipped",
+      "D. The pod is admitted but flagged with a warning annotation because Gatekeeper uses `warn` enforcement for partial compliance"
+    ]
+  },
+  {
+    "id": "s10-q038",
+    "options": [
+      "A. Synchronous REST calls for both B and C with retry middleware and circuit breakers to handle transient failures",
+      "D. Service mesh sidecars handling automatic retries for both B and C with configurable retry budgets per destination",
+      "C. gRPC streaming for A-to-B with server-side retry interceptors, and webhook-based notifications for A-to-C events",
+      "B. Async messaging with a persistent queue for A-to-B for guaranteed delivery, and fire-and-forget events for A-to-C"
+    ]
+  },
+  {
+    "id": "s10-q039",
+    "options": [
+      "A. Only create and update operations on matched resources are blocked; read operations and deletions continue to work normally in all namespaces",
+      "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
+      "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
+      "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
+    ]
+  },
+  {
+    "id": "s10-q040",
+    "options": [
+      "A. Add a `distroless/debug` base image as the final stage instead of `scratch` to include a busybox shell for debugging",
+      "B. Use `kubectl debug` to attach an ephemeral debug container with a shell sharing the pod's process namespace",
+      "C. Mount a ConfigMap containing a statically compiled shell binary at `/bin/sh` in the container volume mount paths",
+      "D. Rebuild the image with `FROM alpine` as the final stage and include `RUN apk add --no-cache bash` for shell access"
+    ]
+  },
+  {
+    "id": "s10-q041",
+    "options": [
+      "A. Change the alert threshold from 5% to 10% to account for statistical insignificance during low-traffic deployment windows",
+      "B. Replace `rate()` with `increase()` to use absolute counts instead of per-second rates, which are less sensitive to low volume",
+      "C. Increase the `for` duration from 10 to 30 minutes so the alert waits for traffic to normalize before firing during deployments",
+      "D. Add a minimum request rate condition: only fire when error ratio exceeds 5% AND `rate(http_requests_total[5m]) > 1`"
+    ]
+  },
+  {
+    "id": "s10-q042",
+    "options": [
+      "A. 5 seconds \u2014 the first probe failure immediately marks the pod as not ready and removes it from service endpoints",
+      "B. 15 seconds \u2014 three consecutive failures at 5-second intervals are required to trigger the not-ready transition state",
+      "C. 10 seconds \u2014 three failures occur but the first probe runs at time 0, so it only takes 2 additional intervals total",
+      "D. 10 seconds \u2014 the second failure at time 10s triggers endpoint removal because the threshold counts from initial success"
+    ]
+  },
+  {
+    "id": "s10-q043",
+    "options": [
+      "A. IPVS round-robin is per-connection, not per-packet; the NAT gateway reuses connections, skewing pod distribution",
+      "B. IPVS in `rr` mode has a warmup period favoring the first registered backend until all backends receive at least one connection",
+      "C. The overloaded pod has the lowest IP address and IPVS round-robin starts from the lowest IP for each new connection cycle",
+      "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for same source IPs"
+    ]
+  },
+  {
+    "id": "s10-q045",
+    "options": [
+      "A. `Guaranteed` QoS \u2014 this pod is last to be evicted during memory pressure because requests equal limits for all resources",
+      "B. `Burstable` QoS \u2014 the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
+      "C. `Guaranteed` QoS \u2014 but it can still be evicted before `BestEffort` pods if actual memory consumption exceeds `limits.memory`",
+      "D. `Guaranteed` QoS \u2014 it is evicted after `Burstable` pods but before `BestEffort` pods during node memory pressure events"
+    ]
+  },
+  {
+    "id": "s10-q046",
+    "options": [
+      "A. Use `PipelineResources` of type `git` and `image` to automatically wire inputs and outputs between the sequential tasks",
+      "B. Mount a shared `PersistentVolumeClaim` across all tasks and write data to agreed paths; use env vars for the image tag",
+      "D. Use Tekton `Conditions` to evaluate each task output and dynamically inject the parameters into the subsequent task run",
+      "C. Use `Workspaces` for sharing cloned source and `Task Results` to pass the image tag from `build-image` to `deploy`"
+    ]
+  },
+  {
+    "id": "s10-q047",
+    "options": [
+      "A. The API server reads the `v1alpha1` object from etcd and returns it directly, since both versions are stored in the CRD spec",
+      "B. The API server serves a cached `v1beta1` version that was pre-converted when the CRD storage version was originally updated",
+      "C. The request is rejected because `v1alpha1` resources cannot be served via `v1beta1` without first running a storage migration",
+      "D. The API server reads the `v1alpha1` object from etcd, calls the conversion webhook to convert it, and returns `v1beta1`"
+    ]
+  },
+  {
+    "id": "s10-q048",
+    "options": [
+      "A. A single A record pointing to the kube-proxy virtual IP that load-balances across all three backend pod IP addresses",
+      "B. A CNAME record pointing to the StatefulSet's stable network identity, which then resolves to the current leader pod IP",
+      "C. Three A records, one for each pod IP, allowing the client DNS resolver to perform client-side load balancing",
+      "D. Three SRV records mapping to `web-0.web-svc`, `web-1.web-svc`, and `web-2.web-svc` in the default namespace"
+    ]
+  },
+  {
+    "id": "s10-q049",
+    "options": [
+      "A. The binary `app` was compiled for a different CPU architecture (e.g., ARM) than the node's architecture (e.g., AMD64)",
+      "B. The `CMD` should use shell form (`CMD app`) instead of exec form (`CMD [\"app\"]`) to resolve the binary via `$PATH`",
+      "C. The binary `app` exists in the build stage but was not copied to the final stage in the multi-stage Dockerfile",
+      "D. The container's `securityContext` has `readOnlyRootFilesystem: true`, preventing runtime access to the binary path"
+    ]
+  },
+  {
+    "id": "s10-q050",
+    "options": [
+      "A. Using `kubectl exec` to enter a running container and apply a hotfix directly to the application binary",
+      "B. Building a new container image for every code change and deploying it through a controlled rolling update",
+      "C. Storing application configuration in ConfigMaps mounted as volumes that trigger pod restarts on changes",
+      "D. Using init containers to download and cache static assets from a CDN into an `emptyDir` volume at startup"
+    ]
+  },
+  {
+    "id": "s10-q051",
+    "options": [
+      "A. 30 seconds \u2014 the `terminationGracePeriodSeconds` counter resets after the `preStop` hook finishes its execution",
+      "B. 5 seconds \u2014 `terminationGracePeriodSeconds` includes `preStop` hook time, leaving only the remainder for SIGTERM",
+      "C. 25 seconds \u2014 the kubelet deducts the `preStop` duration and adds a 20-second buffer for SIGTERM signal handling",
+      "D. Indefinitely \u2014 once the `preStop` hook signals graceful shutdown, the kubelet waits for the process to exit cleanly"
+    ]
+  },
+  {
+    "id": "s10-q052",
+    "options": [
+      "A. Mount two `emptyDir` volumes at `/tmp` and `/var/log/app`; the read-only policy does not apply to mounts",
+      "B. Add `allowedHostPaths` entries for `/tmp` and `/var/log/app` in PodSecurityPolicy to whitelist writable paths",
+      "C. Set `readOnlyRootFilesystem: false` but use an OPA policy to restrict writes to only `/tmp` and `/var/log/app`",
+      "D. Use `subPath` mounts from a single `emptyDir` volume to both paths, which bypasses the read-only constraint"
+    ]
+  },
+  {
+    "id": "s10-q053",
+    "options": [
+      "A. The gateway performs synchronous JWT validation against an external identity provider on each request, adding latency",
+      "B. The gateway replicas share a single database connection pool for rate-limiting state, causing lock contention overhead",
+      "C. Adding replicas increases total connections to backend services, causing backend connection pool exhaustion issues",
+      "D. The gateway load balancer uses layer-4 TCP routing, causing uneven connection distribution among gateway replicas"
+    ]
+  },
+  {
+    "id": "s10-q054",
+    "options": [
+      "A. All 4 replicas are scheduled \u2014 anti-affinity is per-replica and does not prevent co-location within the same Deployment",
+      "B. 3 replicas schedule (one per node) and the 4th remains Pending because no node satisfies the anti-affinity constraint",
+      "C. The scheduler ignores anti-affinity for the 4th replica and co-locates it with an existing replica on the least-loaded node",
+      "D. All 4 replicas remain Pending because the anti-affinity creates a circular dependency that the scheduler cannot resolve"
+    ]
+  },
+  {
+    "id": "s10-q055",
+    "options": [
+      "A. Switch to 100% sampling and use tail-based sampling at the collector to retain only traces with errors or high latency",
+      "B. Increase head-based sampling ratio to 10% and accept additional overhead for better coverage of error scenarios overall",
+      "C. Configure the SDK with a composite sampler: always sample traces with error status and probabilistically sample the rest",
+      "D. Use a separate trace pipeline for error cases that sends traces directly to the backend, bypassing sampling configuration"
+    ]
+  },
+  {
+    "id": "s10-q056",
+    "options": [
+      "A. Only `quota-objects` must have capacity for the Deployment; `quota-compute` is checked only when pods are later created",
+      "B. Both quotas are checked simultaneously \u2014 `quota-objects` for Deployment count and `quota-compute` for the resulting pods",
+      "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
+      "D. Neither quota is checked at Deployment creation \u2014 all resource quota enforcement is deferred to pod scheduling time"
+    ]
+  },
+  {
+    "id": "s10-q057",
+    "options": [
+      "A. Both pods start successfully because Cilium uses network namespaces to isolate `hostPort` bindings per tenant context",
+      "B. Tenant B's pod fails to schedule on that node because the scheduler checks `hostPort` conflicts during scheduling",
+      "C. Both pods are scheduled but Tenant B enters `CrashLoopBackOff` because the port is already bound at the host level",
+      "D. Cilium's network policy engine blocks Tenant B's `hostPort` request at the CNI level and returns an error to kubelet"
+    ]
+  },
+  {
+    "id": "s10-q058",
+    "options": [
+      "A. All three instances process work simultaneously using distributed locking on individual resources stored in etcd",
+      "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy",
+      "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
+      "D. They use leader election via Lease objects in `kube-system`; only the leader reconciles while others stand by"
+    ]
+  },
+  {
+    "id": "s10-q059",
+    "options": [
+      "A. Use a `ReadWriteMany` PersistentVolume shared across all replicas so every pod can access the same session files stored on disk",
+      "B. Replace filesystem sessions with external Redis or Memcached and use `sessionAffinity: ClientIP` as a transitional step",
+      "C. Convert the Deployment to a StatefulSet so each replica gets a dedicated PersistentVolume for storing its own session files",
+      "D. Add `sessionAffinity: ClientIP` to the Service to ensure each user always reaches the same pod where their session is stored"
+    ]
+  },
+  {
+    "id": "s10-q060",
+    "options": [
+      "A. Add an entry to `/etc/fstab` inside the container image for the block device path and the desired filesystem type",
+      "B. Use an init container to run `mkfs.ext4 /dev/xvda` before the app container starts, then mount in the main container",
+      "C. Change the PVC to `volumeMode: Filesystem` so the CSI driver formats and mounts the volume automatically via kubelet",
+      "D. Add a `formatOptions` field in the StorageClass parameters to have the block device pre-formatted before pod attachment"
+    ]
+  },
+  {
+    "id": "s10-q061",
+    "options": [
+      "A. The Ingress forwards the original path `/v2/users`, but `api-v2` expects requests at `/users` without the prefix",
+      "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` path rule",
+      "C. The nginx Ingress strips TLS before forwarding and the `api-v2` service rejects non-HTTPS backend connections",
+      "D. The Ingress controller cannot route to two different services under the same host with overlapping path prefixes"
+    ]
+  },
+  {
+    "id": "s10-q062",
+    "options": [
+      "A. Implement cluster autoscaler with aggressive scale-down settings and use VPA in `UpdateMode: Auto` for all namespaces to right-size pods automatically",
+      "B. Apply `LimitRange` in dev namespaces to enforce lower defaults, use VPA in recommendation-only mode for dev, and keep production resource settings unchanged",
+      "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods",
+      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size resource requests based on VPA recommendations for each workload"
+    ]
+  },
+  {
+    "id": "s10-q063",
+    "options": [
+      "A. Only pods with ordinal >= 3 (pods 3 and 4) are updated; pods 0, 1, and 2 retain the previous spec",
+      "B. The update proceeds in batches of 3 pods at a time, starting from the pod with the highest ordinal",
+      "C. Pods 0, 1, and 2 are updated first, then pods 3 and 4 are updated once the first group is ready",
+      "D. The partition creates two independent groups that can be updated and rolled back completely separately"
+    ]
+  },
+  {
+    "id": "s10-q064",
+    "options": [
+      "A. Each container gets its own full copy of all image layers, consuming 3x the storage of a single container instance",
+      "B. Base image layers are shared read-only via overlayfs, with each container getting its own thin read-write upper layer",
+      "C. The first container pulls the image and subsequent containers use a copy-on-write clone of the first container's filesystem",
+      "D. Containerd deduplicates layers via content-addressable storage but extracts separate snapshots per container for isolation"
+    ]
+  },
+  {
+    "id": "s10-q065",
+    "options": [
+      "A. Both updates succeed because they modify different fields and the API server merges the changes automatically",
+      "B. The first update succeeds; the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
+      "C. The API server queues both updates and applies them sequentially, incrementing resourceVersion for each one",
+      "D. Both updates fail because only the resource owner identified by `metadata.ownerReferences` can update CRs"
+    ]
+  },
+  {
+    "id": "s10-q066",
+    "options": [
+      "A. The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit",
+      "B. The kubelet's eviction threshold was triggered before the container reached its limit, killing the largest memory consumer pod",
+      "C. The container spawned child processes whose memory is not tracked by Prometheus but is counted in the cgroup memory total",
+      "D. Memory fragmentation caused the kernel to report higher memory usage than actual RSS, triggering the OOM kill prematurely"
+    ]
+  },
+  {
+    "id": "s10-q067",
+    "options": [
+      "A. Flux CD \u2014 it provides GitOps reconciliation with multi-cluster support, a Helm controller, and a built-in web dashboard",
+      "B. Jenkins X \u2014 it provides cloud native CI/CD with GitOps capabilities, Helm deployments, and a pipeline visualization UI",
+      "D. Keptn \u2014 it provides cloud native lifecycle management with GitOps support, multi-cluster control, and quality gate views",
+      "C. Argo CD \u2014 a CNCF graduated project providing GitOps with drift detection, multi-cluster, Helm support, and a web UI"
+    ]
+  },
+  {
+    "id": "s10-q068",
+    "options": [
+      "A. It evicts one pod from the node with 2 replicas, allowing the scheduler to place it on the new empty node",
+      "B. It evicts all pods entirely and lets the scheduler redistribute them evenly across all three available nodes",
+      "C. It does nothing because `RemoveDuplicates` only handles pods from the same ReplicaSet on the same node",
+      "D. It evicts pods only if the anti-affinity preference score would measurably improve after the rebalancing run"
+    ]
+  },
+  {
+    "id": "s10-q069",
+    "options": [
+      "A. The existing pod is unaffected; new pod creation succeeds only if the re-pushed image has a valid cosign signature",
+      "B. The existing pod is terminated because its image digest no longer matches the tag; new pod creation is blocked by Kyverno",
+      "C. Both existing and new pods are unaffected because Kyverno only checks signatures at policy creation, not pod admission",
+      "D. The existing pod continues running; new creation fails because Kyverno detects the digest changed and flags a supply chain risk"
+    ]
+  },
+  {
+    "id": "s10-q070",
+    "options": [
+      "A. The EndpointSlice controller takes time to propagate new endpoints to kube-proxy on all nodes, creating stale routing windows",
+      "B. The Service selector change causes all existing TCP connections to terminate immediately, and reconnecting clients see 503 errors",
+      "C. kube-proxy rules update asynchronously; there is a brief period where some rules still point to old blue pods no longer matching",
+      "D. The green pods' readiness probes have not yet been verified by the EndpointSlice controller at the moment of the selector switch"
+    ]
+  },
+  {
+    "id": "s10-q071",
+    "options": [
+      "A. The `main` container's `preStop` hook runs first, then both containers receive SIGTERM simultaneously after hook completion",
+      "B. Both containers receive SIGTERM at the same time; `main`'s `preStop` hook runs concurrently with the SIGTERM signal delivery",
+      "C. The `preStop` hook and `sidecar` SIGTERM start simultaneously; after the hook finishes, `main` also receives SIGTERM",
+      "D. The `sidecar` container is terminated first, then the `main` `preStop` hook runs, followed by SIGTERM delivery to `main`"
+    ]
+  },
+  {
+    "id": "s10-q072",
+    "options": [
+      "A. Node 5 drops the request because there is no local backend pod and the default `externalTrafficPolicy` is `Local`",
+      "B. Node 5's kube-proxy forwards the request to a node with a backend pod via DNAT, adding SNAT for the return path",
+      "C. Node 5 responds with a TCP RST because NodePort services only listen on nodes that have local backend pods running",
+      "D. The request is forwarded to the ClusterIP which distributes it to a backend pod without performing any NAT at all"
+    ]
+  },
+  {
+    "id": "s10-q073",
+    "options": [
+      "A. The node controller marks the node `NotReady` immediately; after `pod-eviction-timeout` the controller starts evicting pods via deletion entries",
+      "B. The node controller marks the node `Unknown`; after taint-based eviction delay, pods are evicted unless they tolerate `unreachable`",
+      "C. The node controller deletes the node object entirely; the scheduler immediately reschedules all of the affected pods to other nodes",
+      "D. The node controller adds a `node.kubernetes.io/not-ready` taint; pods without matching tolerations are evicted after `tolerationSeconds`"
+    ]
+  },
+  {
+    "id": "s10-q074",
+    "options": [
+      "A. KEDA calculates 50 replicas (500 messages / 10 per replica), but the `maxReplicaCount` caps the result at 20",
+      "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds the maximum capacity",
+      "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
+      "D. KEDA computes 50 replicas but scales to 20 in a single step, then pauses scaling until the next evaluation run"
+    ]
+  },
+  {
+    "id": "s10-q075",
+    "options": [
+      "A. The `ServiceMonitor` and `Prometheus` CR are in different namespaces and `serviceMonitorNamespaceSelector` is not configured",
+      "B. The empty selector `{}` means \"match nothing\" in the Prometheus operator; it should be omitted entirely to match all monitors",
+      "C. The application Service does not have the `monitoring: enabled` label, so the `ServiceMonitor` discovers no matching endpoints",
+      "D. Prometheus must be restarted after a new `ServiceMonitor` is created because it does not watch for new monitors dynamically"
+    ]
+  },
+  {
+    "id": "s10-q076",
+    "options": [
+      "A. The PDB prevents Recreate from deleting all pods simultaneously; at least 1 pod remains running throughout the entire update process",
+      "B. The PDB is ignored because the Deployment controller is not subject to PDB enforcement; PDBs only apply to the Eviction API",
+      "C. The Deployment controller deletes pods one at a time respecting the PDB, effectively converting Recreate to a RollingUpdate",
+      "D. The update is blocked entirely because the Recreate strategy conflicts with the PDB, and the Deployment reports a failure condition"
+    ]
+  },
+  {
+    "id": "s10-q077",
+    "options": [
+      "A. The `/healthcheck.sh` script has a database query that occasionally takes longer than 5 seconds due to table lock contention on the node",
+      "B. Under high CPU load the kubelet cannot fork the exec process within `timeoutSeconds`, so the probe times out before the script starts",
+      "C. The exec probe process competes for CPU with the app container, and under high node pressure it is throttled by the cgroup limit",
+      "D. The kubelet probe worker pool is exhausted due to high pod density on the node, delaying probe execution beyond the timeout window"
+    ]
+  },
+  {
+    "id": "s10-q078",
+    "options": [
+      "A. The Orders service should directly query the monolith's database for customer data, using a read-only database connection pool",
+      "B. Create an Anti-Corruption Layer in Orders that calls the monolith's Customers API, translating between data models",
+      "C. Delay the Orders migration until the Customers module is also extracted as a microservice to avoid cross-boundary dependencies",
+      "D. Replicate the entire Customers database table into the Orders microservice using Change Data Capture for real-time sync"
+    ]
+  },
+  {
+    "id": "s10-q079",
+    "options": [
+      "A. It runs again on every subsequent mutating webhook modification, regardless of whether the changes affect the sidecar logic at all",
+      "B. It runs again only if the annotation changes from the second webhook would cause the sidecar webhook to produce a different mutation",
+      "C. It runs again if any other webhook modifies the pod object after its initial invocation, allowing it to react to those changes",
+      "D. It never runs again because mutating webhooks are invoked at most once per admission request, regardless of reinvocation policy"
+    ]
+  },
+  {
+    "id": "s10-q080",
+    "options": [
+      "A. Yes, the CSI driver quiesces all I/O to the volume before taking the snapshot, ensuring full application consistency",
+      "B. No, the snapshot is crash-consistent; data in flight or in application buffers at snapshot time may not be captured",
+      "C. Yes, Kubernetes freezes the filesystem using `fsfreeze` before the CSI snapshot call to ensure data consistency",
+      "D. Consistency depends on the `snapshotClass` parameter `consistency: application` which must be set explicitly"
+    ]
+  },
+  {
+    "id": "s10-q081",
+    "options": [
+      "A. 80% to Service A and 20% is dropped with 503 errors because Service B has no healthy ready endpoints available",
+      "B. 100% to Service A because the Gateway controller automatically redistributes traffic away from unhealthy backends",
+      "C. The behavior depends on the Gateway controller implementation; the spec does not mandate handling for zero endpoints",
+      "D. The HTTPRoute becomes invalid and all traffic is rejected because the route references a backend with zero endpoints"
+    ]
+  },
+  {
+    "id": "s10-q082",
+    "options": [
+      "A. The `pod` label causes high cardinality because pod names include random suffixes that change on every restart or scaling event",
+      "B. The `container` label creates redundant streams when pods have sidecar containers, effectively doubling stream count per pod",
+      "C. The `namespace` label is unnecessary since Loki infers it from the log source path automatically, creating duplicate log streams",
+      "D. The `request_path` label has unbounded cardinality (unique URLs create unique values), causing stream explosion in the ingester"
+    ]
+  },
+  {
+    "id": "s10-q083",
+    "options": [
+      "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` still honors `maxSkew: 1` as a soft preference",
+      "B. Pods are distributed based solely on available node capacity: 4 in zone-a, 1 in zone-b, and 1 in zone-c nodes",
+      "C. Pods are distributed 2-2-2 across zones, identical to `DoNotSchedule`, because the maximum skew can be satisfied",
+      "D. Pods are distributed unevenly because `ScheduleAnyway` makes the constraint purely informational with no effect"
+    ]
+  },
+  {
+    "id": "s10-q084",
+    "options": [
+      "A. No, `get`/`list`/`watch` only provide read access; the user cannot modify or delete secrets, so it is significantly less privileged than cluster-admin",
+      "B. No, secret values are redacted in `list` and `watch` responses by the API server; only a `get` on a specific secret returns actual encoded data",
+      "C. Yes, `list` and `watch` return full secret data, giving the user access to all secrets including service account tokens across namespaces",
+      "D. Yes, but only if the user also has `get` on the `secrets/data` subresource, which is required for accessing the base64-encoded values"
+    ]
+  },
+  {
+    "id": "s10-q085",
+    "options": [
+      "A. Flux detects the remote base change on the next reconciliation cycle, applies the breaking change, and the application breaks",
+      "B. Flux's built-in kustomize controller validates remote base changes against a schema before applying, rejecting breaking changes",
+      "C. Flux pins remote bases to a specific commit SHA, so remote changes are only applied when the SHA reference is explicitly updated",
+      "D. Flux only watches the configured Git repository; remote base changes are not detected unless the main repo commit hash changes"
+    ]
+  },
+  {
+    "id": "s10-q086",
+    "options": [
+      "A. It prevents kube-proxy from responding to ARP requests for Service VIPs, letting MetalLB be the sole ARP responder for LoadBalancer IPs",
+      "B. It enables strict source IP validation in IPVS rules, preventing IP spoofing attacks on Service endpoints at the network interface level",
+      "C. It forces kube-proxy to only answer ARP for its own node IP, not for ClusterIPs, preventing conflicts with MetalLB in L2 mode operation",
+      "D. It configures interfaces to only answer ARP for addresses on the incoming interface, preventing multi-node MetalLB VIP conflicts"
+    ]
+  },
+  {
+    "id": "s10-q087",
+    "options": [
+      "A. The container is restarted because the kubelet always restarts containers in any non-`Never` restart policy regardless of exit code",
+      "B. The Job controller creates a new pod because it interprets the completed pod as needing replacement to meet its completions target",
+      "C. The container is not restarted, but the pod phase stays `Running` with a `Terminated` container until the Job controller cleans up",
+      "D. The container is not restarted (exit 0 = success); the pod transitions to `Succeeded` and remains until Job TTL or deletion"
+    ]
+  },
+  {
+    "id": "s10-q088",
+    "options": [
+      "A. Cluster B's local service takes precedence; local services always override remote services in the Cluster Mesh config",
+      "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined endpoints",
+      "C. Service names conflict and Cluster Mesh rejects the configuration, requiring globally unique service names across clusters",
+      "D. Each cluster maintains its own namespace; cross-cluster access requires explicit `<service>.<cluster>` DNS entry mappings"
+    ]
+  },
+  {
+    "id": "s10-q089",
+    "options": [
+      "A. Notary v2 for signing, Docker Content Trust for registry storage, and OPA Gatekeeper for admission verification",
+      "B. cosign (Sigstore) for signing and registry storage, combined with Kyverno or a policy controller for admission",
+      "C. GPG signing integrated into the Dockerfile build, stored as image labels, and verified by a custom validating webhook",
+      "D. TUF (The Update Framework) for signing and distribution, with Falco for runtime image integrity verification"
+    ]
+  },
+  {
+    "id": "s10-q090",
+    "options": [
+      "A. 5, because Helm preserves values from the previous release that are not explicitly overridden in the upgrade command",
+      "B. 3, because the upgrade resets to chart defaults and `custom-values.yaml` does not override the `replicaCount` value",
+      "C. 5 with `--reuse-values`, or 3 without it; the default resets to chart defaults merged with the provided values",
+      "D. Undefined \u2014 Helm removes keys not present in upgrade values, leaving `replicaCount` unset in template rendering"
+    ]
+  },
+  {
+    "id": "s10-q091",
+    "options": [
+      "A. The pod is created with the sidecar but without limits, because validating webhooks cannot see any mutations from mutating webhooks",
+      "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which has a sidecar without limits",
+      "C. The pod is created because Kubernetes auto-injects default limits from the namespace LimitRange for webhook-injected containers",
+      "D. The mutating webhook changes are rolled back when the validating webhook rejects, and the pod is then created without the sidecar"
+    ]
+  },
+  {
+    "id": "s10-q092",
+    "options": [
+      "A. Resources consumed by pods without cost labels; the team should add `cost-center` labels to all deployed workloads",
+      "D. Idle resources from pods with requests but low utilization; the team should use VPA to right-size resource requests",
+      "C. Resources consumed by system components (kubelet, kube-proxy, OS) that are not tracked as Kubernetes workloads",
+      "B. The gap between total node capacity and all pod requests; right-size nodes or increase requests to reduce waste"
+    ]
+  },
+  {
+    "id": "s10-q093",
+    "options": [
+      "A. ReplicaSets for revisions 3, 4, and 5 are retained by the controller; `rollout undo` reverts to revision 4",
+      "B. Revisions 4 and 5 are retained (current + 1 history per limit); undo reverts to revision 4, creating revision 6",
+      "C. Revisions 3, 4, and 5 are retained (2 old + 1 current); undo reverts to revision 4, creating revision 6",
+      "D. Only the ReplicaSet for revision 5 is retained; `rollout undo` fails because no previous revision is available"
+    ]
+  },
+  {
+    "id": "s10-q094",
+    "options": [
+      "A. UID 65534, because the Dockerfile `USER` directive takes precedence over the pod's `securityContext` at runtime",
+      "B. UID 1000, because the pod `securityContext.runAsUser` overrides the Dockerfile `USER` directive at container start",
+      "C. The container fails to start because there is a conflict between the image user config and the pod security context",
+      "D. UID 1000 for the main process, but child processes inherit UID 65534 from the original image user configuration"
+    ]
+  },
+  {
+    "id": "s10-q095",
+    "options": [
+      "A. It eliminates the need for a message broker by using the database as the event store, reducing overall infrastructure complexity",
+      "B. It solves the dual-write problem \u2014 ensuring the database write and event publication both happen or neither does",
+      "C. It improves event publishing throughput by batching multiple events from the outbox table into a single broker publish call",
+      "D. It provides exactly-once delivery by using the database transaction ACID properties to guarantee each event publishes once"
+    ]
+  },
+  {
+    "id": "s10-q096",
+    "options": [
+      "A. The pipeline uses mutable tags since commit SHAs can be rewritten during force pushes, risking deploying the wrong image version",
+      "B. The CI pipeline pushes to the GitOps repo, coupling CI and CD; compromised credentials allow deploying arbitrary images",
+      "C. The pipeline does not pin base images in the Dockerfile, risking supply chain attacks through uncontrolled base image updates",
+      "D. The pipeline stores image tags in Kubernetes manifests instead of Helm values or Kustomize overlays, making rollbacks harder"
+    ]
+  },
+  {
+    "id": "s10-q097",
+    "options": [
+      "A. The NetworkPolicy implicitly blocks egress because any pod selected by a policy has default-deny for unspecified policy types",
+      "B. The NetworkPolicy has `policyTypes: [Ingress, Egress]` but only defines ingress rules; the empty egress section denies egress",
+      "C. The CNI plugin applies a default-deny-all policy to any pod targeted by at least one NetworkPolicy, affecting both directions",
+      "D. The NetworkPolicy has `policyTypes: [Ingress]` only; the `db` pods egress is blocked by a separate cluster default policy"
+    ]
+  },
+  {
+    "id": "s10-q098",
+    "options": [
+      "A. The `batch` processor reorders spans before `tail_sampling`, causing incomplete trace assembly at the sampling decision point",
+      "B. Tail sampling requires all spans of a trace together, but the DaemonSet means spans arrive at different collector instances",
+      "C. The `tail_sampling` processor has a too-short `decision_wait` period, causing decisions before all spans have been received",
+      "D. The OTLP gRPC receiver does not guarantee span ordering, causing the tail sampler to decide on incomplete trace fragments"
+    ]
+  },
+  {
+    "id": "s10-q099",
+    "options": [
+      "A. Flagger pauses the canary and waits for manual approval to either continue the rollout or initiate a rollback",
+      "B. Flagger immediately scales the canary to zero and routes 100% traffic to the primary, marking the canary as failed",
+      "C. Flagger retries the failed iteration up to the configured `threshold` count before initiating a full rollback",
+      "D. Flagger reduces the canary traffic weight by half and re-runs analysis to confirm the issue before deciding next"
+    ]
+  },
+  {
+    "id": "s10-q100",
+    "options": [
+      "A. Level 3 \u2014 strong observability stack is in place but the application lacks the declarative management required for Level 4",
+      "B. Level 4 \u2014 GitOps provides declarative management, but liveness probes alone do not constitute platform-level auto-remediation",
+      "C. Level 5 \u2014 the application has all required capabilities including auto-remediation through liveness probes and pod autoscaling",
+      "D. Level 4 \u2014 has observability and declarative management, but auto-remediation needs observability-driven response like Keptn"
+    ]
+  }
+]

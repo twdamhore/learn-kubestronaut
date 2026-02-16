@@ -1,0 +1,875 @@
+[
+  {
+    "id": "s03-q001",
+    "options": [
+      "`ClusterIP` — provides a virtual IP reachable only inside the cluster",
+      "`NodePort` — opens a static port on every node for external access only",
+      "`LoadBalancer` — provisions a cloud-managed LB scoped to the VPC network",
+      "`ExternalName` — maps a DNS CNAME record to an external endpoint target"
+    ]
+  },
+  {
+    "id": "s03-q002",
+    "options": [
+      "The kubelet on the receiving node spawns a temporary proxy pod to relay each inbound request onward",
+      "CoreDNS redirects the request at the DNS layer to a node that currently hosts the target pod replica",
+      "kube-proxy on each node programs iptables/IPVS rules that forward traffic to any pod endpoint",
+      "The container runtime tunnels the packet back to the API server which then routes it to the pod"
+    ]
+  },
+  {
+    "id": "s03-q003",
+    "options": [
+      "An `Ingress` resource with path-based rules and an Ingress controller deployed in the cluster",
+      "Two separate `LoadBalancer` Services with custom path annotations to split traffic by URL",
+      "A single `NodePort` Service with `sessionAffinity` and per-path routing configuration set",
+      "A `NetworkPolicy` that selectively forwards external traffic based on URL path and destination"
+    ]
+  },
+  {
+    "id": "s03-q005",
+    "options": [
+      "The Service's `selector` labels do not match the labels on the running pods",
+      "The `ClusterIP` has not yet been allocated by the API server for the Service",
+      "CoreDNS has not propagated the endpoint records into etcd for this Service",
+      "The pods are running but kube-proxy has not yet started on their assigned nodes"
+    ]
+  },
+  {
+    "id": "s03-q006",
+    "options": [
+      "The kubelet configuration on every node, setting the `proxyMode: ipvs` field",
+      "The CNI plugin configuration files under `/etc/cni/net.d/` on each node",
+      "The kube-controller-manager startup flag `--proxy-mode=ipvs` in the manifest",
+      "The kube-proxy `ConfigMap` or startup flags, setting the `mode: ipvs` field"
+    ]
+  },
+  {
+    "id": "s03-q007",
+    "options": [
+      "All egress is still allowed because the policy only lists `ingress` in `policyTypes`",
+      "All egress is blocked because any `NetworkPolicy` implicitly denies all traffic directions",
+      "Egress to the internet is blocked but egress within the cluster namespace is still permitted",
+      "The policy is rejected by the API server because it must define both ingress and egress rules"
+    ]
+  },
+  {
+    "id": "s03-q008",
+    "options": [
+      "The kube-scheduler when it selects the target node and binds the pod to it",
+      "The kube-apiserver when it persists the Pod object into the etcd data store",
+      "The CNI plugin invoked by the container runtime during pod sandbox setup",
+      "CoreDNS when it registers the pod's A record and assigns a virtual address"
+    ]
+  },
+  {
+    "id": "s03-q009",
+    "options": [
+      "Yes — the Kubernetes networking model requires every pod to have a routable IP without NAT",
+      "No — pods on different nodes always traverse kube-proxy which performs source NAT on packets",
+      "Only if a `LoadBalancer` Service is placed in front of both pods to bridge node boundaries",
+      "Only if both pods are in the same namespace and share an identical network policy selector"
+    ]
+  },
+  {
+    "id": "s03-q010",
+    "options": [
+      "`spec.selector.sticky: true` to pin each session to a single pod",
+      "`spec.externalTrafficPolicy: Local` to route only to local pods",
+      "`spec.type: StatefulSet` to enable persistent session handling",
+      "`spec.sessionAffinity: ClientIP` to bind clients to one pod"
+    ]
+  },
+  {
+    "id": "s03-q012",
+    "options": [
+      "A CNI plugin such as Flannel or Calico for overlay networking setup",
+      "A `PodDisruptionBudget` controller for pod availability management",
+      "The kube-proxy component running in IPVS mode on each cluster node",
+      "A service mesh such as Istio or Linkerd for traffic management"
+    ]
+  },
+  {
+    "id": "s03-q013",
+    "options": [
+      "To tunnel pod traffic across nodes whose underlying network cannot route the pod CIDR",
+      "To encrypt all pod-to-pod traffic with TLS by default when traversing the overlay network",
+      "To enforce `NetworkPolicy` rules at the kernel level using VXLAN metadata and identifiers",
+      "To load-balance traffic across Service endpoints by wrapping packets in VXLAN encapsulation"
+    ]
+  },
+  {
+    "id": "s03-q014",
+    "options": [
+      "The cloud load balancer is restricted to forward traffic within a single availability zone only",
+      "kube-proxy disables SNAT for all cluster-internal traffic routed through the Service endpoints",
+      "Traffic forwards only to pods on the receiving node, preserving the original client source IP",
+      "Only pods configured with `hostNetwork: true` are eligible to receive the Service's traffic flow"
+    ]
+  },
+  {
+    "id": "s03-q015",
+    "options": [
+      "Apply a policy in `finance` on `app: payment` allowing ingress from `web` with `role: gateway` on port 8443",
+      "Apply a policy in `web` on `role: gateway` allowing egress to `finance` namespace on port 8443 for payment services",
+      "Apply a policy in `finance` on all pods allowing ingress from any pod in the cluster on port 8443 regardless of labels",
+      "Apply a policy in `finance` on `app: payment` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443 for all sources"
+    ]
+  },
+  {
+    "id": "s03-q016",
+    "options": [
+      "`my-svc.default.svc.cluster.local`",
+      "`my-svc.cluster.local` as FQDN",
+      "`my-svc.svc.cluster.local` FQDN",
+      "`my-svc.alpha.svc.cluster.local`"
+    ]
+  },
+  {
+    "id": "s03-q017",
+    "options": [
+      "SRV records only, with no A records created for the individual pod endpoints",
+      "CNAME records that map `cache-0` through `cache-2` to the node's IP address",
+      "A single A record for `cache` that resolves to all three pod IPs at one time",
+      "A records like `cache-0.cache.<ns>.svc.cluster.local` for each pod"
+    ]
+  },
+  {
+    "id": "s03-q018",
+    "options": [
+      "All microservices share a single pod so they can communicate over the `localhost` interface directly",
+      "Microservices write to a shared NFS volume and poll for changes as an inter-process mechanism",
+      "Each microservice exposes a Kubernetes Service and communicates via well-defined APIs over HTTP",
+      "Each microservice opens a direct TCP socket to every other microservice pod IP for communication"
+    ]
+  },
+  {
+    "id": "s03-q019",
+    "options": [
+      "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
+      "Flannel — a simple overlay CNI focused on basic pod-to-pod connectivity",
+      "kube-router — a networking solution using BGP for route distribution",
+      "Multus — a meta-plugin that attaches multiple network interfaces to pods"
+    ]
+  },
+  {
+    "id": "s03-q020",
+    "options": [
+      "Adding a `NetworkPolicy` for each service pair to enforce encrypted communication channels",
+      "Configuring `readinessProbe` on each pod to handle retries and circuit breaking automatically",
+      "Using a `CronJob` to rotate certificates and restart affected pods on a periodic schedule run",
+      "Deploying a service mesh that handles mTLS, retries, and circuit breaking via sidecars"
+    ]
+  },
+  {
+    "id": "s03-q021",
+    "options": [
+      "The `terminationGracePeriodSeconds` combined with proper SIGTERM handling in the app",
+      "Setting `spec.minReadySeconds` to a high value on the Deployment's rolling update strategy",
+      "Configuring a `PodDisruptionBudget` with `maxUnavailable: 0` to prevent pod terminations",
+      "Increasing the Service's `spec.sessionAffinity` timeout to keep connections routed properly"
+    ]
+  },
+  {
+    "id": "s03-q022",
+    "options": [
+      "Query `kubectl top service` to retrieve per-service request latency metrics directly from nodes",
+      "Deploy a service mesh that captures L7 metrics from sidecar proxies and exports to Prometheus",
+      "Enable verbose logging on kube-proxy to extract request timing data from iptables rule matches",
+      "Set `spec.publishNotReadyAddresses: true` on the Service to expose latency response headers"
+    ]
+  },
+  {
+    "id": "s03-q023",
+    "options": [
+      "Distributed tracing with propagated trace context headers across services",
+      "Increasing the log level to `DEBUG` on all pods and reading aggregated output",
+      "Adding `livenessProbe` checks with a 2-second timeout to every container",
+      "Creating a `NetworkPolicy` that logs all denied connections between services"
+    ]
+  },
+  {
+    "id": "s03-q024",
+    "options": [
+      "Set `spec.weight: 10` on the canary Deployment's Service annotation for traffic splitting",
+      "Create a `NetworkPolicy` that limits 10% of connections to the canary pod endpoints only",
+      "Scale the canary Deployment to 10% of the main Deployment's replica count for rough split",
+      "Use a service mesh or Ingress controller that supports weighted traffic splitting rules"
+    ]
+  },
+  {
+    "id": "s03-q025",
+    "options": [
+      "`helm upgrade <release> <chart> --set service.type=NodePort` to override the value",
+      "`kubectl patch svc <name> -p '{\"spec\":{\"type\":\"NodePort\"}}'` after the helm upgrade",
+      "`helm upgrade <release> <chart> --reuse-values --force` to reapply with existing values",
+      "`helm rollback <release> 0` then redeploy with the new type set in a values override"
+    ]
+  },
+  {
+    "id": "s03-q026",
+    "options": [
+      "Switch to `NodePort` since bare-metal clusters cannot provision external load balancer instances",
+      "Restart the kube-controller-manager with the `--cloud-provider=external` flag for LB support",
+      "Install a bare-metal load balancer implementation such as MetalLB to allocate external IPs",
+      "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal` to the Service"
+    ]
+  },
+  {
+    "id": "s03-q027",
+    "options": [
+      "The pod is terminated and replaced by the Deployment controller with a new replica instance",
+      "The pod's IP is removed from the Endpoints object so it stops receiving Service traffic",
+      "The Service switches to a different port automatically to reach a healthy pod on the node",
+      "kube-proxy doubles the health check frequency for that endpoint until the probe succeeds"
+    ]
+  },
+  {
+    "id": "s03-q028",
+    "options": [
+      "A DaemonSet ensuring one DNS pod runs on every node",
+      "A StatefulSet with persistent storage for DNS records",
+      "A Deployment with a corresponding ClusterIP Service",
+      "A static pod managed directly by kubelet on each node"
+    ]
+  },
+  {
+    "id": "s03-q029",
+    "options": [
+      "In a `ConfigMap` in the same namespace as the Ingress resource for TLS data",
+      "In the Ingress controller's container filesystem at the `/etc/ssl/` directory",
+      "In a `Secret` of type `kubernetes.io/tls` referenced by the Ingress resource",
+      "In etcd directly, accessible only by the kube-apiserver component at runtime"
+    ]
+  },
+  {
+    "id": "s03-q030",
+    "options": [
+      "It applies to all pods across every namespace in the entire cluster",
+      "It applies only to pods that have no labels in the `production` namespace",
+      "It applies to every pod running in the `production` namespace only",
+      "The policy is invalid and will be rejected by the Kubernetes API server"
+    ]
+  },
+  {
+    "id": "s03-q031",
+    "options": [
+      "80–443 reserved for standard HTTP and HTTPS protocol traffic",
+      "1024–65535 which covers the entire non-privileged port range",
+      "30000–32767 which is the default NodePort allocation range",
+      "49152–65535 which is the IANA dynamic and private port range"
+    ]
+  },
+  {
+    "id": "s03-q032",
+    "options": [
+      "A single A record with the IP `0.0.0.0` representing no valid cluster endpoint",
+      "No DNS record is created because headless Services bypass CoreDNS entirely",
+      "A set of A records, one for each pod endpoint matched by the Service selector",
+      "A CNAME record pointing to the first ready pod in the endpoint list for the svc"
+    ]
+  },
+  {
+    "id": "s03-q033",
+    "options": [
+      "kubelet — the primary node agent that manages pod lifecycle on nodes",
+      "kube-scheduler — the component that assigns pods to nodes in a cluster",
+      "kube-controller-manager — the component running reconciliation loops",
+      "kube-proxy — the component that programs network forwarding rules"
+    ]
+  },
+  {
+    "id": "s03-q034",
+    "options": [
+      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, causing a routing conflict",
+      "The DNS for `api.example.com` does not point to the Ingress controller's external IP address",
+      "The Ingress controller in use does not support host-based routing, only path-based routing rules",
+      "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
+    ]
+  },
+  {
+    "id": "s03-q035",
+    "options": [
+      "They share the pod's network namespace and communicate via `localhost`",
+      "They each get a separate IP address and must use a Service to connect",
+      "They communicate only through a shared `emptyDir` volume on the node",
+      "The CNI plugin creates a virtual bridge between the two container endpoints"
+    ]
+  },
+  {
+    "id": "s03-q036",
+    "options": [
+      "Traffic between zones is encrypted automatically by kube-proxy using IPsec tunnels",
+      "kube-proxy prefers routing traffic to endpoints in the same topology zone as the client",
+      "The Service is replicated across multiple clusters for geographic high availability setup",
+      "Pods are scheduled only in the zone with the most available resources for the workload"
+    ]
+  },
+  {
+    "id": "s03-q037",
+    "options": [
+      "Type `LoadBalancer` with annotation `service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"`",
+      "Type `NodePort` with annotation `service.beta.kubernetes.io/aws-load-balancer-type: nlb` set on it",
+      "Type `ClusterIP` with `externalIPs` set to the VPC subnet range for internal load balancing purposes",
+      "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution"
+    ]
+  },
+  {
+    "id": "s03-q038",
+    "options": [
+      "The IP of the node's local DNS cache daemon running on each worker",
+      "The kube-apiserver's ClusterIP used for cluster management traffic",
+      "The ClusterIP of the `kube-dns` Service in the `kube-system` ns",
+      "A hardcoded Google Public DNS address configured in the base image"
+    ]
+  },
+  {
+    "id": "s03-q039",
+    "options": [
+      "kube-proxy configured with dual-stack support for multiple network interfaces",
+      "Multus CNI, a meta-plugin that delegates to multiple CNI backends",
+      "CoreDNS with a custom zone file for VLAN-specific DNS name resolution",
+      "A dedicated `NetworkPolicy` using a VLAN selector for interface isolation"
+    ]
+  },
+  {
+    "id": "s03-q040",
+    "options": [
+      "Whether kube-proxy is running in IPVS mode instead of iptables mode on the affected nodes",
+      "Whether CNI binaries and config under `/etc/cni/net.d/` and `/opt/cni/bin/` are installed",
+      "Whether the kubelet has the `--network-plugin=cni` flag removed from its startup arguments",
+      "Whether CoreDNS pods are in `CrashLoopBackOff` and unable to resolve pod DNS registrations"
+    ]
+  },
+  {
+    "id": "s03-q041",
+    "options": [
+      "All ingress and egress traffic to and from selected pods is denied",
+      "All ingress and egress is allowed because no explicit deny rules exist",
+      "Only egress is denied while ingress defaults to allow with no rules set",
+      "The policy has no effect because it has no rules and is treated as a no-op"
+    ]
+  },
+  {
+    "id": "s03-q042",
+    "options": [
+      "IPVS supports TLS termination at the kernel level for improved security on each cluster node",
+      "IPVS uses hash-based structures providing O(1) routing regardless of endpoint count",
+      "IPVS automatically encrypts inter-node traffic using kernel-level IPsec tunnels by default",
+      "IPVS eliminates the need for a CNI plugin by handling all pod networking within the kernel"
+    ]
+  },
+  {
+    "id": "s03-q043",
+    "options": [
+      "Flannel with its VXLAN overlay dataplane for pod networking",
+      "Calico with its iptables dataplane for policy enforcement",
+      "Cilium with its eBPF-based kube-proxy replacement feature",
+      "CoreDNS with endpoint slices for service name resolution"
+    ]
+  },
+  {
+    "id": "s03-q044",
+    "options": [
+      "Inside each application container as custom middleware logic for rate control",
+      "As a `NetworkPolicy` rule that limits the number of connections per second",
+      "At the Ingress controller or API gateway layer, external to the application",
+      "By setting resource `limits` on the pod to throttle CPU and request handling"
+    ]
+  },
+  {
+    "id": "s03-q045",
+    "options": [
+      "The timeout pattern, which limits how long the order service waits for a response from the inventory",
+      "The circuit breaker, which stops sending requests to a failing upstream past a threshold",
+      "The retry pattern, which sends the request again immediately on any failure from the downstream svc",
+      "The bulkhead pattern, which limits the number of pods in a Deployment to isolate cascading failures"
+    ]
+  },
+  {
+    "id": "s03-q046",
+    "options": [
+      "Envoy Gateway — an Envoy-based ingress project tool",
+      "Ambassador — a developer-focused API gateway project",
+      "Contour — an Envoy-powered Ingress controller tool",
+      "Gateway API — the standards-based routing project"
+    ]
+  },
+  {
+    "id": "s03-q047",
+    "options": [
+      "`kube_service_info` filtered by service name and namespace labels in the dashboard",
+      "`kube_endpoint_address_available` with a configured threshold of zero ready endpoints",
+      "`kube_endpoint_addresses_ready` from kube-state-metrics equal to zero for the Service",
+      "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
+    ]
+  },
+  {
+    "id": "s03-q048",
+    "options": [
+      "kube-proxy logs showing iptables rule updates and endpoint changes on each node",
+      "The kube-scheduler logs showing pod placement decisions for the affected workload",
+      "The etcd audit log showing key-value store operations for the Service resources",
+      "The kubelet logs showing image pull progress and container start events on nodes"
+    ]
+  },
+  {
+    "id": "s03-q049",
+    "options": [
+      "Argo CD keeps the manual change and updates the Git repository to match the live state",
+      "Argo CD detects drift and reverts the Ingress to match the Git-defined desired state",
+      "The manual change persists because Argo CD only manages resources at initial creation time",
+      "Argo CD deletes the Ingress resource entirely and creates a new one from the Git definition"
+    ]
+  },
+  {
+    "id": "s03-q050",
+    "options": [
+      "Delete the Deployment and recreate it with the new image tag specified in the pod template spec",
+      "Use `kubectl set image` on the Deployment with a rolling update strategy for zero downtime",
+      "Scale the Deployment to zero replicas, update the image tag, then scale back up to the count",
+      "Edit the Ingress to point to a new Service while the old Deployment is still running and ready"
+    ]
+  },
+  {
+    "id": "s03-q051",
+    "options": [
+      "Port 80 on the backend pod's running container process",
+      "Port 8080 on the node that is running the backend pod",
+      "Port 8080 on the backend pod's container application",
+      "Port 80 on the Ingress controller's listening socket"
+    ]
+  },
+  {
+    "id": "s03-q052",
+    "options": [
+      "100 endpoints per slice",
+      "1000 endpoints per slice",
+      "250 endpoints per slice",
+      "500 endpoints per slice"
+    ]
+  },
+  {
+    "id": "s03-q053",
+    "options": [
+      "`spec.loadBalancerSourceRanges` set to allowed CIDR blocks",
+      "`spec.externalTrafficPolicy: Restricted` to limit source IPs",
+      "`metadata.annotations.allowed-ips` to define allowed clients",
+      "`spec.selector.sourceIP` matching allowed client IP ranges"
+    ]
+  },
+  {
+    "id": "s03-q054",
+    "options": [
+      "No, because a pod cannot be both source and destination of the same policy match criteria",
+      "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule",
+      "No, because the policy only allows traffic from pods that lack the `app: backend` label value",
+      "Yes, but only if an explicit egress rule is also defined allowing traffic on port 443 outbound"
+    ]
+  },
+  {
+    "id": "s03-q055",
+    "options": [
+      "It serves as a health check endpoint for the Ingress controller to verify backend pod availability",
+      "It redirects all HTTPS traffic to HTTP on port 80 for unencrypted backend service communications",
+      "It defines the primary backend service that takes higher priority over all other routing rule sets",
+      "It routes requests not matching any defined host or path rule to the `fallback-svc` backend"
+    ]
+  },
+  {
+    "id": "s03-q056",
+    "options": [
+      "The kube-apiserver during the initial node registration phase",
+      "The kube-controller-manager's node IPAM controller process",
+      "CoreDNS when it creates DNS records for each registered node",
+      "The kubelet when it joins the cluster during the boot process"
+    ]
+  },
+  {
+    "id": "s03-q057",
+    "options": [
+      "It forces the Service to use a `ClusterIP` from the local node's subnet for pod-level routing",
+      "It prevents the Service from being accessible outside the current namespace's network boundary",
+      "It configures kube-proxy to use iptables instead of IPVS for this particular Service's rules",
+      "It restricts internal pod-to-Service traffic to endpoints on the same node as the client pod"
+    ]
+  },
+  {
+    "id": "s03-q058",
+    "options": [
+      "Only cluster-internal names are resolved; external names fail to resolve entirely for the pod",
+      "The pod uses the node's DNS settings exclusively, bypassing CoreDNS for all lookups it makes",
+      "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
+      "The pod alternates between CoreDNS and the node's DNS resolver in a random sequence pattern"
+    ]
+  },
+  {
+    "id": "s03-q059",
+    "options": [
+      "Only Policy A takes effect because it was created first and has priority in the namespace",
+      "Only Policy B takes effect because port 443 is treated as higher priority than port 80",
+      "Both policies merge additively — ingress from `web` on 80 AND from `api` on 443 is allowed",
+      "The policies conflict with each other and therefore all ingress traffic is denied by default"
+    ]
+  },
+  {
+    "id": "s03-q060",
+    "options": [
+      "The custom search domain replaces all default cluster search domains in the pod's `resolv.conf`",
+      "The custom search domain is appended to the default cluster search domains in `resolv.conf`",
+      "The `dnsConfig` is ignored because `ClusterFirst` always uses only the default cluster domains",
+      "The pod enters an error state because `dnsConfig` and `dnsPolicy` cannot be used in the same pod"
+    ]
+  },
+  {
+    "id": "s03-q061",
+    "options": [
+      "They allow Services to span multiple clusters for cross-region federation and service discovery",
+      "They split large endpoint lists into smaller slices that can be independently updated",
+      "They cache endpoint data on each node to reduce the number of direct API server watch queries",
+      "They replace kube-proxy by routing traffic directly to pods using kernel-level eBPF forwarding"
+    ]
+  },
+  {
+    "id": "s03-q062",
+    "options": [
+      "`nodeSelector` with a specific zone label to place pods on nodes in the target zone",
+      "`topologySpreadConstraints` with `topologyKey: topology.kubernetes.io/zone` set",
+      "`affinity.podAffinity` with `topologyKey: kubernetes.io/hostname` configured",
+      "`tolerations` matching the zone taint to allow pods on nodes in specific zones"
+    ]
+  },
+  {
+    "id": "s03-q063",
+    "options": [
+      "Allocating an IP address from the node's pod CIDR for the new pod sandbox",
+      "Creating a veth pair and attaching one end to the pod's network namespace",
+      "Programming kube-proxy iptables rules for the newly created pod sandbox",
+      "Configuring routing so the pod can reach other pods across cluster nodes"
+    ]
+  },
+  {
+    "id": "s03-q064",
+    "options": [
+      "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
+      "BGP peering encrypts all inter-node traffic using IPsec by default for enhanced data protection",
+      "BGP peering eliminates the need for kube-proxy entirely by handling service routing via BGP peers",
+      "BGP peering allows pods to use IPv6 addresses exclusively, which VXLAN does not support at all"
+    ]
+  },
+  {
+    "id": "s03-q065",
+    "options": [
+      "Increase the pod's memory limit to allow DNS caching and larger response buffer allocation",
+      "Delete and recreate the pod's Service to force re-registration of the DNS endpoint records",
+      "Restart the kube-apiserver to ensure DNS-related resources are properly synced and available",
+      "Check that the CoreDNS pods are running and the `kube-dns` Service has valid endpoints"
+    ]
+  },
+  {
+    "id": "s03-q066",
+    "options": [
+      "The pod gets its own network namespace with a dedicated IP from the host's subnet range",
+      "The pod is automatically assigned a `NodePort` Service for external traffic by the kubelet",
+      "The pod can only communicate with other pods that are co-located on the same cluster node",
+      "The pod shares the node's network namespace and uses the node's IP address for traffic"
+    ]
+  },
+  {
+    "id": "s03-q068",
+    "options": [
+      "`/var/lib/kubelet/cni/` on each node",
+      "`/etc/kubernetes/cni/` on each node",
+      "`/etc/cni/net.d/` on each worker node",
+      "`/opt/cni/config/` on each worker node"
+    ]
+  },
+  {
+    "id": "s03-q069",
+    "options": [
+      "Infrastructure as Code for declarative configuration management",
+      "Observability and health signaling for self-healing systems",
+      "Immutable infrastructure for reproducible deployment patterns",
+      "Event-driven architecture for asynchronous message handling"
+    ]
+  },
+  {
+    "id": "s03-q070",
+    "options": [
+      "The request is immediately rejected with a 503 error because no backend pod is available",
+      "Knative's activator component holds the request while a pod is created then forwards it",
+      "The request is queued in CoreDNS until the pod IP becomes available in the DNS records",
+      "The Ingress controller retries the request indefinitely until a backend pod finally appears"
+    ]
+  },
+  {
+    "id": "s03-q071",
+    "options": [
+      "Istio — a full-featured service mesh using Envoy sidecar proxies",
+      "Consul Connect — HashiCorp's service mesh with built-in discovery",
+      "Linkerd — a lightweight mesh using a Rust-based micro-proxy layer",
+      "Open Service Mesh — a lightweight SMI-compatible service mesh tool"
+    ]
+  },
+  {
+    "id": "s03-q072",
+    "options": [
+      "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely",
+      "Replacing all `ClusterIP` Services with `NodePort` Services for more direct pod-to-pod routing",
+      "Setting all pod `dnsPolicy` to `None` to bypass DNS resolution latency on each service call",
+      "Using gRPC with HTTP/2 connection multiplexing instead of REST for inter-service communication"
+    ]
+  },
+  {
+    "id": "s03-q073",
+    "options": [
+      "`kube_networkpolicy_labels` showing all policy labels attached to the resources in the namespace",
+      "`kube_pod_status_phase` tracking pods stuck in `Pending` state due to scheduling or networking",
+      "`kube_pod_container_status_restarts_total` counting container restarts caused by network issues",
+      "No built-in metric exists; the engineer should use CNI-level flow logs or eBPF-based monitoring"
+    ]
+  },
+  {
+    "id": "s03-q074",
+    "options": [
+      "On the kube-apiserver by enabling the `--dns-audit-log` flag in the manifest",
+      "In the `NetworkPolicy` resource by adding a `log: true` annotation to the spec",
+      "On each pod's container by setting `DNS_LOG=true` environment variable at startup",
+      "In the CoreDNS configuration by adding the `log` plugin to the Corefile config"
+    ]
+  },
+  {
+    "id": "s03-q075",
+    "options": [
+      "The service works normally because GitOps only manages Deployments and not NetworkPolicies",
+      "The service's pods cannot receive any traffic because no allow rule exists for them yet",
+      "The Ingress controller automatically creates a permissive NetworkPolicy for new workloads",
+      "Argo CD generates a default allow-all policy for any new workloads it detects in the repo"
+    ]
+  },
+  {
+    "id": "s03-q076",
+    "options": [
+      "`myhost.mysubdomain.<namespace>.svc.cluster.local` for the pod",
+      "`mysubdomain.myhost.<namespace>.svc.cluster.local` for the pod",
+      "`myhost.<namespace>.pod.cluster.local` resolving to the pod IP",
+      "`mysubdomain.<namespace>.svc.cluster.local` resolving to pod IP"
+    ]
+  },
+  {
+    "id": "s03-q077",
+    "options": [
+      "Add an Ingress resource that routes external traffic to the `ClusterIP` Service backend",
+      "Manually assign a public IP to the `ClusterIP` using `kubectl patch` on the spec field",
+      "Add a `readinessGate` configuration to expose the Service externally via the kubelet API",
+      "Set the `spec.externalIPs` field to the node's private IP and configure a `NodePort` entry"
+    ]
+  },
+  {
+    "id": "s03-q078",
+    "options": [
+      "CoreDNS is configured with too many upstream resolvers causing slow query forwarding chain lookups",
+      "kube-proxy iptables rules throttle DNS traffic to prevent DDoS overload on the CoreDNS endpoints",
+      "The `ndots` setting in `resolv.conf` causes excessive search domain lookups before external queries",
+      "The Linux conntrack table races between simultaneous A and AAAA queries, causing one to drop"
+    ]
+  },
+  {
+    "id": "s03-q079",
+    "options": [
+      "Create `ResourceQuotas` in each namespace to limit network bandwidth between tenant workloads",
+      "Apply `NetworkPolicy` in each namespace with default deny-all and allow only within namespace",
+      "Set different `dnsPolicy` values for each namespace to isolate tenant DNS name resolution paths",
+      "Deploy separate CoreDNS instances per namespace so tenants cannot resolve each other's services"
+    ]
+  },
+  {
+    "id": "s03-q080",
+    "options": [
+      "It replaces CoreDNS entirely with a more performant DNS server deployed as a DaemonSet on all nodes",
+      "It pre-populates all DNS records from etcd into node memory at startup to avoid CoreDNS lookups",
+      "It bypasses the `kube-dns` Service and sends queries directly to the CoreDNS pod IP on each node",
+      "It runs a local caching agent on each node serving cached responses, falling back to CoreDNS"
+    ]
+  },
+  {
+    "id": "s03-q081",
+    "options": [
+      "To the cloud load balancer, which then forwards the traffic back into the cluster for routing",
+      "To the kube-apiserver, which acts as a proxy and forwards the request to the correct backend",
+      "The request fails because pods inside the cluster cannot reach the external load balancer IPs",
+      "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
+    ]
+  },
+  {
+    "id": "s03-q082",
+    "options": [
+      "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress",
+      "Both controllers process the Ingress simultaneously and the first to respond wins the route",
+      "The kube-apiserver assigns the Ingress to the controller with the least current load value",
+      "The controller that was installed first in the cluster has priority over any newer controller"
+    ]
+  },
+  {
+    "id": "s03-q083",
+    "options": [
+      "Only pods in `CrashLoopBackOff` state are included in the Endpoints for the Service",
+      "Pods not yet passing their readiness probe are included in the Endpoints for this svc",
+      "The Service publishes the node IP addresses instead of pod IPs in the Endpoints object",
+      "The Service stops performing health checks on backend pods and includes all endpoints"
+    ]
+  },
+  {
+    "id": "s03-q084",
+    "options": [
+      "`ConfigMap` storing key-value configuration data",
+      "`Secret` storing sensitive credential information",
+      "`Endpoints` or `EndpointSlice` resource objects",
+      "`ServiceAccount` for pod identity management"
+    ]
+  },
+  {
+    "id": "s03-q085",
+    "options": [
+      "The Service must use TLS 1.2 for all connections between the proxy and the backend pods",
+      "kube-proxy will use HTTP/2 to communicate with the API server for this Service endpoint",
+      "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2 via protocol negotiation",
+      "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
+    ]
+  },
+  {
+    "id": "s03-q086",
+    "options": [
+      "Only the CNI plugin needs to be configured for dual-stack; no other cluster changes are needed",
+      "The apiserver, controller-manager, kube-proxy, and CNI must all be configured with dual CIDRs",
+      "Dual-stack only works with IPVS mode; iptables mode does not support IPv6 routing at all",
+      "Each pod must explicitly request an IPv6 address in its spec alongside the IPv4 address field"
+    ]
+  },
+  {
+    "id": "s03-q087",
+    "options": [
+      "kube-proxy is not running on the nodes, preventing iptables rules from being programmed at all",
+      "A firewall or security group rule blocks inbound traffic on port 31000 to the cluster's nodes",
+      "The Service's `sessionAffinity` is set to `ClientIP`, which blocks connections from external IPs",
+      "The CNI plugin does not support `NodePort` Services and drops traffic at the network overlay"
+    ]
+  },
+  {
+    "id": "s03-q088",
+    "options": [
+      "Yes, because kube-proxy intercepts DNS queries regardless of the configured nameserver address",
+      "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
+      "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
+      "No, because `dnsPolicy: None` fully disables all DNS resolution capabilities inside the pod"
+    ]
+  },
+  {
+    "id": "s03-q089",
+    "options": [
+      "Yes, because `10.0.5.15` is within the `10.0.0.0/8` CIDR and matches the allow rule",
+      "No, because `10.0.5.15` falls within the `except` block `10.0.5.0/24` and is excluded",
+      "Yes, because the `except` clause only applies to egress rules and not to ingress rules",
+      "No, because `ipBlock` rules do not apply to private IP ranges within the cluster network"
+    ]
+  },
+  {
+    "id": "s03-q090",
+    "options": [
+      "Default-deny `NetworkPolicy`, mTLS via a service mesh, and identity-based authorization rules",
+      "`NodePort` Services with strong passwords and firewall rules applied on each individual node",
+      "`ResourceQuotas` to limit pod counts and `LimitRanges` for memory in every cluster namespace",
+      "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem` on every pod in the cluster"
+    ]
+  },
+  {
+    "id": "s03-q091",
+    "options": [
+      "Prometheus — a metrics collection and alerting toolkit for Kubernetes clusters",
+      "Thanos — a long-term storage and global querying layer for Prometheus data",
+      "Fluentd — a unified logging layer for collecting and routing log data feeds",
+      "Hubble — a Cilium component for eBPF-based flow logs and service maps"
+    ]
+  },
+  {
+    "id": "s03-q092",
+    "options": [
+      "In the CoreDNS configuration by adding per-path TTL values for the route entries",
+      "In the `terminationGracePeriodSeconds` of each backend Deployment for each path",
+      "On the `ClusterIP` Services backing each path using a timeout annotation field set",
+      "On the Ingress using controller-specific annotations for per-path timeouts"
+    ]
+  },
+  {
+    "id": "s03-q093",
+    "options": [
+      "The kube-scheduler dispatching pods to nodes in the cluster worker pool",
+      "The kubelet's HTTP server on the affected node under pressure",
+      "CoreDNS handling DNS resolution queries from cluster pods currently",
+      "The Ingress controller proxying external requests to backend services"
+    ]
+  },
+  {
+    "id": "s03-q094",
+    "options": [
+      "No impact — tracing frameworks ignore `X-Request-ID` headers in the request pipeline flow",
+      "The trace breaks at that service; downstream spans appear as separate uncorrelated traces",
+      "The Ingress controller automatically re-injects the header for all downstream service calls",
+      "kube-proxy adds the missing header using iptables MARK rules on the packet metadata fields"
+    ]
+  },
+  {
+    "id": "s03-q095",
+    "options": [
+      "Wait for the Argo Rollout to automatically detect the NetworkPolicy issue and trigger rollback",
+      "Fix the NetworkPolicy in Git, push the change, and let the GitOps tool sync the correction",
+      "Delete all NetworkPolicies in the namespace to restore connectivity between all the services",
+      "Restart kube-proxy on all nodes to clear the faulty rules and restore the prior configuration"
+    ]
+  },
+  {
+    "id": "s03-q096",
+    "options": [
+      "Update the Ingress backend to point to the green Service instead of blue",
+      "Scale the blue Deployment to zero replicas and wait for traffic to drain",
+      "Delete the blue `ClusterIP` Service to force traffic to the green backend",
+      "Change the blue Service's selector to match the green pods' label values"
+    ]
+  },
+  {
+    "id": "s03-q097",
+    "options": [
+      "`helm install <release> <chart> --set networkPolicy.enabled=true`",
+      "`helm install <release> <chart> --enable-network-policy` as a flag",
+      "`kubectl apply -f values.yaml --set networkPolicy.enabled=true`",
+      "`helm template <chart> | kubectl apply -f -` to render and apply"
+    ]
+  },
+  {
+    "id": "s03-q098",
+    "options": [
+      "Only an IPv4 ClusterIP is assigned because IPv4 is always the preferred address family",
+      "Only an IPv6 ClusterIP is assigned because dual-stack clusters default to IPv6 addresses",
+      "Both an IPv4 and IPv6 ClusterIP, with the primary family set by the cluster's default",
+      "No ClusterIP is assigned — PreferDualStack turns it into a headless Service automatically"
+    ]
+  },
+  {
+    "id": "s03-q099",
+    "options": [
+      "It always presents the certificate from the first TLS entry listed in the Ingress spec definition",
+      "It selects the certificate based on the SNI header in the TLS ClientHello from the client",
+      "It combines all certificates into a single SAN certificate dynamically at the proxy TLS layer",
+      "It presents a self-signed certificate and lets the backend handle TLS termination on its own"
+    ]
+  },
+  {
+    "id": "s03-q100",
+    "options": [
+      "Horizontal Pod Autoscaler to reduce the pod count and thereby shrink the Endpoints object size",
+      "Pod topology spread constraints to distribute pods evenly and reduce the endpoint churn rate",
+      "`EndpointSlices`, which split endpoints into smaller objects for more efficient updates",
+      "`ServiceTopology` to filter endpoints by zone and reduce the overall Endpoints object size"
+    ]
+  }
+]

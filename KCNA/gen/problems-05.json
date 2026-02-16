@@ -1,0 +1,1982 @@
+[
+  {
+    "id": "s05-q001",
+    "qIndex": 0,
+    "text": "A junior admin creates a Role in the `payments` namespace granting `get`, `list`, and `watch` on Pods. They bind it to a user via a ClusterRoleBinding. What happens when the user tries to list Pods in the `payments` namespace?",
+    "options": [
+      "Access is denied because a Role cannot be referenced by a ClusterRoleBinding",
+      "The user can list Pods in all namespaces",
+      "The user can list Pods only in `payments`",
+      "The ClusterRoleBinding escalates the Role to cluster-wide scope"
+    ],
+    "answer": 0,
+    "lengths": [
+      76,
+      40,
+      41,
+      63
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q002",
+    "qIndex": 1,
+    "text": "You need to allow traffic from Pods labeled `app: frontend` in the `web` namespace to reach Pods labeled `app: api` in the `backend` namespace on port 8443. Which NetworkPolicy spec is correct?",
+    "options": [
+      "Apply an ingress NetworkPolicy in `backend` with `namespaceSelector` matching `web` and `podSelector` matching `app: frontend`",
+      "Apply an egress NetworkPolicy in `web` with `podSelector` matching `app: api`",
+      "Apply an ingress NetworkPolicy in `web` with `podSelector` matching `app: frontend`",
+      "Apply an egress NetworkPolicy in `backend` with `namespaceSelector` matching `web`"
+    ],
+    "answer": 0,
+    "lengths": [
+      126,
+      77,
+      83,
+      82
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q003",
+    "qIndex": 2,
+    "text": "A Pod spec sets `runAsNonRoot: true` at the pod-level `securityContext`, but one container image has `USER root` in its Dockerfile. What occurs when this Pod is scheduled?",
+    "options": [
+      "The container runs as root, overriding the pod-level setting",
+      "The Pod is rejected at admission with a warning",
+      "The container fails to start with a `RunAsNonRoot` error",
+      "Kubernetes automatically remaps root to UID 65534"
+    ],
+    "answer": 2,
+    "lengths": [
+      60,
+      47,
+      56,
+      49
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q004",
+    "qIndex": 3,
+    "text": "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
+    "options": [
+      "During scheduling by the kube-scheduler",
+      "During admission by the PodSecurity admission plugin",
+      "During image pull by the kubelet",
+      "At runtime by the container runtime"
+    ],
+    "answer": 1,
+    "lengths": [
+      39,
+      52,
+      32,
+      35
+    ],
+    "avgLen": 40,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q005",
+    "qIndex": 4,
+    "text": "A security team wants to scan container images for known CVEs before they are deployed into the cluster. Which CNCF project is specifically designed for container image vulnerability scanning?",
+    "options": [
+      "Falco",
+      "Open Policy Agent",
+      "cert-manager",
+      "Trivy"
+    ],
+    "answer": 3,
+    "lengths": [
+      5,
+      17,
+      12,
+      5
+    ],
+    "avgLen": 10,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q006",
+    "qIndex": 5,
+    "text": "You create a ServiceAccount named `deployer` in the `staging` namespace and mount its token into a Pod. In Kubernetes 1.24+, what must you do to obtain a long-lived token for this ServiceAccount?",
+    "options": [
+      "Tokens are always auto-mounted and never expire",
+      "Set `automountServiceAccountToken: true` on the Pod spec",
+      "Create a Secret of type `kubernetes.io/service-account-token` with the annotation `kubernetes.io/service-account.name: deployer`",
+      "Run `kubectl token create deployer` to generate an OIDC token"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      56,
+      128,
+      61
+    ],
+    "avgLen": 73,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q007",
+    "qIndex": 6,
+    "text": "A ClusterRole grants `create` and `delete` on `deployments` in the `apps` API group. A RoleBinding in the `dev` namespace binds this ClusterRole to user `alice`. What can Alice do?",
+    "options": [
+      "Create and delete Deployments in all namespaces",
+      "Create and delete Deployments only in the `dev` namespace",
+      "Nothing, because ClusterRoles cannot be bound by RoleBindings",
+      "Create Deployments in `dev` but delete them cluster-wide"
+    ],
+    "answer": 1,
+    "lengths": [
+      47,
+      57,
+      61,
+      56
+    ],
+    "avgLen": 55,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q008",
+    "qIndex": 7,
+    "text": "You suspect an unauthorized process is running inside a production container. Which approach provides real-time detection of anomalous system calls within running containers?",
+    "options": [
+      "Prometheus metrics scraping with alerting rules",
+      "Fluentd log aggregation with pattern matching",
+      "Jaeger distributed tracing with span analysis",
+      "Falco with custom rules monitoring syscall events"
+    ],
+    "answer": 3,
+    "lengths": [
+      47,
+      45,
+      45,
+      49
+    ],
+    "avgLen": 47,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q009",
+    "qIndex": 8,
+    "text": "A Pod has the following `securityContext` at the container level: `readOnlyRootFilesystem: true`. The application inside needs to write temporary files. What is the recommended approach?",
+    "options": [
+      "Set `readOnlyRootFilesystem: false` to allow writes",
+      "Use an `initContainer` to pre-create the files",
+      "Set `allowPrivilegeEscalation: true` to bypass the restriction",
+      "Mount an `emptyDir` volume at the path where writes are needed"
+    ],
+    "answer": 3,
+    "lengths": [
+      51,
+      46,
+      62,
+      62
+    ],
+    "avgLen": 55,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q010",
+    "qIndex": 9,
+    "text": "Your CI pipeline builds container images and pushes them to a registry. To prevent deploying images with critical vulnerabilities, which step should be integrated into the pipeline?",
+    "options": [
+      "Sign images with cosign after pushing to the registry",
+      "Use `imagePullPolicy: Always` on all Pods",
+      "Run a vulnerability scanner and fail the build if critical CVEs are found",
+      "Deploy to a staging namespace before production"
+    ],
+    "answer": 2,
+    "lengths": [
+      53,
+      41,
+      73,
+      47
+    ],
+    "avgLen": 54,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q011",
+    "qIndex": 10,
+    "text": "A Deployment creates Pods that need to read Secrets from the Kubernetes API. The Pods use the `default` ServiceAccount. In a hardened cluster with `automountServiceAccountToken: false` set on the `default` ServiceAccount, what happens?",
+    "options": [
+      "The Pods still receive a projected token volume by default",
+      "No token is mounted, and API calls from Pods fail with 401 Unauthorized",
+      "The kubelet injects a static token from its local credential store",
+      "The Pods are rejected at admission because no token is available"
+    ],
+    "answer": 1,
+    "lengths": [
+      58,
+      71,
+      66,
+      64
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q012",
+    "qIndex": 11,
+    "text": "A team adopts a zero-trust security model for their cloud native application. Which principle does this model emphasize?",
+    "options": [
+      "Verify every request regardless of its source network location",
+      "Trust all traffic originating from within the cluster network",
+      "Encrypt only external-facing traffic at the ingress layer",
+      "Rely on network perimeter firewalls for all access control"
+    ],
+    "answer": 0,
+    "lengths": [
+      62,
+      61,
+      57,
+      58
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q013",
+    "qIndex": 12,
+    "text": "A container in a Pod attempts to use `CAP_NET_ADMIN` to modify network interfaces. The Pod spec does not include any `capabilities` configuration. What is the default behavior?",
+    "options": [
+      "All Linux capabilities are granted by default",
+      "`CAP_NET_ADMIN` is granted because it is in the container runtime default list",
+      "The container runs with a default set that does not include `CAP_NET_ADMIN`",
+      "The kubelet adds all `NET_*` capabilities automatically"
+    ],
+    "answer": 2,
+    "lengths": [
+      45,
+      78,
+      75,
+      55
+    ],
+    "avgLen": 63,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q014",
+    "qIndex": 13,
+    "text": "You have a Pod Security Admission policy that enforces `baseline` on the `apps` namespace. A new Pod requests `hostNetwork: true`. What is the outcome?",
+    "options": [
+      "The Pod is scheduled but logs a warning event",
+      "The Pod is admitted because `baseline` allows host networking",
+      "The Pod is rejected because `baseline` prohibits `hostNetwork: true`",
+      "The Pod is mutated to set `hostNetwork: false`"
+    ],
+    "answer": 2,
+    "lengths": [
+      45,
+      61,
+      68,
+      46
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q015",
+    "qIndex": 14,
+    "text": "A Role in the `finance` namespace grants `get` and `list` on the `secrets` resource. A RoleBinding binds this Role to user `bob`. An administrator is concerned about security. Why might this be problematic?",
+    "options": [
+      "Roles cannot grant access to Secrets",
+      "Bob can read all Secrets in `finance`, potentially including sensitive credentials",
+      "RoleBindings for Secrets require cluster-admin approval",
+      "The `get` verb on Secrets only returns metadata, not data"
+    ],
+    "answer": 1,
+    "lengths": [
+      36,
+      82,
+      55,
+      57
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q016",
+    "qIndex": 15,
+    "text": "You need to restrict a container to only use capabilities `NET_BIND_SERVICE` and nothing else. Which `securityContext` configuration achieves this?",
+    "options": [
+      "Set `capabilities: { add: [NET_BIND_SERVICE] }` only",
+      "Set `capabilities: { drop: [ALL], add: [NET_BIND_SERVICE] }`",
+      "Set `privileged: true` and `capabilities: { drop: [ALL], add: [NET_BIND_SERVICE] }`",
+      "Set `capabilities: { drop: [NET_ADMIN, SYS_ADMIN] }`"
+    ],
+    "answer": 1,
+    "lengths": [
+      52,
+      60,
+      83,
+      52
+    ],
+    "avgLen": 62,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q017",
+    "qIndex": 16,
+    "text": "A service mesh like Istio or Linkerd automatically provides mutual TLS (mTLS) between services. What security benefit does mTLS provide that standard TLS does not?",
+    "options": [
+      "mTLS encrypts traffic with stronger cipher suites",
+      "mTLS eliminates the need for network policies",
+      "mTLS automatically rotates secrets stored in etcd",
+      "mTLS authenticates both the client and the server, not just the server"
+    ],
+    "answer": 3,
+    "lengths": [
+      49,
+      45,
+      49,
+      70
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q018",
+    "qIndex": 17,
+    "text": "Audit logging is enabled on the kube-apiserver. A security analyst wants to capture which users accessed Secrets without logging the Secret data itself. Which audit level should they configure?",
+    "options": [
+      "`None` — disables logging for the resource",
+      "`Request` — logs request metadata and request body",
+      "`Metadata` — logs request metadata without request or response body",
+      "`RequestResponse` — logs metadata, request body, and response body"
+    ],
+    "answer": 2,
+    "lengths": [
+      42,
+      50,
+      67,
+      66
+    ],
+    "avgLen": 56,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q019",
+    "qIndex": 18,
+    "text": "You want to grant a ServiceAccount the ability to `get` Pods across all namespaces. Which combination of resources do you need?",
+    "options": [
+      "A Role and a RoleBinding in each namespace",
+      "A ClusterRole and a ClusterRoleBinding",
+      "A ClusterRole and a RoleBinding in the ServiceAccount's namespace",
+      "A Role and a ClusterRoleBinding"
+    ],
+    "answer": 1,
+    "lengths": [
+      42,
+      38,
+      65,
+      31
+    ],
+    "avgLen": 44,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q020",
+    "qIndex": 19,
+    "text": "A GitOps workflow stores Kubernetes manifests in a Git repository. An engineer commits a Deployment that mounts a Secret as an environment variable. What security concern arises?",
+    "options": [
+      "The Secret data may be stored in plaintext in the Git repository history",
+      "GitOps controllers cannot apply Secrets from Git",
+      "Environment variables are encrypted at rest by Kubernetes automatically",
+      "Secrets mounted as env vars are visible only to the init container"
+    ],
+    "answer": 0,
+    "lengths": [
+      72,
+      48,
+      71,
+      66
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q021",
+    "qIndex": 20,
+    "text": "The kube-apiserver uses which authentication method to verify requests from the kubelet by default?",
+    "options": [
+      "Basic authentication with username and password",
+      "Bearer token from a static token file",
+      "OIDC tokens from an external identity provider",
+      "Client certificate authentication (X.509)"
+    ],
+    "answer": 3,
+    "lengths": [
+      47,
+      37,
+      46,
+      41
+    ],
+    "avgLen": 43,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q022",
+    "qIndex": 21,
+    "text": "A default-deny NetworkPolicy is applied to the `secure` namespace. After applying it, existing Pods in the namespace can no longer communicate with each other. Which NetworkPolicy spec creates this default-deny behavior for ingress?",
+    "options": [
+      "A policy with `podSelector: {}` and an empty `ingress: []` array",
+      "A policy with `podSelector: {}` and `policyTypes: [Ingress]` with no `ingress` field",
+      "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rules",
+      "A policy with `podSelector: {}` and `ingress: [{from: []}]`"
+    ],
+    "answer": 1,
+    "lengths": [
+      64,
+      84,
+      76,
+      59
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q023",
+    "qIndex": 22,
+    "text": "An attacker gains access to a container and tries to escalate privileges using `setuid` binaries. Which `securityContext` field prevents this?",
+    "options": [
+      "`readOnlyRootFilesystem: true`",
+      "`runAsNonRoot: true`",
+      "`privileged: false`",
+      "`allowPrivilegeEscalation: false`"
+    ],
+    "answer": 3,
+    "lengths": [
+      30,
+      20,
+      19,
+      33
+    ],
+    "avgLen": 26,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q024",
+    "qIndex": 23,
+    "text": "An RBAC policy uses the `resourceNames` field to restrict a Role to only access a specific Secret called `db-credentials`. Which statement about this restriction is correct?",
+    "options": [
+      "The `list` verb still returns all Secrets in the namespace",
+      "The `get` verb can only retrieve the `db-credentials` Secret",
+      "The `resourceNames` field is ignored for Secrets",
+      "The restriction applies to all resources, not just the named one"
+    ],
+    "answer": 1,
+    "lengths": [
+      58,
+      60,
+      48,
+      64
+    ],
+    "avgLen": 58,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q025",
+    "qIndex": 24,
+    "text": "Kubernetes Secrets are base64-encoded by default. An operations team wants to ensure Secrets are encrypted at rest in etcd. What must they configure?",
+    "options": [
+      "Enable TLS on the etcd client connections",
+      "Set `--etcd-encryption=true` on the kubelet",
+      "Use `kubectl create secret --encrypt` flag",
+      "Configure an `EncryptionConfiguration` resource on the kube-apiserver with an encryption provider"
+    ],
+    "answer": 3,
+    "lengths": [
+      41,
+      43,
+      42,
+      97
+    ],
+    "avgLen": 56,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q026",
+    "qIndex": 25,
+    "text": "A team creates multiple Roles in the same namespace, each granting different permissions. User `carol` is bound to two of them via separate RoleBindings. How does Kubernetes evaluate her access?",
+    "options": [
+      "Only the first RoleBinding created takes effect",
+      "The most restrictive Role takes precedence",
+      "Permissions from all bound Roles are combined (additive)",
+      "Kubernetes returns an error for conflicting bindings"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      42,
+      56,
+      52
+    ],
+    "avgLen": 49,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q027",
+    "qIndex": 26,
+    "text": "The kube-apiserver flag `--anonymous-auth=true` is set. A request arrives without any authentication credentials. How is it handled?",
+    "options": [
+      "The request is rejected with 401 Unauthorized",
+      "The request is forwarded to an external identity provider",
+      "The request inherits the `default` ServiceAccount permissions",
+      "The request is processed as user `system:anonymous` in group `system:unauthenticated`"
+    ],
+    "answer": 3,
+    "lengths": [
+      45,
+      57,
+      61,
+      85
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q028",
+    "qIndex": 27,
+    "text": "A security audit finds that containers in the `analytics` namespace are running with `seccompProfile: Unconfined`. The team wants to enforce the `RuntimeDefault` seccomp profile. Which resource enforces this at the namespace level?",
+    "options": [
+      "A LimitRange targeting container security contexts",
+      "Pod Security Admission with the `restricted` profile on the namespace",
+      "A ResourceQuota limiting seccomp profile types",
+      "A MutatingWebhookConfiguration that patches Pod specs"
+    ],
+    "answer": 1,
+    "lengths": [
+      50,
+      69,
+      46,
+      53
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q029",
+    "qIndex": 28,
+    "text": "A NetworkPolicy allows egress only to port 443 from Pods in the `frontend` namespace. A Pod tries to resolve a DNS name before connecting. What happens?",
+    "options": [
+      "DNS resolution works because NetworkPolicy does not affect DNS",
+      "DNS resolution uses the node's resolver, bypassing the policy",
+      "DNS resolution fails because UDP port 53 is not permitted by the egress rule",
+      "The kubelet resolves DNS on behalf of the Pod"
+    ],
+    "answer": 2,
+    "lengths": [
+      62,
+      61,
+      76,
+      45
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q030",
+    "qIndex": 29,
+    "text": "Open Policy Agent (OPA) Gatekeeper is deployed in a cluster. How does it enforce policies on Kubernetes resources?",
+    "options": [
+      "It acts as a validating admission webhook that evaluates resources against Rego policies",
+      "It runs as a sidecar in each Pod and intercepts syscalls",
+      "It modifies the kube-apiserver binary to include policy checks",
+      "It replaces the built-in RBAC system with attribute-based access control"
+    ],
+    "answer": 0,
+    "lengths": [
+      88,
+      56,
+      62,
+      72
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q031",
+    "qIndex": 30,
+    "text": "A Pod spec sets `serviceAccountName: custom-sa`. The ServiceAccount `custom-sa` does not exist in the namespace. What happens when the Pod is created?",
+    "options": [
+      "The Pod is created with the `default` ServiceAccount as a fallback",
+      "The Pod is created but remains in `Pending` state until the SA is created",
+      "The kubelet creates the ServiceAccount automatically",
+      "The API server rejects the Pod creation request"
+    ],
+    "answer": 3,
+    "lengths": [
+      66,
+      73,
+      52,
+      47
+    ],
+    "avgLen": 60,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q032",
+    "qIndex": 31,
+    "text": "You create an aggregated ClusterRole with the label selector `rbac.authorization.k8s.io/aggregate-to-admin: \"true\"`. What effect does this have?",
+    "options": [
+      "Rules from ClusterRoles matching the selector are automatically added to the `admin` ClusterRole",
+      "It creates a new ClusterRole that overrides the built-in `admin` role",
+      "It grants admin permissions to all ServiceAccounts",
+      "It merges the ClusterRole into the `cluster-admin` role"
+    ],
+    "answer": 0,
+    "lengths": [
+      96,
+      69,
+      50,
+      55
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q033",
+    "qIndex": 32,
+    "text": "A security team sets up alerts for failed authentication attempts to the Kubernetes API server. Which metric from the apiserver exposes this information?",
+    "options": [
+      "`apiserver_request_total` with code label `401`",
+      "`kubelet_http_requests_total` with status `denied`",
+      "`etcd_request_failed_total`",
+      "`scheduler_binding_errors_total`"
+    ],
+    "answer": 0,
+    "lengths": [
+      47,
+      50,
+      27,
+      32
+    ],
+    "avgLen": 39,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q034",
+    "qIndex": 33,
+    "text": "An organization implements the principle of least privilege for their Kubernetes workloads. Which practice best exemplifies this principle?",
+    "options": [
+      "Granting `cluster-admin` to all developers for convenience",
+      "Using a single ServiceAccount for all Pods in the cluster",
+      "Creating namespace-scoped Roles with only the specific verbs and resources each workload needs",
+      "Disabling RBAC and using ABAC for simpler policy management"
+    ],
+    "answer": 2,
+    "lengths": [
+      58,
+      57,
+      94,
+      59
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q035",
+    "qIndex": 34,
+    "text": "A container image is pulled from a private registry that requires authentication. Where should the image pull credentials be configured in Kubernetes?",
+    "options": [
+      "In a ConfigMap referenced by `imagePullConfigMap` in the Pod spec",
+      "In the kubelet configuration file on each node",
+      "In the container runtime configuration under `/etc/containerd/creds.json`",
+      "In a Secret of type `kubernetes.io/dockerconfigjson` referenced by `imagePullSecrets` in the Pod spec"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      46,
+      73,
+      101
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q036",
+    "qIndex": 35,
+    "text": "A NetworkPolicy in the `database` namespace allows ingress only from Pods with label `role: backend` in the same namespace. A Pod in a different namespace with the same label tries to connect. Is it allowed?",
+    "options": [
+      "Yes, because the label matches regardless of namespace",
+      "No, because `podSelector` only matches Pods in the policy's namespace",
+      "Yes, if the other namespace has the same name",
+      "No, because NetworkPolicies block all cross-namespace traffic"
+    ],
+    "answer": 1,
+    "lengths": [
+      54,
+      69,
+      45,
+      61
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q037",
+    "qIndex": 36,
+    "text": "A security-sensitive workload requires that its Pods only run on nodes with an encrypted filesystem. The nodes are labeled `disk-encryption: enabled`. Which mechanism ensures the Pods are scheduled only on these nodes?",
+    "options": [
+      "A `nodeSelector` with `disk-encryption: enabled` on the Pod spec",
+      "A Pod affinity rule preferring Pods with `disk-encryption: enabled`",
+      "A taint `disk-encryption=enabled:NoSchedule` on the nodes",
+      "A PriorityClass assigned to the Pod"
+    ],
+    "answer": 0,
+    "lengths": [
+      64,
+      67,
+      57,
+      35
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q038",
+    "qIndex": 37,
+    "text": "A Helm chart for a microservice includes a Secret template. A developer stores the chart in a public Helm repository. What security concern should be addressed?",
+    "options": [
+      "Helm automatically encrypts Secret values in the chart",
+      "Helm charts cannot contain Secret templates",
+      "The default values file may contain sensitive data visible to anyone with repository access",
+      "Public Helm repositories enforce RBAC on chart downloads"
+    ],
+    "answer": 2,
+    "lengths": [
+      54,
+      43,
+      91,
+      56
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q039",
+    "qIndex": 38,
+    "text": "A team uses gVisor (runsc) as the container runtime for their sensitive workloads. What security benefit does gVisor provide compared to the default runc runtime?",
+    "options": [
+      "gVisor provides hardware-level isolation using dedicated CPUs",
+      "gVisor encrypts all container filesystem data at rest",
+      "gVisor intercepts syscalls in a user-space kernel, reducing the host kernel attack surface",
+      "gVisor eliminates the need for Linux namespaces and cgroups"
+    ],
+    "answer": 2,
+    "lengths": [
+      61,
+      53,
+      90,
+      59
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q040",
+    "qIndex": 39,
+    "text": "A ClusterRole has a rule with `apiGroups: [\"\"]` and `resources: [\"pods/exec\"]`. A ClusterRoleBinding binds it to user `dave`. What can Dave do?",
+    "options": [
+      "Execute commands inside any Pod in any namespace",
+      "Execute commands only in Pods he created",
+      "View Pod execution logs across the cluster",
+      "Nothing, because `pods/exec` is not a valid subresource"
+    ],
+    "answer": 0,
+    "lengths": [
+      48,
+      40,
+      42,
+      55
+    ],
+    "avgLen": 46,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q041",
+    "qIndex": 40,
+    "text": "A security incident response requires tracing the origin of an API call that deleted a critical ConfigMap. Which Kubernetes feature helps reconstruct the sequence of events?",
+    "options": [
+      "Kubernetes audit logs with the `RequestResponse` audit level",
+      "Container stdout/stderr logs from the affected Pod",
+      "Prometheus time-series metrics for ConfigMap operations",
+      "Distributed tracing spans from the application"
+    ],
+    "answer": 0,
+    "lengths": [
+      60,
+      50,
+      55,
+      46
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q042",
+    "qIndex": 41,
+    "text": "A CronJob is configured to run a backup script that requires access to the Kubernetes API. The CronJob's Pod template specifies `serviceAccountName: backup-sa`. When does the projected token for `backup-sa` expire by default?",
+    "options": [
+      "The token never expires",
+      "After 24 hours",
+      "After the Pod terminates",
+      "After 1 hour"
+    ],
+    "answer": 3,
+    "lengths": [
+      23,
+      14,
+      24,
+      12
+    ],
+    "avgLen": 18,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q043",
+    "qIndex": 42,
+    "text": "In a microservices architecture, each service has its own database. How does this design pattern enhance security compared to a shared database?",
+    "options": [
+      "Individual databases use stronger encryption algorithms",
+      "Shared databases cannot be secured with network policies",
+      "A breach in one service's database does not expose other services' data",
+      "Individual databases do not require authentication"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      56,
+      71,
+      50
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q044",
+    "qIndex": 43,
+    "text": "A Role grants `watch` on `secrets` in the `monitoring` namespace. A RoleBinding binds it to ServiceAccount `prometheus`. What can Prometheus do with this permission?",
+    "options": [
+      "Receive a stream of Secret objects including their full data as changes occur",
+      "Only receive notifications when Secrets change, without seeing their data",
+      "List all Secrets once but not receive updates",
+      "Nothing, because `watch` is not a valid verb for Secrets"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      73,
+      45,
+      56
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q045",
+    "qIndex": 44,
+    "text": "A Pod mounts a Secret as a volume at `/etc/creds`. The Secret is updated via `kubectl edit secret`. When does the Pod see the updated values?",
+    "options": [
+      "Immediately, because the volume is backed by the API server",
+      "Only after the Pod is restarted",
+      "After the kubelet sync period (up to a few minutes by default)",
+      "Never, because mounted Secrets are immutable"
+    ],
+    "answer": 2,
+    "lengths": [
+      59,
+      31,
+      62,
+      44
+    ],
+    "avgLen": 49,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q046",
+    "qIndex": 45,
+    "text": "An etcd cluster used by Kubernetes stores all cluster state. Which security measure protects etcd communication between peers?",
+    "options": [
+      "Peer TLS certificates for mutual authentication between etcd members",
+      "RBAC policies applied to etcd API endpoints",
+      "IPsec tunnels established by the CNI plugin",
+      "Kubernetes NetworkPolicies targeting etcd Pods"
+    ],
+    "answer": 0,
+    "lengths": [
+      68,
+      43,
+      43,
+      46
+    ],
+    "avgLen": 50,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q047",
+    "qIndex": 46,
+    "text": "A CI/CD pipeline uses a Kubernetes ServiceAccount token to deploy workloads. The token is stored as a pipeline variable. Which improvement reduces the risk if the token is compromised?",
+    "options": [
+      "Use a long-lived token to reduce rotation frequency",
+      "Store the token in a ConfigMap instead of a pipeline variable",
+      "Grant the ServiceAccount `cluster-admin` to simplify permission management",
+      "Use short-lived tokens from `kubectl create token` with a limited expiration"
+    ],
+    "answer": 3,
+    "lengths": [
+      51,
+      61,
+      74,
+      76
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q048",
+    "qIndex": 47,
+    "text": "You need to allow a user to view resources across all namespaces but not modify anything. Which built-in ClusterRole is appropriate?",
+    "options": [
+      "`admin`",
+      "`edit`",
+      "`view`",
+      "`cluster-admin`"
+    ],
+    "answer": 2,
+    "lengths": [
+      7,
+      6,
+      6,
+      15
+    ],
+    "avgLen": 9,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q049",
+    "qIndex": 48,
+    "text": "A cloud native application uses short-lived, immutable containers. How does immutability improve security?",
+    "options": [
+      "Immutable containers run faster, reducing exposure time",
+      "Immutable containers automatically encrypt their filesystems",
+      "Attackers cannot install persistent backdoors because changes are lost on restart",
+      "Immutable containers do not need RBAC policies"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      60,
+      81,
+      46
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q050",
+    "qIndex": 49,
+    "text": "A Pod with `runAsUser: 1000` fails to start because the application cannot bind to port 80. The container's `securityContext` has `capabilities: { drop: [ALL] }`. What is the most secure fix?",
+    "options": [
+      "Set `privileged: true` to grant all capabilities",
+      "Add `NET_BIND_SERVICE` to `capabilities.add` and keep dropping all others",
+      "Change `runAsUser` to `0` to run as root",
+      "Remove the `capabilities` block entirely"
+    ],
+    "answer": 1,
+    "lengths": [
+      48,
+      73,
+      40,
+      40
+    ],
+    "avgLen": 50,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q051",
+    "qIndex": 50,
+    "text": "A developer attempts to create a RoleBinding in the `staging` namespace that references a ClusterRole granting `delete` on `nodes`. The developer only has `admin` access to the `staging` namespace. What happens?",
+    "options": [
+      "The RoleBinding is created and grants node deletion within `staging`",
+      "The request is denied because the developer cannot escalate privileges beyond what they already have",
+      "The RoleBinding is created but the `delete nodes` permission is silently ignored",
+      "The API server automatically downgrades the ClusterRole to a Role"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      100,
+      80,
+      65
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q052",
+    "qIndex": 51,
+    "text": "The kube-apiserver is configured with multiple authentication methods: client certificates, bearer tokens, and OIDC. In which order does the API server evaluate these authenticators?",
+    "options": [
+      "In a fixed order: certificates first, then tokens, then OIDC",
+      "The order is randomized for each request",
+      "All configured authenticators are tried, and the first one to succeed is used",
+      "Only one authentication method can be active at a time"
+    ],
+    "answer": 2,
+    "lengths": [
+      60,
+      40,
+      77,
+      54
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q053",
+    "qIndex": 52,
+    "text": "A Pod runs with `securityContext.runAsUser: 1000` at the pod level, but one of its containers specifies `securityContext.runAsUser: 2000`. Which UID does that container use?",
+    "options": [
+      "UID 1000, because pod-level settings always take precedence",
+      "UID 2000, because container-level settings override pod-level settings",
+      "An error occurs due to conflicting UID specifications",
+      "The container runtime selects the UID based on the image"
+    ],
+    "answer": 1,
+    "lengths": [
+      59,
+      70,
+      53,
+      56
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q054",
+    "qIndex": 53,
+    "text": "A NetworkPolicy selects Pods using `podSelector: {matchLabels: {app: db}}` and specifies both `Ingress` and `Egress` in `policyTypes` with explicit ingress rules but no egress rules. What egress behavior applies to the selected Pods?",
+    "options": [
+      "All egress traffic is denied because `Egress` is listed in `policyTypes` with no rules",
+      "All egress traffic is allowed because no egress rules are specified",
+      "Egress is unaffected because only ingress rules were defined",
+      "Egress defaults to the namespace-level default policy"
+    ],
+    "answer": 0,
+    "lengths": [
+      86,
+      67,
+      60,
+      53
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q055",
+    "qIndex": 54,
+    "text": "A team uses Sealed Secrets (Bitnami) to manage Secrets in their GitOps repository. How does Sealed Secrets protect Secret data?",
+    "options": [
+      "It stores Secrets in a separate encrypted Git branch",
+      "It replaces Secrets with references to an external vault",
+      "It base64-encodes Secret data twice for additional security",
+      "It encrypts Secret data with a public key; only the in-cluster controller can decrypt with the private key"
+    ],
+    "answer": 3,
+    "lengths": [
+      52,
+      56,
+      59,
+      106
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q056",
+    "qIndex": 55,
+    "text": "A platform team wants to detect when a Pod is running as root in production namespaces. Which approach enables automated detection?",
+    "options": [
+      "Review `kubectl get pods -o yaml` output manually each day",
+      "Configure a Prometheus alert rule querying `kube_pod_container_status_running` with a security context label",
+      "Use an OPA Gatekeeper constraint that audits existing Pods running as root",
+      "Enable verbose logging on the kubelet"
+    ],
+    "answer": 2,
+    "lengths": [
+      58,
+      108,
+      74,
+      37
+    ],
+    "avgLen": 69,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q057",
+    "qIndex": 56,
+    "text": "A StatefulSet runs a database that stores encryption keys in a projected volume combining a Secret and a ConfigMap. If the Secret is deleted while the Pod is running, what happens to the mounted data?",
+    "options": [
+      "The mounted files immediately disappear from the container",
+      "The Pod is immediately terminated by the kubelet",
+      "The projected volume recreates the Secret automatically",
+      "The existing mounted data remains until the next kubelet sync, then the Pod fails"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      48,
+      55,
+      81
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q058",
+    "qIndex": 57,
+    "text": "A Role has two rules: one grants `get` on `pods` and another grants `create` on `pods/exec`. What effective permissions does a user bound to this Role have?",
+    "options": [
+      "The user can only view Pods because `pods/exec` requires `pods` write access",
+      "The rules conflict and neither takes effect",
+      "The user can execute commands but not view Pod details",
+      "The user can view Pods and execute commands in them"
+    ],
+    "answer": 3,
+    "lengths": [
+      76,
+      43,
+      54,
+      51
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q059",
+    "qIndex": 58,
+    "text": "A security policy requires that all containers use image digests instead of tags. Why is this practice recommended?",
+    "options": [
+      "Tags are mutable and can be repointed to a different image, while digests are immutable",
+      "Digests download faster than tags from registries",
+      "Digests enable automatic vulnerability scanning",
+      "Tags cannot be used with private registries"
+    ],
+    "answer": 0,
+    "lengths": [
+      87,
+      49,
+      47,
+      43
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q060",
+    "qIndex": 59,
+    "text": "An API gateway sits in front of multiple microservices and handles authentication. What security risk does this centralized pattern introduce?",
+    "options": [
+      "Each microservice must implement its own TLS termination",
+      "The gateway cannot enforce rate limiting on individual services",
+      "Microservices behind the gateway cannot use service meshes",
+      "If the gateway is compromised, all backend services become accessible without authentication"
+    ],
+    "answer": 3,
+    "lengths": [
+      56,
+      63,
+      58,
+      92
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q061",
+    "qIndex": 60,
+    "text": "A NetworkPolicy allows ingress to Pods labeled `app: web` on port 443 from any source. A new Pod labeled `app: web` is created without port 443 open. Does the NetworkPolicy still apply to this new Pod?",
+    "options": [
+      "No, NetworkPolicy only applies to Pods that have the specified port open",
+      "Yes, the policy selects Pods by label regardless of which ports the container exposes",
+      "No, the policy is only evaluated at Pod creation time",
+      "Yes, but the policy forces port 443 to open on the Pod"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      85,
+      53,
+      54
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q062",
+    "qIndex": 61,
+    "text": "A cluster uses RuntimeClass to run certain Pods in Kata Containers instead of the default runtime. What security advantage does Kata Containers provide?",
+    "options": [
+      "Kata runs containers in lightweight VMs, providing hardware-level isolation",
+      "Kata encrypts all container images before execution",
+      "Kata replaces Linux namespaces with a proprietary isolation mechanism",
+      "Kata eliminates the need for Pod Security Standards"
+    ],
+    "answer": 0,
+    "lengths": [
+      75,
+      51,
+      69,
+      51
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q063",
+    "qIndex": 62,
+    "text": "A webhook admission controller is configured as `failurePolicy: Fail`. The webhook endpoint becomes unreachable. What happens to new Pod creation requests?",
+    "options": [
+      "Pod creation requests are rejected until the webhook becomes available",
+      "Pods are created normally, bypassing the webhook",
+      "The API server queues requests and retries for 30 seconds",
+      "The kube-controller-manager handles admission in place of the webhook"
+    ],
+    "answer": 0,
+    "lengths": [
+      70,
+      48,
+      57,
+      69
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q064",
+    "qIndex": 63,
+    "text": "An administrator needs to grant a group of developers read access to all resources in the `testing` namespace except Secrets. How can this be achieved with RBAC?",
+    "options": [
+      "Create a Role with a deny rule for Secrets and allow all other resources",
+      "Bind the `view` ClusterRole and create a separate Role that explicitly lists each allowed resource excluding Secrets",
+      "Use `resourceNames` to exclude Secret names from a Role",
+      "Set a namespace annotation to hide Secrets from non-admin users"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      116,
+      55,
+      63
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q065",
+    "qIndex": 64,
+    "text": "A company implements image provenance verification in their cluster using Sigstore cosign. What does this verification confirm?",
+    "options": [
+      "That the image has no known CVEs",
+      "That the image uses a read-only filesystem",
+      "That the image was built and signed by a trusted entity",
+      "That the image is smaller than the registry size limit"
+    ],
+    "answer": 2,
+    "lengths": [
+      32,
+      42,
+      55,
+      54
+    ],
+    "avgLen": 46,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q066",
+    "qIndex": 65,
+    "text": "A Pod is configured with an Istio sidecar proxy. The security team needs to log all requests denied by the sidecar's authorization policy. Where should they look for these logs?",
+    "options": [
+      "In the application container's stdout logs",
+      "In the kube-apiserver audit logs",
+      "In the CoreDNS query logs",
+      "In the Istio proxy (Envoy) container's access logs"
+    ],
+    "answer": 3,
+    "lengths": [
+      42,
+      32,
+      25,
+      50
+    ],
+    "avgLen": 37,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q067",
+    "qIndex": 66,
+    "text": "A Pod spec includes `automountServiceAccountToken: true` at the pod level, but the associated ServiceAccount has `automountServiceAccountToken: false`. Which setting takes effect?",
+    "options": [
+      "The ServiceAccount setting takes precedence; no token is mounted",
+      "An error is raised due to conflicting settings",
+      "The Pod spec setting takes precedence; the token is mounted",
+      "The token is mounted but expired immediately"
+    ],
+    "answer": 2,
+    "lengths": [
+      64,
+      46,
+      59,
+      44
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q068",
+    "qIndex": 67,
+    "text": "A DaemonSet runs a log collector on every node. The collector needs access to host paths `/var/log` and `/var/lib/docker/containers`. Under the `restricted` Pod Security Standard, is this allowed?",
+    "options": [
+      "Yes, because DaemonSets are exempt from Pod Security Standards",
+      "No, the `restricted` profile prohibits `hostPath` volumes",
+      "Yes, if the `hostPath` volumes are read-only",
+      "No, but it is allowed under the `baseline` profile"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      57,
+      44,
+      50
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q069",
+    "qIndex": 68,
+    "text": "A ClusterRole includes the `impersonate` verb for `users` and `groups`. What security risk does this permission carry?",
+    "options": [
+      "The user can only impersonate ServiceAccounts in their own namespace",
+      "The user can act as any user or group, effectively gaining cluster-admin access",
+      "The impersonate verb only works with the `--dry-run` flag",
+      "Impersonation is logged but does not grant actual permissions"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      79,
+      57,
+      61
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q070",
+    "qIndex": 69,
+    "text": "During a canary deployment, a new version is found to have a vulnerability that exposes user data. Which action should be taken immediately?",
+    "options": [
+      "Roll back the canary to the previous version and stop routing traffic to the new version",
+      "Increase the canary percentage to gather more data about the vulnerability",
+      "Apply a NetworkPolicy to block the canary Pods from the internet",
+      "Patch the vulnerability in production without rolling back"
+    ],
+    "answer": 0,
+    "lengths": [
+      88,
+      74,
+      64,
+      58
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q071",
+    "qIndex": 70,
+    "text": "A multi-tenant cluster uses separate namespaces per tenant. Each tenant's Pods run with a dedicated ServiceAccount. What additional isolation mechanism prevents one tenant from accessing another tenant's API resources?",
+    "options": [
+      "Kubernetes automatically isolates namespaces at the API level",
+      "Node affinity rules that pin tenants to different nodes",
+      "Container runtime sandboxing with gVisor",
+      "RBAC Roles and RoleBindings scoped to each tenant's namespace"
+    ],
+    "answer": 3,
+    "lengths": [
+      61,
+      55,
+      40,
+      61
+    ],
+    "avgLen": 54,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q072",
+    "qIndex": 71,
+    "text": "A NetworkPolicy allows egress from Pods labeled `app: worker` to an external CIDR `10.0.0.0/8` on port 5432. The cluster Pod CIDR is `192.168.0.0/16`. Can the worker Pods reach other Pods in the cluster?",
+    "options": [
+      "Yes, because intra-cluster traffic is always allowed",
+      "No, because the egress rule only allows traffic to `10.0.0.0/8`",
+      "Yes, because NetworkPolicies do not affect cluster-internal traffic",
+      "No, unless DNS port 53 is also allowed"
+    ],
+    "answer": 1,
+    "lengths": [
+      52,
+      63,
+      67,
+      38
+    ],
+    "avgLen": 55,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q073",
+    "qIndex": 72,
+    "text": "A security-hardened node has the taint `security=high:NoSchedule`. A Pod for a sensitive workload needs to be scheduled on this node. What must the Pod spec include?",
+    "options": [
+      "A `nodeSelector` matching `security: high`",
+      "A `toleration` matching the taint `security=high:NoSchedule`",
+      "A `nodeAffinity` rule with `requiredDuringSchedulingIgnoredDuringExecution`",
+      "An annotation `scheduler.alpha.kubernetes.io/tolerations`"
+    ],
+    "answer": 1,
+    "lengths": [
+      42,
+      60,
+      75,
+      57
+    ],
+    "avgLen": 59,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q074",
+    "qIndex": 73,
+    "text": "A serverless platform like Knative runs user functions in Kubernetes Pods that scale to zero. What security challenge does scale-to-zero introduce for functions that access Secrets?",
+    "options": [
+      "Cold-start Pods must re-authenticate and fetch Secrets, increasing latency and requiring token freshness",
+      "Secrets are deleted when Pods scale to zero",
+      "Scale-to-zero disables RBAC for the namespace",
+      "Functions cannot access the Kubernetes API during cold start"
+    ],
+    "answer": 0,
+    "lengths": [
+      104,
+      43,
+      45,
+      60
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q075",
+    "qIndex": 74,
+    "text": "A security team receives excessive alerts from the cluster's monitoring system about Pod security policy violations. Many are false positives from system workloads. What is the recommended approach to reduce noise?",
+    "options": [
+      "Disable all security alerts to reduce operational burden",
+      "Configure exemptions for system namespaces and tune alert thresholds for known workloads",
+      "Move all system workloads to a separate cluster",
+      "Replace monitoring with manual periodic audits"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      88,
+      47,
+      46
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q076",
+    "qIndex": 75,
+    "text": "A team configures an RBAC Role with `verbs: [\"*\"]` on `resources: [\"pods\"]`. What does the wildcard grant?",
+    "options": [
+      "Only the standard CRUD verbs (`get`, `list`, `create`, `update`, `delete`)",
+      "All current and future verbs including subresources like `pods/exec` and `pods/log`",
+      "All current verbs on Pods but not subresources",
+      "An error, because wildcards are not valid in the `verbs` field"
+    ],
+    "answer": 2,
+    "lengths": [
+      74,
+      83,
+      46,
+      62
+    ],
+    "avgLen": 66,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q077",
+    "qIndex": 76,
+    "text": "The Kubernetes API server supports webhook token authentication. A request includes a bearer token, and the API server sends it to an external webhook for validation. What must the webhook return for successful authentication?",
+    "options": [
+      "An HTTP 302 redirect to the identity provider",
+      "A signed JWT with the user's claims",
+      "An HTTP 200 with a `TokenReview` response containing the user's identity",
+      "An HTTP 200 with a plain-text username"
+    ],
+    "answer": 2,
+    "lengths": [
+      45,
+      35,
+      72,
+      38
+    ],
+    "avgLen": 48,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q078",
+    "qIndex": 77,
+    "text": "A Pod uses `fsGroup: 2000` in its `securityContext`. What effect does this have on mounted volumes?",
+    "options": [
+      "The filesystem is encrypted with a key derived from group 2000",
+      "All files in mounted volumes are owned by GID 2000, and new files inherit this group",
+      "Only processes running as GID 2000 can access the Pod",
+      "The volume is mounted read-only for non-group members"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      84,
+      53,
+      53
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q079",
+    "qIndex": 78,
+    "text": "A Pod fails to start with the error `Error: secret \"tls-cert\" not found`. The Secret exists in the `default` namespace, but the Pod runs in the `production` namespace. What is the issue?",
+    "options": [
+      "Secrets cannot be used across namespaces; the Secret must exist in the Pod's namespace",
+      "The Secret name has a typo",
+      "TLS Secrets require a special RBAC role to access",
+      "The Pod's ServiceAccount does not have permission to read Secrets"
+    ],
+    "answer": 0,
+    "lengths": [
+      86,
+      26,
+      49,
+      65
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q080",
+    "qIndex": 79,
+    "text": "A team evaluates SPIFFE/SPIRE for workload identity in their Kubernetes cluster. What does SPIFFE provide?",
+    "options": [
+      "A vulnerability scanning framework for container images",
+      "A network policy engine for service-to-service communication",
+      "A standard for issuing and verifying cryptographic identities (SVIDs) to workloads",
+      "A secrets management system that replaces Kubernetes Secrets"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      60,
+      82,
+      60
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q081",
+    "qIndex": 80,
+    "text": "A Pod has two containers: `app` and `sidecar`. The `app` container sets `runAsUser: 1000` and the `sidecar` has no `securityContext`. The pod-level `securityContext` sets `runAsUser: 3000`. What UID does the sidecar use?",
+    "options": [
+      "UID 0 (root) because no container-level setting is specified",
+      "UID 1000, inheriting from the `app` container",
+      "UID 3000, inheriting from the pod-level `securityContext`",
+      "The UID defined in the sidecar's container image"
+    ],
+    "answer": 2,
+    "lengths": [
+      60,
+      45,
+      57,
+      48
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q082",
+    "qIndex": 81,
+    "text": "A cloud native application follows the 12-factor methodology and stores configuration in environment variables. Why is storing Secrets as environment variables considered less secure than using volume mounts?",
+    "options": [
+      "Environment variables are not encrypted in transit",
+      "Volume mounts automatically encrypt Secret data",
+      "Environment variables are limited to 256 characters",
+      "Environment variables are visible in process listings, crash dumps, and logs, while volume-mounted files are not"
+    ],
+    "answer": 3,
+    "lengths": [
+      50,
+      47,
+      51,
+      112
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q083",
+    "qIndex": 82,
+    "text": "A cluster uses Calico as the CNI plugin with NetworkPolicy support. An administrator creates an `allow-dns` NetworkPolicy permitting UDP egress on port 53. The policy uses `namespaceSelector: {}` in the egress `to` block. What does this allow?",
+    "options": [
+      "DNS queries only to CoreDNS in `kube-system`",
+      "UDP port 53 traffic to any Pod in any namespace",
+      "DNS queries to external DNS servers outside the cluster",
+      "UDP port 53 traffic only within the same namespace"
+    ],
+    "answer": 1,
+    "lengths": [
+      44,
+      47,
+      55,
+      50
+    ],
+    "avgLen": 49,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q085",
+    "qIndex": 84,
+    "text": "An administrator creates a ClusterRole with `nonResourceURLs: [\"/healthz\", \"/metrics\"]` and verb `get`. What access does this grant?",
+    "options": [
+      "Access to Pod health check and metrics endpoints",
+      "Access to health check resources in all namespaces",
+      "Access to the API server's `/healthz` and `/metrics` HTTP endpoints",
+      "Nothing, because `nonResourceURLs` is not a valid RBAC field"
+    ],
+    "answer": 2,
+    "lengths": [
+      48,
+      50,
+      67,
+      60
+    ],
+    "avgLen": 56,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q086",
+    "qIndex": 85,
+    "text": "A Pod in the `app` namespace needs to communicate with a Service in the `database` namespace. A NetworkPolicy in `database` only allows ingress from the `app` namespace. The `app` namespace must be labeled. Which label must be present?",
+    "options": [
+      "`kubernetes.io/name: app` set automatically by Kubernetes",
+      "`app.kubernetes.io/managed-by: networkpolicy`",
+      "No label is needed; namespaces are matched by name",
+      "A custom label matching the `namespaceSelector` in the NetworkPolicy, such as `name: app`"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      45,
+      50,
+      89
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q087",
+    "qIndex": 86,
+    "text": "An application stores database credentials in a Kubernetes Secret and mounts it as a volume. The Secret has `immutable: true` set. What happens when someone tries to update the Secret?",
+    "options": [
+      "The update succeeds but triggers a Pod restart",
+      "The Secret is versioned and both old and new values coexist",
+      "The `immutable` field is advisory only and does not enforce anything",
+      "The update is rejected by the API server"
+    ],
+    "answer": 3,
+    "lengths": [
+      46,
+      59,
+      68,
+      40
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q088",
+    "qIndex": 87,
+    "text": "A GitOps tool (Flux or ArgoCD) detects drift between the desired state in Git and the actual cluster state. A Secret was manually modified in the cluster. How does the GitOps tool respond?",
+    "options": [
+      "It reverts the Secret to the state defined in Git, overwriting the manual change",
+      "It ignores Secrets because they are excluded from reconciliation by default",
+      "It creates a new Secret alongside the modified one",
+      "It raises an alert but does not modify the cluster"
+    ],
+    "answer": 0,
+    "lengths": [
+      80,
+      75,
+      50,
+      50
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q089",
+    "qIndex": 88,
+    "text": "A Job creates a Pod that processes sensitive data and then completes. The Pod remains in `Completed` state. What security consideration applies to completed Pods?",
+    "options": [
+      "Completed Pods are immediately removed from the cluster",
+      "Completed Pods have their volumes automatically encrypted",
+      "Environment variables and volume mounts with sensitive data remain accessible via `kubectl logs` and `kubectl describe`",
+      "Completed Pods cannot be inspected by any user"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      57,
+      119,
+      46
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q090",
+    "qIndex": 89,
+    "text": "A blue-green deployment switches traffic from the blue (current) to the green (new) environment. Before switching, the security team wants to verify the green environment. Which validation should be performed?",
+    "options": [
+      "Run a vulnerability scan on the blue environment",
+      "Verify the green environment's container images are signed and pass security policy checks",
+      "Disable NetworkPolicies during the transition period",
+      "Grant cluster-admin to the deployment pipeline temporarily"
+    ],
+    "answer": 1,
+    "lengths": [
+      48,
+      90,
+      52,
+      58
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q091",
+    "qIndex": 90,
+    "text": "A team uses cert-manager in their Kubernetes cluster. What is the primary function of cert-manager?",
+    "options": [
+      "Automatically provisioning and renewing TLS certificates from issuers like Let's Encrypt",
+      "Managing RBAC certificates for user authentication",
+      "Encrypting etcd data at rest using X.509 certificates",
+      "Scanning container images for expired SSL certificates"
+    ],
+    "answer": 0,
+    "lengths": [
+      88,
+      50,
+      53,
+      54
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q092",
+    "qIndex": 91,
+    "text": "A PodDisruptionBudget (PDB) is configured for a security-critical Deployment with `minAvailable: 2`. During a node drain, what happens if draining would reduce available replicas below 2?",
+    "options": [
+      "The drain proceeds regardless of the PDB",
+      "The drain is blocked until another replica becomes available or the PDB is modified",
+      "The Pod is migrated live to another node",
+      "The PDB is automatically adjusted to allow the drain"
+    ],
+    "answer": 1,
+    "lengths": [
+      40,
+      83,
+      40,
+      52
+    ],
+    "avgLen": 54,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q093",
+    "qIndex": 92,
+    "text": "A cluster is configured with an admission webhook that rejects any Pod not specifying a `runtimeClassName`. A developer submits a Pod without this field. What is the outcome?",
+    "options": [
+      "The Pod is created with the default runtime class",
+      "The Pod is rejected by the admission webhook",
+      "The webhook mutates the Pod to add a default runtime class",
+      "The Pod enters a pending state until a runtime class is assigned"
+    ],
+    "answer": 1,
+    "lengths": [
+      49,
+      44,
+      58,
+      64
+    ],
+    "avgLen": 54,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q094",
+    "qIndex": 93,
+    "text": "A team implements distributed tracing with OpenTelemetry in a Kubernetes cluster. How can trace data help with security incident investigation?",
+    "options": [
+      "Traces encrypt sensitive data in transit between services",
+      "Traces replace audit logs for compliance purposes",
+      "Traces automatically block malicious requests",
+      "Traces show the full request path across services, helping identify which service was compromised"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      49,
+      45,
+      97
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q095",
+    "qIndex": 94,
+    "text": "A Kubernetes cluster uses OIDC tokens for user authentication. The kube-apiserver is configured with `--oidc-issuer-url`, `--oidc-client-id`, and `--oidc-username-claim`. What role does the `--oidc-groups-claim` flag serve?",
+    "options": [
+      "It maps a JWT claim to Kubernetes groups for use in RBAC policies",
+      "It specifies which OIDC scope to request from the identity provider",
+      "It creates Kubernetes Groups as API resources",
+      "It restricts which groups can access the cluster"
+    ],
+    "answer": 0,
+    "lengths": [
+      65,
+      67,
+      45,
+      48
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s05-q096",
+    "qIndex": 95,
+    "text": "A microservice communicates with an external payment API using a bearer token stored in a Kubernetes Secret. The token is rotated monthly by the payment provider. What is the best practice for handling rotation?",
+    "options": [
+      "Hardcode the token in the application source code and redeploy monthly",
+      "Store the token in a ConfigMap for easier updates",
+      "Use an external secrets operator to sync the token from a vault and update the Kubernetes Secret automatically",
+      "Create a new namespace for each token rotation"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      49,
+      110,
+      46
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q097",
+    "qIndex": 96,
+    "text": "A Role grants `get` on `configmaps` with `resourceNames: [\"app-config\"]`. A user bound to this Role runs `kubectl get configmaps`. What happens?",
+    "options": [
+      "Only `app-config` is returned in the list",
+      "The request is forbidden because `list` is not granted and `resourceNames` does not apply to `get` without specifying the name",
+      "All ConfigMaps are returned because `get` implies `list`",
+      "An empty list is returned"
+    ],
+    "answer": 1,
+    "lengths": [
+      41,
+      126,
+      56,
+      25
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q098",
+    "qIndex": 97,
+    "text": "A container image is stored in a registry with content trust enabled (Docker Content Trust / Notary). What does content trust verify?",
+    "options": [
+      "That the image has no known vulnerabilities",
+      "That the image meets size requirements for the registry",
+      "That the image uses a non-root user",
+      "That the image was signed by a trusted publisher and has not been tampered with"
+    ],
+    "answer": 3,
+    "lengths": [
+      43,
+      55,
+      35,
+      79
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q099",
+    "qIndex": 98,
+    "text": "A Helm chart uses `lookup` functions to read existing Secrets during template rendering. What security implication does this have?",
+    "options": [
+      "The `lookup` function caches Secret data in the Helm release secret",
+      "The user running `helm install` must have RBAC permissions to read Secrets in the target namespace",
+      "`lookup` functions are disabled by default in Helm 3",
+      "The function only reads Secret metadata, not data"
+    ],
+    "answer": 1,
+    "lengths": [
+      67,
+      98,
+      52,
+      49
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s05-q100",
+    "qIndex": 99,
+    "text": "A CI/CD pipeline runs `kubectl apply` using a ServiceAccount bound to a custom ClusterRole. The ClusterRole grants `create`, `update`, and `delete` on Deployments, Services, and ConfigMaps. A developer modifies the pipeline to also deploy a ClusterRoleBinding granting `cluster-admin`. What happens?",
+    "options": [
+      "The ClusterRoleBinding is created successfully",
+      "The request is denied because the ServiceAccount cannot escalate privileges beyond its own permissions",
+      "The pipeline pauses for manual approval",
+      "The ClusterRoleBinding is created but marked as pending review"
+    ],
+    "answer": 1,
+    "lengths": [
+      46,
+      102,
+      39,
+      62
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  }
+]

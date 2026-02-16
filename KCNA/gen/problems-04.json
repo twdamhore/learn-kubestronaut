@@ -1,0 +1,1982 @@
+[
+  {
+    "id": "s04-q001",
+    "qIndex": 0,
+    "text": "A developer creates a PersistentVolumeClaim requesting 5Gi of storage with `ReadWriteOnce` access mode. The cluster has a PersistentVolume of 10Gi with `ReadWriteMany` access mode and status `Available`. What happens when the PVC is created?",
+    "options": [
+      "The PVC binds to the PV because the PV capacity exceeds the request and `ReadWriteMany` satisfies `ReadWriteOnce`",
+      "The PVC remains `Pending` because the access modes do not exactly match",
+      "The PVC binds but is capped at 5Gi, and the remaining 5Gi becomes a new PV",
+      "The PVC fails with an error because over-provisioning is not allowed"
+    ],
+    "answer": 0,
+    "lengths": [
+      113,
+      71,
+      74,
+      68
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q002",
+    "qIndex": 1,
+    "text": "An administrator sets the `persistentVolumeReclaimPolicy` on a PV to `Retain`. A user deletes the PVC bound to this PV. What is the state of the PV after the PVC deletion?",
+    "options": [
+      "The PV is deleted along with its underlying storage",
+      "The PV transitions back to `Available` and can immediately be claimed",
+      "The PV enters `Failed` state because the bound PVC no longer exists",
+      "The PV transitions to `Released` and retains its data, but cannot be bound to a new PVC without manual intervention"
+    ],
+    "answer": 3,
+    "lengths": [
+      51,
+      69,
+      67,
+      115
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q003",
+    "qIndex": 2,
+    "text": "A StatefulSet named `db` with 3 replicas uses `volumeClaimTemplates` to provision storage. Which of the following correctly describes the PVC naming convention?",
+    "options": [
+      "All replicas share a single PVC named `db-pvc`",
+      "PVCs are named with random suffixes like Deployment pod names",
+      "PVCs are named `<volumeClaimTemplate-name>-<statefulset-name>-<ordinal>`, e.g., `data-db-0`, `data-db-1`, `data-db-2`",
+      "PVCs are named `<statefulset-name>-<ordinal>`, e.g., `db-0`, `db-1`, `db-2`"
+    ],
+    "answer": 2,
+    "lengths": [
+      46,
+      61,
+      117,
+      75
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q004",
+    "qIndex": 3,
+    "text": "A pod specification includes an `emptyDir` volume with `medium: Memory`. What is the operational impact of this configuration?",
+    "options": [
+      "The volume stores data on the node's SSD for faster I/O",
+      "The volume uses a memory-mapped file that persists across pod restarts",
+      "The volume is backed by RAM but does not count against any resource limits",
+      "The volume is backed by a tmpfs filesystem in RAM, meaning data is lost on pod restart and counts against the container's memory limit"
+    ],
+    "answer": 3,
+    "lengths": [
+      55,
+      70,
+      74,
+      134
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q005",
+    "qIndex": 4,
+    "text": "A team is deploying a distributed database that requires each replica to have its own dedicated persistent storage that survives pod rescheduling. Which workload controller and volume strategy should they use?",
+    "options": [
+      "Deployment with `volumeClaimTemplates`",
+      "DaemonSet with `hostPath` volumes",
+      "StatefulSet with `volumeClaimTemplates`",
+      "ReplicaSet with a shared PVC"
+    ],
+    "answer": 2,
+    "lengths": [
+      38,
+      33,
+      39,
+      28
+    ],
+    "avgLen": 35,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q006",
+    "qIndex": 5,
+    "text": "A cloud-native application follows the Twelve-Factor App methodology. How does this methodology recommend handling persistent data storage?",
+    "options": [
+      "Store all data in local container filesystems for performance",
+      "Embed database drivers directly into the application binary",
+      "Treat backing services like databases as attached resources that can be swapped without code changes",
+      "Use only in-memory storage to maintain statelessness"
+    ],
+    "answer": 2,
+    "lengths": [
+      61,
+      59,
+      100,
+      52
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q007",
+    "qIndex": 6,
+    "text": "An operator notices that a PVC has been in `Pending` state for several minutes. The PVC requests `ReadWriteMany` access mode and 50Gi of storage. The cluster has several available PVs with 100Gi capacity but all are configured with `ReadWriteOnce`. What is the most likely cause?",
+    "options": [
+      "No available PV supports the `ReadWriteMany` access mode requested by the PVC",
+      "The PV capacity is too large for the PVC request",
+      "The PVC is waiting for a pod to reference it before binding",
+      "PVCs cannot request more than 10Gi by default"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      48,
+      59,
+      45
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q008",
+    "qIndex": 7,
+    "text": "A site reliability engineer wants to set up alerts for persistent volume usage approaching capacity in a Kubernetes cluster. Which metric from the kubelet's metrics endpoint is most relevant for monitoring PV disk usage?",
+    "options": [
+      "`kubelet_volume_stats_available_bytes` — reports available bytes on mounted PVs",
+      "`kube_pod_container_resource_requests` — reports container resource requests",
+      "`node_filesystem_avail_bytes` — reports available bytes on node filesystems",
+      "`container_fs_writes_total` — reports total filesystem writes per container"
+    ],
+    "answer": 0,
+    "lengths": [
+      79,
+      76,
+      75,
+      75
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q010",
+    "qIndex": 9,
+    "text": "A pod mounts a `configMap` volume to provide configuration files to the application. After updating the ConfigMap data with `kubectl edit configmap`, how does Kubernetes propagate the change to running pods?",
+    "options": [
+      "The pod must be restarted manually; ConfigMap volumes are never updated",
+      "The API server pushes changes directly to the container filesystem in real time",
+      "A new pod is automatically created to replace the one using the outdated ConfigMap",
+      "The kubelet periodically syncs mounted ConfigMap volumes, updating the files eventually without a pod restart"
+    ],
+    "answer": 3,
+    "lengths": [
+      71,
+      79,
+      82,
+      109
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q011",
+    "qIndex": 10,
+    "text": "A Helm chart for a database includes a `volumeClaimTemplates` section in the StatefulSet template. A user installs the chart with `helm install mydb ./db-chart`. After uninstalling with `helm uninstall mydb`, what happens to the PVCs created by the StatefulSet?",
+    "options": [
+      "PVCs created by `volumeClaimTemplates` are retained by default and must be deleted manually",
+      "All PVCs are deleted automatically along with the Helm release",
+      "Helm converts the PVCs to `emptyDir` volumes before uninstall",
+      "The PVCs are archived in a Helm backup secret"
+    ],
+    "answer": 0,
+    "lengths": [
+      91,
+      62,
+      61,
+      45
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q012",
+    "qIndex": 11,
+    "text": "A developer defines a pod with two containers that need to share temporary files during processing. Neither container needs the data to persist after the pod terminates. Which volume type is most appropriate?",
+    "options": [
+      "`emptyDir` mounted in both containers",
+      "`persistentVolumeClaim` with `Recycle` reclaim policy",
+      "`hostPath` pointing to `/tmp` on the node",
+      "`nfs` volume with a temporary export"
+    ],
+    "answer": 0,
+    "lengths": [
+      37,
+      53,
+      41,
+      36
+    ],
+    "avgLen": 42,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q013",
+    "qIndex": 12,
+    "text": "A platform team is evaluating CNCF projects for providing persistent storage to Kubernetes workloads. Which CNCF graduated project provides distributed block storage specifically designed for Kubernetes?",
+    "options": [
+      "Longhorn — a lightweight distributed block storage system for Kubernetes",
+      "MinIO — an S3-compatible object storage server",
+      "Rook — a storage orchestrator that manages Ceph clusters on Kubernetes",
+      "OpenEBS — a container-attached storage solution"
+    ],
+    "answer": 2,
+    "lengths": [
+      72,
+      46,
+      70,
+      47
+    ],
+    "avgLen": 59,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q014",
+    "qIndex": 13,
+    "text": "A StorageClass is configured with `reclaimPolicy: Delete` and `volumeBindingMode: WaitForFirstConsumer`. A PVC is created referencing this StorageClass, but no pod has mounted the PVC yet. What is the current state of the PV?",
+    "options": [
+      "A PV has been dynamically provisioned and is in `Available` state",
+      "A PV has been provisioned and is already `Bound` to the PVC",
+      "No PV has been created yet; provisioning is deferred until a pod uses the PVC",
+      "The PVC is rejected because `WaitForFirstConsumer` requires a pod reference at creation time"
+    ],
+    "answer": 2,
+    "lengths": [
+      65,
+      59,
+      77,
+      92
+    ],
+    "avgLen": 73,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q015",
+    "qIndex": 14,
+    "text": "A Kubernetes cluster uses a CSI driver for cloud-based block storage. A pod is scheduled to a node, but the volume attachment takes over 2 minutes and eventually times out. Which component is primarily responsible for attaching CSI volumes to nodes?",
+    "options": [
+      "The kube-scheduler, which assigns volumes during pod scheduling",
+      "The kubelet on the target node, through the CSI node plugin",
+      "The kube-controller-manager's PV controller",
+      "The external-attacher sidecar, which calls the CSI `ControllerPublishVolume` RPC"
+    ],
+    "answer": 3,
+    "lengths": [
+      63,
+      59,
+      43,
+      80
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q016",
+    "qIndex": 15,
+    "text": "A pod uses a PVC backed by a PV that is a local volume on node `worker-03`. When the scheduler attempts to place the pod, what constraint does the local PV introduce?",
+    "options": [
+      "The pod can be scheduled to any node and the data is replicated automatically",
+      "The pod is scheduled randomly and the local volume is migrated at runtime",
+      "The scheduler ignores volume locality and selects the node with the most available CPU",
+      "The pod is constrained to `worker-03` because local PVs have node affinity that restricts where the pod can run"
+    ],
+    "answer": 3,
+    "lengths": [
+      77,
+      73,
+      86,
+      111
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q017",
+    "qIndex": 16,
+    "text": "An e-commerce platform migrating from a monolith to microservices currently stores all session data, product catalog, and order history in a single PostgreSQL database. Which storage pattern best supports a microservices decomposition?",
+    "options": [
+      "Continue using a single shared database to avoid data duplication",
+      "Store all data in a shared NFS volume accessible by all pods",
+      "Give each microservice its own dedicated data store (database-per-service pattern)",
+      "Use `emptyDir` volumes in each pod to cache the entire database"
+    ],
+    "answer": 2,
+    "lengths": [
+      65,
+      60,
+      82,
+      63
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q018",
+    "qIndex": 17,
+    "text": "A StatefulSet running Elasticsearch uses PersistentVolumes for data storage. Pods are experiencing I/O errors and data corruption. Which logging approach would best help diagnose the storage issue?",
+    "options": [
+      "Examine kubelet logs on the node, CSI driver logs, and `kubectl describe pv/pvc` events for storage-related errors",
+      "Check only the Elasticsearch application logs inside the container",
+      "Review the kube-scheduler logs for scheduling decisions",
+      "Check the kube-apiserver audit logs for PVC creation timestamps"
+    ],
+    "answer": 0,
+    "lengths": [
+      114,
+      66,
+      55,
+      63
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q019",
+    "qIndex": 18,
+    "text": "A developer creates a PVC with `storageClassName: \"\"` (empty string). How does Kubernetes handle this PVC?",
+    "options": [
+      "The PVC uses the cluster's default StorageClass",
+      "The PVC is rejected because an empty StorageClass name is invalid",
+      "The PVC can only bind to a PV that also has no StorageClass set, disabling dynamic provisioning",
+      "The PVC triggers dynamic provisioning using any available StorageClass"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      65,
+      95,
+      70
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q020",
+    "qIndex": 19,
+    "text": "A security audit reveals that a pod mounts a `hostPath` volume pointing to `/etc` on the node. What is the primary security concern with this configuration?",
+    "options": [
+      "The pod may read or modify sensitive host configuration files like `/etc/shadow`, enabling privilege escalation",
+      "The pod can only read files from `/etc`, which poses no risk",
+      "The `hostPath` volume is encrypted by default so there is no concern",
+      "The pod will crash because `/etc` is a protected system directory"
+    ],
+    "answer": 0,
+    "lengths": [
+      111,
+      60,
+      68,
+      65
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q021",
+    "qIndex": 20,
+    "text": "A StatefulSet with `podManagementPolicy: OrderedReady` and 5 replicas is being scaled up. Pod `web-2` is stuck in `Pending` state due to insufficient resources. What happens to `web-3` and `web-4`?",
+    "options": [
+      "They are not created until `web-2` reaches `Running` and `Ready` state",
+      "They are created in parallel regardless of `web-2`'s status",
+      "Only `web-3` waits; `web-4` is created immediately",
+      "The entire StatefulSet is rolled back to 3 replicas"
+    ],
+    "answer": 0,
+    "lengths": [
+      70,
+      59,
+      50,
+      51
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q022",
+    "qIndex": 21,
+    "text": "A team follows cloud-native principles and needs to deploy a stateful application that requires high availability and data replication. Which approach aligns best with cloud-native storage practices?",
+    "options": [
+      "Use local node storage with manual backup scripts run via cron jobs",
+      "Store data on a single NFS server outside the cluster",
+      "Deploy a distributed storage solution (e.g., Ceph via Rook) that provides replication and self-healing within the cluster",
+      "Disable persistence and rely on application-level in-memory caching"
+    ],
+    "answer": 2,
+    "lengths": [
+      67,
+      53,
+      121,
+      67
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q023",
+    "qIndex": 22,
+    "text": "A GitOps team manages StatefulSet manifests in Git, including `volumeClaimTemplates`. An engineer modifies the storage size in the `volumeClaimTemplates` from 10Gi to 20Gi and merges the change. What happens when the GitOps controller applies this update?",
+    "options": [
+      "The StatefulSet is updated in-place and all PVCs are automatically resized",
+      "New PVCs are created at 20Gi while old PVCs are deleted",
+      "The GitOps controller automatically recreates the StatefulSet with the new size",
+      "The update fails because `volumeClaimTemplates` in a StatefulSet are immutable after creation"
+    ],
+    "answer": 3,
+    "lengths": [
+      74,
+      55,
+      79,
+      93
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q024",
+    "qIndex": 23,
+    "text": "A pod enters `ContainerCreating` state and stays there for several minutes. Running `kubectl describe pod` shows the event: `FailedMount: Unable to attach or mount volumes: timed out waiting for the condition`. What is the most likely cause?",
+    "options": [
+      "The container image is too large to download",
+      "The PV backing the PVC is unavailable, the CSI driver is malfunctioning, or the volume is already attached to another node",
+      "The pod's resource requests exceed node capacity",
+      "The pod's service account does not have RBAC permissions to create volumes"
+    ],
+    "answer": 1,
+    "lengths": [
+      44,
+      122,
+      48,
+      74
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q025",
+    "qIndex": 24,
+    "text": "A StatefulSet named `redis` has 3 replicas and uses a headless Service named `redis-svc`. A client pod needs to connect to the specific replica `redis-1`. What DNS name should the client use?",
+    "options": [
+      "`redis-svc.default.svc.cluster.local` — the Service automatically routes to `redis-1`",
+      "`redis-1.default.svc.cluster.local` — each pod gets a cluster-level DNS entry",
+      "`redis-svc-1.default.svc.cluster.local` — replicas are indexed by Service name",
+      "`redis-1.redis-svc.default.svc.cluster.local` — the headless Service provides per-pod DNS entries"
+    ],
+    "answer": 3,
+    "lengths": [
+      85,
+      77,
+      78,
+      97
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q026",
+    "qIndex": 25,
+    "text": "A PersistentVolume is defined with `capacity: 50Gi`, `accessModes: [ReadWriteOnce]`, and `storageClassName: fast-ssd`. A PVC requests 50Gi with `accessModes: [ReadWriteOnce]` and `storageClassName: standard`. Will the PVC bind to this PV?",
+    "options": [
+      "Yes, because the capacity and access modes match",
+      "Yes, but Kubernetes will convert the PV's StorageClass to `standard`",
+      "No, because the `storageClassName` values differ and must match for binding",
+      "No, because PVCs cannot specify a `storageClassName`"
+    ],
+    "answer": 2,
+    "lengths": [
+      48,
+      68,
+      75,
+      52
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q027",
+    "qIndex": 26,
+    "text": "The `kube-controller-manager` contains a PersistentVolume controller. What is the primary responsibility of this controller?",
+    "options": [
+      "Formatting and partitioning the underlying storage devices",
+      "Scheduling pods that use PVCs to specific nodes",
+      "Encrypting data at rest on PersistentVolumes",
+      "Matching PVCs to available PVs and managing the binding lifecycle"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      47,
+      44,
+      65
+    ],
+    "avgLen": 54,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q028",
+    "qIndex": 27,
+    "text": "A CSI driver implements the `VolumeSnapshot` feature. A user creates a `VolumeSnapshot` object referencing an existing PVC. What additional resource must exist in the cluster for the snapshot to succeed?",
+    "options": [
+      "A `SnapshotSchedule` CRD that defines the backup frequency",
+      "A dedicated `snapshot-controller` Deployment in every namespace",
+      "A `VolumeSnapshotClass` that specifies the CSI driver and deletion policy",
+      "A `StorageClass` with `snapshot: enabled` annotation"
+    ],
+    "answer": 2,
+    "lengths": [
+      58,
+      63,
+      73,
+      52
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q029",
+    "qIndex": 28,
+    "text": "A team needs a volume that allows multiple pods on different nodes to read and write simultaneously. Which access mode should they configure on the PV?",
+    "options": [
+      "`ReadWriteMany` — allows read/write by many nodes simultaneously",
+      "`ReadWriteOnce` — allows read/write by a single node",
+      "`ReadOnlyMany` — allows read-only by many nodes",
+      "`ReadWriteOncePod` — allows read/write by a single pod"
+    ],
+    "answer": 0,
+    "lengths": [
+      64,
+      52,
+      47,
+      54
+    ],
+    "avgLen": 54,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q030",
+    "qIndex": 29,
+    "text": "A StatefulSet runs a Cassandra cluster with 3 replicas. Each pod needs to discover the other replicas for gossip-based cluster formation. Which Kubernetes networking feature enables this peer discovery?",
+    "options": [
+      "A headless Service (`clusterIP: None`) that provides DNS SRV records for each pod",
+      "A `ClusterIP` Service with session affinity enabled",
+      "An Ingress resource with path-based routing to each pod",
+      "A `NodePort` Service exposing each replica on a unique port"
+    ],
+    "answer": 0,
+    "lengths": [
+      81,
+      51,
+      55,
+      59
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q031",
+    "qIndex": 30,
+    "text": "An application stores user-uploaded files in a PersistentVolume. The operations team wants to ensure the application can scale horizontally across multiple pods on different nodes. What storage constraint must they address?",
+    "options": [
+      "The application must use `emptyDir` for horizontal scaling",
+      "The PV must support `ReadWriteMany` access mode, or the team must use an external object store (e.g., S3) instead of PV-based storage",
+      "Horizontal scaling is impossible with any form of persistent storage",
+      "Each pod replica must write to a separate directory on the same `ReadWriteOnce` volume"
+    ],
+    "answer": 1,
+    "lengths": [
+      58,
+      133,
+      68,
+      86
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q032",
+    "qIndex": 31,
+    "text": "A StatefulSet has `podManagementPolicy: Parallel`. How does this change the behavior compared to the default `OrderedReady`?",
+    "options": [
+      "Pods are created in order but terminated in parallel",
+      "Pods share the same PVC instead of having individual PVCs",
+      "The StatefulSet behaves identically to a Deployment",
+      "Pods are created and terminated all at once without waiting for each to be Running and Ready"
+    ],
+    "answer": 3,
+    "lengths": [
+      52,
+      57,
+      51,
+      92
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q033",
+    "qIndex": 32,
+    "text": "A platform engineer configures Prometheus to scrape kubelet metrics for PV monitoring. Which of the following metrics would help track the total capacity versus used capacity of a mounted PersistentVolume?",
+    "options": [
+      "`kube_persistentvolume_capacity_bytes` and `kube_persistentvolume_used_bytes`",
+      "`node_disk_io_time_seconds_total` and `node_disk_read_bytes_total`",
+      "`kubelet_volume_stats_capacity_bytes` and `kubelet_volume_stats_used_bytes`",
+      "`container_fs_usage_bytes` and `container_fs_limit_bytes`"
+    ],
+    "answer": 2,
+    "lengths": [
+      77,
+      66,
+      75,
+      57
+    ],
+    "avgLen": 69,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q034",
+    "qIndex": 33,
+    "text": "A developer creates a pod with a `secret` volume type to mount TLS certificates. How are the Secret data values stored on the node when mounted as a volume?",
+    "options": [
+      "As encrypted files that require a decryption key to read",
+      "As base64-encoded files matching the Secret's data encoding",
+      "As plain-text files in a tmpfs filesystem; the base64 encoding is decoded automatically",
+      "As binary files that only the kubelet can access"
+    ],
+    "answer": 2,
+    "lengths": [
+      56,
+      59,
+      87,
+      48
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q035",
+    "qIndex": 34,
+    "text": "A cloud provider's CSI driver supports volume expansion. An administrator needs to allow users to resize their PVCs. What must be configured on the StorageClass?",
+    "options": [
+      "Set `reclaimPolicy: Expand` on the StorageClass",
+      "Add the annotation `resize.kubernetes.io/enabled: \"true\"` to each PVC",
+      "Set `volumeBindingMode: Immediate` to allow resizing",
+      "Set `allowVolumeExpansion: true` on the StorageClass"
+    ],
+    "answer": 3,
+    "lengths": [
+      47,
+      69,
+      52,
+      52
+    ],
+    "avgLen": 55,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q036",
+    "qIndex": 35,
+    "text": "A Kubernetes platform team wants to provide container-native storage that replicates data across nodes for high availability. They evaluate Longhorn. Which statement accurately describes Longhorn's architecture?",
+    "options": [
+      "Longhorn requires an external Ceph cluster for backend storage",
+      "Longhorn only supports `ReadWriteMany` access mode",
+      "Longhorn replaces the kubelet's volume management entirely",
+      "Longhorn creates replicated block storage volumes using the node's local disks and manages them via a CSI driver and per-node engine processes"
+    ],
+    "answer": 3,
+    "lengths": [
+      62,
+      50,
+      58,
+      142
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q037",
+    "qIndex": 36,
+    "text": "A cluster has two PVs available: PV-A with 100Gi and PV-B with 20Gi. Both have the same StorageClass and access modes. A PVC requests 15Gi. Which PV does Kubernetes bind the PVC to?",
+    "options": [
+      "PV-B, because Kubernetes selects the smallest PV that satisfies the request",
+      "PV-A, because it has the most available capacity",
+      "The PVC is rejected because both PVs exceed the requested size",
+      "Kubernetes randomly selects between PV-A and PV-B"
+    ],
+    "answer": 0,
+    "lengths": [
+      75,
+      48,
+      62,
+      49
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q038",
+    "qIndex": 37,
+    "text": "A CI/CD pipeline builds container images and deploys a StatefulSet to a staging cluster. The pipeline needs to verify that all PVCs are bound before running integration tests. Which approach is most reliable?",
+    "options": [
+      "Add a `sleep 60` step after deployment and assume PVCs will be bound",
+      "Use `kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=120s` to wait for all PVCs to be bound",
+      "Skip PVC verification since Kubernetes guarantees immediate binding",
+      "Check the StatefulSet replica count as a proxy for PVC binding"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      115,
+      67,
+      62
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q039",
+    "qIndex": 38,
+    "text": "A StatefulSet is being scaled down from 5 replicas to 3. In which order are the pods terminated when using the default `OrderedReady` policy?",
+    "options": [
+      "Pods are terminated in ascending order: `pod-0`, `pod-1` first",
+      "All excess pods (`pod-3`, `pod-4`) are terminated simultaneously",
+      "Kubernetes randomly selects which pods to terminate",
+      "Pods are terminated in reverse ordinal order: `pod-4` first, then `pod-3`"
+    ],
+    "answer": 3,
+    "lengths": [
+      62,
+      64,
+      51,
+      73
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q040",
+    "qIndex": 39,
+    "text": "A Pod Security Standard of `restricted` is enforced on a namespace. A developer tries to deploy a pod with a `hostPath` volume. What happens?",
+    "options": [
+      "The pod creation is denied because the `restricted` profile prohibits `hostPath` volumes",
+      "The pod is created but the `hostPath` volume is silently ignored",
+      "The pod is created with read-only access to the `hostPath`",
+      "The `restricted` profile only limits CPU and memory, not volumes"
+    ],
+    "answer": 0,
+    "lengths": [
+      88,
+      64,
+      58,
+      64
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q041",
+    "qIndex": 40,
+    "text": "A cluster uses a StorageClass with `volumeBindingMode: WaitForFirstConsumer` for zone-aware provisioning. A pod requests a PVC with this StorageClass and has a `nodeSelector` restricting it to zone `us-east-1a`. Where is the PV provisioned?",
+    "options": [
+      "In a random zone, since the StorageClass does not consider pod placement",
+      "In all zones simultaneously for redundancy",
+      "In zone `us-east-1a`, because `WaitForFirstConsumer` provisions the PV in the same topology as the scheduled pod",
+      "The PV is provisioned immediately when the PVC is created, before the pod is scheduled"
+    ],
+    "answer": 2,
+    "lengths": [
+      72,
+      42,
+      112,
+      86
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q042",
+    "qIndex": 41,
+    "text": "A microservices application uses the Event Sourcing pattern to store state changes. Each microservice writes events to an append-only event store. What is the primary benefit of this pattern for stateful microservices?",
+    "options": [
+      "It eliminates the need for any persistent storage",
+      "It reduces storage costs by compressing all events into a single record",
+      "It ensures all microservices share the same database schema",
+      "It provides a complete audit trail and allows state reconstruction from the event history at any point in time"
+    ],
+    "answer": 3,
+    "lengths": [
+      49,
+      71,
+      59,
+      110
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q043",
+    "qIndex": 42,
+    "text": "An administrator wants to pre-provision PVs that can only be claimed by PVCs with a specific label. Which PV field enables this selective binding?",
+    "options": [
+      "`spec.selector` — PVs do not have a selector field; only PVCs do",
+      "`spec.claimRef` — pre-binds the PV to a specific PVC by name and namespace",
+      "`spec.nodeAffinity` — restricts which nodes can use the PV",
+      "`spec.storageClassName` — only PVCs with the same class can bind"
+    ],
+    "answer": 0,
+    "lengths": [
+      64,
+      74,
+      58,
+      64
+    ],
+    "avgLen": 65,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q044",
+    "qIndex": 43,
+    "text": "A container runtime uses `overlayfs` for the container's root filesystem. A process in the container writes a 2GB temporary file to `/tmp`. Where is this data actually stored?",
+    "options": [
+      "In the container image layer, modifying the original image",
+      "In the overlay's upper (writable) layer on the node's filesystem, consuming node disk space",
+      "In a dedicated PersistentVolume automatically created for the container",
+      "In memory (RAM) since `/tmp` is always backed by tmpfs in containers"
+    ],
+    "answer": 1,
+    "lengths": [
+      58,
+      91,
+      71,
+      68
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q045",
+    "qIndex": 44,
+    "text": "A Grafana dashboard shows that a PersistentVolume is at 95% capacity. The operations team needs to be alerted before the volume reaches 100%. Using Prometheus alerting, which alert rule expression correctly fires when PV usage exceeds 90%?",
+    "options": [
+      "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9`",
+      "`kube_pod_container_resource_limits / kube_pod_container_resource_requests > 0.9`",
+      "`node_filesystem_size_bytes - node_filesystem_free_bytes > 0.9`",
+      "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9`"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      81,
+      63,
+      67
+    ],
+    "avgLen": 72,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q046",
+    "qIndex": 45,
+    "text": "A PV is created with `persistentVolumeReclaimPolicy: Recycle`. What does the `Recycle` policy do when the bound PVC is deleted?",
+    "options": [
+      "The PV and its data are permanently deleted from the storage backend",
+      "The PV is archived to a backup location before deletion",
+      "The PV runs a basic `rm -rf` on the volume and makes it `Available` again for new claims",
+      "The PV is retained indefinitely until manual cleanup"
+    ],
+    "answer": 2,
+    "lengths": [
+      68,
+      55,
+      88,
+      52
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q047",
+    "qIndex": 46,
+    "text": "A Helm chart includes a StorageClass template with a configurable provisioner. The `values.yaml` defaults to `kubernetes.io/aws-ebs`. A user deploying to GCP needs to override this. Which Helm command correctly overrides the provisioner?",
+    "options": [
+      "`helm install db ./chart --set storageClass.provisioner=pd.csi.storage.gke.io`",
+      "`helm install db ./chart --replace-provisioner pd.csi.storage.gke.io`",
+      "`helm install db ./chart --force-value provisioner=pd.csi.storage.gke.io`",
+      "`helm install db ./chart --env GCP_PROVISIONER=pd.csi.storage.gke.io`"
+    ],
+    "answer": 0,
+    "lengths": [
+      78,
+      69,
+      73,
+      69
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q048",
+    "qIndex": 47,
+    "text": "A cluster node's kubelet reports `DiskPressure` condition as `True`. What effect does this have on pod scheduling and existing pods?",
+    "options": [
+      "No effect; `DiskPressure` is an informational metric only",
+      "All existing pods are immediately terminated",
+      "The node is automatically drained and cordoned permanently",
+      "The scheduler stops placing new pods on the node, and the kubelet may evict pods to reclaim disk space"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      44,
+      58,
+      102
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q049",
+    "qIndex": 48,
+    "text": "A serverless function on Kubernetes (using Knative) needs to process uploaded files stored in a PersistentVolume. What is the primary challenge when combining serverless workloads with PV-based storage?",
+    "options": [
+      "Serverless functions scale to zero, but PV mount/unmount cycles add latency to cold starts, and `ReadWriteOnce` PVs cannot be shared across concurrent instances",
+      "Serverless functions cannot access any form of storage",
+      "PersistentVolumes are automatically deleted when functions scale to zero",
+      "Knative only supports `emptyDir` volumes"
+    ],
+    "answer": 0,
+    "lengths": [
+      160,
+      54,
+      72,
+      40
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q050",
+    "qIndex": 49,
+    "text": "A developer uses a `projected` volume to combine multiple sources into a single mount point. Which volume types can be projected together in a single `projected` volume?",
+    "options": [
+      "`configMap`, `secret`, `downwardAPI`, and `serviceAccountToken` sources",
+      "Only `configMap` and `secret` volumes",
+      "`persistentVolumeClaim`, `configMap`, and `secret` sources",
+      "`emptyDir`, `hostPath`, and `configMap` sources"
+    ],
+    "answer": 0,
+    "lengths": [
+      71,
+      37,
+      58,
+      47
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q051",
+    "qIndex": 50,
+    "text": "A PVC is configured with a `selector` that uses `matchLabels: { tier: premium }`. The cluster has 5 PVs, but only 2 have the label `tier: premium`. What happens during binding?",
+    "options": [
+      "The PVC binds to any of the 5 PVs since labels are advisory only",
+      "The PVC only considers the 2 PVs with `tier: premium` label and binds to the one that best matches capacity and access mode requirements",
+      "The PVC creates new PVs with the `tier: premium` label via dynamic provisioning",
+      "The PVC is rejected because label selectors are not supported on PVCs"
+    ],
+    "answer": 1,
+    "lengths": [
+      64,
+      136,
+      79,
+      69
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q052",
+    "qIndex": 51,
+    "text": "A CSI driver specification defines three plugin services: Identity, Controller, and Node. Which operations does the Node plugin service handle?",
+    "options": [
+      "Creating and deleting volumes on the storage backend",
+      "Registering the CSI driver with the Kubernetes API server",
+      "Scheduling pods to nodes based on volume topology",
+      "Staging (formatting/mounting to a global path) and publishing (bind-mounting into the pod) volumes on the node"
+    ],
+    "answer": 3,
+    "lengths": [
+      52,
+      57,
+      49,
+      110
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q053",
+    "qIndex": 52,
+    "text": "A StatefulSet performs a rolling update with `updateStrategy.type: RollingUpdate` and `partition: 3`. The StatefulSet has 5 replicas (ordinals 0-4). Which pods are updated?",
+    "options": [
+      "All pods from `pod-0` to `pod-4` are updated",
+      "Only `pod-0`, `pod-1`, and `pod-2` are updated",
+      "Only `pod-3` and `pod-4` are updated; pods with ordinal < 3 retain the old revision",
+      "No pods are updated until the partition is removed"
+    ],
+    "answer": 2,
+    "lengths": [
+      44,
+      46,
+      83,
+      50
+    ],
+    "avgLen": 56,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q054",
+    "qIndex": 53,
+    "text": "A development team uses `subPath` when mounting a ConfigMap volume in a pod. What is the effect of using `subPath` compared to a standard mount?",
+    "options": [
+      "`subPath` creates a subdirectory in the ConfigMap itself",
+      "`subPath` enables automatic ConfigMap updates to propagate to the mounted file",
+      "`subPath` restricts ConfigMap access to read-only mode",
+      "`subPath` mounts only a single key from the ConfigMap as a file without hiding other files in the mount directory"
+    ],
+    "answer": 3,
+    "lengths": [
+      56,
+      78,
+      54,
+      113
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q055",
+    "qIndex": 54,
+    "text": "A cloud-native application team is deciding between using a managed database service (e.g., AWS RDS) and running a database as a StatefulSet in Kubernetes. Which factor most strongly favors using a managed service?",
+    "options": [
+      "Managed services are always cheaper than self-hosted databases",
+      "Managed services handle backups, patching, replication, and failover, reducing operational burden on the team",
+      "StatefulSets cannot provide persistent storage for databases",
+      "Managed services run inside the Kubernetes cluster for better latency"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      109,
+      60,
+      69
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q056",
+    "qIndex": 55,
+    "text": "The `etcd` datastore in a Kubernetes cluster uses persistent storage for its data directory. What happens to the cluster if etcd's storage becomes corrupted or unavailable?",
+    "options": [
+      "The entire cluster control plane becomes non-functional since all cluster state is stored in etcd",
+      "Only new pod creation is affected; running pods are unaffected",
+      "The cluster continues operating normally from cached data",
+      "The kube-apiserver automatically switches to an in-memory backup store"
+    ],
+    "answer": 0,
+    "lengths": [
+      97,
+      62,
+      57,
+      70
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q057",
+    "qIndex": 56,
+    "text": "A PVC is stuck in `Pending` state. Running `kubectl describe pvc` shows the event: `waiting for a volume to be created, either by external provisioner or manually`. What does this indicate?",
+    "options": [
+      "The PVC has a syntax error in its YAML definition",
+      "The cluster has run out of node disk space",
+      "The PVC is referencing a StorageClass with a dynamic provisioner that has not yet created the volume",
+      "The PVC is bound but the event is stale"
+    ],
+    "answer": 2,
+    "lengths": [
+      49,
+      42,
+      100,
+      39
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q058",
+    "qIndex": 57,
+    "text": "The Container Storage Interface (CSI) specification is a standard adopted by the CNCF ecosystem. What problem does CSI solve?",
+    "options": [
+      "It provides a uniform interface for storage vendors to write a single driver that works across multiple container orchestrators",
+      "It standardizes container image formats across registries",
+      "It defines network policies for container-to-container communication",
+      "It specifies CPU and memory resource management for containers"
+    ],
+    "answer": 0,
+    "lengths": [
+      127,
+      57,
+      68,
+      62
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q059",
+    "qIndex": 58,
+    "text": "A PV definition includes `spec.capacity.storage: 100Gi` and `spec.accessModes: [ReadWriteOnce, ReadOnlyMany]`. A PVC requests `ReadOnlyMany` and 50Gi. After binding, can another PVC also bind to the same PV?",
+    "options": [
+      "Yes, because the PV supports multiple access modes so multiple PVCs can bind",
+      "No, a PV can only be bound to one PVC at a time regardless of access modes",
+      "Yes, if the second PVC also requests `ReadOnlyMany`",
+      "It depends on the StorageClass configuration"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      74,
+      51,
+      44
+    ],
+    "avgLen": 61,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s04-q060",
+    "qIndex": 59,
+    "text": "A team wants to use ephemeral CSI volumes that are created and destroyed with the pod lifecycle. Which volume type in the pod spec enables this?",
+    "options": [
+      "`persistentVolumeClaim` with `readOnly: true`",
+      "`emptyDir` with a CSI-backed storage medium",
+      "`hostPath` pointing to the CSI driver's mount directory",
+      "`csi` inline volume in the pod spec with the `ephemeral` field"
+    ],
+    "answer": 3,
+    "lengths": [
+      45,
+      43,
+      55,
+      62
+    ],
+    "avgLen": 51,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q061",
+    "qIndex": 60,
+    "text": "An administrator needs to expand an existing PVC from 10Gi to 20Gi. The StorageClass has `allowVolumeExpansion: true`. What is the correct procedure?",
+    "options": [
+      "Delete the PVC, create a new one with 20Gi, and re-attach it to the pod",
+      "Edit the PVC to change `spec.resources.requests.storage` to 20Gi; the CSI driver handles the expansion",
+      "Edit the PV directly to change its capacity; the PVC inherits the new size",
+      "Create a second PVC for 10Gi and mount both in the pod"
+    ],
+    "answer": 1,
+    "lengths": [
+      71,
+      102,
+      74,
+      54
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q062",
+    "qIndex": 61,
+    "text": "A distributed application uses OpenTelemetry for tracing. A request flows through a stateless API gateway, then to a stateful order service backed by a PV. Traces show high latency in the order service. Which trace attribute would help determine if the latency is storage-related?",
+    "options": [
+      "Span duration for database write operations showing I/O wait times",
+      "HTTP status code of the response",
+      "The number of replicas in the Deployment",
+      "The container image tag used by the order service"
+    ],
+    "answer": 0,
+    "lengths": [
+      66,
+      32,
+      40,
+      49
+    ],
+    "avgLen": 47,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q063",
+    "qIndex": 62,
+    "text": "When a StatefulSet pod is deleted, the associated PVC is NOT deleted by default. What is the rationale for this behavior?",
+    "options": [
+      "It is a bug in the StatefulSet controller that has not been fixed",
+      "Retaining PVCs prevents accidental data loss; when the pod is recreated with the same ordinal, it reattaches to the existing PVC and data",
+      "PVCs cannot be deleted once created under any circumstances",
+      "The kubelet does not have permissions to delete PVCs"
+    ],
+    "answer": 1,
+    "lengths": [
+      65,
+      137,
+      59,
+      52
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q064",
+    "qIndex": 63,
+    "text": "A pod spec defines a volume using the `downwardAPI` volume type with items referencing `metadata.labels` and `metadata.annotations`. How is this data exposed to the container?",
+    "options": [
+      "As environment variables injected at container startup",
+      "As a read-only database accessible via a Unix socket",
+      "As files in the mounted directory, with each item written to a separate file that updates when the source changes",
+      "As HTTP endpoints on localhost that return JSON"
+    ],
+    "answer": 2,
+    "lengths": [
+      54,
+      52,
+      113,
+      47
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q065",
+    "qIndex": 64,
+    "text": "A team is designing a stateful microservice for Kubernetes and must decide on a data persistence strategy. Which principle should guide their choice between local volumes, network-attached storage, and object storage?",
+    "options": [
+      "Always use the cheapest storage option regardless of performance characteristics",
+      "Match the storage type to the workload's I/O pattern, durability requirements, and scaling needs",
+      "Always use local volumes for maximum performance in all scenarios",
+      "Use only object storage because it is the most cloud-native option"
+    ],
+    "answer": 1,
+    "lengths": [
+      80,
+      96,
+      65,
+      66
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q066",
+    "qIndex": 65,
+    "text": "A StatefulSet-based MySQL cluster uses a headless Service. The administrator needs to create a separate Service that load-balances read traffic across all replicas while keeping the headless Service for direct pod addressing. Is this possible?",
+    "options": [
+      "No, a StatefulSet can only have one associated Service",
+      "Yes, create a regular `ClusterIP` Service with the same selector as the headless Service to load-balance across pods",
+      "Yes, but only if the pods are labeled differently for each Service",
+      "No, load balancing is incompatible with StatefulSets"
+    ],
+    "answer": 1,
+    "lengths": [
+      54,
+      116,
+      66,
+      52
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q067",
+    "qIndex": 66,
+    "text": "A team needs to update a StatefulSet that manages a 5-node ZooKeeper ensemble. They want to update one node at a time and verify cluster health between updates. Which update approach should they use?",
+    "options": [
+      "Use `RollingUpdate` with `partition` set to progressively lower values, verifying health after each change",
+      "Use `Recreate` strategy to replace all nodes simultaneously",
+      "Delete the StatefulSet and recreate it with the new image",
+      "Scale down to 0, update the spec, then scale back up"
+    ],
+    "answer": 0,
+    "lengths": [
+      106,
+      59,
+      57,
+      52
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q068",
+    "qIndex": 67,
+    "text": "After a node reboot, pods that were using `ReadWriteOnce` PVs on that node are recreated on a different node. The new pods are stuck in `ContainerCreating` with a `Multi-Attach error`. What caused this?",
+    "options": [
+      "The pod image is not available on the new node",
+      "The PVC was deleted during the node reboot",
+      "The PV is still marked as attached to the rebooted node because the `VolumeAttachment` was not cleaned up, preventing attachment to the new node",
+      "`ReadWriteOnce` PVs cannot be moved between nodes under any circumstances"
+    ],
+    "answer": 2,
+    "lengths": [
+      46,
+      42,
+      144,
+      73
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q069",
+    "qIndex": 68,
+    "text": "A developer specifies `resources.requests.ephemeral-storage: 2Gi` and `resources.limits.ephemeral-storage: 4Gi` on a container. What does this control?",
+    "options": [
+      "The size of PersistentVolumes the container can claim",
+      "The amount of temporary storage (container writable layer + `emptyDir` without medium) the container can use on the node",
+      "The maximum size of container images that can be pulled",
+      "The RAM allocation for tmpfs-backed `emptyDir` volumes"
+    ],
+    "answer": 1,
+    "lengths": [
+      53,
+      120,
+      55,
+      54
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q070",
+    "qIndex": 69,
+    "text": "A FinOps team notices that multiple `Released` PersistentVolumes backed by cloud provider disks are accumulating costs. These PVs have the `Retain` reclaim policy and their original PVCs were deleted weeks ago. What action should they take?",
+    "options": [
+      "Wait for Kubernetes to automatically clean up the `Released` PVs",
+      "Change the `reclaimPolicy` on the released PVs to `Delete` — this retroactively deletes them",
+      "Restart the kube-controller-manager to trigger garbage collection",
+      "Identify and delete the `Released` PVs (after verifying data is no longer needed) to stop cloud disk billing"
+    ],
+    "answer": 3,
+    "lengths": [
+      64,
+      92,
+      65,
+      108
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q071",
+    "qIndex": 70,
+    "text": "A pod requires two PVCs: one backed by a local SSD PV on `node-a` and another backed by a local NVMe PV on `node-b`. Can the scheduler place this pod?",
+    "options": [
+      "Yes, the scheduler mounts volumes from both nodes into the pod",
+      "No, a pod runs on a single node and cannot use local PVs from different nodes simultaneously",
+      "Yes, if both PVs have `ReadWriteMany` access mode",
+      "The scheduler splits the pod across both nodes"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      92,
+      49,
+      46
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q072",
+    "qIndex": 71,
+    "text": "A StatefulSet-based Kafka cluster uses PVCs for log storage and a headless Service for broker discovery. A new broker pod `kafka-3` is added via scaling. How do existing brokers discover the new member?",
+    "options": [
+      "The kube-apiserver sends a notification to all broker pods",
+      "Kafka brokers perform DNS lookups against the headless Service, which returns updated A records including `kafka-3`",
+      "The new broker automatically inherits the cluster configuration from the PVC",
+      "Existing brokers cannot discover new members without a full restart"
+    ],
+    "answer": 1,
+    "lengths": [
+      58,
+      115,
+      76,
+      67
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q073",
+    "qIndex": 72,
+    "text": "A platform team uses Velero (a CNCF project) to back up Kubernetes resources. How does Velero handle PersistentVolume backups?",
+    "options": [
+      "Velero only backs up Kubernetes resource manifests, not actual PV data",
+      "Velero replaces PVs with `emptyDir` volumes during backup",
+      "Velero can take PV snapshots using CSI snapshots or Restic/Kopia for file-level backups, in addition to backing up resource manifests",
+      "Velero requires all PVs to be unmounted before backup"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      57,
+      133,
+      53
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q074",
+    "qIndex": 73,
+    "text": "A monitoring dashboard tracks the `kube_persistentvolumeclaim_status_phase` metric from kube-state-metrics. What information does this metric provide?",
+    "options": [
+      "The I/O throughput of each PVC in bytes per second",
+      "The current phase (`Pending`, `Bound`, `Lost`) of each PVC as a gauge metric with labels",
+      "The total number of PVCs created since cluster startup",
+      "The storage capacity used by each PVC"
+    ],
+    "answer": 1,
+    "lengths": [
+      50,
+      88,
+      54,
+      37
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q075",
+    "qIndex": 74,
+    "text": "A StatefulSet has `spec.persistentVolumeClaimRetentionPolicy.whenDeleted: Delete` and `whenScaled: Retain`. What behavior does this configure?",
+    "options": [
+      "PVCs are deleted when the StatefulSet is deleted, but retained when individual pods are scaled down",
+      "PVCs are retained when the StatefulSet is deleted, but deleted when pods are scaled down",
+      "All PVCs are always deleted regardless of the operation",
+      "This field is not valid in the StatefulSet spec"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      88,
+      55,
+      47
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q076",
+    "qIndex": 75,
+    "text": "A PV has `spec.claimRef` set to a specific PVC name and namespace. What is the effect of pre-populating `claimRef` on a PV?",
+    "options": [
+      "The PV is reserved for that specific PVC; other PVCs cannot bind to it even if they match all other criteria",
+      "The PV is immediately deleted when that PVC is created",
+      "The `claimRef` is informational only and does not affect binding",
+      "The PV automatically creates the referenced PVC if it does not exist"
+    ],
+    "answer": 0,
+    "lengths": [
+      108,
+      54,
+      64,
+      68
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q077",
+    "qIndex": 76,
+    "text": "A CSI driver supports volume cloning. A developer creates a PVC with `dataSource` referencing an existing PVC. What happens?",
+    "options": [
+      "The new PVC shares the same PV as the source PVC",
+      "A new PV is provisioned with a copy of the source PVC's data, and the new PVC binds to it",
+      "The source PVC is deleted and its PV is transferred to the new PVC",
+      "Volume cloning is only supported for `emptyDir` volumes"
+    ],
+    "answer": 1,
+    "lengths": [
+      48,
+      89,
+      66,
+      55
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q078",
+    "qIndex": 77,
+    "text": "In a highly available Kubernetes setup, etcd runs as a 3-member cluster with each member storing data on a local SSD PV. One etcd member's disk fails completely. What is the impact on the cluster?",
+    "options": [
+      "The entire Kubernetes cluster becomes unavailable immediately",
+      "The etcd cluster maintains quorum with 2 of 3 members and continues operating; the failed member must be replaced and resynced",
+      "The remaining 2 etcd members automatically replicate data to a new disk",
+      "Kubernetes switches to an in-memory mode until the disk is repaired"
+    ],
+    "answer": 1,
+    "lengths": [
+      61,
+      126,
+      71,
+      67
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q079",
+    "qIndex": 78,
+    "text": "A microservices application uses the Saga pattern for distributed transactions across services that each have their own database. Why is the Saga pattern preferred over traditional two-phase commit (2PC) for cloud-native applications?",
+    "options": [
+      "Saga eliminates the need for any form of data consistency",
+      "Saga avoids distributed locks, maintaining service autonomy and availability at the cost of requiring compensating transactions for rollbacks",
+      "Saga is faster because it skips all validation steps",
+      "Two-phase commit does not work with any database technology"
+    ],
+    "answer": 1,
+    "lengths": [
+      57,
+      141,
+      52,
+      59
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q080",
+    "qIndex": 79,
+    "text": "A developer adds a `volumeMount` with `readOnly: true` to a container that mounts a PVC. The PVC has `ReadWriteOnce` access mode. What is the effect?",
+    "options": [
+      "The mount fails because the access mode conflicts with the `readOnly` flag",
+      "The `readOnly` flag is ignored because the PVC allows writes",
+      "The PVC's access mode is changed to `ReadOnlyMany` automatically",
+      "The container mounts the volume as read-only at the OS level, regardless of the PVC's access mode"
+    ],
+    "answer": 3,
+    "lengths": [
+      74,
+      60,
+      64,
+      97
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q081",
+    "qIndex": 80,
+    "text": "A security team requires that all Secrets used by applications must be encrypted at rest in etcd. Which Kubernetes feature enables this?",
+    "options": [
+      "Setting `readOnly: true` on Secret volume mounts",
+      "Configuring `EncryptionConfiguration` on the kube-apiserver to encrypt Secret resources before storing them in etcd",
+      "Using `base64` encoding in Secret manifests, which provides encryption",
+      "Enabling TLS on the etcd cluster, which encrypts all stored data"
+    ],
+    "answer": 1,
+    "lengths": [
+      48,
+      115,
+      70,
+      64
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q082",
+    "qIndex": 81,
+    "text": "A CI pipeline needs to run database migration scripts against a PostgreSQL StatefulSet before deploying new application pods. Which Kubernetes resource is best suited to run this one-time migration task?",
+    "options": [
+      "A Deployment with 1 replica",
+      "A CronJob scheduled to run every minute until the migration succeeds",
+      "A Job that runs the migration script, configured as an `initContainer` dependency or a Helm pre-upgrade hook",
+      "A DaemonSet that runs the migration on every node"
+    ],
+    "answer": 2,
+    "lengths": [
+      27,
+      68,
+      108,
+      49
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q083",
+    "qIndex": 82,
+    "text": "A StatefulSet uses `updateStrategy.type: OnDelete`. An administrator updates the container image in the StatefulSet spec. What happens to existing pods?",
+    "options": [
+      "No pods are updated; each pod must be manually deleted to trigger recreation with the new spec",
+      "Pods are updated one at a time in reverse ordinal order",
+      "All pods are immediately updated with the new image",
+      "The StatefulSet rejects the update until all pods are drained"
+    ],
+    "answer": 0,
+    "lengths": [
+      94,
+      55,
+      51,
+      61
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q084",
+    "qIndex": 83,
+    "text": "A team is designing a system where each microservice stores data in a different type of database (PostgreSQL for transactions, Redis for caching, Elasticsearch for search). What is this approach called?",
+    "options": [
+      "Monolithic data architecture",
+      "Polyglot persistence — using multiple database technologies chosen to match each service's specific data requirements",
+      "Data mesh — a decentralized sociotechnical approach to data management",
+      "Database sharding — splitting a single database across multiple servers"
+    ],
+    "answer": 1,
+    "lengths": [
+      28,
+      117,
+      70,
+      71
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q085",
+    "qIndex": 84,
+    "text": "A PVC is in `Lost` state. What does this indicate, and what should the administrator do?",
+    "options": [
+      "The PVC was never created; recreate it",
+      "The PVC is transitioning between namespaces",
+      "The PVC exceeded its storage quota and was evicted",
+      "The PV that was bound to this PVC no longer exists; the administrator must investigate why the PV was deleted and provision replacement storage"
+    ],
+    "answer": 3,
+    "lengths": [
+      38,
+      43,
+      50,
+      143
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q086",
+    "qIndex": 85,
+    "text": "A pod mounts a PVC backed by an NFS PV. The pod can read files but cannot write, receiving `Permission denied` errors. The NFS export allows read-write access. What is the most likely cause?",
+    "options": [
+      "The PVC access mode is set to `ReadOnlyMany`",
+      "NFS volumes are always read-only in Kubernetes",
+      "The container runs as a non-root user (e.g., UID 1000) that does not have write permissions on the NFS export's file ownership",
+      "The kubelet does not support write operations on NFS volumes"
+    ],
+    "answer": 2,
+    "lengths": [
+      44,
+      46,
+      126,
+      60
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q087",
+    "qIndex": 86,
+    "text": "A centralized logging system collects logs from all pods using a DaemonSet-based log collector (e.g., Fluentd). Logs from StatefulSet pods include the pod name, which contains the ordinal index. Why is this useful for debugging stateful workloads?",
+    "options": [
+      "It is not useful; all StatefulSet pod logs are identical",
+      "The ordinal in the pod name allows correlating logs with specific replicas, helping identify issues on particular instances like split-brain or replication lag on a specific node",
+      "The ordinal is used to sort logs chronologically",
+      "Fluentd uses the ordinal to determine log rotation frequency"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      178,
+      48,
+      60
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q088",
+    "qIndex": 87,
+    "text": "A cluster has nodes in three availability zones. A StatefulSet with 3 replicas needs to spread pods across zones for high availability. Which scheduling feature achieves this?",
+    "options": [
+      "Set `nodeSelector` to a single zone and rely on Kubernetes to distribute",
+      "Use `topologySpreadConstraints` with `topologyKey: topology.kubernetes.io/zone` and `maxSkew: 1`",
+      "Create three separate StatefulSets, one per zone",
+      "Set `podAntiAffinity` with `topologyKey: kubernetes.io/hostname` — this spreads across zones"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      96,
+      48,
+      92
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q089",
+    "qIndex": 88,
+    "text": "A container image includes a `VOLUME` instruction in the Dockerfile. When this container runs in Kubernetes without any volume mounts defined in the pod spec, what happens?",
+    "options": [
+      "The container runtime creates an anonymous `emptyDir`-like volume at the specified path, managed by the runtime, not Kubernetes",
+      "Kubernetes automatically creates a PersistentVolumeClaim for the VOLUME path",
+      "The VOLUME instruction is completely ignored by Kubernetes",
+      "The pod fails to start because no volume is configured for the VOLUME path"
+    ],
+    "answer": 0,
+    "lengths": [
+      127,
+      76,
+      58,
+      74
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q090",
+    "qIndex": 89,
+    "text": "A team evaluates etcd, the distributed key-value store used by Kubernetes. Which consistency model does etcd implement, and why is this important for Kubernetes?",
+    "options": [
+      "Eventually consistent — prioritizes availability over consistency",
+      "Strongly consistent via the Raft consensus protocol, ensuring all cluster state reads reflect the latest writes",
+      "Causally consistent — only related operations are ordered",
+      "BASE (Basically Available, Soft state, Eventually consistent) — for maximum throughput"
+    ],
+    "answer": 1,
+    "lengths": [
+      65,
+      111,
+      57,
+      86
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q091",
+    "qIndex": 90,
+    "text": "An administrator creates a StorageClass with `mountOptions: [\"nfsvers=4.1\", \"hard\"]`. Where are these mount options applied?",
+    "options": [
+      "On the kube-apiserver when validating PVC requests",
+      "On the storage backend when creating new volumes",
+      "On the node by the kubelet when mounting the PV to the pod, passed as options to the `mount` system call",
+      "On the PVC object as metadata annotations"
+    ],
+    "answer": 2,
+    "lengths": [
+      50,
+      48,
+      104,
+      41
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q092",
+    "qIndex": 91,
+    "text": "A GitOps workflow using Argo CD manages a StatefulSet with PVCs. The team needs to migrate data from one StorageClass to another. Since `volumeClaimTemplates` are immutable, what is the recommended GitOps-compatible approach?",
+    "options": [
+      "Directly edit the live StatefulSet in the cluster, bypassing GitOps",
+      "Create a migration Job that copies data between PVCs, update the StatefulSet name in Git to create a new StatefulSet with the new StorageClass, then clean up the old resources",
+      "Delete all PVCs and let Argo CD recreate them with the new StorageClass",
+      "Change the StorageClass's provisioner — this migrates all existing PVCs"
+    ],
+    "answer": 1,
+    "lengths": [
+      67,
+      175,
+      71,
+      71
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q093",
+    "qIndex": 92,
+    "text": "A StatefulSet with `revisionHistoryLimit: 5` has been updated 8 times. How many ControllerRevision objects are retained?",
+    "options": [
+      "5 revisions are retained; the 3 oldest non-current revisions are garbage collected",
+      "All 8 revisions are retained",
+      "Only the current revision is retained",
+      "StatefulSets do not use ControllerRevision objects"
+    ],
+    "answer": 0,
+    "lengths": [
+      82,
+      28,
+      37,
+      50
+    ],
+    "avgLen": 49,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q094",
+    "qIndex": 93,
+    "text": "A team runs multiple StatefulSets across several namespaces, each with dynamically provisioned PVCs. To track storage costs per team, which approach is most effective?",
+    "options": [
+      "Monitor total cluster storage costs without per-team breakdown",
+      "Use labels on PVCs and PVs combined with a cost monitoring tool (e.g., Kubecost) that maps storage usage to team ownership via namespace or label-based allocation",
+      "Assign each team a fixed storage budget with no actual tracking",
+      "Rely on the cloud provider's billing dashboard, which automatically groups by Kubernetes namespace"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      162,
+      63,
+      98
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q095",
+    "qIndex": 94,
+    "text": "A StorageClass has `reclaimPolicy: Delete`. When a PVC using this StorageClass is deleted, what happens to the dynamically provisioned PV and its underlying storage?",
+    "options": [
+      "The PV is retained in `Released` state for manual cleanup",
+      "Both the PV object and the underlying storage resource (e.g., cloud disk) are automatically deleted",
+      "The PV is deleted but the underlying cloud disk is preserved",
+      "The PV transitions to `Available` for reuse"
+    ],
+    "answer": 1,
+    "lengths": [
+      57,
+      99,
+      60,
+      43
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q096",
+    "qIndex": 95,
+    "text": "A Kubernetes cluster runs version 1.29 and supports the `ReadWriteOncePod` access mode. How does `ReadWriteOncePod` differ from `ReadWriteOnce`?",
+    "options": [
+      "They are identical; `ReadWriteOncePod` is just an alias",
+      "`ReadWriteOncePod` allows multiple pods but only one can write",
+      "`ReadWriteOncePod` is only for ephemeral volumes",
+      "`ReadWriteOncePod` restricts the volume to a single pod on the entire cluster, while `ReadWriteOnce` allows multiple pods on the same node to mount the volume"
+    ],
+    "answer": 3,
+    "lengths": [
+      55,
+      62,
+      48,
+      158
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q097",
+    "qIndex": 96,
+    "text": "A team deploying serverless functions on Kubernetes needs temporary storage for processing intermediate results during function execution. The data does not need to persist between invocations. Which storage approach is best?",
+    "options": [
+      "A PersistentVolumeClaim with `ReadWriteMany` access mode",
+      "An `emptyDir` volume, which provides ephemeral storage tied to the pod lifecycle",
+      "A `hostPath` volume pointing to the node's `/tmp` directory",
+      "An NFS volume shared across all function instances"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      80,
+      59,
+      50
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q098",
+    "qIndex": 97,
+    "text": "A team manages a Redis Sentinel StatefulSet. They need to perform a rolling update but ensure that at least 2 out of 3 Sentinel pods are always running during the update. Which StatefulSet configuration parameter controls this?",
+    "options": [
+      "`spec.minReadySeconds` — ensures pods are ready before proceeding",
+      "`spec.updateStrategy.rollingUpdate.maxUnavailable: 1` — limits the number of pods that can be down simultaneously during the update",
+      "`spec.replicas: 3` — the replica count itself ensures availability",
+      "`spec.revisionHistoryLimit` — controls how many old revisions to keep"
+    ],
+    "answer": 1,
+    "lengths": [
+      65,
+      131,
+      66,
+      69
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q099",
+    "qIndex": 98,
+    "text": "A developer defines a `StorageClass` with `parameters.type: gp3` and `parameters.iops: \"5000\"` for an AWS EBS CSI driver. What do these parameters control?",
+    "options": [
+      "The Kubernetes scheduler's disk I/O priority for pods using this class",
+      "The maximum I/O rate that the kubelet allows for volume operations",
+      "The characteristics of the provisioned cloud disk — `gp3` specifies the EBS volume type and `iops` sets the provisioned IOPS",
+      "The replication factor for the PV across availability zones"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      66,
+      124,
+      59
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s04-q100",
+    "qIndex": 99,
+    "text": "A Helm chart deploys a StatefulSet with a PVC. The chart includes a `pre-delete` hook that backs up data before uninstalling. The hook Job writes a snapshot to an S3 bucket. If the hook Job fails, what happens to the Helm release?",
+    "options": [
+      "The release is uninstalled anyway, ignoring the hook failure",
+      "The uninstall is aborted; the release and all its resources remain intact until the hook succeeds or is manually resolved",
+      "Helm deletes the StatefulSet but keeps the PVCs",
+      "Helm retries the hook indefinitely"
+    ],
+    "answer": 1,
+    "lengths": [
+      60,
+      121,
+      47,
+      34
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  }
+]

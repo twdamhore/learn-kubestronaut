@@ -196,7 +196,7 @@ var questions = [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
       "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
-      "Mount the ConfigMap volume directly; it is always read-only by default without extra settings"
+      "Mount the ConfigMap volume directly at /app/config/settings.yaml; no extra configuration is needed since volumes always mount at the exact file path"
     ],
     answer: 0,
     explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.",
@@ -341,7 +341,7 @@ var questions = [
     options: [
       "SSH into each running pod and manually update the configuration files in place on the filesystem",
       "Use `kubectl edit` to modify the running Deployment and let pods pick up the changes dynamically",
-      "Build a new container image with the updated configuration and then perform a rolling update",
+      "Build a new container image with the updated configuration baked in, requiring a new image build for every config change across all environments",
       "Create a new ConfigMap version, then trigger a Deployment rollout by updating the reference"
     ],
     answer: 3,
@@ -517,7 +517,7 @@ var questions = [
       "The files still exist but are hidden beneath the mount point; running `ls -a /config` would show them"
     ],
     answer: 2,
-    explanation: "When a volume is mounted at a path in a container, it completely overlays (replaces) whatever was at that path in the image. The original files from the Dockerfile are not deleted — they are simply hidden behind the mount. To mount a single file without replacing the directory, use `subPath`. The files are not revealed by `ls -a` because the mount fully replaces the directory view. This is standard Linux mount behavior, not a kubelet bug.",
+    explanation: "When a volume is mounted at a path in a container, it completely overlays (replaces) whatever was at that path in the image. From the container's perspective, the volume mount completely replaces the directory. The original files from the Dockerfile exist in the image layer but are completely inaccessible once the volume is mounted over the path — no command run inside the container can see them. This is standard Linux mount overlay behavior. To mount a single file without replacing the directory, use `subPath`.",
     verify: null
   },
   {
@@ -778,7 +778,7 @@ var questions = [
       "The kubelet intercepts container log output and replaces any Secret values with `[REDACTED]` markers",
       "Env vars from Secrets are not visible to the application process so they cannot be logged by the app"
     ],
-    answer: 1,
+    answer: 0,
     explanation: "Kubernetes does not perform any log redaction. Once a Secret is injected as an environment variable, the application process has full access to its plaintext value. If the application logs environment variables, the secret appears in plaintext in container logs, which may be forwarded to centralized logging systems like Elasticsearch or Loki. Applications should be configured to avoid logging sensitive environment variables. Neither the kubelet nor the container runtime performs automatic redaction.",
     verify: null
   },
@@ -1038,7 +1038,7 @@ var questions = [
     id: "s02-q063",
     domain: "Container Orchestration",
     subsection: "Security",
-    text: "A container runs as a non-root user (UID 1000) and mounts a Secret volume. The files in the mount are owned by root with mode `0644`. The application cannot read the files. What is the fix?",
+    text: "A container runs as a non-root user (UID 1000) and mounts a Secret volume. The files in the mount are owned by root with mode `0600`. The application cannot read the files. What is the fix?",
     diagram: null,
     options: [
       "Set `runAsUser: 0` in the securityContext to run as root, as this is the only way to read Secret mount volumes",

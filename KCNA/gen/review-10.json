@@ -1,0 +1,91 @@
+{
+  "set": "10",
+  "total_reviewed": 100,
+  "issues_found": 12,
+  "issues": [
+    {
+      "id": "s10-q002",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The option labels are out of order (A, C, B, D instead of A, B, C, D). This is cosmetic but could confuse students during review. The answer (index 1, label 'C') is technically correct: PSA enforce mode rejects pods at the pod creation level, so the Deployment object is created but the ReplicaSet fails to create pods.",
+      "suggested_fix": "Reorder options to A, B, C, D sequence for clarity."
+    },
+    {
+      "id": "s10-q004",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The options are labeled A, B, D, C (out of order). The answer content (index 2, label 'D') is defensible but this is an advanced and nuanced scheduling scenario. The behavior of topology spread constraints with NotReady nodes is complex and depends on Kubernetes version.",
+      "suggested_fix": "Reorder options to A, B, C, D for clarity."
+    },
+    {
+      "id": "s10-q014",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The question states 'Logs show the init container completes successfully but exits with code 128'. This is contradictory -- exit code 128 is NOT a successful completion (exit code 0 is success). The question says the init container 'completes successfully' but also exits with a non-zero code. Additionally, the pod is in CrashLoopBackOff, which means the init container is failing, not completing successfully. The answer (A, Git fatal error) is the best option given the context, but the question text is internally inconsistent.",
+      "suggested_fix": "Change question text from 'Logs show the init container completes successfully but exits with code 128' to 'Logs show the init container appears to run the git clone but exits with code 128'."
+    },
+    {
+      "id": "s10-q016",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "Answer index 3 (option B) says 'Two runs are skipped silently due to Forbid; after the job finishes, the next run occurs at the next scheduled interval with no catch-up'. However, with startingDeadlineSeconds: 200, after the 12-minute job completes, the CronJob controller checks for missed schedules within the last 200 seconds. The schedule at minute 10 is only 120 seconds old (within the 200s deadline), so the controller WILL start a catch-up job for the most recent missed schedule. Option A ('Two scheduled runs are missed; after the job finishes, only the most recent missed schedule triggers a new job') is more accurate. The Forbid policy prevents concurrent execution, but after the blocking job finishes, missed schedules within the startingDeadlineSeconds window can still be started.",
+      "suggested_fix": "Change answer from 3 to 0. Option A correctly describes that the most recent missed schedule triggers a new job after the long-running one finishes."
+    },
+    {
+      "id": "s10-q020",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation says the FQDN 'api-service.team-b.svc.cluster.local' (4 dots) is subject to search domain expansion because it has fewer than ndots:5. The explanation is technically correct but could be clearer that without a trailing dot, the resolver does not treat the name as absolute even though it looks like a complete FQDN. The answer (A) is correct.",
+      "suggested_fix": "Minor wording improvement: clarify that without a trailing dot, the resolver applies search domain expansion regardless of how 'complete' the name appears, because the dot count (4) is less than ndots (5)."
+    },
+    {
+      "id": "s10-q046",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The answer (index 3, option C: 'Use Workspaces for sharing cloned source and Task Results to pass the image tag from build-image to deploy') is correct. However, the explanation contradicts itself by saying 'While option C is technically functional, it does not use the native Tekton parameter-passing mechanism.' Task Results ARE the native Tekton parameter-passing mechanism. The explanation seems to have confused option B (PVC + env vars) with option C (Workspaces + Results).",
+      "suggested_fix": "Remove or rewrite the contradictory sentence. The explanation should affirm that Workspaces + Task Results (option C) IS the recommended native approach in Tekton."
+    },
+    {
+      "id": "s10-q055",
+      "type": "wrong_domain",
+      "severity": "minor",
+      "description": "This question about OpenTelemetry tracing sampling strategies (head-based vs tail-based sampling) is assigned to domain 'Kubernetes Fundamentals' subsection 'Core Concepts'. The question contains no Kubernetes-specific content and is purely about distributed tracing architecture.",
+      "suggested_fix": "Change domain to 'Cloud Native Observability' and subsection to 'Tracing'."
+    },
+    {
+      "id": "s10-q056",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "Options A and C express essentially the same concept using different wording. Option A: 'Only quota-objects must have capacity; quota-compute is checked only when pods are later created'. Option C (answer, index 1): 'Only quota-objects is checked at Deployment creation; quota-compute is checked when the ReplicaSet creates pods'. Both are correct statements of the same idea. Having two functionally identical options is poor question design.",
+      "suggested_fix": "Replace option A with a distinctly different wrong answer to avoid having two options that say the same thing."
+    },
+    {
+      "id": "s10-q073",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "Answer index 0 (option B) says 'The node controller marks the node Unknown; after taint-based eviction delay, pods are evicted unless they tolerate unreachable'. Option A says 'The node controller marks the node NotReady immediately; after pod-eviction-timeout...' The explanation correctly states the node is marked Unknown (not NotReady) and that taint-based eviction is used (not the deprecated pod-eviction-timeout). The answer is correct. However, option B says 'taint-based eviction delay' generically while option D correctly names the specific taint 'node.kubernetes.io/not-ready'. The actual taint applied for loss of heartbeat is 'node.kubernetes.io/unreachable' (as the explanation states), not 'not-ready'. Both the answer and explanation are correct; option D names the wrong taint, making it clearly wrong.",
+      "suggested_fix": "No change needed. The answer is correct."
+    },
+    {
+      "id": "s10-q085",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "Answer index 3 (option D) says 'Flux only watches the configured Git repository; remote base changes are not detected unless the main repo commit hash changes'. This is inaccurate. During each reconciliation cycle (every 5 minutes as stated), Flux runs kustomize build which fetches remote bases at their current state. If the remote base is referenced by branch (not pinned to a specific commit), the breaking change WILL be picked up on the next reconciliation cycle, even without changes to the main repository. Option A ('Flux detects the remote base change on the next reconciliation cycle, applies the breaking change, and the application breaks') is more accurate.",
+      "suggested_fix": "Change answer from 3 to 0. Option A correctly describes that Flux picks up remote base changes during periodic reconciliation via kustomize build."
+    },
+    {
+      "id": "s10-q096",
+      "type": "wrong_domain",
+      "severity": "minor",
+      "description": "This question about CI/CD pipeline anti-patterns (CI pipeline pushing to GitOps repo, trust boundary separation) is assigned to domain 'Kubernetes Fundamentals' subsection 'Core Concepts'. The question is about CI/CD security practices with no Kubernetes-specific content.",
+      "suggested_fix": "Change domain to 'Cloud Native Application Delivery' and subsection to 'CI/CD' or 'GitOps'."
+    },
+    {
+      "id": "s10-q070",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "Answer index 0 (option A: 'EndpointSlice controller takes time to propagate new endpoints to kube-proxy') and option C ('kube-proxy rules update asynchronously; stale rules point to old blue pods') describe the same root cause from different perspectives. Both are technically correct. The answer A is slightly more precise as it identifies the source of the delay (EndpointSlice propagation), while C describes the symptom (stale kube-proxy rules). However, the blue pods are NOT being deleted -- they are still running. The 503 errors occur because the old endpoints are removed but kube-proxy on some nodes may still have stale rules pointing to blue pod IPs that are no longer service endpoints. Option A is the better answer.",
+      "suggested_fix": "Make option C more clearly distinct from A, or add to the explanation why A is preferred over C."
+    }
+  ]
+}

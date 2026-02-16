@@ -95,14 +95,14 @@ var questions = [
       "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
     ],
     answer: 3,
-    explanation: "Cilium is a CNCF incubating project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.",
+    explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.",
     verify: "kubectl get pods -n kube-system -l k8s-app=cilium"
   },
   {
     id: "s08-q007",
     domain: "Container Orchestration",
     subsection: "Security",
-    text: "Your security team wants runtime threat detection for all containers in the Kubernetes cluster. They need to detect suspicious system calls such as unexpected shell spawns or sensitive file access. Which CNCF incubating project is specifically designed for this purpose?",
+    text: "Your security team wants runtime threat detection for all containers in the Kubernetes cluster. They need to detect suspicious system calls such as unexpected shell spawns or sensitive file access. Which CNCF graduated project is specifically designed for this purpose?",
     diagram: null,
     options: [
       "OPA (Open Policy Agent) — a general-purpose policy engine for Kubernetes admission control decisions",
@@ -111,7 +111,7 @@ var questions = [
       "Trivy — a vulnerability scanner for container images, filesystem content, and IaC configuration files"
     ],
     answer: 1,
-    explanation: "Falco is a CNCF incubating project that monitors kernel system calls and Kubernetes audit logs to detect runtime threats. It uses rules to identify suspicious activity such as unexpected shell execution, sensitive file reads, or privilege escalation. OPA focuses on policy enforcement at admission time, not runtime syscall monitoring.",
+    explanation: "Falco is a CNCF graduated project that monitors kernel system calls and Kubernetes audit logs to detect runtime threats. It uses rules to identify suspicious activity such as unexpected shell execution, sensitive file reads, or privilege escalation. OPA focuses on policy enforcement at admission time, not runtime syscall monitoring.",
     verify: null
   },
   {
@@ -366,7 +366,7 @@ var questions = [
       "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
       "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
     ],
-    answer: 2,
+    answer: 3,
     explanation: "Taints and tolerations are the correct mechanism for node reservation. A taint with `NoSchedule` effect prevents any Pod that lacks a matching toleration from being scheduled on the node. Only ML Pods with the corresponding toleration can be placed on GPU nodes. `nodeSelector` attracts ML Pods but does not repel others. Priority classes affect preemption, not initial scheduling restrictions.",
     verify: "kubectl describe node <gpu-node> | grep -i taint"
   },
@@ -383,23 +383,23 @@ var questions = [
       "`audit` — logs security violations in the API server logs but does not enforce any rules"
     ],
     answer: 0,
-    explanation: "The `restricted` Pod Security Standard is the most hardened built-in profile. It requires containers to run as non-root, drop all capabilities, disallow privilege escalation, and use a read-only root filesystem (recommended). The `baseline` profile prevents known escalation vectors but is less strict. `audit` is an enforcement mode, not a profile level.",
+    explanation: "The `restricted` Pod Security Standard is the most hardened built-in profile. It requires containers to run as non-root, drop all capabilities, and disallow privilege escalation. Note that `readOnlyRootFilesystem` is recommended but not required by the restricted profile — it is a best practice rather than an enforced control. The `baseline` profile prevents known escalation vectors but is less strict. `audit` is an enforcement mode, not a profile level.",
     verify: "kubectl get namespace <ns> -o jsonpath='{.metadata.labels}'"
   },
   {
     id: "s08-q025",
     domain: "Cloud Native Architecture",
     subsection: "Serverless",
-    text: "A team wants to deploy event-driven workloads on Kubernetes that automatically scale to zero when idle and scale up on incoming HTTP requests or CloudEvents. Which CNCF incubating project provides this serverless capability on top of Kubernetes?",
+    text: "A team wants to deploy event-driven workloads on Kubernetes that automatically scale to zero when idle and scale up on incoming HTTP requests or CloudEvents. Which CNCF graduated project provides this serverless capability on top of Kubernetes?",
     diagram: null,
     options: [
-      "Knative — provides serverless Serving and Eventing with scale-to-zero on Kubernetes",
+      "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes",
       "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows on Kubernetes pods",
       "KEDA — a Kubernetes event-driven autoscaler triggering Pod scaling from external sources",
       "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
     ],
     answer: 0,
-    explanation: "Knative is a CNCF incubating project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero), while Knative Eventing provides a framework for event-driven architectures using CloudEvents. KEDA is a CNCF graduated autoscaler but does not provide the full serverless platform experience that Knative offers.",
+    explanation: "Knative is a CNCF graduated project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero), while Knative Eventing provides a framework for event-driven architectures using CloudEvents. KEDA is a CNCF graduated autoscaler but does not provide the full serverless platform experience that Knative offers.",
     verify: "kubectl get pods -n knative-serving"
   },
   // ── Batch 2: q026–q050  (K8s=12, CO=5, CNA=4, CNO=2, CAD=2) ──
@@ -471,7 +471,7 @@ var questions = [
     id: "s08-q030",
     domain: "Cloud Native Architecture",
     subsection: "Microservices",
-    text: "A distributed e-commerce platform uses the Saga pattern to handle a multi-step order process: reserve inventory, charge payment, and ship order. If the payment step fails, the system must compensate by releasing the reserved inventory. Which type of Saga is described here?",
+    text: "A distributed e-commerce platform uses the Saga pattern to handle a multi-step order process: reserve inventory, charge payment, and ship order. A central order service coordinates the multi-step process, directing each service when to act. If the payment step fails, the system must compensate by releasing the reserved inventory. Which type of Saga is described here?",
     diagram: null,
     options: [
       "Choreography-based Saga — each service listens for events and performs its step or compensation autonomously",
@@ -751,7 +751,7 @@ var questions = [
       "The node lacks network access to `internal-registry.corp.com` or the Pod lacks a valid `imagePullSecret` for it",
       "The `containerd` runtime does not support pulling images from private registries that require authentication creds"
     ],
-    answer: 1,
+    answer: 2,
     explanation: "`ImagePullBackOff` occurs when the kubelet cannot pull the container image. For private registries, the most common causes are: the node cannot reach the registry (network/firewall), or the registry requires authentication and no valid `imagePullSecret` is configured on the Pod or its ServiceAccount. Port conflicts cause runtime errors, not image pull failures. Containerd fully supports private registries.",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
@@ -992,7 +992,7 @@ var questions = [
       "gRPC uses HTTP/2 persistent connections; `kube-proxy` does L4 balancing per connection so one connection routes to one Pod",
       "The Service `sessionAffinity` is set to `ClientIP` by default, which pins all traffic from one client to a single Pod"
     ],
-    answer: 3,
+    answer: 2,
     explanation: "gRPC uses HTTP/2, which multiplexes multiple requests over a single persistent TCP connection. Since `kube-proxy` performs Layer 4 (TCP connection-level) load balancing, all requests on the same connection go to the same backend Pod. To properly load-balance gRPC, teams need L7 load balancing (e.g., via a service mesh like Linkerd or an Envoy-based ingress controller) that can distribute individual gRPC requests across Pods.",
     verify: "kubectl get endpoints <service-name>"
   },
@@ -1473,7 +1473,7 @@ var questions = [
       "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read the missing credentials",
       "The container cannot start because mandatory env var references to non-existent Secrets cause `CreateContainerConfigError`"
     ],
-    answer: 2,
+    answer: 3,
     explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.",
     verify: "kubectl describe pod <pod-name> | grep -A5 Error"
   },
@@ -1521,7 +1521,7 @@ var questions = [
       "The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster",
       "The Pod's resource requests exceed the total combined capacity of all 5 nodes in the cluster group"
     ],
-    answer: 2,
+    answer: 1,
     explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.",
     verify: "kubectl describe pod <pod-name> | grep -A10 Events"
   },
@@ -1553,7 +1553,7 @@ var questions = [
       "Nodes, PersistentVolumes, ClusterRoles, and Namespaces themselves — these are cluster-scoped",
       "Secrets and ServiceAccounts — these are cluster-scoped to allow easy cross-namespace access paths"
     ],
-    answer: 1,
+    answer: 2,
     explanation: "Certain Kubernetes resources are cluster-scoped, meaning they are not bound to any namespace. Examples include Nodes, PersistentVolumes, ClusterRoles, ClusterRoleBindings, Namespaces, StorageClasses, and CustomResourceDefinitions. Resources like Pods, Services, ConfigMaps, Secrets, Deployments, and ServiceAccounts are namespace-scoped.",
     verify: "kubectl api-resources --namespaced=false"
   },
@@ -1601,7 +1601,7 @@ var questions = [
       "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers",
       "Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture"
     ],
-    answer: 2,
+    answer: 3,
     explanation: "Both Argo CD and Flux are pull-based GitOps tools. A key difference is that Argo CD includes a rich web UI for application visualization, sync management, and RBAC, making it popular for teams that value visual management. Flux is modular and CLI-first, composed of separate controllers (Source, Kustomize, Helm, Notification, Image Automation), which some teams prefer for its composability and infrastructure-as-code approach. Both support Helm, Kustomize, and plain manifests.",
     verify: null
   }

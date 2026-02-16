@@ -1,0 +1,875 @@
+[
+  {
+    "id": "s08-q001",
+    "options": [
+      "Sandbox — early-stage projects with minimal adoption and limited production readiness requirements",
+      "Incubating — projects demonstrating growing adoption, healthy contributors, and open governance",
+      "Graduated — projects with thriving adoption, open governance, and community sustainability",
+      "Archived — formerly graduated projects retired from active maintenance and contributor support"
+    ]
+  },
+  {
+    "id": "s08-q002",
+    "options": [
+      "Envoy, acting as a sidecar proxy that intercepts and resolves DNS queries",
+      "CoreDNS, the default cluster DNS provider since Kubernetes version 1.13",
+      "etcd, which stores DNS records as key-value pairs for Pod name lookups",
+      "NATS, which publishes DNS record updates via its messaging bus system"
+    ]
+  },
+  {
+    "id": "s08-q003",
+    "options": [
+      "The Docker shim (`dockershim`) that was built directly into the kubelet binary",
+      "A separate `cri-o` daemon that translates CRI calls to `containerd` commands",
+      "The `runc` binary, which implements the full CRI specification on its own",
+      "The CRI plugin built into `containerd` itself, speaking CRI gRPC directly"
+    ]
+  },
+  {
+    "id": "s08-q004",
+    "options": [
+      "Consul, a service mesh and key-value store commonly used for service discovery",
+      "Redis, an in-memory data structure store commonly used for caching app data",
+      "etcd, a distributed key-value store providing consistent available storage",
+      "CockroachDB, a distributed SQL database offering strong data consistency now"
+    ]
+  },
+  {
+    "id": "s08-q005",
+    "options": [
+      "Loose coupling — each service exposes a stable API and hides internal implementation",
+      "Shared database — all services access a single relational database for consistency",
+      "Synchronous RPC only — all inter-service calls must be blocking HTTP requests only",
+      "Monolithic deployment — services are packaged together to reduce network overhead cost"
+    ]
+  },
+  {
+    "id": "s08-q006",
+    "options": [
+      "Cilium relies exclusively on iptables rules and cannot inspect any Layer 7 traffic at all",
+      "Cilium is a CNCF graduated service mesh that requires Envoy sidecars in every Pod now",
+      "Cilium replaces kube-proxy but cannot enforce any form of Kubernetes NetworkPolicy rules",
+      "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
+    ]
+  },
+  {
+    "id": "s08-q007",
+    "options": [
+      "OPA (Open Policy Agent) — a general-purpose policy engine for Kubernetes admission control decisions",
+      "Trivy — a vulnerability scanner for container images, filesystem content, and IaC configuration files",
+      "Notary — a project for cryptographic signing and verification of container image artifacts integrity",
+      "Falco — a cloud native runtime security tool detecting anomalous behavior via kernel events"
+    ]
+  },
+  {
+    "id": "s08-q008",
+    "options": [
+      "`strategy: { type: Recreate }` with `replicas: 5` which terminates all Pods before updating",
+      "`strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 5, maxSurge: 0 } }`",
+      "`strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 1, maxSurge: 2 } }`",
+      "`strategy: { type: BlueGreen, rollingUpdate: { maxUnavailable: 0, maxSurge: 5 } }`"
+    ]
+  },
+  {
+    "id": "s08-q009",
+    "options": [
+      "Fluentd — a unified logging layer that collects and forwards log data to backends",
+      "Jaeger — a distributed tracing platform for monitoring microservice request flows",
+      "Prometheus — a monitoring system that scrapes metrics from targets via HTTP endpoints",
+      "Thanos — a long-term storage solution extending Prometheus with global query capability"
+    ]
+  },
+  {
+    "id": "s08-q010",
+    "options": [
+      "Argo CD and Flux — GitOps controllers that reconcile cluster resources from Git state",
+      "Jenkins and Spinnaker — CI/CD pipelines that push deployment changes to Kubernetes clusters",
+      "Helm and Kustomize — templating tools that generate Kubernetes manifests from template files",
+      "Tekton and Buildpacks — CI tools that build and package container images from source code"
+    ]
+  },
+  {
+    "id": "s08-q011",
+    "options": [
+      "`podAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` to co-locate Pods on the same node",
+      "`nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` specifying a list of node names",
+      "`topologySpreadConstraints` with `whenUnsatisfiable: DoNotSchedule` and `maxSkew: 100`",
+      "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` matching Pod labels"
+    ]
+  },
+  {
+    "id": "s08-q012",
+    "options": [
+      "Deploy an API gateway at the cluster ingress to handle all internal service-to-service communication traffic",
+      "Add mTLS libraries to each microservice codebase and implement retry logic in application middleware code",
+      "Implement a service mesh (e.g., Linkerd or Istio) with sidecar proxies handling mTLS, shifting, and retries",
+      "Use Kubernetes NetworkPolicies to encrypt all traffic and configure retries via Pod annotation declarations"
+    ]
+  },
+  {
+    "id": "s08-q013",
+    "options": [
+      "Declarative configuration requires fewer YAML lines, making manifests faster to write and maintain across environments",
+      "Users define desired end state, and controllers continuously reconcile actual state, enabling self-healing operations",
+      "Imperative commands are unsupported by `kubectl`; only declarative YAML manifests can be applied to the cluster",
+      "Declarative configuration bypasses the Kubernetes API server, allowing resources to be written to etcd directly"
+    ]
+  },
+  {
+    "id": "s08-q014",
+    "options": [
+      "A `PersistentVolume` manually created by the administrator with a matching `storageClassName` field value",
+      "A `ConfigMap` that contains the storage backend connection string and credentials for the kubelet daemon",
+      "A `VolumeSnapshot` that restores an existing disk to a new PersistentVolume automatically on creation",
+      "A `StorageClass` that defines a provisioner, creating PersistentVolumes when PVCs reference its name"
+    ]
+  },
+  {
+    "id": "s08-q015",
+    "options": [
+      "Factor III (Config) — config varying between deploys should be stored in the environment",
+      "Factor I (Codebase) — there must be exactly one codebase tracked in version control per app",
+      "Factor VI (Processes) — the application should execute as one or more stateless processes",
+      "Factor XII (Admin processes) — admin and management tasks should run as one-off processes"
+    ]
+  },
+  {
+    "id": "s08-q016",
+    "options": [
+      "`Allow` — permits concurrent Job runs without any scheduling restriction",
+      "`Replace` — terminates the currently running Job and starts the new one",
+      "`Forbid` — skips the new Job run if a previous run is still active now",
+      "`Queue` — enqueues the new Job to run after the current one completes it"
+    ]
+  },
+  {
+    "id": "s08-q017",
+    "options": [
+      "The container image is missing the `curl` binary and TLS libraries needed for outbound HTTPS connections",
+      "The Pod's `readinessProbe` is failing because port 443 is not exposed as a containerPort in the Pod spec",
+      "Kubernetes DNS cannot resolve the external API hostname due to a missing entry in the CoreDNS ConfigMap",
+      "The `default-deny` egress NetworkPolicy blocks all outbound traffic including HTTPS to the external API"
+    ]
+  },
+  {
+    "id": "s08-q018",
+    "options": [
+      "`ExternalName` — maps the Service to an external DNS name via a CNAME record entry",
+      "`LoadBalancer` — provisions a cloud load balancer that also allocates a NodePort value",
+      "`NodePort` — exposes the Service on a static port on each node's IP address directly",
+      "`Headless` — removes the ClusterIP and returns individual Pod IPs directly in DNS"
+    ]
+  },
+  {
+    "id": "s08-q019",
+    "options": [
+      "Prometheus — scrapes application metrics endpoints and stores them as time-series data",
+      "Jaeger — collects distributed traces across microservices for latency analysis tasks",
+      "Fluentd — a unified logging layer that collects, transforms, and routes log data",
+      "Grafana — a visualization and dashboarding tool for metrics, alerts, and log queries"
+    ]
+  },
+  {
+    "id": "s08-q020",
+    "options": [
+      "It serves as the front-end REST API for all cluster operations and authenticates every incoming request to the cluster",
+      "It assigns Pods to nodes by evaluating resource requests, taints, tolerations, and affinity rules for optimal placement",
+      "It manages the lifecycle of container images by pulling them from registries, caching them on nodes, and garbage collecting",
+      "It runs core control loops (ReplicaSet, Deployment, Node controllers) that reconcile actual state toward desired state"
+    ]
+  },
+  {
+    "id": "s08-q021",
+    "options": [
+      "Helm is a CNCF graduated project serving as the Kubernetes package manager using charts for applications",
+      "Helm is a CNCF sandbox project providing container image building capabilities without requiring Docker",
+      "Helm is a CNCF incubating project that manages service mesh configurations and traffic routing policies",
+      "Helm is a CNCF graduated project that provides persistent storage management for stateful cluster workloads"
+    ]
+  },
+  {
+    "id": "s08-q022",
+    "options": [
+      "Edit the `Chart.yaml` file inside the chart archive to change the default version and image tag settings",
+      "Modify the chart's `templates/` directory directly and repackage the chart archive before installing it",
+      "Pass a custom values file via `helm install -f custom-values.yaml` or use `--set` for overrides",
+      "Use `kubectl patch` on the deployed resources after `helm install` completes to override the values"
+    ]
+  },
+  {
+    "id": "s08-q023",
+    "options": [
+      "Add a label `gpu=true` and use `nodeSelector` on ML Pods — but this alone does not repel non-ML Pods from GPU nodes",
+      "Set `priorityClassName: high` on ML Pods so they always preempt lower-priority workloads from GPU-labeled nodes",
+      "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
+      "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
+    ]
+  },
+  {
+    "id": "s08-q024",
+    "options": [
+      "`privileged` — allows unrestricted Pod access with no security restrictions or enforcement",
+      "`baseline` — prevents known privilege escalations but permits containers to run as root",
+      "`restricted` — requires non-root execution, drops all capabilities, disallows escalation",
+      "`audit` — logs security violations in the API server logs but does not enforce any rules"
+    ]
+  },
+  {
+    "id": "s08-q025",
+    "options": [
+      "Knative — provides serverless Serving and Eventing with scale-to-zero on Kubernetes",
+      "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows on Kubernetes pods",
+      "KEDA — a Kubernetes event-driven autoscaler triggering Pod scaling from external sources",
+      "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
+    ]
+  },
+  {
+    "id": "s08-q027",
+    "options": [
+      "Node resource capacity and existing resource requests from already scheduled Pods",
+      "Taints configured on the node and corresponding tolerations declared on the Pod",
+      "Pod affinity and anti-affinity rules specified in the Pod's scheduling spec fields",
+      "The container image pull time from the registry to each candidate node on the list"
+    ]
+  },
+  {
+    "id": "s08-q028",
+    "options": [
+      "`runc` — the reference OCI runtime specification implementation binary",
+      "`dockerd` — the Docker daemon that manages full container lifecycle ops",
+      "`cri-o` — an alternative CRI runtime implementation for Kubernetes nodes",
+      "`podman` — a daemonless container engine for running OCI containers cli"
+    ]
+  },
+  {
+    "id": "s08-q029",
+    "options": [
+      "Envoy is a CNCF graduated L7 proxy with service discovery, load balancing, TLS, and gRPC support",
+      "Envoy is a CNCF incubating project used as a container runtime for managing workloads on K8s nodes",
+      "Envoy is a CNCF graduated monitoring tool that scrapes and aggregates metrics from app endpoints",
+      "Envoy is a CNCF sandbox project that provides DNS resolution and service discovery for clusters"
+    ]
+  },
+  {
+    "id": "s08-q030",
+    "options": [
+      "Choreography-based Saga — each service listens for events and performs its step or compensation autonomously",
+      "Orchestration-based Saga — a central orchestrator directs each step and triggers compensations on failure",
+      "Two-phase commit — a coordinator locks all resources across services until all participants agree to commit",
+      "Event sourcing — all state changes are stored as immutable events and replayed to determine current state"
+    ]
+  },
+  {
+    "id": "s08-q031",
+    "options": [
+      "Deployment with `replicas` set to the current node count and manually adjusted as nodes change",
+      "DaemonSet — ensures exactly one Pod copy runs on every (or selected subset of) cluster node(s)",
+      "StatefulSet with `podManagementPolicy: Parallel` and replicas matching the current node count",
+      "Job with `completions` equal to the number of nodes and `parallelism` set to the total node count"
+    ]
+  },
+  {
+    "id": "s08-q032",
+    "options": [
+      "Prometheus — collects time-series metrics from service endpoints via HTTP scrape targets",
+      "Fluentd — aggregates container log data and forwards it to centralized storage backends",
+      "Jaeger — a distributed tracing system for monitoring and troubleshooting microservices",
+      "Cortex — provides horizontally scalable long-term storage for Prometheus metric series"
+    ]
+  },
+  {
+    "id": "s08-q033",
+    "options": [
+      "A NetworkPolicy that allows inbound traffic on port 80 and 443 from external client source IPs",
+      "An Ingress Controller (e.g., NGINX or Envoy-based) that reads Ingress rules and configures proxy",
+      "The `kube-proxy` component that implements Service routing via iptables or IPVS on each cluster node",
+      "CoreDNS, which resolves `app.example.com` to the cluster's external IP address for traffic routing"
+    ]
+  },
+  {
+    "id": "s08-q034",
+    "options": [
+      "Every Pod must share the same IP address as its host node to avoid unnecessary routing complexity across the cluster",
+      "Pods must use a Service ClusterIP to communicate with Pods on other nodes since direct Pod-to-Pod traffic is blocked",
+      "Only Pods in the same namespace can communicate directly; any cross-namespace traffic requires an Ingress resource rule",
+      "All Pods can communicate across nodes without NAT, and each Pod receives its own unique cluster-routable IP address"
+    ]
+  },
+  {
+    "id": "s08-q035",
+    "options": [
+      "Both containers share the same IP address and can communicate via `localhost`, but they must use different ports",
+      "Both containers share the same filesystem and can access each other's files without requiring any volume mounts",
+      "Both containers share CPU and memory limits so resource requests apply to the Pod as a whole not individual containers",
+      "Both containers are automatically restarted together if either container fails a configured health check probe"
+    ]
+  },
+  {
+    "id": "s08-q036",
+    "options": [
+      "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task` and `Run`",
+      "Argo CD — a GitOps continuous delivery tool that syncs Git repository state to Kubernetes clusters",
+      "Jenkins X — an opinionated CI/CD platform using Jenkins pipelines with Kubernetes cluster integration",
+      "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from Git repositories continuously"
+    ]
+  },
+  {
+    "id": "s08-q037",
+    "options": [
+      "Canary — shift a small traffic percentage to the new version while monitoring metrics before rollout",
+      "Recreate — terminate all old Pods before launching new ones, resulting in a brief downtime window period",
+      "Blue-green — run two full environments simultaneously and switch the load balancer at once for cutover",
+      "Rolling update — replace Pods one by one in sequence until all instances are running the new version"
+    ]
+  },
+  {
+    "id": "s08-q038",
+    "options": [
+      "`activeDeadlineSeconds: 240` — limits the total Job runtime to exactly 4 minutes",
+      "`completions: 4` — requires 4 successful completions before the Job is finished",
+      "`parallelism: 4` — runs 4 Pods simultaneously to increase success probability",
+      "`backoffLimit: 4` — allows the Job to retry up to 4 times before marking failed"
+    ]
+  },
+  {
+    "id": "s08-q039",
+    "options": [
+      "At runtime, by monitoring running container processes and blocking any unauthorized container images",
+      "At scheduling time, when the kube-scheduler assigns the Pod to a specific node in the cluster",
+      "At image pull time, when the kubelet on the node attempts to download the image from the registry",
+      "During admission, as a validating webhook that intercepts API requests before persistence to etcd"
+    ]
+  },
+  {
+    "id": "s08-q040",
+    "options": [
+      "`topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: topology.kubernetes.io/zone`, and `DoNotSchedule`",
+      "`nodeAffinity` with preferred scheduling that weights zone labels equally across all available nodes in the cluster",
+      "`podAntiAffinity` with required scheduling to prevent any two Pods from being placed in the same availability zone",
+      "`resourceQuota` per zone namespace to limit the maximum number of Pods allowed in each availability zone segment"
+    ]
+  },
+  {
+    "id": "s08-q041",
+    "options": [
+      "Storing session data in a Redis cluster shared by all running application instances in the environment",
+      "Keeping user session data in local process memory, causing session loss if the instance is restarted",
+      "Using environment variables to inject configuration values into the application process at startup",
+      "Writing application logs to stdout so they can be captured by external logging infrastructure tools"
+    ]
+  },
+  {
+    "id": "s08-q042",
+    "options": [
+      "`prometheus.io/scrape: \"true\"` and `prometheus.io/port: \"8080\"` on the Pod metadata annotations",
+      "`monitoring.k8s.io/enabled: \"true\"` and `monitoring.k8s.io/endpoint: \"/metrics\"` on the Service",
+      "`observability.cncf.io/type: prometheus` and `observability.cncf.io/interval: 30s` on the Deployment",
+      "`metrics.kubernetes.io/scrape: \"true\"` and `metrics.kubernetes.io/path: \"/metrics\"` on the Namespace"
+    ]
+  },
+  {
+    "id": "s08-q043",
+    "options": [
+      "It load-balances traffic across Pods using round-robin at the kernel level via iptables or IPVS rules",
+      "It exposes the Service on every node's IP address on a random high port for external access to Pods",
+      "It forwards traffic to Pods in other namespaces by creating cross-namespace endpoint slice resources",
+      "It returns individual Pod IP addresses in DNS A/AAAA records instead of a single virtual IP address"
+    ]
+  },
+  {
+    "id": "s08-q045",
+    "options": [
+      "ConfigMap updates are never propagated to running Pods regardless of how they are consumed by containers in the Pod specification",
+      "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before any updates will take effect in Pods",
+      "The kubelet polls ConfigMap changes every 5 seconds and automatically refreshes both environment variables and volume-mounted data",
+      "Env vars from ConfigMaps are set at Pod creation and not updated without restart; volume mounts are eventually refreshed"
+    ]
+  },
+  {
+    "id": "s08-q046",
+    "options": [
+      "The Pods continue running indefinitely on the isolated node and are never rescheduled to other healthy cluster nodes",
+      "The kube-scheduler immediately reschedules all Pods to other available nodes without waiting for any timeout period",
+      "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",
+      "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
+    ]
+  },
+  {
+    "id": "s08-q047",
+    "options": [
+      "The container port specified in the Pod spec conflicts with another container in the same Pod causing a bind error",
+      "The `kube-scheduler` cannot find a node with enough available resources to schedule and pull the image properly",
+      "The node lacks network access to `internal-registry.corp.com` or the Pod lacks a valid `imagePullSecret` for it",
+      "The `containerd` runtime does not support pulling images from private registries that require authentication creds"
+    ]
+  },
+  {
+    "id": "s08-q048",
+    "options": [
+      "A `postStart` lifecycle hook on the main application container that runs a migration script",
+      "A sidecar container that continuously runs alongside the application container in the Pod",
+      "An init container in the Pod spec that runs and completes before any app containers start",
+      "A `readinessProbe` that delays traffic routing until the database migration fully completes"
+    ]
+  },
+  {
+    "id": "s08-q049",
+    "options": [
+      "NATS is a CNCF graduated container runtime that competes with containerd for CRI compliance on Kubernetes nodes",
+      "NATS is a CNCF graduated distributed tracing system that collects spans from microservices across the cluster",
+      "NATS is a CNCF incubating messaging system supporting pub/sub, request/reply, and streaming for cloud apps",
+      "NATS is a CNCF sandbox secret management tool that stores and distributes encrypted credentials for workloads"
+    ]
+  },
+  {
+    "id": "s08-q050",
+    "options": [
+      "Base64 encoding IS encryption — it uses the AES-256 cipher to protect Secret data stored in the etcd datastore",
+      "Secrets are encrypted by default in etcd using a Kubernetes-managed encryption key without any extra configuration",
+      "Base64 is encoding, not encryption; Secrets are stored unencrypted in etcd unless encryption at rest is configured",
+      "Secrets are only protected in transit between API server and kubelet via TLS; they are stored as plaintext in etcd"
+    ]
+  },
+  {
+    "id": "s08-q051",
+    "options": [
+      "The local file, the live object in the cluster, and the last-applied-configuration annotation",
+      "The local file, the Helm release secret, and the etcd snapshot from the previous backup hour",
+      "The local file, the container runtime image cache, and the kubelet's in-memory state on the node",
+      "The Git repository HEAD, the staging branch, and the production branch of the main repository"
+    ]
+  },
+  {
+    "id": "s08-q052",
+    "options": [
+      "IPVS offers O(1) connection processing via hash lookups, improving performance for large clusters",
+      "IPVS encrypts all Service traffic using mutual TLS without requiring a service mesh or extra certs",
+      "IPVS replaces CoreDNS entirely by performing DNS resolution for Service names at the kernel level",
+      "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs using BGP"
+    ]
+  },
+  {
+    "id": "s08-q053",
+    "options": [
+      "All requests are forwarded to the external API normally while logging each failure for later analysis and review",
+      "Requests to the external API are immediately rejected without attempting the call, returning a fallback or error",
+      "A single probe request is sent to the external API while all other requests are queued until it responds back",
+      "The service retries the external API call indefinitely with exponential backoff until a success is returned"
+    ]
+  },
+  {
+    "id": "s08-q054",
+    "options": [
+      "StatefulSet — provides stable Pod identities, ordered deployment, and persistent storage",
+      "Deployment — provides declarative updates and rolling rollouts for stateless application workloads",
+      "DaemonSet — ensures one Pod per node for infrastructure agents and system-level daemon processes",
+      "ReplicaSet — maintains a specified number of identical Pod replicas for a given template selector"
+    ]
+  },
+  {
+    "id": "s08-q055",
+    "options": [
+      "A ClusterRoleBinding that binds the Role to the ServiceAccount across all cluster namespaces",
+      "A NetworkPolicy that allows the ServiceAccount to access the API server network endpoint",
+      "A RoleBinding in the same namespace referencing the Role and ServiceAccount as a subject",
+      "A PodSecurityPolicy that grants the ServiceAccount access to Pod resources in the cluster"
+    ]
+  },
+  {
+    "id": "s08-q056",
+    "options": [
+      "The Gateway API removes the need for any controller — all routing is handled entirely by kube-proxy on each node in the cluster",
+      "The Gateway API replaces Services and Endpoints with a single resource combining routing, load balancing, and backend selection",
+      "The Gateway API encrypts all cluster network traffic by default without requiring any TLS certificates or additional configuration",
+      "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
+    ]
+  },
+  {
+    "id": "s08-q057",
+    "options": [
+      "OpenTelemetry only supports distributed tracing; separate libraries are needed for metrics collection and log aggregation",
+      "OpenTelemetry is a proprietary standard owned by Jaeger that only supports data export in Jaeger's native format",
+      "OpenTelemetry replaces Prometheus entirely and cannot export metrics data in the Prometheus exposition text format",
+      "OpenTelemetry is a CNCF incubating project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
+    ]
+  },
+  {
+    "id": "s08-q058",
+    "options": [
+      "Grafana Loki — a horizontally scalable log aggregation system designed for cost efficiency and simplicity",
+      "Cortex — a horizontally scalable Prometheus-compatible TSDB that is now part of the Mimir project lineage",
+      "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
+      "Thanos — extends Prometheus with long-term storage, global querying, and downsampling capabilities"
+    ]
+  },
+  {
+    "id": "s08-q059",
+    "options": [
+      "`persistentVolumeClaim` — provisions a network-attached disk from a StorageClass for persistent data",
+      "`hostPath` — mounts a directory from the host node's filesystem into the Pod for shared node access",
+      "`emptyDir` — creates a temporary directory that exists for the Pod's lifetime shared by containers",
+      "`configMap` — mounts configuration data from a ConfigMap resource as files in the container's paths"
+    ]
+  },
+  {
+    "id": "s08-q060",
+    "options": [
+      "gVisor interposes a user-space kernel (Sentry) intercepting system calls, reducing host attack surface",
+      "gVisor encrypts all container filesystem data at rest using hardware-backed encryption on the host storage",
+      "gVisor runs each container inside a full virtual machine using QEMU for complete hardware-level isolation",
+      "gVisor disables all Linux capabilities and seccomp profiles entirely, making containers fully unprivileged"
+    ]
+  },
+  {
+    "id": "s08-q061",
+    "options": [
+      "`etcdctl member list --endpoints=https://127.0.0.1:2379` to display all current cluster members list",
+      "`etcdctl snapshot save /backup/etcd-snapshot.db --endpoints=... --cacert=... --cert=... --key=...`",
+      "`etcdctl defrag --endpoints=https://127.0.0.1:2379` to reclaim fragmented storage on the database",
+      "`etcdctl put /backup/trigger true --endpoints=https://127.0.0.1:2379` to write a backup signal key"
+    ]
+  },
+  {
+    "id": "s08-q062",
+    "options": [
+      "gRPC is not a supported protocol for Kubernetes Services and always requires an external third-party load balancer",
+      "The Pods have different resource limits configured, causing the kube-scheduler to prefer one Pod over the others",
+      "The Service `sessionAffinity` is set to `ClientIP` by default, which pins all traffic from one client to a single Pod",
+      "gRPC uses HTTP/2 persistent connections; `kube-proxy` does L4 balancing per connection so one connection routes to one Pod"
+    ]
+  },
+  {
+    "id": "s08-q063",
+    "options": [
+      "Node A, because the scheduler uses a best-effort approach and places Pods on partially matching nodes",
+      "Node B, because it is the only node meeting both CPU (500m) and memory (256Mi) resource requests",
+      "Neither node — the Pod remains `Pending` because neither node has exactly the requested resources",
+      "The scheduler splits the Pod across both nodes, running the CPU-intensive portion on Node B only"
+    ]
+  },
+  {
+    "id": "s08-q064",
+    "options": [
+      "There is no violation — using lighter databases in development improves iteration speed without any meaningful consequence at all",
+      "Factor X requires minimizing gaps between dev and prod including backing services; different databases cause subtle bugs",
+      "Factor X only applies to the application source code itself and does not extend to backing services like databases or caches used",
+      "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
+    ]
+  },
+  {
+    "id": "s08-q066",
+    "options": [
+      "All 3 Pods are created simultaneously for fast startup regardless of individual Pod readiness status",
+      "Pods are created in reverse order: `pod-2` is created first, then `pod-1`, and finally `pod-0`",
+      "Pods are created in random order determined by the scheduler's scoring algorithm for the nodes",
+      "Pods are created sequentially: `pod-0` must be Running and Ready before `pod-1` starts creating"
+    ]
+  },
+  {
+    "id": "s08-q067",
+    "options": [
+      "Falco — detects runtime anomalies and security threats by monitoring kernel-level system calls in real time",
+      "Trivy — an all-in-one scanner detecting vulnerabilities in images and misconfigurations in K8s manifests",
+      "kube-bench — checks Kubernetes cluster node configuration against CIS security benchmark requirements",
+      "OPA Gatekeeper — enforces custom admission policies on Kubernetes API requests via constraint templates"
+    ]
+  },
+  {
+    "id": "s08-q068",
+    "options": [
+      "The container is throttled by the CFS scheduler; it cannot exceed 2 CPU cores but is not killed",
+      "The container is immediately terminated (OOMKilled) for exceeding its configured CPU limit value",
+      "The kubelet evicts the Pod because it has exceeded the CPU allocation available on the node",
+      "Nothing happens — CPU limits are advisory only and have no enforcement mechanism in Kubernetes"
+    ]
+  },
+  {
+    "id": "s08-q069",
+    "options": [
+      "Flux Helm Controller — watches HelmRepository sources for new chart versions and reconciles releases",
+      "Flux Notification Controller — sends alerts and notifications when Git commits are pushed to the repo",
+      "Flux Image Automation Controller — scans container registries and updates image tags in Git repos",
+      "Flux Source Controller monitors Git repos and Kustomize Controller applies manifests to the cluster"
+    ]
+  },
+  {
+    "id": "s08-q070",
+    "options": [
+      "The ServiceAccount token is auto-mounted at `/var/run/secrets/kubernetes.io/serviceaccount/` with `ca.crt`",
+      "The kubelet injects the API server's TLS certificate into every container's `/etc/ssl/` directory automatically",
+      "The kube-proxy provides an unauthenticated API gateway on `localhost:8080` that forwards all requests",
+      "The developer must hard-code the API server URL and a static bearer token in the application configuration"
+    ]
+  },
+  {
+    "id": "s08-q071",
+    "options": [
+      "Increase the CPU limit so the application can process memory allocations and garbage collection cycles faster",
+      "Set `restartPolicy: Never` on the Pod to prevent Kubernetes from restarting the killed container instance",
+      "Add a `livenessProbe` that checks memory usage and restarts the container before it gets OOMKilled by cgroup",
+      "Increase the memory limit to at least 300Mi with headroom to prevent the kernel OOM killer from acting"
+    ]
+  },
+  {
+    "id": "s08-q072",
+    "options": [
+      "No — all 3 etcd members must be available and reachable for the cluster to accept any read or write operations",
+      "Yes — etcd uses Raft consensus requiring a majority quorum; with 2 of 3 members the quorum is maintained",
+      "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles data afterward",
+      "No — etcd immediately promotes one of the remaining members to operate as a standalone single-node instance"
+    ]
+  },
+  {
+    "id": "s08-q073",
+    "options": [
+      "Sidecar pattern — inject a proxy container alongside each service to handle cross-cutting concerns locally",
+      "Backend for Frontend (BFF) — build a separate backend service tailored per client type (mobile, web app)",
+      "API Gateway pattern — a single entry point handling auth, rate limiting, and routing for backend services",
+      "Service mesh pattern — distribute proxy functionality across all service instances via sidecar injection"
+    ]
+  },
+  {
+    "id": "s08-q074",
+    "options": [
+      "It sets the maximum number of Pods that can exist in the namespace at any given time during operations",
+      "It defines default, min, and max resource requests and limits for containers and Pods in the namespace",
+      "It restricts which container images can be pulled by Pods deployed within the namespace by registry URL",
+      "It limits the number of API requests per second that can be made to resources within that namespace"
+    ]
+  },
+  {
+    "id": "s08-q075",
+    "options": [
+      "AWS EBS — block storage that can be attached to a single EC2 instance at a time supporting RWO access only",
+      "NFS (Network File System) — a network filesystem supporting concurrent read/write from multiple nodes",
+      "Local PV — uses local disks on a specific node and is inherently limited to that single node RWO only",
+      "Azure Managed Disks — premium block storage that supports single-node attachment with RWO access only"
+    ]
+  },
+  {
+    "id": "s08-q076",
+    "options": [
+      "The Pod is created successfully because the CPU limit of 3 is still under the namespace quota limit of 8",
+      "The Pod is created but throttled to use only 1 CPU request since that is all the remaining quota allows",
+      "The ResourceQuota is ignored because it only applies to Deployments and ReplicaSets, not individual Pods",
+      "Pod creation is rejected because total CPU requests would be 5 (3 + 2), exceeding the quota of 4 total"
+    ]
+  },
+  {
+    "id": "s08-q077",
+    "options": [
+      "CRI-O supports both the Kubernetes CRI and Docker API, making it a drop-in replacement for Docker Engine on nodes",
+      "CRI-O uses its own proprietary image format that is incompatible with OCI container images and Docker registries",
+      "CRI-O is purpose-built for Kubernetes, implementing only the CRI interface without Docker-specific build features",
+      "CRI-O bundles its own container storage driver and cannot leverage the host filesystem or existing storage config"
+    ]
+  },
+  {
+    "id": "s08-q078",
+    "options": [
+      "gRPC is a CNCF incubating high-performance RPC framework using Protocol Buffers and HTTP/2 for transport",
+      "gRPC is a CNCF graduated project serving as a REST API replacement by using XML over HTTP/1.1 protocol",
+      "gRPC is not part of the CNCF — it is a proprietary Google technology with no open-source governance body",
+      "gRPC is a CNCF sandbox project providing a durable messaging queue for asynchronous communication use"
+    ]
+  },
+  {
+    "id": "s08-q079",
+    "options": [
+      "`completions: 100, parallelism: 10` — creates Pods in batches of 10 until 100 completions are reached",
+      "`completions: 10, parallelism: 100` — creates 100 Pods simultaneously but only counts 10 completions",
+      "`completions: 100, parallelism: 100` — creates all 100 Pods simultaneously on available cluster nodes",
+      "`completions: 1, parallelism: 10` — runs up to 10 Pods in parallel but only needs 1 to succeed total"
+    ]
+  },
+  {
+    "id": "s08-q080",
+    "options": [
+      "Sidecar logging — a logging container is injected into every Pod to capture and forward application logs",
+      "Node-level logging agent — a DaemonSet reads container logs from `/var/log/containers/` on each node",
+      "Application-level logging — each application writes logs directly to a remote centralized logging service",
+      "Event-driven logging — a controller watches Kubernetes Events and forwards them as structured log entries"
+    ]
+  },
+  {
+    "id": "s08-q081",
+    "options": [
+      "`kubectl cordon <node>` — marks the node as unschedulable without evicting running Pods",
+      "`kubectl delete node <node>` — removes the node from the cluster entirely and permanently",
+      "`kubectl drain <node>` — cordons the node AND evicts all non-DaemonSet Pods from the node",
+      "`kubectl taint nodes <node> maintenance=true:NoExecute` — evicts Pods lacking toleration"
+    ]
+  },
+  {
+    "id": "s08-q082",
+    "options": [
+      "Docker-in-Docker (DinD) — runs a full Docker daemon inside a privileged container for building images",
+      "Kaniko — builds OCI container images from a Dockerfile inside a container without a Docker daemon",
+      "`kubectl build` — a built-in kubectl subcommand for building container images on cluster worker nodes",
+      "`containerd build` — uses the containerd runtime to build OCI container images directly on the node"
+    ]
+  },
+  {
+    "id": "s08-q083",
+    "options": [
+      "A single `from` entry with both `podSelector` and `namespaceSelector`, requiring both conditions true simultaneously for every match",
+      "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
+      "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from `monitoring` namespace Pods for egress controls",
+      "Two `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, another with `namespaceSelector` for `monitoring`"
+    ]
+  },
+  {
+    "id": "s08-q084",
+    "options": [
+      "It creates a headless Service that does not forward any traffic to any backend Pod endpoints at all",
+      "It creates a Service that load-balances traffic across all Pods in the cluster regardless of labels",
+      "It allows the Service to proxy traffic to external endpoints not running as Pods in the cluster",
+      "It is an invalid configuration — Services without selectors are rejected by the Kubernetes API server"
+    ]
+  },
+  {
+    "id": "s08-q085",
+    "options": [
+      "Treat backing services as attached resources swappable via config — e.g., swap local PostgreSQL for RDS by changing a URL",
+      "Embed the database driver and connection pool directly in the application binary to avoid any external runtime dependencies",
+      "Run all backing services inside the same container as the application process to achieve the lowest possible network latency",
+      "Hard-code backing service connection strings in the application source code to ensure reliability and avoid config drift issues"
+    ]
+  },
+  {
+    "id": "s08-q086",
+    "options": [
+      "Scheduling Pods to nodes, managing CronJobs, running admission webhooks, and handling resource quota enforcement in all namespaces",
+      "Managing cloud controllers: Node controller for instance checks, Route controller for routes, Service controller for LBs",
+      "Running etcd backups to cloud object storage, encrypting Secrets with cloud KMS, and managing cloud-based certificate issuance",
+      "Building container images using cloud-native build services and pushing finished images to cloud container registry endpoints"
+    ]
+  },
+  {
+    "id": "s08-q087",
+    "options": [
+      "Resource fragmentation — unused capacity on nodes that cannot fit any additional Pod due to scheduling constraints",
+      "Resource slack — the gap between resource requests (reserved capacity) and actual utilization, representing waste",
+      "Resource throttling — the gap between resource limits and actual usage when the kernel restricts CPU time slices",
+      "Resource contention — multiple Pods competing for the same finite node resources causing performance degradation"
+    ]
+  },
+  {
+    "id": "s08-q088",
+    "options": [
+      "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace",
+      "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent writes",
+      "Setting `readOnlyRootFilesystem: true` in `securityContext` combined with `restricted` PSS profile",
+      "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
+    ]
+  },
+  {
+    "id": "s08-q089",
+    "options": [
+      "4 replicas — the HPA doubles the current count to halve utilization, but this ignores the standard formula",
+      "The HPA calculates `ceil(currentReplicas * (currentUtilization / target))` = `ceil(2 * 140/70)` = 4",
+      "10 replicas — the HPA scales to the maximum immediately whenever utilization exceeds the target value",
+      "2 replicas — the HPA cannot scale above the current count until the next scheduled evaluation period"
+    ]
+  },
+  {
+    "id": "s08-q090",
+    "options": [
+      "Use `kubectl rollout undo` to switch traffic from the blue Deployment replicas to the green version pods",
+      "Deploy green as a separate Deployment, then update the Service selector to match green Pods for a switch",
+      "Scale the blue Deployment to 0 and create a new Deployment with the same name but the green image tag",
+      "Use a CronJob that periodically checks for new versions and automatically switches the Service selector"
+    ]
+  },
+  {
+    "id": "s08-q091",
+    "options": [
+      "Events record audit logs of all API server authentication and authorization decisions for security compliance",
+      "Events store persistent application logs from container stdout and stderr streams for long-term retention",
+      "Events record state changes for cluster resources: Pod scheduling, image pulls, probe failures, scaling",
+      "Events track network packet flows between Pods for security auditing and network performance monitoring"
+    ]
+  },
+  {
+    "id": "s08-q092",
+    "options": [
+      "The Pod starts normally with empty environment variables since the referenced Secret resource is not found in the namespace",
+      "The kubelet creates the missing Secret automatically with default empty values and proceeds to start the container Pod",
+      "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read the missing credentials",
+      "The container cannot start because mandatory env var references to non-existent Secrets cause `CreateContainerConfigError`"
+    ]
+  },
+  {
+    "id": "s08-q093",
+    "options": [
+      "`cache-svc` — short names automatically resolve across all namespaces without further qualification",
+      "`cache-svc.cluster.local` — namespace is not needed since Service names are globally unique in DNS",
+      "`data.cache-svc.svc.cluster.local` — the namespace prefix comes before the service name in the FQDN",
+      "`cache-svc.data.svc.cluster.local` — the FQDN includes service name, namespace, and cluster domain"
+    ]
+  },
+  {
+    "id": "s08-q094",
+    "options": [
+      "Rewriting the entire monolith from scratch in a new language and framework then deploying it all at once",
+      "Incrementally replacing monolith features with microservices, routing via a facade until fully replaced",
+      "Running the monolith and microservices on separate clusters with no shared traffic or communication",
+      "Splitting the monolithic database into shards while keeping the existing application code unchanged"
+    ]
+  },
+  {
+    "id": "s08-q095",
+    "options": [
+      "The Pod's container image cannot be found in the configured container registry endpoint on any node",
+      "The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster",
+      "The Pod has a `nodeSelector` or `nodeAffinity` not matching any worker node, plus control-plane taints",
+      "The Pod's resource requests exceed the total combined capacity of all 5 nodes in the cluster group"
+    ]
+  },
+  {
+    "id": "s08-q096",
+    "options": [
+      "The CNCF landscape only includes officially hosted CNCF projects and explicitly excludes all commercial products and vendors",
+      "The CNCF landscape categorizes cloud native technologies across runtime, orchestration, observability, and the wider ecosystem",
+      "The CNCF landscape is a certification program that validates vendor products for Kubernetes compatibility and conformance testing",
+      "The CNCF landscape is a dependency graph showing which CNCF projects depend on each other for build and runtime dependencies"
+    ]
+  },
+  {
+    "id": "s08-q097",
+    "options": [
+      "Pods, Services, and ConfigMaps — these are all namespace-scoped and isolated per namespace boundary",
+      "Deployments and DaemonSets — these exist at the cluster level and reference namespaces via labels",
+      "Nodes, PersistentVolumes, ClusterRoles, and Namespaces themselves — these are cluster-scoped",
+      "Secrets and ServiceAccounts — these are cluster-scoped to allow easy cross-namespace access paths"
+    ]
+  },
+  {
+    "id": "s08-q098",
+    "options": [
+      "`kubectl logs <pod-name> --all-containers` — shows logs from all container restarts and sidecar containers",
+      "`kubectl logs <pod-name> --since=1h` — shows all logs from the past hour across all container restarts",
+      "`kubectl describe pod <pod-name>` — the describe output includes full container logs from all restart cycles",
+      "`kubectl logs <pod-name> --previous` — shows logs from the previous container instance for crash debugging"
+    ]
+  },
+  {
+    "id": "s08-q099",
+    "options": [
+      "All existing Pods are terminated first, then new Pods with the updated spec are created, causing brief downtime",
+      "New Pods are created alongside old Pods and traffic is gradually shifted from old version to new version pods",
+      "Pods are updated in-place without restarting — the container image is swapped while the Pod continues running",
+      "A new ReplicaSet is created and scaled up while simultaneously scaling down the old ReplicaSet one Pod at a time"
+    ]
+  },
+  {
+    "id": "s08-q100",
+    "options": [
+      "Argo CD uses a push-based model while Flux uses a pull-based model representing fundamentally different approaches",
+      "Argo CD can only deploy Helm charts while Flux can only deploy plain Kubernetes manifests from Git repositories",
+      "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers",
+      "Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture"
+    ]
+  }
+]

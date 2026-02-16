@@ -1,0 +1,1862 @@
+[
+  {
+    "id": "s06-q001",
+    "qIndex": 0,
+    "text": "A team wants to ensure their GPU-intensive workload runs only on nodes with NVIDIA GPUs. They have already labeled those nodes with <code>gpu=nvidia</code>. Which Pod spec field is the simplest way to target these nodes?",
+    "options": [
+      "A. `spec.affinity.nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution`",
+      "B. `spec.nodeSelector` with `gpu: nvidia`",
+      "C. `spec.tolerations` with key `gpu` and value `nvidia`",
+      "D. `spec.nodeName` set to the GPU node hostname"
+    ],
+    "answer": 1,
+    "lengths": [
+      85,
+      41,
+      55,
+      47
+    ],
+    "avgLen": 57,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q002",
+    "qIndex": 1,
+    "text": "You apply a taint <code>kubectl taint nodes node1 dedicated=ml:NoSchedule</code>. A data-processing Pod without any tolerations is pending. What happens when the scheduler evaluates node1?",
+    "options": [
+      "A. The Pod is scheduled but enters `CrashLoopBackOff`",
+      "B. The Pod is scheduled with a warning event",
+      "C. The scheduler skips node1 because the Pod lacks a matching toleration",
+      "D. The taint is ignored if the Pod has a `nodeSelector` matching node1"
+    ],
+    "answer": 2,
+    "lengths": [
+      53,
+      44,
+      72,
+      70
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q003",
+    "qIndex": 2,
+    "text": "After upgrading the control plane, a cluster administrator notices that several Pods are stuck in <code>Pending</code>. The nodes show status <code>Ready,SchedulingDisabled</code>. What is the most likely cause?",
+    "options": [
+      "A. The nodes were cordoned during the upgrade and never uncordoned",
+      "B. The kubelet on each node has crashed",
+      "C. The kube-scheduler Pod failed to restart after the upgrade",
+      "D. The Pods exceed the cluster resource quota"
+    ],
+    "answer": 0,
+    "lengths": [
+      66,
+      39,
+      61,
+      45
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q004",
+    "qIndex": 3,
+    "text": "An SRE team must back up the cluster state before a major upgrade. Which component stores all cluster configuration and state data that needs to be backed up?",
+    "options": [
+      "A. kube-apiserver",
+      "B. kube-controller-manager",
+      "C. etcd",
+      "D. kube-scheduler"
+    ],
+    "answer": 2,
+    "lengths": [
+      17,
+      26,
+      7,
+      17
+    ],
+    "avgLen": 17,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q005",
+    "qIndex": 4,
+    "text": "A platform team is designing their cluster upgrade strategy. They want zero-downtime deployments and the ability to roll back quickly. Which approach best aligns with cloud-native principles?",
+    "options": [
+      "A. In-place upgrade of all nodes simultaneously",
+      "B. Upgrading only the control plane and leaving worker nodes on the old version indefinitely",
+      "C. Creating a brand new cluster and migrating all workloads at once",
+      "D. Rolling upgrade with cordon, drain, upgrade, and uncordon per node"
+    ],
+    "answer": 3,
+    "lengths": [
+      47,
+      92,
+      67,
+      69
+    ],
+    "avgLen": 69,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q006",
+    "qIndex": 5,
+    "text": "You need a Pod to prefer nodes in availability zone <code>us-east-1a</code> but still schedule elsewhere if those nodes are full. Which scheduling construct should you use?",
+    "options": [
+      "A. `nodeSelector` with `topology.kubernetes.io/zone: us-east-1a`",
+      "B. `requiredDuringSchedulingIgnoredDuringExecution` node affinity",
+      "C. `preferredDuringSchedulingIgnoredDuringExecution` node affinity",
+      "D. A taint on non-`us-east-1a` nodes with `NoSchedule` effect"
+    ],
+    "answer": 2,
+    "lengths": [
+      64,
+      65,
+      66,
+      61
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q007",
+    "qIndex": 6,
+    "text": "A security policy requires that only infrastructure Pods run on control-plane nodes. The control-plane nodes already have the taint <code>node-role.kubernetes.io/control-plane:NoSchedule</code>. How should the infrastructure Pods be configured?",
+    "options": [
+      "A. Add `nodeSelector: node-role.kubernetes.io/control-plane: \"\"`",
+      "B. Set `spec.nodeName` to each control-plane node",
+      "C. Add a toleration with key `node-role.kubernetes.io/control-plane` and effect `NoSchedule`",
+      "D. Remove the taint and use a `NetworkPolicy` instead"
+    ],
+    "answer": 2,
+    "lengths": [
+      64,
+      49,
+      92,
+      53
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q008",
+    "qIndex": 7,
+    "text": "A microservices application has a web frontend and a cache service. The team wants both Pods to be scheduled on the same node for low latency. Which mechanism achieves this?",
+    "options": [
+      "A. Pod anti-affinity with `topologyKey: kubernetes.io/hostname`",
+      "B. Pod affinity with `topologyKey: kubernetes.io/hostname`",
+      "C. Node affinity targeting a specific node label",
+      "D. `hostNetwork: true` on both Pods"
+    ],
+    "answer": 1,
+    "lengths": [
+      63,
+      58,
+      48,
+      35
+    ],
+    "avgLen": 51,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q009",
+    "qIndex": 8,
+    "text": "After draining a node for maintenance, you want to verify that all Pods have been successfully evicted. Which command provides the most direct confirmation?",
+    "options": [
+      "A. `kubectl top node <node-name>`",
+      "B. `kubectl get events --field-selector involvedObject.name=<node-name>`",
+      "C. `kubectl describe node <node-name> | grep -i condition`",
+      "D. `kubectl get pods --all-namespaces --field-selector spec.nodeName=<node-name>`"
+    ],
+    "answer": 3,
+    "lengths": [
+      33,
+      72,
+      58,
+      81
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q010",
+    "qIndex": 9,
+    "text": "During a cluster upgrade, the administrator must upgrade components in a specific order. Which sequence is correct for upgrading a kubeadm-managed cluster?",
+    "options": [
+      "A. kubelet -> kube-apiserver -> kube-controller-manager -> kube-scheduler",
+      "B. kube-apiserver -> kube-controller-manager -> kube-scheduler -> kubelet -> kube-proxy",
+      "C. etcd -> kubelet -> kube-apiserver -> kube-proxy",
+      "D. kube-scheduler -> kube-controller-manager -> kube-apiserver -> kubelet"
+    ],
+    "answer": 1,
+    "lengths": [
+      73,
+      87,
+      50,
+      73
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q011",
+    "qIndex": 10,
+    "text": "A Pod with resource requests of <code>cpu: 4</code> and <code>memory: 8Gi</code> is stuck in <code>Pending</code>. The cluster has 3 nodes each with 4 CPU cores and 8Gi memory, but all have existing workloads consuming about 1 CPU. What is the issue?",
+    "options": [
+      "A. The Pod requests exceed the total cluster capacity",
+      "B. No single node has enough unreserved CPU to satisfy the request",
+      "C. The memory request is too high for the node allocatable memory",
+      "D. The Pod is missing a `priorityClassName`"
+    ],
+    "answer": 1,
+    "lengths": [
+      53,
+      66,
+      65,
+      43
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q012",
+    "qIndex": 11,
+    "text": "What is the effect of the taint <code>node.kubernetes.io/not-ready:NoExecute</code> that Kubernetes automatically applies to a node that loses connectivity?",
+    "options": [
+      "A. New Pods are prevented from scheduling but existing Pods continue running",
+      "B. All Pods without a matching toleration are evicted after the tolerationSeconds period",
+      "C. The node is immediately removed from the cluster",
+      "D. Only DaemonSet Pods are evicted from the node"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      88,
+      51,
+      48
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q013",
+    "qIndex": 12,
+    "text": "A company uses a CNCF graduated project to manage their cluster lifecycle, including provisioning, upgrading, and scaling Kubernetes clusters declaratively. Which project is this?",
+    "options": [
+      "A. Cluster API",
+      "B. Helm",
+      "C. Argo CD",
+      "D. Flux"
+    ],
+    "answer": 0,
+    "lengths": [
+      14,
+      7,
+      10,
+      7
+    ],
+    "avgLen": 10,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q014",
+    "qIndex": 13,
+    "text": "Before draining a node, you notice a Pod using a local PersistentVolume. What should you consider about the drain operation?",
+    "options": [
+      "A. The drain will automatically migrate the local volume to another node",
+      "B. The Pod will be evicted but its data on the local volume will be inaccessible from the new node",
+      "C. The drain command will fail unless `--force` is specified for local volumes",
+      "D. Local volumes are automatically replicated, so no data loss occurs"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      98,
+      78,
+      69
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q015",
+    "qIndex": 14,
+    "text": "During a cluster upgrade, the platform team uses a strategy where they create a new node pool with the upgraded version, migrate workloads, then decommission the old pool. Which pattern does this follow?",
+    "options": [
+      "A. Blue-green node replacement",
+      "B. In-place rolling update",
+      "C. Canary deployment",
+      "D. Recreate strategy"
+    ],
+    "answer": 0,
+    "lengths": [
+      30,
+      26,
+      20,
+      20
+    ],
+    "avgLen": 24,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q016",
+    "qIndex": 15,
+    "text": "A DaemonSet Pod runs a log collector on every node. During a drain operation, you notice the DaemonSet Pod is not evicted. Why?",
+    "options": [
+      "A. DaemonSet Pods have a higher priority than all other Pods",
+      "B. DaemonSet Pods automatically tolerate all taints",
+      "C. The drain command cannot evict Pods in the `kube-system` namespace",
+      "D. `kubectl drain` ignores DaemonSet-managed Pods by default"
+    ],
+    "answer": 3,
+    "lengths": [
+      60,
+      51,
+      69,
+      60
+    ],
+    "avgLen": 60,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q017",
+    "qIndex": 16,
+    "text": "You configure a Pod with both a <code>nodeSelector</code> and a <code>nodeAffinity</code> rule. How does the scheduler evaluate them?",
+    "options": [
+      "A. `nodeSelector` takes precedence; `nodeAffinity` is ignored",
+      "B. Both must be satisfied for the node to be eligible",
+      "C. `nodeAffinity` takes precedence; `nodeSelector` is ignored",
+      "D. The scheduler picks whichever constraint matches more nodes"
+    ],
+    "answer": 1,
+    "lengths": [
+      61,
+      53,
+      61,
+      62
+    ],
+    "avgLen": 59,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q018",
+    "qIndex": 17,
+    "text": "After performing an etcd backup, you want to verify the snapshot file is valid. Which command checks the integrity of the backup?",
+    "options": [
+      "A. `etcdctl snapshot verify backup.db`",
+      "B. `etcdctl snapshot status backup.db`",
+      "C. `etcdctl check backup.db --integrity`",
+      "D. `etcdctl endpoint health --snapshot backup.db`"
+    ],
+    "answer": 1,
+    "lengths": [
+      38,
+      38,
+      40,
+      49
+    ],
+    "avgLen": 41,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q019",
+    "qIndex": 18,
+    "text": "A node is being drained, and a Service backed by a Deployment has Pods on that node. What ensures traffic is not sent to the evicted Pods during the drain?",
+    "options": [
+      "A. The kube-proxy immediately blocks all traffic to the drained node",
+      "B. The endpoint controller removes the terminating Pod from the Service Endpoints",
+      "C. The Pod Disruption Budget prevents traffic loss",
+      "D. The Service automatically reroutes based on node health checks"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      81,
+      50,
+      65
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q021",
+    "qIndex": 20,
+    "text": "A platform engineer wants to ensure that critical monitoring Pods are scheduled before batch processing Pods when cluster resources are constrained. Which Kubernetes feature should they use?",
+    "options": [
+      "A. Resource quotas per namespace",
+      "B. Pod affinity rules targeting monitoring nodes",
+      "C. PriorityClasses with preemption enabled",
+      "D. LimitRanges for batch workload Pods"
+    ],
+    "answer": 2,
+    "lengths": [
+      32,
+      48,
+      42,
+      38
+    ],
+    "avgLen": 40,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q022",
+    "qIndex": 21,
+    "text": "You run <code>kubectl drain node2 --ignore-daemonsets</code> but it fails with <code>Cannot evict pod as it would violate the pod's disruption budget</code>. What should you do?",
+    "options": [
+      "A. Scale up the workload replicas so the PDB allows eviction, then retry the drain",
+      "B. Add `--force` to bypass the PDB",
+      "C. Delete the PDB, drain the node, then recreate the PDB",
+      "D. Use `--delete-emptydir-data` to override PDB restrictions"
+    ],
+    "answer": 0,
+    "lengths": [
+      82,
+      34,
+      56,
+      60
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q023",
+    "qIndex": 22,
+    "text": "In a highly available cluster with 3 etcd members, one member goes down. What is the impact on cluster operations?",
+    "options": [
+      "A. The cluster becomes read-only until the member recovers",
+      "B. All writes fail but reads succeed from the remaining members",
+      "C. The kube-apiserver automatically switches to an in-memory store",
+      "D. The cluster continues normal operations because 2 of 3 members form a quorum"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      63,
+      66,
+      79
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q024",
+    "qIndex": 23,
+    "text": "A GitOps pipeline automatically applies cluster configurations. Before a scheduled maintenance window, the team wants to prevent any automated changes. What is the recommended approach?",
+    "options": [
+      "A. Delete the GitOps controller deployment",
+      "B. Revoke the GitOps controller's RBAC permissions",
+      "C. Suspend the GitOps sync or reconciliation for the affected resources",
+      "D. Disconnect the cluster from the Git repository"
+    ],
+    "answer": 2,
+    "lengths": [
+      42,
+      50,
+      71,
+      49
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q025",
+    "qIndex": 24,
+    "text": "During a rolling node upgrade, you want to ensure the kube-proxy Pods on upgraded nodes are also running the new version. How does kube-proxy typically get upgraded on worker nodes?",
+    "options": [
+      "A. kube-proxy runs as a static Pod managed by the kubelet",
+      "B. kube-proxy must be manually upgraded on each node via SSH",
+      "C. kube-proxy is compiled into the kubelet binary",
+      "D. kube-proxy runs as a DaemonSet and is upgraded during `kubeadm upgrade apply`"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      60,
+      49,
+      80
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q026",
+    "qIndex": 25,
+    "text": "You want to spread replicas of a Deployment across different failure domains. You set <code>topologySpreadConstraints</code> with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code>. If zone A has 3 Pods and zone B has 1 Pod, can the scheduler place the next Pod in zone A?",
+    "options": [
+      "A. No, placing in zone A would make the skew 3 which exceeds `maxSkew: 1`",
+      "B. Yes, `maxSkew` only applies when scaling down",
+      "C. Yes, but only if zone A has more allocatable resources",
+      "D. No, `topologySpreadConstraints` requires equal distribution at all times"
+    ],
+    "answer": 0,
+    "lengths": [
+      73,
+      48,
+      57,
+      75
+    ],
+    "avgLen": 63,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q027",
+    "qIndex": 26,
+    "text": "Which Kubernetes component is responsible for watching newly created Pods that have no assigned node and selecting a node for them to run on?",
+    "options": [
+      "A. kube-controller-manager",
+      "B. kube-scheduler",
+      "C. kubelet",
+      "D. kube-proxy"
+    ],
+    "answer": 1,
+    "lengths": [
+      26,
+      17,
+      10,
+      13
+    ],
+    "avgLen": 17,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q028",
+    "qIndex": 27,
+    "text": "A Pod has the toleration <code>key: node.kubernetes.io/unreachable, effect: NoExecute, tolerationSeconds: 30</code>. The node becomes unreachable. What happens to the Pod?",
+    "options": [
+      "A. The Pod is immediately evicted",
+      "B. The Pod continues running indefinitely on the unreachable node",
+      "C. The Pod is evicted after 30 seconds if the node remains unreachable",
+      "D. The Pod is rescheduled to a new node but keeps the old Pod running"
+    ],
+    "answer": 2,
+    "lengths": [
+      33,
+      65,
+      70,
+      69
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q029",
+    "qIndex": 28,
+    "text": "You create a PriorityClass with <code>value: 1000000</code> and <code>preemptionPolicy: Never</code>. What behavior does this produce?",
+    "options": [
+      "A. High-priority Pods using this class are scheduled first but never evict lower-priority Pods",
+      "B. The PriorityClass is invalid because preemption cannot be disabled",
+      "C. Pods with this class can only preempt Pods with value below 100",
+      "D. Lower-priority Pods are evicted but not terminated"
+    ],
+    "answer": 0,
+    "lengths": [
+      94,
+      69,
+      66,
+      53
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q030",
+    "qIndex": 29,
+    "text": "A microservices platform runs payment and fraud-detection services. The team wants to ensure these Pods never share a node due to resource contention concerns. Which scheduling feature should they use?",
+    "options": [
+      "A. Node affinity targeting different node pools",
+      "B. Taints on nodes dedicated to each service",
+      "C. Pod anti-affinity with `topologyKey: kubernetes.io/hostname`",
+      "D. Separate namespaces with resource quotas"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      44,
+      63,
+      43
+    ],
+    "avgLen": 49,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q031",
+    "qIndex": 30,
+    "text": "A company's disaster recovery plan requires restoring a Kubernetes cluster from scratch. Which backup must be restored first before any other cluster components can function?",
+    "options": [
+      "A. The etcd snapshot",
+      "B. The PersistentVolume data",
+      "C. The kubelet configuration files",
+      "D. The container image registry"
+    ],
+    "answer": 0,
+    "lengths": [
+      20,
+      28,
+      34,
+      31
+    ],
+    "avgLen": 28,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q032",
+    "qIndex": 31,
+    "text": "A node has the taint <code>special-hardware=fpga:PreferNoSchedule</code>. A Pod without any tolerations is submitted. What happens?",
+    "options": [
+      "A. The Pod is never scheduled on this node",
+      "B. The Pod is scheduled on this node but receives a warning annotation",
+      "C. The taint is invalid because `PreferNoSchedule` is not a valid effect",
+      "D. The Pod can be scheduled on this node if no other nodes are available"
+    ],
+    "answer": 3,
+    "lengths": [
+      42,
+      70,
+      72,
+      72
+    ],
+    "avgLen": 64,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q033",
+    "qIndex": 32,
+    "text": "You need to run a log-shipping agent on every node, including nodes that are tainted with <code>NoSchedule</code>. Which workload type automatically handles this?",
+    "options": [
+      "A. Deployment with replicas equal to node count",
+      "B. StatefulSet with pod anti-affinity",
+      "C. DaemonSet with appropriate tolerations",
+      "D. Job with parallelism equal to node count"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      37,
+      41,
+      43
+    ],
+    "avgLen": 42,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q034",
+    "qIndex": 33,
+    "text": "During a node upgrade, the container runtime is upgraded from one version to another. What happens to running containers on that node during the runtime upgrade?",
+    "options": [
+      "A. Containers continue running because the runtime upgrade is transparent",
+      "B. All containers are stopped and must be restarted by the kubelet",
+      "C. The node must be drained first because the runtime cannot be upgraded with running containers",
+      "D. Only Pods with `restartPolicy: Always` survive the runtime upgrade"
+    ],
+    "answer": 2,
+    "lengths": [
+      73,
+      66,
+      96,
+      69
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q035",
+    "qIndex": 34,
+    "text": "You want to monitor the scheduling latency of Pods in your cluster. Which metric exposed by the kube-scheduler is most relevant?",
+    "options": [
+      "A. `scheduler_scheduling_algorithm_duration_seconds`",
+      "B. `kubelet_pod_start_duration_seconds`",
+      "C. `apiserver_request_duration_seconds`",
+      "D. `etcd_request_duration_seconds`"
+    ],
+    "answer": 0,
+    "lengths": [
+      52,
+      39,
+      39,
+      34
+    ],
+    "avgLen": 41,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q036",
+    "qIndex": 35,
+    "text": "When the kube-scheduler evaluates nodes for a Pod, it performs two phases: filtering and scoring. What happens during the filtering phase?",
+    "options": [
+      "A. Nodes are ranked by resource availability",
+      "B. Nodes that do not meet the Pod's hard constraints are eliminated",
+      "C. Nodes are randomly sampled for evaluation",
+      "D. Nodes are checked for network connectivity to the Pod"
+    ],
+    "answer": 1,
+    "lengths": [
+      44,
+      67,
+      44,
+      56
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q037",
+    "qIndex": 36,
+    "text": "During a cluster upgrade, the certificates used by etcd and the API server may expire. What tool in a kubeadm cluster checks certificate expiration?",
+    "options": [
+      "A. `kubectl certificate list`",
+      "B. `kubeadm certs check-expiration`",
+      "C. `openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -dates`",
+      "D. Both B and C can check certificate expiration"
+    ],
+    "answer": 3,
+    "lengths": [
+      29,
+      35,
+      69,
+      48
+    ],
+    "avgLen": 45,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q038",
+    "qIndex": 37,
+    "text": "You define a <code>requiredDuringSchedulingIgnoredDuringExecution</code> node affinity rule that matches nodes with label <code>disk=ssd</code>. Later, the label is removed from the node where the Pod is running. What happens to the Pod?",
+    "options": [
+      "A. The Pod is immediately evicted and rescheduled",
+      "B. The Pod enters a `Pending` state until a matching node is found",
+      "C. The kubelet terminates the Pod on the next sync cycle",
+      "D. The Pod continues running because the rule is `IgnoredDuringExecution`"
+    ],
+    "answer": 3,
+    "lengths": [
+      49,
+      66,
+      56,
+      73
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q039",
+    "qIndex": 38,
+    "text": "Which CNCF project provides a Kubernetes-native way to declaratively manage etcd clusters, including automated backups and restore operations?",
+    "options": [
+      "A. etcd-operator (CoreOS/etcd project)",
+      "B. Longhorn",
+      "C. Velero",
+      "D. Stash"
+    ],
+    "answer": 2,
+    "lengths": [
+      38,
+      11,
+      9,
+      8
+    ],
+    "avgLen": 17,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q041",
+    "qIndex": 40,
+    "text": "A team configures <code>topologySpreadConstraints</code> with <code>whenUnsatisfiable: DoNotSchedule</code>. The constraint cannot be satisfied because all zones already exceed the <code>maxSkew</code>. What happens?",
+    "options": [
+      "A. The Pod remains in `Pending` state",
+      "B. The Pod is scheduled on the least loaded zone",
+      "C. The scheduler ignores the constraint and schedules normally",
+      "D. The Pod is scheduled but a warning event is emitted"
+    ],
+    "answer": 0,
+    "lengths": [
+      37,
+      48,
+      62,
+      54
+    ],
+    "avgLen": 50,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q042",
+    "qIndex": 41,
+    "text": "After cordoning a node, you want to check how many allocatable resources remain across the cluster. Which approach gives the most accurate picture?",
+    "options": [
+      "A. `kubectl top nodes`",
+      "B. `kubectl get nodes -o wide` and check the STATUS column",
+      "C. `kubectl describe nodes` and sum the `Allocatable` minus `Allocated resources`",
+      "D. `kubectl get pods --all-namespaces | wc -l`"
+    ],
+    "answer": 2,
+    "lengths": [
+      22,
+      58,
+      81,
+      46
+    ],
+    "avgLen": 52,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q043",
+    "qIndex": 42,
+    "text": "During a rolling upgrade, some Pods on the old node version report DNS resolution failures. The CoreDNS Pods are running on upgraded nodes. What could cause this issue?",
+    "options": [
+      "A. The old kubelet cannot communicate with the new CoreDNS version",
+      "B. CoreDNS requires a matching kubelet version on all nodes",
+      "C. The Pod network CIDR changed during the upgrade",
+      "D. kube-proxy on the old nodes has incompatible iptables rules after the partial upgrade"
+    ],
+    "answer": 3,
+    "lengths": [
+      66,
+      59,
+      50,
+      88
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q044",
+    "qIndex": 43,
+    "text": "Which taint effect allows already-running Pods to remain but prevents new Pods without a matching toleration from being scheduled?",
+    "options": [
+      "A. `NoSchedule`",
+      "B. `NoExecute`",
+      "C. `PreferNoSchedule`",
+      "D. `EvictExisting`"
+    ],
+    "answer": 0,
+    "lengths": [
+      15,
+      14,
+      21,
+      18
+    ],
+    "avgLen": 17,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q045",
+    "qIndex": 44,
+    "text": "A Helm chart for a database uses <code>nodeSelector</code> values that differ between staging and production. How should this be managed across environments?",
+    "options": [
+      "A. Create separate Helm charts for each environment",
+      "B. Hard-code the `nodeSelector` in the chart templates",
+      "C. Use Helm values files with environment-specific `nodeSelector` overrides",
+      "D. Use Helm hooks to modify `nodeSelector` after deployment"
+    ],
+    "answer": 2,
+    "lengths": [
+      51,
+      54,
+      75,
+      59
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q046",
+    "qIndex": 45,
+    "text": "You want to temporarily prevent a node from accepting new Pods without evicting existing ones. Which command achieves this?",
+    "options": [
+      "A. `kubectl drain <node-name>`",
+      "B. `kubectl taint nodes <node-name> maintenance=true:NoExecute`",
+      "C. `kubectl cordon <node-name>`",
+      "D. `kubectl delete node <node-name>`"
+    ],
+    "answer": 2,
+    "lengths": [
+      30,
+      63,
+      31,
+      36
+    ],
+    "avgLen": 40,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q047",
+    "qIndex": 46,
+    "text": "A critical system Pod uses the built-in PriorityClass <code>system-node-critical</code>. What scheduling priority does this grant?",
+    "options": [
+      "A. Priority value of 1000, scheduled before normal Pods",
+      "B. Priority value of 2000000000, the highest built-in priority class",
+      "C. Same as default priority but with guaranteed resource allocation",
+      "D. Priority value of 100000000, above cluster-critical"
+    ],
+    "answer": 1,
+    "lengths": [
+      55,
+      68,
+      67,
+      54
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q048",
+    "qIndex": 47,
+    "text": "An organization operates multiple Kubernetes clusters and wants to standardize their etcd backup procedure. Which practice aligns with cloud-native operational principles?",
+    "options": [
+      "A. Manual SSH into each control-plane node to run backup scripts weekly",
+      "B. Automated CronJobs that trigger `etcdctl snapshot save` and store backups in object storage",
+      "C. Relying on the cloud provider to back up the entire VM",
+      "D. Taking etcd backups only before planned maintenance windows"
+    ],
+    "answer": 1,
+    "lengths": [
+      71,
+      94,
+      57,
+      62
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q049",
+    "qIndex": 48,
+    "text": "Before draining a node with Pods using <code>emptyDir</code> volumes, you run <code>kubectl drain node3</code> and receive an error about Pods with local data. What flag resolves this?",
+    "options": [
+      "A. `--force`",
+      "B. `--delete-emptydir-data`",
+      "C. `--ignore-daemonsets`",
+      "D. `--grace-period=0`"
+    ],
+    "answer": 1,
+    "lengths": [
+      12,
+      27,
+      24,
+      21
+    ],
+    "avgLen": 21,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q051",
+    "qIndex": 50,
+    "text": "You want to ensure that two replicas of a Redis cache are never on the same node. You configure pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code>. If the cluster only has 1 node, what happens to the second replica?",
+    "options": [
+      "A. Both replicas run on the same node with a warning",
+      "B. The scheduler converts the hard rule to a soft preference",
+      "C. The second replica remains in `Pending` state",
+      "D. The second replica is placed on the same node and marked as degraded"
+    ],
+    "answer": 2,
+    "lengths": [
+      52,
+      60,
+      48,
+      71
+    ],
+    "avgLen": 58,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q052",
+    "qIndex": 51,
+    "text": "After restoring an etcd snapshot on a single-node control plane, the API server shows stale data from before the backup. Other control plane Pods are running. What is the most likely issue?",
+    "options": [
+      "A. The kube-apiserver cache needs to be flushed manually",
+      "B. The etcd restore created a new data directory but the etcd Pod is still using the old one",
+      "C. The kube-controller-manager is reconciling to a newer state",
+      "D. The restored snapshot was encrypted with a different key"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      92,
+      62,
+      59
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q053",
+    "qIndex": 52,
+    "text": "A Pod has both a `nodeSelector` for <code>env=production</code> and a toleration for the taint <code>team=backend:NoSchedule</code>. Which nodes can this Pod be scheduled on?",
+    "options": [
+      "A. Only nodes with label `env=production` and taint `team=backend:NoSchedule`",
+      "B. Any node with the taint `team=backend:NoSchedule`",
+      "C. Only nodes without any taints that have label `env=production`",
+      "D. Any node with label `env=production`, regardless of the taint"
+    ],
+    "answer": 3,
+    "lengths": [
+      77,
+      52,
+      65,
+      64
+    ],
+    "avgLen": 65,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q054",
+    "qIndex": 53,
+    "text": "What happens to Pods managed by a ReplicaSet when the node they are running on is drained?",
+    "options": [
+      "A. The ReplicaSet controller creates replacement Pods on other available nodes",
+      "B. The Pods are moved to another node with their state preserved",
+      "C. The Pods are terminated and must be manually recreated",
+      "D. The ReplicaSet is scaled to zero until the node returns"
+    ],
+    "answer": 0,
+    "lengths": [
+      78,
+      64,
+      57,
+      58
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q055",
+    "qIndex": 54,
+    "text": "A distributed tracing system requires its collector Pods to run in the same availability zone as the application Pods they collect from. Which approach ensures zone-local collection?",
+    "options": [
+      "A. Use pod affinity with `topologyKey: topology.kubernetes.io/zone`",
+      "B. Deploy collectors as a DaemonSet across all nodes",
+      "C. Set `hostNetwork: true` on collector Pods",
+      "D. Configure a headless Service for the collectors"
+    ],
+    "answer": 0,
+    "lengths": [
+      67,
+      52,
+      44,
+      50
+    ],
+    "avgLen": 53,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q056",
+    "qIndex": 55,
+    "text": "A newly joined worker node shows <code>NotReady</code> status. The kubelet is running and the node is reachable. Which component on the node is most likely misconfigured?",
+    "options": [
+      "A. kube-proxy",
+      "B. The container runtime (e.g., containerd)",
+      "C. CoreDNS",
+      "D. The CNI plugin"
+    ],
+    "answer": 3,
+    "lengths": [
+      13,
+      43,
+      10,
+      17
+    ],
+    "avgLen": 21,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q057",
+    "qIndex": 56,
+    "text": "A multi-tenant cluster uses node pools with taints: <code>tenant=team-a:NoSchedule</code> and <code>tenant=team-b:NoSchedule</code>. How should team-a's Pods be configured to run only on their nodes?",
+    "options": [
+      "A. Add a toleration for `tenant=team-a:NoSchedule` only",
+      "B. Add tolerations for both taints and use `nodeSelector` for `tenant=team-a`",
+      "C. Add a toleration for `tenant=team-a:NoSchedule` and a `nodeSelector` for `tenant=team-a`",
+      "D. Use only `nodeSelector` for `tenant=team-a` without any tolerations"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      77,
+      91,
+      70
+    ],
+    "avgLen": 73,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q058",
+    "qIndex": 57,
+    "text": "A cluster has nodes of varying sizes. Some workloads waste resources because they request far more than they use. Which Kubernetes feature helps right-size Pod resource requests?",
+    "options": [
+      "A. Horizontal Pod Autoscaler (HPA)",
+      "B. Cluster Autoscaler",
+      "C. LimitRange",
+      "D. Vertical Pod Autoscaler (VPA)"
+    ],
+    "answer": 3,
+    "lengths": [
+      34,
+      21,
+      13,
+      32
+    ],
+    "avgLen": 25,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q059",
+    "qIndex": 58,
+    "text": "During an etcd backup, the <code>etcdctl</code> command requires specific flags to authenticate. Which set of flags is required when TLS is enabled?",
+    "options": [
+      "A. `--username` and `--password`",
+      "B. `--cacert`, `--cert`, and `--key`",
+      "C. `--token` and `--endpoint`",
+      "D. `--kubeconfig` and `--context`"
+    ],
+    "answer": 1,
+    "lengths": [
+      32,
+      36,
+      29,
+      33
+    ],
+    "avgLen": 33,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q060",
+    "qIndex": 59,
+    "text": "After upgrading containerd on a node, the kubelet fails to start Pods with the error <code>failed to create containerd task</code>. What should you check first?",
+    "options": [
+      "A. The kubelet configuration for the correct CRI socket path",
+      "B. Whether the node has sufficient disk space",
+      "C. The container image registry connectivity",
+      "D. The kernel version compatibility"
+    ],
+    "answer": 0,
+    "lengths": [
+      60,
+      45,
+      44,
+      35
+    ],
+    "avgLen": 46,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q061",
+    "qIndex": 60,
+    "text": "A platform team implements resource requests and limits for all namespaces. Which Kubernetes object enforces default resource requests for Pods that do not specify them?",
+    "options": [
+      "A. ResourceQuota",
+      "B. PodSecurityPolicy",
+      "C. LimitRange",
+      "D. NetworkPolicy"
+    ],
+    "answer": 2,
+    "lengths": [
+      16,
+      20,
+      13,
+      16
+    ],
+    "avgLen": 16,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q063",
+    "qIndex": 62,
+    "text": "During a cluster upgrade, you need to rotate the etcd encryption key used for encrypting Secrets at rest. What is the correct procedure?",
+    "options": [
+      "A. Add the new key as the first entry in the encryption config, restart the API server, then re-encrypt all Secrets",
+      "B. Delete and recreate all Secrets with the new key",
+      "C. Stop etcd, replace the key file, and restart etcd",
+      "D. Run `kubeadm certs renew` to automatically rotate encryption keys"
+    ],
+    "answer": 0,
+    "lengths": [
+      115,
+      51,
+      52,
+      68
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q064",
+    "qIndex": 63,
+    "text": "A node has two taints: <code>gpu=true:NoSchedule</code> and <code>zone=restricted:NoSchedule</code>. A Pod tolerates only <code>gpu=true:NoSchedule</code>. Can this Pod be scheduled on the node?",
+    "options": [
+      "A. Yes, tolerating one taint is sufficient",
+      "B. Yes, but only if `nodeSelector` also matches",
+      "C. No, the Pod must tolerate all taints on the node",
+      "D. No, unless the Pod uses `operator: Exists` to tolerate all taints"
+    ],
+    "answer": 2,
+    "lengths": [
+      42,
+      47,
+      51,
+      68
+    ],
+    "avgLen": 52,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q065",
+    "qIndex": 64,
+    "text": "A CI/CD pipeline must validate that a Kubernetes manifest does not schedule Pods on control-plane nodes. Which tool can perform this validation before deployment?",
+    "options": [
+      "A. `kubectl apply --dry-run=server`",
+      "B. `kubectl auth can-i`",
+      "C. `helm lint`",
+      "D. A policy engine like OPA Gatekeeper or Kyverno with a scheduling constraint policy"
+    ],
+    "answer": 3,
+    "lengths": [
+      35,
+      23,
+      14,
+      85
+    ],
+    "avgLen": 39,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q066",
+    "qIndex": 65,
+    "text": "The Kubernetes version skew policy states that the kubelet must not be newer than the kube-apiserver. If the API server is at v1.29, which kubelet versions are supported on worker nodes?",
+    "options": [
+      "A. v1.29 only",
+      "B. v1.27 through v1.29",
+      "C. v1.28 and v1.29 only",
+      "D. v1.26 through v1.29"
+    ],
+    "answer": 1,
+    "lengths": [
+      13,
+      22,
+      23,
+      22
+    ],
+    "avgLen": 20,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q067",
+    "qIndex": 66,
+    "text": "A PriorityClass with <code>value: 1000000</code> and <code>globalDefault: true</code> was created. Existing Pods without an explicit `priorityClassName` report priority 0 in their spec. Why?",
+    "options": [
+      "A. `globalDefault` only applies to Pods created after the PriorityClass was defined",
+      "B. Existing Pods need to be restarted to pick up the new default",
+      "C. The PriorityClass value exceeds the maximum allowed for global defaults",
+      "D. `globalDefault` is not a valid field in PriorityClass"
+    ],
+    "answer": 0,
+    "lengths": [
+      83,
+      64,
+      74,
+      56
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q068",
+    "qIndex": 67,
+    "text": "Which CNCF project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
+    "options": [
+      "A. Scheduler Plugins (scheduling-plugins)",
+      "B. Descheduler",
+      "C. Kueue",
+      "D. Volcano"
+    ],
+    "answer": 0,
+    "lengths": [
+      41,
+      14,
+      8,
+      10
+    ],
+    "avgLen": 18,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q069",
+    "qIndex": 68,
+    "text": "A cluster administrator runs <code>kubectl taint nodes --all node-role.kubernetes.io/control-plane-</code> (with trailing dash). What does this command do?",
+    "options": [
+      "A. Adds the `control-plane` taint to all nodes",
+      "B. Lists all nodes with the `control-plane` taint",
+      "C. Removes the `control-plane` taint from all nodes, allowing workloads on control-plane nodes",
+      "D. Sets the `control-plane` taint effect to `PreferNoSchedule`"
+    ],
+    "answer": 2,
+    "lengths": [
+      46,
+      49,
+      94,
+      62
+    ],
+    "avgLen": 63,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q071",
+    "qIndex": 70,
+    "text": "During node maintenance, a Pod is evicted and rescheduled. The Pod's IP address changes. How do other Pods discover the new IP?",
+    "options": [
+      "A. Services and DNS automatically resolve to the new Pod IP via endpoint updates",
+      "B. The old IP is preserved through IP address migration",
+      "C. Other Pods must be restarted to discover the new IP",
+      "D. The CNI plugin broadcasts the new IP to all nodes"
+    ],
+    "answer": 0,
+    "lengths": [
+      80,
+      55,
+      54,
+      52
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q072",
+    "qIndex": 71,
+    "text": "A StatefulSet has <code>podManagementPolicy: Parallel</code>. During a drain, how does this affect the restart behavior compared to the default <code>OrderedReady</code> policy?",
+    "options": [
+      "A. Pods are evicted in reverse ordinal order regardless of policy",
+      "B. `Parallel` means Pods are never evicted during drain",
+      "C. With `Parallel`, replacement Pods can start simultaneously; with `OrderedReady`, they start sequentially",
+      "D. There is no difference during drain, only during initial creation"
+    ],
+    "answer": 2,
+    "lengths": [
+      65,
+      55,
+      107,
+      68
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q073",
+    "qIndex": 72,
+    "text": "A cluster runs workloads with very different resource profiles: small API Pods and large ML training Pods. Which node management strategy optimizes cost and scheduling?",
+    "options": [
+      "A. Use a single node type large enough for all workloads",
+      "B. Overcommit resources on all nodes to maximize utilization",
+      "C. Run all workloads on spot/preemptible instances",
+      "D. Use multiple node pools with different instance types and use taints/nodeSelectors to direct workloads"
+    ],
+    "answer": 3,
+    "lengths": [
+      56,
+      60,
+      50,
+      105
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q074",
+    "qIndex": 73,
+    "text": "After a failed etcd restore, the API server logs show <code>etcdserver: mvcc: database is out of date</code>. What is the most likely cause?",
+    "options": [
+      "A. The snapshot was taken from a different cluster",
+      "B. The etcd `--initial-cluster-token` was not changed during restore, causing the old cluster data to conflict",
+      "C. The API server version is incompatible with the etcd version",
+      "D. The etcd certificates have expired"
+    ],
+    "answer": 1,
+    "lengths": [
+      50,
+      110,
+      63,
+      37
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q075",
+    "qIndex": 74,
+    "text": "A Pod uses <code>spec.schedulerName: custom-scheduler</code>. The custom scheduler is not deployed. What happens to the Pod?",
+    "options": [
+      "A. The default scheduler picks up the Pod after a timeout",
+      "B. The API server rejects the Pod creation",
+      "C. The Pod remains in `Pending` state indefinitely",
+      "D. The Pod is assigned to a random node by the kubelet"
+    ],
+    "answer": 2,
+    "lengths": [
+      57,
+      42,
+      50,
+      54
+    ],
+    "avgLen": 51,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q077",
+    "qIndex": 76,
+    "text": "You attempt <code>kubectl drain node4</code> but get <code>error: unable to drain node, pods not managed by ReplicationController, ReplicaSet, Job, DaemonSet or StatefulSet</code>. What caused this?",
+    "options": [
+      "A. The node has static Pods that cannot be drained",
+      "B. The Pods have `terminationGracePeriodSeconds` set too high",
+      "C. Standalone Pods (not managed by a controller) exist on the node",
+      "D. The node's kubelet is not responding to eviction requests"
+    ],
+    "answer": 2,
+    "lengths": [
+      50,
+      61,
+      66,
+      60
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q078",
+    "qIndex": 77,
+    "text": "You set a weight of <code>100</code> on one <code>preferredDuringSchedulingIgnoredDuringExecution</code> node affinity term and <code>1</code> on another. How does the scheduler use these weights?",
+    "options": [
+      "A. The weight=100 rule must be satisfied; the weight=1 rule is optional",
+      "B. Only the highest-weight rule is evaluated",
+      "C. Weights are percentages, so weight=100 means the rule is always enforced",
+      "D. Nodes matching the weight=100 rule score 100 times higher for that term than nodes matching the weight=1 rule"
+    ],
+    "answer": 3,
+    "lengths": [
+      71,
+      44,
+      75,
+      112
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q079",
+    "qIndex": 78,
+    "text": "A team runs a multi-region Kubernetes federation. They want to ensure that each region's API gateway has local database Pods. Which scheduling concept addresses this requirement?",
+    "options": [
+      "A. Pod affinity with a zone or region topology key",
+      "B. Global load balancing with Service mesh",
+      "C. Cross-cluster PersistentVolume replication",
+      "D. DNS-based geo-routing"
+    ],
+    "answer": 0,
+    "lengths": [
+      50,
+      42,
+      45,
+      24
+    ],
+    "avgLen": 40,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q080",
+    "qIndex": 79,
+    "text": "In a kubeadm cluster, where are the static Pod manifests for control-plane components stored by default?",
+    "options": [
+      "A. `/var/lib/kubelet/config.yaml`",
+      "B. `/opt/cni/bin/`",
+      "C. `/etc/kubernetes/manifests/`",
+      "D. `/etc/containerd/config.toml`"
+    ],
+    "answer": 2,
+    "lengths": [
+      33,
+      18,
+      31,
+      32
+    ],
+    "avgLen": 29,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q081",
+    "qIndex": 80,
+    "text": "During a complex scheduling issue, you want to trace why a specific Pod was placed on a particular node. Which kube-scheduler feature provides this information?",
+    "options": [
+      "A. Scheduler extender logs",
+      "B. Distributed tracing with Jaeger",
+      "C. Pod status conditions",
+      "D. Verbose scheduler logging at level 10 and scheduler events on the Pod"
+    ],
+    "answer": 3,
+    "lengths": [
+      26,
+      34,
+      24,
+      72
+    ],
+    "avgLen": 39,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q082",
+    "qIndex": 81,
+    "text": "A cluster upgrade requires updating RBAC rules. The existing ClusterRole for the scheduler includes custom permissions. What risk does upgrading with <code>kubeadm upgrade apply</code> pose to this ClusterRole?",
+    "options": [
+      "A. kubeadm may overwrite the system ClusterRoles it manages, removing custom additions",
+      "B. kubeadm overwrites all ClusterRoles with default values",
+      "C. Custom ClusterRoles are preserved; kubeadm never modifies existing RBAC",
+      "D. kubeadm deletes all RBAC objects and recreates them"
+    ],
+    "answer": 0,
+    "lengths": [
+      86,
+      58,
+      74,
+      54
+    ],
+    "avgLen": 68,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q083",
+    "qIndex": 82,
+    "text": "What is the purpose of the <code>--pod-eviction-timeout</code> flag (or equivalent setting) on the kube-controller-manager in relation to node failures?",
+    "options": [
+      "A. It sets the maximum time for a graceful Pod shutdown",
+      "B. It controls the rate at which Pods are evicted during a drain",
+      "C. It defines how long the controller waits before evicting Pods from a node that is `NotReady`",
+      "D. It sets the timeout for Pod readiness probes"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      64,
+      95,
+      47
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q085",
+    "qIndex": 84,
+    "text": "A Pod's toleration uses <code>operator: Exists</code> with <code>key: special-taint</code> and no <code>value</code> field. Which taints does this toleration match?",
+    "options": [
+      "A. Only taints with key `special-taint` and an empty value",
+      "B. All taints on the node regardless of key or value",
+      "C. No taints, because a value must be specified",
+      "D. All taints with key `special-taint` regardless of value"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      52,
+      47,
+      58
+    ],
+    "avgLen": 54,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q086",
+    "qIndex": 85,
+    "text": "A StatefulSet uses <code>volumeClaimTemplates</code> with a StorageClass that provisions network-attached storage. After draining a node and the Pod is rescheduled, what happens to the PersistentVolumeClaim?",
+    "options": [
+      "A. A new PVC is created for the rescheduled Pod",
+      "B. The existing PVC is reused and the PV is attached to the new node",
+      "C. The PVC is deleted and data is lost",
+      "D. The Pod cannot start until it is manually bound to the original node"
+    ],
+    "answer": 1,
+    "lengths": [
+      47,
+      68,
+      38,
+      71
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q087",
+    "qIndex": 86,
+    "text": "During a rolling cluster upgrade, you want to validate that the new node version works correctly before upgrading all nodes. Which strategy achieves this?",
+    "options": [
+      "A. Upgrade all worker nodes simultaneously for consistency",
+      "B. Upgrade the control plane only and skip worker nodes",
+      "C. Upgrade one canary node first, validate it, then proceed with the rest",
+      "D. Run two separate clusters during the transition"
+    ],
+    "answer": 2,
+    "lengths": [
+      58,
+      55,
+      73,
+      50
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q088",
+    "qIndex": 87,
+    "text": "A CI/CD pipeline must verify that node maintenance operations complete successfully before deploying new application versions. Which approach best integrates cluster readiness checks into the pipeline?",
+    "options": [
+      "A. Skip pre-deployment checks and rely on Kubernetes self-healing",
+      "B. Deploy to a separate staging cluster that never undergoes maintenance",
+      "C. Add a manual approval gate where an operator visually inspects the cluster",
+      "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      72,
+      77,
+      92
+    ],
+    "avgLen": 77,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q089",
+    "qIndex": 88,
+    "text": "Which CNCF project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?",
+    "options": [
+      "A. Descheduler",
+      "B. kube-scheduler",
+      "C. Cluster Autoscaler",
+      "D. kube-state-metrics"
+    ],
+    "answer": 0,
+    "lengths": [
+      14,
+      17,
+      21,
+      21
+    ],
+    "avgLen": 18,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q090",
+    "qIndex": 89,
+    "text": "A cluster administrator wants to prevent namespaces from consuming more than their allocated share of CPU and memory. Which Kubernetes resource enforces namespace-level aggregate resource limits?",
+    "options": [
+      "A. LimitRange",
+      "B. PodDisruptionBudget",
+      "C. ResourceQuota",
+      "D. PriorityClass"
+    ],
+    "answer": 2,
+    "lengths": [
+      13,
+      22,
+      16,
+      16
+    ],
+    "avgLen": 17,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q091",
+    "qIndex": 90,
+    "text": "A high-priority Pod preempts a lower-priority Pod, but the preempted Pod's `terminationGracePeriodSeconds` is set to 300. The high-priority Pod needs the resources immediately. What happens?",
+    "options": [
+      "A. The high-priority Pod waits up to 300 seconds for the preempted Pod to terminate gracefully",
+      "B. The preempted Pod is killed immediately, ignoring the grace period",
+      "C. The scheduler finds an alternative node to avoid the long grace period",
+      "D. The preempted Pod's grace period is automatically reduced to 30 seconds"
+    ],
+    "answer": 0,
+    "lengths": [
+      94,
+      69,
+      73,
+      74
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q092",
+    "qIndex": 91,
+    "text": "A cloud-native platform team automates node lifecycle management. When a node is cordoned via <code>kubectl cordon</code>, which field on the Node object is modified to signal the scheduler?",
+    "options": [
+      "A. `metadata.labels` gains `node.kubernetes.io/unschedulable: true`",
+      "B. `status.conditions` adds a `Schedulable: False` condition",
+      "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled: true`",
+      "D. `spec.unschedulable` is set to `true`"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      60,
+      78,
+      40
+    ],
+    "avgLen": 61,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q093",
+    "qIndex": 92,
+    "text": "After restoring a cluster from an etcd backup, the GitOps controller detects drift between the Git repository and the cluster state. What is the expected behavior?",
+    "options": [
+      "A. The GitOps controller deletes resources not in the Git repo",
+      "B. The cluster state takes precedence over the Git repository",
+      "C. The GitOps controller reconciles the cluster to match the Git repository state",
+      "D. The GitOps controller pauses and requires manual intervention"
+    ],
+    "answer": 2,
+    "lengths": [
+      62,
+      61,
+      81,
+      64
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q094",
+    "qIndex": 93,
+    "text": "A Pod anti-affinity rule specifies <code>topologyKey: topology.kubernetes.io/zone</code>. If all zones already have a matching Pod, and <code>whenUnsatisfiable: DoNotSchedule</code> is set on the topology spread, what happens?",
+    "options": [
+      "A. The Pod remains in `Pending` state",
+      "B. The Pod is scheduled in the zone with the fewest matching Pods",
+      "C. A new zone is automatically provisioned",
+      "D. The anti-affinity rule is relaxed to hostname level"
+    ],
+    "answer": 0,
+    "lengths": [
+      37,
+      65,
+      42,
+      54
+    ],
+    "avgLen": 50,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q095",
+    "qIndex": 94,
+    "text": "A team is deciding between upgrading Kubernetes one minor version at a time versus skipping versions. The cluster is at v1.27 and they want v1.30. What does the Kubernetes project recommend?",
+    "options": [
+      "A. Skip directly to v1.30 to minimize maintenance windows",
+      "B. Upgrade to v1.29 first (skipping one is allowed), then to v1.30",
+      "C. Build a new v1.30 cluster and migrate workloads",
+      "D. Upgrade sequentially: v1.27 -> v1.28 -> v1.29 -> v1.30"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      66,
+      50,
+      57
+    ],
+    "avgLen": 58,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q096",
+    "qIndex": 95,
+    "text": "During preemption, the scheduler selects victim Pods to evict. Which factor has the highest priority when choosing victims?",
+    "options": [
+      "A. Pod age — older Pods are evicted first",
+      "B. Pod resource usage — Pods using the most resources are evicted first",
+      "C. Pod priority value — lowest priority Pods are evicted first",
+      "D. Pod namespace — Pods in non-system namespaces are evicted first"
+    ],
+    "answer": 2,
+    "lengths": [
+      41,
+      71,
+      62,
+      66
+    ],
+    "avgLen": 60,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s06-q097",
+    "qIndex": 96,
+    "text": "After draining and upgrading a node, you uncordon it. New Pods are scheduled but cannot reach ClusterIP Services. kube-proxy is running. What should you check?",
+    "options": [
+      "A. Whether the node's iptables rules were flushed during the upgrade",
+      "B. Whether CoreDNS Pods are running on this specific node",
+      "C. Whether the Service ClusterIP has changed",
+      "D. Whether the Pod network interface has the correct MTU"
+    ],
+    "answer": 0,
+    "lengths": [
+      68,
+      57,
+      44,
+      56
+    ],
+    "avgLen": 56,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q098",
+    "qIndex": 97,
+    "text": "A Helm chart includes a <code>Job</code> with a <code>helm.sh/hook: pre-upgrade</code> annotation that backs up the database before upgrades. During a cluster upgrade, the Job fails. What happens to the Helm release?",
+    "options": [
+      "A. The upgrade proceeds anyway, ignoring the hook failure",
+      "B. The upgrade is aborted and the release remains at the previous version",
+      "C. Helm rolls back to the previous release automatically",
+      "D. The hook Job is retried three times before the upgrade fails"
+    ],
+    "answer": 1,
+    "lengths": [
+      57,
+      73,
+      56,
+      63
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q099",
+    "qIndex": 98,
+    "text": "An etcd member is replaced in a 3-member cluster. What is the correct procedure?",
+    "options": [
+      "A. Add the new member, then remove the old one",
+      "B. Remove the old member first, then add the new one to maintain quorum during the transition",
+      "C. Stop all members, replace the failed one, and restart all",
+      "D. Restore from backup on the new member without changing cluster membership"
+    ],
+    "answer": 1,
+    "lengths": [
+      46,
+      93,
+      60,
+      76
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s06-q100",
+    "qIndex": 99,
+    "text": "A Pod has the toleration <code>operator: Exists</code> with no key, value, or effect specified. What does this toleration match?",
+    "options": [
+      "A. Only taints with the `NoSchedule` effect",
+      "B. Only taints without a value",
+      "C. All taints — this is a wildcard toleration",
+      "D. No taints — a key is required for any match"
+    ],
+    "answer": 2,
+    "lengths": [
+      43,
+      30,
+      45,
+      46
+    ],
+    "avgLen": 41,
+    "correctIsLongest": false
+  }
+]

@@ -1,0 +1,875 @@
+[
+  {
+    "id": "s07-q001",
+    "options": [
+      "The container image cannot be pulled from the registry and the pod enters ImagePullBackOff status",
+      "The node running the pod has run out of available disk space and is actively evicting workloads",
+      "The container starts, crashes, and Kubernetes restarts it with exponential back-off delays",
+      "The pod's readiness probe is failing so it is being removed from the Service endpoint list"
+    ]
+  },
+  {
+    "id": "s07-q002",
+    "options": [
+      "The pod's CPU request exceeds allocatable CPU on every node in the cluster",
+      "A `NetworkPolicy` is blocking the pod from communicating with the API server",
+      "The container image specified in the pod manifest does not exist in the registry",
+      "The pod has a `nodeSelector` that does not match any available node labels"
+    ]
+  },
+  {
+    "id": "s07-q003",
+    "options": [
+      "Restart the kubelet service on the node where the pod has been scheduled to run currently",
+      "Delete the pod's `ServiceAccount` resource and then recreate it from the original manifest",
+      "Increase the pod's memory limits in its resource spec to allow the image to be pulled down",
+      "Verify that image `myapp:v2.1` exists in the container registry with the correct tag"
+    ]
+  },
+  {
+    "id": "s07-q004",
+    "options": [
+      "The container's liveness probe timed out and Kubernetes terminated the running process",
+      "The node ran out of available disk space causing the container to be evicted by kubelet",
+      "The container exceeded its configured `limits.memory` and the Linux kernel killed it",
+      "The container failed its startup probe check and was terminated by the kubelet process"
+    ]
+  },
+  {
+    "id": "s07-q005",
+    "options": [
+      "The pods have no resource limits configured in their spec and are being CPU-throttled by cgroups",
+      "The pods are running on nodes that have been cordoned by the cluster administrator recently",
+      "DNS resolution for the Service name is intermittently failing across the cluster nodes in the mesh",
+      "The readiness probe is failing on those pods so they are removed from Service endpoints"
+    ]
+  },
+  {
+    "id": "s07-q007",
+    "options": [
+      "Refactor the application to emit structured logs to stdout/stderr for `kubectl logs` and aggregators",
+      "SSH into the node and read the application log files directly from the container's overlay filesystem layer",
+      "Mount a persistent volume to store application log files and set up a cron job to periodically collect them",
+      "Disable container restart policies so the crashed container's filesystem persists for postmortem analysis"
+    ]
+  },
+  {
+    "id": "s07-q008",
+    "options": [
+      "`kubectl delete pod <name> --grace-period=0 --force` to bypass graceful shutdown",
+      "`kubectl drain <node-name> --ignore-daemonsets` to evict all non-DaemonSet pods",
+      "`kubectl cordon <node-name>` followed by `kubectl uncordon <node-name>` to reset",
+      "`kubectl rollout restart deployment <deployment-name>` to recreate all managed pods"
+    ]
+  },
+  {
+    "id": "s07-q009",
+    "options": [
+      "`kubectl logs <pod-name>` which defaults to the first container only listed",
+      "`kubectl describe pod <pod-name> | grep logs` to filter the log output",
+      "`kubectl logs <pod-name> -c app` to select a specific container by name",
+      "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
+    ]
+  },
+  {
+    "id": "s07-q010",
+    "options": [
+      "The pod's image pull secret is missing and all nodes are refusing to process the pull request from the registry",
+      "The pod's `nodeAffinity` rules explicitly exclude every available node in the cluster based on their current labels",
+      "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
+      "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
+    ]
+  },
+  {
+    "id": "s07-q011",
+    "options": [
+      "The main application container is crashing repeatedly and the init container is attempting to restart it",
+      "The init container keeps crashing and restarting, which prevents the main container from ever starting",
+      "The init container completed successfully but the main container cannot locate the files it produced",
+      "The pod was evicted due to node resource pressure and is being rescheduled on a different cluster node"
+    ]
+  },
+  {
+    "id": "s07-q012",
+    "options": [
+      "Whether Service B's container image was built using the correct base image version and dependencies",
+      "Whether the Kubernetes scheduler inadvertently moved Service B pods to a different cluster namespace",
+      "Whether Service A's pod security policy was accidentally modified during the recent deployment rollout",
+      "Whether Service B's new version changed its API contract or response time, causing request timeouts"
+    ]
+  },
+  {
+    "id": "s07-q013",
+    "options": [
+      "The pod has not yet been assigned to a node by the cluster scheduler component",
+      "The pod's init containers have not completed execution of their initialization tasks",
+      "The pod is scheduled and initialized, but a main container is not passing readiness",
+      "The pod's volumes have failed to mount and all containers are stuck in a waiting state"
+    ]
+  },
+  {
+    "id": "s07-q014",
+    "options": [
+      "Remove the `readinessProbe` from the pod spec since it conflicts with the configured security context settings",
+      "Add a `ClusterRoleBinding` that grants the pod's ServiceAccount root access to bypass the security restriction",
+      "Ensure the container image runs as a non-root user, or set `runAsUser` to a non-zero UID in `securityContext`",
+      "Set `privileged: true` in the container's security context to completely bypass the runAsNonRoot restriction"
+    ]
+  },
+  {
+    "id": "s07-q015",
+    "options": [
+      "Configuring `minReadySeconds` and a readiness probe so the rollout waits for new pods before removing old ones",
+      "Setting `spec.strategy.type` to `Recreate` so all existing pods are replaced simultaneously during each deployment update",
+      "Increasing `terminationGracePeriodSeconds` to give the old pods more time to complete in-flight requests before shutdown",
+      "Adding a `PodDisruptionBudget` with `maxUnavailable: 100%` to allow the deployment controller to remove all pods at once"
+    ]
+  },
+  {
+    "id": "s07-q016",
+    "options": [
+      "A `nodeSelector` matching the GPU node's labels to direct scheduling there",
+      "A toleration for the taint `gpu=true:NoSchedule` to allow pod placement",
+      "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"` in metadata",
+      "A resource request for `nvidia.com/gpu: 1` under the container resources spec"
+    ]
+  },
+  {
+    "id": "s07-q017",
+    "options": [
+      "The `kube-scheduler`, as it may have placed the pod on a network-isolated cluster node",
+      "The `kube-proxy` DaemonSet, which manages the iptables rules for routing Service traffic",
+      "The CoreDNS pods in `kube-system`, which provide cluster DNS resolution for all pods",
+      "The `etcd` cluster, which stores all DNS records and network configuration for the cluster"
+    ]
+  },
+  {
+    "id": "s07-q018",
+    "options": [
+      "`kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'` for a one-time sorted list",
+      "`kubectl get pods -A --watch` which continuously streams pod status updates as they occur in real time",
+      "`kubectl top pods --all-namespaces` which shows CPU and memory usage but does not track restart counts",
+      "`kubectl get events -A --field-selector reason=Killing` which shows termination events but not live updates"
+    ]
+  },
+  {
+    "id": "s07-q019",
+    "options": [
+      "The pod will enter `ImagePullBackOff` because the health endpoint is not responsive during container initialization phase",
+      "The container will be marked as not ready but will continue running until it eventually passes the configured readiness probe",
+      "The liveness probe will automatically wait for the readiness probe to pass first before it begins performing any health checks",
+      "The kubelet kills and restarts the container because the liveness probe fails during initialization, causing a crash loop"
+    ]
+  },
+  {
+    "id": "s07-q020",
+    "options": [
+      "`kubectl debug <pod-name> --image=busybox --target=<container-name>` for ephemeral debugging",
+      "`kubectl cp` to copy a debug binary into the running container's writable overlay filesystem layer",
+      "`kubectl exec <pod-name> -- /bin/sh` to start a shell in the existing minimal distroless container",
+      "`kubectl replace --force` to redeploy the pod with a different image that contains debug tools"
+    ]
+  },
+  {
+    "id": "s07-q021",
+    "options": [
+      "All three pods belong to the same ReplicaSet and one has developed a corrupted container filesystem causing crashes",
+      "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while old pods (`6d8f9b`) remain",
+      "The third pod was manually created outside of the Deployment controller and is unrelated to the current ReplicaSet",
+      "The Deployment's replica count was scaled down from 3 to 2 and the excess pod is being terminated by the controller"
+    ]
+  },
+  {
+    "id": "s07-q022",
+    "options": [
+      "The PVC and the pod are in different namespaces so the pod cannot find the claim",
+      "The PVC's storage class does not support dynamic provisioning of persistent volumes",
+      "The PVC is in `Bound` state to another pod and cannot be used by this additional pod",
+      "The node where the pod would be scheduled does not have enough available disk space"
+    ]
+  },
+  {
+    "id": "s07-q023",
+    "options": [
+      "The Kubernetes API server cached the old image tag and needs to be restarted to clear the internal cache entry",
+      "The deployment controller does not detect tag changes when the image name and tag string remain exactly the same",
+      "The container runtime installed on the nodes does not support pulling images using the mutable `latest` tag name",
+      "With `imagePullPolicy: IfNotPresent`, the node uses its cached `myapp:latest` instead of pulling the update"
+    ]
+  },
+  {
+    "id": "s07-q024",
+    "options": [
+      "Deploy a sidecar that tails `/var/log/app.log` to stdout, exposing logs via `kubectl logs -c <sidecar>`",
+      "Mount a `hostPath` volume so the log file is written directly to the node's filesystem for external collection",
+      "Configure the kubelet to automatically detect and forward log files written inside running container filesystems",
+      "Set the pod's `restartPolicy` to `Never` so the container's filesystem is preserved after a failure for analysis"
+    ]
+  },
+  {
+    "id": "s07-q025",
+    "options": [
+      "The `kube-apiserver`, which cannot communicate with the node's kubelet after the upgrade process",
+      "The `kube-scheduler`, which failed to properly register the node after the cluster upgrade completed",
+      "The CNI plugin on the node, which provides pod networking and reports network readiness to kubelet",
+      "The `etcd` instance on that node, which stores the node's persistent network configuration records"
+    ]
+  },
+  {
+    "id": "s07-q026",
+    "options": [
+      "The pod's `metadata.annotations` for any error codes that may have been injected by the scheduler",
+      "The container's exit code and logs from the previous run via `kubectl logs <pod> --previous`",
+      "The node's kubelet certificate expiry date which may cause authentication failures for the pod",
+      "The pod's `ownerReferences` field to identify the parent controller that manages this workload"
+    ]
+  },
+  {
+    "id": "s07-q027",
+    "options": [
+      "Delete the PersistentVolumeClaim and let the StatefulSet recreate it with the correct ownership permissions",
+      "Change the StatefulSet's `replicas` to 0 and then back to 1 to trigger a completely fresh volume mount",
+      "Set `imagePullPolicy: Always` to force a fresh image pull with the correct file permissions configured",
+      "Add an `initContainer` that runs as root to execute `chown 1000:1000 /data` before the main container"
+    ]
+  },
+  {
+    "id": "s07-q028",
+    "options": [
+      "That the Service's `spec.selector` matches the pod labels and `targetPort` matches the application's listen port",
+      "That a `NetworkPolicy` with an explicit `allow` rule exists for the ClusterIP Service address in the namespace",
+      "That the `kube-apiserver` has the `--enable-aggregator-routing` flag enabled in its static pod configuration",
+      "That the pods have a `ClusterIP` annotation in their metadata section that references the correct Service resource"
+    ]
+  },
+  {
+    "id": "s07-q029",
+    "options": [
+      "Kubernetes will automatically restart the pod after an exponential back-off delay period has elapsed",
+      "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts",
+      "Kubernetes will delete the failed pod and then schedule a replacement pod on a different cluster node",
+      "The pod will transition to `Pending` state and wait for manual intervention from a cluster operator"
+    ]
+  },
+  {
+    "id": "s07-q030",
+    "options": [
+      "Two distinct issues: two nodes lack sufficient memory, and two other nodes fail the pod's affinity or selector rules",
+      "One issue: all four nodes have insufficient memory because node affinity overrides the scheduler's memory capacity checks",
+      "Three issues: memory shortage, affinity mismatch, and an implicit CPU shortage that the scheduler is not explicitly reporting",
+      "One issue: the node selector is misconfigured which causes the scheduler to misreport memory availability on those two nodes"
+    ]
+  },
+  {
+    "id": "s07-q031",
+    "options": [
+      "The kube-scheduler, which could not find a valid node placement for the pod sandbox container creation request",
+      "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
+      "The CNI plugin, which failed to assign a valid network namespace to the new pod sandbox container on the node",
+      "The CRI (e.g., containerd) relaying an OCI runtime error from `runc` during pod sandbox creation"
+    ]
+  },
+  {
+    "id": "s07-q032",
+    "options": [
+      "The pod starts normally but the environment variable is set to an empty string, causing application errors at runtime when the database URL is used",
+      "The pod fails with a `CreateContainerConfigError` status because the referenced key does not exist in the ConfigMap, blocking container startup",
+      "The pod starts but Kubernetes automatically injects a default value of `localhost` for any missing ConfigMap keys referenced in the pod spec",
+      "The pod enters `Pending` state while the scheduler waits for the ConfigMap to be updated with the missing key before proceeding with scheduling"
+    ]
+  },
+  {
+    "id": "s07-q033",
+    "options": [
+      "No, `Completed` means the pod crashed after finishing its work and should be investigated",
+      "No, the pod should show `Running` status if the Job actually succeeded and finished correctly",
+      "Yes, `Completed` with exit code 0 means the Job's container ran successfully and exited",
+      "Yes, but only if the Job's `backoffLimit` has not been reached during the execution run"
+    ]
+  },
+  {
+    "id": "s07-q034",
+    "options": [
+      "`kubectl describe pods -n <namespace>` and look for the resource usage fields in the output section",
+      "`kubectl get pods -n <namespace> -o wide` combined with the `--show-metrics` display flag for usage",
+      "`kubectl top pods -n <namespace> --sort-by=cpu` for real-time resource usage from Metrics API",
+      "`kubectl get resourcequota -n <namespace>` to see the per-pod resource consumption totals listed"
+    ]
+  },
+  {
+    "id": "s07-q035",
+    "options": [
+      "Whether the pod has an explicit `externalTrafficPolicy` annotation value set to `Local` in its spec",
+      "Whether the pod's container has the `NET_ADMIN` Linux capability listed in its security context",
+      "Whether the pod's `hostNetwork` field is set to `true` which would bypass the NodePort routing entirely",
+      "Whether the node's firewall or cloud security group allows inbound traffic on port 30080 from outside"
+    ]
+  },
+  {
+    "id": "s07-q036",
+    "options": [
+      "Whether other workloads on that node compete for memory, causing the DaemonSet pod to hit its limit under pressure",
+      "Whether the DaemonSet's update strategy is set to `OnDelete` instead of `RollingUpdate` for the pod replacement policy",
+      "Whether the node has a different container runtime version than other nodes which may cause memory allocation overhead",
+      "Whether the `kube-proxy` instance running on that specific node is consuming excessive memory from the system resources"
+    ]
+  },
+  {
+    "id": "s07-q037",
+    "options": [
+      "It replaces the readiness probe entirely and solely determines when the pod first receives Service traffic",
+      "It continuously monitors the application process and restarts it if startup takes longer than 30 seconds total",
+      "It gives the application up to 300 seconds to start before liveness and readiness probes begin checking",
+      "It signals the scheduler to delay placing additional pods on the same node until this one becomes healthy"
+    ]
+  },
+  {
+    "id": "s07-q038",
+    "options": [
+      "The Secret was created with `type: Opaque` instead of required `type: kubernetes.io/dockerconfigjson`",
+      "The node's kubelet is configured to ignore image pull secrets for security compliance policy enforcement",
+      "The container image tag is set to `latest` which bypasses authentication checks on all private registries",
+      "The Secret's data field must be base64-encoded twice for proper Docker registry authentication to succeed"
+    ]
+  },
+  {
+    "id": "s07-q039",
+    "options": [
+      "Increasing the replica count of Service C pods to handle more concurrent incoming requests from upstream",
+      "Restarting all pods in the request chain to clear any stale connections or cached network state data",
+      "Implementing distributed tracing (e.g., Jaeger or Zipkin) to visualize latency across each hop",
+      "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
+    ]
+  },
+  {
+    "id": "s07-q040",
+    "options": [
+      "`helm rollback myrelease` to revert to the previous working release revision",
+      "`helm uninstall myrelease` then `helm install myrelease ./mychart` to redeploy",
+      "`helm template myrelease ./mychart | kubectl delete -f -` to remove resources",
+      "`helm repo update && helm upgrade myrelease --reset-values ./mychart` to reset"
+    ]
+  },
+  {
+    "id": "s07-q041",
+    "options": [
+      "Whether the `kube-apiserver` process is running on the control plane node host",
+      "Whether the `etcd` data directory has been encrypted causing connection failures",
+      "Whether a new RBAC policy is blocking your specific user account from cluster access",
+      "Whether the cluster's Ingress controller is healthy and properly forwarding requests"
+    ]
+  },
+  {
+    "id": "s07-q042",
+    "options": [
+      "`<service-name>.<namespace>` which is a partial DNS name resolving within the cluster domain",
+      "`<namespace>/<service-name>` which uses path-based notation for cross-namespace DNS lookups",
+      "`<service-name>--<namespace>.cluster.local` using double-dash as the namespace separator",
+      "`<service-name>.<namespace>.svc.cluster.local` the standard fully qualified DNS name"
+    ]
+  },
+  {
+    "id": "s07-q043",
+    "options": [
+      "The application is writing logs to stderr instead of stdout and `kubectl logs` does not capture stderr output streams",
+      "The pod's log rotation policy deleted the logs before you could view them during the troubleshooting investigation",
+      "The container process crashes before producing any output, likely during entrypoint or command execution at startup",
+      "The kubelet on the node has logging disabled via a configuration flag preventing any log capture from containers"
+    ]
+  },
+  {
+    "id": "s07-q044",
+    "options": [
+      "The pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy",
+      "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of exit code",
+      "The pod is deleted and a new replacement pod is created by the ReplicaSet controller on a potentially different cluster node",
+      "The kubelet marks the pod as `Failed` because containers should not exit with code 0 under the Always restart policy rules"
+    ]
+  },
+  {
+    "id": "s07-q045",
+    "options": [
+      "The old pod's logs are permanently lost unless a cluster-level log aggregation system (e.g., Fluentd, Loki) collected them",
+      "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
+      "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
+      "Use `kubectl get events` which automatically captures full container logs on termination and stores them in the API server"
+    ]
+  },
+  {
+    "id": "s07-q046",
+    "options": [
+      "`kube_pod_status_phase` filtered to `Failed` which only shows terminal pod states and not gradual memory trends",
+      "`kube_pod_container_status_restarts_total` to count restarts which is reactive and only triggers after OOM events",
+      "`node_memory_MemAvailable_bytes` to monitor overall node memory which lacks per-container granularity for leaks",
+      "`container_memory_working_set_bytes` tracked over time, showing continuous upward trend approaching the limit"
+    ]
+  },
+  {
+    "id": "s07-q047",
+    "options": [
+      "Yes, Services route traffic to individual containers independently, so the healthy one still receives incoming requests normally",
+      "No, the pod is removed from the Service's Endpoints because overall pod readiness is `False` when any container is not ready",
+      "Yes, but only if the Service has `sessionAffinity: ClientIP` configured which allows partial pod readiness to serve traffic",
+      "No, Kubernetes immediately terminates the entire pod when any container enters a crash loop back-off waiting state in the pod"
+    ]
+  },
+  {
+    "id": "s07-q048",
+    "options": [
+      "ConfigMap volume mounts are immutable after pod creation and require a full pod delete and recreate cycle to update the mounted data",
+      "ConfigMap changes are only propagated by the kubelet at a fixed 24-hour synchronization interval, regardless of any manual restarts",
+      "The application caches config at startup and does not re-read from disk—verify the pod actually restarted with new data",
+      "The `kube-controller-manager` must be restarted for ConfigMap changes to propagate across the cluster to all affected pod volumes"
+    ]
+  },
+  {
+    "id": "s07-q049",
+    "options": [
+      "ArgoCD will revert the Deployment to `replicas: 3` to match the desired state in Git",
+      "ArgoCD will preserve the manual change and then update the Git repository to `replicas: 5`",
+      "ArgoCD will compute an average of the values and set the `replicas: 4` as a compromise state",
+      "ArgoCD will mark the Deployment as failed and then stop syncing until it is manually resolved"
+    ]
+  },
+  {
+    "id": "s07-q050",
+    "options": [
+      "It prevents the CronJob from running entirely if any other Job in the namespace is currently active",
+      "It terminates the currently running Job immediately in order to start the new scheduled Job run",
+      "It queues the new Job and executes it immediately after the current one finishes its processing",
+      "It skips a new Job run if the previous Job from this CronJob has not yet completed execution"
+    ]
+  },
+  {
+    "id": "s07-q051",
+    "options": [
+      "The pod will be killed and restarted by the kubelet after the configured failure threshold is reached",
+      "The pod continues running but is excluded from Service Endpoints, so it receives no client traffic",
+      "The pod will be evicted from the current node and rescheduled on a healthier node in the cluster",
+      "There is no operational impact because readiness probes are strictly informational only in nature"
+    ]
+  },
+  {
+    "id": "s07-q052",
+    "options": [
+      "The total physical RAM installed on the node minus the memory currently consumed by running pod workloads",
+      "The memory limit specified in the node's LimitRange resource that restricts individual pod memory requests",
+      "The maximum memory that a single pod can request according to the namespace's ResourceQuota configuration",
+      "The memory available for pods after reserving resources for the kubelet, system daemons, and OS overhead"
+    ]
+  },
+  {
+    "id": "s07-q053",
+    "options": [
+      "Increase the `limits.cpu` on the existing pods to give them more processing power for handling additional load",
+      "Change the Deployment strategy from `RollingUpdate` to `Recreate` so all pods are replaced simultaneously",
+      "Reduce CPU requests per pod, add nodes with more CPU, or enable the cluster autoscaler for new nodes",
+      "Set `priorityClassName: system-node-critical` on the Deployment to preempt lower-priority existing workloads"
+    ]
+  },
+  {
+    "id": "s07-q054",
+    "options": [
+      "The TCP check succeeds immediately because the kernel binds the port as soon as the container process starts up",
+      "The TCP check fails because no process is listening on port 5432 yet, so the pod is marked as not ready",
+      "The TCP check is skipped entirely until the container's liveness probe passes its first successful health check",
+      "The TCP check times out and the kubelet kills the container for failing the readiness probe failure threshold"
+    ]
+  },
+  {
+    "id": "s07-q055",
+    "options": [
+      "Once a NetworkPolicy selects a pod, all ingress not allowed is denied; if `policyTypes` includes `Egress`, outbound traffic is also denied",
+      "The NetworkPolicy blocks all traffic including DNS queries, so the pods cannot resolve any hostnames for dependent services in the entire cluster",
+      "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
+      "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
+    ]
+  },
+  {
+    "id": "s07-q056",
+    "options": [
+      "`spec.template.spec.terminationGracePeriodSeconds` which controls container shutdown duration",
+      "`spec.strategy.rollingUpdate.maxSurge` which controls extra pods during a rolling update",
+      "`spec.minReadySeconds` which sets minimum time a pod must be ready before proceeding",
+      "`spec.progressDeadlineSeconds` which sets maximum time before rollout is marked failed"
+    ]
+  },
+  {
+    "id": "s07-q057",
+    "options": [
+      "The image was built for a different CPU architecture (e.g., `linux/arm64`) incompatible with `amd64` nodes",
+      "The Kubernetes version is incompatible with the Docker version that was used to build the container image layer",
+      "The container runtime on the cluster nodes does not support the OCI image format used by this container image",
+      "The pod's security context prevents execution of the container's entrypoint binary on the scheduled cluster node"
+    ]
+  },
+  {
+    "id": "s07-q058",
+    "options": [
+      "It does not matter because pod names are only cosmetic identifiers with no functional significance in Kubernetes operations",
+      "It causes DNS conflicts because two pods with the same name temporarily exist during the StatefulSet replacement cycle",
+      "The stable identity means the pod reattaches to its PersistentVolumeClaim and DNS hostname, preserving data and identity",
+      "The kubelet refuses to create a pod with a name that was previously used, causing the StatefulSet controller to stall out"
+    ]
+  },
+  {
+    "id": "s07-q059",
+    "options": [
+      "Whether the application inside the container has crashed or stopped listening on port 8080 since last check",
+      "Whether the CNI plugin has revoked the pod's assigned IP address causing network connectivity to be completely lost",
+      "Whether the Kubernetes API server can reach the pod's IP address directly on the cluster internal network path",
+      "Whether the liveness probe URL path `/healthz` was renamed in the pod spec during the most recent config update"
+    ]
+  },
+  {
+    "id": "s07-q060",
+    "options": [
+      "Increasing the timeout values in all upstream services to wait longer for slow responses from Service D",
+      "Adding more replicas to Service D to handle the increased load and reduce its average response latency",
+      "Deploying all four services in the same pod to eliminate any network latency between service-to-service calls",
+      "Implementing the circuit breaker pattern so upstream services fail fast when Service D becomes unhealthy"
+    ]
+  },
+  {
+    "id": "s07-q061",
+    "options": [
+      "The PersistentVolumes that are attached to the pods running on that particular node in the cluster",
+      "The etcd data directory on the control plane node which stores the cluster's key-value state data",
+      "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir`s",
+      "The network-attached storage volumes used by the CSI driver to provision persistent volume claims"
+    ]
+  },
+  {
+    "id": "s07-q062",
+    "options": [
+      "Restart the kubelet service on the node to clear its internal volume mount cache entry",
+      "Create the missing ConfigMap named `app-config` in the same namespace as the pod",
+      "Delete the pod's ServiceAccount which is blocking the volume mount from completing",
+      "Add a `volumeClaimTemplate` to the pod spec to dynamically provision the ConfigMap"
+    ]
+  },
+  {
+    "id": "s07-q063",
+    "options": [
+      "Increasing log verbosity to `DEBUG` level in the application to capture more timing details in the output",
+      "Examining distributed trace spans that break the request into timed segments across each network component",
+      "Monitoring CPU usage metrics of all pods in the request path using the Metrics Server or Prometheus tooling",
+      "Running `kubectl top pods` during the request to find resource bottlenecks that may indicate latency sources"
+    ]
+  },
+  {
+    "id": "s07-q064",
+    "options": [
+      "The pod's ServiceAccount CA bundle does not match the API server's TLS certificate, or the `kubernetes` Service is missing",
+      "The pod does not have its ServiceAccount token volume mounted, so mutual TLS authentication with the API server fails",
+      "The pod needs a NetworkPolicy explicitly allowing egress traffic to the API server's endpoint IP address and port 443",
+      "The API server only accepts connections from the control plane network, and pod traffic is routed through a different subnet"
+    ]
+  },
+  {
+    "id": "s07-q065",
+    "options": [
+      "Move the pod to the `production` namespace using `kubectl move` to place it alongside the existing Secret resource",
+      "Add a cross-namespace reference in the pod spec using `secretRef.namespace: production` to access the remote Secret",
+      "Create `db-credentials` in the `staging` namespace, or use ExternalSecrets to sync secrets across namespaces",
+      "Grant the pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding for cross-namespace Secret access"
+    ]
+  },
+  {
+    "id": "s07-q067",
+    "options": [
+      "A new container image was pulled from an untrusted or unapproved external container registry source",
+      "Someone executed a shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
+      "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell at boot time",
+      "The container's security context was modified at runtime to allow root access to the system process"
+    ]
+  },
+  {
+    "id": "s07-q068",
+    "options": [
+      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer process on the node operating system layer",
+      "The HorizontalPodAutoscaler scaled down the deployment and selected this specific pod for controlled graceful termination",
+      "A PodDisruptionBudget was violated and the pod was preempted by a higher-priority workload scheduled on the same node",
+      "The kubelet's eviction manager detected node memory fell below the eviction threshold and evicted the pod to reclaim"
+    ]
+  },
+  {
+    "id": "s07-q069",
+    "options": [
+      "No, both containers see the same files because `emptyDir` is shared storage—the file should be visible, check the paths",
+      "No, `emptyDir` volumes can only be mounted in one container per pod and the second container mount is silently ignored by kubelet",
+      "Yes, different mount paths create completely isolated storage spaces within the same `emptyDir`, preventing file visibility",
+      "Yes, `emptyDir` volumes are read-only by default so Container B lacks the necessary write permissions to see mutable content"
+    ]
+  },
+  {
+    "id": "s07-q070",
+    "options": [
+      "It is paused in place and automatically resumed when cluster resources become available again after the rebalancing cycle",
+      "It is moved to a different node automatically by the scheduler without any interruption to the currently running process",
+      "It is gracefully terminated and its owner controller creates a replacement, which may remain `Pending` if scarce",
+      "It is deleted permanently from the cluster along with its owning controller, requiring a complete full manual redeployment"
+    ]
+  },
+  {
+    "id": "s07-q071",
+    "options": [
+      "That the `metrics-server` Deployment in `kube-system` is running and its pods are healthy and serving",
+      "That Prometheus is installed as a prerequisite for the Metrics API to function in the cluster properly",
+      "That each node has the `monitoring=enabled` label applied which the Metrics Server uses for discovery",
+      "That the `kube-apiserver` has the `--enable-top-command` flag set in its static pod manifest file"
+    ]
+  },
+  {
+    "id": "s07-q072",
+    "options": [
+      "The Service's `spec.ports[].protocol` does not match the pod's protocol configuration",
+      "The pods are running in a different cluster than the Service resource was created in",
+      "The `kube-proxy` on the nodes is not forwarding traffic correctly to pod endpoints",
+      "The Service's `spec.selector` labels do not match any of the target pod's labels set"
+    ]
+  },
+  {
+    "id": "s07-q073",
+    "options": [
+      "Init containers run in parallel, so `init-cache` cannot see `init-db`'s data because they execute simultaneously in the pod",
+      "Init containers run sequentially in spec order, so `init-cache` can access shared volumes that were written by `init-db`",
+      "Init containers run in reverse order (last defined runs first), so `init-cache` actually ran before `init-db` in this pod",
+      "Init containers run in random order determined by the scheduler, so the execution sequence is unpredictable for each run"
+    ]
+  },
+  {
+    "id": "s07-q074",
+    "options": [
+      "Increase the canary percentage to 50% to gather more error data and improve the statistical analysis of failures",
+      "Wait for the canary's auto-healing mechanism to resolve the 500 errors through automatic retry and recovery logic",
+      "Delete the entire Deployment resource and redeploy from scratch to clear any corrupted state in the new revision",
+      "Halt the rollout immediately and route 100% of traffic back to the stable version, then investigate the canary"
+    ]
+  },
+  {
+    "id": "s07-q075",
+    "options": [
+      "The container image is missing the `api-key` binary that is required for the application startup sequence to complete",
+      "The pod spec references a Secret named `api-key` (via `envFrom` or `env.valueFrom`) that is missing in the namespace",
+      "The node's container runtime cannot decrypt the `api-key` Secret due to missing cluster encryption provider keys",
+      "The API server rejected the pod because the Secret name `api-key` is a reserved identifier in the Kubernetes system"
+    ]
+  },
+  {
+    "id": "s07-q076",
+    "options": [
+      "The node does not have 500m CPU available for scheduling the new pod that the ReplicaSet is trying to create in production",
+      "The pod's CPU request of 500m exceeds the maximum allowed by a `LimitRange` configured in the production namespace resource",
+      "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
+      "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
+    ]
+  },
+  {
+    "id": "s07-q077",
+    "options": [
+      "Rules that prevent pods from being scheduled on nodes with specific CPU architectures or hardware configurations",
+      "Limits on the total number of pods that can run on a single node regardless of available resources or capacity",
+      "Security rules that restrict pod-to-pod network communication based on the physical node topology layout",
+      "Constraints controlling how pods distribute across failure domains (nodes, zones) for high availability"
+    ]
+  },
+  {
+    "id": "s07-q078",
+    "options": [
+      "All old pods are immediately terminated by the controller to make room for the new replacement pod instances",
+      "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
+      "Kubernetes automatically reverts to the previous Deployment revision when the new pod fails its readiness checks",
+      "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
+    ]
+  },
+  {
+    "id": "s07-q079",
+    "options": [
+      "Keep a minimum warm instance by setting Knative's `minScale: 1` to avoid cold starts for this function",
+      "Increase the container's CPU limits to speed up JIT compilation and reduce initialization time at startup",
+      "Convert the function to a long-running Deployment to avoid the serverless model's cold start limitations",
+      "Disable health checks entirely so the container is not killed during its lengthy initialization sequence"
+    ]
+  },
+  {
+    "id": "s07-q080",
+    "options": [
+      "Existing pods run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
+      "All pods in the cluster immediately stop because the controller manager manages the container runtime directly",
+      "Only DaemonSet pods are affected because the controller manager specifically handles DaemonSet reconciliation",
+      "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario"
+    ]
+  },
+  {
+    "id": "s07-q081",
+    "options": [
+      "The writes silently fail and the application receives I/O errors after reaching the 100Mi size boundary",
+      "The `emptyDir` volume automatically expands to accommodate the extra data beyond the configured limit",
+      "The kubelet evicts the pod because it exceeded the ephemeral storage limit for the `emptyDir` volume",
+      "Nothing happens because `sizeLimit` is only an advisory value and is not enforced by the kubelet at all"
+    ]
+  },
+  {
+    "id": "s07-q082",
+    "options": [
+      "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
+      "ArgoCD does not support webhooks for Git notifications and only polls the repository on a fixed schedule",
+      "The Kubernetes cluster has reached its maximum number of allowed Deployments in the target namespace now",
+      "Git repositories must be restarted after each push for ArgoCD to detect and process any incoming changes"
+    ]
+  },
+  {
+    "id": "s07-q083",
+    "options": [
+      "The IP addresses of the nodes where the StatefulSet pods are running, returned through the cluster DNS system",
+      "Multiple cluster IPs allocated to the Service for load balancing across the StatefulSet pod member instances",
+      "The IP addresses of the `kube-proxy` instances on each node that handle traffic routing for this Service type",
+      "The individual pod IPs of each StatefulSet member, since a headless Service returns pod IPs instead of a VIP"
+    ]
+  },
+  {
+    "id": "s07-q084",
+    "options": [
+      "Some pods lack the sidecar proxy so they cannot participate in mTLS and their plaintext connections are rejected",
+      "The sidecar proxy containers do not have enough CPU resources allocated to handle the mTLS encryption overhead load",
+      "The Kubernetes API server does not support mTLS between pods and requires a separate certificate management tooling",
+      "The Service definitions need to be updated to specify TLS ports explicitly in each individual port mapping configuration"
+    ]
+  },
+  {
+    "id": "s07-q085",
+    "options": [
+      "The kubelet sends a SIGTERM to the application process, giving it the full termination grace period to shut down properly",
+      "The probe returns a non-zero exit code, and after `failureThreshold` failures the kubelet restarts the container",
+      "The pod is removed from Service endpoints but the container continues running indefinitely in a degraded serving state mode",
+      "The kubelet waits indefinitely for the `/tmp/healthy` file to be recreated before taking any corrective restart action at all"
+    ]
+  },
+  {
+    "id": "s07-q086",
+    "options": [
+      "The pod must specify `hostNetwork: true` to comply with the restricted policy's network isolation requirements for the pod",
+      "The pod must have resource limits set to zero to meet the restricted policy's compute allocation constraints on the spec",
+      "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and use a read-only root filesystem or seccomp",
+      "The pod must use the `default` ServiceAccount and not a custom one to satisfy the restricted policy identity check rules"
+    ]
+  },
+  {
+    "id": "s07-q087",
+    "options": [
+      "Run `kubectl logs -l app=payment --all-namespaces --prefix` to stream from all matching pods with name prefixes",
+      "Open individual `kubectl logs` commands for each pod in separate terminal windows and monitor them independently",
+      "Use `kubectl get pods -l app=payment` and pipe the output to a custom log aggregation script on your machine",
+      "Deploy a new DaemonSet that captures logs from pods with the `payment` label and forwards them to a collector"
+    ]
+  },
+  {
+    "id": "s07-q088",
+    "options": [
+      "The kubelet immediately kills the container with SIGKILL and creates the new replacement container on the same node",
+      "The container continues serving traffic for the full 30 seconds while the new version starts running alongside it",
+      "The kubelet sends SIGTERM giving the container 30 seconds to shut down gracefully; then SIGKILL is sent if needed",
+      "The pod's readiness probe is suspended for the 30-second window to allow the container to drain active connections"
+    ]
+  },
+  {
+    "id": "s07-q089",
+    "options": [
+      "Nothing is wrong—interactive debugging of production databases is considered a standard cloud native practice today",
+      "The `kubectl exec` command does not support interactive database clients like `psql` due to TTY protocol limits",
+      "The pod's network policy automatically blocks interactive sessions in production namespaces as a security measure",
+      "Manual changes via `kubectl exec` bypass version control, audit trails, and automation, violating declarative ops"
+    ]
+  },
+  {
+    "id": "s07-q090",
+    "options": [
+      "When the pod has a `preferredDuringSchedulingIgnoredDuringExecution` affinity that no longer matches after initial scheduling",
+      "When a `requiredDuringSchedulingRequiredDuringExecution` affinity is set and node labels change to no longer match the rule",
+      "When the node runs out of CPU resources after the pod is scheduled, triggering an eviction by the kubelet's eviction manager",
+      "When a higher-priority pod's node affinity conflicts with the existing pod's placement and the scheduler initiates preemption"
+    ]
+  },
+  {
+    "id": "s07-q091",
+    "options": [
+      "The CNI plugin failed to configure pod sandbox networking, such as assigning an IP or setting up veth",
+      "The container runtime failed to pull the required container image from the configured registry endpoint URL",
+      "The kubelet process failed to authenticate with the API server using its current client certificate key pair",
+      "The kube-proxy could not create the required iptables rules for routing traffic to the new pod sandbox IP"
+    ]
+  },
+  {
+    "id": "s07-q092",
+    "options": [
+      "The cluster is optimally sized because it has sufficient headroom for unexpected traffic spikes and burst workloads ahead",
+      "The low utilization indicates a monitoring error and the actual real-time resource usage is likely much higher than reported",
+      "The cluster is over-provisioned—resource requests are likely much higher than actual usage, or there are too many nodes",
+      "Node-level metrics are irrelevant to cost optimization analysis; only individual pod-level metrics matter for planning use"
+    ]
+  },
+  {
+    "id": "s07-q093",
+    "options": [
+      "The application encountered an unhandled exception and chose exit code 137 as its custom application error code value",
+      "The container received a SIGKILL (signal 9) from an external source such as the liveness probe or a manual `kill -9`",
+      "The container's storage volume became read-only, forcing an immediate termination with signal 9 from the Linux kernel",
+      "The container image has a known bug that causes exit code 137 on any Linux system running this particular binary build"
+    ]
+  },
+  {
+    "id": "s07-q094",
+    "options": [
+      "The kubelet's bootstrap token has expired or is invalid, preventing API server authentication",
+      "The node's hostname already exists in the cluster from a previous registration and now conflicts with it",
+      "The API server has reached its maximum node limit and is currently rejecting all new registration requests",
+      "The node does not have a container runtime installed which is a required prerequisite for kubelet startup"
+    ]
+  },
+  {
+    "id": "s07-q095",
+    "options": [
+      "The Helm chart has a syntax error in one of its rendered templates that prevents the manifest from being applied correctly",
+      "The Helm repository index is corrupted and needs to be rebuilt before the chart can be installed into the target namespace",
+      "The Kubernetes version does not support the API version used in the chart manifests, causing an incompatibility validation error",
+      "A resource in the chart (e.g., Service or ConfigMap) already exists in the namespace from a previous manual or Helm deployment"
+    ]
+  },
+  {
+    "id": "s07-q096",
+    "options": [
+      "The `Local` external traffic policy is deprecated and no longer supported in recent Kubernetes versions for NodePort Services",
+      "The `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
+      "With `externalTrafficPolicy: Local`, kube-proxy only routes to pods on the same node; nodes without a pod drop the traffic",
+      "The CNI plugin does not support the `Local` external traffic policy and silently falls back to the default `Cluster` behavior"
+    ]
+  },
+  {
+    "id": "s07-q098",
+    "options": [
+      "Helm, which can validate image tags during chart rendering and block deployments that use the `latest` tag in templates",
+      "Prometheus, which can alert when pods use the `latest` tag by monitoring container image metadata exposed as metrics",
+      "Falco, which detects policy violations at runtime by monitoring system calls and container events on each cluster node",
+      "OPA Gatekeeper or Kyverno, which enforce admission control policies that reject resources violating image tag rules"
+    ]
+  },
+  {
+    "id": "s07-q099",
+    "options": [
+      "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes",
+      "The pods need to be restarted for the new iptables rules to take effect because they cache network state at startup time",
+      "The Service got a new ClusterIP. Clients should use DNS names instead of hardcoded IPs, since DNS resolves to the new IP",
+      "Services must always use `type: ExternalName` to support IP changes and ensure that clients can handle address transitions"
+    ]
+  },
+  {
+    "id": "s07-q100",
+    "options": [
+      "Using `imagePullPolicy: Always` so Kubernetes retries pulling until the image becomes available in the registry eventually",
+      "Ensuring the pipeline verifies the image push is complete (e.g., by pulling the digest) before updating the Deployment",
+      "Setting a long `initialDelaySeconds` on the readiness probe to give the registry time to propagate the image to all nodes",
+      "Configuring the container runtime to cache all images locally before deploying any workload updates to the cluster nodes"
+    ]
+  }
+]

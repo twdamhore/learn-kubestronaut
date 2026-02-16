@@ -1,0 +1,63 @@
+{
+  "set": "03",
+  "total_reviewed": 100,
+  "issues_found": 8,
+  "issues": [
+    {
+      "id": "s03-q034",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question states requests to api.example.com return 404 and the correct answer says DNS not pointing to the Ingress controller is the most likely cause. However, if DNS does not point to the Ingress controller, the client would either get a connection error (if the IP doesn't host a web server) or a 404 from a completely different server — not from the Ingress controller. A 404 from the NGINX Ingress controller itself typically means the request arrived at the controller but no matching Ingress rule was found (e.g., host mismatch, missing ingressClassName, missing backend). The premise and answer are logically inconsistent for the specific symptom of '404'.",
+      "suggested_fix": "Reword the question to say 'requests to api.example.com time out or fail to connect' instead of 'return 404', OR change the scenario to a different symptom like 'the Ingress controller returns a default 404 backend response' and adjust the answer to focus on backend/host mismatch."
+    },
+    {
+      "id": "s03-q037",
+      "type": "wrong_answer",
+      "severity": "moderate",
+      "description": "The question asks specifically for an 'internal-only AWS Network Load Balancer (NLB)'. Option C (the correct answer) uses only the annotation service.beta.kubernetes.io/aws-load-balancer-internal: true, which by itself creates an internal Classic Load Balancer (CLB), NOT an NLB. To create an NLB, you also need the annotation service.beta.kubernetes.io/aws-load-balancer-type: nlb (or use the AWS Load Balancer Controller with appropriate annotations). The answer is the best among the options given but doesn't fully satisfy the 'NLB' requirement stated in the question.",
+      "suggested_fix": "Either (1) change the question to ask for an 'internal-only load balancer' without specifying NLB, or (2) update option C to include both annotations: aws-load-balancer-internal: true AND aws-load-balancer-type: nlb."
+    },
+    {
+      "id": "s03-q047",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The correct answer references the metric 'kube_endpoint_addresses_ready' which is not an actual kube-state-metrics metric name. The real metrics were 'kube_endpoint_address_available' and 'kube_endpoint_address_not_ready' (both deprecated), now replaced by 'kube_endpoint_address' with a 'ready' label. While the concept is correct (using kube-state-metrics endpoint metrics), the specific metric name is fabricated and could mislead students looking for this metric in a real cluster.",
+      "suggested_fix": "Change the metric name in the option and explanation to 'kube_endpoint_address' with label ready=true (the current kube-state-metrics metric), or 'kube_endpoint_address_available' (the older deprecated name that actually existed)."
+    },
+    {
+      "id": "s03-q052",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question premise says 'An engineer runs kubectl get endpointslices and notices an EndpointSlice for a Service with 1000 endpoints.' This implies a single EndpointSlice contains 1000 endpoints, which contradicts the correct answer that the default maximum is 100 per slice. A Service with 1000 endpoints would have approximately 10 EndpointSlices. The question setup is confusingly worded.",
+      "suggested_fix": "Reword the question to: 'A Service has 1000 pod endpoints. The engineer notices multiple EndpointSlice objects were created for this Service. What is the default maximum number of endpoints per EndpointSlice?'"
+    },
+    {
+      "id": "s03-q078",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question says the 5-second DNS delay 'only affects queries that result in NXDOMAIN responses' and the correct answer is the conntrack race condition (option D). However, the conntrack race condition affects ALL DNS queries (both successful and NXDOMAIN), not specifically NXDOMAIN queries. Meanwhile, option C about ndots causing excessive search domain lookups IS specifically related to NXDOMAIN — the search domain attempts for external names produce NXDOMAIN responses before the final absolute query succeeds. The explanation even acknowledges 'The ndots default is 5, not 1' which supports option C. The 5-second signature is the conntrack race, but the 'only NXDOMAIN' qualifier points toward option C. The question conflates two separate DNS issues.",
+      "suggested_fix": "Either (1) remove 'The issue only affects queries that result in NXDOMAIN responses' from the question text to make the conntrack race answer unambiguous, or (2) change the answer to option C (ndots) and adjust the explanation to focus on the search domain NXDOMAIN cascade combined with the 5s timeout behavior."
+    },
+    {
+      "id": "s03-q016",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation says 'Option D uses default namespace, which is wrong for a pod in alpha.' But Option D in the explanation refers to index 3 which is the CORRECT answer (payment.alpha.svc.cluster.local). The explanation should say 'Option A uses default namespace' since index 0 is my-svc.default.svc.cluster.local. The option letter references in the explanation are misnumbered because the options are zero-indexed.",
+      "suggested_fix": "Change the explanation from 'Option D uses default namespace' to 'Option A (the first option) uses the default namespace, which is wrong for a pod in alpha.'"
+    },
+    {
+      "id": "s03-q004",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation says 'Option B uses the wrong namespace. Option C reverses the namespace and service positions. Option D has an invalid format entirely.' But these letter references don't match the zero-indexed options. The actual options are: index 0 = payment.store.svc.cluster.local (wrong ns), index 1 = finance.payment.svc.cluster.local (reversed), index 2 = payment.cluster.local.finance (invalid format), index 3 = correct. The letters B/C/D in the explanation should reference the first three options (A/B/C or indices 0/1/2), not B/C/D.",
+      "suggested_fix": "Replace the letter references in the explanation with descriptions: 'The first option uses the wrong namespace (store instead of finance). The second option reverses the service and namespace. The third option has an invalid DNS format.'"
+    },
+    {
+      "id": "s03-q091",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The question asks 'Which CNCF project provides network observability...' and the correct answer is 'Hubble — a Cilium component'. Hubble is not a standalone CNCF project — it is a sub-component of the Cilium CNCF graduated project. While technically part of a CNCF project, calling Hubble itself a 'CNCF project' could be misleading. The answer option correctly describes it as 'a Cilium component' but the question framing implies it's a standalone project.",
+      "suggested_fix": "Reword the question to 'Which tool within the CNCF ecosystem provides network observability...' or 'Which component of a CNCF project provides network observability...' to be more precise."
+    }
+  ]
+}

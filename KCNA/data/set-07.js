@@ -142,7 +142,7 @@ var questions = [
       "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
     ],
     answer: 2,
-    explanation: "In a multi-container pod, you must specify which container's logs to view using the `-c` flag. Without it, `kubectl logs` will return an error stating that the container name must be specified when the pod has multiple containers. The `-c app` flag targets only the `app` container's stdout/stderr stream.",
+    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.28, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.28+, omitting `-c` defaults to the first container in the pod spec, but using `-c` explicitly is the recommended practice for clarity and correctness.",
     verify: "kubectl logs <pod-name> -c app --tail=20"
   },
   {
@@ -664,7 +664,7 @@ var questions = [
     text: "A pod can resolve DNS names for Services in its own namespace using short names (e.g., `my-service`) but fails to resolve Services in other namespaces. What is the correct DNS format to reach a Service in a different namespace?",
     diagram: null,
     options: [
-      "`<service-name>.<namespace>` which is a partial DNS name resolving within the cluster domain",
+      "`<service-name>/<namespace>` which uses slash-based notation for cross-namespace DNS lookups",
       "`<namespace>/<service-name>` which uses path-based notation for cross-namespace DNS lookups",
       "`<service-name>--<namespace>.cluster.local` using double-dash as the namespace separator",
       "`<service-name>.<namespace>.svc.cluster.local` the standard fully qualified DNS name"
@@ -869,10 +869,10 @@ var questions = [
     id: "s07-q055",
     domain: "Container Orchestration",
     subsection: "Networking",
-    text: "After deploying a `NetworkPolicy` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only has an `ingress` rule allowing traffic from `app=frontend`. What caused the complete communication breakdown?",
+    text: "After deploying a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only defines an `ingress` rule allowing traffic from `app=frontend` but has no `egress` rules. What caused the complete communication breakdown?",
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="200" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#2a9d8f" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#2a9d8f" font-size="9">allow</text><line x1="250" y1="75" x2="268" y2="75" stroke="#e63946" stroke-width="2" stroke-dasharray="4,3"/><text x="259" y="68" fill="#e63946" font-size="9">deny</text><text x="200" y="130" text-anchor="middle" fill="#aaa" font-size="10">Ingress-only policy: inbound restricted, outbound restricted</text><text x="200" y="150" text-anchor="middle" fill="#aaa" font-size="10">Without an egress section, all egress is implicitly denied</text><text x="200" y="170" text-anchor="middle" fill="#e76f51" font-size="10">CORRECTION: egress is only denied if egress policyType is set</text><text x="200" y="190" text-anchor="middle" fill="#aaa" font-size="10">Check policyTypes field to understand actual behavior</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2a9d8f"/></marker></defs></svg>',
     options: [
-      "Once a NetworkPolicy selects a pod, all ingress not allowed is denied; if `policyTypes` includes `Egress`, outbound traffic is also denied",
+      "Because `policyTypes` includes `Egress` but no egress rules are defined, all outbound traffic (including DNS) is denied alongside unrestricted ingress being locked down",
       "The NetworkPolicy blocks all traffic including DNS queries, so the pods cannot resolve any hostnames for dependent services in the entire cluster",
       "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
@@ -1205,7 +1205,7 @@ var questions = [
     id: "s07-q076",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3500m, limited: 4000m`. What is preventing pod creation?",
+    text: "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3600m, limited: 4000m`. What is preventing pod creation?",
     diagram: null,
     options: [
       "The node does not have 500m CPU available for scheduling the new pod that the ReplicaSet is trying to create in production",
@@ -1214,7 +1214,7 @@ var questions = [
       "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
     ],
     answer: 2,
-    explanation: "The event message shows a `ResourceQuota` named `compute-quota` with a CPU limit of 4000m. Current usage is 3500m, and the new pod requests 500m, which would bring the total to 4000m—at the limit. The error indicates the quota would be exceeded, preventing pod creation. ResourceQuotas enforce per-namespace resource consumption limits.",
+    explanation: "The event message shows a `ResourceQuota` named `compute-quota` with a CPU limit of 4000m. Current usage is 3600m, and the new pod requests 500m, which would bring the total to 4100m—exceeding the 4000m limit. ResourceQuotas enforce per-namespace resource consumption limits.",
     verify: "kubectl get resourcequota compute-quota -n production -o yaml"
   },
   {
@@ -1381,17 +1381,17 @@ var questions = [
     id: "s07-q087",
     domain: "Cloud Native Observability",
     subsection: "Logging",
-    text: "You need to stream logs from all pods matching the label `app=payment` across all namespaces simultaneously. Which approach is most efficient?",
+    text: "You need to stream logs from all pods matching the label `app=payment` in the `payments` namespace simultaneously. Which approach is most efficient?",
     diagram: null,
     options: [
-      "Run `kubectl logs -l app=payment --all-namespaces --prefix` to stream from all matching pods with name prefixes",
+      "Run `kubectl logs -l app=payment -n payments --prefix` to stream from all matching pods with name prefixes",
       "Open individual `kubectl logs` commands for each pod in separate terminal windows and monitor them independently",
       "Use `kubectl get pods -l app=payment` and pipe the output to a custom log aggregation script on your machine",
       "Deploy a new DaemonSet that captures logs from pods with the `payment` label and forwards them to a collector"
     ],
     answer: 0,
-    explanation: "`kubectl logs -l app=payment --all-namespaces --prefix` uses the label selector to target all matching pods and the `--prefix` flag prepends each log line with the pod name for identification. This is the most direct way to stream multiple pod logs simultaneously. For persistent log collection, a dedicated aggregation system is better, but for ad-hoc debugging this is efficient.",
-    verify: "kubectl logs -l app=payment --all-namespaces --prefix --tail=10"
+    explanation: "`kubectl logs -l app=payment -n payments --prefix` uses the label selector to target all matching pods in the `payments` namespace and the `--prefix` flag prepends each log line with the pod name for identification. Note that `kubectl logs` does not support `--all-namespaces`; you must specify a single namespace with `-n`. This is the most direct way to stream multiple pod logs simultaneously. For persistent log collection, a dedicated aggregation system is better, but for ad-hoc debugging this is efficient.",
+    verify: "kubectl logs -l app=payment -n payments --prefix --tail=10"
   },
   {
     id: "s07-q088",
@@ -1429,17 +1429,17 @@ var questions = [
     id: "s07-q090",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "A pod is scheduled to a node, but then immediately evicted with reason `NodeAffinity`. Under what circumstances does this happen?",
+    text: "A pod is scheduled to a node and runs successfully for 5 minutes, but then is evicted. The pod had a toleration for `node.kubernetes.io/not-ready` with `tolerationSeconds: 300`. What happened?",
     diagram: null,
     options: [
-      "When the pod has a `preferredDuringSchedulingIgnoredDuringExecution` affinity that no longer matches after initial scheduling",
-      "When a `requiredDuringSchedulingRequiredDuringExecution` affinity is set and node labels change to no longer match the rule",
-      "When the node runs out of CPU resources after the pod is scheduled, triggering an eviction by the kubelet's eviction manager",
-      "When a higher-priority pod's node affinity conflicts with the existing pod's placement and the scheduler initiates preemption"
+      "The pod exceeded its resource limits after 5 minutes, so the kubelet's eviction manager terminated it to reclaim node resources",
+      "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction after 5 minutes",
+      "The scheduler detected a better node for the pod and performed a live migration after the 300-second warm-up period elapsed",
+      "A `PodDisruptionBudget` allowed the eviction after the 300-second minimum uptime threshold was reached for the workload"
     ],
     answer: 1,
-    explanation: "`requiredDuringSchedulingRequiredDuringExecution` (if supported) enforces affinity both at scheduling time and during execution. If a node's labels change and no longer satisfy the rule, the pod is evicted. Note that as of Kubernetes 1.29+, `requiredDuringSchedulingIgnoredDuringExecution` ignores label changes during execution. The eviction only happens with the stricter `RequiredDuringExecution` variant.",
-    verify: "kubectl get events --field-selector reason=NodeAffinity"
+    explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node loses connectivity), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.",
+    verify: "kubectl get events --field-selector reason=TaintManagerEviction"
   },
   {
     id: "s07-q091",

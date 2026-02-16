@@ -213,7 +213,7 @@ var questions = [
     id: "s10-q014",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A multi-container pod has an init container that clones a Git repository into a shared `emptyDir` volume. The main application container mounts the same volume at `/app/config`. The pod is stuck in `Init:CrashLoopBackOff`. Logs show the init container completes successfully but exits with code 128. What is the most likely issue?",
+    text: "A multi-container pod has an init container that clones a Git repository into a shared `emptyDir` volume. The main application container mounts the same volume at `/app/config`. The pod is stuck in `Init:CrashLoopBackOff`. Logs show the init container appears to run the git clone but exits with code 128. What is the most likely issue?",
     diagram: null,
     options: [
       "A. Exit code 128 indicates a Git fatal error, meaning the repository URL is unreachable or authentication credentials have failed",
@@ -253,8 +253,8 @@ var questions = [
       "C. The CronJob controller counts 2 missed starts, which is below the 100-miss threshold, so it schedules a catch-up run immediately after the long job finishes",
       "B. Two runs are skipped silently due to `Forbid`; after the job finishes, the next run occurs at the next scheduled interval with no catch-up"
     ],
-    answer: 3,
-    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller will not create a new Job if a previous one is still running. During the 12-minute execution, two 5-minute scheduled intervals pass, but both are skipped because the prior Job is active. When the job finishes, `Forbid` does not queue or catch up missed runs. The next Job is created at the next regular schedule interval. The `startingDeadlineSeconds` only defines how late a job can start — it does not trigger catch-up execution.",
+    answer: 0,
+    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller will not create a new Job while a previous one is still running. During the 12-minute execution, two 5-minute scheduled intervals are missed. When the long-running job finishes, the controller checks for missed schedules within the `startingDeadlineSeconds: 200` window. The most recent missed schedule falls within that 200-second deadline, so the controller triggers exactly one catch-up run for it. The CronJob controller never creates multiple catch-up jobs — it only creates one for the most recently missed schedule if it is still within the deadline window.",
     verify: "kubectl get cronjob <name> -o jsonpath='{.status}' | jq . && kubectl get jobs --sort-by=.status.startTime"
   },
   {
@@ -318,7 +318,7 @@ var questions = [
       "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
     ],
     answer: 0,
-    explanation: "In Kubernetes, the default `ndots` value is 5. When a name has fewer than 5 dots, the resolver appends search domains before trying the name as-is. The short name `api-service.team-b` (1 dot) gets search domains appended, eventually resolving as `api-service.team-b.team-a.svc.cluster.local` then trying other search paths including `api-service.team-b.svc.cluster.local`. The FQDN `api-service.team-b.svc.cluster.local` (4 dots, fewer than ndots:5) is also subject to search domain expansion, which can cause resolution failures. Adding a trailing dot (`api-service.team-b.svc.cluster.local.`) marks it as absolute and bypasses search expansion.",
+    explanation: "In Kubernetes, the default `ndots` value is 5. The resolver counts dots in the queried name: if fewer than 5, it first tries appending each search domain before falling back to the literal name. The short name `api-service.team-b` has 1 dot (< 5), so search domains are appended, and one combination — `api-service.team-b.svc.cluster.local` — resolves correctly. However, the seemingly-qualified name `api-service.team-b.svc.cluster.local` has only 4 dots (still < 5), so the resolver prepends search-domain expansions like `api-service.team-b.svc.cluster.local.team-a.svc.cluster.local` before trying the literal string. These spurious lookups can return NXDOMAIN or mask the correct result. Appending a trailing dot (`api-service.team-b.svc.cluster.local.`) marks the name as an absolute FQDN, bypassing all search-domain expansion regardless of `ndots`.",
     verify: "kubectl exec <pod-name> -n team-a -- cat /etc/resolv.conf && kubectl exec <pod-name> -n team-a -- nslookup api-service.team-b.svc.cluster.local."
   },
   {
@@ -734,7 +734,7 @@ var questions = [
       "C. Use `Workspaces` for sharing cloned source and `Task Results` to pass the image tag from `build-image` to `deploy`"
     ],
     answer: 3,
-    explanation: "Tekton's recommended approach for inter-task data sharing combines `Workspaces` and `Results`. Workspaces (backed by PVCs or other volume types) provide shared filesystem access for large data like source code. Task Results are small string outputs (limited to 4096 bytes) stored by a task and consumable as parameters by downstream tasks — perfect for passing an image tag. `PipelineResources` (option A) have been deprecated. While option C is technically functional, it does not use the native Tekton parameter-passing mechanism.",
+    explanation: "Tekton's recommended approach for inter-task data sharing combines `Workspaces` and `Results`. Workspaces (backed by PVCs or other volume types) provide shared filesystem access for large data like source code. Task Results are small string outputs (limited to 4096 bytes) stored by a task and consumable as parameters by downstream tasks — perfect for passing an image tag. `PipelineResources` (option A) have been deprecated. Option B works but is less idiomatic because it relies on convention-based file paths rather than Tekton's native Workspace and Result abstractions.",
     verify: "kubectl get pipeline <name> -o yaml | grep -A10 'results\\|workspaces'"
   },
   {
@@ -888,7 +888,7 @@ var questions = [
     text: "A namespace has two ResourceQuotas:\n- `quota-compute`: `requests.cpu: 4, limits.cpu: 8`\n- `quota-objects`: `count/deployments.apps: 10, count/services: 5`\n\nWhen a new Deployment is created, which quotas must have available capacity?",
     diagram: null,
     options: [
-      "A. Only `quota-objects` must have capacity for the Deployment; `quota-compute` is checked only when pods are later created",
+      "A. Both quotas reject the Deployment immediately because it references resources tracked by quota-compute",
       "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
       "B. Both quotas are checked simultaneously — `quota-objects` for Deployment count and `quota-compute` for the resulting pods",
       "D. Neither quota is checked at Deployment creation — all resource quota enforcement is deferred to pod scheduling time"
@@ -1114,7 +1114,7 @@ var questions = [
     options: [
       "A. The EndpointSlice controller takes time to propagate new endpoints to kube-proxy on all nodes, creating stale routing windows",
       "B. The Service selector change causes all existing TCP connections to terminate immediately, and reconnecting clients see 503 errors",
-      "C. kube-proxy rules update asynchronously; there is a brief period where some rules still point to old blue pods no longer matching",
+      "C. kube-proxy iptables/IPVS rules on each node update asynchronously after EndpointSlice changes, so stale DNAT rules briefly route traffic to old blue pod IPs",
       "D. The green pods' readiness probes have not yet been verified by the EndpointSlice controller at the moment of the selector switch"
     ],
     answer: 0,
@@ -1357,8 +1357,8 @@ var questions = [
       "C. Flux pins remote bases to a specific commit SHA, so remote changes are only applied when the SHA reference is explicitly updated",
       "D. Flux only watches the configured Git repository; remote base changes are not detected unless the main repo commit hash changes"
     ],
-    answer: 3,
-    explanation: "Flux's `Kustomization` controller watches the configured `GitRepository` source for changes. It detects a new reconciliation is needed when the Git source has a new commit. If the main repository has not changed (no new commits), Flux does not re-fetch or re-evaluate remote kustomize bases. The breaking change in the remote base only takes effect when something in the main repository changes (triggering a new kustomize build that fetches the latest remote base) or when the Flux `Kustomization` is manually triggered. This is why pinning remote bases to specific refs is a best practice.",
+    answer: 0,
+    explanation: "Flux's kustomize controller runs `kustomize build` on every reconciliation cycle (every 5 minutes in this case). During the build, kustomize fetches remote bases from their source repositories. If the remote base has been updated with a breaking change, the next reconciliation will pull the latest version of that base, apply the resulting manifests, and the application will break. Flux does not automatically pin or cache remote bases — it re-fetches them each cycle. This is why pinning remote bases to a specific tag or commit ref in `kustomization.yaml` is a critical best practice.",
     verify: "flux get kustomization <name> && flux reconcile kustomization <name> --with-source"
   },
   {

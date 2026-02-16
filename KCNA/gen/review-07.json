@@ -1,0 +1,49 @@
+{
+  "set": "07",
+  "total_reviewed": 100,
+  "issues_found": 6,
+  "issues": [
+    {
+      "id": "s07-q055",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "The question states the NetworkPolicy 'only has an ingress rule allowing traffic from app=frontend' and that pods 'can no longer communicate with any other pods' (complete communication breakdown). However, if the NetworkPolicy only specifies ingress rules, the default policyTypes is [Ingress] only, meaning egress is NOT blocked. Egress is only blocked if policyTypes explicitly includes 'Egress'. The answer (index 0) correctly states 'if policyTypes includes Egress, outbound traffic is also denied' but the question scenario does not clarify that policyTypes includes Egress. An ingress-only policy would only block incoming traffic to the api pods (except from frontend), not outgoing traffic from them. The SVG diagram itself even notes this correction. A student may be confused because the question's scenario (complete breakdown) requires Egress in policyTypes, but the question text only mentions an ingress rule.",
+      "suggested_fix": "Clarify the question text to state the NetworkPolicy has policyTypes: [Ingress, Egress] but only defines an ingress rule, or rephrase the scenario to describe only ingress being blocked (e.g., 'other pods can no longer reach the api pods') rather than 'complete communication breakdown'."
+    },
+    {
+      "id": "s07-q076",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The question's error message shows 'requested: cpu=500m, used: 3500m, limited: 4000m'. The explanation says 'which would bring the total to 4000m—at the limit. The error indicates the quota would be exceeded'. However, 3500m + 500m = 4000m which equals the limit, not exceeds it. Kubernetes ResourceQuota admission uses the check 'used + requested > hard', so 4000 > 4000 is false and the request should actually be ALLOWED. The scenario's error message is unrealistic for these exact numbers. The answer choice (index 2) and the concept are correct, but the specific numbers in the question text are inconsistent with Kubernetes behavior.",
+      "suggested_fix": "Change 'used: 3500m' to 'used: 3600m' in the question text so that 3600+500=4100 > 4000, making the exceeded quota error realistic. Or change 'limited: 4000m' to 'limited: 3900m'."
+    },
+    {
+      "id": "s07-q087",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The correct answer (index 0) suggests using 'kubectl logs -l app=payment --all-namespaces --prefix' to stream logs from all matching pods across all namespaces. However, 'kubectl logs' does NOT support the '--all-namespaces' or '-A' flag. Running this command would produce an error. The '--all-namespaces' flag is supported by commands like 'kubectl get', 'kubectl describe', etc., but not by 'kubectl logs'. This would mislead students into believing this command works.",
+      "suggested_fix": "Remove '--all-namespaces' from the answer and rephrase the question to target a single namespace, e.g., 'kubectl logs -l app=payment -n payments --prefix'. Alternatively, change the question to be about a tool like stern/kubetail that does support cross-namespace log streaming, or rephrase the scenario to be within a single namespace."
+    },
+    {
+      "id": "s07-q090",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "description": "The correct answer (index 1) references 'requiredDuringSchedulingRequiredDuringExecution' node affinity, but this field does NOT exist in any released version of Kubernetes (up to 1.32+). Only 'requiredDuringSchedulingIgnoredDuringExecution' and 'preferredDuringSchedulingIgnoredDuringExecution' exist for node affinity. The 'RequiredDuringExecution' variant has been discussed in design docs but was never implemented. The explanation compounds the error by referencing this non-existent field. While Kubernetes can evict pods with reason 'NodeAffinity' in certain edge cases (e.g., taint-based eviction for not-ready nodes), the mechanism described in the answer is fictional.",
+      "suggested_fix": "Rewrite the question to focus on a real eviction mechanism. For example, change it to ask about NoExecute taints causing pod eviction when tolerationSeconds expires, or about node condition-based taints (node.kubernetes.io/not-ready:NoExecute). The answer about requiredDuringSchedulingRequiredDuringExecution should be replaced with a factually accurate Kubernetes eviction scenario."
+    },
+    {
+      "id": "s07-q042",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "Option 0 states '<service-name>.<namespace>' which is also a valid and working DNS format for cross-namespace resolution in Kubernetes (it works via the search domain entries in /etc/resolv.conf). The explanation acknowledges this: 'you need at minimum <service-name>.<namespace> or the full FQDN'. While option 3 (the FQDN) is the most complete and standard answer, option 0 is technically correct too, which could confuse students who know about partial DNS names.",
+      "suggested_fix": "Rephrase option 0 to make it clearly wrong, e.g., '<service-name>/<namespace>' or add a subtle error. Alternatively, change the question to ask specifically for the 'fully qualified domain name (FQDN)' rather than just 'the correct DNS format'."
+    },
+    {
+      "id": "s07-q009",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states 'Without it [the -c flag], kubectl logs will return an error stating that the container name must be specified when the pod has multiple containers.' While this was true in older Kubernetes versions, starting from Kubernetes 1.28+, kubectl logs without -c on a multi-container pod defaults to the first container rather than erroring (with a warning). However, option 0 claims it 'defaults to the first container only listed' which would then also be partially correct. Since KCNA targets general Kubernetes knowledge and the older behavior is more commonly tested, this is a minor issue.",
+      "suggested_fix": "Update the explanation to note that behavior may vary by Kubernetes version: in older versions kubectl errors without -c, while in newer versions (1.28+) it may default to the first container with a warning. The -c flag remains the recommended practice for clarity."
+    }
+  ]
+}

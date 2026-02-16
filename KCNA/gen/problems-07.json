@@ -1,0 +1,1942 @@
+[
+  {
+    "id": "s07-q001",
+    "qIndex": 0,
+    "text": "A pod named `api-server` is repeatedly restarting. Running `kubectl get pods` shows the STATUS column as `CrashLoopBackOff` with RESTARTS at 14. What does this status indicate?",
+    "options": [
+      "The container image cannot be pulled from the registry",
+      "The node running the pod has run out of disk space and is evicting pods",
+      "The container starts, crashes, and Kubernetes keeps restarting it with exponential back-off delays",
+      "The pod's readiness probe is failing and the pod is being removed from Service endpoints"
+    ],
+    "answer": 2,
+    "lengths": [
+      54,
+      71,
+      98,
+      88
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q002",
+    "qIndex": 1,
+    "text": "You deploy a pod and it remains in the `Pending` state for over 10 minutes. Running `kubectl describe pod` shows the event: `0/3 nodes are available: 3 Insufficient cpu`. What is the most likely cause?",
+    "options": [
+      "The pod's CPU request exceeds the allocatable CPU on all nodes in the cluster",
+      "A `NetworkPolicy` is blocking the pod from communicating with the API server",
+      "The container image specified in the pod manifest does not exist",
+      "The pod has a `nodeSelector` that does not match any node labels"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      76,
+      64,
+      64
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q003",
+    "qIndex": 2,
+    "text": "After deploying a new version of your application, `kubectl get pods` shows one pod with STATUS `ImagePullBackOff`. The `Events` section of `kubectl describe pod` shows `Failed to pull image \"myapp:v2.1\": rpc error: code = NotFound`. Which action would most directly resolve this?",
+    "options": [
+      "Restart the kubelet on the node where the pod is scheduled",
+      "Delete the pod's `ServiceAccount` and recreate it",
+      "Increase the pod's memory limits to allow the image to be pulled",
+      "Verify that the image `myapp:v2.1` exists in the container registry and the tag is correct"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      49,
+      64,
+      90
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q004",
+    "qIndex": 3,
+    "text": "A pod's container is being `OOMKilled` repeatedly. The `kubectl describe pod` output shows `Last State: Terminated` with `Reason: OOMKilled` and `Exit Code: 137`. What does this tell you about the container?",
+    "options": [
+      "The container's liveness probe timed out and Kubernetes killed the process",
+      "The node ran out of disk space causing the container to be evicted",
+      "The container process consumed more memory than its configured `limits.memory` and the Linux kernel killed it",
+      "The container failed its startup probe and was terminated by the kubelet"
+    ],
+    "answer": 2,
+    "lengths": [
+      74,
+      66,
+      109,
+      72
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q005",
+    "qIndex": 4,
+    "text": "Users report intermittent 503 errors when accessing your service. Some pods behind the Service are in `Running` state but their `READY` column shows `0/1`. What is the most likely explanation?",
+    "options": [
+      "The pods have no resource limits configured and are being throttled",
+      "The pods are running on nodes that have been cordoned",
+      "DNS resolution for the Service name is intermittently failing",
+      "The readiness probe is failing on those pods, so they are removed from the Service's endpoint list"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      53,
+      61,
+      98
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q007",
+    "qIndex": 6,
+    "text": "Your team is adopting a cloud native troubleshooting strategy. A microservice pod keeps crashing, but the application does not write meaningful logs to stdout. According to cloud native best practices, what should the team prioritize?",
+    "options": [
+      "Refactor the application to emit structured logs to stdout/stderr so that `kubectl logs` and log aggregators can capture them",
+      "SSH into the node and read the application log files directly from the container's filesystem layer",
+      "Mount a persistent volume to store log files and set up a cron job to collect them",
+      "Disable container restarts so the crashed container's filesystem persists for analysis"
+    ],
+    "answer": 0,
+    "lengths": [
+      125,
+      99,
+      82,
+      86
+    ],
+    "avgLen": 98,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q008",
+    "qIndex": 7,
+    "text": "After a node reboot, several pods are stuck in `Terminating` state and will not delete. Running `kubectl delete pod <name>` hangs indefinitely. What is the recommended approach to forcefully remove these pods?",
+    "options": [
+      "`kubectl delete pod <name> --grace-period=0 --force`",
+      "`kubectl drain <node-name> --ignore-daemonsets`",
+      "`kubectl cordon <node-name>` followed by `kubectl uncordon <node-name>`",
+      "`kubectl rollout restart deployment <deployment-name>`"
+    ],
+    "answer": 0,
+    "lengths": [
+      52,
+      47,
+      71,
+      54
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q009",
+    "qIndex": 8,
+    "text": "A multi-container pod has two containers: `app` and `sidecar-logger`. You want to view only the logs from the `app` container. Which command is correct?",
+    "options": [
+      "`kubectl logs <pod-name>`",
+      "`kubectl describe pod <pod-name> | grep logs`",
+      "`kubectl logs <pod-name> -c app`",
+      "`kubectl exec <pod-name> -- cat /var/log/app.log`"
+    ],
+    "answer": 2,
+    "lengths": [
+      25,
+      45,
+      32,
+      49
+    ],
+    "avgLen": 38,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q010",
+    "qIndex": 9,
+    "text": "A deployment's pods fail to start with the event: `Warning FailedScheduling: 0/5 nodes are available: 5 node(s) had taint {node.kubernetes.io/not-ready: }, that the pod didn't tolerate`. What does this mean?",
+    "options": [
+      "The pod's image pull secret is missing and all nodes are refusing the pull request",
+      "The pod's `nodeAffinity` rules exclude all available nodes",
+      "The cluster's admission controller is blocking pod creation due to a security policy",
+      "All five nodes in the cluster are in a `NotReady` state, and the pods do not have a toleration for the `not-ready` taint"
+    ],
+    "answer": 3,
+    "lengths": [
+      82,
+      58,
+      84,
+      120
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q011",
+    "qIndex": 10,
+    "text": "A pod has an init container that must complete before the main application container starts. The pod is stuck in `Init:CrashLoopBackOff`. What does this status mean?",
+    "options": [
+      "The main application container is crashing, and the init container is trying to restart it",
+      "The init container keeps crashing and restarting, preventing the main container from ever starting",
+      "The init container completed successfully but the main container cannot find the files it created",
+      "The pod was evicted due to resource pressure and is being rescheduled"
+    ],
+    "answer": 1,
+    "lengths": [
+      90,
+      98,
+      97,
+      69
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q012",
+    "qIndex": 11,
+    "text": "In a microservices architecture, Service A depends on Service B. After deploying a new version of Service B, Service A starts returning timeout errors. The pods for Service B are `Running` and `Ready`. What should you check first?",
+    "options": [
+      "Whether Service B's container image was built with the correct base image",
+      "Whether the Kubernetes scheduler moved Service B pods to a different namespace",
+      "Whether Service A's pod security policy was modified during the deployment",
+      "Whether Service B's new version changed its API contract or response time, causing Service A's requests to exceed its timeout threshold"
+    ],
+    "answer": 3,
+    "lengths": [
+      73,
+      78,
+      74,
+      135
+    ],
+    "avgLen": 90,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q013",
+    "qIndex": 12,
+    "text": "You run `kubectl describe pod web-app` and see the following under Conditions:\n\n```\nConditions:\n  Type     Status\n  PodScheduled   True\n  Initialized    True\n  ContainersReady False\n  Ready          False\n```\n\nWhat can you conclude?",
+    "options": [
+      "The pod has not yet been assigned to a node by the scheduler",
+      "The pod's init containers have not completed yet",
+      "The pod is scheduled and init containers finished, but at least one main container is not passing its readiness check",
+      "The pod's volumes have failed to mount and all containers are waiting"
+    ],
+    "answer": 2,
+    "lengths": [
+      60,
+      48,
+      117,
+      69
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q014",
+    "qIndex": 13,
+    "text": "A pod fails to start with the event: `Error: container has runAsNonRoot and image will run as root`. What must you change to fix this?",
+    "options": [
+      "Remove the `readinessProbe` from the pod spec since it conflicts with the security context",
+      "Add a `ClusterRoleBinding` that grants the pod's ServiceAccount root access",
+      "Ensure the container image runs as a non-root user, or set `runAsUser` to a non-zero UID in the pod's `securityContext`",
+      "Set `privileged: true` in the container's security context to bypass the restriction"
+    ],
+    "answer": 2,
+    "lengths": [
+      90,
+      75,
+      119,
+      84
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q015",
+    "qIndex": 14,
+    "text": "After a rolling update, some pods from the new ReplicaSet are in `CrashLoopBackOff` while old pods were terminated. Users are experiencing downtime. What deployment setting could have prevented this scenario?",
+    "options": [
+      "Configuring `minReadySeconds` and a proper readiness probe so the deployment waits for new pods to become healthy before terminating old ones",
+      "Setting `spec.strategy.type` to `Recreate` to replace all pods simultaneously",
+      "Increasing the `terminationGracePeriodSeconds` to give the old pods more time to shut down",
+      "Adding a `PodDisruptionBudget` with `maxUnavailable: 100%`"
+    ],
+    "answer": 0,
+    "lengths": [
+      141,
+      77,
+      90,
+      58
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q016",
+    "qIndex": 15,
+    "text": "A pod is stuck in `Pending` state. The events show: `0/3 nodes are available: 1 node(s) had taint {gpu=true: NoSchedule}, 2 node(s) had taint {maintenance: NoSchedule}`. The pod needs to run on the GPU node. What should you add to the pod spec?",
+    "options": [
+      "A `nodeSelector` matching the GPU node's labels",
+      "A toleration for the taint `gpu=true:NoSchedule`",
+      "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"`",
+      "A resource request for `nvidia.com/gpu: 1`"
+    ],
+    "answer": 1,
+    "lengths": [
+      47,
+      48,
+      66,
+      42
+    ],
+    "avgLen": 51,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q017",
+    "qIndex": 16,
+    "text": "A pod can reach other pods by IP address but DNS lookups for Service names fail. Running `kubectl exec <pod> -- nslookup kubernetes.default` returns `connection timed out; no servers could be reached`. Which component should you investigate?",
+    "options": [
+      "The `kube-scheduler`, as it may have placed the pod on an isolated node",
+      "The `kube-proxy` DaemonSet, which manages iptables rules for Services",
+      "The CoreDNS pods in the `kube-system` namespace, which provide cluster DNS resolution",
+      "The `etcd` cluster, which stores all DNS records for the cluster"
+    ],
+    "answer": 2,
+    "lengths": [
+      71,
+      69,
+      85,
+      64
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q018",
+    "qIndex": 17,
+    "text": "You want to watch pod restarts in real-time across all namespaces to identify unstable workloads. Which command provides a continuously updating view?",
+    "options": [
+      "`kubectl get pods --all-namespaces --sort-by='.status.containerStatuses[0].restartCount'`",
+      "`kubectl get pods -A --watch`",
+      "`kubectl top pods --all-namespaces`",
+      "`kubectl get events --all-namespaces --field-selector reason=Killing`"
+    ],
+    "answer": 1,
+    "lengths": [
+      89,
+      29,
+      35,
+      69
+    ],
+    "avgLen": 56,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q019",
+    "qIndex": 18,
+    "text": "A container's liveness probe is configured as an HTTP GET to `/healthz` on port 8080. The application takes 30 seconds to initialize, but the probe starts checking at container start with `initialDelaySeconds: 5`. What will happen?",
+    "options": [
+      "The pod will enter `ImagePullBackOff` because the health endpoint is not responsive",
+      "The container will be marked as not ready but will continue running until it passes the probe",
+      "The liveness probe will automatically wait for the readiness probe to pass first",
+      "The kubelet will kill and restart the container because the liveness probe fails during initialization, creating a `CrashLoopBackOff` cycle"
+    ],
+    "answer": 3,
+    "lengths": [
+      83,
+      93,
+      80,
+      139
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q020",
+    "qIndex": 19,
+    "text": "Your team needs to debug a production container that was built from a minimal/distroless image with no shell or debugging tools. Which Kubernetes feature allows you to attach a debugging container to the running pod?",
+    "options": [
+      "`kubectl debug <pod-name> --image=busybox --target=<container-name>` to create an ephemeral debug container",
+      "`kubectl cp` to copy a debug binary into the running container",
+      "`kubectl exec <pod-name> -- /bin/sh` to start a shell in the existing container",
+      "`kubectl replace --force` to redeploy the pod with a different image"
+    ],
+    "answer": 0,
+    "lengths": [
+      107,
+      62,
+      79,
+      68
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q021",
+    "qIndex": 20,
+    "text": "A Deployment with 3 replicas shows the following after `kubectl get pods`:\n\n```\nNAME                   READY   STATUS             RESTARTS   AGE\nweb-6d8f9b-abc12       1/1     Running            0          2d\nweb-6d8f9b-def34       1/1     Running            0          2d\nweb-7c4e2a-ghi56       0/1     CrashLoopBackOff   8          12m\n```\n\nWhat can you infer about the deployment?",
+    "options": [
+      "All three pods are from the same ReplicaSet and one has a corrupted container filesystem",
+      "A rolling update created a new ReplicaSet (`7c4e2a`), but the new pod is crashing, while two old pods (`6d8f9b`) remain healthy",
+      "The third pod was manually created outside of the Deployment and is unrelated",
+      "The Deployment's replica count was reduced from 3 to 2 and the excess pod is being terminated"
+    ],
+    "answer": 1,
+    "lengths": [
+      88,
+      127,
+      77,
+      93
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q022",
+    "qIndex": 21,
+    "text": "A pod is stuck in `Pending` with the event: `persistentvolumeclaim \"data-pvc\" not found`. The PVC exists in the cluster but the pod remains unscheduled. What is the most likely cause?",
+    "options": [
+      "The PVC and the pod are in different namespaces",
+      "The PVC's storage class does not support dynamic provisioning",
+      "The PVC is in `Bound` state and cannot be used by another pod",
+      "The node where the pod would be scheduled does not have enough disk space"
+    ],
+    "answer": 0,
+    "lengths": [
+      47,
+      61,
+      61,
+      73
+    ],
+    "avgLen": 61,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q023",
+    "qIndex": 22,
+    "text": "Your CI/CD pipeline deploys a new image tag but the pods still run the old version. The Deployment spec uses `image: myapp:latest` and `imagePullPolicy: IfNotPresent`. What explains this behavior?",
+    "options": [
+      "The Kubernetes API server cached the old image tag and needs to be restarted",
+      "The deployment controller does not detect tag changes when the image name stays the same",
+      "The container runtime does not support pulling images with the `latest` tag",
+      "Since `imagePullPolicy` is `IfNotPresent`, the node uses the already-cached `myapp:latest` image instead of pulling the updated version"
+    ],
+    "answer": 3,
+    "lengths": [
+      76,
+      88,
+      75,
+      135
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q024",
+    "qIndex": 23,
+    "text": "A team discovers that a failing pod emits zero logs via `kubectl logs`, making debugging impossible. Investigating the container reveals the application writes logs to `/var/log/app.log` inside the container. Which pattern would improve observability without modifying the application code?",
+    "options": [
+      "Deploy a sidecar container that tails `/var/log/app.log` to its own stdout, making the logs available via `kubectl logs -c <sidecar>`",
+      "Mount a `hostPath` volume so the log file is written directly to the node's filesystem for collection",
+      "Configure the kubelet to automatically detect log files inside containers and forward them",
+      "Set the pod's `restartPolicy` to `Never` so the container's filesystem is preserved after failure"
+    ],
+    "answer": 0,
+    "lengths": [
+      133,
+      101,
+      90,
+      97
+    ],
+    "avgLen": 105,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q025",
+    "qIndex": 24,
+    "text": "After upgrading the cluster, `kubectl get nodes` shows one node as `NotReady`. Running `kubectl describe node` shows the condition `KubeletNotReady` with message `runtime network not ready: NetworkReady=false`. What component is likely misconfigured?",
+    "options": [
+      "The `kube-apiserver`, which cannot communicate with the node's kubelet",
+      "The `kube-scheduler`, which failed to register the node after the upgrade",
+      "The CNI plugin on the node, which provides pod networking and reports readiness to the kubelet",
+      "The `etcd` instance on that node, which stores the node's network configuration"
+    ],
+    "answer": 2,
+    "lengths": [
+      70,
+      73,
+      94,
+      79
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q026",
+    "qIndex": 25,
+    "text": "You run `kubectl get events --sort-by='.lastTimestamp'` and see repeated `BackOff` events for a pod. The event message says `Back-off restarting failed container`. What information should you check next to determine why the container is failing?",
+    "options": [
+      "The pod's `metadata.annotations` for error codes injected by the scheduler",
+      "The container's exit code and logs from the previous run using `kubectl logs <pod> --previous`",
+      "The node's kubelet certificate expiry date",
+      "The pod's `ownerReferences` field to identify the parent controller"
+    ],
+    "answer": 1,
+    "lengths": [
+      74,
+      94,
+      42,
+      67
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q027",
+    "qIndex": 26,
+    "text": "A StatefulSet pod `db-0` is in `CrashLoopBackOff`. You discover the application fails because it cannot write to `/data`. Running `kubectl exec db-0 -- ls -la /data` shows the directory is owned by `root` but the container runs as UID `1000`. What is the fix?",
+    "options": [
+      "Delete the PersistentVolumeClaim and let the StatefulSet recreate it with correct permissions",
+      "Change the StatefulSet's `replicas` to 0 and back to 1 to trigger a fresh volume mount",
+      "Set `imagePullPolicy: Always` to force a fresh image pull with correct file permissions",
+      "Add an `initContainer` that runs as root and executes `chown 1000:1000 /data` before the main container starts"
+    ],
+    "answer": 3,
+    "lengths": [
+      93,
+      86,
+      87,
+      110
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q028",
+    "qIndex": 27,
+    "text": "A Service of type `ClusterIP` is created for a Deployment, but `curl <service-ip>:<port>` from within the cluster returns `connection refused`. The pods are `Running` and `Ready`. What should you verify?",
+    "options": [
+      "That the Service's `spec.selector` labels match the pod labels, and the `targetPort` matches the port the application listens on",
+      "That a `NetworkPolicy` with an explicit `allow` rule for the Service IP exists",
+      "That the `kube-apiserver` has the `--enable-aggregator-routing` flag enabled",
+      "That the pods have a `ClusterIP` annotation in their metadata"
+    ],
+    "answer": 0,
+    "lengths": [
+      128,
+      78,
+      76,
+      61
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q029",
+    "qIndex": 28,
+    "text": "A pod shows `STATUS: Error` and `Exit Code: 1` after running to completion. The pod's `restartPolicy` is `Never`. What will Kubernetes do with this pod?",
+    "options": [
+      "Kubernetes will automatically restart the pod after an exponential back-off delay",
+      "The pod will remain in `Error` state indefinitely because `restartPolicy: Never` prevents restarts",
+      "Kubernetes will delete the failed pod and schedule a replacement on a different node",
+      "The pod will transition to `Pending` state and wait for manual intervention"
+    ],
+    "answer": 1,
+    "lengths": [
+      81,
+      98,
+      84,
+      75
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q030",
+    "qIndex": 29,
+    "text": "A pod remains `Pending` with the event: `0/4 nodes are available: 2 Insufficient memory, 2 node(s) didn't match Pod's node affinity/selector`. How many distinct issues prevent scheduling?",
+    "options": [
+      "Two distinct issues: two nodes lack memory capacity, and two other nodes do not match the pod's affinity or selector rules",
+      "One issue: all nodes have insufficient memory because node affinity overrides memory checks",
+      "Three issues: memory, affinity, and an implicit CPU shortage on all nodes",
+      "One issue: the node selector is misconfigured which causes the scheduler to misreport memory availability"
+    ],
+    "answer": 0,
+    "lengths": [
+      122,
+      91,
+      73,
+      105
+    ],
+    "avgLen": 98,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q031",
+    "qIndex": 30,
+    "text": "A pod fails with the event: `Failed to create pod sandbox: rpc error: code = Unknown desc = failed to start sandbox container: Error response from daemon: OCI runtime create failed`. Which layer of the container stack is reporting this error?",
+    "options": [
+      "The kube-scheduler, which could not find a valid node for the pod",
+      "The kube-apiserver, which rejected the pod spec during admission",
+      "The CNI plugin, which failed to assign a network namespace to the pod",
+      "The CRI implementation (e.g., containerd) relaying an error from the low-level OCI runtime (e.g., `runc`)"
+    ],
+    "answer": 3,
+    "lengths": [
+      65,
+      64,
+      69,
+      105
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q032",
+    "qIndex": 31,
+    "text": "A 12-factor application running in Kubernetes fails because an environment variable `DATABASE_URL` is empty. The pod spec references a ConfigMap that exists but does not contain the key `DATABASE_URL`. What is the pod's expected behavior?",
+    "options": [
+      "The pod starts normally but the environment variable is set to an empty string, causing application errors at runtime",
+      "The pod fails immediately with a `CreateContainerConfigError` status because the referenced key does not exist in the ConfigMap",
+      "The pod starts but Kubernetes automatically injects a default value of `localhost` for missing ConfigMap keys",
+      "The pod enters `Pending` state while the scheduler waits for the ConfigMap to be updated"
+    ],
+    "answer": 1,
+    "lengths": [
+      117,
+      127,
+      109,
+      88
+    ],
+    "avgLen": 110,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q033",
+    "qIndex": 32,
+    "text": "You notice a pod with `STATUS: Completed` and `RESTARTS: 0` in `kubectl get pods`. The pod belongs to a Job resource. Is this pod healthy?",
+    "options": [
+      "No, `Completed` means the pod crashed after finishing its work",
+      "No, the pod should show `Running` if the Job succeeded",
+      "Yes, `Completed` with exit code 0 means the Job's container ran successfully and exited normally",
+      "Yes, but only if the Job's `backoffLimit` has not been reached"
+    ],
+    "answer": 2,
+    "lengths": [
+      62,
+      54,
+      96,
+      62
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q034",
+    "qIndex": 33,
+    "text": "You want to identify which pods are consuming the most CPU and memory in a namespace. Which command provides real-time resource usage metrics?",
+    "options": [
+      "`kubectl describe pods -n <namespace>` and look for resource fields",
+      "`kubectl get pods -n <namespace> -o wide` with the `--show-metrics` flag",
+      "`kubectl top pods -n <namespace> --sort-by=cpu`",
+      "`kubectl get resourcequota -n <namespace>` to see per-pod consumption"
+    ],
+    "answer": 2,
+    "lengths": [
+      67,
+      72,
+      47,
+      69
+    ],
+    "avgLen": 64,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q035",
+    "qIndex": 34,
+    "text": "A pod running a web server is accessible from within the cluster but not from external traffic through a `NodePort` Service. The Service is correctly configured with `type: NodePort` and `nodePort: 30080`. What should you check on the nodes?",
+    "options": [
+      "Whether the pod has an explicit `externalTrafficPolicy` annotation set to `Local`",
+      "Whether the pod's container has the `NET_ADMIN` capability in its security context",
+      "Whether the pod's `hostNetwork` field is set to `true`",
+      "Whether the node's firewall or security group allows inbound traffic on port 30080"
+    ],
+    "answer": 3,
+    "lengths": [
+      81,
+      82,
+      54,
+      82
+    ],
+    "avgLen": 75,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q036",
+    "qIndex": 35,
+    "text": "A DaemonSet pod on a specific node keeps getting `OOMKilled`. Other DaemonSet pods on different nodes are running fine. The pod's memory limit is 256Mi. What should you investigate on that specific node?",
+    "options": [
+      "Whether the node has more workloads competing for memory, causing the DaemonSet pod's application to hit its limit faster due to system memory pressure",
+      "Whether the DaemonSet's update strategy is `OnDelete` instead of `RollingUpdate`",
+      "Whether the node has a different container runtime than other nodes",
+      "Whether the `kube-proxy` on that node is consuming excessive memory"
+    ],
+    "answer": 0,
+    "lengths": [
+      151,
+      80,
+      67,
+      67
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q037",
+    "qIndex": 36,
+    "text": "A `startupProbe` is configured on a container with `failureThreshold: 30` and `periodSeconds: 10`. The application takes about 3 minutes to initialize. What is the purpose of the `startupProbe` in this scenario?",
+    "options": [
+      "It replaces the readiness probe entirely and determines when the pod receives traffic",
+      "It continuously monitors the application and restarts it if startup takes longer than 30 seconds",
+      "It gives the application up to 300 seconds to start before the liveness and readiness probes begin their checks",
+      "It signals the scheduler to delay placing additional pods until this one is healthy"
+    ],
+    "answer": 2,
+    "lengths": [
+      85,
+      96,
+      111,
+      83
+    ],
+    "avgLen": 94,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q038",
+    "qIndex": 37,
+    "text": "A pod fails to pull an image from a private container registry. The event shows: `Failed to pull image: unauthorized: authentication required`. The correct `imagePullSecrets` was created but the pod still cannot authenticate. What is a common mistake?",
+    "options": [
+      "The Secret was created with `type: Opaque` instead of `type: kubernetes.io/dockerconfigjson`",
+      "The node's kubelet is configured to ignore image pull secrets for security reasons",
+      "The container image tag is set to `latest` which bypasses authentication",
+      "The Secret's data must be base64-encoded twice for Docker registry authentication"
+    ],
+    "answer": 0,
+    "lengths": [
+      92,
+      82,
+      72,
+      81
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q039",
+    "qIndex": 38,
+    "text": "In a distributed microservices system, a chain of calls (A -> B -> C) is experiencing intermittent failures. Service C's pods are healthy, but Service B logs show `context deadline exceeded` when calling Service C. What technique would help pinpoint the latency source?",
+    "options": [
+      "Increasing the replica count of Service C to handle more requests",
+      "Restarting all pods in the chain to clear any stale connections",
+      "Implementing distributed tracing (e.g., Jaeger or Zipkin) to visualize latency across each hop in the request chain",
+      "Adding CPU resource limits to all services to prevent noisy-neighbor problems"
+    ],
+    "answer": 2,
+    "lengths": [
+      65,
+      63,
+      115,
+      77
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q040",
+    "qIndex": 39,
+    "text": "After running `helm upgrade myrelease ./mychart`, several pods are in `CrashLoopBackOff`. You need to quickly restore the previous working version. Which Helm command achieves this?",
+    "options": [
+      "`helm rollback myrelease`",
+      "`helm uninstall myrelease` and then `helm install myrelease ./mychart`",
+      "`helm template myrelease ./mychart | kubectl delete -f -`",
+      "`helm repo update && helm upgrade myrelease --reset-values ./mychart`"
+    ],
+    "answer": 0,
+    "lengths": [
+      25,
+      70,
+      57,
+      69
+    ],
+    "avgLen": 55,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q041",
+    "qIndex": 40,
+    "text": "Running `kubectl` commands from your workstation returns: `Unable to connect to the server: dial tcp <ip>:6443: connect: connection refused`. The cluster was working an hour ago. What should you check first?",
+    "options": [
+      "Whether the `kube-apiserver` process is running on the control plane node",
+      "Whether the `etcd` data directory has been encrypted",
+      "Whether a new RBAC policy is blocking your user account",
+      "Whether the cluster's Ingress controller is healthy"
+    ],
+    "answer": 0,
+    "lengths": [
+      73,
+      52,
+      55,
+      51
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q042",
+    "qIndex": 41,
+    "text": "A pod can resolve DNS names for Services in its own namespace using short names (e.g., `my-service`) but fails to resolve Services in other namespaces. What is the correct DNS format to reach a Service in a different namespace?",
+    "options": [
+      "`<service-name>.<namespace>`",
+      "`<namespace>/<service-name>`",
+      "`<service-name>--<namespace>.cluster.local`",
+      "`<service-name>.<namespace>.svc.cluster.local`"
+    ],
+    "answer": 3,
+    "lengths": [
+      28,
+      28,
+      43,
+      46
+    ],
+    "avgLen": 36,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q043",
+    "qIndex": 42,
+    "text": "A pod enters `CrashLoopBackOff` immediately after starting. The `kubectl logs` output is empty, and `kubectl logs --previous` also returns nothing. What does the absence of logs suggest?",
+    "options": [
+      "The application is writing logs to stderr instead of stdout, which `kubectl logs` does not capture",
+      "The pod's log rotation policy deleted the logs before you could view them",
+      "The container process crashes before producing any output, likely during the entrypoint or command execution phase",
+      "The kubelet on the node has logging disabled via a configuration flag"
+    ],
+    "answer": 2,
+    "lengths": [
+      98,
+      73,
+      114,
+      69
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q044",
+    "qIndex": 43,
+    "text": "A pod has `restartPolicy: Always` and its single container exits with code 0. What does Kubernetes do?",
+    "options": [
+      "The pod transitions to `Completed` state and is never restarted",
+      "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of the exit code",
+      "The pod is deleted and a new pod is created by the ReplicaSet controller",
+      "The kubelet marks the pod as `Failed` because containers should not exit with code 0 under this policy"
+    ],
+    "answer": 1,
+    "lengths": [
+      63,
+      111,
+      72,
+      102
+    ],
+    "avgLen": 87,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q045",
+    "qIndex": 44,
+    "text": "You need to retrieve logs from a pod that crashed and was replaced 2 hours ago. The new pod has the same name. `kubectl logs <pod> --previous` shows logs from the current pod's previous restart, not from the pod that was replaced. How can you retrieve the old logs?",
+    "options": [
+      "The old pod's logs are permanently lost unless a cluster-level log aggregation system (e.g., Fluentd, Loki) was collecting them",
+      "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs",
+      "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances",
+      "Use `kubectl get events` which automatically captures full container logs on termination"
+    ],
+    "answer": 0,
+    "lengths": [
+      127,
+      79,
+      101,
+      88
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q046",
+    "qIndex": 45,
+    "text": "Your team uses Prometheus to monitor Kubernetes workloads. A pod's memory usage steadily climbs until it gets `OOMKilled`, then restarts and repeats the pattern. What Prometheus metric would help you detect this memory leak before the OOM event?",
+    "options": [
+      "`kube_pod_status_phase` filtered to `Failed`",
+      "`kube_pod_container_status_restarts_total` to count restarts",
+      "`node_memory_MemAvailable_bytes` to monitor overall node memory",
+      "`container_memory_working_set_bytes` tracked over time, showing a continuous upward trend approaching the memory limit"
+    ],
+    "answer": 3,
+    "lengths": [
+      44,
+      60,
+      63,
+      118
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q047",
+    "qIndex": 46,
+    "text": "A pod with two containers shows `READY: 1/2`. One container is in `Waiting` state with reason `CrashLoopBackOff`. Can the healthy container continue to serve traffic through a Service?",
+    "options": [
+      "Yes, Services route traffic to individual containers, so the healthy one still receives requests",
+      "No, the pod is removed from the Service's Endpoints because the overall pod readiness is `False` when any container is not ready",
+      "Yes, but only if the Service uses `sessionAffinity: ClientIP`",
+      "No, Kubernetes immediately terminates the entire pod when any container crashes"
+    ],
+    "answer": 1,
+    "lengths": [
+      96,
+      128,
+      61,
+      79
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q048",
+    "qIndex": 47,
+    "text": "You apply a ConfigMap change and restart the pods, but the application still reads old configuration values. The ConfigMap is mounted as a volume (not as environment variables). What could explain this?",
+    "options": [
+      "ConfigMap volume mounts are immutable after pod creation and require a pod delete/recreate",
+      "ConfigMap changes are only propagated by the kubelet every 24 hours",
+      "The application caches the configuration file at startup and does not re-read it from disk, so a restart should have loaded the new values—verify the pod actually restarted",
+      "The `kube-controller-manager` must be restarted for ConfigMap changes to propagate"
+    ],
+    "answer": 2,
+    "lengths": [
+      90,
+      67,
+      172,
+      82
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q049",
+    "qIndex": 48,
+    "text": "A GitOps tool (e.g., ArgoCD) shows a Deployment as `OutOfSync` after someone manually ran `kubectl scale deployment web --replicas=5` in the cluster. The Git repository defines `replicas: 3`. What will happen on the next sync?",
+    "options": [
+      "ArgoCD will revert the Deployment to `replicas: 3` to match the desired state in Git",
+      "ArgoCD will preserve the manual change and update the Git repository to `replicas: 5`",
+      "ArgoCD will average the values and set `replicas: 4`",
+      "ArgoCD will mark the Deployment as failed and stop syncing until manually resolved"
+    ],
+    "answer": 0,
+    "lengths": [
+      84,
+      85,
+      52,
+      82
+    ],
+    "avgLen": 76,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q050",
+    "qIndex": 49,
+    "text": "A CronJob runs every hour but you notice some Jobs are missing from the expected schedule. The CronJob's `concurrencyPolicy` is set to `Forbid`. What does this policy cause?",
+    "options": [
+      "It prevents the CronJob from running entirely if any other Job in the namespace is active",
+      "It terminates the currently running Job to start the new scheduled one",
+      "It queues the new Job and runs it immediately after the current one finishes",
+      "It skips a new Job run if the previous Job from this CronJob has not yet completed"
+    ],
+    "answer": 3,
+    "lengths": [
+      89,
+      70,
+      76,
+      82
+    ],
+    "avgLen": 79,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q051",
+    "qIndex": 50,
+    "text": "You run `kubectl describe pod payment-svc` and see a `Warning` event: `Readiness probe failed: HTTP probe failed with statuscode: 503`. The pod is `Running` but `READY: 0/1`. What is the operational impact?",
+    "options": [
+      "The pod will be killed and restarted by the kubelet after the failure threshold is met",
+      "The pod continues running but is excluded from the Service's Endpoints, so it receives no traffic",
+      "The pod will be evicted from the node and rescheduled on a healthier node",
+      "There is no impact because readiness probes are informational only"
+    ],
+    "answer": 1,
+    "lengths": [
+      86,
+      97,
+      73,
+      66
+    ],
+    "avgLen": 81,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q052",
+    "qIndex": 51,
+    "text": "A pod with `resources.requests.memory: 8Gi` is `Pending` in a cluster where the largest node has 16Gi total memory but only 6Gi allocatable. What does 'allocatable' mean in this context?",
+    "options": [
+      "The total physical RAM installed on the node, minus memory used by running pods",
+      "The memory limit specified in the node's LimitRange resource",
+      "The maximum memory that a single pod can request according to the ResourceQuota",
+      "The memory available for pod scheduling after reserving memory for the kubelet, system daemons, and OS overhead"
+    ],
+    "answer": 3,
+    "lengths": [
+      79,
+      60,
+      79,
+      111
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q053",
+    "qIndex": 52,
+    "text": "After scaling a Deployment from 3 to 10 replicas, 7 new pods stay in `Pending`. The events show `0/5 nodes are available: 5 Insufficient cpu`. The existing 3 pods use `requests.cpu: 500m` each. What is the most effective resolution?",
+    "options": [
+      "Increase the `limits.cpu` on the existing pods to give them more processing power",
+      "Change the Deployment strategy from `RollingUpdate` to `Recreate`",
+      "Either reduce the CPU requests per pod, add nodes with more CPU capacity, or use the cluster autoscaler to provision new nodes",
+      "Set `priorityClassName: system-node-critical` on the Deployment to preempt existing workloads"
+    ],
+    "answer": 2,
+    "lengths": [
+      81,
+      65,
+      126,
+      93
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q054",
+    "qIndex": 53,
+    "text": "A container's readiness probe is configured as a TCP socket check on port 5432. The application (PostgreSQL) takes 15 seconds to start accepting connections. During those 15 seconds, what is the readiness probe result?",
+    "options": [
+      "The TCP check succeeds immediately because the kernel binds the port as soon as the container starts",
+      "The TCP check fails because no process is listening on port 5432 yet, and the pod is marked as not ready",
+      "The TCP check is skipped until the liveness probe passes first",
+      "The TCP check times out and the container is killed by the kubelet"
+    ],
+    "answer": 1,
+    "lengths": [
+      100,
+      104,
+      62,
+      66
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q055",
+    "qIndex": 54,
+    "text": "After deploying a `NetworkPolicy` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only has an `ingress` rule allowing traffic from `app=frontend`. What caused the complete communication breakdown?",
+    "options": [
+      "Once any NetworkPolicy selects a pod, all ingress not explicitly allowed is denied by default; if `policyTypes` also includes `Egress`, outbound traffic is denied too unless explicitly allowed",
+      "The NetworkPolicy blocks all traffic including DNS, so the pods cannot resolve any hostnames",
+      "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource",
+      "The CNI plugin does not support NetworkPolicy enforcement on this cluster"
+    ],
+    "answer": 0,
+    "lengths": [
+      192,
+      92,
+      100,
+      73
+    ],
+    "avgLen": 114,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q056",
+    "qIndex": 55,
+    "text": "A Deployment's rollout is stuck. Running `kubectl rollout status deployment/app` shows `Waiting for deployment \"app\" rollout to finish: 1 out of 3 new replicas have been updated...`. The single new pod is in `CrashLoopBackOff`. What parameter controls how long Kubernetes waits before marking the rollout as failed?",
+    "options": [
+      "`spec.template.spec.terminationGracePeriodSeconds`",
+      "`spec.strategy.rollingUpdate.maxSurge`",
+      "`spec.minReadySeconds`",
+      "`spec.progressDeadlineSeconds`"
+    ],
+    "answer": 3,
+    "lengths": [
+      50,
+      38,
+      22,
+      30
+    ],
+    "avgLen": 35,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q057",
+    "qIndex": 56,
+    "text": "A team is debugging an application that works locally in Docker but fails in Kubernetes with `exec format error`. The cluster nodes run on `linux/amd64`. What is the most likely cause?",
+    "options": [
+      "The container image was built for a different CPU architecture (e.g., `linux/arm64`) and cannot run on `amd64` nodes",
+      "The Kubernetes version is incompatible with the Docker version used to build the image",
+      "The container runtime does not support the OCI image format",
+      "The pod's security context prevents execution of the container's entrypoint binary"
+    ],
+    "answer": 0,
+    "lengths": [
+      116,
+      86,
+      59,
+      82
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q058",
+    "qIndex": 57,
+    "text": "A pod in a StatefulSet named `cache-2` fails and is recreated. Unlike Deployments, the new pod has the exact same name `cache-2`. Why does this matter for troubleshooting?",
+    "options": [
+      "It does not matter because pod names are only cosmetic identifiers",
+      "It causes DNS conflicts because two pods with the same name temporarily exist during replacement",
+      "The stable identity means the pod reattaches to the same PersistentVolumeClaim and DNS hostname, so persistent data and network identity are preserved across restarts",
+      "The kubelet refuses to create a pod with a name that was previously used, causing the StatefulSet to stall"
+    ],
+    "answer": 2,
+    "lengths": [
+      66,
+      96,
+      166,
+      106
+    ],
+    "avgLen": 109,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q059",
+    "qIndex": 58,
+    "text": "You see this event in `kubectl describe pod`: `Warning  Unhealthy  Liveness probe failed: Get \"http://10.244.1.5:8080/healthz\": dial tcp 10.244.1.5:8080: connect: connection refused`. The container was previously running fine. What should you check?",
+    "options": [
+      "Whether the application inside the container has crashed or stopped listening on port 8080",
+      "Whether the CNI plugin has revoked the pod's IP address",
+      "Whether the Kubernetes API server can reach the pod's IP address directly",
+      "Whether the liveness probe URL path `/healthz` was renamed in the pod spec"
+    ],
+    "answer": 0,
+    "lengths": [
+      90,
+      55,
+      73,
+      74
+    ],
+    "avgLen": 73,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q060",
+    "qIndex": 59,
+    "text": "A microservice mesh experiences cascading failures: when Service D becomes slow, Services C, B, and A all start timing out. What design pattern should be implemented to prevent this cascade?",
+    "options": [
+      "Increasing the timeout values in all upstream services to wait longer for Service D",
+      "Adding more replicas to Service D to handle the increased load",
+      "Deploying all four services in the same pod to eliminate network latency",
+      "Implementing the circuit breaker pattern so that upstream services fail fast when Service D is unhealthy instead of waiting for timeouts"
+    ],
+    "answer": 3,
+    "lengths": [
+      83,
+      62,
+      72,
+      136
+    ],
+    "avgLen": 88,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q061",
+    "qIndex": 60,
+    "text": "A node reports `DiskPressure: True` in its conditions. Pods on this node start getting evicted with `The node was low on resource: ephemeral-storage`. What type of storage is being exhausted?",
+    "options": [
+      "The PersistentVolumes attached to the pods on that node",
+      "The etcd data directory on the control plane node",
+      "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir` volumes",
+      "The network-attached storage used by the CSI driver"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      49,
+      104,
+      51
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q062",
+    "qIndex": 61,
+    "text": "A pod shows `STATUS: ContainerCreating` for an unusually long time. `kubectl describe pod` shows the event: `Warning FailedMount: MountVolume.SetUp failed for volume \"config-vol\": configmap \"app-config\" not found`. What must you do?",
+    "options": [
+      "Restart the kubelet to clear the volume mount cache",
+      "Create the missing ConfigMap named `app-config` in the same namespace as the pod",
+      "Delete the pod's ServiceAccount which is blocking the volume mount",
+      "Add a `volumeClaimTemplate` to the pod spec to dynamically provision the ConfigMap"
+    ],
+    "answer": 1,
+    "lengths": [
+      51,
+      80,
+      66,
+      82
+    ],
+    "avgLen": 70,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q063",
+    "qIndex": 62,
+    "text": "An HTTP request to your application takes 5 seconds, but the application's own processing time is only 200ms. You suspect the delay is in the network or sidecar proxy layer. Which observability technique would best identify where the 4.8 seconds are spent?",
+    "options": [
+      "Increasing log verbosity to `DEBUG` level in the application",
+      "Examining distributed trace spans, which break the request into timed segments across each component (ingress, proxy, service, database)",
+      "Monitoring CPU usage metrics of all pods in the request path",
+      "Running `kubectl top pods` during the request to find bottlenecks"
+    ],
+    "answer": 1,
+    "lengths": [
+      60,
+      136,
+      60,
+      65
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q064",
+    "qIndex": 63,
+    "text": "A pod cannot reach the Kubernetes API server from within the cluster. Running `kubectl exec <pod> -- curl https://kubernetes.default.svc:443` returns a TLS handshake error. What might be wrong?",
+    "options": [
+      "The pod's ServiceAccount CA bundle does not match the API server's certificate, or the `kubernetes` Service in the `default` namespace is missing",
+      "The pod does not have the ServiceAccount token mounted, so TLS mutual authentication fails",
+      "The pod needs a NetworkPolicy allowing egress to the API server",
+      "The API server only accepts connections from the control plane network"
+    ],
+    "answer": 0,
+    "lengths": [
+      145,
+      90,
+      63,
+      70
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q065",
+    "qIndex": 64,
+    "text": "A pod fails to start with: `Error: secret \"db-credentials\" not found`. The Secret exists in the `production` namespace, but the pod runs in the `staging` namespace. How should this be resolved?",
+    "options": [
+      "Move the pod to the `production` namespace using `kubectl move`",
+      "Add a cross-namespace reference in the pod spec using `secretRef.namespace: production`",
+      "Create the Secret `db-credentials` in the `staging` namespace, or use a tool like ExternalSecrets to sync secrets across namespaces",
+      "Grant the pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding"
+    ],
+    "answer": 2,
+    "lengths": [
+      63,
+      87,
+      131,
+      85
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q067",
+    "qIndex": 66,
+    "text": "Your team uses Falco, a CNCF runtime security tool, and receives an alert: `Terminal shell in container (user=root, container=web-app)`. What event triggered this alert?",
+    "options": [
+      "A new container image was pulled from an untrusted registry",
+      "Someone executed a shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
+      "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell",
+      "The container's security context was modified at runtime to allow root access"
+    ],
+    "answer": 1,
+    "lengths": [
+      59,
+      98,
+      85,
+      77
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q068",
+    "qIndex": 67,
+    "text": "You need to check why a pod named `worker-7` was terminated. `kubectl describe pod worker-7` shows `Reason: Evicted` and `Message: The node was low on resource: memory`. What triggered this eviction?",
+    "options": [
+      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer",
+      "The HorizontalPodAutoscaler scaled down the deployment and selected this pod for termination",
+      "A PodDisruptionBudget was violated and the pod was preempted by a higher-priority workload",
+      "The kubelet's eviction manager detected that the node's overall available memory fell below the eviction threshold and evicted the pod to reclaim resources"
+    ],
+    "answer": 3,
+    "lengths": [
+      77,
+      92,
+      90,
+      155
+    ],
+    "avgLen": 104,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q069",
+    "qIndex": 68,
+    "text": "A pod with two containers shares an `emptyDir` volume. Container A writes a file to the volume, but Container B cannot find it. Both containers mount the volume but at different `mountPath` values. Is this expected behavior?",
+    "options": [
+      "No, both containers should see the same files regardless of mount path, because `emptyDir` provides a shared storage space. The file should be visible—check the exact paths",
+      "No, `emptyDir` volumes can only be mounted in one container per pod",
+      "Yes, different mount paths create isolated storage spaces within the same `emptyDir`",
+      "Yes, `emptyDir` volumes are read-only by default and Container B lacks write permissions"
+    ],
+    "answer": 0,
+    "lengths": [
+      172,
+      67,
+      84,
+      88
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q070",
+    "qIndex": 69,
+    "text": "A pod has `priorityClassName: high-priority` set. During a resource crunch, the scheduler preempts a lower-priority pod to make room. What happens to the preempted pod?",
+    "options": [
+      "It is paused and resumed when resources become available",
+      "It is moved to a different node automatically by the scheduler",
+      "It is gracefully terminated and its owner controller (e.g., Deployment) creates a replacement, which may remain `Pending` if resources are still scarce",
+      "It is deleted permanently along with its controller"
+    ],
+    "answer": 2,
+    "lengths": [
+      56,
+      62,
+      151,
+      51
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q071",
+    "qIndex": 70,
+    "text": "A Kubernetes cluster has Metrics Server installed but `kubectl top nodes` returns `error: Metrics API not available`. What should you verify?",
+    "options": [
+      "That the `metrics-server` Deployment in `kube-system` is running and its pods are healthy",
+      "That Prometheus is installed as a prerequisite for the Metrics API",
+      "That each node has the `monitoring=enabled` label",
+      "That the `kube-apiserver` has the `--enable-top-command` flag set"
+    ],
+    "answer": 0,
+    "lengths": [
+      89,
+      66,
+      49,
+      65
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q072",
+    "qIndex": 71,
+    "text": "You create a Service but `kubectl get endpoints <svc-name>` shows `<none>`. The pods targeted by the Service are `Running` and `Ready`. What is the most likely cause?",
+    "options": [
+      "The Service's `spec.ports[].protocol` does not match the pod's protocol",
+      "The pods are running in a different cluster than the Service",
+      "The `kube-proxy` on the nodes is not forwarding traffic correctly",
+      "The Service's `spec.selector` labels do not match any of the pod labels"
+    ],
+    "answer": 3,
+    "lengths": [
+      71,
+      60,
+      65,
+      71
+    ],
+    "avgLen": 67,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s07-q073",
+    "qIndex": 72,
+    "text": "A pod has two init containers: `init-db` and `init-cache`. `init-db` completes successfully, but `init-cache` is in `CrashLoopBackOff`. In what order do init containers run, and can `init-cache` see data produced by `init-db`?",
+    "options": [
+      "Init containers run in parallel. `init-cache` cannot see `init-db`'s data because they run simultaneously",
+      "Init containers run sequentially in the order defined in the spec. `init-cache` can access shared volumes written by `init-db`",
+      "Init containers run in reverse order (last defined runs first), so `init-cache` actually ran before `init-db`",
+      "Init containers run in random order determined by the scheduler, so the execution sequence is unpredictable"
+    ],
+    "answer": 1,
+    "lengths": [
+      105,
+      126,
+      109,
+      107
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q074",
+    "qIndex": 73,
+    "text": "During a canary deployment, 5% of traffic is routed to the new version. Users hitting the canary report `500 Internal Server Error`. What is the correct response in a canary deployment workflow?",
+    "options": [
+      "Increase the canary percentage to 50% to gather more error data for analysis",
+      "Wait for the canary's auto-healing to resolve the 500 errors",
+      "Delete the entire Deployment and redeploy from scratch",
+      "Immediately halt the rollout and route 100% of traffic back to the stable version, then investigate the canary's logs and errors"
+    ],
+    "answer": 3,
+    "lengths": [
+      76,
+      60,
+      54,
+      128
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q075",
+    "qIndex": 74,
+    "text": "Running `kubectl get pod my-pod -o jsonpath='{.status.containerStatuses[0].state}'` returns `{\"waiting\":{\"reason\":\"CreateContainerConfigError\",\"message\":\"secret \\\"api-key\\\" not found\"}}`. The pod shows `STATUS: CreateContainerConfigError`. What is happening?",
+    "options": [
+      "The container image is missing the `api-key` binary required for startup",
+      "The pod spec references a Secret named `api-key` (via `envFrom` or `env.valueFrom`) that does not exist in the namespace",
+      "The node's container runtime cannot decrypt the `api-key` Secret due to missing encryption keys",
+      "The API server rejected the pod because the Secret name `api-key` is reserved"
+    ],
+    "answer": 1,
+    "lengths": [
+      72,
+      120,
+      95,
+      77
+    ],
+    "avgLen": 91,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q076",
+    "qIndex": 75,
+    "text": "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3500m, limited: 4000m`. What is preventing pod creation?",
+    "options": [
+      "The node does not have 500m CPU available",
+      "The pod's CPU request of 500m exceeds the maximum allowed by a `LimitRange`",
+      "A `ResourceQuota` named `compute-quota` in the namespace limits total CPU requests, and creating this pod would exceed the 4000m limit",
+      "The cluster-wide CPU capacity has been fully allocated"
+    ],
+    "answer": 2,
+    "lengths": [
+      41,
+      75,
+      134,
+      54
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q077",
+    "qIndex": 76,
+    "text": "After deploying a pod, `kubectl describe pod` shows `Warning  FailedScheduling  0/3 nodes are available: 3 node(s) didn't match pod topology spread constraints`. What are topology spread constraints?",
+    "options": [
+      "Rules that prevent pods from being scheduled on nodes with specific CPU architectures",
+      "Limits on the number of pods that can run on a single node regardless of resources",
+      "Security rules that restrict pod-to-pod communication based on node topology",
+      "Constraints that control how pods are distributed across failure domains (nodes, zones, regions) to achieve high availability"
+    ],
+    "answer": 3,
+    "lengths": [
+      85,
+      82,
+      76,
+      125
+    ],
+    "avgLen": 92,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q078",
+    "qIndex": 77,
+    "text": "A Deployment has `maxUnavailable: 0` and `maxSurge: 1` in its rolling update strategy. During an update, you observe that the old pods are not terminated until the new pod is `Ready`. What happens if the new pod enters `CrashLoopBackOff`?",
+    "options": [
+      "All old pods are immediately terminated to make room for new pods",
+      "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods, and the crashing new pod never becomes `Ready`",
+      "Kubernetes automatically reverts to the previous Deployment revision",
+      "The Deployment controller increases `maxSurge` to create additional new pods"
+    ],
+    "answer": 1,
+    "lengths": [
+      65,
+      124,
+      68,
+      76
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q079",
+    "qIndex": 78,
+    "text": "A serverless function running on Knative fails with cold start timeouts. The container takes 8 seconds to initialize, but the default request timeout is 5 seconds. How should you address this in a cloud native way?",
+    "options": [
+      "Keep a minimum of one warm instance by setting Knative's `minScale: 1` to avoid cold starts entirely",
+      "Increase the container's CPU limits to speed up JIT compilation during startup",
+      "Convert the function to a long-running Deployment to avoid the serverless model",
+      "Disable health checks so the container is not killed during initialization"
+    ],
+    "answer": 0,
+    "lengths": [
+      100,
+      78,
+      79,
+      74
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q080",
+    "qIndex": 79,
+    "text": "The `kube-controller-manager` pod is in `CrashLoopBackOff` on the control plane node. What impact does this have on the cluster?",
+    "options": [
+      "Existing pods continue running, but controllers (Deployment, ReplicaSet, Job, etc.) cannot reconcile desired state—no new pods are created, and crashed pods are not replaced",
+      "All pods in the cluster immediately stop because the controller manager manages the container runtime",
+      "Only DaemonSet pods are affected because the controller manager specifically handles DaemonSets",
+      "There is no impact because the scheduler takes over controller responsibilities"
+    ],
+    "answer": 0,
+    "lengths": [
+      173,
+      101,
+      95,
+      79
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q081",
+    "qIndex": 80,
+    "text": "A pod has an `emptyDir` volume with `sizeLimit: 100Mi`. The application writes 150Mi of data to it. What happens?",
+    "options": [
+      "The writes silently fail and the application receives I/O errors after 100Mi",
+      "The `emptyDir` automatically expands to accommodate the extra data",
+      "The kubelet evicts the pod because it exceeded the ephemeral storage limit for the `emptyDir` volume",
+      "Nothing happens because `sizeLimit` is only advisory and not enforced"
+    ],
+    "answer": 2,
+    "lengths": [
+      76,
+      66,
+      100,
+      69
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q082",
+    "qIndex": 81,
+    "text": "A developer pushes a change to the Git repository, but ArgoCD shows the application as `Synced` with the old version. The Git webhook is configured correctly. What is a common cause?",
+    "options": [
+      "The change was pushed to a branch that ArgoCD is not tracking—verify the `targetRevision` in the Application spec",
+      "ArgoCD does not support webhooks and only polls on a fixed schedule",
+      "The Kubernetes cluster has reached its maximum number of Deployments",
+      "Git repositories must be restarted after each push for ArgoCD to detect changes"
+    ],
+    "answer": 0,
+    "lengths": [
+      113,
+      67,
+      68,
+      79
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q083",
+    "qIndex": 82,
+    "text": "A headless Service (`clusterIP: None`) is created for a StatefulSet. When you run `nslookup <service-name>` from a pod, it returns multiple IP addresses. What do these IPs represent?",
+    "options": [
+      "The IP addresses of the nodes where the StatefulSet pods are running",
+      "Multiple cluster IPs allocated to the Service for load balancing",
+      "The IP addresses of the `kube-proxy` instances on each node",
+      "The individual pod IP addresses of each StatefulSet member, since a headless Service does not have a virtual IP and DNS returns pod IPs directly"
+    ],
+    "answer": 3,
+    "lengths": [
+      68,
+      64,
+      59,
+      144
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q084",
+    "qIndex": 83,
+    "text": "A service mesh (e.g., Istio) is deployed and sidecar containers are injected into all pods. After enabling `STRICT` mTLS, some pods start failing with `upstream connect error or disconnect/reset before headers`. What is the likely cause?",
+    "options": [
+      "Some pods in the mesh do not have the sidecar injected, so they cannot participate in mTLS and their plaintext connections are rejected",
+      "The sidecar proxy does not have enough CPU to handle the encryption overhead",
+      "The Kubernetes API server does not support mTLS between pods",
+      "The Service definitions need to be updated to specify TLS ports explicitly"
+    ],
+    "answer": 0,
+    "lengths": [
+      135,
+      76,
+      60,
+      74
+    ],
+    "avgLen": 86,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q085",
+    "qIndex": 84,
+    "text": "A pod's liveness probe uses a command: `exec: [\"cat\", \"/tmp/healthy\"]`. The application creates this file on startup and deletes it when it detects a fatal error. What happens after the file is deleted?",
+    "options": [
+      "The kubelet sends a SIGTERM to the application process, giving it time to shut down gracefully",
+      "The liveness probe command returns a non-zero exit code, and after `failureThreshold` failures, the kubelet kills and restarts the container",
+      "The pod is removed from the Service endpoints but continues running",
+      "The kubelet waits indefinitely for the file to be recreated before taking any action"
+    ],
+    "answer": 1,
+    "lengths": [
+      94,
+      140,
+      67,
+      84
+    ],
+    "avgLen": 96,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q086",
+    "qIndex": 85,
+    "text": "A pod fails admission with: `Error from server (Forbidden): pods \"test\" is forbidden: violates PodSecurity \"restricted:latest\"`. The pod spec has `runAsNonRoot: true` and `allowPrivilegeEscalation: false`. What else might the `restricted` policy require?",
+    "options": [
+      "The pod must specify `hostNetwork: true` to comply with the restricted policy",
+      "The pod must have resource limits set to zero to meet the restricted policy",
+      "The pod must drop all Linux capabilities (set `securityContext.capabilities.drop: [\"ALL\"]`) and use a read-only root filesystem or specify required `seccompProfile`",
+      "The pod must use the `default` ServiceAccount, not a custom one"
+    ],
+    "answer": 2,
+    "lengths": [
+      77,
+      75,
+      164,
+      63
+    ],
+    "avgLen": 95,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q087",
+    "qIndex": 86,
+    "text": "You need to stream logs from all pods matching the label `app=payment` across all namespaces simultaneously. Which approach is most efficient?",
+    "options": [
+      "Run `kubectl logs -l app=payment --all-namespaces --prefix` to stream from all matching pods with pod name prefixes",
+      "Open individual `kubectl logs` commands for each pod in separate terminal windows",
+      "Use `kubectl get pods -l app=payment` and pipe the output to a log aggregation script",
+      "Deploy a new DaemonSet that captures logs from pods with the `payment` label"
+    ],
+    "answer": 0,
+    "lengths": [
+      115,
+      81,
+      85,
+      76
+    ],
+    "avgLen": 89,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q088",
+    "qIndex": 87,
+    "text": "A pod has `terminationGracePeriodSeconds: 30`. When a rolling update begins, what happens during those 30 seconds?",
+    "options": [
+      "The kubelet immediately kills the container with SIGKILL and creates the new one",
+      "The container continues serving traffic for 30 seconds while the new version starts alongside it",
+      "The kubelet sends SIGTERM to the container, giving it 30 seconds to shut down gracefully; if it does not exit, SIGKILL is sent",
+      "The pod's readiness probe is suspended for 30 seconds to allow the container to drain connections"
+    ],
+    "answer": 2,
+    "lengths": [
+      80,
+      96,
+      126,
+      97
+    ],
+    "avgLen": 100,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q089",
+    "qIndex": 88,
+    "text": "A team runs `kubectl exec -it production-db-0 -- psql` to manually fix data in production. From a cloud native operations perspective, what is wrong with this approach?",
+    "options": [
+      "Nothing is wrong—interactive debugging is a standard cloud native practice",
+      "The `kubectl exec` command does not support interactive database clients",
+      "The pod's network policy automatically blocks interactive sessions in production namespaces",
+      "Manual changes via `kubectl exec` bypass version control, audit trails, and automation, violating the principle that infrastructure and configuration should be managed declaratively and reproducibly"
+    ],
+    "answer": 3,
+    "lengths": [
+      74,
+      72,
+      91,
+      198
+    ],
+    "avgLen": 109,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q090",
+    "qIndex": 89,
+    "text": "A pod is scheduled to a node, but then immediately evicted with reason `NodeAffinity`. Under what circumstances does this happen?",
+    "options": [
+      "When the pod has a `preferredDuringSchedulingIgnoredDuringExecution` affinity that no longer matches after scheduling",
+      "When the pod has a `requiredDuringSchedulingRequiredDuringExecution` affinity and the node's labels change to no longer match the requirement",
+      "When the node runs out of CPU resources after the pod is scheduled",
+      "When a higher-priority pod's affinity conflicts with the existing pod's placement"
+    ],
+    "answer": 1,
+    "lengths": [
+      117,
+      141,
+      66,
+      81
+    ],
+    "avgLen": 101,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q091",
+    "qIndex": 90,
+    "text": "A pod is stuck with `STATUS: ContainerCreating` and the describe output shows: `Warning  FailedCreatePodSandBox: rpc error: code = Unknown desc = failed to set up sandbox container network: NetworkPlugin cni failed to set up pod network`. Which component failed?",
+    "options": [
+      "The CNI plugin failed to configure networking for the pod's sandbox (e.g., assigning an IP address or setting up veth pairs)",
+      "The container runtime failed to pull the container image",
+      "The kubelet failed to authenticate with the API server",
+      "The kube-proxy could not create iptables rules for the pod"
+    ],
+    "answer": 0,
+    "lengths": [
+      124,
+      56,
+      54,
+      58
+    ],
+    "avgLen": 73,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q092",
+    "qIndex": 91,
+    "text": "A team notices their Kubernetes costs are 3x higher than expected. Running `kubectl top nodes` shows all nodes at 15-20% CPU and 30% memory utilization. What does this suggest about the cluster's resource efficiency?",
+    "options": [
+      "The cluster is optimally sized because it has headroom for traffic spikes",
+      "The low utilization indicates a monitoring error and the actual usage is much higher",
+      "The cluster is significantly over-provisioned—resource requests are likely much higher than actual usage, or there are too many nodes for the workload",
+      "Node-level metrics are irrelevant to cost optimization; only pod-level metrics matter"
+    ],
+    "answer": 2,
+    "lengths": [
+      73,
+      84,
+      150,
+      85
+    ],
+    "avgLen": 98,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q093",
+    "qIndex": 92,
+    "text": "A pod's container exits with code 137 but there is no `OOMKilled` reason in the pod status. The container's `State` shows `Reason: Error`. What else could cause exit code 137?",
+    "options": [
+      "The application encountered an unhandled exception and chose exit code 137 as its error code",
+      "The container received a SIGKILL (signal 9) from an external source—such as the liveness probe killing the container or a manual `kill -9` inside the container",
+      "The container's storage volume became read-only, forcing an immediate termination",
+      "The container image has a known bug that causes exit code 137 on any Linux system"
+    ],
+    "answer": 1,
+    "lengths": [
+      92,
+      159,
+      81,
+      81
+    ],
+    "avgLen": 103,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q094",
+    "qIndex": 93,
+    "text": "You see `Unable to register node with API server` in the kubelet logs of a new node being added to the cluster. What is the most common cause?",
+    "options": [
+      "The kubelet's bootstrap token has expired or is invalid, preventing it from authenticating to the API server",
+      "The node's hostname already exists in the cluster from a previous registration",
+      "The API server has reached its maximum node limit",
+      "The node does not have a container runtime installed"
+    ],
+    "answer": 0,
+    "lengths": [
+      108,
+      78,
+      49,
+      52
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q095",
+    "qIndex": 94,
+    "text": "You run `helm install myrelease ./mychart` and get: `Error: INSTALLATION FAILED: rendered manifests contain a resource that already exists. Unable to continue with install`. What happened?",
+    "options": [
+      "The Helm chart has a syntax error in one of its templates",
+      "The Helm repository index is corrupted and needs to be rebuilt",
+      "The Kubernetes version does not support the API version used in the chart manifests",
+      "A Kubernetes resource defined in the chart (e.g., a Service or ConfigMap) already exists in the namespace, possibly from a previous manual deployment or a different Helm release"
+    ],
+    "answer": 3,
+    "lengths": [
+      57,
+      62,
+      83,
+      177
+    ],
+    "avgLen": 95,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q096",
+    "qIndex": 95,
+    "text": "Traffic to a Service with `externalTrafficPolicy: Local` is not reaching pods on some nodes. Requests to those nodes' NodePort return `connection refused`. What explains this?",
+    "options": [
+      "The `Local` policy is deprecated and no longer supported in recent Kubernetes versions",
+      "The `Local` policy requires all pods to have `hostNetwork: true`",
+      "With `externalTrafficPolicy: Local`, kube-proxy only routes traffic to pods on the same node. Nodes without a matching pod drop the traffic instead of forwarding it to other nodes",
+      "The CNI plugin does not support the `Local` external traffic policy"
+    ],
+    "answer": 2,
+    "lengths": [
+      86,
+      64,
+      179,
+      67
+    ],
+    "avgLen": 99,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q098",
+    "qIndex": 97,
+    "text": "A team wants to set up policy-as-code to prevent deploying containers with the `latest` tag in production namespaces. Which CNCF tool is designed for this use case?",
+    "options": [
+      "Helm, which can validate image tags during chart rendering",
+      "Prometheus, which can alert when pods use the `latest` tag",
+      "Falco, which detects policy violations at runtime",
+      "OPA Gatekeeper (or Kyverno), which provides admission control policies that inspect and enforce rules on Kubernetes resources before they are persisted"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      58,
+      49,
+      151
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q099",
+    "qIndex": 98,
+    "text": "After deleting and recreating a Service, existing pods that cached the old Service ClusterIP are getting `connection refused` errors when trying to connect. Why is this happening, and how should clients discover Services?",
+    "options": [
+      "The kube-proxy is not updating iptables rules for the new Service",
+      "The pods need to be restarted for the new iptables rules to take effect",
+      "The Service was recreated with a different ClusterIP. Clients should use DNS names (`<service>.<namespace>.svc.cluster.local`) instead of hardcoded IPs, because DNS automatically resolves to the new IP",
+      "Services must always use `type: ExternalName` to support IP changes"
+    ],
+    "answer": 2,
+    "lengths": [
+      65,
+      71,
+      201,
+      67
+    ],
+    "avgLen": 101,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s07-q100",
+    "qIndex": 99,
+    "text": "A CI pipeline builds a container image and pushes it to a registry, then updates the Deployment image tag. However, the pipeline sometimes deploys an image that has not finished being pushed, causing `ImagePullBackOff`. What practice prevents this race condition?",
+    "options": [
+      "Using `imagePullPolicy: Always` so Kubernetes retries pulling until the image is available",
+      "Ensuring the CI pipeline verifies the image push is complete (e.g., by pulling the image digest) before updating the Deployment, and using immutable image tags or digests",
+      "Setting a long `initialDelaySeconds` on the readiness probe to give the registry time to propagate the image",
+      "Configuring the container runtime to cache all images locally before deploying"
+    ],
+    "answer": 1,
+    "lengths": [
+      90,
+      170,
+      108,
+      78
+    ],
+    "avgLen": 112,
+    "correctIsLongest": true
+  }
+]

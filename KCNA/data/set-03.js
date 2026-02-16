@@ -62,7 +62,7 @@ var questions = [
       "`payment.finance.svc.cluster.local`"
     ],
     answer: 3,
-    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. Since the `payment` Service is in the `finance` namespace, the correct FQDN is `payment.finance.svc.cluster.local`. Option B uses the wrong namespace. Option C reverses the namespace and service positions. Option D has an invalid format entirely.",
+    explanation: "Kubernetes DNS follows the pattern `<service>.<namespace>.svc.cluster.local`. Since the `payment` Service is in the `finance` namespace, the correct FQDN is `payment.finance.svc.cluster.local`. The first option uses the wrong namespace (store instead of finance). The second option reverses the service and namespace. The third option has an invalid DNS format.",
     verify: "kubectl exec frontend -n store -- nslookup payment.finance.svc.cluster.local"
   },
   {
@@ -254,7 +254,7 @@ var questions = [
       "`my-svc.alpha.svc.cluster.local`"
     ],
     answer: 3,
-    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. Option D uses `default` namespace, which is wrong for a pod in `alpha`.",
+    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.",
     verify: "kubectl exec <pod> -n alpha -- cat /etc/resolv.conf"
   },
   {
@@ -533,7 +533,7 @@ var questions = [
     id: "s03-q034",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "An Ingress resource specifies `host: api.example.com` with a backend pointing to service `api-svc` on port 80. The Ingress controller is running, but requests to `api.example.com` return 404. Which is the most likely cause?",
+    text: "An Ingress resource specifies `host: api.example.com` with a backend pointing to service `api-svc` on port 80. The Ingress controller is running, but requests to `api.example.com` time out or fail to connect. Which is the most likely cause?",
     diagram: null,
     options: [
       "The DNS for `api.example.com` does not point to the Ingress controller's external IP",
@@ -581,7 +581,7 @@ var questions = [
     id: "s03-q037",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "An operator needs to expose a TCP service on port 3306 (MySQL) externally. The cluster is on AWS. Which Service configuration requests an internal-only AWS Network Load Balancer?",
+    text: "An operator needs to expose a TCP service on port 3306 (MySQL) externally. The cluster is on AWS. Which Service configuration requests an internal-only load balancer?",
     diagram: null,
     options: [
       "Type `ClusterIP` with `externalIPs` set to the VPC subnet range for internal load balancing purposes",
@@ -746,11 +746,11 @@ var questions = [
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
       "`kube_endpoint_address_available` with a configured threshold of zero ready endpoints",
-      "`kube_endpoint_addresses_ready` from kube-state-metrics equal to zero for the Service",
+      "`kube_endpoint_address` with label `ready=\"true\"` from kube-state-metrics equal to zero for the Service",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "kube-state-metrics exposes `kube_endpoint_addresses_ready` which counts the number of ready addresses per Endpoint. An alert on this metric being zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
+    explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label that indicates whether each address is ready. Counting addresses where `ready=\"true\"` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard metric name. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.",
     verify: null
   },
   {
@@ -821,7 +821,7 @@ var questions = [
     id: "s03-q052",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "An engineer runs `kubectl get endpointslices` and notices an EndpointSlice for a Service with 1000 endpoints. What is the default maximum number of endpoints per EndpointSlice?",
+    text: "A Service has 1000 pod endpoints. The engineer notices multiple EndpointSlice objects were created for this Service. What is the default maximum number of endpoints per EndpointSlice?",
     diagram: null,
     options: [
       "1000 endpoints per slice",
@@ -1237,7 +1237,7 @@ var questions = [
     id: "s03-q078",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "An SRE notices that DNS lookups from pods occasionally take 5 seconds. The issue only affects queries that result in NXDOMAIN responses. What is the most likely cause in Linux-based clusters?",
+    text: "An SRE notices that DNS lookups from pods occasionally take 5 seconds. What is the most likely cause in Linux-based clusters?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="100" height="35" rx="4" fill="#326CE5"/><text x="80" y="32" text-anchor="middle" fill="#fff" font-size="10">App Pod</text><rect x="30" y="80" width="100" height="35" rx="4" fill="#FF9800"/><text x="80" y="102" text-anchor="middle" fill="#fff" font-size="10">CoreDNS</text><rect x="30" y="150" width="100" height="35" rx="4" fill="#4CAF50"/><text x="80" y="172" text-anchor="middle" fill="#fff" font-size="10">Upstream DNS</text><line x1="80" y1="45" x2="80" y2="80" stroke="#999" stroke-width="1.5"/><line x1="80" y1="115" x2="80" y2="150" stroke="#999" stroke-width="1.5"/><text x="180" y="60" fill="#f44" font-size="10">A + AAAA sent</text><text x="180" y="75" fill="#f44" font-size="10">simultaneously</text><text x="180" y="105" fill="#ccc" font-size="9">conntrack race</text><text x="180" y="120" fill="#ccc" font-size="9">drops one packet</text><text x="180" y="140" fill="#ccc" font-size="9">→ 5s timeout</text></svg>',
     options: [
       "CoreDNS is configured with too many upstream resolvers causing slow query forwarding chain lookups",
@@ -1445,7 +1445,7 @@ var questions = [
     id: "s03-q091",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which CNCF project provides network observability for Kubernetes by leveraging eBPF to generate flow logs and a service dependency map without requiring sidecar proxies?",
+    text: "Which tool within the CNCF ecosystem provides network observability for Kubernetes by leveraging eBPF to generate flow logs and a service dependency map without requiring sidecar proxies?",
     diagram: null,
     options: [
       "Prometheus — a metrics collection and alerting toolkit for Kubernetes clusters",

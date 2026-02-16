@@ -206,7 +206,7 @@ var questions = [
       "OpenEBS — a container-attached storage solution providing per-pod block volumes"
     ],
     answer: 2,
-    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project. MinIO and OpenEBS are CNCF sandbox/incubating projects focused on different storage paradigms.",
+    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF sandbox project.",
     verify: null
   },
   {
@@ -677,7 +677,7 @@ var questions = [
     id: "s04-q043",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "An administrator wants to pre-provision PVs that can only be claimed by PVCs with a specific label. Which PV field enables this selective binding?",
+    text: "An administrator wants to pre-provision PVs that can only be claimed by PVCs matching a specific label selector. Which resource supports label-based matching for PV-PVC binding?",
     diagram: null,
     options: [
       "`spec.selector` on PVs is not valid — only PVCs support selector fields for matching labels",
@@ -766,7 +766,7 @@ var questions = [
       "The scheduler stops placing new pods on the node, and the kubelet may evict pods to reclaim disk"
     ],
     answer: 3,
-    explanation: "When the kubelet detects that disk usage exceeds the eviction threshold (default 85%), it sets the `DiskPressure` condition to `True`. The scheduler adds a taint to prevent new pods from being scheduled. The kubelet begins evicting pods, starting with those exceeding ephemeral storage requests, to reclaim disk space. The node is not permanently cordoned.",
+    explanation: "When the kubelet detects that disk usage exceeds the eviction threshold (default: nodefs.available < 10%), it sets the `DiskPressure` condition to `True`. The scheduler adds a taint to prevent new pods from being scheduled. The kubelet begins evicting pods, starting with those exceeding ephemeral storage requests, to reclaim disk space. The node is not permanently cordoned.",
     verify: "kubectl describe node <node-name> | grep -A5 Conditions"
   },
   {
@@ -889,7 +889,7 @@ var questions = [
     diagram: null,
     options: [
       "The control plane becomes non-functional since all cluster state is stored in the etcd data store",
-      "Only new pod creation is affected by the outage; currently running pods continue operating normally",
+      "Only new pod creation is affected; the API server falls back to a read-only cache mode and continues serving existing state",
       "The cluster continues operating normally by falling back to locally cached data on each component",
       "The kube-apiserver automatically switches to an in-memory backup store when etcd is unavailable"
     ],
@@ -1198,7 +1198,7 @@ var questions = [
       "This field is not valid in the StatefulSet spec and is rejected by the API server upon submission"
     ],
     answer: 0,
-    explanation: "The `persistentVolumeClaimRetentionPolicy` field (stable in Kubernetes 1.27+) controls PVC lifecycle. `whenDeleted: Delete` means PVCs are cleaned up when the entire StatefulSet is deleted. `whenScaled: Retain` means PVCs are kept when scaling down, allowing data to be preserved if the StatefulSet is scaled back up later.",
+    explanation: "The `persistentVolumeClaimRetentionPolicy` field (beta in Kubernetes 1.27, stable/GA in Kubernetes 1.32) controls PVC lifecycle. `whenDeleted: Delete` means PVCs are cleaned up when the entire StatefulSet is deleted. `whenScaled: Retain` means PVCs are kept when scaling down, allowing data to be preserved if the StatefulSet is scaled back up later.",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.persistentVolumeClaimRetentionPolicy}'"
   },
   {
@@ -1531,7 +1531,7 @@ var questions = [
       "They are identical; `ReadWriteOncePod` is just an alias for the `ReadWriteOnce` access mode in the API",
       "`ReadWriteOncePod` allows multiple pods to mount the volume but only one pod at a time can write to it",
       "`ReadWriteOncePod` is only for ephemeral volumes and cannot be used with PersistentVolumeClaim resources",
-      "`ReadWriteOncePod` restricts the volume to a single pod cluster-wide, while `ReadWriteOnce` allows many"
+      "`ReadWriteOncePod` restricts the volume to a single pod cluster-wide, while `ReadWriteOnce` allows multiple pods on the same node"
     ],
     answer: 3,
     explanation: "`ReadWriteOnce` (RWO) restricts the volume to a single node, but multiple pods on that node can mount it. `ReadWriteOncePod` (RWOP), GA since Kubernetes 1.29, restricts the volume to exactly one pod across the entire cluster. This is important for workloads that require exclusive access, such as databases that use file-level locking.",
@@ -1566,7 +1566,7 @@ var questions = [
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
     answer: 1,
-    explanation: "Starting with Kubernetes 1.24, StatefulSets support `maxUnavailable` in the rolling update strategy. Setting `maxUnavailable: 1` ensures that at most 1 pod is unavailable during the update, maintaining a minimum of 2 running pods. This is critical for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational.",
+    explanation: "The maxUnavailable field was introduced as an alpha feature in Kubernetes 1.24 (requiring the MaxUnavailableStatefulSet feature gate). StatefulSets support `maxUnavailable` in the rolling update strategy. Setting `maxUnavailable: 1` ensures that at most 1 pod is unavailable during the update, maintaining a minimum of 2 running pods. This is critical for quorum-based systems like Redis Sentinel that require a majority of nodes to be operational.",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {

@@ -1,0 +1,70 @@
+{
+  "set": "05",
+  "total_reviewed": 100,
+  "issues_found": 9,
+  "issues": [
+    {
+      "id": "s05-q001",
+      "type": "bad_verify",
+      "severity": "minor",
+      "description": "The verify command 'kubectl create clusterrolebinding test --role=pod-reader --user=jane 2>&1' uses a '--role' flag, but the 'kubectl create clusterrolebinding' subcommand only supports '--clusterrole', not '--role'. The command will fail with 'unknown flag: --role' rather than demonstrating the intended API server rejection of binding a Role via a ClusterRoleBinding.",
+      "suggested_fix": "Change verify to: kubectl create clusterrolebinding test --clusterrole=pod-reader --user=jane --dry-run=server 2>&1 (demonstrates that a ClusterRole named 'pod-reader' would need to exist)"
+    },
+    {
+      "id": "s05-q022",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "description": "Both option A ('podSelector: {} and an empty ingress: [] array') and option B ('podSelector: {}, policyTypes: [Ingress], and no ingress field') produce a valid default-deny ingress NetworkPolicy. The explanation itself acknowledges 'Including an empty ingress: [] array has the same effect, but the canonical form omits it.' Having two factually correct options makes this question ambiguous and could mislead students who know both forms work.",
+      "suggested_fix": "Reword option A to be clearly wrong, e.g., 'A policy with podSelector: {} and ingress: [{}] allowing traffic from all sources' (ingress: [{}] means allow-all, which is different from ingress: []). Alternatively, explicitly ask for the canonical Kubernetes documentation form."
+    },
+    {
+      "id": "s05-q042",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation states the default projected token lifetime is '1 hour'. The actual Kubernetes default for expirationSeconds on projected service account tokens is 3607 seconds (~1 hour). While approximately correct for KCNA purposes, precision could be improved.",
+      "suggested_fix": "Minor: optionally clarify to 'approximately 1 hour (3607 seconds)'. The answer (index 1) is still the best choice among the four options."
+    },
+    {
+      "id": "s05-q051",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation about RBAC escalation prevention is correct in principle, but the scenario involves 'delete' on 'nodes', which is a cluster-scoped resource. A RoleBinding in a namespace cannot effectively grant access to cluster-scoped resources. Even if the RoleBinding could be created, the 'delete nodes' permission would have no effect via a namespace-scoped RoleBinding. The explanation should mention this nuance for completeness.",
+      "suggested_fix": "Add to explanation: 'Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources. Even if creation were allowed, the permission would have no practical effect.'"
+    },
+    {
+      "id": "s05-q057",
+      "type": "ambiguous",
+      "severity": "minor",
+      "description": "The answer (index 3) states 'Existing mounted data remains until the next kubelet sync, then Pod fails'. The actual behavior is more nuanced and non-deterministic: the kubelet will fail to refresh the projected volume and may log errors, but the Pod does not necessarily fail or crash. Existing mounted files may remain stale. The stated behavior is an oversimplification that could mislead students.",
+      "suggested_fix": "Revise the answer text to 'Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt' and update the explanation to describe the non-deterministic nature of the behavior."
+    },
+    {
+      "id": "s05-q064",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The explanation states 'The view ClusterRole includes Secret access, so you cannot use it directly.' This is INCORRECT for Kubernetes 1.14+. Since Kubernetes 1.14, the built-in 'view' ClusterRole explicitly EXCLUDES access to Secrets. The correct answer (index 1: create a custom Role explicitly listing allowed resources) is still the best answer, but the stated rationale is factually wrong and could confuse students studying for the exam.",
+      "suggested_fix": "Change the explanation to: 'RBAC has no deny rules; permissions are purely additive. To grant read access to most resources while explicitly excluding Secrets, create a custom Role that lists each allowed resource type with get, list, and watch verbs. Note: the built-in view ClusterRole already excludes Secrets (since Kubernetes 1.14), so binding view via a RoleBinding could also work depending on the exact requirements.'"
+    },
+    {
+      "id": "s05-q068",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "description": "The explanation states 'The baseline profile also restricts hostPath.' This is INCORRECT. The baseline Pod Security Standard does NOT restrict hostPath volumes; only the restricted profile prohibits hostPath. The baseline profile allows hostPath. This error makes option D ('No, but mounting hostPath is allowed under the baseline profile') a factually TRUE statement. While the correct answer (B) still directly answers the question, the false claim about baseline in the explanation could mislead students.",
+      "suggested_fix": "Change the explanation to: 'The restricted Pod Security Standard prohibits hostPath volumes entirely, regardless of whether they are read-only. Note that the baseline profile does permit hostPath volumes. For log collectors requiring host access, the namespace must use the baseline (or privileged) profile, or the specific Pods must be exempted from the restricted profile.'"
+    },
+    {
+      "id": "s05-q076",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "description": "The explanation could be clearer about why the wildcard '*' in verbs does not affect subresources. The answer (index 2: 'All current verbs on Pods but not on any Pod subresources like exec') is correct. The wildcard in verbs grants all verbs on the specified resource, but 'pods' and 'pods/exec' are treated as separate resources in RBAC rules. The explanation should distinguish between verb wildcards and resource scope more explicitly.",
+      "suggested_fix": "Improve the explanation to: 'The wildcard * in the verbs field grants all verbs (get, list, watch, create, update, patch, delete, deletecollection) on the specified resource. However, subresources like pods/exec and pods/log are treated as separate resources in RBAC and must be listed in their own rule with their own verbs. The wildcard applies to the verb dimension, not the resource dimension.'"
+    },
+    {
+      "id": "s05-q088",
+      "type": "wrong_domain",
+      "severity": "minor",
+      "description": "Question s05-q088 about GitOps drift detection and reconciliation (Flux/ArgoCD reverting manually modified Secrets) is assigned to domain 'Kubernetes Fundamentals' subsection 'Core Concepts'. This question is primarily about GitOps tooling behavior, which fits better under the 'Cloud Native Application Delivery' domain, subsection 'GitOps'.",
+      "suggested_fix": "Change domain to 'Cloud Native Application Delivery' and subsection to 'GitOps'"
+    }
+  ]
+}

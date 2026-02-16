@@ -1,0 +1,1942 @@
+[
+  {
+    "id": "s03-q001",
+    "qIndex": 0,
+    "text": "A development team deploys a microservice consisting of three replicas. Other pods within the same cluster need to reach these replicas using a single stable IP address, but no external access is required. Which Service type satisfies this requirement with the least exposure?",
+    "options": [
+      "`ClusterIP` — provides a virtual IP reachable only from within the cluster",
+      "`NodePort` — opens a port on every node for internal routing",
+      "`LoadBalancer` — provisions a cloud load balancer scoped to the VPC",
+      "`ExternalName` — maps a DNS CNAME to the pod endpoints"
+    ],
+    "answer": 0,
+    "lengths": [
+      74,
+      60,
+      67,
+      54
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q002",
+    "qIndex": 1,
+    "text": "An operator notices that a `NodePort` Service is accessible on port 32100 of every node, but the backend pods run on only two of five nodes. What explains traffic arriving at a node that has no local pod?",
+    "options": [
+      "The kubelet on the receiving node spawns a temporary proxy pod to relay the request",
+      "CoreDNS redirects the request to a node that hosts the pod",
+      "kube-proxy on each node programs iptables/IPVS rules that forward traffic to any pod endpoint cluster-wide",
+      "The container runtime tunnels the packet back to the API server which routes it"
+    ],
+    "answer": 2,
+    "lengths": [
+      83,
+      58,
+      106,
+      79
+    ],
+    "avgLen": 82,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q003",
+    "qIndex": 2,
+    "text": "A team wants to route external HTTPS traffic to two different backend services based on the URL path — `/api` to `api-svc` and `/web` to `web-svc`. Both services are `ClusterIP`. Which resource is designed for this?",
+    "options": [
+      "An `Ingress` resource with path-based routing rules and an Ingress controller",
+      "Two separate `LoadBalancer` Services with path annotations",
+      "A single `NodePort` Service with `sessionAffinity` set per path",
+      "A `NetworkPolicy` that selectively forwards traffic based on URL path"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      58,
+      63,
+      69
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q005",
+    "qIndex": 4,
+    "text": "After creating a `ClusterIP` Service, an SRE checks `kubectl get endpoints` and sees `<none>` for the Service. The pods are running. What is the most likely cause?",
+    "options": [
+      "The Service's `selector` labels do not match the labels on the running pods",
+      "The `ClusterIP` has not been allocated by the API server yet",
+      "CoreDNS has not propagated the endpoint records to etcd",
+      "The pods are running but kube-proxy has not started on their nodes"
+    ],
+    "answer": 0,
+    "lengths": [
+      75,
+      60,
+      55,
+      66
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q006",
+    "qIndex": 5,
+    "text": "A cluster administrator wants kube-proxy to use IPVS mode instead of the default iptables mode. Which component's configuration must be changed?",
+    "options": [
+      "The kubelet configuration on every node, setting `proxyMode: ipvs`",
+      "The CNI plugin configuration file under `/etc/cni/net.d/`",
+      "The kube-controller-manager flag `--proxy-mode=ipvs`",
+      "The kube-proxy `ConfigMap` or startup flags, setting `mode: ipvs`"
+    ],
+    "answer": 3,
+    "lengths": [
+      66,
+      57,
+      52,
+      65
+    ],
+    "avgLen": 60,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q007",
+    "qIndex": 6,
+    "text": "A developer creates a `NetworkPolicy` that specifies only `ingress` rules with a `podSelector` matching `app: db`. No `egress` rules are defined in the policy. What happens to outbound traffic from the `app: db` pods?",
+    "options": [
+      "All egress traffic is still allowed because the policy only specifies `ingress` in its `policyTypes`",
+      "All egress traffic is blocked because any `NetworkPolicy` implicitly denies all directions",
+      "Egress to the internet is blocked but egress within the cluster is allowed",
+      "The policy is invalid and rejected by the API server"
+    ],
+    "answer": 0,
+    "lengths": [
+      100,
+      90,
+      74,
+      52
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q008",
+    "qIndex": 7,
+    "text": "Which component is responsible for assigning an IP address to a newly created pod on a node?",
+    "options": [
+      "The kube-scheduler when it binds the pod to the node",
+      "The kube-apiserver when it persists the Pod object to etcd",
+      "The CNI plugin invoked by the container runtime during pod sandbox creation",
+      "CoreDNS when it registers the pod's A record"
+    ],
+    "answer": 2,
+    "lengths": [
+      52,
+      58,
+      75,
+      44
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q009",
+    "qIndex": 8,
+    "text": "A cluster runs Calico as its CNI. An engineer asks whether pods on different nodes can communicate without NAT. What is the correct answer?",
+    "options": [
+      "Yes — the Kubernetes networking model requires every pod to have a routable IP and communicate without NAT",
+      "No — pods on different nodes always go through kube-proxy which performs SNAT",
+      "Only if a `LoadBalancer` Service is placed in front of both pods",
+      "Only if both pods are in the same namespace"
+    ],
+    "answer": 0,
+    "lengths": [
+      106,
+      77,
+      64,
+      43
+    ],
+    "avgLen": 73,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q010",
+    "qIndex": 9,
+    "text": "You need to expose a legacy application that requires clients to connect to the same pod for the duration of their session. Which Service field enables this?",
+    "options": [
+      "`spec.selector.sticky: true`",
+      "`spec.externalTrafficPolicy: Local`",
+      "`spec.type: StatefulSet`",
+      "`spec.sessionAffinity: ClientIP`"
+    ],
+    "answer": 3,
+    "lengths": [
+      28,
+      35,
+      24,
+      32
+    ],
+    "avgLen": 30,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q012",
+    "qIndex": 11,
+    "text": "A pod running a sidecar proxy intercepts all outbound traffic by modifying iptables rules inside the pod's network namespace. This pattern is commonly used by which type of technology?",
+    "options": [
+      "A CNI plugin such as Flannel or Calico",
+      "A `PodDisruptionBudget` controller",
+      "The kube-proxy component running in IPVS mode",
+      "A service mesh such as Istio or Linkerd"
+    ],
+    "answer": 3,
+    "lengths": [
+      38,
+      34,
+      45,
+      39
+    ],
+    "avgLen": 39,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q013",
+    "qIndex": 12,
+    "text": "A platform engineer observes that a Flannel-based cluster uses VXLAN encapsulation. What is the primary purpose of this encapsulation?",
+    "options": [
+      "To tunnel pod traffic across nodes whose underlying network does not route the pod CIDR natively",
+      "To encrypt all pod-to-pod traffic with TLS by default",
+      "To enforce `NetworkPolicy` rules at the kernel level",
+      "To load-balance traffic across Service endpoints"
+    ],
+    "answer": 0,
+    "lengths": [
+      96,
+      53,
+      52,
+      48
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q014",
+    "qIndex": 13,
+    "text": "An operator sets `externalTrafficPolicy: Local` on a `LoadBalancer` Service. What is the primary effect of this setting?",
+    "options": [
+      "The cloud load balancer is restricted to a single availability zone",
+      "kube-proxy disables SNAT for all cluster-internal traffic",
+      "Traffic is forwarded only to pods running on the node that received the request, preserving the client source IP",
+      "Only pods with a `hostNetwork: true` setting can receive the traffic"
+    ],
+    "answer": 2,
+    "lengths": [
+      67,
+      57,
+      112,
+      68
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q015",
+    "qIndex": 14,
+    "text": "A security team mandates that only the `api-gateway` pods (label `role: gateway`) in namespace `web` can send traffic to `payment` pods (label `app: payment`) in namespace `finance` on port 8443. Which `NetworkPolicy` target and rule combination achieves this?",
+    "options": [
+      "Apply a policy to pods with `app: payment` in `finance` allowing ingress from `namespaceSelector` matching `web` AND `podSelector` matching `role: gateway` on port 8443",
+      "Apply a policy to pods with `role: gateway` in `web` allowing egress to `namespaceSelector` matching `finance` on port 8443",
+      "Apply a policy to all pods in `finance` allowing ingress from any pod on port 8443",
+      "Apply a policy to pods with `app: payment` in `finance` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443"
+    ],
+    "answer": 0,
+    "lengths": [
+      168,
+      123,
+      82,
+      111
+    ],
+    "avgLen": 121,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q016",
+    "qIndex": 15,
+    "text": "A cluster uses CoreDNS. A pod in namespace `alpha` resolves the short name `my-svc`. According to the default `resolv.conf` search domains, which FQDN does the resolver try first?",
+    "options": [
+      "`my-svc.default.svc.cluster.local`",
+      "`my-svc.cluster.local`",
+      "`my-svc.svc.cluster.local`",
+      "`my-svc.alpha.svc.cluster.local`"
+    ],
+    "answer": 3,
+    "lengths": [
+      34,
+      22,
+      26,
+      32
+    ],
+    "avgLen": 29,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q017",
+    "qIndex": 16,
+    "text": "An engineer creates a headless Service (`clusterIP: None`) for a StatefulSet with 3 replicas named `cache`. What DNS records are created for individual pods?",
+    "options": [
+      "SRV records only, with no A records for individual pods",
+      "CNAME records mapping `cache-0` to the node's IP address",
+      "A single A record for `cache` resolving to all three pod IPs simultaneously",
+      "A records like `cache-0.cache.<namespace>.svc.cluster.local` for each pod"
+    ],
+    "answer": 3,
+    "lengths": [
+      55,
+      56,
+      75,
+      73
+    ],
+    "avgLen": 65,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q018",
+    "qIndex": 17,
+    "text": "A company migrating to Kubernetes wants each microservice to be independently deployable and to communicate over the network. To minimize coupling, which approach best aligns with cloud native networking principles?",
+    "options": [
+      "All microservices share a single pod so they communicate over `localhost`",
+      "Microservices write to a shared NFS volume and poll for changes",
+      "Each microservice exposes a Kubernetes Service and communicates via well-defined APIs over HTTP/gRPC",
+      "Each microservice opens a direct TCP socket to every other microservice's pod IP"
+    ],
+    "answer": 2,
+    "lengths": [
+      73,
+      63,
+      100,
+      80
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q019",
+    "qIndex": 18,
+    "text": "A platform team evaluates CNI plugins for their new production cluster. They need support for `NetworkPolicy` enforcement and high-performance eBPF dataplane. Which CNCF project fits this requirement?",
+    "options": [
+      "Cilium",
+      "Flannel",
+      "kube-router",
+      "Multus"
+    ],
+    "answer": 0,
+    "lengths": [
+      6,
+      7,
+      11,
+      6
+    ],
+    "avgLen": 8,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q020",
+    "qIndex": 19,
+    "text": "A microservices application has 20 services communicating over mTLS. The team struggles with managing certificates, retries, and circuit breaking at the application level. Which infrastructure pattern offloads these cross-cutting concerns from application code?",
+    "options": [
+      "Adding a `NetworkPolicy` for each service pair to enforce encrypted communication",
+      "Configuring `readinessProbe` on each pod to handle retries automatically",
+      "Using a `CronJob` to rotate certificates and restart pods periodically",
+      "Deploying a service mesh that handles mTLS, retries, and circuit breaking in sidecar proxies"
+    ],
+    "answer": 3,
+    "lengths": [
+      81,
+      72,
+      70,
+      92
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q021",
+    "qIndex": 20,
+    "text": "An application behind a `LoadBalancer` Service experiences intermittent 503 errors when backend pods are scaling down. Which Kubernetes mechanism helps pods finish in-flight requests before termination?",
+    "options": [
+      "The `terminationGracePeriodSeconds` setting combined with proper SIGTERM handling in the application",
+      "Setting `spec.minReadySeconds` to a high value on the Deployment",
+      "Configuring a `PodDisruptionBudget` with `maxUnavailable: 0`",
+      "Increasing the Service's `spec.sessionAffinity` timeout"
+    ],
+    "answer": 0,
+    "lengths": [
+      100,
+      64,
+      60,
+      55
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q022",
+    "qIndex": 21,
+    "text": "An SRE wants to monitor the latency of requests flowing through a `ClusterIP` Service. Which approach provides per-request latency metrics without modifying application code?",
+    "options": [
+      "Query `kubectl top service` to get per-service request latency",
+      "Deploy a service mesh that captures L7 metrics from sidecar proxies and exports them to Prometheus",
+      "Enable verbose logging on kube-proxy to extract timing from iptables rules",
+      "Set `spec.publishNotReadyAddresses: true` on the Service to expose latency headers"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      98,
+      74,
+      82
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q023",
+    "qIndex": 22,
+    "text": "A distributed application uses an Ingress controller, three microservices, and a database. Requests sometimes take over 10 seconds. Which observability practice helps identify which service introduces the latency?",
+    "options": [
+      "Distributed tracing with propagated trace context headers across all services",
+      "Increasing the log level to `DEBUG` on all pods and reading the logs",
+      "Adding `livenessProbe` checks with a 2-second timeout to every container",
+      "Creating a `NetworkPolicy` that logs all denied connections"
+    ],
+    "answer": 0,
+    "lengths": [
+      77,
+      68,
+      72,
+      59
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q024",
+    "qIndex": 23,
+    "text": "A team performs a canary deployment of a new version of their Service. They want 10% of traffic routed to the canary pods. The standard Kubernetes `Service` object load-balances equally across all endpoints. How can they achieve weighted routing?",
+    "options": [
+      "Set `spec.weight: 10` on the canary Deployment's Service annotation",
+      "Create a `NetworkPolicy` that limits 10% of connections to the canary pods",
+      "Scale the canary Deployment to 10% of the main Deployment's replica count",
+      "Use a service mesh or Ingress controller that supports traffic splitting with weight-based rules"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      74,
+      73,
+      96
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q025",
+    "qIndex": 24,
+    "text": "A Helm chart templates a `Service` and an `Ingress` resource. During `helm upgrade`, the team wants to switch from `ClusterIP` to `NodePort` without editing the template files. How should they pass this change?",
+    "options": [
+      "`helm upgrade <release> <chart> --set service.type=NodePort`",
+      "`kubectl patch svc <name> -p '{\"spec\":{\"type\":\"NodePort\"}}'` after the upgrade",
+      "`helm upgrade <release> <chart> --reuse-values --force`",
+      "`helm rollback <release> 0` and redeploy with the new type"
+    ],
+    "answer": 0,
+    "lengths": [
+      60,
+      78,
+      55,
+      58
+    ],
+    "avgLen": 63,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q026",
+    "qIndex": 25,
+    "text": "A developer deploys a `LoadBalancer` Service in a bare-metal cluster without a cloud provider. The Service remains in `Pending` state for the external IP. What is the most likely solution?",
+    "options": [
+      "Switch to a `NodePort` Service since bare-metal clusters cannot provision external load balancers",
+      "Restart the kube-controller-manager with the `--cloud-provider=external` flag",
+      "Install a bare-metal load balancer implementation such as MetalLB to allocate external IPs",
+      "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal`"
+    ],
+    "answer": 2,
+    "lengths": [
+      97,
+      77,
+      90,
+      76
+    ],
+    "avgLen": 85,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q027",
+    "qIndex": 26,
+    "text": "A pod defines `readinessProbe` on port 8080. When the probe fails, what happens to the pod's IP in the Service's Endpoints object?",
+    "options": [
+      "The pod is terminated and replaced by a new one",
+      "The pod's IP is removed from the Endpoints object so it stops receiving Service traffic",
+      "The Service switches to a different port automatically",
+      "kube-proxy doubles the health check frequency until the probe succeeds"
+    ],
+    "answer": 1,
+    "lengths": [
+      47,
+      87,
+      54,
+      70
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q028",
+    "qIndex": 27,
+    "text": "CoreDNS in a Kubernetes cluster is typically deployed as which kind of workload?",
+    "options": [
+      "A DaemonSet ensuring one pod per node",
+      "A StatefulSet with persistent storage",
+      "A Deployment with a corresponding ClusterIP Service",
+      "A static pod managed directly by the kubelet"
+    ],
+    "answer": 2,
+    "lengths": [
+      37,
+      37,
+      51,
+      44
+    ],
+    "avgLen": 42,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q029",
+    "qIndex": 28,
+    "text": "An administrator configures an Ingress resource with TLS termination. Where is the TLS certificate stored?",
+    "options": [
+      "In a `ConfigMap` in the same namespace as the Ingress",
+      "In the Ingress controller's container filesystem at `/etc/ssl/`",
+      "In a Kubernetes `Secret` of type `kubernetes.io/tls` referenced by the Ingress",
+      "In etcd directly, accessible only by the kube-apiserver"
+    ],
+    "answer": 2,
+    "lengths": [
+      53,
+      63,
+      78,
+      55
+    ],
+    "avgLen": 62,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q030",
+    "qIndex": 29,
+    "text": "A team configures a `NetworkPolicy` with an empty `podSelector: {}` in namespace `production`. What is the scope of this policy?",
+    "options": [
+      "It applies to all pods across all namespaces in the cluster",
+      "It applies only to pods without any labels in the `production` namespace",
+      "It applies to all pods in the `production` namespace",
+      "The policy is invalid and will be rejected by the API server"
+    ],
+    "answer": 2,
+    "lengths": [
+      59,
+      72,
+      52,
+      60
+    ],
+    "avgLen": 61,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q031",
+    "qIndex": 30,
+    "text": "A `NodePort` Service is created without specifying a port number. Which range does Kubernetes use to auto-assign the node port?",
+    "options": [
+      "80–443",
+      "1024–65535",
+      "30000–32767",
+      "49152–65535"
+    ],
+    "answer": 2,
+    "lengths": [
+      6,
+      10,
+      11,
+      11
+    ],
+    "avgLen": 10,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q032",
+    "qIndex": 31,
+    "text": "You create a Service with `spec.clusterIP: None`. When you perform a DNS lookup for the Service, what do you get?",
+    "options": [
+      "A single A record with the IP `0.0.0.0`",
+      "No DNS record is created for headless Services",
+      "A set of A records, one for each pod endpoint matched by the Service selector",
+      "A CNAME record pointing to the first ready pod"
+    ],
+    "answer": 2,
+    "lengths": [
+      39,
+      46,
+      77,
+      46
+    ],
+    "avgLen": 52,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q033",
+    "qIndex": 32,
+    "text": "Which Kubernetes component watches for Service and Endpoint changes and updates the forwarding rules on each node?",
+    "options": [
+      "kubelet",
+      "kube-scheduler",
+      "kube-controller-manager",
+      "kube-proxy"
+    ],
+    "answer": 3,
+    "lengths": [
+      7,
+      14,
+      23,
+      10
+    ],
+    "avgLen": 14,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q034",
+    "qIndex": 33,
+    "text": "An Ingress resource specifies `host: api.example.com` with a backend pointing to service `api-svc` on port 80. The Ingress controller is running, but requests to `api.example.com` return 404. Which is the most likely cause?",
+    "options": [
+      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`",
+      "The DNS record for `api.example.com` does not point to the Ingress controller's external IP",
+      "The Ingress controller does not support host-based routing",
+      "A `NetworkPolicy` is blocking traffic from the Ingress controller to `api-svc`"
+    ],
+    "answer": 1,
+    "lengths": [
+      70,
+      91,
+      58,
+      78
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q035",
+    "qIndex": 34,
+    "text": "Two containers in the same pod need to communicate. Which network interface do they share?",
+    "options": [
+      "They share the pod's network namespace and can communicate via `localhost`",
+      "They each get a separate IP and must use a Service to communicate",
+      "They communicate through a shared `emptyDir` volume only",
+      "The CNI plugin creates a virtual bridge between the two containers"
+    ],
+    "answer": 0,
+    "lengths": [
+      74,
+      65,
+      56,
+      66
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q036",
+    "qIndex": 35,
+    "text": "A Service of type `ClusterIP` has the annotation `service.kubernetes.io/topology-mode: Auto`. What behavior does this enable?",
+    "options": [
+      "Traffic is encrypted between zones automatically",
+      "kube-proxy prefers routing traffic to endpoints in the same topology zone as the client pod",
+      "The Service is replicated across multiple clusters",
+      "Pods are scheduled only in the zone with the most available resources"
+    ],
+    "answer": 1,
+    "lengths": [
+      48,
+      91,
+      50,
+      69
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q037",
+    "qIndex": 36,
+    "text": "An operator needs to expose a TCP service on port 3306 (MySQL) externally. The cluster is on AWS. Which Service configuration requests an internal-only AWS Network Load Balancer?",
+    "options": [
+      "Type `LoadBalancer` with annotation `service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"`",
+      "Type `NodePort` with annotation `service.beta.kubernetes.io/aws-load-balancer-type: nlb`",
+      "Type `ClusterIP` with `externalIPs` set to the VPC subnet range",
+      "Type `ExternalName` with `externalName` set to the NLB DNS name"
+    ],
+    "answer": 0,
+    "lengths": [
+      99,
+      88,
+      63,
+      63
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q038",
+    "qIndex": 37,
+    "text": "A pod's `/etc/resolv.conf` shows `nameserver 10.96.0.10`. What does this IP address typically represent?",
+    "options": [
+      "The IP of the node's local DNS cache",
+      "The kube-apiserver's ClusterIP",
+      "The ClusterIP of the `kube-dns` Service in `kube-system`",
+      "A hardcoded Google Public DNS address"
+    ],
+    "answer": 2,
+    "lengths": [
+      36,
+      30,
+      56,
+      37
+    ],
+    "avgLen": 40,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q039",
+    "qIndex": 38,
+    "text": "A platform engineer wants to attach a second network interface to a pod for a specialized VLAN. Which component enables this?",
+    "options": [
+      "kube-proxy configured with dual-stack support",
+      "Multus CNI, a meta-plugin that delegates to multiple CNI plugins",
+      "CoreDNS with a custom zone file for the VLAN",
+      "A dedicated `NetworkPolicy` with a VLAN selector"
+    ],
+    "answer": 1,
+    "lengths": [
+      45,
+      64,
+      44,
+      48
+    ],
+    "avgLen": 50,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q040",
+    "qIndex": 39,
+    "text": "After upgrading the CNI plugin, all new pods get stuck in `ContainerCreating` state. Existing pods still work. What should the engineer check first?",
+    "options": [
+      "Whether kube-proxy is running in IPVS mode instead of iptables",
+      "Whether the CNI binary and configuration files under `/etc/cni/net.d/` and `/opt/cni/bin/` are correctly installed",
+      "Whether the kubelet has the `--network-plugin=cni` flag removed",
+      "Whether CoreDNS pods are in `CrashLoopBackOff`"
+    ],
+    "answer": 1,
+    "lengths": [
+      62,
+      114,
+      63,
+      46
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q041",
+    "qIndex": 40,
+    "text": "A `NetworkPolicy` with `spec.policyTypes: [\"Ingress\", \"Egress\"]` is applied to `app: web` pods but defines no `ingress` or `egress` rules. What is the effect?",
+    "options": [
+      "All ingress and egress traffic to/from the selected pods is denied",
+      "All ingress and egress traffic is allowed because no explicit deny rules exist",
+      "Only egress is denied; ingress defaults to allow",
+      "The policy has no effect because it contains no rules"
+    ],
+    "answer": 0,
+    "lengths": [
+      66,
+      78,
+      48,
+      53
+    ],
+    "avgLen": 61,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q042",
+    "qIndex": 41,
+    "text": "In IPVS mode, kube-proxy creates a virtual server for each Service ClusterIP. What advantage does IPVS mode have over iptables mode for large clusters?",
+    "options": [
+      "IPVS supports TLS termination at the kernel level",
+      "IPVS uses hash-based data structures providing O(1) connection routing regardless of endpoint count",
+      "IPVS automatically encrypts traffic between nodes",
+      "IPVS eliminates the need for a CNI plugin"
+    ],
+    "answer": 1,
+    "lengths": [
+      49,
+      99,
+      49,
+      41
+    ],
+    "avgLen": 60,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q043",
+    "qIndex": 42,
+    "text": "An organization wants to implement network-level identity and segmentation for their Kubernetes workloads using eBPF, replacing kube-proxy entirely. Which CNCF project supports this kube-proxy replacement mode?",
+    "options": [
+      "Flannel",
+      "Calico with iptables dataplane",
+      "Cilium with its eBPF-based kube-proxy replacement",
+      "CoreDNS with endpoint slices"
+    ],
+    "answer": 2,
+    "lengths": [
+      7,
+      30,
+      49,
+      28
+    ],
+    "avgLen": 29,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q044",
+    "qIndex": 43,
+    "text": "A cloud native application uses a `ClusterIP` Service for internal communication and a `LoadBalancer` Service for external access. The team wants to add rate limiting. Where should this concern be implemented according to cloud native best practices?",
+    "options": [
+      "Inside each application container as middleware",
+      "As a `NetworkPolicy` rule that limits connections per second",
+      "At the Ingress controller or API gateway layer, external to the application",
+      "By setting resource `limits` on the pod to throttle CPU and therefore request rate"
+    ],
+    "answer": 2,
+    "lengths": [
+      47,
+      60,
+      75,
+      82
+    ],
+    "avgLen": 66,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q045",
+    "qIndex": 44,
+    "text": "A microservices architecture experiences cascading failures when the `inventory` service becomes slow. Requests back up in the `order` service. Which resilience pattern, typically implemented at the network layer by a service mesh, prevents this cascade?",
+    "options": [
+      "The timeout pattern, which limits how long the order service waits for a response",
+      "The circuit breaker pattern, which stops sending requests to a failing service after a threshold",
+      "The retry pattern, which sends the request again immediately on failure",
+      "The bulkhead pattern, which limits the number of pods in a Deployment"
+    ],
+    "answer": 1,
+    "lengths": [
+      81,
+      96,
+      71,
+      69
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q046",
+    "qIndex": 45,
+    "text": "Which CNCF project provides a standards-based API for configuring advanced traffic routing in Kubernetes, designed as the successor to the Ingress API?",
+    "options": [
+      "Envoy Gateway",
+      "Ambassador",
+      "Contour",
+      "Gateway API"
+    ],
+    "answer": 3,
+    "lengths": [
+      13,
+      10,
+      7,
+      11
+    ],
+    "avgLen": 10,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q047",
+    "qIndex": 46,
+    "text": "A cluster operator wants to alert when a Service has zero ready endpoints for more than 5 minutes. Which Prometheus metric best serves this use case?",
+    "options": [
+      "`kube_service_info` filtered by service name",
+      "`kube_endpoint_address_available` with a threshold of zero",
+      "`kube_endpoint_addresses_ready` (from kube-state-metrics) equal to zero for the Service",
+      "`container_network_receive_bytes_total` dropping to zero"
+    ],
+    "answer": 2,
+    "lengths": [
+      44,
+      58,
+      87,
+      56
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q048",
+    "qIndex": 47,
+    "text": "An SRE needs to correlate network connectivity issues with application errors. Pod logs show connection timeouts. Which additional data source provides the most useful network-level context?",
+    "options": [
+      "kube-proxy logs showing iptables rule updates and endpoint changes",
+      "The kube-scheduler logs showing pod placement decisions",
+      "The etcd audit log showing key-value store operations",
+      "The kubelet logs showing image pull progress"
+    ],
+    "answer": 0,
+    "lengths": [
+      66,
+      55,
+      53,
+      44
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q049",
+    "qIndex": 48,
+    "text": "A GitOps tool like Argo CD manages an Ingress resource in a Git repository. An engineer manually edits the Ingress via `kubectl edit`. What happens on the next Argo CD sync?",
+    "options": [
+      "Argo CD keeps the manual change and updates the Git repository to match",
+      "Argo CD detects drift and reverts the Ingress to match the Git-defined state",
+      "The manual change persists because Argo CD only manages resources at initial creation",
+      "Argo CD deletes the Ingress entirely and creates a new one"
+    ],
+    "answer": 1,
+    "lengths": [
+      71,
+      76,
+      85,
+      58
+    ],
+    "avgLen": 73,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q050",
+    "qIndex": 49,
+    "text": "A CI pipeline builds a new container image and needs to update a Kubernetes `Deployment` to use it. The cluster uses an Ingress to route traffic. Which approach ensures zero-downtime deployment?",
+    "options": [
+      "Delete the Deployment and recreate it with the new image tag",
+      "Use `kubectl set image deployment/<name> <container>=<new-image>` with a rolling update strategy configured",
+      "Scale the Deployment to zero, update the image, then scale back up",
+      "Edit the Ingress to point to a new Service while the old Deployment is still running"
+    ],
+    "answer": 1,
+    "lengths": [
+      60,
+      107,
+      66,
+      84
+    ],
+    "avgLen": 79,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q051",
+    "qIndex": 50,
+    "text": "A developer creates a Service with `spec.ports` containing `port: 80` and `targetPort: 8080`. A client pod sends a request to the Service's ClusterIP on port 80. Where does the traffic ultimately arrive?",
+    "options": [
+      "Port 80 on the backend pod",
+      "Port 8080 on the node running the backend pod",
+      "Port 8080 on the backend pod's container",
+      "Port 80 on the Ingress controller"
+    ],
+    "answer": 2,
+    "lengths": [
+      26,
+      45,
+      40,
+      33
+    ],
+    "avgLen": 36,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q052",
+    "qIndex": 51,
+    "text": "An engineer runs `kubectl get endpointslices` and notices an EndpointSlice for a Service with 1000 endpoints. What is the default maximum number of endpoints per EndpointSlice?",
+    "options": [
+      "100",
+      "1000",
+      "250",
+      "500"
+    ],
+    "answer": 0,
+    "lengths": [
+      3,
+      4,
+      3,
+      3
+    ],
+    "avgLen": 3,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q053",
+    "qIndex": 52,
+    "text": "A cluster administrator wants to restrict which external IPs can reach a `LoadBalancer` Service. Which Service field provides this capability?",
+    "options": [
+      "`spec.loadBalancerSourceRanges` set to allowed CIDR blocks",
+      "`spec.externalTrafficPolicy: Restricted`",
+      "`metadata.annotations.allowed-ips`",
+      "`spec.selector.sourceIP` matching the client ranges"
+    ],
+    "answer": 0,
+    "lengths": [
+      58,
+      40,
+      34,
+      51
+    ],
+    "avgLen": 46,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q054",
+    "qIndex": 53,
+    "text": "A `NetworkPolicy` allows ingress from pods labeled `role: frontend` to pods labeled `app: backend` on port 443. A pod labeled both `role: frontend` and `app: backend` sends traffic to another `app: backend` pod on port 443. Is this traffic allowed?",
+    "options": [
+      "No, because a pod cannot be both a source and destination of the same policy",
+      "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule",
+      "No, because the policy only allows traffic from pods that do not also carry the `app: backend` label",
+      "Yes, but only if an egress rule is also defined"
+    ],
+    "answer": 1,
+    "lengths": [
+      76,
+      90,
+      100,
+      47
+    ],
+    "avgLen": 78,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q055",
+    "qIndex": 54,
+    "text": "An Ingress resource specifies a `defaultBackend` pointing to `fallback-svc:80`. What is the purpose of this configuration?",
+    "options": [
+      "It serves as a health check endpoint for the Ingress controller",
+      "It redirects all HTTPS traffic to HTTP on port 80",
+      "It defines the primary backend that takes priority over all other rules",
+      "It routes requests that do not match any defined host or path rule to `fallback-svc`"
+    ],
+    "answer": 3,
+    "lengths": [
+      63,
+      49,
+      71,
+      84
+    ],
+    "avgLen": 67,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q056",
+    "qIndex": 55,
+    "text": "In a kubeadm-bootstrapped cluster, which component typically allocates the pod CIDR range for each node?",
+    "options": [
+      "The kube-apiserver during node registration",
+      "The kube-controller-manager's node IPAM controller",
+      "CoreDNS when it creates DNS records for the node",
+      "The kubelet when it joins the cluster"
+    ],
+    "answer": 1,
+    "lengths": [
+      43,
+      50,
+      48,
+      37
+    ],
+    "avgLen": 45,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q057",
+    "qIndex": 56,
+    "text": "A Service is configured with `spec.internalTrafficPolicy: Local`. What does this setting control?",
+    "options": [
+      "It forces the Service to use a `ClusterIP` from the local node's subnet",
+      "It prevents the Service from being accessible outside the current namespace",
+      "It configures kube-proxy to use iptables instead of IPVS for this Service",
+      "It restricts internal (pod-to-Service) traffic to endpoints on the same node as the client pod"
+    ],
+    "answer": 3,
+    "lengths": [
+      71,
+      75,
+      73,
+      94
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q058",
+    "qIndex": 57,
+    "text": "A pod specification includes `dnsPolicy: ClusterFirst`. The pod needs to resolve both cluster-internal service names and external hostnames like `example.com`. Which behavior results from this policy?",
+    "options": [
+      "Only cluster-internal names are resolved; external names fail",
+      "The pod uses the node's DNS settings exclusively, bypassing CoreDNS",
+      "Queries are sent to CoreDNS first, which forwards unresolved external names to upstream DNS servers",
+      "The pod alternates between CoreDNS and the node's DNS randomly"
+    ],
+    "answer": 2,
+    "lengths": [
+      61,
+      67,
+      99,
+      62
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q059",
+    "qIndex": 58,
+    "text": "Two `NetworkPolicy` objects exist in the same namespace: Policy A allows ingress from `app: web` on port 80, and Policy B allows ingress from `app: api` on port 443. Both select the same target pod `app: server`. What is the combined effect?",
+    "options": [
+      "Only Policy A takes effect because it was created first",
+      "Only Policy B takes effect because port 443 has higher priority",
+      "Both policies are merged additively — ingress from `web` on 80 AND from `api` on 443 are allowed",
+      "The policies conflict and all ingress is denied"
+    ],
+    "answer": 2,
+    "lengths": [
+      55,
+      63,
+      96,
+      47
+    ],
+    "avgLen": 65,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q060",
+    "qIndex": 59,
+    "text": "A pod uses `dnsConfig` to add a custom search domain `legacy.internal`. Combined with the default `ClusterFirst` DNS policy, what happens to DNS resolution?",
+    "options": [
+      "The custom search domain replaces all default cluster search domains",
+      "The custom search domain is appended to the default cluster search domains in the pod's `resolv.conf`",
+      "The `dnsConfig` is ignored because `ClusterFirst` always uses only cluster domains",
+      "The pod enters an error state because `dnsConfig` and `dnsPolicy` are mutually exclusive"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      101,
+      82,
+      88
+    ],
+    "avgLen": 85,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q061",
+    "qIndex": 60,
+    "text": "A cluster uses `EndpointSlices` instead of the legacy `Endpoints` resource. What primary scalability problem do `EndpointSlices` solve?",
+    "options": [
+      "They allow Services to span multiple clusters",
+      "They reduce the size of watch events by splitting large endpoint lists into smaller, independently updatable slices",
+      "They cache endpoint data on each node to avoid API server queries",
+      "They replace kube-proxy by routing traffic directly"
+    ],
+    "answer": 1,
+    "lengths": [
+      45,
+      115,
+      65,
+      51
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q062",
+    "qIndex": 61,
+    "text": "An operator wants pods of a network-intensive application to be spread across different failure zones to survive a zone outage. Which scheduling feature achieves this?",
+    "options": [
+      "`nodeSelector` with a specific zone label",
+      "`topologySpreadConstraints` with `topologyKey: topology.kubernetes.io/zone`",
+      "`affinity.podAffinity` with `topologyKey: kubernetes.io/hostname`",
+      "`tolerations` matching the zone taint"
+    ],
+    "answer": 1,
+    "lengths": [
+      41,
+      75,
+      65,
+      37
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q063",
+    "qIndex": 62,
+    "text": "A container runtime calls the CNI `ADD` operation when creating a pod sandbox. Which of the following is NOT a responsibility of the CNI plugin during this operation?",
+    "options": [
+      "Allocating an IP address from the node's pod CIDR",
+      "Creating a virtual ethernet (veth) pair and attaching one end to the pod network namespace",
+      "Programming kube-proxy iptables rules for the pod",
+      "Configuring routing so the pod can reach other pods"
+    ],
+    "answer": 2,
+    "lengths": [
+      49,
+      90,
+      49,
+      51
+    ],
+    "avgLen": 60,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q064",
+    "qIndex": 63,
+    "text": "A Calico cluster uses BGP peering with the physical network's top-of-rack routers. What advantage does this provide over VXLAN overlay mode?",
+    "options": [
+      "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation overhead",
+      "BGP peering encrypts all traffic between nodes using IPsec by default",
+      "BGP peering eliminates the need for kube-proxy entirely",
+      "BGP peering allows pods to use IPv6 addresses, which VXLAN does not support"
+    ],
+    "answer": 0,
+    "lengths": [
+      105,
+      69,
+      55,
+      75
+    ],
+    "avgLen": 76,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q065",
+    "qIndex": 64,
+    "text": "An application pod cannot resolve any DNS names. Running `nslookup kubernetes.default` from inside the pod fails. Which step should the engineer take first?",
+    "options": [
+      "Increase the pod's memory limit to allow DNS caching",
+      "Delete and recreate the pod's Service",
+      "Restart the kube-apiserver",
+      "Check that the CoreDNS pods are running and the `kube-dns` Service has endpoints"
+    ],
+    "answer": 3,
+    "lengths": [
+      52,
+      37,
+      26,
+      80
+    ],
+    "avgLen": 49,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q066",
+    "qIndex": 65,
+    "text": "A pod has `hostNetwork: true` set in its spec. How does this affect the pod's networking?",
+    "options": [
+      "The pod gets its own network namespace with a dedicated IP from the host's subnet",
+      "The pod is automatically assigned a `NodePort` Service",
+      "The pod can only communicate with other pods on the same node",
+      "The pod shares the node's network namespace and uses the node's IP address"
+    ],
+    "answer": 3,
+    "lengths": [
+      81,
+      54,
+      61,
+      74
+    ],
+    "avgLen": 68,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q068",
+    "qIndex": 67,
+    "text": "Which file system path on a Kubernetes node contains the CNI plugin configuration that the container runtime reads?",
+    "options": [
+      "`/var/lib/kubelet/cni/`",
+      "`/etc/kubernetes/cni/`",
+      "`/etc/cni/net.d/`",
+      "`/opt/cni/config/`"
+    ],
+    "answer": 2,
+    "lengths": [
+      23,
+      22,
+      17,
+      18
+    ],
+    "avgLen": 20,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q069",
+    "qIndex": 68,
+    "text": "A team designs a cloud native application where each component exposes its health via a `/healthz` endpoint. The Ingress controller routes traffic only to healthy instances. Which cloud native principle does this primarily exemplify?",
+    "options": [
+      "Infrastructure as Code",
+      "Observability and health signaling for self-healing systems",
+      "Immutable infrastructure",
+      "Event-driven architecture"
+    ],
+    "answer": 1,
+    "lengths": [
+      22,
+      59,
+      24,
+      25
+    ],
+    "avgLen": 33,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q070",
+    "qIndex": 69,
+    "text": "A Knative Serving deployment scales a Service to zero pods when there is no traffic, and scales up when a request arrives. What happens to the first request when pods are scaled to zero?",
+    "options": [
+      "The request is immediately rejected with a 503 error",
+      "Knative's activator component holds the request while a pod is being created, then forwards it",
+      "The request is queued in CoreDNS until the pod IP is available",
+      "The Ingress controller retries the request indefinitely until a pod appears"
+    ],
+    "answer": 1,
+    "lengths": [
+      52,
+      94,
+      62,
+      75
+    ],
+    "avgLen": 71,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q071",
+    "qIndex": 70,
+    "text": "Which CNCF project provides a lightweight service mesh focused on simplicity and minimal resource overhead, using a Rust-based micro-proxy instead of Envoy?",
+    "options": [
+      "Istio",
+      "Consul Connect",
+      "Linkerd",
+      "Open Service Mesh"
+    ],
+    "answer": 2,
+    "lengths": [
+      5,
+      14,
+      7,
+      17
+    ],
+    "avgLen": 11,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q072",
+    "qIndex": 71,
+    "text": "A development team splits a monolith into microservices. They notice that inter-service calls now add significant latency. Which networking optimization reduces the overhead of east-west traffic within the cluster?",
+    "options": [
+      "Running all microservices in a single pod to use `localhost`",
+      "Replacing all `ClusterIP` Services with `NodePort` Services",
+      "Setting all pod `dnsPolicy` to `None` to bypass DNS resolution",
+      "Using gRPC instead of REST for inter-service calls and enabling HTTP/2 connection multiplexing"
+    ],
+    "answer": 3,
+    "lengths": [
+      60,
+      59,
+      62,
+      94
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q073",
+    "qIndex": 72,
+    "text": "A network engineer wants to detect when a `NetworkPolicy` is misconfigured and blocking legitimate traffic. Which metric from kube-state-metrics is most useful?",
+    "options": [
+      "`kube_networkpolicy_labels` showing all policy labels",
+      "`kube_pod_status_phase` tracking pods stuck in `Pending`",
+      "`kube_pod_container_status_restarts_total` counting container restarts",
+      "There is no built-in metric; the engineer should use CNI-level flow logs or eBPF-based monitoring"
+    ],
+    "answer": 3,
+    "lengths": [
+      53,
+      56,
+      70,
+      97
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q074",
+    "qIndex": 73,
+    "text": "An SRE wants to capture all DNS queries made by pods in the cluster for security auditing. Where should they enable query logging?",
+    "options": [
+      "On the kube-apiserver by enabling the `--dns-audit-log` flag",
+      "In the `NetworkPolicy` resource by adding a `log: true` annotation",
+      "On each pod's application container by setting `DNS_LOG=true` environment variable",
+      "In the CoreDNS configuration by adding the `log` plugin to the Corefile"
+    ],
+    "answer": 3,
+    "lengths": [
+      60,
+      66,
+      82,
+      71
+    ],
+    "avgLen": 70,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q075",
+    "qIndex": 74,
+    "text": "A GitOps pipeline manages `NetworkPolicy` resources in Git. A new microservice is added but its `NetworkPolicy` is missing from the repository. In a cluster with default-deny policies, what happens to the new service?",
+    "options": [
+      "The service works normally because GitOps only manages Deployments, not NetworkPolicies",
+      "The service's pods cannot receive any traffic because no allow rule exists for them",
+      "The Ingress controller automatically creates a permissive NetworkPolicy",
+      "Argo CD generates a default allow-all policy for new workloads"
+    ],
+    "answer": 1,
+    "lengths": [
+      87,
+      83,
+      71,
+      62
+    ],
+    "avgLen": 76,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q076",
+    "qIndex": 75,
+    "text": "A pod spec sets `spec.hostname: myhost` and `spec.subdomain: mysubdomain`. A headless Service named `mysubdomain` exists in the same namespace. What stable DNS A record does this pod get?",
+    "options": [
+      "`myhost.mysubdomain.<namespace>.svc.cluster.local`",
+      "`mysubdomain.myhost.<namespace>.svc.cluster.local`",
+      "`myhost.<namespace>.pod.cluster.local`",
+      "`mysubdomain.<namespace>.svc.cluster.local` resolving to the pod IP only"
+    ],
+    "answer": 0,
+    "lengths": [
+      50,
+      50,
+      38,
+      72
+    ],
+    "avgLen": 53,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q077",
+    "qIndex": 76,
+    "text": "An application team has a `ClusterIP` Service that works correctly. They now need to make it accessible from outside the cluster without changing the Service type. Which approach works?",
+    "options": [
+      "Add an Ingress resource that routes external traffic to the `ClusterIP` Service",
+      "Manually assign a public IP to the `ClusterIP` using `kubectl patch`",
+      "Add a `readinessGate` to expose the Service externally",
+      "Set the `spec.externalIPs` field to the node's private IP and configure a `NodePort`"
+    ],
+    "answer": 0,
+    "lengths": [
+      79,
+      68,
+      54,
+      84
+    ],
+    "avgLen": 71,
+    "correctIsLongest": false
+  },
+  {
+    "id": "s03-q078",
+    "qIndex": 77,
+    "text": "An SRE notices that DNS lookups from pods occasionally take 5 seconds. The issue only affects queries that result in NXDOMAIN responses. What is the most likely cause in Linux-based clusters?",
+    "options": [
+      "CoreDNS is configured with too many upstream resolvers",
+      "kube-proxy's iptables rules throttle DNS traffic to prevent DDoS",
+      "The `ndots` setting in `resolv.conf` is set to 1, causing excessive external lookups",
+      "The Linux kernel's conntrack table races between simultaneous A and AAAA queries on the same UDP socket, dropping one"
+    ],
+    "answer": 3,
+    "lengths": [
+      54,
+      64,
+      84,
+      117
+    ],
+    "avgLen": 80,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q079",
+    "qIndex": 78,
+    "text": "A multi-tenant cluster needs to ensure that pods in namespace `tenant-a` cannot communicate with pods in namespace `tenant-b`. Which is the most effective approach?",
+    "options": [
+      "Create `ResourceQuotas` in each namespace to limit network bandwidth",
+      "Apply `NetworkPolicy` in each namespace with a default deny-all and then allow only within the same namespace",
+      "Set different `dnsPolicy` values for each namespace",
+      "Deploy separate CoreDNS instances per namespace"
+    ],
+    "answer": 1,
+    "lengths": [
+      68,
+      109,
+      51,
+      47
+    ],
+    "avgLen": 69,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q080",
+    "qIndex": 79,
+    "text": "A NodeLocal DNS Cache DaemonSet is deployed to improve DNS performance. How does it reduce load on CoreDNS?",
+    "options": [
+      "It replaces CoreDNS entirely with a more performant DNS server",
+      "It pre-populates all DNS records from etcd into node memory at startup",
+      "It bypasses the `kube-dns` Service and sends queries directly to the CoreDNS pod IP",
+      "It runs a local caching DNS agent on each node that serves cached responses and falls back to CoreDNS for cache misses"
+    ],
+    "answer": 3,
+    "lengths": [
+      62,
+      70,
+      83,
+      118
+    ],
+    "avgLen": 83,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q081",
+    "qIndex": 80,
+    "text": "A `LoadBalancer` Service on GKE shows two IP addresses: one in `status.loadBalancer.ingress[0].ip` and the ClusterIP. A pod inside the cluster sends a request to the external load balancer IP. Where is the request routed?",
+    "options": [
+      "To the cloud load balancer, which forwards it back into the cluster",
+      "To the kube-apiserver, which proxies it to the correct pod",
+      "The request fails because pods cannot reach external load balancer IPs",
+      "Directly to the Service endpoints via kube-proxy's hairpin rules, without leaving the cluster"
+    ],
+    "answer": 3,
+    "lengths": [
+      67,
+      58,
+      70,
+      93
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q082",
+    "qIndex": 81,
+    "text": "A team configures an Ingress with `ingressClassName: nginx`. The cluster has two Ingress controllers: one with class `nginx` and another with class `traefik`. What determines which controller processes this Ingress?",
+    "options": [
+      "The controller whose `IngressClass` resource name matches `nginx` processes the Ingress",
+      "Both controllers process it and the first to respond wins",
+      "The kube-apiserver assigns the Ingress to the controller with the least load",
+      "The controller installed first in the cluster has priority"
+    ],
+    "answer": 0,
+    "lengths": [
+      87,
+      57,
+      76,
+      58
+    ],
+    "avgLen": 70,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q083",
+    "qIndex": 82,
+    "text": "A Service has `spec.publishNotReadyAddresses: true`. What is the effect on the Endpoints/EndpointSlice for this Service?",
+    "options": [
+      "Only pods in `CrashLoopBackOff` are included in the Endpoints",
+      "Pods that have not yet passed their readiness probe are included in the Endpoints",
+      "The Service publishes the node IP addresses instead of pod IPs",
+      "The Service stops performing health checks on backend pods"
+    ],
+    "answer": 1,
+    "lengths": [
+      61,
+      81,
+      62,
+      58
+    ],
+    "avgLen": 66,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q084",
+    "qIndex": 83,
+    "text": "Which Kubernetes resource stores the mapping between a pod's IP address and the Service it belongs to, enabling kube-proxy to program forwarding rules?",
+    "options": [
+      "`ConfigMap`",
+      "`Secret`",
+      "`Endpoints` or `EndpointSlice`",
+      "`ServiceAccount`"
+    ],
+    "answer": 2,
+    "lengths": [
+      11,
+      8,
+      30,
+      16
+    ],
+    "avgLen": 16,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q085",
+    "qIndex": 84,
+    "text": "A developer sets `spec.ports[0].appProtocol: kubernetes.io/h2c` on a Service. What does this indicate to consuming infrastructure?",
+    "options": [
+      "The Service must use TLS 1.2 for all connections",
+      "kube-proxy will use HTTP/2 to communicate with the API server for this Service",
+      "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2",
+      "The backend pods speak cleartext HTTP/2 (h2c), allowing protocol-aware proxies to use HTTP/2 without TLS"
+    ],
+    "answer": 3,
+    "lengths": [
+      48,
+      78,
+      65,
+      104
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q086",
+    "qIndex": 85,
+    "text": "A cluster operator wants to implement dual-stack networking so pods receive both IPv4 and IPv6 addresses. Which configuration is required?",
+    "options": [
+      "Only the CNI plugin needs to be configured for dual-stack; no other changes are needed",
+      "The kube-apiserver, kube-controller-manager, kube-proxy, and CNI plugin must all be configured with dual-stack CIDRs",
+      "Dual-stack only works with IPVS mode; iptables mode does not support IPv6",
+      "Each pod must explicitly request an IPv6 address in its spec"
+    ],
+    "answer": 1,
+    "lengths": [
+      86,
+      116,
+      73,
+      60
+    ],
+    "avgLen": 84,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q087",
+    "qIndex": 86,
+    "text": "A `NodePort` Service is accessible on port 31000 from within the cluster but not from an external machine. Pods are healthy and endpoints are populated. What is the most likely external cause?",
+    "options": [
+      "kube-proxy is not running on the nodes",
+      "A firewall or security group rule is blocking inbound traffic on port 31000 to the node",
+      "The Service's `sessionAffinity` is set to `ClientIP`, blocking external clients",
+      "The CNI plugin does not support `NodePort` Services"
+    ],
+    "answer": 1,
+    "lengths": [
+      38,
+      87,
+      79,
+      51
+    ],
+    "avgLen": 64,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q088",
+    "qIndex": 87,
+    "text": "A pod uses `dnsPolicy: None` and provides custom `dnsConfig` with `nameservers: [\"8.8.8.8\"]`. Can this pod resolve cluster-internal Service names?",
+    "options": [
+      "Yes, because kube-proxy intercepts DNS queries regardless of the configured nameserver",
+      "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS",
+      "No, because the pod's DNS queries go to `8.8.8.8` which has no knowledge of cluster Services",
+      "No, because `dnsPolicy: None` disables all DNS resolution"
+    ],
+    "answer": 2,
+    "lengths": [
+      86,
+      75,
+      92,
+      57
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q089",
+    "qIndex": 88,
+    "text": "A `NetworkPolicy` specifies an `ipBlock` with `cidr: 10.0.0.0/8` and `except: [10.0.5.0/24]`. A connection from `10.0.5.15` attempts to reach the selected pods. Is it allowed?",
+    "options": [
+      "Yes, because `10.0.5.15` is within the `10.0.0.0/8` CIDR",
+      "No, because `10.0.5.15` falls within the `except` block `10.0.5.0/24`",
+      "Yes, because `except` only applies to egress rules",
+      "No, because `ipBlock` rules do not apply to private IP ranges"
+    ],
+    "answer": 1,
+    "lengths": [
+      56,
+      69,
+      50,
+      61
+    ],
+    "avgLen": 59,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q090",
+    "qIndex": 89,
+    "text": "A platform team implements a zero-trust network model in their Kubernetes cluster. Which combination of features best supports this model?",
+    "options": [
+      "Default-deny `NetworkPolicy`, mTLS between services via a service mesh, and identity-based authorization",
+      "`NodePort` Services with strong passwords and firewall rules on each node",
+      "`ResourceQuotas` to limit pod counts and `LimitRanges` for memory",
+      "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem`"
+    ],
+    "answer": 0,
+    "lengths": [
+      104,
+      73,
+      65,
+      68
+    ],
+    "avgLen": 78,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q091",
+    "qIndex": 90,
+    "text": "Which CNCF project provides network observability for Kubernetes by leveraging eBPF to generate flow logs and a service dependency map without requiring sidecar proxies?",
+    "options": [
+      "Prometheus",
+      "Thanos",
+      "Fluentd",
+      "Hubble (part of the Cilium project)"
+    ],
+    "answer": 3,
+    "lengths": [
+      10,
+      6,
+      7,
+      35
+    ],
+    "avgLen": 15,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q092",
+    "qIndex": 91,
+    "text": "A team deploys multiple microservices behind an Ingress with path-based routing. They need different timeout values for `/api` (30s) and `/uploads` (300s). Where should this configuration be set?",
+    "options": [
+      "In the CoreDNS configuration by adding per-path TTL values",
+      "In the `terminationGracePeriodSeconds` of each backend Deployment",
+      "On the `ClusterIP` Services backing each path",
+      "On the Ingress resource using controller-specific annotations for each path"
+    ],
+    "answer": 3,
+    "lengths": [
+      58,
+      65,
+      45,
+      75
+    ],
+    "avgLen": 61,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q093",
+    "qIndex": 92,
+    "text": "A cluster uses Prometheus to monitor networking. The metric `kubelet_http_requests_duration_seconds_bucket` shows increasing p99 latency for health checks. Which component is most likely under pressure?",
+    "options": [
+      "The kube-scheduler",
+      "The kubelet's HTTP server on the affected node",
+      "CoreDNS",
+      "The Ingress controller"
+    ],
+    "answer": 1,
+    "lengths": [
+      18,
+      46,
+      7,
+      22
+    ],
+    "avgLen": 23,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q094",
+    "qIndex": 93,
+    "text": "An Ingress controller propagates the `X-Request-ID` header to backend services. One backend does NOT forward this header when calling downstream services. What impact does this have on distributed tracing?",
+    "options": [
+      "No impact — tracing frameworks ignore `X-Request-ID` headers",
+      "The trace breaks at that service; downstream spans appear as separate, uncorrelated traces",
+      "The Ingress controller automatically re-injects the header for downstream calls",
+      "kube-proxy adds the missing header using iptables MARK rules"
+    ],
+    "answer": 1,
+    "lengths": [
+      60,
+      90,
+      79,
+      60
+    ],
+    "avgLen": 72,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q095",
+    "qIndex": 94,
+    "text": "A CI/CD pipeline deploys a new `NetworkPolicy` that accidentally blocks traffic between the frontend and backend services. The team uses Argo Rollouts for progressive delivery. How should they respond?",
+    "options": [
+      "Wait for the Argo Rollout to automatically detect the NetworkPolicy issue and roll back",
+      "Fix the NetworkPolicy in Git, push the change, and let the GitOps tool sync the correction",
+      "Delete all NetworkPolicies in the namespace to restore connectivity",
+      "Restart kube-proxy on all nodes to clear the faulty rules"
+    ],
+    "answer": 1,
+    "lengths": [
+      87,
+      90,
+      67,
+      57
+    ],
+    "avgLen": 75,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q096",
+    "qIndex": 95,
+    "text": "A blue/green deployment uses two Deployments (blue and green) with separate `ClusterIP` Services. An Ingress resource routes all traffic to the blue Service. To switch traffic to green, what change is needed?",
+    "options": [
+      "Update the Ingress backend to point to the green Service instead of the blue Service",
+      "Scale the blue Deployment to zero replicas",
+      "Delete the blue `ClusterIP` Service",
+      "Change the blue Service's selector to match the green pods"
+    ],
+    "answer": 0,
+    "lengths": [
+      84,
+      42,
+      35,
+      58
+    ],
+    "avgLen": 55,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q097",
+    "qIndex": 96,
+    "text": "A Helm chart includes a `NetworkPolicy` template that is conditionally rendered based on `{{ if .Values.networkPolicy.enabled }}`. The default `values.yaml` sets `networkPolicy.enabled: false`. An operator wants to deploy with the policy enabled. What is the correct command?",
+    "options": [
+      "`helm install <release> <chart> --set networkPolicy.enabled=true`",
+      "`helm install <release> <chart> --enable-network-policy`",
+      "`kubectl apply -f values.yaml --set networkPolicy.enabled=true`",
+      "`helm template <chart> | kubectl apply -f -`"
+    ],
+    "answer": 0,
+    "lengths": [
+      65,
+      56,
+      63,
+      44
+    ],
+    "avgLen": 57,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q098",
+    "qIndex": 97,
+    "text": "A Service's `spec.ipFamilyPolicy` is set to `PreferDualStack`. The cluster supports dual-stack. What ClusterIP addresses does this Service receive?",
+    "options": [
+      "Only an IPv4 ClusterIP",
+      "Only an IPv6 ClusterIP",
+      "Both an IPv4 and an IPv6 ClusterIP, with the primary family determined by the cluster's default",
+      "No ClusterIP — it becomes a headless Service"
+    ],
+    "answer": 2,
+    "lengths": [
+      22,
+      22,
+      95,
+      44
+    ],
+    "avgLen": 46,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q099",
+    "qIndex": 98,
+    "text": "An engineer creates an Ingress with multiple TLS entries, each specifying a different `secretName` for hosts `a.example.com` and `b.example.com`. How does the Ingress controller determine which certificate to present?",
+    "options": [
+      "It always presents the certificate from the first TLS entry",
+      "It selects the certificate based on the SNI (Server Name Indication) header in the TLS ClientHello",
+      "It combines all certificates into a single SAN certificate dynamically",
+      "It presents a self-signed certificate and lets the backend handle TLS"
+    ],
+    "answer": 1,
+    "lengths": [
+      59,
+      98,
+      70,
+      69
+    ],
+    "avgLen": 74,
+    "correctIsLongest": true
+  },
+  {
+    "id": "s03-q100",
+    "qIndex": 99,
+    "text": "A cluster administrator notices that the Endpoints object for a Service with 5000 pods is very large and causes slow API responses. Which feature should they ensure is enabled?",
+    "options": [
+      "Horizontal Pod Autoscaler to reduce the pod count",
+      "Pod topology spread constraints to distribute pods",
+      "`EndpointSlices`, which split endpoints into smaller objects for more efficient updates",
+      "`ServiceTopology` to filter endpoints by zone"
+    ],
+    "answer": 2,
+    "lengths": [
+      49,
+      50,
+      87,
+      45
+    ],
+    "avgLen": 58,
+    "correctIsLongest": true
+  }
+]

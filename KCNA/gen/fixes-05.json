@@ -1,0 +1,893 @@
+[
+  {
+    "id": "s05-q001",
+    "options": [
+      "Access is denied because a Role cannot be referenced by a ClusterRoleBinding",
+      "The user can list Pods across every namespace including `payments` in the cluster",
+      "The user can list Pods only in the `payments` namespace using the bound Role",
+      "The ClusterRoleBinding escalates the Role permissions to apply cluster-wide"
+    ]
+  },
+  {
+    "id": "s05-q002",
+    "options": [
+      "An ingress policy in `backend` with `namespaceSelector` for `web` and `podSelector` for `app: frontend`",
+      "An egress NetworkPolicy in `web` namespace with `podSelector` matching the label `app: api` on port 8443",
+      "An ingress NetworkPolicy in the `web` namespace selecting Pods matching `app: frontend` for this traffic",
+      "An egress NetworkPolicy in `backend` using `namespaceSelector` matching the `web` namespace on port 8443"
+    ]
+  },
+  {
+    "id": "s05-q003",
+    "options": [
+      "The container runs as root, overriding the pod-level security setting",
+      "The Pod is rejected at the admission stage with a security warning",
+      "The container fails to start with a `RunAsNonRoot` validation error",
+      "Kubernetes automatically remaps root UID to the nobody UID 65534"
+    ]
+  },
+  {
+    "id": "s05-q004",
+    "options": [
+      "During scheduling by the kube-scheduler component",
+      "During admission by the PodSecurity admission plugin",
+      "During the image pull phase by the node kubelet",
+      "At runtime enforcement by the container runtime"
+    ]
+  },
+  {
+    "id": "s05-q005",
+    "options": [
+      "Falco, which monitors runtime syscall activity in containers",
+      "Open Policy Agent, which evaluates admission control policies",
+      "cert-manager, which automates TLS certificate provisioning",
+      "Trivy, which scans container images for known vulnerabilities"
+    ]
+  },
+  {
+    "id": "s05-q006",
+    "options": [
+      "Tokens are always auto-mounted into Pods and they never expire in any version",
+      "Set `automountServiceAccountToken: true` in the Pod spec to get a long-lived token",
+      "Create a Secret of type `kubernetes.io/service-account-token` annotated with the SA name",
+      "Run `kubectl token create deployer` to generate an OIDC-based token for the account"
+    ]
+  },
+  {
+    "id": "s05-q007",
+    "options": [
+      "Create and delete Deployments across all namespaces in the cluster",
+      "Create and delete Deployments only in the `dev` namespace scope",
+      "Nothing, because ClusterRoles cannot be bound by namespace RoleBindings",
+      "Create Deployments in `dev` but delete them across all other namespaces"
+    ]
+  },
+  {
+    "id": "s05-q008",
+    "options": [
+      "Prometheus metrics scraping combined with custom alerting rules",
+      "Fluentd log aggregation paired with regex pattern matching",
+      "Jaeger distributed tracing along with detailed span analysis",
+      "Falco with custom rules that monitor container syscall events"
+    ]
+  },
+  {
+    "id": "s05-q009",
+    "options": [
+      "Set `readOnlyRootFilesystem: false` to allow container filesystem writes",
+      "Use an `initContainer` to pre-create all needed temporary file paths",
+      "Set `allowPrivilegeEscalation: true` to bypass filesystem restrictions",
+      "Mount an `emptyDir` volume at the path where temporary writes are needed"
+    ]
+  },
+  {
+    "id": "s05-q010",
+    "options": [
+      "Sign all images with cosign after pushing them to the container registry",
+      "Set `imagePullPolicy: Always` on all Pod specs across every namespace",
+      "Run a vulnerability scanner and fail the build on critical CVE findings",
+      "Deploy the image to a staging namespace first before promoting to production"
+    ]
+  },
+  {
+    "id": "s05-q011",
+    "options": [
+      "The Pods still receive a projected token volume from the kubelet by default",
+      "No token is mounted and API calls from the Pods fail with 401 Unauthorized",
+      "The kubelet injects a static token sourced from its local credential store",
+      "The Pods are rejected at the admission stage because no valid token exists"
+    ]
+  },
+  {
+    "id": "s05-q012",
+    "options": [
+      "Verify every request regardless of its source network location",
+      "Trust all traffic that originates from within the cluster network",
+      "Encrypt only external-facing traffic at the ingress gateway layer",
+      "Rely on network perimeter firewalls to handle all access control"
+    ]
+  },
+  {
+    "id": "s05-q013",
+    "options": [
+      "All Linux capabilities are granted to containers by the default runtime config",
+      "`CAP_NET_ADMIN` is granted because it is included in the runtime default list",
+      "The container runs with a default set that does not include `CAP_NET_ADMIN`",
+      "The kubelet adds all `NET_*` capabilities automatically to each new container"
+    ]
+  },
+  {
+    "id": "s05-q014",
+    "options": [
+      "The Pod is scheduled normally but the kubelet logs a warning event",
+      "The Pod is admitted because the `baseline` profile allows host networking",
+      "The Pod is rejected because `baseline` prohibits `hostNetwork: true`",
+      "The Pod spec is mutated by the controller to set `hostNetwork: false`"
+    ]
+  },
+  {
+    "id": "s05-q015",
+    "options": [
+      "Roles cannot grant any access permissions to Secret resources in a namespace",
+      "Bob can read all Secrets in `finance`, potentially exposing sensitive credentials",
+      "RoleBindings that reference Secret access require cluster-admin level approval",
+      "The `get` verb on Secrets only returns object metadata, not the actual data values"
+    ]
+  },
+  {
+    "id": "s05-q016",
+    "options": [
+      "Set `capabilities: { add: [NET_BIND_SERVICE] }` without dropping any others",
+      "Set `capabilities: { drop: [ALL], add: [NET_BIND_SERVICE] }` in the spec",
+      "Set `privileged: true` and then `capabilities: { drop: [ALL] }` combined",
+      "Set `capabilities: { drop: [NET_ADMIN, SYS_ADMIN] }` in the container spec"
+    ]
+  },
+  {
+    "id": "s05-q017",
+    "options": [
+      "mTLS encrypts traffic using stronger cipher suites than standard TLS",
+      "mTLS eliminates the need for network policies between mesh services",
+      "mTLS automatically rotates all secrets stored in the etcd data store",
+      "mTLS authenticates both client and server, not just the server side"
+    ]
+  },
+  {
+    "id": "s05-q018",
+    "options": [
+      "`None` — disables all audit logging for the matched resource",
+      "`Request` — logs the request metadata along with the request body",
+      "`Metadata` — logs request metadata without request or response body",
+      "`RequestResponse` — logs metadata plus request body and response body"
+    ]
+  },
+  {
+    "id": "s05-q019",
+    "options": [
+      "A Role and a RoleBinding in each individual namespace",
+      "A ClusterRole and a ClusterRoleBinding for the account",
+      "A ClusterRole and a RoleBinding in the SA's own namespace",
+      "A namespace-scoped Role and a cluster-level RoleBinding"
+    ]
+  },
+  {
+    "id": "s05-q020",
+    "options": [
+      "The Secret data may be stored in plaintext within the Git repository history",
+      "GitOps controllers are unable to apply Secret resources synced from Git repos",
+      "Environment variables are encrypted at rest by Kubernetes engine automatically",
+      "Secrets mounted as environment variables are visible only to the init container"
+    ]
+  },
+  {
+    "id": "s05-q021",
+    "options": [
+      "Basic authentication using a username and password pair",
+      "Bearer token sourced from a static token file on disk",
+      "OIDC tokens obtained from an external identity provider",
+      "Client certificate authentication using X.509 certificates"
+    ]
+  },
+  {
+    "id": "s05-q022",
+    "options": [
+      "A policy with `podSelector: {}` and an empty `ingress: []` array in the spec",
+      "A policy with `podSelector: {}`, `policyTypes: [Ingress]`, and no `ingress` field",
+      "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rule list",
+      "A policy with `podSelector: {}` and `ingress: [{from: []}]` allowing empty source"
+    ]
+  },
+  {
+    "id": "s05-q023",
+    "options": [
+      "`readOnlyRootFilesystem: true` — prevents writes to the container root filesystem",
+      "`runAsNonRoot: true` — ensures the container process does not run as UID zero root",
+      "`privileged: false` — disables privileged mode but does not block setuid escalation",
+      "`allowPrivilegeEscalation: false` — blocks setuid binaries from gaining privileges"
+    ]
+  },
+  {
+    "id": "s05-q024",
+    "options": [
+      "The `list` verb still returns all Secrets that exist in the namespace",
+      "The `get` verb can only retrieve the named `db-credentials` Secret",
+      "The `resourceNames` field is ignored when applied to Secret resources",
+      "The restriction applies to all resource types, not just the named one"
+    ]
+  },
+  {
+    "id": "s05-q025",
+    "options": [
+      "Enable TLS encryption on the etcd client connection endpoints",
+      "Set the `--etcd-encryption=true` flag on the node-level kubelet",
+      "Use the `kubectl create secret --encrypt` command-line flag",
+      "Configure an `EncryptionConfiguration` on the kube-apiserver"
+    ]
+  },
+  {
+    "id": "s05-q026",
+    "options": [
+      "Only the first RoleBinding created takes effect for user carol",
+      "The most restrictive Role takes precedence over all the others",
+      "Permissions from all bound Roles are combined additively together",
+      "Kubernetes returns an error for conflicting overlapping bindings"
+    ]
+  },
+  {
+    "id": "s05-q027",
+    "options": [
+      "The request is rejected with a 401 Unauthorized HTTP response status code",
+      "The request is forwarded to an external identity provider for authentication",
+      "The request inherits the `default` ServiceAccount permissions in the namespace",
+      "The request is processed as `system:anonymous` in `system:unauthenticated`"
+    ]
+  },
+  {
+    "id": "s05-q028",
+    "options": [
+      "A LimitRange resource that targets container security context settings",
+      "Pod Security Admission with the `restricted` profile on the namespace",
+      "A ResourceQuota configured to limit allowed seccomp profile types",
+      "A MutatingWebhookConfiguration that patches Pod security context"
+    ]
+  },
+  {
+    "id": "s05-q029",
+    "options": [
+      "DNS resolution works because NetworkPolicy does not affect DNS traffic",
+      "DNS resolution uses the node's resolver, fully bypassing the policy",
+      "DNS fails because UDP port 53 is not permitted by the egress rule",
+      "The kubelet resolves DNS on behalf of the Pod before the connection"
+    ]
+  },
+  {
+    "id": "s05-q030",
+    "options": [
+      "It acts as a validating admission webhook evaluating Rego policies",
+      "It runs as a sidecar in each Pod to intercept container syscalls",
+      "It modifies the kube-apiserver binary to add built-in policy checks",
+      "It replaces the RBAC system with attribute-based access control rules"
+    ]
+  },
+  {
+    "id": "s05-q031",
+    "options": [
+      "The Pod is created with the `default` ServiceAccount as a fallback",
+      "The Pod is created but remains in `Pending` until the SA is created",
+      "The kubelet creates the missing ServiceAccount resource automatically",
+      "The API server rejects the Pod creation request with a clear error"
+    ]
+  },
+  {
+    "id": "s05-q032",
+    "options": [
+      "Matching ClusterRole rules are automatically merged into the `admin` ClusterRole",
+      "It creates a new ClusterRole definition that overrides the built-in `admin` role",
+      "It grants admin-level permissions to all ServiceAccounts in every namespace",
+      "It merges the matching ClusterRole rules into the `cluster-admin` built-in role"
+    ]
+  },
+  {
+    "id": "s05-q033",
+    "options": [
+      "`apiserver_request_total` filtered with the HTTP code label `401`",
+      "`kubelet_http_requests_total` filtered with status label `denied`",
+      "`etcd_request_failed_total` tracking failed etcd store operations",
+      "`scheduler_binding_errors_total` tracking Pod scheduling errors"
+    ]
+  },
+  {
+    "id": "s05-q034",
+    "options": [
+      "Granting `cluster-admin` to all developers for convenient broad access",
+      "Using a single shared ServiceAccount for all Pods across the cluster",
+      "Creating namespace-scoped Roles with only the specific verbs needed",
+      "Disabling RBAC and using ABAC for simpler overall policy management"
+    ]
+  },
+  {
+    "id": "s05-q035",
+    "options": [
+      "In a ConfigMap referenced by `imagePullConfigMap` in the Pod specification",
+      "In the kubelet configuration file present on each individual worker node",
+      "In the container runtime config file under `/etc/containerd/creds.json`",
+      "In a `kubernetes.io/dockerconfigjson` Secret via `imagePullSecrets` field"
+    ]
+  },
+  {
+    "id": "s05-q036",
+    "options": [
+      "Yes, because the Pod label matches regardless of the source namespace",
+      "No, because `podSelector` only matches Pods in the policy's namespace",
+      "Yes, if the originating namespace has exactly the same namespace name",
+      "No, because NetworkPolicies block all cross-namespace traffic by rule"
+    ]
+  },
+  {
+    "id": "s05-q037",
+    "options": [
+      "A `nodeSelector` with `disk-encryption: enabled` on the Pod spec to match nodes",
+      "A Pod affinity rule that prefers co-location with `disk-encryption: enabled` Pods",
+      "A taint `disk-encryption=enabled:NoSchedule` applied to the eligible worker nodes",
+      "A PriorityClass with a high priority value assigned to the sensitive workload Pod"
+    ]
+  },
+  {
+    "id": "s05-q038",
+    "options": [
+      "Helm automatically encrypts all Secret values embedded in the chart package",
+      "Helm chart templates cannot include Kubernetes Secret resource definitions",
+      "The default values file may contain sensitive data visible to anyone with access",
+      "Public Helm repositories enforce RBAC-based access control on chart downloads"
+    ]
+  },
+  {
+    "id": "s05-q039",
+    "options": [
+      "gVisor provides hardware-level isolation using dedicated physical CPU cores",
+      "gVisor encrypts all container filesystem data at rest using built-in keys",
+      "gVisor intercepts syscalls in user-space, reducing host kernel attack surface",
+      "gVisor eliminates the need for Linux namespaces and cgroups for isolation"
+    ]
+  },
+  {
+    "id": "s05-q040",
+    "options": [
+      "Execute commands inside any Pod in any namespace via exec",
+      "Execute commands only in Pods that he originally created",
+      "View Pod execution logs across the entire cluster scope",
+      "Nothing, because `pods/exec` is not a valid subresource"
+    ]
+  },
+  {
+    "id": "s05-q041",
+    "options": [
+      "Kubernetes audit logs with the `RequestResponse` audit level",
+      "Container stdout and stderr logs from the affected Pod output",
+      "Prometheus time-series metrics tracking ConfigMap operations",
+      "Distributed tracing spans captured from the running application"
+    ]
+  },
+  {
+    "id": "s05-q042",
+    "options": [
+      "The projected token never expires regardless of Pod state",
+      "After 24 hours following the initial token issuance time",
+      "After the Pod terminates and its resources are cleaned up",
+      "After 1 hour, the default projected token expiration time"
+    ]
+  },
+  {
+    "id": "s05-q043",
+    "options": [
+      "Individual databases use inherently stronger encryption algorithms",
+      "Shared databases cannot be effectively secured with network policies",
+      "A breach in one service's database does not expose other services' data",
+      "Individual databases do not require any form of user authentication"
+    ]
+  },
+  {
+    "id": "s05-q044",
+    "options": [
+      "Receive a stream of Secret objects including full data as changes occur",
+      "Only receive notifications when Secrets change, not their actual data values",
+      "List all Secrets once at startup but never receive subsequent updates",
+      "Nothing, because `watch` is not a valid RBAC verb for Secret resources"
+    ]
+  },
+  {
+    "id": "s05-q045",
+    "options": [
+      "Immediately, because the volume is directly backed by the API server",
+      "Only after the Pod is manually restarted by an administrator or tool",
+      "After the kubelet sync period, which is up to a few minutes by default",
+      "Never, because Secrets mounted into running containers are immutable"
+    ]
+  },
+  {
+    "id": "s05-q046",
+    "options": [
+      "Peer TLS certificates for mutual authentication between etcd members",
+      "RBAC policies applied to etcd API endpoints for access restriction",
+      "IPsec tunnels established by the CNI plugin between cluster members",
+      "Kubernetes NetworkPolicies configured to target the etcd Pod traffic"
+    ]
+  },
+  {
+    "id": "s05-q047",
+    "options": [
+      "Use a long-lived token to reduce the frequency of credential rotation",
+      "Store the token in a ConfigMap instead of using a pipeline secret variable",
+      "Grant the ServiceAccount `cluster-admin` to simplify permission management",
+      "Use short-lived tokens from `kubectl create token` with limited expiration"
+    ]
+  },
+  {
+    "id": "s05-q048",
+    "options": [
+      "`admin` — grants read and write access to most namespace resources",
+      "`edit` — allows read and write access but excludes Roles and bindings",
+      "`view` — grants read-only access to resources across all namespaces",
+      "`cluster-admin` — grants full unrestricted access to every resource"
+    ]
+  },
+  {
+    "id": "s05-q049",
+    "options": [
+      "Immutable containers run faster than mutable ones, reducing exposure time",
+      "Immutable containers automatically encrypt their underlying filesystems",
+      "Attackers cannot install persistent backdoors since changes are lost on restart",
+      "Immutable containers do not need RBAC policies for access control purposes"
+    ]
+  },
+  {
+    "id": "s05-q050",
+    "options": [
+      "Set `privileged: true` on the container to grant all capabilities",
+      "Add `NET_BIND_SERVICE` to `capabilities.add` and keep dropping all",
+      "Change `runAsUser` to `0` to allow the process to run as root user",
+      "Remove the `capabilities` block entirely from the security context"
+    ]
+  },
+  {
+    "id": "s05-q051",
+    "options": [
+      "The RoleBinding is created and grants node deletion permissions within the `staging` namespace",
+      "The request is denied because the developer cannot escalate beyond their existing permissions",
+      "The RoleBinding is created but the `delete nodes` permission is silently ignored by the API",
+      "The API server automatically downgrades the referenced ClusterRole to a namespace-scoped Role"
+    ]
+  },
+  {
+    "id": "s05-q052",
+    "options": [
+      "In a fixed order: certificates first, then bearer tokens, then OIDC",
+      "The evaluation order is randomized differently for each request",
+      "All configured authenticators are tried; the first success is used",
+      "Only one authentication method can be configured and active at once"
+    ]
+  },
+  {
+    "id": "s05-q053",
+    "options": [
+      "UID 1000, because pod-level settings always take precedence over containers",
+      "UID 2000, because container-level settings override pod-level settings",
+      "An error occurs due to conflicting UID specifications in the Pod spec",
+      "The container runtime selects the UID based on what the image specifies"
+    ]
+  },
+  {
+    "id": "s05-q054",
+    "options": [
+      "All egress is denied because `Egress` is in `policyTypes` with no rules defined",
+      "All egress traffic is allowed because no explicit egress rules were specified",
+      "Egress is unaffected because only ingress rules were defined in this policy",
+      "Egress defaults to whatever the namespace-level default network policy allows"
+    ]
+  },
+  {
+    "id": "s05-q055",
+    "options": [
+      "It stores Secret data in a separate encrypted Git branch for secure access",
+      "It replaces Kubernetes Secrets with references to an external vault service",
+      "It base64-encodes Secret data twice for an additional layer of security",
+      "It encrypts data with a public key; only the in-cluster controller decrypts"
+    ]
+  },
+  {
+    "id": "s05-q056",
+    "options": [
+      "Review `kubectl get pods -o yaml` output manually each day for root usage",
+      "Configure a Prometheus alert rule on `kube_pod_container_status_running` labels",
+      "Use an OPA Gatekeeper constraint that audits existing Pods running as root",
+      "Enable verbose logging on the kubelet process to capture security context data"
+    ]
+  },
+  {
+    "id": "s05-q057",
+    "options": [
+      "The mounted Secret files immediately disappear from the running container",
+      "The Pod is immediately terminated by the kubelet due to missing Secret",
+      "The projected volume controller recreates the missing Secret automatically",
+      "Existing mounted data remains until the next kubelet sync, then Pod fails"
+    ]
+  },
+  {
+    "id": "s05-q058",
+    "options": [
+      "The user can only view Pods because `pods/exec` requires write access",
+      "The two rules conflict with each other and neither one takes effect",
+      "The user can execute commands inside Pods but cannot view Pod details",
+      "The user can view Pods and also execute commands inside them directly"
+    ]
+  },
+  {
+    "id": "s05-q059",
+    "options": [
+      "Tags are mutable and can be repointed to a different image; digests are immutable",
+      "Digests download significantly faster than tags when pulling from registries",
+      "Digests enable automatic vulnerability scanning during the image pull phase",
+      "Tags cannot be used when pulling images from private container registries"
+    ]
+  },
+  {
+    "id": "s05-q060",
+    "options": [
+      "Each microservice must implement its own TLS termination at the service level",
+      "The gateway cannot enforce per-service rate limiting on individual endpoints",
+      "Microservices behind the gateway are unable to use service mesh capabilities",
+      "If the gateway is compromised, all backend services are accessible unauthenticated"
+    ]
+  },
+  {
+    "id": "s05-q061",
+    "options": [
+      "No, because a NetworkPolicy only applies to Pods with the specified port actively open",
+      "Yes, the policy selects Pods by label regardless of which ports the container exposes",
+      "No, because the NetworkPolicy is only evaluated once at the time of Pod creation",
+      "Yes, but the NetworkPolicy forces port 443 to open on the Pod's network interface"
+    ]
+  },
+  {
+    "id": "s05-q062",
+    "options": [
+      "Kata runs containers in lightweight VMs, providing hardware-level isolation",
+      "Kata encrypts all container images at rest before allowing their execution",
+      "Kata replaces Linux namespaces with a proprietary isolation mechanism",
+      "Kata eliminates the need for enforcing Pod Security Standards on workloads"
+    ]
+  },
+  {
+    "id": "s05-q063",
+    "options": [
+      "Pod creation requests are rejected until the webhook endpoint becomes available",
+      "Pods are created normally by the API server, completely bypassing the webhook",
+      "The API server queues incoming requests and retries for 30 seconds on failure",
+      "The kube-controller-manager handles the admission in place of the failed webhook"
+    ]
+  },
+  {
+    "id": "s05-q064",
+    "options": [
+      "Create a Role with a deny rule for Secrets and allow rules for all other resources",
+      "Create a custom Role that explicitly lists each allowed resource excluding Secrets",
+      "Use the `resourceNames` field in the Role to exclude specific Secret object names",
+      "Set a namespace annotation that hides Secrets from non-admin users by convention"
+    ]
+  },
+  {
+    "id": "s05-q065",
+    "options": [
+      "That the container image has no known CVEs in its dependency layers",
+      "That the container image uses a read-only filesystem configuration",
+      "That the image was built and signed by a trusted entity or pipeline",
+      "That the container image is smaller than the registry size limit rule"
+    ]
+  },
+  {
+    "id": "s05-q066",
+    "options": [
+      "In the application container's stdout log stream for request data",
+      "In the kube-apiserver audit logs for API-level request tracking",
+      "In the CoreDNS query logs for service name resolution details",
+      "In the Istio proxy (Envoy) container's access logs for denials"
+    ]
+  },
+  {
+    "id": "s05-q067",
+    "options": [
+      "The ServiceAccount setting takes precedence and no token is mounted",
+      "An error is raised because of the conflicting automount settings",
+      "The Pod spec setting takes precedence and the token is mounted",
+      "The token is mounted into the Pod but it is expired immediately"
+    ]
+  },
+  {
+    "id": "s05-q068",
+    "options": [
+      "Yes, because DaemonSets are fully exempt from Pod Security Standards",
+      "No, the `restricted` profile prohibits mounting `hostPath` volumes",
+      "Yes, if the `hostPath` volumes are configured as read-only mounts",
+      "No, but mounting `hostPath` is allowed under the `baseline` profile"
+    ]
+  },
+  {
+    "id": "s05-q069",
+    "options": [
+      "The user can only impersonate ServiceAccounts within their own namespace",
+      "The user can act as any user or group, effectively gaining cluster-admin",
+      "The impersonate verb only works when combined with the `--dry-run` flag",
+      "Impersonation requests are logged but do not grant actual API permissions"
+    ]
+  },
+  {
+    "id": "s05-q070",
+    "options": [
+      "Roll back the canary to the previous version and stop routing new traffic",
+      "Increase the canary percentage to gather more data about the vulnerability",
+      "Apply a NetworkPolicy to block the canary Pods from all internet traffic",
+      "Patch the vulnerability directly in the production environment without rollback"
+    ]
+  },
+  {
+    "id": "s05-q071",
+    "options": [
+      "Kubernetes automatically isolates tenant namespaces at the API level",
+      "Node affinity rules that pin different tenants to separate worker nodes",
+      "Container runtime sandboxing with gVisor applied to each tenant's Pods",
+      "RBAC Roles and RoleBindings scoped to each individual tenant namespace"
+    ]
+  },
+  {
+    "id": "s05-q072",
+    "options": [
+      "Yes, because intra-cluster traffic between Pods is always allowed",
+      "No, because the egress rule only allows traffic to `10.0.0.0/8`",
+      "Yes, because NetworkPolicies do not affect cluster-internal traffic",
+      "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
+    ]
+  },
+  {
+    "id": "s05-q073",
+    "options": [
+      "A `nodeSelector` entry matching the `security: high` node label",
+      "A `toleration` matching the taint `security=high:NoSchedule`",
+      "A `nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution`",
+      "An annotation `scheduler.alpha.kubernetes.io/tolerations` on the Pod"
+    ]
+  },
+  {
+    "id": "s05-q074",
+    "options": [
+      "Cold-start Pods must re-authenticate and fetch Secrets, increasing startup latency",
+      "Secrets are automatically deleted from etcd whenever Pods scale down to zero replicas",
+      "Scale-to-zero disables RBAC for the namespace until a new Pod instance is launched",
+      "Functions cannot access the Kubernetes API during cold start initialization phases"
+    ]
+  },
+  {
+    "id": "s05-q075",
+    "options": [
+      "Disable all security alerts entirely to reduce the overall operational burden",
+      "Configure exemptions for system namespaces and tune alert thresholds properly",
+      "Move all system workloads to a separate dedicated cluster to avoid conflicts",
+      "Replace the automated monitoring with periodic manual security audit processes"
+    ]
+  },
+  {
+    "id": "s05-q076",
+    "options": [
+      "Only the standard CRUD verbs: `get`, `list`, `create`, `update`, `delete`",
+      "All current and future verbs including subresources like `pods/exec`",
+      "All current verbs on Pods but not on any Pod subresources like exec",
+      "An error because wildcard characters are not valid in the `verbs` field"
+    ]
+  },
+  {
+    "id": "s05-q077",
+    "options": [
+      "An HTTP 302 redirect response pointing to the external identity provider",
+      "A signed JWT containing the authenticated user's identity claim fields",
+      "An HTTP 200 with a `TokenReview` response containing user identity",
+      "An HTTP 200 response with a plain-text username string in the body"
+    ]
+  },
+  {
+    "id": "s05-q078",
+    "options": [
+      "The filesystem is encrypted with a key derived from group ID 2000 value",
+      "All files in mounted volumes are owned by GID 2000 and new files inherit it",
+      "Only processes running as GID 2000 can access the Pod network and volumes",
+      "The volume is mounted as read-only for any process not in the group 2000"
+    ]
+  },
+  {
+    "id": "s05-q079",
+    "options": [
+      "Secrets cannot be used across namespaces; it must exist in the Pod's namespace",
+      "The Secret name contains a typo preventing the kubelet from locating the resource",
+      "TLS-type Secrets require a special RBAC role to access from within Pod containers",
+      "The Pod's ServiceAccount does not have the required permission to read that Secret"
+    ]
+  },
+  {
+    "id": "s05-q080",
+    "options": [
+      "A vulnerability scanning framework specifically built for container images",
+      "A network policy engine for controlling service-to-service communications",
+      "A standard for issuing and verifying cryptographic identities to workloads",
+      "A secrets management system designed to replace native Kubernetes Secrets"
+    ]
+  },
+  {
+    "id": "s05-q081",
+    "options": [
+      "UID 0 (root) because no container-level setting is specified for it",
+      "UID 1000, inheriting from the `app` container's security context",
+      "UID 3000, inheriting from the pod-level `securityContext` setting",
+      "The UID defined in the sidecar's container image Dockerfile entry"
+    ]
+  },
+  {
+    "id": "s05-q082",
+    "options": [
+      "Environment variables are not encrypted by Kubernetes while in transit between components",
+      "Volume mounts automatically encrypt Secret data before writing it to the container disk",
+      "Environment variables are limited to 256 characters and cannot hold full Secret values",
+      "Env vars are visible in process listings, crash dumps, and logs; volume files are not"
+    ]
+  },
+  {
+    "id": "s05-q083",
+    "options": [
+      "DNS queries are restricted only to CoreDNS Pods in `kube-system`",
+      "UDP port 53 traffic is allowed to any Pod in any namespace scope",
+      "DNS queries are allowed to external DNS servers outside the cluster",
+      "UDP port 53 traffic is restricted only within the same namespace"
+    ]
+  },
+  {
+    "id": "s05-q085",
+    "options": [
+      "Access to Pod health check endpoints and metrics scraping targets",
+      "Access to health check resources across all namespaces in the cluster",
+      "Access to the API server's `/healthz` and `/metrics` HTTP endpoints",
+      "Nothing, because `nonResourceURLs` is not a valid field in RBAC rules"
+    ]
+  },
+  {
+    "id": "s05-q086",
+    "options": [
+      "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
+      "The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
+      "No label is needed because namespaces are matched by their name automatically",
+      "A custom label matching the `namespaceSelector` in the policy, such as `name: app`"
+    ]
+  },
+  {
+    "id": "s05-q087",
+    "options": [
+      "The update succeeds but triggers an automatic Pod restart cycle",
+      "The Secret is versioned and both old and new values coexist together",
+      "The `immutable` field is advisory only and does not enforce any restriction",
+      "The update is rejected by the API server because the Secret is immutable"
+    ]
+  },
+  {
+    "id": "s05-q088",
+    "options": [
+      "It reverts the Secret to the Git-defined state, overwriting the manual change",
+      "It ignores Secrets because they are excluded from reconciliation by default",
+      "It creates a new Secret resource alongside the one that was manually modified",
+      "It raises an alert to administrators but does not modify the cluster state"
+    ]
+  },
+  {
+    "id": "s05-q089",
+    "options": [
+      "Completed Pods are immediately removed from the cluster after job finishes",
+      "Completed Pods have their mounted volumes automatically encrypted at rest",
+      "Env vars and volume mounts with sensitive data remain accessible via kubectl",
+      "Completed Pods cannot be inspected or queried by any user in the cluster"
+    ]
+  },
+  {
+    "id": "s05-q090",
+    "options": [
+      "Run a vulnerability scan on the existing blue environment containers first",
+      "Verify green environment images are signed and pass security policy checks",
+      "Disable all NetworkPolicies during the blue-green transition period window",
+      "Grant cluster-admin access to the deployment pipeline service temporarily"
+    ]
+  },
+  {
+    "id": "s05-q091",
+    "options": [
+      "Provisioning and renewing TLS certificates from issuers like Let's Encrypt",
+      "Managing RBAC certificates used for user authentication to the API server",
+      "Encrypting etcd data at rest using X.509 certificates and key management",
+      "Scanning container images for expired or misconfigured SSL certificates"
+    ]
+  },
+  {
+    "id": "s05-q092",
+    "options": [
+      "The drain proceeds regardless of the PDB configuration and evicts the Pod",
+      "The drain is blocked until another replica is available or the PDB is changed",
+      "The Pod is live-migrated transparently to another available node in the cluster",
+      "The PDB is automatically adjusted by the controller to allow the drain to proceed"
+    ]
+  },
+  {
+    "id": "s05-q093",
+    "options": [
+      "The Pod is created with the cluster default runtime class applied",
+      "The Pod is rejected by the configured validating admission webhook",
+      "The webhook mutates the Pod spec to add a default runtime class value",
+      "The Pod enters a pending state until a runtime class value is assigned"
+    ]
+  },
+  {
+    "id": "s05-q094",
+    "options": [
+      "Traces encrypt sensitive data in transit between communicating services",
+      "Traces replace audit logs entirely for regulatory compliance purposes",
+      "Traces automatically block requests detected as malicious in real time",
+      "Traces show the full request path, helping identify compromised services"
+    ]
+  },
+  {
+    "id": "s05-q095",
+    "options": [
+      "It maps a JWT claim to Kubernetes groups for use in RBAC policies",
+      "It specifies which OIDC scope to request from the identity provider",
+      "It creates Kubernetes Group resources as objects in the API server",
+      "It restricts which groups are allowed to access the cluster at all"
+    ]
+  },
+  {
+    "id": "s05-q096",
+    "options": [
+      "Hardcode the token in the application source code and redeploy it monthly",
+      "Store the token in a ConfigMap for easier updates by the operations team",
+      "Use an external secrets operator to sync the token from a vault automatically",
+      "Create a new namespace for each monthly token rotation from the payment provider"
+    ]
+  },
+  {
+    "id": "s05-q097",
+    "options": [
+      "Only `app-config` is returned when the user runs the list command in that namespace",
+      "The request is forbidden because `list` is not granted and `resourceNames` needs it",
+      "All ConfigMaps are returned because the `get` verb implicitly includes `list` access",
+      "An empty list is returned because the `list` verb was not explicitly granted by Role"
+    ]
+  },
+  {
+    "id": "s05-q098",
+    "options": [
+      "That the container image has no known vulnerabilities in its layers",
+      "That the image meets size and format requirements for the registry",
+      "That the container image uses a non-root user in its configuration",
+      "That the image was signed by a trusted publisher and is untampered"
+    ]
+  },
+  {
+    "id": "s05-q099",
+    "options": [
+      "The `lookup` function caches Secret data in the Helm release Secret object",
+      "The user running `helm install` must have RBAC permissions to read Secrets",
+      "`lookup` functions are disabled by default in all Helm 3 chart templates",
+      "The `lookup` function only reads Secret metadata fields, not actual data"
+    ]
+  },
+  {
+    "id": "s05-q100",
+    "options": [
+      "The ClusterRoleBinding is created successfully without any restriction or warning",
+      "The request is denied because the ServiceAccount cannot escalate its permissions",
+      "The pipeline execution pauses and waits for a manual approval step to continue",
+      "The ClusterRoleBinding is created but marked as pending administrative review"
+    ]
+  }
+]

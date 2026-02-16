@@ -405,7 +405,7 @@ var questions = [
     id: "s01-q026",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "A DevOps team is writing Kubernetes manifests and needs to understand the required fields. Every Kubernetes object manifest must include certain top-level fields. Which set of fields is mandatory in every Kubernetes resource manifest?",
+    text: "A DevOps team is writing Kubernetes manifests for workload resources like Deployments and Services. Which set of top-level fields is mandatory in most Kubernetes resource manifests?",
     diagram: null,
     options: [
       "`apiVersion`, `kind`, `metadata`, and `spec`",
@@ -414,7 +414,7 @@ var questions = [
       "`apiVersion`, `kind`, `name`, and `labels`"
     ],
     answer: 0,
-    explanation: "Every Kubernetes resource manifest requires `apiVersion` (the API group and version), `kind` (the type of resource), `metadata` (including at minimum a name), and `spec` (the desired state specification). The `status` field is managed by Kubernetes and should not be set by users. `name` and `labels` go inside `metadata`, not at the top level. `version` and `type` are not valid top-level Kubernetes manifest fields.",
+    explanation: "Most Kubernetes resource manifests require `apiVersion` (the API group and version), `kind` (the type of resource), `metadata` (including at minimum a name), and `spec` (the desired state specification). Note that some resources like ConfigMap and Secret use `data` instead of `spec`. The `status` field is managed by Kubernetes and should not be set by users. `name` and `labels` go inside `metadata`, not at the top level. `version` and `type` are not valid top-level Kubernetes manifest fields.",
     verify: null
   },
   {
@@ -606,7 +606,7 @@ var questions = [
       "`inventory-api` or the FQDN `.svc` suffix"
     ],
     answer: 3,
-    explanation: "Within the same namespace, a Service can be reached using just its name (`inventory-api`). The fully qualified domain name (FQDN) follows the pattern `<service-name>.<namespace>.svc.cluster.local`. So `inventory-api.production.svc.cluster.local` is the FQDN. The first option incorrectly uses `pod` instead of `svc`. The third option reverses the namespace and service name order. The fourth option omits the namespace and `svc` components.",
+    explanation: "Within the same namespace, a Service can be reached using just its name (`inventory-api`). The fully qualified domain name (FQDN) follows the pattern `<service-name>.<namespace>.svc.cluster.local`. So `inventory-api.production.svc.cluster.local` is the FQDN. The first option incorrectly uses `pod` instead of `svc`. The second option (`inventory-api.cluster.local`) omits the namespace and `svc` components, making it an invalid DNS name for Kubernetes Services. The third option reverses the namespace and service name order.",
     verify: "microk8s kubectl get svc -n production 2>/dev/null || echo 'namespace may not exist yet'"
   },
   {
@@ -1035,10 +1035,10 @@ var questions = [
       "`kubectl get pods -l app=frontend,tier!=api`",
       "`kubectl get pods -l app=frontend OR tier!=api`",
       "`kubectl get pods --labels app=frontend --no tier`",
-      "`kubectl get pods -l app=frontend -l tier!=api`"
+      "`kubectl get pods -l app=frontend --exclude tier=api`"
     ],
     answer: 0,
-    explanation: "The `-l` flag supports both equality-based (`app=frontend`) and inequality-based (`tier!=api`) selectors, separated by commas for AND logic. The comma means both conditions must be true. There is no `OR` operator in label selectors. The `--labels` and `--exclude` flags do not exist. Specifying `-l` twice would result in only the last value being used, not an AND combination.",
+    explanation: "The `-l` flag supports both equality-based (`app=frontend`) and inequality-based (`tier!=api`) selectors, separated by commas for AND logic. The comma means both conditions must be true. There is no `OR` operator in label selectors. The `--labels` and `--exclude` flags do not exist in kubectl for label filtering.",
     verify: "microk8s kubectl get pods -l app=frontend,tier!=api --all-namespaces 2>/dev/null"
   },
   {
@@ -1054,7 +1054,7 @@ var questions = [
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
     ],
     answer: 1,
-    explanation: "Kubernetes assigns a Quality of Service (QoS) class based on resource requests and limits. When `requests` equals `limits` for all containers, the Pod receives the `Guaranteed` QoS class, making it the last to be evicted during resource pressure. Pods with `Burstable` or `BestEffort` QoS are evicted first. Priority affects scheduling preemption but not kubelet eviction order. `terminationGracePeriodSeconds` only affects the shutdown process. The mentioned annotation does not exist.",
+    explanation: "Kubernetes assigns a Quality of Service (QoS) class based on resource requests and limits. When `requests` equals `limits` for all containers, the Pod receives the `Guaranteed` QoS class, making it the last to be evicted during resource pressure. Pods with `Burstable` or `BestEffort` QoS are evicted first. While Pod priority can influence eviction order within the same QoS class, the QoS class itself is the primary factor the kubelet considers during eviction, making Guaranteed QoS the strongest protection. `terminationGracePeriodSeconds` only affects the shutdown process. The mentioned annotation does not exist.",
     verify: "microk8s kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{\"\\t\"}{.status.qosClass}{\"\\n\"}{end}' --all-namespaces 2>/dev/null"
   },
   {
