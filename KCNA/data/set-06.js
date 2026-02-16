@@ -1327,7 +1327,7 @@ var questions = [
     ],
     answer: 2,
     explanation: "The pod eviction timeout (default 5 minutes) determines how long the node lifecycle controller waits after a node becomes `NotReady` before evicting its Pods. This grace period accounts for transient network issues and prevents unnecessary Pod disruption. Note: the `--pod-eviction-timeout` flag was deprecated and removed in Kubernetes 1.27+. In modern clusters, eviction is controlled via NoExecute taints applied automatically to NotReady nodes and the `tolerationSeconds` field on Pod tolerations (default 300s).",
-    verify: "kubectl -n kube-system get pod kube-controller-manager-<node> -o yaml | grep eviction"
+    verify: null
   },
   {
     id: "s06-q084",

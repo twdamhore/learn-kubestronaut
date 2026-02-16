@@ -142,7 +142,7 @@ var questions = [
       "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
     ],
     answer: 2,
-    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.28, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.28+, omitting `-c` defaults to the first container in the pod spec, but using `-c` explicitly is the recommended practice for clarity and correctness.",
+    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.24, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.24+, omitting `-c` defaults to the first container in the pod spec (GA since 1.27), but using `-c` explicitly is the recommended practice for clarity and correctness.",
     verify: "kubectl logs <pod-name> -c app --tail=20"
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "A resource in the chart (e.g., Service or ConfigMap) already exists in the namespace from a previous manual or Helm deployment"
     ],
     answer: 3,
-    explanation: "Helm refuses to install when it finds existing resources that match what the chart would create, to avoid overwriting unmanaged resources. This commonly happens when resources were created manually with `kubectl apply` or by another Helm release. You can either delete the conflicting resources first, or use `helm install --replace` or adopt the resources into the new release.",
+    explanation: "Helm refuses to install when it finds existing resources that match what the chart would create, to avoid overwriting unmanaged resources. This commonly happens when resources were created manually with `kubectl apply` or by another Helm release. You can either delete the conflicting resources first, use `helm upgrade --install` to adopt them, or annotate the existing resources with `meta.helm.sh/release-name` and `meta.helm.sh/release-namespace` plus label `app.kubernetes.io/managed-by: Helm` to adopt them into the new release.",
     verify: "helm list -A"
   },
   {

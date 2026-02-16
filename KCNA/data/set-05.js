@@ -1083,7 +1083,7 @@ var questions = [
       "Yes, because DaemonSets are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
-      "No, but mounting `hostPath` is allowed under the `baseline` profile"
+      "No, but `hostPath` volumes are allowed under the `baseline` profile as long as `readOnly: true` is set"
     ],
     answer: 1,
     explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. Note that the baseline profile does permit hostPath volumes. For log collectors requiring host access, the namespace must use the baseline profile or the Pods must be exempted from the restricted profile.",
@@ -1189,7 +1189,7 @@ var questions = [
     id: "s05-q075",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "A security team receives excessive alerts from the cluster's monitoring system about Pod security policy violations. Many are false positives from system workloads. What is the recommended approach to reduce noise?",
+    text: "A security team receives excessive alerts from the cluster's monitoring system about Pod Security Standards violations. Many are false positives from system workloads. What is the recommended approach to reduce noise?",
     diagram: null,
     options: [
       "Disable all security alerts entirely to reduce the overall operational burden",
@@ -1374,7 +1374,7 @@ var questions = [
       "No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without using labels"
     ],
     answer: 2,
-    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. While Kubernetes 1.22+ adds the `kubernetes.io/metadata.name` label automatically, in general the `app` namespace must have a label that matches the selector defined in the NetworkPolicy's ingress `from` block.",
+    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. Since Kubernetes 1.22+, every namespace automatically gets the `kubernetes.io/metadata.name` label matching its name, so that auto-label is guaranteed and can be used in selectors. However, the question asks about a custom label beyond the auto-assigned one — if the NetworkPolicy's `namespaceSelector` uses a custom label (e.g., `name: app`), the `app` namespace must have that label applied manually.",
     verify: "kubectl get ns app --show-labels"
   },
   {
@@ -1545,7 +1545,7 @@ var questions = [
     diagram: null,
     options: [
       "Only `app-config` is returned when the user runs the list command in that namespace",
-      "The request is forbidden because `list` is not granted and `resourceNames` needs it",
+      "The request is forbidden because the Role only grants `get` on specific names, but `kubectl get configmaps` without a name requires the `list` verb, which is not granted",
       "All ConfigMaps are returned because the `get` verb implicitly includes `list` access",
       "An empty list is returned because the `list` verb was not explicitly granted by Role"
     ],

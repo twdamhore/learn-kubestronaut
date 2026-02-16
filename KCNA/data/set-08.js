@@ -736,7 +736,7 @@ var questions = [
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
     ],
     answer: 0,
-    explanation: "When a node becomes `NotReady` and the eviction timeout elapses, the node controller taints the node with `node.kubernetes.io/unreachable:NoExecute`, which triggers Pod eviction. Pods are marked as `Terminating`, and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.",
+    explanation: "When a node becomes `NotReady` after the node-monitor-grace-period (default 40s), the node controller almost immediately applies the `node.kubernetes.io/unreachable:NoExecute` taint. Once the taint is applied, each Pod's `tolerationSeconds` (default 300s) countdown begins. When that timer expires, the Pod is evicted — marked as `Terminating` — and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.",
     verify: "kubectl get nodes"
   },
   {

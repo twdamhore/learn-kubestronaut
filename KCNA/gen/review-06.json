@@ -1,7 +1,16 @@
 {
   "set": "06",
-  "round": 7,
+  "round": 8,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s06-q083",
+      "type": "bad_verify",
+      "severity": "low",
+      "what": "Verify command will not produce useful output on K8s 1.29+",
+      "detail": "The verify command `kubectl -n kube-system get pod kube-controller-manager-<node> -o yaml | grep eviction` greps for 'eviction' in the kube-controller-manager pod spec. The `--pod-eviction-timeout` flag was removed in Kubernetes 1.27, so on K8s 1.29+ clusters this grep returns nothing. The explanation correctly documents the deprecation and modern mechanism (NoExecute taints + tolerationSeconds), but the verify command does not match the current behavior.",
+      "fix": "Change verify to: `kubectl get pod -n kube-system -l component=kube-controller-manager -o yaml | grep -E 'node-monitor|taint'` or set verify to null since the flag no longer exists in K8s 1.29+."
+    }
+  ]
 }

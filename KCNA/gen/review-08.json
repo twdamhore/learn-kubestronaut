@@ -1,16 +1,16 @@
 {
   "set": "08",
-  "round": 7,
+  "round": 8,
   "total_reviewed": 100,
   "issues_found": 1,
   "issues": [
     {
       "id": "s08-q046",
-      "type": "ambiguous",
+      "type": "wrong_explanation",
       "severity": "minor",
-      "what": "Question text references deprecated `pod-eviction-timeout` flag which was removed in Kubernetes 1.27",
-      "detail": "The question says 'after the `pod-eviction-timeout` (default 5 minutes) expires'. In Kubernetes 1.29+ (the target version per review guidelines), the `--pod-eviction-timeout` kube-controller-manager flag no longer exists. The eviction mechanism is now purely taint-based: the node controller applies `node.kubernetes.io/unreachable:NoExecute` and pods have a default toleration of 300 seconds (5 minutes) via `--default-unreachable-toleration-seconds` on the API server. The answer (index 0) and explanation are correct (they describe taint-based eviction), but the question text uses legacy terminology that could confuse candidates studying for K8s 1.29+ exams.",
-      "suggestion": "Reword the question text to reference the taint-based eviction mechanism instead. For example: 'After a network partition isolates a worker node from the control plane, the node controller marks the node as `NotReady` and applies a `node.kubernetes.io/unreachable:NoExecute` taint. Pods tolerate this taint for 300 seconds by default. What happens to the Pods running on that node after this toleration period expires?'"
+      "what": "Explanation still uses legacy 'eviction timeout' phrasing that conflicts with the corrected question text",
+      "detail": "The question text (correctly fixed in round 7) now describes the taint-based eviction mechanism: the node controller applies 'node.kubernetes.io/unreachable:NoExecute' and Pods have 'tolerationSeconds (default 300 seconds)'. However, the explanation still says 'when the eviction timeout elapses, the node controller taints the node with node.kubernetes.io/unreachable:NoExecute'. This reverses the actual sequence. In Kubernetes 1.29+, the node controller applies the NoExecute taint almost immediately after the node-monitor-grace-period (default 40s). It is then the Pod's tolerationSeconds (default 300s, injected by the DefaultTolerationSeconds admission controller) that governs when the Pod is evicted — not an 'eviction timeout' on the controller side. The answer (index 0) is correct but the explanation's causal chain is slightly wrong.",
+      "suggestion": "Replace the explanation with: 'When a node becomes NotReady, the node controller quickly applies a node.kubernetes.io/unreachable:NoExecute taint. All Pods without a matching toleration are evicted immediately. Pods created by controllers like Deployments automatically receive a toleration with tolerationSeconds: 300 (injected by the DefaultTolerationSeconds admission plugin). Once that 300-second grace period expires, the Pod is marked Terminating and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.'"
     }
   ]
 }

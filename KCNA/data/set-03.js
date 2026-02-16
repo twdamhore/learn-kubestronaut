@@ -638,7 +638,7 @@ var questions = [
       "Whether CoreDNS pods are in `CrashLoopBackOff` and unable to resolve pod DNS registrations"
     ],
     answer: 1,
-    explanation: "When new pods fail at `ContainerCreating`, the most common cause after a CNI upgrade is missing or misconfigured CNI binaries (`/opt/cni/bin/`) or config files (`/etc/cni/net.d/`). Existing pods retain their network setup. kube-proxy mode does not affect pod creation. The `--network-plugin` flag was deprecated in newer kubelet versions. CoreDNS issues would cause DNS failures, not pod creation failures.",
+    explanation: "When new pods fail at `ContainerCreating`, the most common cause after a CNI upgrade is missing or misconfigured CNI binaries (`/opt/cni/bin/`) or config files (`/etc/cni/net.d/`). Existing pods retain their network setup. kube-proxy mode does not affect pod creation. The `--network-plugin` flag was removed in Kubernetes 1.24 along with dockershim; in current versions the kubelet has no such flag. CoreDNS issues would cause DNS failures, not pod creation failures.",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
