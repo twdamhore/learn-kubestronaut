@@ -373,7 +373,7 @@ var questions = [
     id: "s05-q024",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "An RBAC policy uses the `resourceNames` field to restrict a Role to only access a specific Secret called `db-credentials`. Which statement about this restriction is correct?",
+    text: "A Role grants only the `get` verb on Secrets with `resourceNames: [\"db-credentials\"]`. Which statement about this restriction is correct?",
     diagram: null,
     options: [
       "The `list` verb still returns all Secrets that exist in the namespace",

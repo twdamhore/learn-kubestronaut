@@ -1,32 +1,14 @@
 {
   "set": "05",
-  "round": 8,
+  "round": 9,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s05-q068",
+      "id": "s05-q024",
       "type": "ambiguous",
-      "problem": "Options B and D both correctly answer 'No'. B says restricted prohibits hostPath volumes; D says hostPath is allowed under baseline. Both are factually true. Two valid 'No' options with correct reasoning makes the question ambiguous for test-takers.",
-      "suggestion": "Reword option D to be clearly incorrect, e.g., 'No, and mounting hostPath is also prohibited under the baseline profile' (which is false, since baseline allows hostPath)."
-    },
-    {
-      "id": "s05-q075",
-      "type": "ambiguous",
-      "problem": "Question text says 'Pod security policy violations'. In K8s 1.25+ the PodSecurityPolicy API was removed. The phrase 'Pod security policy' can be confused with the deprecated PSP resource. The answer and explanation correctly reference Pod Security Admission, but the question text is misleading for a 1.29+ context.",
-      "suggestion": "Change 'Pod security policy violations' to 'Pod Security Standards violations' or 'pod security violations' to avoid confusion with the removed PodSecurityPolicy API."
-    },
-    {
-      "id": "s05-q086",
-      "type": "wrong_explanation",
-      "problem": "The explanation says 'While Kubernetes 1.22+ adds the kubernetes.io/metadata.name label automatically, in general the app namespace must have a label that matches the selector.' For K8s 1.29+ (the target version), the auto-label is always present, so a custom label is NOT required if the namespaceSelector uses kubernetes.io/metadata.name. Saying 'in general' understates that the auto-label is guaranteed in 1.29+.",
-      "suggestion": "Update explanation to: 'NetworkPolicy namespaceSelector matches namespaces by labels. Since Kubernetes 1.22+, every namespace automatically gets the label kubernetes.io/metadata.name matching its name, so you can use that. Alternatively, apply a custom label matching the namespaceSelector in the policy.' Keep answer C as correct since the question specifically says 'the app namespace must be labeled' implying custom labels."
-    },
-    {
-      "id": "s05-q097",
-      "type": "ambiguous",
-      "problem": "Option B (the correct answer) reads 'The request is forbidden because list is not granted and resourceNames needs it'. The phrase 'resourceNames needs it' is misleading — resourceNames does not need list. The actual issue is that 'kubectl get configmaps' (without a specific name) requires the list verb, which is not granted. The main explanation field is correct, but the option text itself is confusingly worded.",
-      "suggestion": "Reword option B to: 'The request is forbidden because kubectl get configmaps requires the list verb, which is not granted by this Role'."
+      "problem": "The question does not specify which verbs the Role grants. If the Role includes the `list` verb (which is common and implied by 'access'), then option A ('The list verb still returns all Secrets that exist in the namespace') is also factually correct alongside option B ('The get verb can only retrieve the named db-credentials Secret'). The explanation itself acknowledges that list/watch cannot be effectively restricted by resourceNames. Two potentially correct options makes the question ambiguous.",
+      "suggestion": "Add explicit verbs to the question text, e.g., 'A Role grants get on secrets with resourceNames: [db-credentials]'. Omitting list from the verbs makes option A clearly inapplicable and removes the ambiguity. Alternatively, change option A to something clearly wrong like 'The list verb is automatically blocked when resourceNames is specified'."
     }
   ]
 }

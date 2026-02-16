@@ -1,20 +1,7 @@
 {
   "set": "07",
-  "round": 8,
+  "round": 9,
   "total_reviewed": 100,
-  "issues_found": 2,
-  "issues": [
-    {
-      "id": "s07-q009",
-      "type": "wrong_explanation",
-      "what": "Explanation says 'In Kubernetes versions before 1.28, omitting -c in a multi-container pod returns an error' and 'In Kubernetes 1.28+, omitting -c defaults to the first container'. The kubectl logs default-to-first-container behavior was merged for Kubernetes 1.24 (PR #105964, Jan 2022) and went GA in 1.27, not 1.28.",
-      "fix": "Change '1.28' references in the explanation to '1.24' (introduced) / '1.27' (GA). For example: 'In Kubernetes 1.24+, omitting -c defaults to the first container in the pod spec (GA since 1.27), but using -c explicitly is the recommended practice for clarity and correctness.'"
-    },
-    {
-      "id": "s07-q095",
-      "type": "wrong_explanation",
-      "what": "Explanation suggests 'use helm install --replace' as a fix for pre-existing live resources. In Helm 3, --replace only reuses a release name whose previous release was deleted but still retained in history. It does NOT resolve conflicts with live resources created by manual kubectl apply or another Helm release, which is the scenario described in this question.",
-      "fix": "Remove the 'helm install --replace' suggestion. Replace with: 'You can either delete the conflicting resources first, use helm upgrade --install to adopt them, or annotate the resources with meta.helm.sh/release-name and meta.helm.sh/release-namespace plus label app.kubernetes.io/managed-by: Helm to adopt them into the new release.'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

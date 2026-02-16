@@ -90,7 +90,7 @@ var questions = [
     diagram: null,
     options: [
       "Cilium relies exclusively on iptables rules and cannot inspect any Layer 7 traffic at all",
-      "Cilium is a CNCF graduated service mesh that requires Envoy sidecars in every Pod now",
+      "Cilium is a CNCF incubating project that requires Envoy sidecars in every Pod for basic L3/L4 networking",
       "Cilium replaces kube-proxy but cannot enforce any form of Kubernetes NetworkPolicy rules",
       "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
     ],
@@ -395,11 +395,11 @@ var questions = [
     options: [
       "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes",
       "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows on Kubernetes pods",
-      "KEDA — a Kubernetes event-driven autoscaler triggering Pod scaling from external sources",
+      "KEDA — a CNCF graduated event-driven autoscaler triggering Pod scaling from external sources",
       "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
     ],
     answer: 0,
-    explanation: "Knative is a CNCF graduated project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero), while Knative Eventing provides a framework for event-driven architectures using CloudEvents. KEDA is a CNCF graduated autoscaler but does not provide the full serverless platform experience that Knative offers.",
+    explanation: "Knative is a CNCF graduated project that extends Kubernetes with serverless capabilities. Knative Serving handles request-driven auto-scaling (including scale-to-zero) natively from HTTP requests, while Knative Eventing provides a framework for event-driven architectures using CloudEvents. While both Knative and KEDA are CNCF graduated, KEDA is an autoscaler that plugs into Deployments/Jobs and requires add-ons (like the KEDA HTTP add-on) for HTTP-triggered scale-to-zero. Knative provides the full serverless platform (Serving + Eventing) out of the box.",
     verify: "kubectl get pods -n knative-serving"
   },
   // ── Batch 2: q026–q050  (K8s=12, CO=5, CNA=4, CNO=2, CAD=2) ──
@@ -1250,7 +1250,7 @@ var questions = [
       "gRPC is a CNCF sandbox project providing a durable messaging queue for asynchronous communication use"
     ],
     answer: 0,
-    explanation: "gRPC is a CNCF incubating project originally developed at Google. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing. It is widely used for microservices communication, particularly where low latency and high throughput are required.",
+    explanation: "gRPC is a CNCF incubating project originally developed at Google. Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level as of 2025, which is a commonly tested fact. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing.",
     verify: null
   },
   {

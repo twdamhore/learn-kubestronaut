@@ -1246,7 +1246,7 @@ var questions = [
       "The Linux conntrack table races between simultaneous A and AAAA queries, causing one to drop"
     ],
     answer: 3,
-    explanation: "A well-known Linux DNS issue in Kubernetes involves the glibc resolver sending A and AAAA queries simultaneously on the same UDP socket. A conntrack race condition can cause one packet to be dropped, resulting in a 5-second timeout before a retry succeeds. This is mitigated by using `single-request-reopen` in `resolv.conf` or NodeLocal DNS Cache. Too many upstream resolvers is unusual. The `ndots` default is 5, not 1. kube-proxy does not throttle DNS.",
+    explanation: "A well-known Linux DNS issue in Kubernetes involves the glibc resolver sending A and AAAA queries simultaneously on the same UDP socket. A conntrack race condition can cause one packet to be dropped, resulting in a 5-second timeout before a retry succeeds. This is mitigated by using `single-request-reopen` in `resolv.conf` or NodeLocal DNS Cache. Too many upstream resolvers is unusual. A high `ndots` value causes extra DNS query attempts, adding latency, but does not explain the characteristic intermittent 5-second delays that match the DNS retry timeout triggered by conntrack race conditions. kube-proxy does not throttle DNS.",
     verify: "kubectl exec <pod> -- cat /etc/resolv.conf"
   },
   {

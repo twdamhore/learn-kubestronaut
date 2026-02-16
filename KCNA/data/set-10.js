@@ -197,16 +197,16 @@ var questions = [
     id: "s10-q013",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A DaemonSet runs a log collector on every node. The pod template includes `tolerations` for `node-role.kubernetes.io/control-plane:NoSchedule`. After a cluster upgrade, the DaemonSet pods on control-plane nodes are evicted and not rescheduled. Investigation reveals the control-plane nodes now have an additional taint `node.kubernetes.io/not-ready:NoExecute`. What should be added to the DaemonSet?",
+    text: "A DaemonSet runs a log collector on every node. The pod template includes `tolerations` for `node-role.kubernetes.io/control-plane:NoSchedule`. After a cluster upgrade, the DaemonSet pods on control-plane nodes are evicted and not rescheduled. Investigation reveals the control-plane nodes now have a custom taint `maintenance=upgrade:NoExecute` applied by the upgrade tooling. What should be added to the DaemonSet?",
     diagram: null,
     options: [
-      "A. A toleration for `node.kubernetes.io/not-ready` with `effect: NoExecute` and an appropriate `tolerationSeconds` value",
+      "A. A toleration for `maintenance=upgrade` with `effect: NoExecute` and an appropriate `tolerationSeconds` value",
       "B. A `nodeSelector` targeting control-plane nodes combined with a `PodDisruptionBudget` to prevent eviction during upgrades",
-      "C. A toleration for `node.kubernetes.io/not-ready` with `effect: NoExecute` and `operator: Exists` to tolerate indefinitely",
+      "C. A toleration for key `maintenance` with `effect: NoExecute` and `operator: Exists` to tolerate indefinitely",
       "D. An annotation `scheduler.alpha.kubernetes.io/tolerations` with a wildcard to tolerate all taints on control-plane nodes"
     ],
     answer: 2,
-    explanation: "The `NoExecute` taint `node.kubernetes.io/not-ready` causes running pods to be evicted unless they have a matching toleration. Using `operator: Exists` without a value matches the taint regardless of its value, and omitting `tolerationSeconds` means the pod tolerates the taint indefinitely. Option A with `tolerationSeconds` would only delay eviction. A DaemonSet log collector should remain on the node permanently, so indefinite toleration is correct. The deprecated annotation in option D is not valid.",
+    explanation: "The `NoExecute` taint `maintenance=upgrade:NoExecute` causes running pods to be evicted unless they have a matching toleration. Note that the DaemonSet controller automatically adds tolerations for `node.kubernetes.io/not-ready:NoExecute` and `node.kubernetes.io/unreachable:NoExecute`, but it does NOT auto-tolerate custom taints. Using `operator: Exists` on the `maintenance` key matches regardless of the taint value, and omitting `tolerationSeconds` means the pod tolerates the taint indefinitely. Option A with `tolerationSeconds` would only delay eviction. A DaemonSet log collector should remain on the node permanently, so indefinite toleration is correct. The deprecated annotation in option D is not valid.",
     verify: "kubectl get daemonset <name> -o jsonpath='{.spec.template.spec.tolerations}' | jq ."
   },
   {

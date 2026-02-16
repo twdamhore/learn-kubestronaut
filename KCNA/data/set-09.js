@@ -813,8 +813,8 @@ var questions = [
       "Kubernetes automatically chooses the higher replica count to avoid disruption to the currently running workload in the cluster",
       "The replica count reverts to the file value because <code>kubectl apply</code> uses a three-way merge of the file, annotation, and live state"
     ],
-    answer: 3,
-    explanation: "`kubectl apply` performs a three-way merge between the local file, the `last-applied-configuration` annotation, and the live object. Since the replica count is explicitly declared in the YAML file and was part of the last-applied configuration, the three-way merge detects the field was not intentionally removed and applies the value from the file, overwriting the manual edit.",
+    answer: 0,
+    explanation: "`kubectl apply` performs a three-way strategic-merge-patch between the local file, the `last-applied-configuration` annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by `kubectl edit`) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why `kubectl apply` is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.",
     verify: "kubectl get deployment my-app -o jsonpath='{.metadata.annotations.kubectl\\.kubernetes\\.io/last-applied-configuration}'"
   },
   {

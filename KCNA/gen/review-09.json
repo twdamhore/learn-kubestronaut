@@ -1,7 +1,16 @@
 {
   "set": "09",
-  "round": 8,
+  "round": 9,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s09-q051",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "what": "Correct answer is index 0 (option A), not index 3 (option D); the three-way merge preserves the manual edit, not overwrites it",
+      "detail": "kubectl apply performs a three-way strategic-merge-patch comparing (1) the local file, (2) the last-applied-configuration annotation, and (3) the live object. When the replica count in the local file is identical to the value stored in the last-applied-configuration annotation, the three-way diff produces NO patch for that field. This means the live value (set by kubectl edit) is preserved. The current answer (index 3) claims the opposite: that the replica count 'reverts to the file value.' In reality, the three-way merge is specifically designed so that fields unchanged between the file and the last-applied annotation are left alone in the live object, allowing manual edits to persist. The correct answer is index 0 (option A): 'The replica count stays at the kubectl edit value because kubectl apply uses the last-applied annotation to detect changes.'",
+      "suggestion": "Change answer from 3 to 0. Replace the explanation with: 'kubectl apply performs a three-way strategic-merge-patch between the local file, the last-applied-configuration annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by kubectl edit) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why kubectl apply is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.'"
+    }
+  ]
 }
