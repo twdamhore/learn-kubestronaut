@@ -1,0 +1,402 @@
+{
+  "s06-q001": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: nodeAffinity works but is more complex than nodeSelector; the question asks for the simplest way\n- C: Tolerations address taints, not labels; the nodes are labeled, not tainted\n- D: nodeName bypasses the scheduler entirely and only targets a single node, making it inflexible"
+  },
+  "s06-q002": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- B: NoSchedule prevents scheduling entirely; it does not allow scheduling with a warning\n- A: CrashLoopBackOff is a runtime error, not a scheduling outcome; the Pod never starts on the node\n- D: nodeSelector does not override taints; both must be satisfied independently"
+  },
+  "s06-q003": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    "wrong": "- B: Kubelet crashes would show NotReady, not SchedulingDisabled; the nodes show Ready\n- C: A failed kube-scheduler would affect all scheduling, not just these nodes\n- D: Resource quota violations produce different error events, not SchedulingDisabled status"
+  },
+  "s06-q004": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    "wrong": "- A: kube-apiserver is a stateless frontend that reads from etcd; backing it up alone captures nothing\n- B: kube-controller-manager is stateless and runs reconciliation loops; it stores no data\n- D: kube-scheduler is stateless and makes placement decisions; it stores no persistent data"
+  },
+  "s06-q005": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- A: Simultaneous upgrade causes downtime for all workloads and provides no rollback path\n- B: Leaving workers on the old version indefinitely creates version skew issues and is not a complete upgrade\n- C: Batch migration to a new cluster is disruptive and does not enable incremental rollback"
+  },
+  "s06-q006": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
+    "wrong": "- B: requiredDuringScheduling is a hard constraint that would leave the Pod pending if no matching nodes are available\n- A: nodeSelector is also a hard constraint; the Pod would be stuck pending if matching nodes are full\n- D: Tainting all non-matching nodes is operationally heavy and prevents other workloads from scheduling there"
+  },
+  "s06-q007": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#concepts",
+    "wrong": "- A: nodeSelector matches labels but does not bypass taints; the Pod would still be blocked by the taint\n- B: nodeName bypasses the scheduler but is inflexible and does not scale to multiple control-plane nodes\n- D: Removing the taint defeats the isolation purpose and allows any Pod to schedule on control-plane nodes"
+  },
+  "s06-q008": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- A: Pod anti-affinity spreads Pods apart, the opposite of co-locating them on the same node\n- C: Node affinity targets node labels, not other Pods; it cannot express co-location with another Pod\n- D: hostNetwork shares the host network namespace but does not control Pod placement on the same node"
+  },
+  "s06-q009": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    "wrong": "- A: kubectl top shows resource usage but does not list which Pods remain on the node\n- C: Node Conditions section shows node health status, not individual Pod presence\n- B: Events may not capture every eviction detail and are not a complete Pod inventory"
+  },
+  "s06-q010": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- A: Upgrading kubelet before the API server violates the version skew policy\n- C: This sequence is out of order; etcd is upgraded as part of the control-plane upgrade, not separately before kubelet\n- D: kube-scheduler and kube-controller-manager must not be upgraded before kube-apiserver"
+  },
+  "s06-q011": {
+    "ref": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "wrong": "- A: The cluster has 12 total CPUs which exceeds the 4 CPU request, so total capacity is not the issue\n- C: Each node has 8Gi memory which matches the request, so memory is not the bottleneck\n- D: priorityClassName is not required for scheduling Pods; it only affects preemption order"
+  },
+  "s06-q012": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    "wrong": "- A: NoExecute does more than NoSchedule; it also evicts existing Pods, not just blocks new ones\n- C: The node is not removed from the cluster; it remains registered but marked as unreachable\n- D: DaemonSet Pods typically have tolerations for unreachable taints and are NOT evicted; regular Pods are evicted"
+  },
+  "s06-q013": {
+    "ref": "https://cluster-api.sigs.k8s.io/",
+    "wrong": "- B: Helm packages and deploys applications via charts; it does not manage cluster lifecycle\n- C: Argo CD is a GitOps continuous delivery tool for deploying applications, not managing cluster infrastructure\n- D: Flux is a GitOps reconciliation tool for application delivery, not cluster provisioning or lifecycle management"
+  },
+  "s06-q014": {
+    "ref": "https://kubernetes.io/docs/concepts/storage/volumes/#local",
+    "wrong": "- A: Kubernetes does not automatically migrate local volume data; local PVs are node-bound\n- D: Local volumes are not replicated; they exist only on the specific node they are provisioned on\n- C: The drain command does not specifically fail for local PV Pods; --force is for standalone unmanaged Pods"
+  },
+  "s06-q015": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    "wrong": "- B: In-place rolling update upgrades nodes one at a time in-place, not by creating a parallel pool\n- C: Canary deployment upgrades a single node first to validate, not a full parallel pool\n- D: Recreate strategy would take everything down at once, not run parallel pools"
+  },
+  "s06-q016": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    "wrong": "- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but not for all taints; the reason drain skips them is different\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace"
+  },
+  "s06-q017": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: nodeSelector does not take precedence; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not take precedence; it is combined with nodeSelector requirements\n- D: The scheduler does not pick the less restrictive constraint; both must be satisfied simultaneously"
+  },
+  "s06-q018": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    "wrong": "- A: There is no `etcdctl snapshot verify` subcommand; it does not exist\n- C: There is no `etcdctl check` subcommand with an `--integrity` flag\n- D: `etcdctl endpoint health` checks live endpoint health, not snapshot file integrity"
+  },
+  "s06-q019": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#endpoints",
+    "wrong": "- A: kube-proxy updates iptables rules based on Endpoints changes but does not independently block traffic to drained nodes\n- C: PDBs limit the rate of disruption but do not manage traffic routing\n- D: Services do not perform periodic node health checks; they rely on the endpoint controller and readiness probes"
+  },
+  "s06-q020": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/disruptions/",
+    "wrong": "- A: 0 disruptions would mean no drain is possible, which is incorrect with minAvailable: 2 and 3 replicas\n- C: 2 simultaneous disruptions would leave only 1 Pod running, violating minAvailable: 2\n- D: 3 disruptions would mean all Pods down, clearly violating the PDB"
+  },
+  "s06-q021": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
+    "wrong": "- A: Resource quotas limit total consumption per namespace but do not affect scheduling order\n- B: Pod affinity targets placement topology, not scheduling priority or ordering\n- D: LimitRanges set per-Pod resource defaults and caps but do not control scheduling order"
+  },
+  "s06-q022": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    "wrong": "- B: --force is for standalone Pods not managed by a controller; it does not bypass PDB constraints\n- C: Deleting the PDB removes an important safety mechanism and risks service disruption\n- D: --delete-emptydir-data handles emptyDir volumes; it has no effect on PDB restrictions"
+  },
+  "s06-q023": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
+    "wrong": "- A: The cluster does not become read-only; with quorum intact, both reads and writes succeed\n- B: Writes do not fail with quorum maintained; 2 of 3 members is sufficient for consensus\n- C: The API server has no in-memory fallback store; it always requires etcd to be available"
+  },
+  "s06-q024": {
+    "ref": "https://fluxcd.io/flux/components/kustomize/kustomizations/#suspend",
+    "wrong": "- A: Deleting the controller risks configuration drift and adds recovery complexity\n- B: Revoking RBAC permissions is disruptive and may cause controller errors and failed reconciliation\n- D: Disconnecting from Git is operationally complex and may cause controller failures"
+  },
+  "s06-q025": {
+    "ref": "https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/kubelet-integration/",
+    "wrong": "- A: kube-proxy is not a static Pod; it runs as a DaemonSet managed by kubeadm\n- B: kube-proxy does not require manual SSH upgrades; kubeadm automates the DaemonSet image update\n- C: kube-proxy is a separate binary/container, not compiled into the kubelet"
+  },
+  "s06-q026": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- B: maxSkew applies during scheduling, not only during scaling down\n- C: Available resources do not override maxSkew constraints in topology spread\n- D: topologySpreadConstraints use maxSkew to control allowed imbalance, not strict equality"
+  },
+  "s06-q027": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- A: kube-controller-manager runs control loops like ReplicaSet and Deployment controllers, not scheduling\n- C: kubelet runs containers on a node after assignment; it does not decide which node a Pod goes to\n- D: kube-proxy manages network rules for Services; it has no role in Pod scheduling"
+  },
+  "s06-q028": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    "wrong": "- A: The Pod is not immediately evicted; the tolerationSeconds grace period applies first\n- B: The Pod does not run indefinitely; tolerationSeconds: 30 limits how long it tolerates the taint\n- D: The old Pod is evicted, not kept running; the new Pod is scheduled independently by the controller"
+  },
+  "s06-q029": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#non-preempting-priority-class",
+    "wrong": "- B: preemptionPolicy: Never is a valid field; it is supported since Kubernetes 1.24 GA\n- C: preemptionPolicy: Never means no preemption at all, not a threshold-based preemption\n- D: Preemption terminates victim Pods fully; there is no mechanism to evict Pods without killing containers"
+  },
+  "s06-q030": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- A: Node affinity with dedicated pools works but requires infrastructure overhead to maintain separate pools\n- B: Taints with tolerations isolate node pools but do not directly prevent two services from co-locating on the same node\n- D: Separate namespaces with quotas isolate resource consumption but do not prevent Pods from running on the same node"
+  },
+  "s06-q031": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    "wrong": "- B: PersistentVolume data is application data that can be restored after the cluster itself is operational\n- C: Kubelet config files are node-level configs that can be regenerated; they are not the cluster state\n- D: Container images are stored externally in registries and can be pulled again; they are not cluster state"
+  },
+  "s06-q032": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule is a recognized and valid taint effect alongside NoSchedule and NoExecute"
+  },
+  "s06-q033": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    "wrong": "- A: A Deployment cannot guarantee exactly one Pod per node and does not track node additions/removals\n- B: StatefulSet with anti-affinity can spread Pods but does not automatically track nodes joining or leaving\n- D: A Job with parallelism equal to node count runs a fixed number of tasks, not one per node dynamically"
+  },
+  "s06-q034": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    "wrong": "- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop"
+  },
+  "s06-q035": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- B: kubelet_pod_start_duration_seconds measures Pod startup time after scheduling, a different phase\n- C: apiserver_request_duration_seconds measures API server request latency, not scheduling latency\n- D: etcd_request_duration_seconds measures etcd request latency, not scheduling-specific latency"
+  },
+  "s06-q036": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler-implementation",
+    "wrong": "- A: Ranking by available resources is part of the scoring phase, not the filtering phase\n- C: Random sampling is a performance optimization (percentageOfNodesToScore), not the purpose of filtering\n- D: Network connectivity checks are not part of the filtering phase; filtering checks constraints like taints and resources"
+  },
+  "s06-q037": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
+    "wrong": "- A: There is no `kubectl certificate list` command in standard kubectl\n- B: kubeadm certs check-expiration works but is only one of the valid approaches; D is more complete\n- C: openssl x509 works for individual cert files but is only one of the valid approaches; D is more complete"
+  },
+  "s06-q038": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
+    "wrong": "- A: IgnoredDuringExecution means no eviction occurs after scheduling; the Pod is not evicted\n- B: The Pod does not enter Pending; it continues running on the current node\n- C: The kubelet does not terminate Pods due to affinity rule changes; this is explicitly ignored"
+  },
+  "s06-q039": {
+    "ref": "https://velero.io/",
+    "wrong": "- A: etcd-operator manages etcd clusters, not Kubernetes resource backup and restore\n- B: Longhorn is a distributed block storage system, not a backup and restore tool\n- D: Stash is a third-party tool by AppsCode, not a CNCF project"
+  },
+  "s06-q040": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
+    "wrong": "- A: 1 failure tolerance is for a 3-member cluster if quorum required 3; but quorum is ceil((5+1)/2)=3, so 2 can fail\n- C: 3 simultaneous failures would leave only 2 members, below the quorum of 3\n- D: 4 failures would leave only 1 member, far below quorum"
+  },
+  "s06-q041": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "wrong": "- B: DoNotSchedule does not fall back to least loaded zone; it enforces the constraint strictly\n- C: The scheduler does not ignore the constraint; DoNotSchedule is a hard requirement\n- D: No warning event is emitted while scheduling proceeds; the Pod stays Pending"
+  },
+  "s06-q042": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/",
+    "wrong": "- A: kubectl top shows current usage metrics, not allocatable vs. allocated capacity\n- B: kubectl get nodes -o wide shows status and version but not resource allocation details\n- D: Counting Pods does not reveal resource allocation levels; Pods vary in resource requests"
+  },
+  "s06-q043": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- A: Kubelet version differences do not prevent CoreDNS communication; the API handles compatibility\n- B: CoreDNS has no kubelet version dependency; it runs as a regular Deployment\n- C: Pod network CIDR is not changed during standard kubeadm upgrades"
+  },
+  "s06-q044": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: EvictExisting is not a valid taint effect in Kubernetes"
+  },
+  "s06-q045": {
+    "ref": "https://helm.sh/docs/chart_template_guide/values_files/",
+    "wrong": "- A: Separate charts duplicate effort and violate DRY principles; values files handle environment differences\n- B: Hard-coding values prevents reuse across environments\n- D: Helm hooks run Jobs at lifecycle events; they are not designed for overriding template values"
+  },
+  "s06-q046": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
+    "wrong": "- A: drain also evicts existing Pods, which exceeds the requirement of only preventing new scheduling\n- B: NoExecute taint would evict existing Pods, not just prevent new scheduling\n- D: Deleting the node removes it from the cluster entirely, which is destructive"
+  },
+  "s06-q047": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    "wrong": "- A: Priority value 1000 is far lower than system-node-critical; it is a typical user-defined priority\n- C: system-node-critical is not same as default priority; it has a specific very high value\n- D: 100000000 is not the value; system-node-critical is 2000001000, higher than system-cluster-critical at 2000000000"
+  },
+  "s06-q048": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    "wrong": "- A: Manual SSH-based backups are error-prone, not automated, and do not follow cloud-native automation principles\n- C: VM-level backups may not capture a consistent etcd snapshot state during writes\n- D: Backing up only before maintenance windows risks losing data from the interval between backups"
+  },
+  "s06-q049": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/",
+    "wrong": "- A: --force handles standalone Pods not managed by a controller, not emptyDir data acknowledgment\n- C: --ignore-daemonsets addresses DaemonSet Pods, not emptyDir volume data\n- D: --grace-period controls the termination grace period, not emptyDir data handling"
+  },
+  "s06-q050": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
+    "wrong": "- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Standard is not a valid Kubernetes QoS class"
+  },
+  "s06-q051": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- A: Hard anti-affinity does not allow both replicas on the same node; it is strictly enforced\n- B: The scheduler never converts hard constraints to soft preferences; they remain strict\n- D: There is no degraded marking; hard constraints either succeed or leave the Pod Pending"
+  },
+  "s06-q052": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
+    "wrong": "- A: The API server reads from etcd, not an in-memory cache; restarting it would not fix a stale etcd data directory\n- C: The controller-manager reconciles to current etcd state; it cannot create newer state from old data\n- D: Encryption key mismatch would cause read errors, not stale data; the data would be unreadable"
+  },
+  "s06-q053": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- B: Tolerations allow scheduling on tainted nodes but do not restrict to only tainted nodes; nodeSelector controls which nodes are eligible\n- C: Tolerations allow (not require) scheduling on tainted nodes; nodes without taints with the matching label are also eligible\n- A: The Pod is not restricted to only tainted+labeled nodes; untainted nodes with the label are also eligible"
+  },
+  "s06-q054": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+    "wrong": "- B: Pods are not moved with state; they are terminated and new Pods start fresh on other nodes\n- C: ReplicaSet-managed Pods are automatically recreated by the controller; manual recreation is not needed\n- D: The ReplicaSet maintains desired replica count; it does not scale to zero during drain"
+  },
+  "s06-q055": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- B: DaemonSet places one Pod per node regardless of zone; it does not ensure zone-level co-location with specific app Pods\n- C: hostNetwork shares the node network namespace but does not control zone-level placement\n- D: A headless Service provides DNS records for Pods but does not influence scheduling placement"
+  },
+  "s06-q056": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
+    "wrong": "- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: Container runtime issues can also cause NotReady, but the question asks about the most likely cause when kubelet is running\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady"
+  },
+  "s06-q057": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: A toleration alone allows scheduling on tainted nodes but also allows scheduling on untainted nodes\n- B: Tolerating both tenants would allow scheduling on team-b nodes, violating isolation\n- D: nodeSelector alone cannot override the NoSchedule taint; the Pod would be stuck Pending on tainted nodes"
+  },
+  "s06-q058": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/",
+    "wrong": "- A: HPA scales the number of replicas horizontally, not individual Pod resource requests\n- B: Cluster Autoscaler adds or removes nodes, not Pod resource requests\n- C: LimitRange sets default and maximum resource values but does not dynamically adjust based on usage"
+  },
+  "s06-q059": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    "wrong": "- A: etcd does not use username/password authentication by default; TLS client certificates are standard\n- C: etcd does not use token-based authentication; it uses mutual TLS in kubeadm clusters\n- D: etcdctl is a standalone tool that does not use kubeconfig files; those are for kubectl"
+  },
+  "s06-q060": {
+    "ref": "https://kubernetes.io/docs/setup/production-environment/container-runtimes/",
+    "wrong": "- B: Disk space issues would produce different error messages, not containerd task creation failures\n- C: Registry connectivity issues cause image pull errors, not containerd task creation failures\n- D: Kernel compatibility issues are rare and would typically cause containerd itself to fail to start"
+  },
+  "s06-q061": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/limit-range/",
+    "wrong": "- A: ResourceQuota limits total namespace consumption but does not set per-Pod defaults\n- B: PodSecurityPolicy is deprecated and enforces security constraints, not resource defaults\n- D: NetworkPolicy controls network traffic between Pods, not resource defaults"
+  },
+  "s06-q062": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/",
+    "wrong": "- A: NodeResourcesBalancedAllocation favors nodes with balanced CPU/memory ratios, which would spread Pods\n- B: InterPodAffinity scores based on Pod affinity rules; without specific rules configured, it would not concentrate Pods\n- C: NodeResourcesFit checks resource availability but does not by itself cause concentration on one node"
+  },
+  "s06-q063": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
+    "wrong": "- B: Deleting and recreating Secrets is unnecessary and risky; the re-encryption approach preserves existing Secrets\n- C: Stopping etcd entirely causes cluster downtime and is not the correct procedure\n- D: kubeadm certs renew handles TLS certificates, not encryption-at-rest keys; these are different systems"
+  },
+  "s06-q064": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: Tolerating one taint is not sufficient; all NoSchedule taints must be tolerated\n- B: nodeSelector does not affect taint evaluation; taints are checked independently\n- D: operator: Exists without a key would tolerate all taints, but the question says the Pod only tolerates the gpu taint"
+  },
+  "s06-q065": {
+    "ref": "https://kubernetes.io/docs/concepts/security/pod-security-admission/",
+    "wrong": "- A: --dry-run=server validates API syntax and admission but does not check custom scheduling policies\n- B: kubectl auth can-i checks RBAC permissions, not manifest content or scheduling policies\n- C: helm lint validates chart structure and template syntax, not scheduling or placement policies"
+  },
+  "s06-q066": {
+    "ref": "https://kubernetes.io/releases/version-skew-policy/",
+    "wrong": "- A: v1.29 only is too restrictive; kubelets can be up to 3 minor versions older\n- B: v1.27 through v1.29 is only a 2-version skew; the policy allows 3 versions for kubelet >= 1.25\n- C: v1.28 and v1.29 is only a 1-version skew, unnecessarily restrictive"
+  },
+  "s06-q067": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    "wrong": "- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault is a valid and recognized field in the PriorityClass spec"
+  },
+  "s06-q068": {
+    "ref": "https://github.com/kubernetes-sigs/scheduler-plugins",
+    "wrong": "- B: Descheduler rebalances Pods after scheduling but does not extend the scheduler with custom plugins\n- C: Kueue manages job queuing and admission but does not add custom scheduling plugins\n- D: Volcano is a batch scheduling system primarily for HPC/AI workloads, not a general scheduler plugin framework"
+  },
+  "s06-q069": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: The trailing dash removes the taint, it does not add one\n- B: The taint command modifies taints, it does not list them; use kubectl describe for listing\n- D: The trailing dash means removal, not changing the effect to PreferNoSchedule"
+  },
+  "s06-q070": {
+    "ref": "https://etcd.io/docs/v3.5/dev-guide/limit/",
+    "wrong": "- A: 1 GB is below the default; the actual default quota is 2 GB\n- B: 4 GB exceeds the default; it would require explicit --quota-backend-bytes configuration\n- C: 8 GB is the recommended maximum configurable size, not the default"
+  },
+  "s06-q071": {
+    "ref": "https://kubernetes.io/docs/concepts/services-networking/service/#endpoints",
+    "wrong": "- B: Pod IP addresses are not preserved across rescheduling; new Pods get new IPs from the Pod CIDR\n- C: Other Pods using Service DNS do not need to restart; DNS and endpoint updates are transparent\n- D: CNI plugins do not broadcast IP changes; Service abstraction handles discovery via endpoints and DNS"
+  },
+  "s06-q072": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
+    "wrong": "- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: Parallel policy does not prevent eviction during drain; Pods are still evicted normally\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation"
+  },
+  "s06-q073": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
+    "wrong": "- A: A single large node type wastes resources for small workloads and creates a single point of failure\n- B: Overcommitting resources leads to resource contention and OOM kills under load\n- C: Spot instances can be reclaimed at any time, making them unsuitable as the sole infrastructure for all workloads"
+  },
+  "s06-q074": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
+    "wrong": "- A: A snapshot from a different cluster would have different data entirely, not cause a database-out-of-date error\n- C: API server and etcd version incompatibility would cause connection or protocol errors, not stale data\n- D: Expired TLS certificates would cause authentication errors, not database-out-of-date messages"
+  },
+  "s06-q075": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
+    "wrong": "- A: The default scheduler does not fall back to handling Pods assigned to other schedulers\n- B: The API server accepts any schedulerName; it does not validate that the scheduler exists\n- D: Kubelets do not assign Pods to nodes; they only run Pods already assigned by a scheduler"
+  },
+  "s06-q076": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators",
+    "wrong": "- B: The In operator matches any single value in the list, not a literal comma-separated string\n- C: In does not perform substring matching; it checks for exact value equality against list items\n- D: A node has only one value for a label key; In matches if that value appears in the list (OR, not AND)"
+  },
+  "s06-q077": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/",
+    "wrong": "- A: Static Pods produce a different error message and cannot be evicted via the API; they are managed by kubelet\n- B: High terminationGracePeriodSeconds delays eviction but does not prevent the drain command from proceeding\n- D: An unresponsive kubelet would cause different errors; the error message specifically mentions unmanaged Pods"
+  },
+  "s06-q078": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity-weight",
+    "wrong": "- A: Preferred affinity terms are never hard constraints regardless of weight; they only influence scoring\n- B: All preferred terms are evaluated and their scores summed; lower-weight rules are not discarded\n- C: Weights are scoring multipliers (1-100), not percentages; they do not make rules mandatory"
+  },
+  "s06-q079": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- B: Global load balancing routes traffic but does not control Pod placement in specific regions\n- C: PersistentVolume replication handles data sync but does not ensure Pod co-location\n- D: DNS-based routing directs user traffic to regions but does not control database Pod placement"
+  },
+  "s06-q080": {
+    "ref": "https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/#constants-and-well-known-values-and-paths",
+    "wrong": "- A: /var/lib/kubelet/config.yaml is the kubelet configuration file, not static Pod manifests\n- B: /opt/cni/bin/ stores CNI plugin binaries, not Pod manifests\n- D: /etc/containerd/config.toml is the containerd runtime configuration, not Pod manifests"
+  },
+  "s06-q081": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "wrong": "- A: Scheduler extender logs are only available if custom extenders are configured; they are not default\n- B: Distributed tracing provides cross-service request tracing, not scheduler decision details\n- C: Pod status conditions show readiness and health but not why a specific node was chosen"
+  },
+  "s06-q082": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- B: kubeadm does not overwrite ALL ClusterRoles; it manages specific system roles only\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages"
+  },
+  "s06-q083": {
+    "ref": "https://kubernetes.io/docs/concepts/architecture/nodes/#node-controller",
+    "wrong": "- A: Graceful shutdown timeout is controlled by terminationGracePeriodSeconds on the Pod, not this flag\n- B: The eviction rate is controlled by different parameters (--node-eviction-rate), not the pod-eviction-timeout\n- D: Readiness probe timeouts are configured per-container in the Pod spec, not on the controller-manager"
+  },
+  "s06-q084": {
+    "ref": "https://knative.dev/docs/serving/autoscaling/scale-bounds/",
+    "wrong": "- B: PreferNoSchedule taints affect scheduling preference but do not reduce cold-start time\n- C: Pod anti-affinity spreads Pods across zones but does not address cold-start latency\n- D: terminationGracePeriodSeconds controls shutdown duration, not startup time"
+  },
+  "s06-q085": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: Exists with a key matches any value for that key, not just empty string values\n- B: Exists with a specific key matches only that key's taints; matching all taints requires omitting the key\n- C: The value field is optional with operator: Exists; it is valid and functional without a value"
+  },
+  "s06-q086": {
+    "ref": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    "wrong": "- A: StatefulSet PVCs persist and are reused; new PVCs are not created for rescheduled Pods\n- C: PVCs are not deleted when StatefulSet Pods are rescheduled; they maintain their binding\n- D: Network-attached storage can be attached to the new node; manual rebinding to the original node is not required"
+  },
+  "s06-q087": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- A: Simultaneous upgrade risks cluster-wide issues with no ability to isolate and validate before committing\n- B: Upgrading only the control plane leaves workers unvalidated and creates persistent version skew\n- D: Running two separate clusters is operationally complex and expensive for a simple version validation"
+  },
+  "s06-q088": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    "wrong": "- A: Skipping checks risks deploying to an unhealthy cluster with potential scheduling failures\n- B: A separate staging cluster does not validate the production cluster's readiness state\n- C: Manual approval gates are slow, error-prone, and do not follow automation best practices"
+  },
+  "s06-q089": {
+    "ref": "https://github.com/kubernetes-sigs/descheduler",
+    "wrong": "- B: kube-scheduler handles initial placement only; it does not re-evaluate or move already-running Pods\n- C: Cluster Autoscaler manages node count, not Pod rebalancing across existing nodes\n- D: kube-state-metrics exposes cluster state as Prometheus metrics; it does not move Pods"
+  },
+  "s06-q090": {
+    "ref": "https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    "wrong": "- A: LimitRange sets per-Pod/container defaults, not namespace-level aggregate limits\n- B: PodDisruptionBudget manages availability during disruptions, not resource consumption\n- D: PriorityClass controls scheduling priority, not resource consumption limits"
+  },
+  "s06-q091": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
+    "wrong": "- B: Preemption respects the victim Pod's terminationGracePeriodSeconds; it is not killed immediately\n- C: The scheduler selects the node during preemption; it does not avoid the node to skip the grace period\n- D: There is no automatic reduction of the grace period; the full configured value applies"
+  },
+  "s06-q092": {
+    "ref": "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
+    "wrong": "- A: Cordoning modifies spec.unschedulable, not metadata.labels; no label is added\n- B: There is no Schedulable condition in node status; cordon uses the spec field\n- C: No annotation is added; the mechanism uses the spec.unschedulable field"
+  },
+  "s06-q093": {
+    "ref": "https://fluxcd.io/flux/concepts/",
+    "wrong": "- A: Deletion of resources not in Git depends on the pruning configuration, not a guaranteed default behavior after restore\n- B: In GitOps, Git is the source of truth; cluster state never takes precedence over Git\n- D: GitOps controllers do not pause; they continuously reconcile automatically"
+  },
+  "s06-q094": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
+    "wrong": "- B: With required (hard) anti-affinity, the scheduler does not fall back to least-loaded; the Pod stays Pending\n- C: Kubernetes does not automatically provision new zones; infrastructure management is external\n- D: The scheduler does not automatically relax topology levels; the constraint is enforced as specified"
+  },
+  "s06-q095": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    "wrong": "- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: Skipping even one minor version is not supported by kubeadm; each minor version must be applied\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach"
+  },
+  "s06-q096": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
+    "wrong": "- A: Pod age is not a primary factor in preemption victim selection\n- B: Actual resource usage is not the selection criterion; priority value determines victim selection\n- D: Pod namespace does not influence preemption victim selection; priority value is the main factor"
+  },
+  "s06-q097": {
+    "ref": "https://kubernetes.io/docs/reference/networking/virtual-ips/",
+    "wrong": "- B: CoreDNS does not need to run on the specific upgraded node; it is cluster-wide\n- C: Service ClusterIPs do not change during upgrades; they are stable\n- D: MTU issues would cause packet fragmentation or drops, not ClusterIP routing failures"
+  },
+  "s06-q098": {
+    "ref": "https://helm.sh/docs/topics/charts_hooks/",
+    "wrong": "- A: Helm does not proceed when a pre-upgrade hook fails; the upgrade is aborted\n- C: Helm does not automatically roll back on hook failure; the release is marked FAILED\n- D: Helm does not retry failed hooks; the hook must succeed on the first attempt"
+  },
+  "s06-q099": {
+    "ref": "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#replacing-a-failed-etcd-member",
+    "wrong": "- A: Adding before removing temporarily creates a 4-member cluster which changes quorum requirements and can cause issues\n- C: Stopping all members causes complete cluster downtime and is unnecessary\n- D: Restoring from backup without updating membership creates inconsistencies in the cluster configuration"
+  },
+  "s06-q100": {
+    "ref": "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    "wrong": "- A: Without a key, the Exists operator matches all taints regardless of effect, not just NoSchedule\n- B: Without a key, it matches all taints regardless of their value, not just valueless taints\n- D: A key is not required with operator: Exists; omitting the key creates a wildcard toleration"
+  }
+}

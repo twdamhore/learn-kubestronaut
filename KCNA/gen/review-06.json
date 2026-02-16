@@ -1,15 +1,32 @@
 {
   "set": "06",
-  "round": 13,
+  "round": 14,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 3,
   "issues": [
     {
-      "id": "s06-q012",
-      "type": "ambiguous",
+      "id": "s06-q008",
+      "type": "giveaway",
       "severity": "minor",
-      "what": "Question stem says the taint `node.kubernetes.io/not-ready:NoExecute` is 'automatically applied to a node that loses connectivity', but connectivity loss triggers the `node.kubernetes.io/unreachable:NoExecute` taint, not `not-ready`. The `not-ready` taint is applied when the node condition is `False` (kubelet reports unhealthy), whereas `unreachable` is applied when the condition is `Unknown` (node controller cannot reach the node). The answer (B) is correct for the effect of a NoExecute taint, but the scenario linking `not-ready` to connectivity loss is imprecise.",
-      "fix": "Change the question stem from 'that Kubernetes automatically applies to a node that loses connectivity' to 'that Kubernetes automatically applies to a node whose Ready condition becomes False' or change the taint to `node.kubernetes.io/unreachable:NoExecute` to match the connectivity-loss scenario."
+      "what": "Diagram title directly reveals the answer",
+      "detail": "The SVG diagram title text reads 'Pod Affinity – Same Node' and the dashed line between the two Pods is labeled 'affinity'. This immediately tells the test-taker the answer is B (Pod affinity) without needing to read the options or think about the concept.",
+      "suggestion": "Change the diagram title to something neutral like 'Scheduling Constraint – Same Node' and relabel the dashed line between Pods to 'co-locate?' or remove the label entirely."
+    },
+    {
+      "id": "s06-q053",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram directly shows the correct answer text",
+      "detail": "The SVG diagram includes the text 'Eligible: A, B' at the bottom. Node A has label env=production with the taint, and Node B has label env=production without the taint. This directly reveals the answer is D ('Any node with label env=production, regardless of the backend taint key') because the diagram shows both production nodes are eligible regardless of taint status.",
+      "suggestion": "Remove the 'Eligible: A, B' text from the diagram, or remove the diagram entirely. The question is clear enough without the visual aid."
+    },
+    {
+      "id": "s06-q096",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram directly reveals the answer",
+      "detail": "The SVG diagram shows a ranked list with '1. Lowest PriorityClass value selected first' highlighted in green at the top. This directly reveals the answer is C ('Pod priority value is the main factor, lowest-priority Pods go first').",
+      "suggestion": "Either remove the diagram or make it show the general preemption flow without explicitly stating the priority-based selection order."
     }
   ]
 }

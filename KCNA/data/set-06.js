@@ -14,7 +14,7 @@ var questions = [
       "D. `spec.nodeName` hardcoded to the specific hostname of the target GPU node"
     ],
     answer: 1,
-    explanation: "`nodeSelector` is the simplest mechanism for constraining Pods to nodes with specific labels. It requires an exact label match and is easier to configure than node affinity. Tolerations address taints, not labels, and `nodeName` bypasses the scheduler entirely, making it inflexible.",
+    explanation: "`nodeSelector` is the simplest mechanism for constraining Pods to nodes with specific labels. It requires an exact label match and is easier to configure than node affinity. Tolerations address taints, not labels, and `nodeName` bypasses the scheduler entirely, making it inflexible.\n\nWhy other options are wrong:\n- A: nodeAffinity works but is more complex than nodeSelector; the question asks for the simplest way\n- C: Tolerations address taints, not labels; the nodes are labeled, not tainted\n- D: nodeName bypasses the scheduler entirely and only targets a single node, making it inflexible\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
     verify: "kubectl explain pod.spec.nodeSelector"
   },
   {
@@ -30,7 +30,7 @@ var questions = [
       "D. The taint is ignored when the Pod has a `nodeSelector` matching node1 labels"
     ],
     answer: 0,
-    explanation: "A `NoSchedule` taint prevents any Pod without a matching toleration from being scheduled on that node. The scheduler filters out node1 during the filtering phase. Even if `nodeSelector` matches node1, the taint still blocks scheduling, leaving the Pod pending.",
+    explanation: "A `NoSchedule` taint prevents any Pod without a matching toleration from being scheduled on that node. The scheduler filters out node1 during the filtering phase. Even if `nodeSelector` matches node1, the taint still blocks scheduling, leaving the Pod pending.\n\nWhy other options are wrong:\n- B: NoSchedule prevents scheduling entirely; it does not allow scheduling with a warning\n- A: CrashLoopBackOff is a runtime error, not a scheduling outcome; the Pod never starts on the node\n- D: nodeSelector does not override taints; both must be satisfied independently\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node node1 | grep -i taint"
   },
   {
@@ -46,7 +46,7 @@ var questions = [
       "D. The Pods exceed the configured cluster-wide resource quota settings"
     ],
     answer: 1,
-    explanation: "The `Ready,SchedulingDisabled` status indicates the nodes were cordoned with `kubectl cordon`. This prevents new Pods from being scheduled on them. After a rolling upgrade, administrators must run `kubectl uncordon` on each node to re-enable scheduling.",
+    explanation: "The `Ready,SchedulingDisabled` status indicates the nodes were cordoned with `kubectl cordon`. This prevents new Pods from being scheduled on them. After a rolling upgrade, administrators must run `kubectl uncordon` on each node to re-enable scheduling.\n\nWhy other options are wrong:\n- B: Kubelet crashes would show NotReady, not SchedulingDisabled; the nodes show Ready\n- C: A failed kube-scheduler would affect all scheduling, not just these nodes\n- D: Resource quota violations produce different error events, not SchedulingDisabled status\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get nodes"
   },
   {
@@ -62,7 +62,7 @@ var questions = [
       "D. kube-scheduler, the Pod placement engine"
     ],
     answer: 2,
-    explanation: "etcd is the distributed key-value store that holds all Kubernetes cluster state including resource definitions, secrets, and config maps. Backing up etcd with `etcdctl snapshot save` captures the entire cluster state. The API server and other components are stateless and read from etcd.",
+    explanation: "etcd is the distributed key-value store that holds all Kubernetes cluster state including resource definitions, secrets, and config maps. Backing up etcd with `etcdctl snapshot save` captures the entire cluster state. The API server and other components are stateless and read from etcd.\n\nWhy other options are wrong:\n- A: kube-apiserver is a stateless frontend that reads from etcd; backing it up alone captures nothing\n- B: kube-controller-manager is stateless and runs reconciliation loops; it stores no data\n- D: kube-scheduler is stateless and makes placement decisions; it stores no persistent data\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "kubectl -n kube-system get pods -l component=etcd"
   },
   {
@@ -78,7 +78,7 @@ var questions = [
       "D. Rolling upgrade with cordon, drain, upgrade, and uncordon per node"
     ],
     answer: 3,
-    explanation: "A rolling upgrade strategy processes one node at a time: cordon to prevent new scheduling, drain to evict existing Pods, upgrade the node, then uncordon. This ensures workload availability throughout the process and allows rollback by stopping the procedure.",
+    explanation: "A rolling upgrade strategy processes one node at a time: cordon to prevent new scheduling, drain to evict existing Pods, upgrade the node, then uncordon. This ensures workload availability throughout the process and allows rollback by stopping the procedure.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade causes downtime for all workloads and provides no rollback path\n- B: Leaving workers on the old version indefinitely creates version skew issues and is not a complete upgrade\n- C: Batch migration to a new cluster is disruptive and does not enable incremental rollback\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -94,7 +94,7 @@ var questions = [
       "D. A taint on all non-`us-east-1a` nodes with a `NoSchedule` effect"
     ],
     answer: 0,
-    explanation: "`preferredDuringSchedulingIgnoredDuringExecution` is a soft requirement that tells the scheduler to try to place the Pod on matching nodes but allows scheduling elsewhere if no matching nodes are available. `nodeSelector` and `required` affinity are hard constraints that would leave the Pod pending.",
+    explanation: "`preferredDuringSchedulingIgnoredDuringExecution` is a soft requirement that tells the scheduler to try to place the Pod on matching nodes but allows scheduling elsewhere if no matching nodes are available. `nodeSelector` and `required` affinity are hard constraints that would leave the Pod pending.\n\nWhy other options are wrong:\n- B: requiredDuringScheduling is a hard constraint that would leave the Pod pending if no matching nodes are available\n- A: nodeSelector is also a hard constraint; the Pod would be stuck pending if matching nodes are full\n- D: Tainting all non-matching nodes is operationally heavy and prevents other workloads from scheduling there\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
     verify: "kubectl explain pod.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution"
   },
   {
@@ -110,7 +110,7 @@ var questions = [
       "D. Remove the taint from the control-plane nodes and enforce isolation via `NetworkPolicy`"
     ],
     answer: 2,
-    explanation: "To schedule Pods on tainted nodes, the Pods must carry a matching toleration. Adding a toleration with the correct key and effect allows the scheduler to consider control-plane nodes. A `nodeSelector` alone does not bypass taints, and removing the taint would defeat the isolation purpose.",
+    explanation: "To schedule Pods on tainted nodes, the Pods must carry a matching toleration. Adding a toleration with the correct key and effect allows the scheduler to consider control-plane nodes. A `nodeSelector` alone does not bypass taints, and removing the taint would defeat the isolation purpose.\n\nWhy other options are wrong:\n- A: nodeSelector matches labels but does not bypass taints; the Pod would still be blocked by the taint\n- B: nodeName bypasses the scheduler but is inflexible and does not scale to multiple control-plane nodes\n- D: Removing the taint defeats the isolation purpose and allows any Pod to schedule on control-plane nodes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#concepts",
     verify: "kubectl describe node <control-plane-node> | grep Taints"
   },
   {
@@ -126,7 +126,7 @@ var questions = [
       "D. Setting `hostNetwork: true` on both the frontend and cache Pods"
     ],
     answer: 1,
-    explanation: "Pod affinity with `topologyKey: kubernetes.io/hostname` tells the scheduler to place the Pod on a node where a Pod matching the label selector is already running. This co-locates the web frontend and cache on the same node. Pod anti-affinity does the opposite, spreading Pods apart.",
+    explanation: "Pod affinity with `topologyKey: kubernetes.io/hostname` tells the scheduler to place the Pod on a node where a Pod matching the label selector is already running. This co-locates the web frontend and cache on the same node. Pod anti-affinity does the opposite, spreading Pods apart.\n\nWhy other options are wrong:\n- A: Pod anti-affinity spreads Pods apart, the opposite of co-locating them on the same node\n- C: Node affinity targets node labels, not other Pods; it cannot express co-location with another Pod\n- D: hostNetwork shares the host network namespace but does not control Pod placement on the same node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl explain pod.spec.affinity.podAffinity"
   },
   {
@@ -142,7 +142,7 @@ var questions = [
       "B. `kubectl get events --field-selector involvedObject.name=<node-name>` list"
     ],
     answer: 1,
-    explanation: "Filtering Pods by `spec.nodeName` shows exactly which Pods remain on the drained node. DaemonSet Pods with appropriate tolerations may still appear. `kubectl top` shows resource usage but not Pod presence, and node conditions do not reflect individual Pod status.",
+    explanation: "Filtering Pods by `spec.nodeName` shows exactly which Pods remain on the drained node. DaemonSet Pods with appropriate tolerations may still appear. `kubectl top` shows resource usage but not Pod presence, and node conditions do not reflect individual Pod status.\n\nWhy other options are wrong:\n- A: kubectl top shows resource usage but does not list which Pods remain on the node\n- C: Node Conditions section shows node health status, not individual Pod presence\n- B: Events may not capture every eviction detail and are not a complete Pod inventory\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get pods --all-namespaces --field-selector spec.nodeName=<node-name>"
   },
   {
@@ -158,7 +158,7 @@ var questions = [
       "D. kube-scheduler -> kube-controller-manager -> kube-apiserver -> kubelet -> kube-proxy"
     ],
     answer: 1,
-    explanation: "Kubernetes requires upgrading control-plane components first in a specific order: kube-apiserver, then kube-controller-manager and kube-scheduler, followed by kubelet and kube-proxy on worker nodes. This ensures API compatibility throughout the process.",
+    explanation: "Kubernetes requires upgrading control-plane components first in a specific order: kube-apiserver, then kube-controller-manager and kube-scheduler, followed by kubelet and kube-proxy on worker nodes. This ensures API compatibility throughout the process.\n\nWhy other options are wrong:\n- A: Upgrading kubelet before the API server violates the version skew policy\n- C: This sequence is out of order; etcd is upgraded as part of the control-plane upgrade, not separately before kubelet\n- D: kube-scheduler and kube-controller-manager must not be upgraded before kube-apiserver\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubeadm upgrade plan"
   },
   {
@@ -174,7 +174,7 @@ var questions = [
       "D. The Pod is missing a `priorityClassName` needed for large Pod requests"
     ],
     answer: 1,
-    explanation: "Each node has 4 CPUs but existing workloads already consume about 1 CPU each, leaving roughly 3 allocatable CPUs per node. The Pod requests 4 CPUs, which no single node can satisfy. The scheduler cannot split requests across nodes; a Pod must fit entirely on one node.",
+    explanation: "Each node has 4 CPUs but existing workloads already consume about 1 CPU each, leaving roughly 3 allocatable CPUs per node. The Pod requests 4 CPUs, which no single node can satisfy. The scheduler cannot split requests across nodes; a Pod must fit entirely on one node.\n\nWhy other options are wrong:\n- A: The cluster has 12 total CPUs which exceeds the 4 CPU request, so total capacity is not the issue\n- C: Each node has 8Gi memory which matches the request, so memory is not the bottleneck\n- D: priorityClassName is not required for scheduling Pods; it only affects preemption order\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
@@ -190,7 +190,7 @@ var questions = [
       "D. Only DaemonSet-managed Pods are evicted from the node when it goes offline entirely"
     ],
     answer: 1,
-    explanation: "`NoExecute` taints not only prevent new Pod scheduling but also evict existing Pods that lack a matching toleration. Pods can specify `tolerationSeconds` to remain for a grace period before eviction. This mechanism ensures workloads are moved off unhealthy nodes automatically.",
+    explanation: "`NoExecute` taints not only prevent new Pod scheduling but also evict existing Pods that lack a matching toleration. Pods can specify `tolerationSeconds` to remain for a grace period before eviction. This mechanism ensures workloads are moved off unhealthy nodes automatically.\n\nWhy other options are wrong:\n- A: NoExecute does more than NoSchedule; it also evicts existing Pods, not just blocks new ones\n- C: The node is not removed from the cluster; it remains registered but marked as unreachable\n- D: DaemonSet Pods typically have tolerations for unreachable taints and are NOT evicted; regular Pods are evicted\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -206,7 +206,7 @@ var questions = [
       "D. Flux, for continuous reconciliation sync"
     ],
     answer: 0,
-    explanation: "Cluster API is a Kubernetes SIG project that provides declarative APIs for cluster creation, configuration, and management. It enables treating cluster infrastructure as Kubernetes resources, supporting lifecycle operations like upgrades and scaling across multiple providers.",
+    explanation: "Cluster API is a Kubernetes SIG project that provides declarative APIs for cluster creation, configuration, and management. It enables treating cluster infrastructure as Kubernetes resources, supporting lifecycle operations like upgrades and scaling across multiple providers.\n\nWhy other options are wrong:\n- B: Helm packages and deploys applications via charts; it does not manage cluster lifecycle\n- C: Argo CD is a GitOps continuous delivery tool for deploying applications, not managing cluster infrastructure\n- D: Flux is a GitOps reconciliation tool for application delivery, not cluster provisioning or lifecycle management\n\nReference: https://cluster-api.sigs.k8s.io/",
     verify: null
   },
   {
@@ -222,7 +222,7 @@ var questions = [
       "B. The Pod is evicted but its data on the local volume is inaccessible from the new node"
     ],
     answer: 3,
-    explanation: "Local PersistentVolumes are bound to a specific node. When a Pod using a local PV is evicted during drain, the rescheduled Pod cannot access the data unless it lands on the same node. This is a critical consideration for stateful workloads using local storage during maintenance.",
+    explanation: "Local PersistentVolumes are bound to a specific node. When a Pod using a local PV is evicted during drain, the rescheduled Pod cannot access the data unless it lands on the same node. This is a critical consideration for stateful workloads using local storage during maintenance.\n\nWhy other options are wrong:\n- A: Kubernetes does not automatically migrate local volume data; local PVs are node-bound\n- D: Local volumes are not replicated; they exist only on the specific node they are provisioned on\n- C: The drain command does not specifically fail for local PV Pods; --force is for standalone unmanaged Pods\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#local",
     verify: "kubectl get pv -o wide"
   },
   {
@@ -238,7 +238,7 @@ var questions = [
       "D. Recreate strategy replacing all"
     ],
     answer: 0,
-    explanation: "This is a blue-green node replacement strategy where a new set of nodes (green) is provisioned alongside existing nodes (blue). Workloads are migrated by cordoning and draining old nodes. Once verified, old nodes are decommissioned, enabling quick rollback by keeping them temporarily.",
+    explanation: "This is a blue-green node replacement strategy where a new set of nodes (green) is provisioned alongside existing nodes (blue). Workloads are migrated by cordoning and draining old nodes. Once verified, old nodes are decommissioned, enabling quick rollback by keeping them temporarily.\n\nWhy other options are wrong:\n- B: In-place rolling update upgrades nodes one at a time in-place, not by creating a parallel pool\n- C: Canary deployment upgrades a single node first to validate, not a full parallel pool\n- D: Recreate strategy would take everything down at once, not run parallel pools\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
     verify: "kubectl get nodes --show-labels"
   },
   {
@@ -254,7 +254,7 @@ var questions = [
       "D. `kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed"
     ],
     answer: 3,
-    explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.",
+    explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but not for all taints; the reason drain skips them is different\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
     verify: "kubectl drain <node-name> --ignore-daemonsets --dry-run=client"
   },
   {
@@ -270,7 +270,7 @@ var questions = [
       "D. The scheduler picks whichever constraint matches the most nodes"
     ],
     answer: 1,
-    explanation: "When both `nodeSelector` and `nodeAffinity` are specified, a node must satisfy both constraints to be eligible. They act as an AND condition. The scheduler first filters by `nodeSelector` labels, then applies `nodeAffinity` rules to the remaining candidates.",
+    explanation: "When both `nodeSelector` and `nodeAffinity` are specified, a node must satisfy both constraints to be eligible. They act as an AND condition. The scheduler first filters by `nodeSelector` labels, then applies `nodeAffinity` rules to the remaining candidates.\n\nWhy other options are wrong:\n- A: nodeSelector does not take precedence; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not take precedence; it is combined with nodeSelector requirements\n- D: The scheduler does not pick the less restrictive constraint; both must be satisfied simultaneously\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
     verify: "kubectl explain pod.spec.nodeSelector"
   },
   {
@@ -286,7 +286,7 @@ var questions = [
       "D. `etcdctl endpoint health --snapshot`"
     ],
     answer: 1,
-    explanation: "`etcdctl snapshot status` displays metadata about the snapshot including hash, revision, total keys, and size, allowing you to verify the backup is valid and contains data. There is no `snapshot verify` subcommand in etcdctl.",
+    explanation: "`etcdctl snapshot status` displays metadata about the snapshot including hash, revision, total keys, and size, allowing you to verify the backup is valid and contains data. There is no `snapshot verify` subcommand in etcdctl.\n\nWhy other options are wrong:\n- A: There is no `etcdctl snapshot verify` subcommand; it does not exist\n- C: There is no `etcdctl check` subcommand with an `--integrity` flag\n- D: `etcdctl endpoint health` checks live endpoint health, not snapshot file integrity\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl snapshot status backup.db --write-out=table"
   },
   {
@@ -302,7 +302,7 @@ var questions = [
       "D. The Service automatically reroutes traffic based on periodic node health checks"
     ],
     answer: 1,
-    explanation: "When a Pod begins terminating, the endpoint controller removes it from the Service's Endpoints object. kube-proxy then updates iptables or IPVS rules, stopping new traffic from reaching the evicted Pod. This is the standard Kubernetes mechanism for graceful Pod removal.",
+    explanation: "When a Pod begins terminating, the endpoint controller removes it from the Service's Endpoints object. kube-proxy then updates iptables or IPVS rules, stopping new traffic from reaching the evicted Pod. This is the standard Kubernetes mechanism for graceful Pod removal.\n\nWhy other options are wrong:\n- A: kube-proxy updates iptables rules based on Endpoints changes but does not independently block traffic to drained nodes\n- C: PDBs limit the rate of disruption but do not manage traffic routing\n- D: Services do not perform periodic node health checks; they rely on the endpoint controller and readiness probes\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#endpoints",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -318,7 +318,7 @@ var questions = [
       "D. 3"
     ],
     answer: 1,
-    explanation: "With `minAvailable: 2` and 3 replicas, only 1 Pod can be disrupted at a time. The eviction API respects the PDB and will not allow more evictions until the disrupted Pod is replaced and running. This ensures the StatefulSet maintains at least 2 healthy replicas.",
+    explanation: "With `minAvailable: 2` and 3 replicas, only 1 Pod can be disrupted at a time. The eviction API respects the PDB and will not allow more evictions until the disrupted Pod is replaced and running. This ensures the StatefulSet maintains at least 2 healthy replicas.\n\nWhy other options are wrong:\n- A: 0 disruptions would mean no drain is possible, which is incorrect with minAvailable: 2 and 3 replicas\n- C: 2 simultaneous disruptions would leave only 1 Pod running, violating minAvailable: 2\n- D: 3 disruptions would mean all Pods down, clearly violating the PDB\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/",
     verify: "kubectl get pdb"
   },
   {
@@ -334,7 +334,7 @@ var questions = [
       "D. LimitRanges applied to batch workload Pods"
     ],
     answer: 2,
-    explanation: "PriorityClasses assign scheduling priority to Pods. When resources are scarce, higher-priority Pods can preempt lower-priority ones. Setting monitoring Pods to a higher PriorityClass ensures they are scheduled before batch Pods and can even evict them if necessary.",
+    explanation: "PriorityClasses assign scheduling priority to Pods. When resources are scarce, higher-priority Pods can preempt lower-priority ones. Setting monitoring Pods to a higher PriorityClass ensures they are scheduled before batch Pods and can even evict them if necessary.\n\nWhy other options are wrong:\n- A: Resource quotas limit total consumption per namespace but do not affect scheduling order\n- B: Pod affinity targets placement topology, not scheduling priority or ordering\n- D: LimitRanges set per-Pod resource defaults and caps but do not control scheduling order\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
     verify: "kubectl get priorityclasses"
   },
   {
@@ -350,7 +350,7 @@ var questions = [
       "D. Use `--delete-emptydir-data` to attempt overriding PDB restrictions"
     ],
     answer: 0,
-    explanation: "Scaling up replicas increases the number of available Pods, allowing the PDB's `minAvailable` or `maxUnavailable` threshold to be met during eviction. The `--disable-eviction` flag bypasses PDBs by using delete instead of the eviction API, but risks service disruption. The `--force` flag only handles standalone pods not managed by a controller. Deleting the PDB removes an important safety mechanism.",
+    explanation: "Scaling up replicas increases the number of available Pods, allowing the PDB's `minAvailable` or `maxUnavailable` threshold to be met during eviction. The `--disable-eviction` flag bypasses PDBs by using delete instead of the eviction API, but risks service disruption. The `--force` flag only handles standalone pods not managed by a controller. Deleting the PDB removes an important safety mechanism.\n\nWhy other options are wrong:\n- B: --force is for standalone Pods not managed by a controller; it does not bypass PDB constraints\n- C: Deleting the PDB removes an important safety mechanism and risks service disruption\n- D: --delete-emptydir-data handles emptyDir volumes; it has no effect on PDB restrictions\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get pdb -A"
   },
   {
@@ -366,7 +366,7 @@ var questions = [
       "A. The cluster becomes read-only until the failed etcd member fully recovers"
     ],
     answer: 0,
-    explanation: "etcd uses the Raft consensus algorithm requiring a majority (quorum) of members to agree on writes. With 3 members, a quorum is 2, so losing 1 member still allows normal read and write operations. Losing a second member would make the cluster unable to reach consensus.",
+    explanation: "etcd uses the Raft consensus algorithm requiring a majority (quorum) of members to agree on writes. With 3 members, a quorum is 2, so losing 1 member still allows normal read and write operations. Losing a second member would make the cluster unable to reach consensus.\n\nWhy other options are wrong:\n- A: The cluster does not become read-only; with quorum intact, both reads and writes succeed\n- B: Writes do not fail with quorum maintained; 2 of 3 members is sufficient for consensus\n- C: The API server has no in-memory fallback store; it always requires etcd to be available\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl endpoint status --cluster"
   },
   {
@@ -382,7 +382,7 @@ var questions = [
       "D. Disconnect the cluster from the Git repository during maintenance"
     ],
     answer: 2,
-    explanation: "Both Flux and Argo CD support suspending synchronization, which temporarily pauses automated reconciliation without losing configuration. This is the safest approach for maintenance windows. Deleting controllers or revoking permissions risks configuration drift and recovery complexity.",
+    explanation: "Both Flux and Argo CD support suspending synchronization, which temporarily pauses automated reconciliation without losing configuration. This is the safest approach for maintenance windows. Deleting controllers or revoking permissions risks configuration drift and recovery complexity.\n\nWhy other options are wrong:\n- A: Deleting the controller risks configuration drift and adds recovery complexity\n- B: Revoking RBAC permissions is disruptive and may cause controller errors and failed reconciliation\n- D: Disconnecting from Git is operationally complex and may cause controller failures\n\nReference: https://fluxcd.io/flux/components/kustomize/kustomizations/#suspend",
     verify: null
   },
   {
@@ -398,7 +398,7 @@ var questions = [
       "D. kube-proxy runs as a DaemonSet and upgrades via `kubeadm upgrade`"
     ],
     answer: 3,
-    explanation: "In kubeadm-managed clusters, kube-proxy runs as a DaemonSet in the `kube-system` namespace. When you run `kubeadm upgrade apply`, it updates the kube-proxy DaemonSet image, and Kubernetes automatically rolls out new Pods on each node.",
+    explanation: "In kubeadm-managed clusters, kube-proxy runs as a DaemonSet in the `kube-system` namespace. When you run `kubeadm upgrade apply`, it updates the kube-proxy DaemonSet image, and Kubernetes automatically rolls out new Pods on each node.\n\nWhy other options are wrong:\n- A: kube-proxy is not a static Pod; it runs as a DaemonSet managed by kubeadm\n- B: kube-proxy does not require manual SSH upgrades; kubeadm automates the DaemonSet image update\n- C: kube-proxy is a separate binary/container, not compiled into the kubelet\n\nReference: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/kubelet-integration/",
     verify: "kubectl -n kube-system get daemonset kube-proxy"
   },
   {
@@ -414,7 +414,7 @@ var questions = [
       "D. No, `topologySpreadConstraints` always requires strictly equal distribution"
     ],
     answer: 0,
-    explanation: "With zone A at 3 Pods and zone B at 1 Pod, the current skew is 2 (3-1). Adding another Pod to zone A would increase it to 3 (4-1), violating `maxSkew: 1`. The scheduler must place the Pod in zone B to keep the skew within bounds. The `whenUnsatisfiable` field controls behavior when constraints cannot be met.",
+    explanation: "With zone A at 3 Pods and zone B at 1 Pod, the current skew is 2 (3-1). Adding another Pod to zone A would increase it to 3 (4-1), violating `maxSkew: 1`. The scheduler must place the Pod in zone B to keep the skew within bounds. The `whenUnsatisfiable` field controls behavior when constraints cannot be met.\n\nWhy other options are wrong:\n- B: maxSkew applies during scheduling, not only during scaling down\n- C: Available resources do not override maxSkew constraints in topology spread\n- D: topologySpreadConstraints use maxSkew to control allowed imbalance, not strict equality\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl explain pod.spec.topologySpreadConstraints"
   },
   {
@@ -430,7 +430,7 @@ var questions = [
       "D. kube-proxy, the network rules management daemon"
     ],
     answer: 1,
-    explanation: "The kube-scheduler watches for Pods with an empty `spec.nodeName` and assigns them to suitable nodes based on filtering and scoring. The kubelet runs Pods after assignment, and the controller-manager manages controllers but does not make scheduling decisions.",
+    explanation: "The kube-scheduler watches for Pods with an empty `spec.nodeName` and assigns them to suitable nodes based on filtering and scoring. The kubelet runs Pods after assignment, and the controller-manager manages controllers but does not make scheduling decisions.\n\nWhy other options are wrong:\n- A: kube-controller-manager runs control loops like ReplicaSet and Deployment controllers, not scheduling\n- C: kubelet runs containers on a node after assignment; it does not decide which node a Pod goes to\n- D: kube-proxy manages network rules for Services; it has no role in Pod scheduling\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
     verify: "kubectl -n kube-system get pods -l component=kube-scheduler"
   },
   {
@@ -446,7 +446,7 @@ var questions = [
       "D. The Pod is rescheduled to a new node but the old instance keeps running"
     ],
     answer: 2,
-    explanation: "The `tolerationSeconds` field specifies how long the Pod tolerates the taint before being evicted. After 30 seconds, if the node is still unreachable, the Pod is marked for eviction by the node controller. Without `tolerationSeconds`, the Pod would tolerate the taint indefinitely.",
+    explanation: "The `tolerationSeconds` field specifies how long the Pod tolerates the taint before being evicted. After 30 seconds, if the node is still unreachable, the Pod is marked for eviction by the node controller. Without `tolerationSeconds`, the Pod would tolerate the taint indefinitely.\n\nWhy other options are wrong:\n- A: The Pod is not immediately evicted; the tolerationSeconds grace period applies first\n- B: The Pod does not run indefinitely; tolerationSeconds: 30 limits how long it tolerates the taint\n- D: The old Pod is evicted, not kept running; the new Pod is scheduled independently by the controller\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
     verify: "kubectl describe pod <pod-name> | grep -i toleration"
   },
   {
@@ -462,7 +462,7 @@ var questions = [
       "D. Lower-priority Pods are evicted from the node but their containers are not killed"
     ],
     answer: 0,
-    explanation: "Setting `preemptionPolicy: Never` means Pods with this PriorityClass are placed ahead in the scheduling queue but will not trigger eviction of running lower-priority Pods. They wait until resources become available naturally. This is useful for important but non-urgent workloads.",
+    explanation: "Setting `preemptionPolicy: Never` means Pods with this PriorityClass are placed ahead in the scheduling queue but will not trigger eviction of running lower-priority Pods. They wait until resources become available naturally. This is useful for important but non-urgent workloads.\n\nWhy other options are wrong:\n- B: preemptionPolicy: Never is a valid field; it is supported since Kubernetes 1.24 GA\n- C: preemptionPolicy: Never means no preemption at all, not a threshold-based preemption\n- D: Preemption terminates victim Pods fully; there is no mechanism to evict Pods without killing containers\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#non-preempting-priority-class",
     verify: "kubectl get priorityclass"
   },
   {
@@ -478,7 +478,7 @@ var questions = [
       "D. Separate namespaces with resource quotas to isolate the two workloads"
     ],
     answer: 2,
-    explanation: "Pod anti-affinity with `topologyKey: kubernetes.io/hostname` ensures that Pods matching the label selector are not co-located on the same node. This directly prevents the payment and fraud-detection Pods from sharing a node without requiring dedicated node pools.",
+    explanation: "Pod anti-affinity with `topologyKey: kubernetes.io/hostname` ensures that Pods matching the label selector are not co-located on the same node. This directly prevents the payment and fraud-detection Pods from sharing a node without requiring dedicated node pools.\n\nWhy other options are wrong:\n- A: Node affinity with dedicated pools works but requires infrastructure overhead to maintain separate pools\n- B: Taints with tolerations isolate node pools but do not directly prevent two services from co-locating on the same node\n- D: Separate namespaces with quotas isolate resource consumption but do not prevent Pods from running on the same node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl explain pod.spec.affinity.podAntiAffinity"
   },
   {
@@ -494,7 +494,7 @@ var questions = [
       "D. The container image registry and contents"
     ],
     answer: 0,
-    explanation: "etcd stores all cluster state, including resource definitions, RBAC policies, and secrets. Restoring the etcd snapshot is the first step in disaster recovery because all other components depend on this data. Without etcd, the API server has no state to serve.",
+    explanation: "etcd stores all cluster state, including resource definitions, RBAC policies, and secrets. Restoring the etcd snapshot is the first step in disaster recovery because all other components depend on this data. Without etcd, the API server has no state to serve.\n\nWhy other options are wrong:\n- B: PersistentVolume data is application data that can be restored after the cluster itself is operational\n- C: Kubelet config files are node-level configs that can be regenerated; they are not the cluster state\n- D: Container images are stored externally in registries and can be pulled again; they are not cluster state\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl snapshot restore backup.db"
   },
   {
@@ -510,7 +510,7 @@ var questions = [
       "D. The Pod can be scheduled on this node if no other nodes are available"
     ],
     answer: 3,
-    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.",
+    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.\n\nWhy other options are wrong:\n- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule is a recognized and valid taint effect alongside NoSchedule and NoExecute\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -526,7 +526,7 @@ var questions = [
       "D. Job with parallelism equal to the node count"
     ],
     answer: 2,
-    explanation: "A DaemonSet ensures exactly one Pod runs on every eligible node. By adding tolerations for the `NoSchedule` taints, DaemonSet Pods can be scheduled on tainted nodes. Deployments and StatefulSets cannot guarantee per-node placement.",
+    explanation: "A DaemonSet ensures exactly one Pod runs on every eligible node. By adding tolerations for the `NoSchedule` taints, DaemonSet Pods can be scheduled on tainted nodes. Deployments and StatefulSets cannot guarantee per-node placement.\n\nWhy other options are wrong:\n- A: A Deployment cannot guarantee exactly one Pod per node and does not track node additions/removals\n- B: StatefulSet with anti-affinity can spread Pods but does not automatically track nodes joining or leaving\n- D: A Job with parallelism equal to node count runs a fixed number of tasks, not one per node dynamically\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
     verify: "kubectl get daemonset -n kube-system"
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "D. Only Pods with `restartPolicy: Always` survive through the container runtime upgrade"
     ],
     answer: 2,
-    explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.",
+    explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl drain <node-name> --ignore-daemonsets"
   },
   {
@@ -558,7 +558,7 @@ var questions = [
       "D. `etcd_request_duration_seconds` metric name type"
     ],
     answer: 0,
-    explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.",
+    explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.\n\nWhy other options are wrong:\n- B: kubelet_pod_start_duration_seconds measures Pod startup time after scheduling, a different phase\n- C: apiserver_request_duration_seconds measures API server request latency, not scheduling latency\n- D: etcd_request_duration_seconds measures etcd request latency, not scheduling-specific latency\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
     verify: null
   },
   {
@@ -574,7 +574,7 @@ var questions = [
       "D. Nodes are checked for live network connectivity to the scheduled Pod"
     ],
     answer: 1,
-    explanation: "During the filtering phase, the scheduler eliminates nodes that cannot satisfy the Pod's hard constraints such as resource requests, node selectors, taints, and affinity rules. Only nodes passing all filters advance to the scoring phase where they are ranked by preference criteria.",
+    explanation: "During the filtering phase, the scheduler eliminates nodes that cannot satisfy the Pod's hard constraints such as resource requests, node selectors, taints, and affinity rules. Only nodes passing all filters advance to the scoring phase where they are ranked by preference criteria.\n\nWhy other options are wrong:\n- A: Ranking by available resources is part of the scoring phase, not the filtering phase\n- C: Random sampling is a performance optimization (percentageOfNodesToScore), not the purpose of filtering\n- D: Network connectivity checks are not part of the filtering phase; filtering checks constraints like taints and resources\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler-implementation",
     verify: "kubectl describe pod <pod-name> | grep -A10 Events"
   },
   {
@@ -590,7 +590,7 @@ var questions = [
       "D. Both B and C can check certificate expiration dates"
     ],
     answer: 3,
-    explanation: "Both `kubeadm certs check-expiration` and `openssl x509` can verify certificate expiration dates. The kubeadm command provides a convenient summary of all cluster certificates, while openssl allows checking individual certificate files directly.",
+    explanation: "Both `kubeadm certs check-expiration` and `openssl x509` can verify certificate expiration dates. The kubeadm command provides a convenient summary of all cluster certificates, while openssl allows checking individual certificate files directly.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- B: kubeadm certs check-expiration works but is only one of the valid approaches; D is more complete\n- C: openssl x509 works for individual cert files but is only one of the valid approaches; D is more complete\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
     verify: "kubeadm certs check-expiration"
   },
   {
@@ -606,7 +606,7 @@ var questions = [
       "D. The Pod continues running because the rule is `IgnoredDuringExecution`"
     ],
     answer: 3,
-    explanation: "The `IgnoredDuringExecution` suffix means the affinity rule is only evaluated at scheduling time. Once a Pod is running, changes to node labels do not trigger eviction. The Pod continues on the node even if it no longer matches the affinity rule.",
+    explanation: "The `IgnoredDuringExecution` suffix means the affinity rule is only evaluated at scheduling time. Once a Pod is running, changes to node labels do not trigger eviction. The Pod continues on the node even if it no longer matches the affinity rule.\n\nWhy other options are wrong:\n- A: IgnoredDuringExecution means no eviction occurs after scheduling; the Pod is not evicted\n- B: The Pod does not enter Pending; it continues running on the current node\n- C: The kubelet does not terminate Pods due to affinity rule changes; this is explicitly ignored\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
     verify: "kubectl get pod <pod-name> -o wide"
   },
   {
@@ -622,7 +622,7 @@ var questions = [
       "D. Stash, a backup and recovery tooling"
     ],
     answer: 2,
-    explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes via the Kubernetes API. It enables disaster recovery, data migration, and cluster portability. Velero does not manage etcd directly but works at the Kubernetes resource level.",
+    explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes via the Kubernetes API. It enables disaster recovery, data migration, and cluster portability. Velero does not manage etcd directly but works at the Kubernetes resource level.\n\nWhy other options are wrong:\n- A: etcd-operator manages etcd clusters, not Kubernetes resource backup and restore\n- B: Longhorn is a distributed block storage system, not a backup and restore tool\n- D: Stash is a third-party tool by AppsCode, not a CNCF project\n\nReference: https://velero.io/",
     verify: null
   },
   {
@@ -638,7 +638,7 @@ var questions = [
       "D. 4"
     ],
     answer: 1,
-    explanation: "An etcd cluster with N members requires a quorum of (N/2)+1 members. For 5 members, the quorum is 3. Therefore, the cluster can tolerate 2 simultaneous member failures and still process reads and writes normally.",
+    explanation: "An etcd cluster with N members requires a quorum of (N/2)+1 members. For 5 members, the quorum is 3. Therefore, the cluster can tolerate 2 simultaneous member failures and still process reads and writes normally.\n\nWhy other options are wrong:\n- A: 1 failure tolerance is for a 3-member cluster if quorum required 3; but quorum is ceil((5+1)/2)=3, so 2 can fail\n- C: 3 simultaneous failures would leave only 2 members, below the quorum of 3\n- D: 4 failures would leave only 1 member, far below quorum\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl member list"
   },
   {
@@ -654,7 +654,7 @@ var questions = [
       "D. The Pod is scheduled but a warning event is emitted on the Pod"
     ],
     answer: 0,
-    explanation: "`DoNotSchedule` is a hard constraint: if the topology spread cannot be satisfied, the Pod remains Pending. The alternative `ScheduleAnyway` would allow scheduling even when the constraint is violated, choosing the topology that minimizes the skew.",
+    explanation: "`DoNotSchedule` is a hard constraint: if the topology spread cannot be satisfied, the Pod remains Pending. The alternative `ScheduleAnyway` would allow scheduling even when the constraint is violated, choosing the topology that minimizes the skew.\n\nWhy other options are wrong:\n- B: DoNotSchedule does not fall back to least loaded zone; it enforces the constraint strictly\n- C: The scheduler does not ignore the constraint; DoNotSchedule is a hard requirement\n- D: No warning event is emitted while scheduling proceeds; the Pod stays Pending\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
@@ -670,7 +670,7 @@ var questions = [
       "D. `kubectl get pods --all-namespaces | wc -l` to count the running Pod total"
     ],
     answer: 2,
-    explanation: "`kubectl describe nodes` shows both `Allocatable` resources (total available for Pods) and `Allocated resources` (currently requested). The difference represents remaining capacity. `kubectl top` shows actual usage, not allocatable capacity, which is different from schedulable capacity.",
+    explanation: "`kubectl describe nodes` shows both `Allocatable` resources (total available for Pods) and `Allocated resources` (currently requested). The difference represents remaining capacity. `kubectl top` shows actual usage, not allocatable capacity, which is different from schedulable capacity.\n\nWhy other options are wrong:\n- A: kubectl top shows current usage metrics, not allocatable vs. allocated capacity\n- B: kubectl get nodes -o wide shows status and version but not resource allocation details\n- D: Counting Pods does not reveal resource allocation levels; Pods vary in resource requests\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/",
     verify: "kubectl describe nodes | grep -A5 'Allocated resources'"
   },
   {
@@ -686,7 +686,7 @@ var questions = [
       "D. kube-proxy on old nodes has incompatible iptables rules after the partial upgrade"
     ],
     answer: 3,
-    explanation: "During partial upgrades, kube-proxy on old nodes may have stale or incompatible iptables/IPVS rules if the kube-proxy DaemonSet was already updated. This can cause DNS resolution failures because Service ClusterIP routing depends on kube-proxy rules being correct.",
+    explanation: "During partial upgrades, kube-proxy on old nodes may have stale or incompatible iptables/IPVS rules if the kube-proxy DaemonSet was already updated. This can cause DNS resolution failures because Service ClusterIP routing depends on kube-proxy rules being correct.\n\nWhy other options are wrong:\n- A: Kubelet version differences do not prevent CoreDNS communication; the API handles compatibility\n- B: CoreDNS has no kubelet version dependency; it runs as a regular Deployment\n- C: Pod network CIDR is not changed during standard kubeadm upgrades\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl -n kube-system get pods -l k8s-app=kube-dns -o wide"
   },
   {
@@ -702,7 +702,7 @@ var questions = [
       "D. `EvictExisting` as effect"
     ],
     answer: 0,
-    explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `EvictExisting` is not a valid taint effect.",
+    explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `EvictExisting` is not a valid taint effect.\n\nWhy other options are wrong:\n- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: EvictExisting is not a valid taint effect in Kubernetes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl taint --help"
   },
   {
@@ -718,7 +718,7 @@ var questions = [
       "D. Use Helm hooks to modify the `nodeSelector` value after each deployment"
     ],
     answer: 2,
-    explanation: "Helm values files allow overriding template variables per environment. Using `values-staging.yaml` and `values-production.yaml` with different `nodeSelector` entries keeps the chart reusable. `helm install -f values-production.yaml` applies the correct configuration per environment.",
+    explanation: "Helm values files allow overriding template variables per environment. Using `values-staging.yaml` and `values-production.yaml` with different `nodeSelector` entries keeps the chart reusable. `helm install -f values-production.yaml` applies the correct configuration per environment.\n\nWhy other options are wrong:\n- A: Separate charts duplicate effort and violate DRY principles; values files handle environment differences\n- B: Hard-coding values prevents reuse across environments\n- D: Helm hooks run Jobs at lifecycle events; they are not designed for overriding template values\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",
     verify: "helm show values <chart-name>"
   },
   {
@@ -734,7 +734,7 @@ var questions = [
       "D. `kubectl delete node <node-name>` from the cluster"
     ],
     answer: 2,
-    explanation: "`kubectl cordon` marks a node as unschedulable, preventing new Pods from being placed on it while leaving existing Pods running. This is ideal for preparing a node for maintenance. `drain` also evicts existing Pods, which goes beyond the requirement.",
+    explanation: "`kubectl cordon` marks a node as unschedulable, preventing new Pods from being placed on it while leaving existing Pods running. This is ideal for preparing a node for maintenance. `drain` also evicts existing Pods, which goes beyond the requirement.\n\nWhy other options are wrong:\n- A: drain also evicts existing Pods, which exceeds the requirement of only preventing new scheduling\n- B: NoExecute taint would evict existing Pods, not just prevent new scheduling\n- D: Deleting the node removes it from the cluster entirely, which is destructive\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
     verify: "kubectl get nodes"
   },
   {
@@ -750,7 +750,7 @@ var questions = [
       "D. Priority value of 100000000, ranked above the cluster-critical one"
     ],
     answer: 1,
-    explanation: "`system-node-critical` has a priority value of 2000001000, making it one of the highest built-in priority classes. It is intended for Pods essential to node operation such as kube-proxy. `system-cluster-critical` has a slightly lower value of 2000000000.",
+    explanation: "`system-node-critical` has a priority value of 2000001000, making it one of the highest built-in priority classes. It is intended for Pods essential to node operation such as kube-proxy. `system-cluster-critical` has a slightly lower value of 2000000000.\n\nWhy other options are wrong:\n- A: Priority value 1000 is far lower than system-node-critical; it is a typical user-defined priority\n- C: system-node-critical is not same as default priority; it has a specific very high value\n- D: 100000000 is not the value; system-node-critical is 2000001000, higher than system-cluster-critical at 2000000000\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass system-node-critical"
   },
   {
@@ -766,7 +766,7 @@ var questions = [
       "D. Taking etcd backups only before planned maintenance windows and major upgrade events"
     ],
     answer: 2,
-    explanation: "Automating etcd backups via CronJobs with remote storage follows cloud-native principles of automation, reproducibility, and resilience. Regular automated backups ensure consistent recovery points. VM-level backups may not capture a consistent etcd state.",
+    explanation: "Automating etcd backups via CronJobs with remote storage follows cloud-native principles of automation, reproducibility, and resilience. Regular automated backups ensure consistent recovery points. VM-level backups may not capture a consistent etcd state.\n\nWhy other options are wrong:\n- A: Manual SSH-based backups are error-prone, not automated, and do not follow cloud-native automation principles\n- C: VM-level backups may not capture a consistent etcd snapshot state during writes\n- D: Backing up only before maintenance windows risks losing data from the interval between backups\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "kubectl get cronjobs -n kube-system"
   },
   {
@@ -782,7 +782,7 @@ var questions = [
       "D. `--grace-period=0` on drain command"
     ],
     answer: 1,
-    explanation: "The `--delete-emptydir-data` flag (previously `--delete-local-data`) acknowledges that evicting Pods with `emptyDir` volumes will discard their data. Without this flag, the drain command refuses to proceed to prevent accidental data loss.",
+    explanation: "The `--delete-emptydir-data` flag (previously `--delete-local-data`) acknowledges that evicting Pods with `emptyDir` volumes will discard their data. Without this flag, the drain command refuses to proceed to prevent accidental data loss.\n\nWhy other options are wrong:\n- A: --force handles standalone Pods not managed by a controller, not emptyDir data acknowledgment\n- C: --ignore-daemonsets addresses DaemonSet Pods, not emptyDir volume data\n- D: --grace-period controls the termination grace period, not emptyDir data handling\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/",
     verify: "kubectl drain --help"
   },
   {
@@ -798,7 +798,7 @@ var questions = [
       "D. `Burstable`"
     ],
     answer: 3,
-    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.",
+    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.\n\nWhy other options are wrong:\n- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Standard is not a valid Kubernetes QoS class\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.qosClass}'"
   },
   {
@@ -814,7 +814,7 @@ var questions = [
       "D. The second replica is placed on the same node but marked as degraded"
     ],
     answer: 2,
-    explanation: "`requiredDuringSchedulingIgnoredDuringExecution` is a hard constraint. If no node satisfies the anti-affinity rule, the Pod stays Pending indefinitely. The scheduler does not downgrade hard constraints to soft preferences. Adding another node would resolve the issue.",
+    explanation: "`requiredDuringSchedulingIgnoredDuringExecution` is a hard constraint. If no node satisfies the anti-affinity rule, the Pod stays Pending indefinitely. The scheduler does not downgrade hard constraints to soft preferences. Adding another node would resolve the issue.\n\nWhy other options are wrong:\n- A: Hard anti-affinity does not allow both replicas on the same node; it is strictly enforced\n- B: The scheduler never converts hard constraints to soft preferences; they remain strict\n- D: There is no degraded marking; hard constraints either succeed or leave the Pod Pending\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get pods -o wide"
   },
   {
@@ -830,7 +830,7 @@ var questions = [
       "D. The restored snapshot was encrypted with a different key that does not match today"
     ],
     answer: 1,
-    explanation: "`etcdctl snapshot restore` creates a new data directory. If the etcd static Pod manifest still points to the old directory, etcd will serve old data. The etcd configuration in `/etc/kubernetes/manifests/etcd.yaml` must reference the new data directory path.",
+    explanation: "`etcdctl snapshot restore` creates a new data directory. If the etcd static Pod manifest still points to the old directory, etcd will serve old data. The etcd configuration in `/etc/kubernetes/manifests/etcd.yaml` must reference the new data directory path.\n\nWhy other options are wrong:\n- A: The API server reads from etcd, not an in-memory cache; restarting it would not fix a stale etcd data directory\n- C: The controller-manager reconciles to current etcd state; it cannot create newer state from old data\n- D: Encryption key mismatch would cause read errors, not stale data; the data would be unreadable\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
     verify: "kubectl -n kube-system get pod etcd-<node-name> -o yaml | grep data-dir"
   },
   {
@@ -846,7 +846,7 @@ var questions = [
       "A. Only nodes with label `env=production` and taint `team=backend:NoSchedule`"
     ],
     answer: 0,
-    explanation: "The `nodeSelector` requires `env=production`, filtering out nodes without that label. The toleration allows (but does not require) scheduling on nodes with the `team=backend:NoSchedule` taint. So the Pod can schedule on any `env=production` node, whether or not it has the taint.",
+    explanation: "The `nodeSelector` requires `env=production`, filtering out nodes without that label. The toleration allows (but does not require) scheduling on nodes with the `team=backend:NoSchedule` taint. So the Pod can schedule on any `env=production` node, whether or not it has the taint.\n\nWhy other options are wrong:\n- B: Tolerations allow scheduling on tainted nodes but do not restrict to only tainted nodes; nodeSelector controls which nodes are eligible\n- C: Tolerations allow (not require) scheduling on tainted nodes; nodes without taints with the matching label are also eligible\n- A: The Pod is not restricted to only tainted+labeled nodes; untainted nodes with the label are also eligible\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe pod <pod-name> | grep 'Node-Selectors\\|Tolerations'"
   },
   {
@@ -862,7 +862,7 @@ var questions = [
       "D. The ReplicaSet is scaled to zero until the drained node returns"
     ],
     answer: 0,
-    explanation: "When Pods are evicted during drain, the ReplicaSet controller detects that the desired replica count is not met and creates new Pods. The scheduler places these new Pods on other available nodes. Pod state is not preserved; the replacement Pods start fresh.",
+    explanation: "When Pods are evicted during drain, the ReplicaSet controller detects that the desired replica count is not met and creates new Pods. The scheduler places these new Pods on other available nodes. Pod state is not preserved; the replacement Pods start fresh.\n\nWhy other options are wrong:\n- B: Pods are not moved with state; they are terminated and new Pods start fresh on other nodes\n- C: ReplicaSet-managed Pods are automatically recreated by the controller; manual recreation is not needed\n- D: The ReplicaSet maintains desired replica count; it does not scale to zero during drain\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
     verify: "kubectl get rs"
   },
   {
@@ -878,7 +878,7 @@ var questions = [
       "D. Configure a headless Service for the collector Pod endpoint group"
     ],
     answer: 0,
-    explanation: "Pod affinity with `topologyKey: topology.kubernetes.io/zone` ensures collector Pods are scheduled in the same zone as the Pods they target via the label selector. A DaemonSet places one Pod per node regardless of zone locality, which is a different distribution pattern.",
+    explanation: "Pod affinity with `topologyKey: topology.kubernetes.io/zone` ensures collector Pods are scheduled in the same zone as the Pods they target via the label selector. A DaemonSet places one Pod per node regardless of zone locality, which is a different distribution pattern.\n\nWhy other options are wrong:\n- B: DaemonSet places one Pod per node regardless of zone; it does not ensure zone-level co-location with specific app Pods\n- C: hostNetwork shares the node network namespace but does not control zone-level placement\n- D: A headless Service provides DNS records for Pods but does not influence scheduling placement\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get pods -o wide --show-labels"
   },
   {
@@ -894,7 +894,7 @@ var questions = [
       "D. The CNI plugin for Pod network setup"
     ],
     answer: 3,
-    explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.",
+    explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: Container runtime issues can also cause NotReady, but the question asks about the most likely cause when kubelet is running\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
     verify: "kubectl describe node <node-name> | grep -A5 Conditions"
   },
   {
@@ -910,7 +910,7 @@ var questions = [
       "D. Use only a `nodeSelector` for the `tenant=team-a` label without adding any tolerations"
     ],
     answer: 2,
-    explanation: "A toleration alone allows scheduling on tainted nodes but does not prevent scheduling on untainted nodes. Combining a toleration (to allow team-a's nodes) with a `nodeSelector` (to require team-a's label) ensures Pods only run on team-a's dedicated node pool.",
+    explanation: "A toleration alone allows scheduling on tainted nodes but does not prevent scheduling on untainted nodes. Combining a toleration (to allow team-a's nodes) with a `nodeSelector` (to require team-a's label) ensures Pods only run on team-a's dedicated node pool.\n\nWhy other options are wrong:\n- A: A toleration alone allows scheduling on tainted nodes but also allows scheduling on untainted nodes\n- B: Tolerating both tenants would allow scheduling on team-b nodes, violating isolation\n- D: nodeSelector alone cannot override the NoSchedule taint; the Pod would be stuck Pending on tainted nodes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl get nodes -l tenant=team-a"
   },
   {
@@ -926,7 +926,7 @@ var questions = [
       "D. Vertical Pod Autoscaler (VPA) for sizing"
     ],
     answer: 3,
-    explanation: "The Vertical Pod Autoscaler analyzes actual resource usage and recommends or automatically adjusts Pod resource requests and limits. This right-sizing reduces waste and improves scheduling efficiency. HPA scales replica count, not individual Pod resources.",
+    explanation: "The Vertical Pod Autoscaler analyzes actual resource usage and recommends or automatically adjusts Pod resource requests and limits. This right-sizing reduces waste and improves scheduling efficiency. HPA scales replica count, not individual Pod resources.\n\nWhy other options are wrong:\n- A: HPA scales the number of replicas horizontally, not individual Pod resource requests\n- B: Cluster Autoscaler adds or removes nodes, not Pod resource requests\n- C: LimitRange sets default and maximum resource values but does not dynamically adjust based on usage\n\nReference: https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/",
     verify: "kubectl get vpa -A"
   },
   {
@@ -942,7 +942,7 @@ var questions = [
       "D. `--kubeconfig` and `--context` flag"
     ],
     answer: 1,
-    explanation: "When TLS is enabled on etcd (standard for kubeadm clusters), `etcdctl` requires `--cacert` (CA certificate), `--cert` (client certificate), and `--key` (client key) for mutual TLS authentication. These certificates are typically found in `/etc/kubernetes/pki/etcd/`.",
+    explanation: "When TLS is enabled on etcd (standard for kubeadm clusters), `etcdctl` requires `--cacert` (CA certificate), `--cert` (client certificate), and `--key` (client key) for mutual TLS authentication. These certificates are typically found in `/etc/kubernetes/pki/etcd/`.\n\nWhy other options are wrong:\n- A: etcd does not use username/password authentication by default; TLS client certificates are standard\n- C: etcd does not use token-based authentication; it uses mutual TLS in kubeadm clusters\n- D: etcdctl is a standalone tool that does not use kubeconfig files; those are for kubectl\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "ls /etc/kubernetes/pki/etcd/"
   },
   {
@@ -958,7 +958,7 @@ var questions = [
       "D. The kernel version compatibility with the new containerd version"
     ],
     answer: 0,
-    explanation: "After upgrading containerd, the CRI socket path may have changed or the containerd configuration may require updates. The kubelet must be configured with the correct `--container-runtime-endpoint` pointing to the containerd socket, typically `unix:///run/containerd/containerd.sock`.",
+    explanation: "After upgrading containerd, the CRI socket path may have changed or the containerd configuration may require updates. The kubelet must be configured with the correct `--container-runtime-endpoint` pointing to the containerd socket, typically `unix:///run/containerd/containerd.sock`.\n\nWhy other options are wrong:\n- B: Disk space issues would produce different error messages, not containerd task creation failures\n- C: Registry connectivity issues cause image pull errors, not containerd task creation failures\n- D: Kernel compatibility issues are rare and would typically cause containerd itself to fail to start\n\nReference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/",
     verify: "systemctl status containerd"
   },
   {
@@ -974,7 +974,7 @@ var questions = [
       "D. NetworkPolicy for traffic controls"
     ],
     answer: 2,
-    explanation: "A LimitRange in a namespace can set default resource requests and limits that are automatically applied to containers that do not specify their own. ResourceQuota limits total resource consumption per namespace but does not set per-Pod defaults.",
+    explanation: "A LimitRange in a namespace can set default resource requests and limits that are automatically applied to containers that do not specify their own. ResourceQuota limits total resource consumption per namespace but does not set per-Pod defaults.\n\nWhy other options are wrong:\n- A: ResourceQuota limits total namespace consumption but does not set per-Pod defaults\n- B: PodSecurityPolicy is deprecated and enforces security constraints, not resource defaults\n- D: NetworkPolicy controls network traffic between Pods, not resource defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
     verify: "kubectl get limitrange -n <namespace>"
   },
   {
@@ -990,7 +990,7 @@ var questions = [
       "D. `ImageLocality` — favors nodes that already have the container image"
     ],
     answer: 3,
-    explanation: "The `ImageLocality` scoring plugin gives higher scores to nodes that already have the required container images cached. If one node has all images cached, it consistently scores highest, causing Pod concentration. This is common after initial deployments when only one node has pulled the images.",
+    explanation: "The `ImageLocality` scoring plugin gives higher scores to nodes that already have the required container images cached. If one node has all images cached, it consistently scores highest, causing Pod concentration. This is common after initial deployments when only one node has pulled the images.\n\nWhy other options are wrong:\n- A: NodeResourcesBalancedAllocation favors nodes with balanced CPU/memory ratios, which would spread Pods\n- B: InterPodAffinity scores based on Pod affinity rules; without specific rules configured, it would not concentrate Pods\n- C: NodeResourcesFit checks resource availability but does not by itself cause concentration on one node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/",
     verify: "kubectl describe pod <pod-name> | grep 'Node:'"
   },
   {
@@ -1006,7 +1006,7 @@ var questions = [
       "D. Run `kubeadm certs renew` to rotate all encryption keys and certificates automatically"
     ],
     answer: 1,
-    explanation: "To rotate encryption keys, add the new key as the first provider in the EncryptionConfiguration, restart the API server to use it for new writes, then re-encrypt existing Secrets with `kubectl get secrets --all-namespaces -o json | kubectl replace -f -`. The old key must remain for reading existing data until re-encryption completes.",
+    explanation: "To rotate encryption keys, add the new key as the first provider in the EncryptionConfiguration, restart the API server to use it for new writes, then re-encrypt existing Secrets with `kubectl get secrets --all-namespaces -o json | kubectl replace -f -`. The old key must remain for reading existing data until re-encryption completes.\n\nWhy other options are wrong:\n- B: Deleting and recreating Secrets is unnecessary and risky; the re-encryption approach preserves existing Secrets\n- C: Stopping etcd entirely causes cluster downtime and is not the correct procedure\n- D: kubeadm certs renew handles TLS certificates, not encryption-at-rest keys; these are different systems\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
     verify: null
   },
   {
@@ -1022,7 +1022,7 @@ var questions = [
       "D. No, unless `operator: Exists` is used to tolerate all taints"
     ],
     answer: 2,
-    explanation: "A Pod must tolerate all `NoSchedule` taints on a node to be scheduled there. Tolerating only one of multiple taints is insufficient. Each taint acts as an independent gate, and all must be satisfied. The Pod would need to add a second toleration for `zone=restricted:NoSchedule`.",
+    explanation: "A Pod must tolerate all `NoSchedule` taints on a node to be scheduled there. Tolerating only one of multiple taints is insufficient. Each taint acts as an independent gate, and all must be satisfied. The Pod would need to add a second toleration for `zone=restricted:NoSchedule`.\n\nWhy other options are wrong:\n- A: Tolerating one taint is not sufficient; all NoSchedule taints must be tolerated\n- B: nodeSelector does not affect taint evaluation; taints are checked independently\n- D: operator: Exists without a key would tolerate all taints, but the question says the Pod only tolerates the gpu taint\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -1038,7 +1038,7 @@ var questions = [
       "D. A policy engine like OPA Gatekeeper or Kyverno with a constraint"
     ],
     answer: 3,
-    explanation: "Policy engines like OPA Gatekeeper or Kyverno can enforce policies that reject manifests scheduling Pods on control-plane nodes. These can run as admission webhooks in the cluster or as CLI tools in CI pipelines. `--dry-run=server` validates syntax but not scheduling policies.",
+    explanation: "Policy engines like OPA Gatekeeper or Kyverno can enforce policies that reject manifests scheduling Pods on control-plane nodes. These can run as admission webhooks in the cluster or as CLI tools in CI pipelines. `--dry-run=server` validates syntax but not scheduling policies.\n\nWhy other options are wrong:\n- A: --dry-run=server validates API syntax and admission but does not check custom scheduling policies\n- B: kubectl auth can-i checks RBAC permissions, not manifest content or scheduling policies\n- C: helm lint validates chart structure and template syntax, not scheduling or placement policies\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
     verify: null
   },
   {
@@ -1054,7 +1054,7 @@ var questions = [
       "D. v1.26 through v1.29 inclusive"
     ],
     answer: 3,
-    explanation: "Since Kubernetes 1.28, the version skew policy allows kubelets to be up to three minor versions older than the API server (for kubelet >= 1.25). With API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server. Note: kubelets older than v1.25 are limited to a two-version skew.",
+    explanation: "Since Kubernetes 1.28, the version skew policy allows kubelets to be up to three minor versions older than the API server (for kubelet >= 1.25). With API server at v1.29, supported kubelet versions are v1.26, v1.27, v1.28, and v1.29. The kubelet must never be newer than the API server. Note: kubelets older than v1.25 are limited to a two-version skew.\n\nWhy other options are wrong:\n- A: v1.29 only is too restrictive; kubelets can be up to 3 minor versions older\n- B: v1.27 through v1.29 is only a 2-version skew; the policy allows 3 versions for kubelet >= 1.25\n- C: v1.28 and v1.29 is only a 1-version skew, unnecessarily restrictive\n\nReference: https://kubernetes.io/releases/version-skew-policy/",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -1070,7 +1070,7 @@ var questions = [
       "D. `globalDefault` is not a recognized valid field in the PriorityClass resource spec"
     ],
     answer: 0,
-    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).",
+    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault is a valid and recognized field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1086,7 +1086,7 @@ var questions = [
       "D. Volcano, the batch scheduling system"
     ],
     answer: 0,
-    explanation: "The Kubernetes Scheduler Plugins project provides a framework for extending the default scheduler with custom filter, score, and other plugins. It uses the scheduler framework API, allowing teams to add domain-specific logic without replacing the entire scheduler.",
+    explanation: "The Kubernetes Scheduler Plugins project provides a framework for extending the default scheduler with custom filter, score, and other plugins. It uses the scheduler framework API, allowing teams to add domain-specific logic without replacing the entire scheduler.\n\nWhy other options are wrong:\n- B: Descheduler rebalances Pods after scheduling but does not extend the scheduler with custom plugins\n- C: Kueue manages job queuing and admission but does not add custom scheduling plugins\n- D: Volcano is a batch scheduling system primarily for HPC/AI workloads, not a general scheduler plugin framework\n\nReference: https://github.com/kubernetes-sigs/scheduler-plugins",
     verify: null
   },
   {
@@ -1102,7 +1102,7 @@ var questions = [
       "D. Sets the `control-plane` taint effect to `PreferNoSchedule` on all matching nodes"
     ],
     answer: 2,
-    explanation: "The trailing dash (`-`) in a taint command removes the taint with that key from the specified nodes. Using `--all` applies it to every node. This is commonly done in single-node or development clusters to allow regular workloads on control-plane nodes.",
+    explanation: "The trailing dash (`-`) in a taint command removes the taint with that key from the specified nodes. Using `--all` applies it to every node. This is commonly done in single-node or development clusters to allow regular workloads on control-plane nodes.\n\nWhy other options are wrong:\n- A: The trailing dash removes the taint, it does not add one\n- B: The taint command modifies taints, it does not list them; use kubectl describe for listing\n- D: The trailing dash means removal, not changing the effect to PreferNoSchedule\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe nodes | grep Taints"
   },
   {
@@ -1118,7 +1118,7 @@ var questions = [
       "D. 2 GB"
     ],
     answer: 3,
-    explanation: "etcd's default maximum database size (quota) is 2 GB. When this limit is reached, etcd stops accepting write requests and returns `NOSPACE` alarms. Monitoring the `etcd_mvcc_db_total_size_in_bytes` metric helps detect approaching limits before writes fail.",
+    explanation: "etcd's default maximum database size (quota) is 2 GB. When this limit is reached, etcd stops accepting write requests and returns `NOSPACE` alarms. Monitoring the `etcd_mvcc_db_total_size_in_bytes` metric helps detect approaching limits before writes fail.\n\nWhy other options are wrong:\n- A: 1 GB is below the default; the actual default quota is 2 GB\n- B: 4 GB exceeds the default; it would require explicit --quota-backend-bytes configuration\n- C: 8 GB is the recommended maximum configurable size, not the default\n\nReference: https://etcd.io/docs/v3.5/dev-guide/limit/",
     verify: null
   },
   {
@@ -1134,7 +1134,7 @@ var questions = [
       "D. The CNI plugin broadcasts the new IP address to all other nodes in the cluster"
     ],
     answer: 0,
-    explanation: "When a new Pod is created, it gets a new IP. The endpoint controller updates the Service's Endpoints object with the new Pod IP, and CoreDNS resolves the Service name to the updated endpoints. Other Pods using the Service DNS name or ClusterIP transparently reach the new Pod.",
+    explanation: "When a new Pod is created, it gets a new IP. The endpoint controller updates the Service's Endpoints object with the new Pod IP, and CoreDNS resolves the Service name to the updated endpoints. Other Pods using the Service DNS name or ClusterIP transparently reach the new Pod.\n\nWhy other options are wrong:\n- B: Pod IP addresses are not preserved across rescheduling; new Pods get new IPs from the Pod CIDR\n- C: Other Pods using Service DNS do not need to restart; DNS and endpoint updates are transparent\n- D: CNI plugins do not broadcast IP changes; Service abstraction handles discovery via endpoints and DNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#endpoints",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -1150,7 +1150,7 @@ var questions = [
       "D. There is no difference during drain operations, the policy only affects initial creation"
     ],
     answer: 2,
-    explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.",
+    explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.\n\nWhy other options are wrong:\n- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: Parallel policy does not prevent eviction during drain; Pods are still evicted normally\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
     verify: "kubectl get statefulset <name> -o yaml | grep podManagementPolicy"
   },
   {
@@ -1166,7 +1166,7 @@ var questions = [
       "D. Use multiple node pools with different instance types and taints or nodeSelectors"
     ],
     answer: 3,
-    explanation: "Multiple node pools with different instance sizes allow right-sizing infrastructure to workload needs. Taints and nodeSelectors ensure ML Pods land on GPU/large nodes while API Pods use smaller, cheaper nodes. This optimizes both cost and scheduling efficiency.",
+    explanation: "Multiple node pools with different instance sizes allow right-sizing infrastructure to workload needs. Taints and nodeSelectors ensure ML Pods land on GPU/large nodes while API Pods use smaller, cheaper nodes. This optimizes both cost and scheduling efficiency.\n\nWhy other options are wrong:\n- A: A single large node type wastes resources for small workloads and creates a single point of failure\n- B: Overcommitting resources leads to resource contention and OOM kills under load\n- C: Spot instances can be reclaimed at any time, making them unsuitable as the sole infrastructure for all workloads\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
     verify: "kubectl get nodes --show-labels"
   },
   {
@@ -1182,7 +1182,7 @@ var questions = [
       "D. The etcd TLS certificates have expired and must be reissued before the restore step"
     ],
     answer: 1,
-    explanation: "When restoring an etcd snapshot, a new `--initial-cluster-token` must be specified to prevent the restored member from joining the old cluster. Without a unique token, the restored etcd may attempt to reconcile with stale cluster state, causing database conflicts.",
+    explanation: "When restoring an etcd snapshot, a new `--initial-cluster-token` must be specified to prevent the restored member from joining the old cluster. Without a unique token, the restored etcd may attempt to reconcile with stale cluster state, causing database conflicts.\n\nWhy other options are wrong:\n- A: A snapshot from a different cluster would have different data entirely, not cause a database-out-of-date error\n- C: API server and etcd version incompatibility would cause connection or protocol errors, not stale data\n- D: Expired TLS certificates would cause authentication errors, not database-out-of-date messages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl snapshot restore --help"
   },
   {
@@ -1198,7 +1198,7 @@ var questions = [
       "D. The Pod is assigned to a random node directly by the kubelet"
     ],
     answer: 0,
-    explanation: "When a Pod specifies a `schedulerName`, only that scheduler will process it. If the named scheduler is not running, no scheduler watches for or binds the Pod, leaving it in `Pending` state. The default scheduler ignores Pods assigned to other schedulers.",
+    explanation: "When a Pod specifies a `schedulerName`, only that scheduler will process it. If the named scheduler is not running, no scheduler watches for or binds the Pod, leaving it in `Pending` state. The default scheduler ignores Pods assigned to other schedulers.\n\nWhy other options are wrong:\n- A: The default scheduler does not fall back to handling Pods assigned to other schedulers\n- B: The API server accepts any schedulerName; it does not validate that the scheduler exists\n- D: Kubelets do not assign Pods to nodes; they only run Pods already assigned by a scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
     verify: "kubectl get pod <pod-name> -o yaml | grep schedulerName"
   },
   {
@@ -1214,7 +1214,7 @@ var questions = [
       "D. Nodes that have both `linux` and `windows` labels simultaneously"
     ],
     answer: 0,
-    explanation: "The `In` operator in node affinity matches nodes whose label value is in the specified list. It acts as an OR condition across the values array. A node with `kubernetes.io/os=linux` or `kubernetes.io/os=windows` satisfies this rule.",
+    explanation: "The `In` operator in node affinity matches nodes whose label value is in the specified list. It acts as an OR condition across the values array. A node with `kubernetes.io/os=linux` or `kubernetes.io/os=windows` satisfies this rule.\n\nWhy other options are wrong:\n- B: The In operator matches any single value in the list, not a literal comma-separated string\n- C: In does not perform substring matching; it checks for exact value equality against list items\n- D: A node has only one value for a label key; In matches if that value appears in the list (OR, not AND)\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#operators",
     verify: "kubectl get nodes --show-labels | grep kubernetes.io/os"
   },
   {
@@ -1230,7 +1230,7 @@ var questions = [
       "D. The node's kubelet process is not responding to the eviction API requests"
     ],
     answer: 2,
-    explanation: "Standalone Pods (created directly, not by a controller) will not be recreated if evicted. The drain command refuses to evict them by default to prevent data loss. The `--force` flag must be used to evict these Pods, acknowledging they will be permanently deleted.",
+    explanation: "Standalone Pods (created directly, not by a controller) will not be recreated if evicted. The drain command refuses to evict them by default to prevent data loss. The `--force` flag must be used to evict these Pods, acknowledging they will be permanently deleted.\n\nWhy other options are wrong:\n- A: Static Pods produce a different error message and cannot be evicted via the API; they are managed by kubelet\n- B: High terminationGracePeriodSeconds delays eviction but does not prevent the drain command from proceeding\n- D: An unresponsive kubelet would cause different errors; the error message specifically mentions unmanaged Pods\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_drain/",
     verify: "kubectl drain node4 --force --dry-run=client"
   },
   {
@@ -1246,7 +1246,7 @@ var questions = [
       "D. Nodes matching weight=100 score 100x higher for that term than weight=1 matches"
     ],
     answer: 3,
-    explanation: "Weights in preferred node affinity range from 1 to 100 and are used as multipliers in the scoring phase. A node matching the weight=100 term receives 100 points for that term versus 1 point for the other. The scheduler sums all scores to rank nodes, making higher-weight preferences more influential.",
+    explanation: "Weights in preferred node affinity range from 1 to 100 and are used as multipliers in the scoring phase. A node matching the weight=100 term receives 100 points for that term versus 1 point for the other. The scheduler sums all scores to rank nodes, making higher-weight preferences more influential.\n\nWhy other options are wrong:\n- A: Preferred affinity terms are never hard constraints regardless of weight; they only influence scoring\n- B: All preferred terms are evaluated and their scores summed; lower-weight rules are not discarded\n- C: Weights are scoring multipliers (1-100), not percentages; they do not make rules mandatory\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity-weight",
     verify: "kubectl explain pod.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution"
   },
   {
@@ -1262,7 +1262,7 @@ var questions = [
       "D. DNS-based geographic routing to the nearest region"
     ],
     answer: 2,
-    explanation: "Pod affinity with a region-level topology key ensures database Pods are co-located in the same region as API gateway Pods. This reduces cross-region latency and keeps data access local. Other options address traffic routing or storage but not Pod placement.",
+    explanation: "Pod affinity with a region-level topology key ensures database Pods are co-located in the same region as API gateway Pods. This reduces cross-region latency and keeps data access local. Other options address traffic routing or storage but not Pod placement.\n\nWhy other options are wrong:\n- B: Global load balancing routes traffic but does not control Pod placement in specific regions\n- C: PersistentVolume replication handles data sync but does not ensure Pod co-location\n- D: DNS-based routing directs user traffic to regions but does not control database Pod placement\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get nodes --show-labels | grep topology.kubernetes.io/region"
   },
   {
@@ -1278,7 +1278,7 @@ var questions = [
       "D. `/etc/containerd/config.toml` file"
     ],
     answer: 2,
-    explanation: "kubeadm places static Pod manifests for kube-apiserver, kube-controller-manager, kube-scheduler, and etcd in `/etc/kubernetes/manifests/`. The kubelet watches this directory and automatically creates or updates Pods when manifests change.",
+    explanation: "kubeadm places static Pod manifests for kube-apiserver, kube-controller-manager, kube-scheduler, and etcd in `/etc/kubernetes/manifests/`. The kubelet watches this directory and automatically creates or updates Pods when manifests change.\n\nWhy other options are wrong:\n- A: /var/lib/kubelet/config.yaml is the kubelet configuration file, not static Pod manifests\n- B: /opt/cni/bin/ stores CNI plugin binaries, not Pod manifests\n- D: /etc/containerd/config.toml is the containerd runtime configuration, not Pod manifests\n\nReference: https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/#constants-and-well-known-values-and-paths",
     verify: "ls /etc/kubernetes/manifests/"
   },
   {
@@ -1294,7 +1294,7 @@ var questions = [
       "D. Verbose scheduler logging at level 10 and Pod events"
     ],
     answer: 3,
-    explanation: "The kube-scheduler emits events on Pods with scheduling decisions and reasons. Increasing verbosity (`--v=10`) provides detailed logs about filter and score plugin results. Pod events show which node was selected and why, making them the primary debugging tool.",
+    explanation: "The kube-scheduler emits events on Pods with scheduling decisions and reasons. Increasing verbosity (`--v=10`) provides detailed logs about filter and score plugin results. Pod events show which node was selected and why, making them the primary debugging tool.\n\nWhy other options are wrong:\n- A: Scheduler extender logs are only available if custom extenders are configured; they are not default\n- B: Distributed tracing provides cross-service request tracing, not scheduler decision details\n- C: Pod status conditions show readiness and health but not why a specific node was chosen\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events"
   },
   {
@@ -1310,7 +1310,7 @@ var questions = [
       "A. kubeadm may overwrite system ClusterRoles it manages, removing custom rules"
     ],
     answer: 3,
-    explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.",
+    explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.\n\nWhy other options are wrong:\n- B: kubeadm does not overwrite ALL ClusterRoles; it manages specific system roles only\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get clusterrole system:kube-scheduler -o yaml"
   },
   {
@@ -1326,7 +1326,7 @@ var questions = [
       "D. It sets the timeout for Pod readiness probes before marking Pods as not available yet"
     ],
     answer: 2,
-    explanation: "The pod eviction timeout (default 5 minutes) determines how long the node lifecycle controller waits after a node becomes `NotReady` before evicting its Pods. This grace period accounts for transient network issues and prevents unnecessary Pod disruption. Note: the `--pod-eviction-timeout` flag was deprecated and removed in Kubernetes 1.27+. In modern clusters, eviction is controlled via NoExecute taints applied automatically to NotReady nodes and the `tolerationSeconds` field on Pod tolerations (default 300s).",
+    explanation: "The pod eviction timeout (default 5 minutes) determines how long the node lifecycle controller waits after a node becomes `NotReady` before evicting its Pods. This grace period accounts for transient network issues and prevents unnecessary Pod disruption. Note: the `--pod-eviction-timeout` flag was deprecated and removed in Kubernetes 1.27+. In modern clusters, eviction is controlled via NoExecute taints applied automatically to NotReady nodes and the `tolerationSeconds` field on Pod tolerations (default 300s).\n\nWhy other options are wrong:\n- A: Graceful shutdown timeout is controlled by terminationGracePeriodSeconds on the Pod, not this flag\n- B: The eviction rate is controlled by different parameters (--node-eviction-rate), not the pod-eviction-timeout\n- D: Readiness probe timeouts are configured per-container in the Pod spec, not on the controller-manager\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-controller",
     verify: null
   },
   {
@@ -1342,7 +1342,7 @@ var questions = [
       "D. Increasing the `terminationGracePeriodSeconds`"
     ],
     answer: 0,
-    explanation: "Setting `minScale: 1` in Knative prevents the revision from scaling to zero, keeping at least one Pod running at all times. This eliminates cold-start latency at the cost of maintaining a warm instance. This is a common trade-off for latency-sensitive serverless workloads.",
+    explanation: "Setting `minScale: 1` in Knative prevents the revision from scaling to zero, keeping at least one Pod running at all times. This eliminates cold-start latency at the cost of maintaining a warm instance. This is a common trade-off for latency-sensitive serverless workloads.\n\nWhy other options are wrong:\n- B: PreferNoSchedule taints affect scheduling preference but do not reduce cold-start time\n- C: Pod anti-affinity spreads Pods across zones but does not address cold-start latency\n- D: terminationGracePeriodSeconds controls shutdown duration, not startup time\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-bounds/",
     verify: null
   },
   {
@@ -1358,7 +1358,7 @@ var questions = [
       "D. All taints with key `special-taint` regardless of their value"
     ],
     answer: 3,
-    explanation: "The `Exists` operator matches all taints with the specified key, regardless of their value. If no key is specified with `Exists`, it matches all taints. This is useful when you want to tolerate a taint key without caring about the specific value assigned.",
+    explanation: "The `Exists` operator matches all taints with the specified key, regardless of their value. If no key is specified with `Exists`, it matches all taints. This is useful when you want to tolerate a taint key without caring about the specific value assigned.\n\nWhy other options are wrong:\n- A: Exists with a key matches any value for that key, not just empty string values\n- B: Exists with a specific key matches only that key's taints; matching all taints requires omitting the key\n- C: The value field is optional with operator: Exists; it is valid and functional without a value\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl explain pod.spec.tolerations"
   },
   {
@@ -1374,7 +1374,7 @@ var questions = [
       "D. The Pod cannot start until it is manually rebound to the original target node"
     ],
     answer: 1,
-    explanation: "StatefulSet PVCs persist across Pod rescheduling. The existing PVC maintains its binding to the PV. Since the storage is network-attached, the PV can be detached from the old node and attached to the new node where the Pod is rescheduled, preserving data.",
+    explanation: "StatefulSet PVCs persist across Pod rescheduling. The existing PVC maintains its binding to the PV. Since the storage is network-attached, the PV can be detached from the old node and attached to the new node where the Pod is rescheduled, preserving data.\n\nWhy other options are wrong:\n- A: StatefulSet PVCs persist and are reused; new PVCs are not created for rescheduled Pods\n- C: PVCs are not deleted when StatefulSet Pods are rescheduled; they maintain their binding\n- D: Network-attached storage can be attached to the new node; manual rebinding to the original node is not required\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc"
   },
   {
@@ -1390,7 +1390,7 @@ var questions = [
       "D. Run two separate clusters during the transition and migrate workloads between them"
     ],
     answer: 2,
-    explanation: "Upgrading a single canary node first allows validation of the new version with real workloads before committing to a full rollout. If issues are found, only one node needs to be rolled back. This minimizes risk while providing confidence in the upgrade process.",
+    explanation: "Upgrading a single canary node first allows validation of the new version with real workloads before committing to a full rollout. If issues are found, only one node needs to be rolled back. This minimizes risk while providing confidence in the upgrade process.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade risks cluster-wide issues with no ability to isolate and validate before committing\n- B: Upgrading only the control plane leaves workers unvalidated and creates persistent version skew\n- D: Running two separate clusters is operationally complex and expensive for a simple version validation\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -1406,7 +1406,7 @@ var questions = [
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"
     ],
     answer: 3,
-    explanation: "Automated pre-deployment checks in CI/CD pipelines ensure the cluster is healthy before deploying. Asserting all nodes are `Ready` prevents deployments to clusters mid-maintenance where scheduling constraints might cause failures. This follows the principle of automated validation gates.",
+    explanation: "Automated pre-deployment checks in CI/CD pipelines ensure the cluster is healthy before deploying. Asserting all nodes are `Ready` prevents deployments to clusters mid-maintenance where scheduling constraints might cause failures. This follows the principle of automated validation gates.\n\nWhy other options are wrong:\n- A: Skipping checks risks deploying to an unhealthy cluster with potential scheduling failures\n- B: A separate staging cluster does not validate the production cluster's readiness state\n- C: Manual approval gates are slow, error-prone, and do not follow automation best practices\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
     verify: "kubectl get nodes"
   },
   {
@@ -1422,7 +1422,7 @@ var questions = [
       "D. kube-state-metrics for monitoring"
     ],
     answer: 0,
-    explanation: "The Descheduler identifies Pods that violate scheduling policies or are suboptimally placed and evicts them so the scheduler can make better placement decisions. It runs periodically or on-demand, addressing issues like uneven distribution that develop over time.",
+    explanation: "The Descheduler identifies Pods that violate scheduling policies or are suboptimally placed and evicts them so the scheduler can make better placement decisions. It runs periodically or on-demand, addressing issues like uneven distribution that develop over time.\n\nWhy other options are wrong:\n- B: kube-scheduler handles initial placement only; it does not re-evaluate or move already-running Pods\n- C: Cluster Autoscaler manages node count, not Pod rebalancing across existing nodes\n- D: kube-state-metrics exposes cluster state as Prometheus metrics; it does not move Pods\n\nReference: https://github.com/kubernetes-sigs/descheduler",
     verify: null
   },
   {
@@ -1438,7 +1438,7 @@ var questions = [
       "D. PriorityClass for scheduling"
     ],
     answer: 0,
-    explanation: "ResourceQuota sets aggregate resource limits per namespace, controlling the total CPU, memory, storage, and object counts that can be consumed. LimitRange sets per-Pod or per-container defaults and constraints, not namespace-wide totals.",
+    explanation: "ResourceQuota sets aggregate resource limits per namespace, controlling the total CPU, memory, storage, and object counts that can be consumed. LimitRange sets per-Pod or per-container defaults and constraints, not namespace-wide totals.\n\nWhy other options are wrong:\n- A: LimitRange sets per-Pod/container defaults, not namespace-level aggregate limits\n- B: PodDisruptionBudget manages availability during disruptions, not resource consumption\n- D: PriorityClass controls scheduling priority, not resource consumption limits\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
     verify: "kubectl get resourcequota -n <namespace>"
   },
   {
@@ -1454,7 +1454,7 @@ var questions = [
       "D. The preempted Pod's grace period is automatically reduced to a default 30 seconds"
     ],
     answer: 0,
-    explanation: "Preemption respects the victim Pod's `terminationGracePeriodSeconds`. The nominated high-priority Pod must wait until the preempted Pod terminates (up to its full grace period) before resources are freed. This can delay scheduling of the high-priority Pod.",
+    explanation: "Preemption respects the victim Pod's `terminationGracePeriodSeconds`. The nominated high-priority Pod must wait until the preempted Pod terminates (up to its full grace period) before resources are freed. This can delay scheduling of the high-priority Pod.\n\nWhy other options are wrong:\n- B: Preemption respects the victim Pod's terminationGracePeriodSeconds; it is not killed immediately\n- C: The scheduler selects the node during preemption; it does not avoid the node to skip the grace period\n- D: There is no automatic reduction of the grace period; the full configured value applies\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
     verify: "kubectl describe pod <preempted-pod> | grep -i grace"
   },
   {
@@ -1470,7 +1470,7 @@ var questions = [
       "D. `spec.unschedulable` is set to `true` signaling the scheduler to skip it"
     ],
     answer: 3,
-    explanation: "`kubectl cordon` sets `spec.unschedulable: true` on the Node object. The scheduler checks this field during the filtering phase and excludes unschedulable nodes from consideration. This declarative approach to node lifecycle aligns with cloud-native infrastructure-as-code principles.",
+    explanation: "`kubectl cordon` sets `spec.unschedulable: true` on the Node object. The scheduler checks this field during the filtering phase and excludes unschedulable nodes from consideration. This declarative approach to node lifecycle aligns with cloud-native infrastructure-as-code principles.\n\nWhy other options are wrong:\n- A: Cordoning modifies spec.unschedulable, not metadata.labels; no label is added\n- B: There is no Schedulable condition in node status; cordon uses the spec field\n- C: No annotation is added; the mechanism uses the spec.unschedulable field\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
     verify: "kubectl get node <node-name> -o jsonpath='{.spec.unschedulable}'"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "D. The GitOps controller pauses sync and requires manual intervention from admin"
     ],
     answer: 2,
-    explanation: "GitOps controllers like Flux and Argo CD continuously reconcile cluster state to match the Git repository. After a restore from backup, any drift (resources present in Git but different or missing in the cluster) triggers the controller to reapply the desired state from Git.",
+    explanation: "GitOps controllers like Flux and Argo CD continuously reconcile cluster state to match the Git repository. After a restore from backup, any drift (resources present in Git but different or missing in the cluster) triggers the controller to reapply the desired state from Git.\n\nWhy other options are wrong:\n- A: Deletion of resources not in Git depends on the pruning configuration, not a guaranteed default behavior after restore\n- B: In GitOps, Git is the source of truth; cluster state never takes precedence over Git\n- D: GitOps controllers do not pause; they continuously reconcile automatically\n\nReference: https://fluxcd.io/flux/concepts/",
     verify: null
   },
   {
@@ -1502,7 +1502,7 @@ var questions = [
       "D. The anti-affinity rule is relaxed to use hostname-level topology instead"
     ],
     answer: 0,
-    explanation: "With a hard anti-affinity (`required`) at the zone topology level, if every zone already has a matching Pod, no zone satisfies the constraint. The Pod stays Pending until a zone becomes available or the constraint is changed. The scheduler does not automatically relax the topology.",
+    explanation: "With a hard anti-affinity (`required`) at the zone topology level, if every zone already has a matching Pod, no zone satisfies the constraint. The Pod stays Pending until a zone becomes available or the constraint is changed. The scheduler does not automatically relax the topology.\n\nWhy other options are wrong:\n- B: With required (hard) anti-affinity, the scheduler does not fall back to least-loaded; the Pod stays Pending\n- C: Kubernetes does not automatically provision new zones; infrastructure management is external\n- D: The scheduler does not automatically relax topology levels; the constraint is enforced as specified\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl describe pod <pod-name> | grep -A3 Warning"
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "D. Upgrade sequentially: v1.27 -> v1.28 -> v1.29 -> v1.30, one at a time"
     ],
     answer: 3,
-    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.",
+    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: Skipping even one minor version is not supported by kubeadm; each minor version must be applied\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubeadm upgrade plan"
   },
   {
@@ -1534,7 +1534,7 @@ var questions = [
       "D. Pod namespace is checked and Pods in non-system namespaces go first"
     ],
     answer: 2,
-    explanation: "The scheduler prefers to evict the lowest-priority Pods first. Among candidate nodes, it chooses the one where the fewest evictions or the lowest-priority evictions are needed. PDB violations are also minimized. Pod age and namespace are not primary factors.",
+    explanation: "The scheduler prefers to evict the lowest-priority Pods first. Among candidate nodes, it chooses the one where the fewest evictions or the lowest-priority evictions are needed. PDB violations are also minimized. Pod age and namespace are not primary factors.\n\nWhy other options are wrong:\n- A: Pod age is not a primary factor in preemption victim selection\n- B: Actual resource usage is not the selection criterion; priority value determines victim selection\n- D: Pod namespace does not influence preemption victim selection; priority value is the main factor\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1550,7 +1550,7 @@ var questions = [
       "D. Whether the Pod network interface has the correct MTU after the node update"
     ],
     answer: 0,
-    explanation: "If iptables rules were cleared during the node upgrade, kube-proxy may not have fully reprogrammed them yet. Restarting the kube-proxy Pod on that node forces a full sync of iptables rules from the current Service/Endpoint state, restoring ClusterIP routing.",
+    explanation: "If iptables rules were cleared during the node upgrade, kube-proxy may not have fully reprogrammed them yet. Restarting the kube-proxy Pod on that node forces a full sync of iptables rules from the current Service/Endpoint state, restoring ClusterIP routing.\n\nWhy other options are wrong:\n- B: CoreDNS does not need to run on the specific upgraded node; it is cluster-wide\n- C: Service ClusterIPs do not change during upgrades; they are stable\n- D: MTU issues would cause packet fragmentation or drops, not ClusterIP routing failures\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
     verify: "kubectl -n kube-system get pods -l k8s-app=kube-proxy -o wide"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
     answer: 2,
-    explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.",
+    explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.\n\nWhy other options are wrong:\n- A: Helm does not proceed when a pre-upgrade hook fails; the upgrade is aborted\n- C: Helm does not automatically roll back on hook failure; the release is marked FAILED\n- D: Helm does not retry failed hooks; the hook must succeed on the first attempt\n\nReference: https://helm.sh/docs/topics/charts_hooks/",
     verify: "helm history <release-name>"
   },
   {
@@ -1582,7 +1582,7 @@ var questions = [
       "D. Restore from backup on the new member without modifying the cluster membership"
     ],
     answer: 1,
-    explanation: "To replace an etcd member safely, first remove the failed member using `etcdctl member remove`, then add the new member with `etcdctl member add`. Removing first prevents the cluster from attempting to replicate to the failed member and avoids split-brain scenarios.",
+    explanation: "To replace an etcd member safely, first remove the failed member using `etcdctl member remove`, then add the new member with `etcdctl member add`. Removing first prevents the cluster from attempting to replicate to the failed member and avoids split-brain scenarios.\n\nWhy other options are wrong:\n- A: Adding before removing temporarily creates a 4-member cluster which changes quorum requirements and can cause issues\n- C: Stopping all members causes complete cluster downtime and is unnecessary\n- D: Restoring from backup without updating membership creates inconsistencies in the cluster configuration\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#replacing-a-failed-etcd-member",
     verify: "ETCDCTL_API=3 etcdctl member list"
   },
   {
@@ -1598,7 +1598,7 @@ var questions = [
       "D. No taints are matched since a key is always required"
     ],
     answer: 2,
-    explanation: "A toleration with `operator: Exists` and no key specified acts as a wildcard that matches every possible taint. This means the Pod can be scheduled on any node regardless of its taints. This is sometimes used for infrastructure Pods that must run everywhere.",
+    explanation: "A toleration with `operator: Exists` and no key specified acts as a wildcard that matches every possible taint. This means the Pod can be scheduled on any node regardless of its taints. This is sometimes used for infrastructure Pods that must run everywhere.\n\nWhy other options are wrong:\n- A: Without a key, the Exists operator matches all taints regardless of effect, not just NoSchedule\n- B: Without a key, it matches all taints regardless of their value, not just valueless taints\n- D: A key is not required with operator: Exists; omitting the key creates a wildcard toleration\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl explain pod.spec.tolerations"
   }
 ];
