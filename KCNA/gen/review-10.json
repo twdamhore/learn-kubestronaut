@@ -1,16 +1,7 @@
 {
   "set": "10",
-  "round": 9,
+  "round": 10,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s10-q013",
-      "type": "ambiguous",
-      "severity": "medium",
-      "what": "Question premise is unlikely in K8s 1.29+: DaemonSet controller automatically adds not-ready and unreachable NoExecute tolerations to all DaemonSet pods since K8s 1.12, so pods should not be evicted by the node.kubernetes.io/not-ready:NoExecute taint",
-      "detail": "The DaemonSet controller automatically adds tolerations for node.kubernetes.io/not-ready:NoExecute and node.kubernetes.io/unreachable:NoExecute (with no tolerationSeconds, i.e. indefinite) to all DaemonSet pods at creation time. These automatic tolerations are added IN ADDITION to any tolerations specified in the pod template. The question states the pod template includes a toleration for node-role.kubernetes.io/control-plane:NoSchedule, but the automatic not-ready and unreachable tolerations should still be present. Therefore the described scenario (DaemonSet pods evicted due to not-ready:NoExecute taint appearing after upgrade) should not occur in K8s 1.29+. The answer (option C: add an explicit toleration for not-ready:NoExecute with operator:Exists) is redundant but harmless; however, the premise misleads test-takers into thinking this is a real operational scenario they need to solve.",
-      "suggestion": "Rework the question premise to a scenario where automatic DaemonSet tolerations would not apply, or change the taint to a custom taint that the DaemonSet controller would not auto-tolerate. For example, use a custom taint like 'maintenance=upgrade:NoExecute' that the DaemonSet controller does not auto-add, making the question about adding explicit tolerations for non-standard taints genuinely necessary."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

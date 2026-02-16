@@ -1,40 +1,7 @@
 {
   "set": "08",
-  "round": 9,
+  "round": 10,
   "total_reviewed": 100,
-  "issues_found": 4,
-  "issues": [
-    {
-      "id": "s08-q006",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "what": "Option B calls Cilium a 'CNCF graduated service mesh' — while the option is correctly marked wrong, its phrasing could confuse test-takers because Cilium IS CNCF graduated and DOES have service mesh capabilities",
-      "detail": "Option B reads 'Cilium is a CNCF graduated service mesh that requires Envoy sidecars in every Pod now'. Cilium is indeed CNCF graduated (since Oct 2023) and does provide service mesh functionality (sidecarless service mesh). The only incorrect part of option B is 'requires Envoy sidecars in every Pod'. A test-taker who knows Cilium is graduated and has mesh features might be drawn to B because two of its three claims are true. The distractor conflates too many correct facts with one wrong detail, making it a less clean distractor.",
-      "suggestion": "Reword option B to be more clearly wrong, e.g.: 'Cilium is a CNCF incubating project that requires Envoy sidecars in every Pod for basic L3/L4 networking'. This makes two claims wrong (incubating, sidecars required for basic networking) and avoids the partial-truth trap."
-    },
-    {
-      "id": "s08-q025",
-      "type": "ambiguous",
-      "severity": "minor",
-      "what": "Option C (KEDA) is also a CNCF graduated project with scale-to-zero capability, making the distinction with Knative less clear than intended",
-      "detail": "The question asks about 'event-driven workloads on Kubernetes that automatically scale to zero when idle and scale up on incoming HTTP requests or CloudEvents'. KEDA graduated from CNCF in August 2023 and supports scale-to-zero for event-driven workloads, including HTTP triggers (via the KEDA HTTP add-on). While Knative is the more complete 'serverless platform' answer, the option text for C says 'KEDA — a Kubernetes event-driven autoscaler triggering Pod scaling from external sources' without noting it is CNCF graduated. The explanation correctly acknowledges KEDA is 'a CNCF graduated autoscaler' but the option text omits the graduated status, creating asymmetry with option A which states 'CNCF graduated'. A test-taker who knows KEDA is graduated and supports scale-to-zero could reasonably argue for C.",
-      "suggestion": "Update option C to state 'KEDA — a CNCF graduated event-driven autoscaler' so the graduation status is transparent. Then strengthen the explanation to clarify that while both are graduated, Knative provides a full serverless platform (Serving + Eventing + scale-to-zero from HTTP natively) whereas KEDA is an autoscaler that plugs into Deployments/Jobs and requires add-ons for HTTP-triggered scale-to-zero."
-    },
-    {
-      "id": "s08-q049",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "what": "Option A says NATS is 'CNCF incubating' which is factually correct, but the explanation does not clarify that NATS has been incubating since 2018 (7+ years) and the NATS/Synadia controversy may have changed its status",
-      "detail": "As of 2025, NATS remains a CNCF incubating project, having been accepted at that level on March 15, 2018. In May 2025, there was a significant dispute between Synadia (NATS's primary contributor) and the CNCF regarding governance and project independence. The question and answer (index 0) are technically correct. This is informational only — no change needed unless NATS status actually changes.",
-      "suggestion": "No change required. The answer and explanation are factually correct. Monitor for any NATS status changes."
-    },
-    {
-      "id": "s08-q078",
-      "type": "ambiguous",
-      "severity": "minor",
-      "what": "gRPC is described as 'CNCF incubating' which is correct but surprising given its massive adoption — test-takers may second-guess the answer",
-      "detail": "Option A states 'gRPC is a CNCF incubating high-performance RPC framework using Protocol Buffers and HTTP/2 for transport'. This is factually correct — gRPC has been at the incubating level since February 16, 2017 (9+ years) and has not graduated despite extremely widespread adoption. However, test-takers who know gRPC is widely used might expect it to be graduated and might hesitate on option A. The question and answer are technically correct, but this is a common point of confusion in CNCF exam prep.",
-      "suggestion": "No change to the answer (it is correct). Consider adding a brief note to the explanation: 'Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level as of 2025, which is a commonly tested fact.'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

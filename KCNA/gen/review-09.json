@@ -1,16 +1,16 @@
 {
   "set": "09",
-  "round": 9,
+  "round": 10,
   "total_reviewed": 100,
   "issues_found": 1,
   "issues": [
     {
-      "id": "s09-q051",
-      "type": "wrong_answer",
-      "severity": "critical",
-      "what": "Correct answer is index 0 (option A), not index 3 (option D); the three-way merge preserves the manual edit, not overwrites it",
-      "detail": "kubectl apply performs a three-way strategic-merge-patch comparing (1) the local file, (2) the last-applied-configuration annotation, and (3) the live object. When the replica count in the local file is identical to the value stored in the last-applied-configuration annotation, the three-way diff produces NO patch for that field. This means the live value (set by kubectl edit) is preserved. The current answer (index 3) claims the opposite: that the replica count 'reverts to the file value.' In reality, the three-way merge is specifically designed so that fields unchanged between the file and the last-applied annotation are left alone in the live object, allowing manual edits to persist. The correct answer is index 0 (option A): 'The replica count stays at the kubectl edit value because kubectl apply uses the last-applied annotation to detect changes.'",
-      "suggestion": "Change answer from 3 to 0. Replace the explanation with: 'kubectl apply performs a three-way strategic-merge-patch between the local file, the last-applied-configuration annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by kubectl edit) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why kubectl apply is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.'"
+      "id": "s09-q072",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "what": "The explanation incorrectly states that Trivy was 'donated to CNCF'; Trivy is not a CNCF project",
+      "detail": "The explanation says 'Trivy (by Aqua Security, donated to CNCF) is a comprehensive vulnerability scanner.' However, Trivy has not been donated to or accepted by the CNCF. It is not listed as a CNCF Sandbox, Incubating, or Graduated project. Trivy remains an independent open-source project maintained by Aqua Security. The question premise also asks for 'a CNCF-hosted solution,' which creates a mismatch with the correct answer. Among the four options, Trivy is still the best answer for container image vulnerability scanning (Falco is runtime detection, OPA Gatekeeper is policy enforcement, cert-manager is certificate management), but the CNCF attribution in the explanation is factually incorrect.",
+      "suggestion": "Remove the parenthetical '(by Aqua Security, donated to CNCF)' from the explanation. Replace with '(by Aqua Security)' or 'Trivy is a widely adopted open-source vulnerability scanner.' Also consider softening the question stem from 'CNCF-hosted solution' to 'cloud-native solution' or 'solution that integrates with their Kubernetes workflow' to avoid the factual mismatch."
     }
   ]
 }

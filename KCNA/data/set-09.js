@@ -1141,7 +1141,7 @@ var questions = [
     id: "s09-q072",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A security team wants to scan container images for known vulnerabilities before they are deployed to the Kubernetes cluster. They need a CNCF-hosted solution that integrates with their existing CI/CD pipeline and container registry. Which project should they consider?",
+    text: "A security team wants to scan container images for known vulnerabilities before they are deployed to the Kubernetes cluster. They need a cloud-native open-source solution that integrates with their existing CI/CD pipeline and container registry. Which project should they consider?",
     diagram: null,
     options: [
       "Falco, which detects runtime security threats and anomalous behavior in running containers on the cluster",
@@ -1150,7 +1150,7 @@ var questions = [
       "cert-manager, which automates the management and renewal of TLS certificates for cluster workloads"
     ],
     answer: 1,
-    explanation: "Trivy (by Aqua Security, donated to CNCF) is a comprehensive vulnerability scanner that can scan container images, filesystems, and IaC files. It integrates easily into CI/CD pipelines and can be used as a registry scanning tool. Falco focuses on runtime threat detection, OPA Gatekeeper on policy enforcement, and cert-manager on certificate management.",
+    explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner that can scan container images, filesystems, and IaC files. It integrates easily into CI/CD pipelines and can be used as a registry scanning tool. Falco focuses on runtime threat detection, OPA Gatekeeper on policy enforcement, and cert-manager on certificate management.",
     verify: null
   },
   {

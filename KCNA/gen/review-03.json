@@ -1,15 +1,15 @@
 {
   "set": "03",
-  "round": 9,
+  "round": 10,
   "total_reviewed": 100,
   "issues_found": 1,
   "issues": [
     {
-      "id": "s03-q078",
-      "type": "wrong_explanation",
-      "severity": "minor",
-      "what": "The explanation dismisses option C (ndots) with 'The `ndots` default is 5, not 1.' This statement is factually true but is a non-sequitur that does not explain why option C is wrong. The ndots:5 default does cause excessive search-domain expansion and extra DNS queries for short names (a real concern), but it does not cause the characteristic exactly-5-second delay pattern, which is the DNS retry timeout triggered by the conntrack race. The dismissal should address the symptom, not the default value.",
-      "fix": "Replace 'The `ndots` default is 5, not 1.' with 'High `ndots` (default 5) causes extra queries but results in slower overall resolution, not the characteristic exactly-5-second delay that matches the DNS retry timeout.'"
+      "id": "s03-q047",
+      "type": "wrong_answer",
+      "severity": "critical",
+      "what": "The marked answer (index 1) references `kube_endpoint_address_available`, which does not exist as a kube-state-metrics metric. The actual kube-state-metrics endpoint metric is `kube_endpoint_address` with a `ready` label (values \"true\" or \"false\"). Option C (index 2) describes `kube_endpoint_address` with label `ready=\"true\"` — this is the real metric. The explanation incorrectly claims that `kube_endpoint_address` with a ready label is not a standard metric name, when in fact it is the canonical metric, and `kube_endpoint_address_available` is the non-existent one.",
+      "fix": "Change answer from 1 to 2. Update option B text to something clearly wrong (e.g., `kube_endpoint_address_available` does not exist). Update the explanation to state that `kube_endpoint_address` with the `ready=\"true\"` label from kube-state-metrics is the correct metric for monitoring endpoint readiness per Service."
     }
   ]
 }

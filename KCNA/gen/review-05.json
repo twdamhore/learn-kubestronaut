@@ -1,14 +1,7 @@
 {
   "set": "05",
-  "round": 9,
+  "round": 10,
   "total_reviewed": 100,
-  "issues_found": 1,
-  "issues": [
-    {
-      "id": "s05-q024",
-      "type": "ambiguous",
-      "problem": "The question does not specify which verbs the Role grants. If the Role includes the `list` verb (which is common and implied by 'access'), then option A ('The list verb still returns all Secrets that exist in the namespace') is also factually correct alongside option B ('The get verb can only retrieve the named db-credentials Secret'). The explanation itself acknowledges that list/watch cannot be effectively restricted by resourceNames. Two potentially correct options makes the question ambiguous.",
-      "suggestion": "Add explicit verbs to the question text, e.g., 'A Role grants get on secrets with resourceNames: [db-credentials]'. Omitting list from the verbs makes option A clearly inapplicable and removes the ambiguity. Alternatively, change option A to something clearly wrong like 'The list verb is automatically blocked when resourceNames is specified'."
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }
