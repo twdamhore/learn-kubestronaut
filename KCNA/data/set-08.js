@@ -75,7 +75,7 @@ var questions = [
     options: [
       "Loose coupling — each service exposes a stable API and hides internal implementation",
       "Shared database — all services access a single relational database for consistency",
-      "Synchronous RPC only — all inter-service calls must be blocking HTTP requests only",
+      "Synchronous RPC — inter-service calls should use blocking HTTP requests to ensure reliable data delivery",
       "Monolithic deployment — services are packaged together to reduce network overhead cost"
     ],
     answer: 0,
@@ -1019,9 +1019,9 @@ var questions = [
     text: "An architect is reviewing Factor X (Dev/prod parity) of the twelve-factor app methodology. The team runs PostgreSQL 14 in production but uses SQLite in development. Which statement correctly identifies the violation?",
     diagram: null,
     options: [
-      "There is no violation — using lighter databases in development improves iteration speed without any meaningful consequence at all",
+      "There is no violation — using lighter-weight databases in development is an accepted trade-off that accelerates local iteration cycles",
       "Factor X requires minimizing gaps between dev and prod including backing services; different databases cause subtle bugs",
-      "Factor X only applies to the application source code itself and does not extend to backing services like databases or caches used",
+      "Factor X primarily addresses the application codebase and deployment pipeline rather than the choice of backing services",
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
     ],
     answer: 1,
@@ -1195,10 +1195,10 @@ var questions = [
     text: "An application requires a PersistentVolume with `ReadWriteMany` (RWX) access mode so multiple Pods on different nodes can write to it simultaneously. Which storage backend commonly supports RWX?",
     diagram: null,
     options: [
-      "AWS EBS — block storage that can be attached to a single EC2 instance at a time supporting RWO access only",
+      "AWS EBS — block storage attached to a single EC2 instance, designed for individual workload attachment",
       "NFS (Network File System) — a network filesystem supporting concurrent read/write from multiple nodes",
-      "Local PV — uses local disks on a specific node and is inherently limited to that single node RWO only",
-      "Azure Managed Disks — premium block storage that supports single-node attachment with RWO access only"
+      "Local PV — uses disks on a specific node, inherently bound to that node for storage access",
+      "Azure Managed Disks — premium block storage providing high IOPS for single-node database workloads"
     ],
     answer: 1,
     explanation: "NFS supports `ReadWriteMany` (RWX) because it is a network filesystem that allows multiple clients (nodes) to mount and write to the same share simultaneously. Block storage solutions like AWS EBS, Azure Managed Disks, and Local PVs only support `ReadWriteOnce` (RWO) — a single node at a time. Other RWX options include CephFS, GlusterFS, and cloud-native file storage services.\n\nWhy other options are wrong:\n- A: AWS EBS is block storage supporting only RWO (single node attachment), not RWX\n- C: Local PV uses local node disks limited to that single node, only RWO\n- D: Azure Managed Disks are block storage supporting only RWO (single node), not RWX\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",

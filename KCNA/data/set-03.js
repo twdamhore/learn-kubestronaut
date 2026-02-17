@@ -136,7 +136,7 @@ var questions = [
     text: "A cluster runs Calico as its CNI. An engineer asks whether pods on different nodes can communicate without NAT. What is the correct answer?",
     diagram: null,
     options: [
-      "No — pods on different nodes always traverse kube-proxy which performs source NAT on packets",
+      "No — pods on different nodes traverse kube-proxy which performs source NAT on cross-node packets",
       "Yes — the Kubernetes networking model requires every pod to have a routable IP without NAT",
       "Only if a `LoadBalancer` Service is placed in front of both pods to bridge node boundaries",
       "Only if both pods are in the same namespace and share an identical network policy selector"
@@ -1064,7 +1064,7 @@ var questions = [
     text: "A `NetworkPolicy` allows egress only to a specific CIDR block `10.0.5.0/24` on port 5432. A pod selected by this policy tries to connect to a database at `10.0.5.10:5432` and to an external API at `203.0.113.50:443`. What happens?",
     diagram: null,
     options: [
-      "Both connections succeed because egress policies only block UDP traffic",
+      "Both connections succeed because the CIDR allow rule also permits traffic to any destination on ports listed in the rule",
       "The database connection is blocked; the external API connection succeeds",
       "Both connections are blocked because the CIDR is a private range",
       "The database connection succeeds; the external API connection is blocked"
@@ -1368,9 +1368,9 @@ var questions = [
     text: "A cluster operator wants to implement dual-stack networking so pods receive both IPv4 and IPv6 addresses. Which configuration is required?",
     diagram: null,
     options: [
-      "Only the CNI plugin needs to be configured for dual-stack; no other cluster changes are needed",
+      "The CNI plugin is the primary component that needs dual-stack configuration; other components auto-detect address families",
       "The apiserver, controller-manager, kube-proxy, and CNI must all be configured with dual CIDRs",
-      "Dual-stack only works with IPVS mode; iptables mode does not support IPv6 routing at all",
+      "Dual-stack performs best with IPVS mode; iptables mode has limited IPv6 support",
       "Each pod must explicitly request an IPv6 address in its spec alongside the IPv4 address field"
     ],
     answer: 1,
@@ -1403,7 +1403,7 @@ var questions = [
       "Yes, because kube-proxy intercepts DNS queries regardless of the configured nameserver address",
       "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
       "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
-      "No, because `dnsPolicy: None` fully disables all DNS resolution capabilities inside the pod"
+      "No, because `dnsPolicy: None` prevents the kubelet from injecting any DNS settings, leaving the pod without resolver configuration"
     ],
     answer: 2,
     explanation: "With `dnsPolicy: None`, the pod uses only the nameservers specified in `dnsConfig`. Since `8.8.8.8` (Google Public DNS) has no knowledge of `*.svc.cluster.local` names, cluster-internal Service names will fail to resolve. kube-proxy does not intercept DNS. Not all queries go through CoreDNS when `None` is set. `dnsPolicy: None` does not disable DNS — it requires explicit configuration via `dnsConfig`.\n\nWhy other options are wrong:\n- A: kube-proxy does not intercept DNS queries; it manages Service-level iptables/IPVS forwarding rules.\n- B: With `dnsPolicy: None`, queries are NOT routed through CoreDNS; they go only to the specified nameservers.\n- D: `dnsPolicy: None` does not disable DNS; it requires the user to provide explicit DNS configuration via `dnsConfig`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -1576,7 +1576,7 @@ var questions = [
     text: "An engineer creates an Ingress with multiple TLS entries, each specifying a different `secretName` for hosts `a.example.com` and `b.example.com`. How does the Ingress controller determine which certificate to present?",
     diagram: null,
     options: [
-      "It always presents the certificate from the first TLS entry listed in the Ingress spec definition",
+      "It presents the certificate from the first TLS entry listed in the Ingress spec by default",
       "It selects the certificate based on the SNI header in the TLS ClientHello from the client",
       "It combines all certificates into a single SAN certificate dynamically at the proxy TLS layer",
       "It presents a self-signed certificate and lets the backend handle TLS termination on its own"

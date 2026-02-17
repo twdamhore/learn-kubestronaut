@@ -840,7 +840,7 @@ var questions = [
     text: "A Pod runs with `securityContext.runAsUser: 1000` at the pod level, but one of its containers specifies `securityContext.runAsUser: 2000`. Which UID does that container use?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="340" height="180" rx="10" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#4cc9f0" font-size="12">Pod securityContext</text><text x="200" y="55" text-anchor="middle" fill="#f8f8f2" font-size="11">runAsUser: 1000</text><rect x="50" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#50fa7b" stroke-width="1.5"/><text x="115" y="100" text-anchor="middle" fill="#50fa7b" font-size="11">Container A</text><text x="115" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">runAsUser: 2000</text><text x="115" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text><rect x="220" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#ff79c6" stroke-width="1.5"/><text x="285" y="100" text-anchor="middle" fill="#ff79c6" font-size="11">Container B</text><text x="285" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">(no override)</text><text x="285" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text></svg>',
     options: [
-      "UID 1000, because pod-level settings always take precedence over containers",
+      "UID 1000, because pod-level settings take precedence over container-level settings",
       "UID 2000, because container-level settings override pod-level settings",
       "An error occurs due to conflicting UID specifications in the Pod spec",
       "The container runtime selects the UID based on what the image specifies"
@@ -939,10 +939,10 @@ var questions = [
       "Tags are mutable and can be repointed to a different image; digests are immutable",
       "Digests download significantly faster than tags when pulling from registries",
       "Digests enable automatic vulnerability scanning during the image pull phase",
-      "Tags cannot be used when pulling images from private container registries"
+      "Digests are required by Kubernetes admission controllers and tags are being deprecated in Pod image references"
     ],
     answer: 0,
-    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags can be used with private registries; there is no such restriction\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
+    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported in Pod image references and are not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
     verify: "kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[0].imageID}'"
   },
   {
@@ -1144,13 +1144,13 @@ var questions = [
     text: "A NetworkPolicy allows egress from Pods labeled `app: worker` to an external CIDR `10.0.0.0/8` on port 5432. The cluster Pod CIDR is `192.168.0.0/16`. Can the worker Pods reach other Pods in the cluster?",
     diagram: null,
     options: [
-      "Yes, because intra-cluster traffic between Pods is always allowed",
+      "Yes, because intra-cluster Pod-to-Pod traffic is not subject to egress NetworkPolicy rules",
       "No, because the egress rule only allows traffic to `10.0.0.0/8`",
       "Yes, because NetworkPolicies do not affect traffic to `192.168.0.0/16`",
       "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
     ],
     answer: 1,
-    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster traffic is subject to NetworkPolicy enforcement; it is not always allowed\n- C: NetworkPolicies affect traffic to all CIDRs including `192.168.0.0/16`; there is no exemption for internal ranges\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster Pod-to-Pod traffic is subject to egress NetworkPolicy rules just like external traffic\n- C: NetworkPolicies affect traffic to all CIDRs including `192.168.0.0/16`; there is no exemption for internal ranges\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o jsonpath='{.items[*].spec.egress}'"
   },
   {
@@ -1352,10 +1352,10 @@ var questions = [
     text: "An administrator creates a ClusterRole with `nonResourceURLs: [\"/healthz\", \"/metrics\"]` and verb `get`. What access does this grant?",
     diagram: null,
     options: [
-      "Access to Pod health check endpoints and metrics scraping targets",
+      "Access to Pod health check endpoints and `/metrics` scraping targets",
       "Access to health check resources across all namespaces in the cluster",
       "Access to the API server's `/healthz` and `/metrics` HTTP endpoints",
-      "Read-only access to all custom resource definitions across the cluster"
+      "Read-only access to all `CustomResourceDefinition` objects across the cluster"
     ],
     answer: 2,
     explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.\n\nWhy other options are wrong:\n- A: nonResourceURLs access API server HTTP endpoints, not Pod health checks or metrics targets\n- B: nonResourceURLs are URL paths, not Kubernetes resource types across namespaces\n- D: nonResourceURLs grant access to specific API server HTTP paths, not to custom resource definitions\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",

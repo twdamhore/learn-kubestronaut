@@ -393,7 +393,7 @@ var questions = [
     diagram: null,
     options: [
       "`redis-svc.default.svc.cluster.local` — the Service routes traffic to `redis-1` automatically",
-      "`redis-1.default.svc.cluster.local` — each pod gets a direct cluster-level DNS entry by its name",
+      "`redis-1.default.svc.cluster.local` — each pod gets a direct cluster-level DNS entry without a headless Service",
       "`redis-svc-1.default.svc.cluster.local` — replicas are indexed by the Service name and ordinal",
       "`redis-1.redis-svc.default.svc.cluster.local` — the headless Service creates per-pod DNS"
     ],
@@ -651,7 +651,7 @@ var questions = [
       "In a random zone outside `us-east-1a` since the `StorageClass` does not consider pod topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
       "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone as the pod",
-      "The PV is provisioned immediately when the `PVC` is created, before the pod is scheduled to any node"
+      "The PV is provisioned immediately when the `PVC` is created because `WaitForFirstConsumer` only delays binding, not provisioning"
     ],
     answer: 2,
     explanation: "`WaitForFirstConsumer` delays PV provisioning until the pod is scheduled to a node. The scheduler considers the pod's node constraints (like `nodeSelector`) and provisions the PV in the same topology (zone) as the chosen node. This prevents the PV from being created in a zone where the pod cannot run, which would cause a scheduling deadlock.\n\nWhy other options are wrong:\n- A: WaitForFirstConsumer explicitly considers pod topology constraints when provisioning the PV\n- B: PVs are not provisioned in all zones; they are created in the specific zone where the pod is scheduled\n- D: WaitForFirstConsumer delays provisioning until the pod is scheduled; it does not provision immediately\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
@@ -699,7 +699,7 @@ var questions = [
       "In the container image layer, directly modifying the original image stored in the registry cache",
       "In the overlay's upper writable layer on the node's filesystem, consuming node disk space",
       "In a dedicated PersistentVolume that is automatically created for the container by the kubelet",
-      "In memory (RAM) since `/tmp` inside containers is always backed by a tmpfs mount by default"
+      "In memory (RAM) since `/tmp` inside containers is typically backed by a tmpfs mount rather than the overlay filesystem"
     ],
     answer: 1,
     explanation: "OverlayFS uses a layered approach with read-only lower layers (image layers) and a writable upper layer. Any writes to the container filesystem, including `/tmp`, go to the upper layer stored on the node's disk. This consumes node-level storage and can lead to disk pressure. For predictable temporary storage, an `emptyDir` volume is recommended.\n\nWhy other options are wrong:\n- A: Container image layers are read-only; writes go to the overlay upper layer, not the image itself\n- C: No PVC is automatically created for container filesystem writes; PVCs must be explicitly defined\n- D: /tmp inside containers is not backed by tmpfs by default; it uses the overlay writable layer on disk\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -872,7 +872,7 @@ var questions = [
     text: "A cloud-native application team is deciding between using a managed database service (e.g., AWS RDS) and running a database as a StatefulSet in Kubernetes. Which factor most strongly favors using a managed service?",
     diagram: null,
     options: [
-      "Managed database services are always cheaper than self-hosted databases running inside Kubernetes clusters",
+      "Managed database services are typically more cost-effective than self-hosted databases, making cost the primary factor favoring managed options",
       "Managed services handle backups, patching, replication, and failover, reducing the team's operations work",
       "StatefulSets cannot provide persistent storage for databases running inside a Kubernetes cluster at all",
       "Managed services run inside the Kubernetes cluster alongside application pods for better network latency"
@@ -952,7 +952,7 @@ var questions = [
     text: "A team wants to use ephemeral CSI volumes that are created and destroyed with the pod lifecycle. Which volume type in the pod spec enables this?",
     diagram: null,
     options: [
-      "`persistentVolumeClaim` with `readOnly: true` set on the volume mount in the pod spec definition",
+      "`persistentVolumeClaim` with `readOnly: true` set on the volume mount to simulate ephemeral behavior",
       "`emptyDir` with a CSI-backed storage medium specified in the volume configuration field of the pod",
       "`hostPath` pointing to the CSI driver's mount directory on the node's local filesystem path",
       "`csi` inline volume in the pod spec, allowing the CSI driver to provision per-pod ephemeral storage"
@@ -1147,7 +1147,7 @@ var questions = [
       "The kube-apiserver sends a notification event to all running broker pods about the new cluster member",
       "Kafka brokers perform DNS lookups against the headless Service which returns updated A records for all",
       "The new broker automatically inherits the full cluster configuration from its provisioned PVC contents",
-      "Existing brokers cannot discover new members without a full restart of every pod in the StatefulSet"
+      "Existing brokers cannot discover new members without a full restart of the headless Service and every pod"
     ],
     answer: 1,
     explanation: "Headless Services provide DNS-based discovery for StatefulSet pods. When `kafka-3` becomes Running and Ready, the headless Service's DNS records are updated to include the new pod. Existing Kafka brokers that periodically resolve the Service DNS or use ZooKeeper/KRaft for cluster membership will discover the new member through these updated records.\n\nWhy other options are wrong:\n- A: The kube-apiserver does not send notification events directly to pods about cluster membership changes\n- C: PVCs contain data written by the application, not Kafka cluster configuration for new member discovery\n- D: Existing brokers can discover new members via DNS lookups without requiring a full restart of all pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "The PVC access mode is set to `ReadOnlyMany` which prevents write operations from the mounted container",
-      "NFS volumes are always mounted as read-only in Kubernetes regardless of the PVC access mode setting",
+      "NFS volumes default to read-only mounts in Kubernetes unless the PVC explicitly requests ReadWriteMany access mode",
       "The container runs as a non-root UID that lacks write permissions on the NFS export's file ownership",
       "The kubelet does not support write operations on NFS volumes mounted via the in-tree volume plugin"
     ],

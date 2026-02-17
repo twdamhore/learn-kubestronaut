@@ -273,7 +273,7 @@ var questions = [
     text: "A developer mounts a ConfigMap as a volume using `subPath: app.conf` to place a single file at `/etc/myapp/app.conf`. After updating the ConfigMap, the file inside the pod does not change even after waiting several minutes. Why?",
     diagram: null,
     options: [
-      "ConfigMap volume mounts are never updated; the pod must always be restarted",
+      "ConfigMap volume mounts are typically not updated after creation; restarting the pod is the standard fix",
       "The kubelet update interval defaults to 10 minutes, so the developer needs to wait longer",
       "Volumes mounted with `subPath` do not receive automatic updates from ConfigMap changes",
       "A `subPath` mount requires `immutable: false` on the ConfigMap to allow live updates"
@@ -1057,10 +1057,10 @@ var questions = [
     text: "A team wants to pass a Kubernetes Secret value to a container's entrypoint command as an argument. They try using `$(SECRET_VAR)` in the `args` field. The Secret is injected as environment variable `SECRET_VAR`. Does this work?",
     diagram: null,
     options: [
-      "No — `args` does not support variable substitution; only the `command` field supports it in pod specs",
+      "No — `args` does not support variable substitution; the `command` field is the supported location in pod specs",
       "No — variable substitution in `args` only works with ConfigMap values, not with Secret-sourced values",
       "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` using env vars",
-      "Yes — but only if the `enableServiceLinks` field is explicitly set to `true` on the pod specification"
+      "Yes — but the `enableServiceLinks` field must be explicitly set to `true` on the pod specification"
     ],
     answer: 2,
     explanation: "Kubernetes supports `$(VAR_NAME)` variable substitution in both the `command` and `args` fields of a container spec. The substitution uses environment variables defined for that container, regardless of whether they come from ConfigMaps, Secrets, or literal values. This is a Kubernetes-level substitution performed before the container starts, not a shell expansion. `enableServiceLinks` controls service-related environment variables and is unrelated to this feature.\n\nWhy other options are wrong:\n- A: Both command and args support $(VAR_NAME) substitution, not just command\n- B: Variable substitution works with env vars from any source including Secrets, not just ConfigMaps\n- D: enableServiceLinks controls service-related env vars and is unrelated to $(VAR_NAME) substitution\n\nReference: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#use-environment-variables-to-define-arguments",

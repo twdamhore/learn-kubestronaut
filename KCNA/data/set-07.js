@@ -456,13 +456,13 @@ var questions = [
     text: "A pod shows `STATUS: Error` and `Exit Code: 1` after running to completion. The pod's `restartPolicy` is `Never`. What will Kubernetes do with this pod?",
     diagram: null,
     options: [
-      "The kubelet overrides the `restartPolicy: Never` and restarts the container after its back-off timer expires",
+      "The kubelet restarts the container after a back-off delay because exit code 1 indicates a transient failure",
       "Kubernetes will delete the failed pod and then schedule a replacement pod on a different cluster node",
       "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts",
       "The `restartPolicy: Never` causes the scheduler to delete and replace the pod on another node"
     ],
     answer: 2,
-    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: The kubelet does not override restartPolicy: Never; it honours the policy and does not restart the container\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: restartPolicy: Never does not trigger deletion or rescheduling; the pod stays on its original node in Failed state\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
+    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: Exit code 1 does not cause the kubelet to treat the failure as transient; restartPolicy: Never is honoured and no restart occurs\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: restartPolicy: Never does not trigger deletion or rescheduling; the pod stays on its original node in Failed state\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.restartPolicy}'"
   },
   {
@@ -1097,12 +1097,12 @@ var questions = [
     diagram: null,
     options: [
       "No, both containers see the same files because `emptyDir` is shared storage—the file should be visible, so check the exact file paths",
-      "No, `emptyDir` volumes can only be mounted in one container per pod, and the second container mount is silently ignored by kubelet",
+      "No, emptyDir volumes use copy-on-write semantics so each container sees an independent snapshot of the data rather than the same underlying files",
       "Yes, different mount paths create isolated storage spaces within the same `emptyDir`, preventing cross-container file visibility",
       "Yes, `emptyDir` volumes are read-only by default so Container B lacks the necessary write permissions to see mutable content"
     ],
     answer: 0,
-    explanation: "An `emptyDir` volume is a shared directory at the pod level. All containers that mount it see the same underlying data, regardless of the mount path. If Container A writes `/mnt/data/file.txt` and Container B mounts the same volume at `/shared/data`, it should see the file at `/shared/data/file.txt`. If the file is missing, verify the exact paths and that both containers mount the same volume name.\n\nWhy other options are wrong:\n- B: emptyDir volumes can be mounted by multiple containers in the same pod simultaneously\n- C: Different mount paths access the same underlying volume data; the mount path is just the view into the pod\n- D: emptyDir volumes are read-write by default, not read-only\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    explanation: "An `emptyDir` volume is a shared directory at the pod level. All containers that mount it see the same underlying data, regardless of the mount path. If Container A writes `/mnt/data/file.txt` and Container B mounts the same volume at `/shared/data`, it should see the file at `/shared/data/file.txt`. If the file is missing, verify the exact paths and that both containers mount the same volume name.\n\nWhy other options are wrong:\n- B: emptyDir does not use copy-on-write; all containers share the same underlying directory and see identical files\n- C: Different mount paths access the same underlying volume data; the mount path is just the view into the pod\n- D: emptyDir volumes are read-write by default, not read-only\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl exec <pod-name> -c <container-b> -- ls <mount-path>"
   },
   {
@@ -1480,13 +1480,13 @@ var questions = [
     text: "A pod's container exits with code 137 but there is no `OOMKilled` reason in the pod status. The container's `State` shows `Reason: Error`. What else could cause exit code 137?",
     diagram: null,
     options: [
-      "The application encountered an unhandled exception and chose exit code 137 as its custom application error code value",
+      "The application explicitly calls exit(137) in its error handler to signal a custom fatal error condition to the orchestration layer",
       "The container received a SIGKILL (signal 9) from an external source such as a manual kill command or system-level memory pressure",
       "The container exceeded its configured CPU limits, causing the kernel to throttle and eventually terminate the process with SIGKILL",
       "The kubelet sent SIGKILL because the container failed to respond to a graceful SIGTERM within the terminationGracePeriodSeconds"
     ],
     answer: 1,
-    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: While an application could technically call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external SIGKILL source, not an application-chosen exit code\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: This describes the graceful shutdown sequence (SIGTERM then SIGKILL), which would show Reason: Killing, not Reason: Error\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
+    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: While an application could call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external signal, not an application-chosen exit code\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: This describes the graceful shutdown sequence (SIGTERM then SIGKILL), which would show Reason: Killing, not Reason: Error\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Last State'"
   },
   {

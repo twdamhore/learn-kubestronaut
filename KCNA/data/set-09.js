@@ -937,12 +937,12 @@ var questions = [
     diagram: null,
     options: [
       "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer will terminate the container",
-      "Memory limits in Kubernetes are advisory only and are never actually enforced by the container runtime or kernel cgroup settings",
-      "The <code>tmpfs</code> mount completely bypasses cgroup memory accounting and is not tracked by the kernel memory controller",
+      "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately by the node allocatable budget",
+      "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.\n\nWhy other options are wrong:\n- B: Memory limits are enforced by cgroups and the kernel; they are not advisory in Kubernetes\n- C: tmpfs memory is tracked by the cgroup memory controller; it does not bypass accounting\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.\n\nWhy other options are wrong:\n- B: tmpfs-backed emptyDir memory is charged to the same cgroup as the container process, not tracked separately by the node allocatable budget\n- C: tmpfs memory is charged to the container's cgroup memory limit, not to the node's system-reserved allocation\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {
@@ -1176,13 +1176,13 @@ var questions = [
     text: "A team uses an init container to pre-populate a shared volume with configuration data before the main application container starts. The init container exits with code 0, but the main container fails to find the expected files. What is the most likely issue?",
     diagram: null,
     options: [
-      "Init containers cannot share any volumes with the main container due to Kubernetes isolation requirements for initialization",
+      "Init containers write data to a temporary staging area that is not directly accessible by the main container without explicit volume binding configuration",
       "The init and main containers mount different volumes or <code>mountPath</code> values, so files are written to one path and read from another",
       "Init container data is automatically cleared from the <code>emptyDir</code> volume when the main container starts to ensure a clean state",
-      "The init container's exit code 0 actually indicates it encountered an error during execution and did not write files successfully"
+      "The init container exited before its filesystem writes were flushed to the volume, so the data was lost during the handoff to the main container"
     ],
     answer: 1,
-    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers can share volumes with main containers; this is a common and supported pattern\n- C: The kubelet does not clear emptyDir or other volume data between init and main containers; volumes persist across container transitions\n- D: Exit code 0 indicates success; it means the init container completed its task without errors\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers share volumes directly with the main container through standard volumeMounts; there is no separate staging area requiring special binding\n- C: The kubelet does not clear emptyDir or other volume data between init and main containers; volumes persist across container transitions\n- D: Filesystem writes are flushed before the container process exits; exit code 0 confirms the init container completed successfully\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.initContainers[*].volumeMounts}'"
   },
   {
@@ -1480,13 +1480,13 @@ var questions = [
     text: "A team evaluates KEDA (Kubernetes Event-Driven Autoscaling) for their event-processing workload that consumes messages from an Apache Kafka topic. How does KEDA differ from the standard Horizontal Pod Autoscaler?",
     diagram: null,
     options: [
-      "KEDA replaces the HPA entirely and cannot coexist with it in the same Kubernetes cluster installation",
+      "KEDA manages its own scaling loop independently of the HPA, so they should not be configured for the same workload",
       "KEDA scales on external event sources (Kafka lag, queue depth) and supports scaling to zero replicas",
-      "KEDA only supports scaling CronJobs and cannot be used with Deployments or StatefulSet workloads",
+      "KEDA is primarily designed for batch workloads and provides limited support for long-running Deployments",
       "KEDA provides faster scaling by bypassing the Kubernetes API server and directly managing Pod counts"
     ],
     answer: 1,
-    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.\n\nWhy other options are wrong:\n- A: KEDA can coexist with HPA; it actually creates HPA objects internally and works alongside them\n- C: KEDA supports Deployments, StatefulSets, Jobs, and custom resources, not just CronJobs\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them\n\nReference: https://keda.sh/docs/latest/concepts/",
+    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.\n\nWhy other options are wrong:\n- A: KEDA actually creates and manages HPA objects under the hood, so it does not run an independent scaling loop separate from HPA\n- C: KEDA fully supports Deployments, StatefulSets, Jobs, and custom resources; it is not limited to batch workloads\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them\n\nReference: https://keda.sh/docs/latest/concepts/",
     verify: null
   },
   {

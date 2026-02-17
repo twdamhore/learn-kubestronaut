@@ -457,7 +457,7 @@ var questions = [
     diagram: null,
     options: [
       "A. High-priority Pods using this class are scheduled first but never preempt others",
-      "B. The PriorityClass is invalid because preemption cannot be disabled in the spec",
+      "B. The PriorityClass is rejected by the API server because `preemptionPolicy: Never` is not a supported value",
       "C. Pods with this class can only preempt Pods that have a value below one hundred",
       "D. Lower-priority Pods are evicted from the node but their containers are not killed"
     ],
@@ -539,7 +539,7 @@ var questions = [
       "A. Containers continue running because the runtime upgrade is fully transparent to them",
       "B. All containers are stopped and must be restarted individually by the kubelet process",
       "C. The node must be drained first because runtime upgrades need no running containers",
-      "D. Only Pods with `restartPolicy: Always` survive through the container runtime upgrade"
+      "D. Pods with `restartPolicy: Always` are restarted automatically by the kubelet, while other Pods are permanently terminated"
     ],
     answer: 2,
     explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
@@ -1304,9 +1304,9 @@ var questions = [
     text: "A cluster upgrade requires updating RBAC rules. The existing ClusterRole for the scheduler includes custom permissions. What risk does upgrading with <code>kubeadm upgrade apply</code> pose to this ClusterRole?",
     diagram: null,
     options: [
-      "D. kubeadm deletes all RBAC objects then recreates them from default templates only",
-      "B. kubeadm overwrites all ClusterRoles with their default values on upgrade",
-      "C. Custom ClusterRoles are preserved because kubeadm never modifies existing RBAC",
+      "D. kubeadm deletes most RBAC objects then recreates them from default templates during the upgrade",
+      "B. kubeadm resets most ClusterRoles to their default definitions during the upgrade process",
+      "C. Custom ClusterRoles are typically preserved since kubeadm avoids modifying user-created RBAC",
       "A. kubeadm may overwrite system ClusterRoles it manages, removing custom rules"
     ],
     answer: 3,
@@ -1528,7 +1528,7 @@ var questions = [
     text: "During preemption, the scheduler selects victim Pods to evict. Which factor has the highest priority when choosing victims?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Factor 2: ???</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest ??? evictions</text></svg>',
     options: [
-      "A. Pod age is the primary factor and older Pods are always evicted first",
+      "A. Pod age is the primary factor, with the oldest Pods selected for eviction first",
       "B. Pod resource usage is checked and Pods using the most are evicted first",
       "C. Pod priority value is the main factor, lowest-priority Pods go first",
       "D. Pod namespace is checked and Pods in non-system namespaces go first"
