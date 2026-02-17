@@ -183,7 +183,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Networking",
     text: "An architect is designing inter-service communication for a microservices platform on Kubernetes. They need mutual TLS between services, traffic shifting for canary deployments, and per-route retry policies — all without modifying application code. Which approach best addresses these requirements?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Sidecar Proxy Architecture</text><rect x="30" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod A</text><rect x="40" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="70" y="79" text-anchor="middle" fill="white" font-size="9">App</text><rect x="110" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="140" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="220" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="295" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod B</text><rect x="230" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="260" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="300" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="330" y="79" text-anchor="middle" fill="white" font-size="9">App</text><line x1="140" y1="87" x2="260" y2="87" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)"/><text x="200" y="105" text-anchor="middle" fill="#a78bfa" font-size="9">mTLS</text><rect x="120" y="150" width="160" height="40" rx="6" fill="#4a1d96" stroke="#a78bfa"/><text x="200" y="175" text-anchor="middle" fill="white" font-size="10">Control Plane</text><line x1="140" y1="120" x2="180" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><line x1="260" y1="120" x2="220" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a78bfa"/></marker></defs></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Inter-Service Communication Pattern</text><rect x="30" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod A</text><rect x="40" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="70" y="79" text-anchor="middle" fill="white" font-size="9">App</text><rect x="110" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="140" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="220" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="295" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod B</text><rect x="230" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="260" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="300" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="330" y="79" text-anchor="middle" fill="white" font-size="9">App</text><line x1="140" y1="87" x2="260" y2="87" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)"/><text x="200" y="105" text-anchor="middle" fill="#a78bfa" font-size="9">encrypted</text><rect x="120" y="150" width="160" height="40" rx="6" fill="#4a1d96" stroke="#a78bfa"/><text x="200" y="175" text-anchor="middle" fill="white" font-size="10">???</text><line x1="140" y1="120" x2="180" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><line x1="260" y1="120" x2="220" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a78bfa"/></marker></defs></svg>',
     options: [
       "Deploy an API gateway at the cluster ingress to handle all internal service-to-service communication traffic",
       "Add mTLS libraries to each microservice codebase and implement retry logic in application middleware code",
@@ -491,7 +491,7 @@ var questions = [
     diagram: null,
     options: [
       "Deployment with `replicas` set to the current node count and manually adjusted as nodes change",
-      "DaemonSet — ensures exactly one Pod copy runs on every (or selected subset of) cluster node(s)",
+      "DaemonSet — ensures exactly one `Pod` copy runs on every (or selected subset of) cluster node(s)",
       "StatefulSet with `podManagementPolicy: Parallel` and replicas matching the current node count",
       "Job with `completions` equal to the number of nodes and `parallelism` set to the total node count"
     ],
@@ -556,7 +556,7 @@ var questions = [
     options: [
       "Both containers share the same IP address and can communicate via `localhost`, but they must use different ports",
       "Both containers share the same filesystem and can access each other's files without requiring any volume mounts",
-      "Both containers share CPU and memory limits so resource requests apply to the Pod as a whole not individual containers",
+      "Both containers share CPU and memory limits so resource requests apply to the `Pod` as a whole not individual containers",
       "Both containers are automatically restarted together if either container fails a configured health check probe"
     ],
     answer: 0,
@@ -570,10 +570,10 @@ var questions = [
     text: "A team is building a CI/CD pipeline that must run inside the Kubernetes cluster as a series of steps, each in its own container. They want a Kubernetes-native pipeline engine. Which project provides custom resources like `Task`, `Pipeline`, and `PipelineRun`?",
     diagram: null,
     options: [
-      "Jenkins X — an opinionated CI/CD platform using Jenkins pipelines with Kubernetes cluster integration",
-      "Argo CD — a GitOps continuous delivery tool that syncs Git repository state to Kubernetes clusters",
+      "Jenkins X — an opinionated CI/CD platform using `Jenkinsfile` pipelines with Kubernetes cluster integration",
+      "Argo CD — a GitOps continuous delivery tool that syncs `Application` state from Git to Kubernetes clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task` and `Run`",
-      "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from Git repositories continuously"
+      "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from `GitRepository` sources continuously"
     ],
     answer: 2,
     explanation: "Tekton is a Kubernetes-native CI/CD framework (a CD Foundation project) that defines pipeline components as Custom Resources: `Task` (a sequence of steps), `Pipeline` (a graph of Tasks), `TaskRun` and `PipelineRun` (execution instances). Each step runs in its own container within a Pod. Argo CD and Flux are GitOps tools, not pipeline engines.\n\nWhy other options are wrong:\n- A: Jenkins X uses Jenkins pipelines with K8s integration but is not Kubernetes-native CRD-based\n- B: Argo CD is a GitOps tool that syncs Git to clusters, not a CI/CD pipeline engine with Task CRDs\n- D: Flux is a GitOps reconciliation toolkit, not a pipeline engine with Task/PipelineRun resources\n\nReference: https://tekton.dev/docs/",
@@ -731,7 +731,7 @@ var questions = [
     diagram: null,
     options: [
       "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",
-      "The kube-scheduler immediately reschedules all Pods to other available nodes without waiting for any timeout period",
+      "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
       "The Pods continue running indefinitely on the isolated node and are never rescheduled to other healthy cluster nodes",
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
     ],
@@ -1279,7 +1279,7 @@ var questions = [
       "Sidecar logging — a logging container is injected into every Pod to capture and forward application logs",
       "Node-level logging agent — a DaemonSet reads container logs from `/var/log/containers/` on each node",
       "Application-level logging — each application writes logs directly to a remote centralized logging service",
-      "Event-driven logging — a controller watches Kubernetes Events and forwards them as structured log entries"
+      "Event-driven logging — a controller watches Kubernetes `Events` and forwards them as structured log entries"
     ],
     answer: 1,
     explanation: "The node-level logging agent pattern deploys a DaemonSet (e.g., Fluentd, Fluent Bit, or Filebeat) on every node. The agent reads container log files from the standard node path (`/var/log/containers/`) where the container runtime writes stdout/stderr output. This approach requires no application changes and provides cluster-wide log collection. Sidecar logging adds containers per Pod, which uses more resources.\n\nWhy other options are wrong:\n- A: Sidecar logging injects a container per Pod, not a DaemonSet reading node-level log files\n- C: Application-level logging requires code changes to write directly to a remote service\n- D: Event-driven logging watches K8s Events, not container stdout/stderr log files\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-node-logging-agent",
@@ -1519,7 +1519,7 @@ var questions = [
       "The Pod's container image cannot be found in the configured container registry endpoint on any node",
       "The Pod has a `nodeSelector` or `nodeAffinity` not matching any worker node, plus control-plane taints",
       "The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster",
-      "The Pod's resource requests exceed the total combined capacity of all 5 nodes in the cluster group"
+      "The Pod's `resource requests` exceed the total combined capacity of all 5 nodes in the cluster group"
     ],
     answer: 1,
     explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.\n\nWhy other options are wrong:\n- A: Image not found would show ImagePullBackOff, not scheduling failure messages about node matching\n- C: The message shows 2 control-plane + 3 worker nodes = 5 total, not all 5 being control-plane nodes\n- D: Insufficient resources would show 'Insufficient cpu/memory' messages, not node affinity mismatch\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",

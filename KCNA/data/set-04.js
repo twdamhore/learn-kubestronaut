@@ -105,9 +105,9 @@ var questions = [
     diagram: null,
     options: [
       "No PV supports the `ReadWriteMany` access mode that the PVC requests in its specification",
-      "The PV capacity of 100Gi is too large for the PVC request of only 50Gi to match correctly",
-      "The PVC is waiting for a pod to reference it before the binding process can be initiated",
-      "PVCs cannot request more than 10Gi of storage by default without a ResourceQuota override"
+      "The PV capacity of `100Gi` is too large for the PVC request of only `50Gi` to match correctly",
+      "The `PVC` is waiting for a pod to reference it before the binding process can be initiated",
+      "PVCs cannot request more than 10Gi of storage by default without a `ResourceQuota` override"
     ],
     answer: 0,
     explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: There is no default 10Gi PVC limit; PVC sizes are constrained only by ResourceQuota if configured\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -206,7 +206,7 @@ var questions = [
       "OpenEBS — a container-attached storage solution providing per-pod block volumes"
     ],
     answer: 2,
-    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS was a CNCF sandbox project (now archived), not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS was a CNCF sandbox project (now archived), not graduated\n\nReference: https://www.cncf.io/projects/rook/",
+    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF sandbox project, not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF sandbox project, not graduated\n\nReference: https://www.cncf.io/projects/rook/",
     verify: null
   },
   {
@@ -360,9 +360,9 @@ var questions = [
     text: "A GitOps team manages StatefulSet manifests in Git, including `volumeClaimTemplates`. An engineer modifies the storage size in the `volumeClaimTemplates` from 10Gi to 20Gi and merges the change. What happens when the GitOps controller applies this update?",
     diagram: null,
     options: [
-      "The StatefulSet is updated in-place and all existing PVCs are automatically resized by the controller",
-      "New PVCs are created at 20Gi while old PVCs are deleted and their underlying storage is reclaimed",
-      "The GitOps controller automatically recreates the entire StatefulSet resource with the new PVC size",
+      "The StatefulSet is updated in-place and all existing `PVCs` are automatically resized by the controller",
+      "New `PVCs` are created at `20Gi` while old PVCs are deleted and their underlying storage is reclaimed",
+      "The GitOps controller automatically recreates the entire `StatefulSet` resource with the new PVC size",
       "The update fails because `volumeClaimTemplates` in a StatefulSet are immutable after initial creation"
     ],
     answer: 3,
@@ -648,10 +648,10 @@ var questions = [
     text: "A cluster uses a StorageClass with `volumeBindingMode: WaitForFirstConsumer` for zone-aware provisioning. A pod requests a PVC with this StorageClass and has a `nodeSelector` restricting it to zone `us-east-1a`. Where is the PV provisioned?",
     diagram: null,
     options: [
-      "In a random zone since the StorageClass does not consider pod placement or node topology constraints",
+      "In a random zone since the `StorageClass` does not consider pod placement or node topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
       "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone as the pod",
-      "The PV is provisioned immediately when the PVC is created, before the pod is scheduled to any node"
+      "The PV is provisioned immediately when the `PVC` is created, before the pod is scheduled to any node"
     ],
     answer: 2,
     explanation: "`WaitForFirstConsumer` delays PV provisioning until the pod is scheduled to a node. The scheduler considers the pod's node constraints (like `nodeSelector`) and provisions the PV in the same topology (zone) as the chosen node. This prevents the PV from being created in a zone where the pod cannot run, which would cause a scheduling deadlock.\n\nWhy other options are wrong:\n- A: WaitForFirstConsumer explicitly considers pod topology constraints when provisioning the PV\n- B: PVs are not provisioned in all zones; they are created in the specific zone where the pod is scheduled\n- D: WaitForFirstConsumer delays provisioning until the pod is scheduled; it does not provision immediately\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
@@ -680,13 +680,13 @@ var questions = [
     text: "An administrator wants to pre-provision PVs that can only be claimed by PVCs matching a specific label selector. From the PVC side, which Kubernetes resource spec field supports label-based selector matching during PV-PVC binding?",
     diagram: null,
     options: [
-      "`spec.selector` on PVs is not valid — only PVCs support selector fields for matching labels",
+      "`spec.selector` on the PVC, which accepts `matchLabels` to restrict binding to PVs with matching labels",
       "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC exists",
       "`spec.nodeAffinity` restricts which nodes can mount the PV but does not control PVC label matching",
       "`spec.storageClassName` ensures only PVCs with the matching class can bind but not by label value"
     ],
     answer: 0,
-    explanation: "PVs do not have a `spec.selector` field. Instead, PVCs can specify a `spec.selector` with `matchLabels` to restrict which PVs they can bind to. For pre-binding a PV to a specific PVC, the administrator uses `spec.claimRef` on the PV. The `storageClassName` also acts as a filter, but the question asks about label-based selection, which is a PVC-side feature.\n\nWhy other options are wrong:\n- B: claimRef pre-binds by name, not by label selector; it is a different binding mechanism\n- C: nodeAffinity controls node placement for volume access, not PVC-to-PV label matching\n- D: storageClassName is a class-based filter, not a label-based selector mechanism\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector",
+    explanation: "PVCs can specify a `spec.selector` with `matchLabels` to restrict which PVs they can bind to. When the administrator labels pre-provisioned PVs, PVCs with a matching `spec.selector` will only bind to PVs whose labels satisfy the selector. For pre-binding a PV to a specific PVC by name, the administrator uses `spec.claimRef` on the PV. The `storageClassName` also acts as a filter, but the question asks about label-based selection, which is the `spec.selector` field on the PVC.\n\nWhy other options are wrong:\n- B: claimRef pre-binds by name, not by label selector; it is a different binding mechanism\n- C: nodeAffinity controls node placement for volume access, not PVC-to-PV label matching\n- D: storageClassName is a class-based filter, not a label-based selector mechanism\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector",
     verify: "kubectl get pvc <pvc-name> -o jsonpath='{.spec.selector}'"
   },
   {
@@ -968,10 +968,10 @@ var questions = [
     text: "An administrator needs to expand an existing PVC from 10Gi to 20Gi. The StorageClass has `allowVolumeExpansion: true`. What is the correct procedure?",
     diagram: '<svg viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="25" width="100" height="50" rx="5" fill="#E8F0FE" stroke="#326CE5"/><text x="60" y="48" text-anchor="middle" font-size="10" fill="#333">PVC: 10Gi</text><text x="60" y="62" text-anchor="middle" font-size="8" fill="#666">needs more space</text><text x="135" y="52" text-anchor="middle" font-size="16" fill="#666">\u2192</text><rect x="155" y="25" width="100" height="50" rx="5" fill="#FFD966" stroke="#F1C232"/><text x="205" y="48" text-anchor="middle" font-size="10" fill="#333">??? Process</text><text x="205" y="62" text-anchor="middle" font-size="8" fill="#666">what happens?</text><text x="280" y="52" text-anchor="middle" font-size="16" fill="#666">\u2192</text><rect x="295" y="25" width="100" height="50" rx="5" fill="#D4EDDA" stroke="#28A745"/><text x="345" y="48" text-anchor="middle" font-size="10" fill="#333">PV: ??? Gi</text><text x="345" y="62" text-anchor="middle" font-size="8" fill="#666">result</text></svg>',
     options: [
-      "Delete the PVC, create a new one requesting 20Gi, and re-attach it to the pod with updated mounts",
+      "Delete the `PVC`, create a new one requesting 20Gi, and re-attach it to the pod with updated mounts",
       "Edit the PVC's `spec.resources.requests.storage` to 20Gi; the CSI driver handles the expansion",
-      "Edit the PV directly to change its capacity to 20Gi; the PVC inherits the new size automatically",
-      "Create a second PVC for the additional 10Gi and mount both volumes inside the application pod"
+      "Edit the `PV` directly to change its capacity to 20Gi; the `PVC` inherits the new size automatically",
+      "Create a second `PVC` for the additional 10Gi and mount both volumes inside the application pod"
     ],
     answer: 1,
     explanation: "PVC expansion is triggered by editing the PVC's `spec.resources.requests.storage` field to the desired size. The PV controller detects the change and instructs the CSI driver to expand the underlying volume. Some storage backends require the pod to be restarted for filesystem expansion, while others support online expansion. The PV size is updated automatically.\n\nWhy other options are wrong:\n- A: Deleting and recreating the PVC would lose existing data; in-place expansion is supported\n- C: Editing the PV directly does not trigger CSI expansion; the PVC is the correct resource to modify\n- D: Creating a second PVC adds complexity; volume expansion is the simpler and correct approach\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims",
@@ -1481,7 +1481,7 @@ var questions = [
     diagram: null,
     options: [
       "Only the current revision is retained; all previous revisions are immediately deleted after updates",
-      "All 8 revisions are retained because Kubernetes never garbage collects ControllerRevision objects",
+      "All 9 revisions are retained because Kubernetes never garbage collects ControllerRevision objects",
       "6 ControllerRevision objects are retained (5 historical plus the current); the 3 oldest are garbage collected",
       "StatefulSets do not use ControllerRevision objects; they track updates via pod template hashes"
     ],

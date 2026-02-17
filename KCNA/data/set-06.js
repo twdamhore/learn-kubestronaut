@@ -581,16 +581,16 @@ var questions = [
     id: "s06-q037",
     domain: "Container Orchestration",
     subsection: "Security",
-    text: "During a cluster upgrade, the certificates used by etcd and the API server may expire. What tool in a kubeadm cluster checks certificate expiration?",
+    text: "During a cluster upgrade, the certificates used by etcd and the API server may expire. Which command in a kubeadm cluster lists all PKI certificates and their expiration dates?",
     diagram: null,
     options: [
-      "A. `kubectl certificate list` displays all cluster certs",
-      "B. `kubeadm certs check-expiration` shows all PKI dates",
-      "C. `openssl x509 -in` on the cert file shows expiry dates",
-      "D. Both B and C can check certificate expiration dates"
+      "A. `kubectl certificate list` — displays all cluster certificates and their status",
+      "B. `kubeadm certs check-expiration` — lists all PKI certificates and their expiration dates",
+      "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
+      "D. `openssl x509 -enddate -noout -in /etc/kubernetes/pki/apiserver.crt` — requires knowing the exact file path"
     ],
-    answer: 3,
-    explanation: "Both `kubeadm certs check-expiration` and `openssl x509` can verify certificate expiration dates. The kubeadm command provides a convenient summary of all cluster certificates, while openssl allows checking individual certificate files directly.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- B: kubeadm certs check-expiration works but is only one of the valid approaches; D is more complete\n- C: openssl x509 works for individual cert files but is only one of the valid approaches; D is more complete\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
+    answer: 1,
+    explanation: "`kubeadm certs check-expiration` is the purpose-built command that lists every PKI certificate managed by kubeadm (API server, etcd, front-proxy, etc.) along with its expiration date and remaining validity period, all in a single summary table.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- C: There is no `etcdctl cert status` command; etcdctl does not include a certificate inspection subcommand\n- D: `openssl x509` can inspect a single certificate file, but it requires knowing the exact file path and only checks one certificate at a time rather than listing all cluster certificates\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
     verify: "kubeadm certs check-expiration"
   },
   {
@@ -1067,10 +1067,10 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. The `globalDefault` field requires all existing Pods to be restarted to take effect"
+      "D. The `globalDefault` field is deprecated and has no effect in Kubernetes v1.27 and later versions"
     ],
     answer: 0,
-    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault is a valid and recognized field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: The `globalDefault` field is not deprecated; it remains a fully supported and functional field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1562,7 +1562,7 @@ var questions = [
     options: [
       "A. The Helm upgrade proceeds anyway and the hook failure is logged but ignored",
       "C. Helm automatically rolls back to the previous release version on hook failure",
-      "B. The upgrade is aborted and the release remains at its previous chart version",
+      "B. The upgrade fails and the release is marked FAILED, preserving the previously deployed resources",
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
     answer: 2,

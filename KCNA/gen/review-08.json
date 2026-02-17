@@ -1,32 +1,64 @@
 {
   "set": "08",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 3,
+  "issues_found": 7,
   "issues": [
     {
-      "id": "s08-q025",
-      "type": "option-length-balance",
-      "severity": "minor",
-      "what": "Correct answer (A) is 23.9% longer than distractor average",
-      "detail": "Correct answer A is 109 chars; average of wrong options is 88.0 chars (23.9% longer, exceeds 15% threshold).",
-      "suggestion": "Shorten option A or lengthen options B/C/D slightly to balance."
+      "id": "s08-q012",
+      "type": "diagram-reveals",
+      "severity": "medium",
+      "what": "Diagram title 'Sidecar Proxy Architecture' directly reveals the service mesh answer",
+      "detail": "SVG diagram titled 'Sidecar Proxy Architecture' shows App+Proxy containers, mTLS, and Control Plane, directly illustrating the service mesh pattern in the correct answer (C).",
+      "suggestion": "Change title to 'Inter-Service Communication Pattern' or '???' and change 'mTLS' to 'encrypted' and 'Control Plane' to '???'."
     },
     {
-      "id": "s08-q041",
-      "type": "option-length-balance",
+      "id": "s08-q035",
+      "type": "formatting-asymmetry",
       "severity": "minor",
-      "what": "Correct answer (B) is 18.4% longer than distractor average",
-      "detail": "Correct answer B is 118 chars; average of wrong options is 99.7 chars (18.4% longer, exceeds 15% threshold).",
-      "suggestion": "Trim option B or extend distractors to reduce the length gap."
+      "what": "Only correct answer uses backtick formatting (`localhost`)",
+      "detail": "Option A (correct) contains `localhost` in backticks. Options B, C, D are all plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
     },
     {
-      "id": "s08-q089",
-      "type": "option-length-balance",
+      "id": "s08-q036",
+      "type": "formatting-asymmetry",
       "severity": "minor",
-      "what": "Correct answer (B) is 15.9% longer than distractor average",
-      "detail": "Correct answer B is 114 chars; average of wrong options is 98.3 chars (15.9% longer, marginally exceeds 15% threshold).",
-      "suggestion": "Minor adjustment to bring within balance."
+      "what": "Only correct answer uses backtick formatting (`Task` and `Run`)",
+      "detail": "Option C (correct) contains `Task` and `Run` in backticks. Options A, B, D are all plain text.",
+      "suggestion": "Add backtick formatting to technical terms in distractors."
+    },
+    {
+      "id": "s08-q046",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`Terminating`)",
+      "detail": "Option A (correct) contains `Terminating` in backticks. Options B, C, D are all plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s08-q080",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`/var/log/containers/`)",
+      "detail": "Option B (correct) contains `/var/log/containers/` in backticks. Options A, C, D are all plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s08-q095",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`nodeSelector`, `nodeAffinity`)",
+      "detail": "Option B (correct) contains `nodeSelector` and `nodeAffinity` in backticks. Options A, C, D are all plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s08-q031",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Correct answer is the only option WITHOUT backtick formatting (reverse)",
+      "detail": "Options A, C, D use backtick formatting. Option B (correct) 'DaemonSet -- ensures exactly one Pod copy...' has no backticks.",
+      "suggestion": "Add a backtick-formatted term to the correct answer or remove backticks from distractors."
     }
   ]
 }

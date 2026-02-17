@@ -1,64 +1,32 @@
 {
   "set": "06",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 7,
+  "issues_found": 3,
   "issues": [
     {
-      "id": "s06-q016",
-      "type": "option-length-balance",
-      "severity": "minor",
-      "what": "Correct answer (D) is 26.4% longer than distractor average",
-      "detail": "Correct answer D is 83 chars vs average of 65.7 for others (26.4% longer). The verbose `--ignore-daemonsets` flag text inflates the length.",
-      "suggestion": "Shorten D to 'The `kubectl drain` command skips DaemonSet-managed Pods by default' or pad distractors slightly."
-    },
-    {
-      "id": "s06-q025",
-      "type": "formatting-asymmetry",
+      "id": "s06-q037",
+      "type": "giveaway-pattern",
       "severity": "medium",
-      "what": "Only correct answer (D) contains backticks; all 3 distractors lack them",
-      "detail": "D contains backticks for `kubeadm upgrade` while A, B, C have no backtick formatting.",
-      "suggestion": "Add backticks to at least one distractor, e.g. A: 'kube-proxy runs as a static Pod managed by the `kubelet` on each node'."
-    },
-    {
-      "id": "s06-q035",
-      "type": "option-length-balance",
-      "severity": "medium",
-      "what": "Correct answer (A) is 36.9% longer than distractor average, plus keyword echo",
-      "detail": "Correct answer A is 47 chars vs average of 34.3 for others (36.9%). The metric name `scheduler_scheduling_attempt_duration_seconds` is inherently longer and echoes 'scheduler'/'scheduling' from the stem.",
-      "suggestion": "Pad other options: 'B. `kubelet_pod_start_duration_seconds` from the kubelet', 'C. `apiserver_request_duration_seconds` from the API server', 'D. `etcd_request_duration_seconds` from the etcd cluster'."
-    },
-    {
-      "id": "s06-q048",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (B) contains backticks; all 3 distractors lack them",
-      "detail": "B contains backticks for `etcdctl snapshot save` while A, C, D have no backtick formatting.",
-      "suggestion": "Add backticks to at least one distractor, e.g. A: 'Manual SSH into each control-plane node to run `etcdctl` backup scripts on a weekly basis'."
+      "what": "'Both B and C' answer is a classic test giveaway",
+      "detail": "Option D is 'Both B and C can check certificate expiration dates'. When individual options B and C are both plausible, a 'both' meta-option strongly signals itself as correct. Test-savvy candidates can pick D without domain knowledge.",
+      "suggestion": "Restructure to avoid the meta-option. Make all 4 options individual tools and pick one correct answer."
     },
     {
       "id": "s06-q067",
-      "type": "option-length-balance",
+      "type": "overlapping-distractors",
+      "severity": "medium",
+      "what": "Options B and D are semantically identical distractors",
+      "detail": "Option B: 'Existing Pods need to be restarted to pick up the newly set global default priority'. Option D: 'The `globalDefault` field requires all existing Pods to be restarted to take effect'. Both claim the same thing, reducing the question to 3 effective choices.",
+      "suggestion": "Replace one duplicate distractor. Change D to: 'The `globalDefault` field is deprecated and has no effect in Kubernetes v1.27 and later versions'."
+    },
+    {
+      "id": "s06-q098",
+      "type": "factual-accuracy",
       "severity": "minor",
-      "what": "Distractor D is 36.6% longer than average of other options",
-      "detail": "Option D at 112 chars is 36.6% longer than the average of the other three (82.0 chars). This outlier distractor signals to test-savvy students it is less likely correct.",
-      "suggestion": "Shorten D to 'The `globalDefault` field requires all existing Pods to be restarted to take effect'."
-    },
-    {
-      "id": "s06-q074",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (B) contains backticks; all 3 distractors lack them",
-      "detail": "B contains backticks for `--initial-cluster-token` while A, C, D have none.",
-      "suggestion": "Add backticks to at least one distractor, e.g. C: 'The API server version is incompatible with the `etcd` version in the restored backup'."
-    },
-    {
-      "id": "s06-q083",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (C) contains backticks; all 3 distractors lack them",
-      "detail": "C contains backticks for `NotReady` while A, B, D have none.",
-      "suggestion": "Add backticks to at least one distractor, e.g. A: 'It sets the maximum time for a graceful Pod shutdown during `eviction` operations'."
+      "what": "Answer says release 'remains at its previous chart version' but Helm status is actually FAILED",
+      "detail": "In Helm 3, when a pre-upgrade hook fails, the release is marked FAILED, not left cleanly at previous version. The explanation correctly says 'Helm marks the upgrade as FAILED' which contradicts the option text.",
+      "suggestion": "Reword option B to: 'The upgrade fails and the release is marked FAILED, preserving prior deployed resources'."
     }
   ]
 }

@@ -1,24 +1,64 @@
 {
   "set": "04",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 7,
   "issues": [
+    {
+      "id": "s04-q007",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer uses backticks (`ReadWriteMany`) while all distractors are plain text",
+      "detail": "Option A (correct) contains `ReadWriteMany` in backticks. Options B, C, D have no backtick formatting. Combined with keyword echo from stem.",
+      "suggestion": "Add backtick formatting to technical terms in distractors."
+    },
     {
       "id": "s04-q013",
       "type": "factual-accuracy",
-      "severity": "major",
-      "what": "Explanation incorrectly says Longhorn is CNCF graduated; it is incubating",
-      "detail": "The explanation for why option A is wrong states 'Longhorn is also a CNCF graduated project providing block storage but does not orchestrate Ceph clusters.' Longhorn is a CNCF incubating project, not graduated. This contradicts Q36 in the same file which correctly identifies Longhorn as 'a CNCF incubating project.'",
-      "suggestion": "Change 'Longhorn is also a CNCF graduated project' to 'Longhorn is a CNCF incubating project' in the explanation."
+      "severity": "minor",
+      "what": "Explanation says OpenEBS is 'now archived' but it was re-accepted to CNCF Sandbox in Oct 2024",
+      "detail": "Both the explanation and 'Why D is wrong' state OpenEBS is 'now archived'. OpenEBS was re-accepted into CNCF Sandbox in October 2024.",
+      "suggestion": "Change to 'OpenEBS is a CNCF sandbox project, not graduated' removing the 'now archived' parenthetical."
     },
     {
-      "id": "s04-q098",
-      "type": "stem-answer-mismatch",
+      "id": "s04-q023",
+      "type": "formatting-asymmetry",
       "severity": "medium",
-      "what": "Option shows maxUnavailable: 1 (default) but stem asks about speeding up updates",
-      "detail": "The stem says the team 'wants to speed up rolling updates by allowing more than one pod to be updated simultaneously'. The correct answer shows `maxUnavailable: 1` which is the default single-pod behavior and does not speed anything up. The explanation even says `maxUnavailable: 2` would allow two pods simultaneously.",
-      "suggestion": "Change the option to: '`spec.updateStrategy.rollingUpdate.maxUnavailable` — controls how many pods can be down during the update' (remove the specific value of 1)."
+      "what": "Only correct answer uses backticks (`volumeClaimTemplates`) while all distractors are plain text",
+      "detail": "Option D (correct) contains `volumeClaimTemplates` in backticks. Options A, B, C have no backtick formatting. Combined with keyword echo from stem.",
+      "suggestion": "Add backtick formatting to technical terms in distractors."
+    },
+    {
+      "id": "s04-q041",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backticks (`us-east-1a`, `WaitForFirstConsumer`)",
+      "detail": "Option C (correct) contains backticks while options A, B, D are plain text.",
+      "suggestion": "Add backtick formatting to distractors."
+    },
+    {
+      "id": "s04-q061",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backticks (`spec.resources.requests.storage`)",
+      "detail": "Option B (correct) contains backticks while options A, C, D have no backtick formatting.",
+      "suggestion": "Add backtick formatting to distractors."
+    },
+    {
+      "id": "s04-q043",
+      "type": "stem-answer-mismatch",
+      "severity": "minor",
+      "what": "Stem asks 'From the PVC side, which field' but answer is framed as a negation about PVs",
+      "detail": "Correct answer (A) says '`spec.selector` on PVs is not valid -- only PVCs support selector fields' rather than directly stating the PVC field.",
+      "suggestion": "Rephrase option A to directly answer: '`spec.selector` on PVCs, which accepts `matchLabels` to restrict binding to PVs with matching labels'."
+    },
+    {
+      "id": "s04-q093",
+      "type": "factual-accuracy",
+      "severity": "minor",
+      "what": "Distractor B says '8 revisions' but there are 9 total (1 initial + 8 updates)",
+      "detail": "Stem says 'updated 8 times' = 9 total ControllerRevisions. Option B says 'All 8 revisions' but should say 9.",
+      "suggestion": "Change option B to: 'All 9 revisions are retained because Kubernetes never garbage collects ControllerRevision objects'."
     }
   ]
 }

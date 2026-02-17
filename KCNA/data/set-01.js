@@ -459,7 +459,7 @@ var questions = [
       "The `kube-proxy`, which assigns IPs from the Service CIDR range to each new Pod created",
       "The `kubelet`, which generates random IPs from the node's host network range for Pods",
       "The `kube-apiserver`, which pre-assigns Pod IPs during the scheduling phase of a Pod",
-      "The CNI plugin, which allocates IPs from the configured Pod CIDR when Pods are created"
+      "The `CNI` plugin, which allocates IPs from the configured Pod CIDR when Pods are created"
     ],
     answer: 3,
     explanation: "The CNI (Container Network Interface) plugin is responsible for setting up Pod networking, including IP address allocation from the configured Pod CIDR range. When a new Pod is created, the kubelet invokes the CNI plugin to configure the network namespace and assign an IP. `kube-proxy` manages Service IP routing rules, not Pod IP assignment. The API server does not assign Pod IPs. The kubelet delegates networking to the CNI plugin rather than handling it directly.\n\nWhy other options are wrong:\n- A: kube-proxy manages Service IP routing rules (iptables/IPVS), not Pod IP assignment.\n- B: The kubelet delegates networking to the CNI plugin; it does not generate random IPs itself.\n- C: The API server does not pre-assign Pod IPs during scheduling.\n\nReference: https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/",
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "Through HTTP headers like `traceparent` from W3C Trace Context forwarded to downstream calls",
-      "Through shared environment variables that all Pods in the cluster can read during execution",
+      "Through shared environment variables like `TRACE_ID` that all Pods in the cluster can read during execution",
       "Through Kubernetes annotations on Pod objects that services query via the API server at runtime",
       "Through the CNI plugin, which embeds trace IDs in the IP packet headers for network-level tracing"
     ],
@@ -1528,13 +1528,13 @@ var questions = [
     text: "A team has a Deployment with `replicas: 3` and a resource request of 500m CPU per Pod. The cluster has 2 nodes, each with 1 CPU allocatable. The team tries to scale to 5 replicas. What happens?",
     diagram: null,
     options: [
-      "All 5 replicas start successfully because resource requests are only treated as soft limits",
+      "All 5 replicas start successfully because Kubernetes overcommits, fitting 3 per node at 500m each",
       "Only 4 replicas can be scheduled (2 per node at 500m each); the 5th Pod remains Pending",
       "Kubernetes automatically provisions a new node to handle the additional requested replicas",
       "The scale operation is rejected by the API server because it exceeds the cluster capacity"
     ],
     answer: 1,
-    explanation: "With 2 nodes of 1 CPU each, the cluster has 2000m total allocatable CPU. Each Pod requests 500m, so 4 Pods can be scheduled (2 per node). The 5th Pod remains in `Pending` state because there is insufficient CPU to satisfy its request. Resource requests are guaranteed allocations, not soft limits. Kubernetes does not auto-provision nodes (that requires a cluster autoscaler). The API server accepts the scale request; scheduling is a separate concern.\n\nWhy other options are wrong:\n- A: Resource requests are guaranteed allocations used by the scheduler, not soft limits.\n- C: Kubernetes does not automatically provision new nodes; that requires a cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after.\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    explanation: "With 2 nodes of 1 CPU each, the cluster has 2000m total allocatable CPU. Each Pod requests 500m, so 4 Pods can be scheduled (2 per node). The 5th Pod remains in `Pending` state because there is insufficient CPU to satisfy its request. Resource requests are guaranteed allocations, not soft limits. Kubernetes does not auto-provision nodes (that requires a cluster autoscaler). The API server accepts the scale request; scheduling is a separate concern.\n\nWhy other options are wrong:\n- A: Resource requests are guaranteed allocations; 3 × 500m = 1500m exceeds a single node's 1000m capacity, so only 2 Pods fit per node.\n- C: Kubernetes does not automatically provision new nodes; that requires a cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after.\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: "microk8s kubectl describe nodes | grep -A5 Allocatable"
   },
   {

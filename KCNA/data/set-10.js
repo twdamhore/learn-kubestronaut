@@ -421,7 +421,7 @@ var questions = [
     id: "s10-q027",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A pod with two containers — `app` (port 8080) and `sidecar` (port 9090) — is in `Running` state, but the `app` container constantly restarts. Logs show `app` exits with `Error: listen EADDRINUSE :::8080`. The `sidecar` container is configured to listen on port 9090. What is the most likely cause?",
+    text: "A pod with two containers — `app` (port 8080) and `sidecar` (port 9090) — is in `Running` state, but the `app` container constantly restarts. The pod is configured with `hostNetwork: true`. Logs show `app` exits with `Error: listen EADDRINUSE :::8080`. The `sidecar` container is configured to listen on port 9090. What is the most likely cause?",
     diagram: null,
     options: [
       "A. The `sidecar` container has a secondary listener binding to port 8080 in addition to its configured primary port 9090",
@@ -1541,7 +1541,7 @@ var questions = [
     id: "s10-q097",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "A cluster administrator creates a `NetworkPolicy` that allows ingress to pods labeled `app: db` only from pods labeled `app: api` on port 5432. After applying the policy, the `api` pods can connect to `db` pods. However, the `db` pods cannot initiate connections to any other pod. No other NetworkPolicies exist in the namespace. Why are outbound connections from `db` pods blocked?",
+    text: "A cluster administrator creates a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that allows ingress to pods labeled `app: db` only from pods labeled `app: api` on port 5432. Only an ingress rule is defined. After applying the policy, the `api` pods can connect to `db` pods. However, the `db` pods cannot initiate connections to any other pod. No other NetworkPolicies exist in the namespace. Why are outbound connections from `db` pods blocked?",
     diagram: "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='50' width='80' height='40' rx='5' fill='#4CAF50' stroke='#fff'/><text x='70' y='75' text-anchor='middle' fill='#fff' font-size='10'>api pods</text><rect x='170' y='50' width='80' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='210' y='75' text-anchor='middle' fill='#fff' font-size='10'>db pods</text><rect x='310' y='50' width='80' height='40' rx='5' fill='#666' stroke='#fff'/><text x='350' y='75' text-anchor='middle' fill='#fff' font-size='10'>other pods</text><line x1='110' y1='65' x2='165' y2='65' stroke='#4CAF50' stroke-width='2' marker-end='url(#a5)'/><text x='137' y='58' text-anchor='middle' fill='#4CAF50' font-size='8'>:5432 OK</text><line x1='250' y1='70' x2='305' y2='70' stroke='#f44' stroke-width='2' stroke-dasharray='4' marker-end='url(#a5)'/><text x='277' y='62' text-anchor='middle' fill='#f44' font-size='8'>BLOCKED</text><defs><marker id='a5' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
       "A. The NetworkPolicy implicitly blocks egress because any pod selected by a policy has default-deny for unspecified policy types",

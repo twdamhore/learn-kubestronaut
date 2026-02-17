@@ -169,9 +169,9 @@ var questions = [
     diagram: null,
     options: [
       "A CNAME record pointing to `db.legacy.corp`",
-      "An A record with the ClusterIP of the Service",
-      "An SRV record listing the external host and port",
-      "A TXT record containing the connection string"
+      "An A record with the `ClusterIP` of the Service",
+      "An `SRV` record listing the external host and port",
+      "A `TXT` record containing the connection string"
     ],
     answer: 0,
     explanation: "`ExternalName` Services work exclusively at the DNS level — CoreDNS returns a CNAME record that maps the Service's cluster DNS name to the value in `spec.externalName`. No ClusterIP is allocated for `ExternalName` Services, so there is no A record with a virtual IP. SRV and TXT records are not used for this purpose.\n\nWhy other options are wrong:\n- B: ExternalName Services do not get a ClusterIP allocation, so there is no A record with a virtual IP.\n- C: SRV records are not returned for ExternalName Services; only a CNAME is provided.\n- D: TXT records are not used by Kubernetes DNS for Service resolution.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
@@ -297,9 +297,9 @@ var questions = [
     diagram: null,
     options: [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
-      "Flannel — a simple overlay CNI focused on basic pod-to-pod connectivity",
-      "kube-router — a networking solution using BGP for route distribution",
-      "Multus — a meta-plugin that attaches multiple network interfaces to pods"
+      "Flannel — a CNCF project providing overlay networking with a basic dataplane for pod connectivity",
+      "kube-router — a networking project using BGP with an iptables dataplane",
+      "Multus — a CNCF sandbox project that attaches multiple network interfaces to pods"
     ],
     answer: 0,
     explanation: "Cilium is a CNCF graduated project that uses eBPF for high-performance networking and has full `NetworkPolicy` support plus extended policy features. Flannel is a simple overlay CNI that does not enforce `NetworkPolicy`. kube-router supports policies via iptables but does not use eBPF. Multus is a meta-CNI plugin that attaches multiple interfaces to pods but delegates actual networking to other plugins.\n\nWhy other options are wrong:\n- B: Flannel is a simple overlay CNI focused on basic connectivity; it does not enforce NetworkPolicy.\n- C: kube-router supports NetworkPolicy via iptables but does not use an eBPF dataplane.\n- D: Multus is a meta-plugin that attaches multiple network interfaces to pods but delegates actual networking to other CNI plugins.\n\nReference: https://www.cncf.io/projects/cilium/",
@@ -793,7 +793,7 @@ var questions = [
     diagram: null,
     options: [
       "Delete the `Deployment` and recreate it with the new image tag specified in the pod template spec",
-      "Use `kubectl set image` on the Deployment with a rolling update strategy for zero downtime",
+      "Use `kubectl set image` on the Deployment with a rolling update strategy",
       "Scale the `Deployment` to zero replicas, update the image tag, then scale back up to the count",
       "Edit the `Ingress` to point to a new Service while the old Deployment is still running and ready"
     ],
@@ -1144,7 +1144,7 @@ var questions = [
     text: "A development team splits a monolith into microservices. They notice that inter-service calls now add significant latency. Which networking optimization reduces the overhead of east-west traffic within the cluster?",
     diagram: null,
     options: [
-      "Using gRPC with HTTP/2 connection multiplexing instead of REST for inter-service communication",
+      "Using `gRPC` with `HTTP/2` connection multiplexing instead of REST for inter-service communication",
       "Replacing all `ClusterIP` Services with `NodePort` Services for more direct pod-to-pod routing",
       "Setting all pod `dnsPolicy` to `None` to bypass DNS resolution latency on each service call",
       "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely"
@@ -1163,7 +1163,7 @@ var questions = [
       "`kube_networkpolicy_labels` showing all policy labels attached to the resources in the namespace",
       "`kube_pod_status_phase` tracking pods stuck in `Pending` state due to scheduling or networking",
       "`kube_pod_container_status_restarts_total` counting container restarts caused by network issues",
-      "No built-in metric exists; the engineer should use CNI-level flow logs or eBPF-based monitoring"
+      "No built-in metric exists; the engineer should use CNI-level flow logs (e.g., `Hubble`) or `eBPF`-based monitoring tools"
     ],
     answer: 3,
     explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",

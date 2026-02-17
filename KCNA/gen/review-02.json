@@ -1,24 +1,48 @@
 {
   "set": "02",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s02-q074",
-      "type": "giveaway-self-defeating-distractors",
-      "severity": "major",
-      "what": "All three wrong options explicitly state what they cannot do, making elimination trivial",
-      "detail": "Options B, C, and D each end with a clause that explicitly disqualifies them: B ends with 'but not container-level OOM events', C ends with 'but not memory termination causes', D ends with 'but not individual container kill reasons'. A test-taker can eliminate all three wrong options without any Kubernetes knowledge simply by noticing each wrong option admits its own irrelevance. The correct option A (164 chars) is also noticeably shorter than B (201 chars), C (196 chars), and D (198 chars).",
-      "suggestion": "Rewrite the wrong options to remove the self-defeating 'but not...' clauses. For example: B: '`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, capacity, and resource saturation levels across the cluster', C: '`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network throughput analysis and bandwidth consumption tracking', D: '`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica availability and desired state reconciliation tracking'."
+      "id": "s02-q009",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`Burstable`, `Guaranteed`)",
+      "detail": "Option A (correct) wraps QoS class names in backticks while all three distractors use zero backticks.",
+      "suggestion": "Add backtick formatting to QoS class names in distractors or remove backticks from the correct answer."
     },
     {
-      "id": "s02-q041",
-      "type": "giveaway-keyword-echo",
+      "id": "s02-q046",
+      "type": "formatting-asymmetry",
       "severity": "medium",
-      "what": "Stem verb 'project' echoes directly to the correct answer's 'projected' volume type",
-      "detail": "The stem says 'A team needs to project multiple ConfigMaps and a Secret into the same directory.' The verb 'project' appears only in the correct answer (D): 'A `projected` volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount'. None of the other three options contain 'project' or 'projected'. A test-taker unfamiliar with projected volumes could still identify the correct answer by matching the stem keyword to the option.",
-      "suggestion": "Rephrase the stem to avoid using the word 'project'. For example: 'A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?'"
+      "what": "Reverse formatting: all distractors have backticks for fictitious features, correct answer has none",
+      "detail": "All 3 distractors reference fictitious features in backticks (`DynamicConfigReload`, `restartPolicy: OnConfigChange`, `kubectl apply --live-reload`) while correct answer is plain prose describing a sidecar pattern.",
+      "suggestion": "Add a backtick-formatted term to the correct answer, e.g. 'sends a signal (e.g., `SIGHUP`) to the main process'."
+    },
+    {
+      "id": "s02-q056",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`binaryData`)",
+      "detail": "Option C (correct) wraps `binaryData` in backticks while all three distractors are plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s02-q083",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer uses backtick formatting (`restartPolicy`)",
+      "detail": "Option D (correct) wraps `restartPolicy` in backticks while all three distractors are plain prose.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s02-q004",
+      "type": "self-defeating-distractor",
+      "severity": "minor",
+      "what": "Option D uses a self-qualifying 'but only when' clause",
+      "detail": "Option D reads: '`Burstable` -- but only when the node has sufficient available resources...' The qualifying language makes it sound hedging and uncertain.",
+      "suggestion": "Rephrase to remove self-qualifying language: '`Burstable` -- the scheduler assigns this class based on current node resource availability at scheduling time'."
     }
   ]
 }

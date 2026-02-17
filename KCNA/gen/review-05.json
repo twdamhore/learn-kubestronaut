@@ -1,24 +1,32 @@
 {
   "set": "05",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 3,
   "issues": [
     {
-      "id": "s05-q057",
-      "type": "option-length-balance",
+      "id": "s05-q068",
+      "type": "stem-answer-mismatch",
       "severity": "minor",
-      "what": "Correct answer (D) is 25.8% longer than distractor average",
-      "detail": "Correct answer (opt 3) is 91 chars vs average 72.3 chars for the other three (25.8% longer). Uses a compound sentence with semicolon making it noticeably more detailed.",
-      "suggestion": "Shorten correct answer to 'Existing mounted data remains temporarily until the kubelet sync fails' (~70 chars), or lengthen distractors by adding detail."
+      "what": "Option D is also a factually correct response; explanation confirms D rather than refuting it",
+      "detail": "Both option B (correct) and option D correctly answer 'No' to the stem. The explanation for D confirms D's factual claim rather than explaining why it is the inferior choice.",
+      "suggestion": "Change option D to be factually wrong, e.g.: 'No, and the baseline profile also restricts hostPath volumes to read-only access'."
     },
     {
-      "id": "s05-q097",
-      "type": "option-length-balance",
+      "id": "s05-q086",
+      "type": "factual-accuracy",
       "severity": "minor",
-      "what": "Correct answer (B) is 39.5% longer than distractor average",
-      "detail": "Correct answer (opt 1) is 60 chars vs average 43.0 for others (39.5% longer). Contains HTTP status code + verb name detail while distractors are 44, 44, 41 chars.",
-      "suggestion": "Lengthen distractors: A: 'Only `app-config` is returned because `resourceNames` filters the listing', C: 'All ConfigMaps in the namespace are returned ignoring `resourceNames`', D: 'An empty list with zero items is returned to the requesting user'."
+      "what": "Stem premise about requiring labeling is misleading given K8s 1.22+ auto-label",
+      "detail": "Option A uses wrong auto-label key (kubernetes.io/name vs kubernetes.io/metadata.name). Stem says namespace 'must be labeled' but namespaces already have auto-labels since 1.22+.",
+      "suggestion": "Update stem to specify a custom namespaceSelector label to remove ambiguity about auto-labels."
+    },
+    {
+      "id": "s05-q093",
+      "type": "keyword-echo",
+      "severity": "minor",
+      "what": "Stem says 'rejects' and only the correct answer uses 'rejected'",
+      "detail": "Stem states webhook 'rejects any Pod not specifying a runtimeClassName.' Only correct answer (B) uses 'rejected'. Distractors use 'created', 'mutates', 'enters a pending state'.",
+      "suggestion": "Rephrase stem to avoid 'reject': 'A cluster is configured with a validating admission webhook that enforces runtimeClassName on all new Pods.'"
     }
   ]
 }

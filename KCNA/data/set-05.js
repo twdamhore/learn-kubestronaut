@@ -1083,10 +1083,10 @@ var questions = [
       "Yes, because DaemonSets are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
-      "No, but `hostPath` volumes are allowed under the `baseline` profile without restriction"
+      "No, and the `baseline` profile also restricts hostPath volumes to read-only access"
     ],
     answer: 1,
-    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile does not restrict hostPath volumes; however, the restricted profile does prohibit them. For log collectors requiring host access, the namespace must use the baseline or privileged profile, or the Pods must be exempted from the restricted profile.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile does not restrict hostPath volumes; only the restricted profile prohibits them\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile does not restrict hostPath volumes; however, the restricted profile does prohibit them. For log collectors requiring host access, the namespace must use the baseline or privileged profile, or the Pods must be exempted from the restricted profile.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile does NOT restrict hostPath volumes at all; only the restricted profile prohibits them\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl label ns logging pod-security.kubernetes.io/enforce=restricted --dry-run=server"
   },
   {
@@ -1365,16 +1365,16 @@ var questions = [
     id: "s05-q086",
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
-    text: "A Pod in the `app` namespace needs to communicate with a Service in the `database` namespace. A NetworkPolicy in `database` only allows ingress from the `app` namespace. The `app` namespace must be labeled. Which label must be present?",
+    text: "A Pod in the `app` namespace needs to communicate with a Service in the `database` namespace. A NetworkPolicy in `database` allows ingress only from namespaces matching the custom selector `matchLabels: {team: app}`. Which label must be applied to the `app` namespace?",
     diagram: null,
     options: [
       "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
       "The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
-      "A custom label matching the `namespaceSelector` in the policy, such as `name: app`",
+      "The custom label `team: app` matching the policy's `namespaceSelector`",
       "No label is needed; `namespaceSelector` resolves namespace names to IPs automatically"
     ],
     answer: 2,
-    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. Since Kubernetes 1.22+, every namespace automatically gets the `kubernetes.io/metadata.name` label matching its name, so that auto-label is guaranteed and can be used in selectors. However, the question asks about a custom label beyond the auto-assigned one — if the NetworkPolicy's `namespaceSelector` uses a custom label (e.g., `name: app`), the `app` namespace must have that label applied manually.\n\nWhy other options are wrong:\n- A: kubernetes.io/name is not a standard auto-label; the auto-label is kubernetes.io/metadata.name (since 1.22)\n- B: app.kubernetes.io/managed-by: networkpolicy is not a standard label for namespace matching\n- D: namespaceSelector works via labels, not by resolving names to IP ranges; however, note that since Kubernetes 1.22+ every namespace automatically receives the `kubernetes.io/metadata.name` label, which can be used as an alternative to custom labels in namespaceSelector\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
+    explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. The policy specifies `matchLabels: {team: app}`, so the `app` namespace must carry the label `team: app` for the selector to match and allow ingress traffic. While Kubernetes 1.22+ auto-assigns the `kubernetes.io/metadata.name` label to every namespace, the policy here uses a custom label that must be applied manually.\n\nWhy other options are wrong:\n- A: kubernetes.io/name is not a standard auto-label; the auto-label is kubernetes.io/metadata.name, and neither matches the custom `team: app` selector\n- B: app.kubernetes.io/managed-by: networkpolicy is not a standard label and does not match the policy's `team: app` selector\n- D: namespaceSelector works via labels, not by resolving names to IP ranges; the namespace must carry the matching label\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
     verify: "kubectl get ns app --show-labels"
   },
   {
@@ -1477,7 +1477,7 @@ var questions = [
     id: "s05-q093",
     domain: "Container Orchestration",
     subsection: "Container Runtimes",
-    text: "A cluster is configured with an admission webhook that rejects any Pod not specifying a `runtimeClassName`. A developer submits a Pod without this field. What is the outcome?",
+    text: "A cluster is configured with a validating admission webhook that enforces `runtimeClassName` on all new Pods. A developer submits a Pod without this field. What is the outcome?",
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="30" width="100" height="45" rx="6" fill="#16213e" stroke="#4cc9f0" stroke-width="2"/><text x="70" y="57" text-anchor="middle" fill="#f8f8f2" font-size="11">Pod (no RC)</text><rect x="160" y="30" width="100" height="45" rx="6" fill="#16213e" stroke="#f1fa8c" stroke-width="2"/><text x="210" y="57" text-anchor="middle" fill="#f8f8f2" font-size="11">Webhook</text><rect x="300" y="30" width="90" height="45" rx="6" fill="#16213e" stroke="#4cc9f0" stroke-width="2"/><text x="345" y="57" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="120" y1="52" x2="160" y2="52" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#arr5)"/><line x1="260" y1="52" x2="300" y2="52" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#arr6)"/><defs><marker id="arr5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker><marker id="arr6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
       "The Pod is created with the cluster default runtime class applied",

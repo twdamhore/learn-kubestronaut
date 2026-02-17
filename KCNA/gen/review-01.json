@@ -1,24 +1,32 @@
 {
   "set": "01",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 3,
   "issues": [
     {
-      "id": "s01-q038",
-      "type": "option-length-balance",
-      "severity": "medium",
-      "what": "Correct answer (D) is drastically longer than all three distractors",
-      "detail": "Option lengths: A=44, B=43, C=44, D=78 (correct). Correct answer is 78 chars vs avg wrong of 43.7 chars, a 78.5% difference (threshold: 15%). Option D is also >30% longer than every other individual option. The three distractors are all DNS-style strings of ~44 chars, while the correct answer adds a full explanatory clause ('since the Service is in the same namespace as the frontend Pod'), making it visually stand out as the most complete and thus most likely correct answer.",
-      "suggestion": "Pad the distractors with brief explanatory clauses to balance lengths. For example: A: '`inventory-api.production.pod.cluster.local` using the Pod DNS subdomain for the namespace', B: '`inventory-api.cluster.local` as the minimal short-form name from any namespace', C: '`production.inventory-api.svc.cluster.local` following the namespace-first DNS convention'. This brings all options closer to the 70-80 char range."
+      "id": "s01-q029",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Correct answer is the only option WITHOUT backtick formatting",
+      "detail": "All 3 distractors use backtick formatting for component names (`kube-proxy`, `kubelet`, `kube-apiserver`), but the correct answer (D: 'The CNI plugin...') uses plain text.",
+      "suggestion": "Add backtick formatting to the correct answer: 'The `CNI` plugin, which allocates IPs from the configured Pod CIDR when Pods are created'"
     },
     {
-      "id": "s01-q066",
-      "type": "giveaway-keyword-echo",
+      "id": "s01-q091",
+      "type": "formatting-asymmetry",
       "severity": "minor",
-      "what": "Stem phrase 'least likely to be evicted' appears verbatim only in the correct answer",
-      "detail": "The stem asks '...what value makes a Pod least likely to be evicted?' The correct option B uses the exact phrase 'making the Pod least likely to be evicted'. The three distractors use different phrasing: A says 'never evicts', C says 'delay the eviction process', D says 'prevent eviction'. Test-savvy students can pattern-match the stem language to the correct answer without knowing the underlying concept.",
-      "suggestion": "Rephrase option B to avoid echoing the stem verbatim. For example: 'Set resource `requests` equal to `limits` (Guaranteed QoS), giving the Pod the highest eviction resistance'. Alternatively, adjust the stem to use different wording like 'which configuration provides the strongest protection against eviction?'"
+      "what": "Only the correct answer uses backtick formatting (`traceparent`)",
+      "detail": "Only option A uses backtick formatting (`traceparent`), while all 3 distractors are plain text. Option lengths are balanced (82-87 chars).",
+      "suggestion": "Remove backticks from the correct answer or add backticks to at least one distractor."
+    },
+    {
+      "id": "s01-q096",
+      "type": "giveaway-shows-work",
+      "severity": "minor",
+      "what": "Only correct answer contains calculation details ('2 per node at 500m each')",
+      "detail": "The correct answer (B) is the only option that includes specific calculations. The 3 distractors make general assertions without showing any math.",
+      "suggestion": "Add specific (but wrong) numbers to at least one distractor, e.g. A: 'All 5 replicas start successfully because Kubernetes overcommits, fitting 3 per node at 500m each'."
     }
   ]
 }

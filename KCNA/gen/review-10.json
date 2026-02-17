@@ -1,48 +1,24 @@
 {
   "set": "10",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s10-q004",
-      "type": "formatting-asymmetry",
-      "severity": "minor",
-      "what": "Only correct answer (D) uses backticks (`maxSkew: 1`); distractors have none",
-      "detail": "Only the correct answer contains backtick-formatted text, giving a visual cue.",
-      "suggestion": "Add backticks to at least one distractor or remove backticks from D."
+      "id": "s10-q097",
+      "type": "stem-answer-mismatch",
+      "severity": "medium",
+      "what": "Stem does not specify policyTypes but correct answer depends on policyTypes: [Ingress, Egress]",
+      "detail": "Stem describes a NetworkPolicy with only ingress rules and says egress is blocked, but does not mention policyTypes. Per K8s docs, if policyTypes is omitted, only Ingress is inferred and egress would NOT be blocked.",
+      "suggestion": "Add policyTypes to the stem: 'A NetworkPolicy with policyTypes: [Ingress, Egress] that allows ingress to pods labeled app: db only from pods labeled app: api on port 5432.'"
     },
     {
-      "id": "s10-q012",
-      "type": "formatting-asymmetry",
+      "id": "s10-q027",
+      "type": "factual-accuracy",
       "severity": "minor",
-      "what": "Only correct answer (A) uses backticks (`type: Opaque`); distractors have none",
-      "detail": "Only the correct answer contains backtick-formatted text, creating a visual signal.",
-      "suggestion": "Add backticks to at least one distractor or remove backticks from A."
-    },
-    {
-      "id": "s10-q058",
-      "type": "formatting-asymmetry",
-      "severity": "minor",
-      "what": "Only correct answer (B) uses backticks (`kube-system`); distractors have none",
-      "detail": "Only the correct answer contains backtick-formatted text.",
-      "suggestion": "Add backticks to at least one distractor, e.g. A could format `etcd` in backticks."
-    },
-    {
-      "id": "s10-q074",
-      "type": "formatting-asymmetry",
-      "severity": "minor",
-      "what": "Only correct answer (A) uses backticks (`maxReplicaCount`); distractors have none",
-      "detail": "Only the correct answer contains backtick-formatted text.",
-      "suggestion": "Add backticks to at least one distractor."
-    },
-    {
-      "id": "s10-q099",
-      "type": "formatting-asymmetry",
-      "severity": "minor",
-      "what": "Only correct answer (C) uses backticks (`threshold`); distractors have none",
-      "detail": "Only the correct answer contains backtick-formatted text.",
-      "suggestion": "Add backticks to at least one distractor or remove backticks from C."
+      "what": "Correct answer assumes hostNetwork: true but this is not stated in the stem",
+      "detail": "Stem shows EADDRINUSE on port 8080. Correct answer (C) invokes hostNetwork: true, but stem never mentions it. Option A (sidecar secondary listener) is also plausible.",
+      "suggestion": "Add 'The pod spec includes hostNetwork: true' to the stem to make the correct answer unambiguous."
     }
   ]
 }

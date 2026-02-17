@@ -1,64 +1,48 @@
 {
   "set": "03",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 7,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s03-q038",
+      "id": "s03-q011",
       "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only the correct answer uses backtick formatting (`db.legacy.corp`)",
+      "detail": "Option A (correct) uses backticks around `db.legacy.corp`. Options B, C, D use no backticks.",
+      "suggestion": "Add backtick formatting to distractors: B: 'An A record with the `ClusterIP`', C: 'An `SRV` record', D: 'A `TXT` record'."
+    },
+    {
+      "id": "s03-q019",
+      "type": "keyword-echo",
       "severity": "medium",
-      "what": "Only correct answer (C) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option C uses backticks for `kube-dns` and `kube-system` while A, B, D have no backticks. This visually signals C as the technical answer.",
-      "suggestion": "Add backticks to distractors: A could use `DNS cache daemon`, B could use `kube-apiserver` and `ClusterIP`, D could use `8.8.8.8`."
+      "what": "Correct answer echoes all three key stem terms while no distractor echoes any",
+      "detail": "Stem asks for 'NetworkPolicy enforcement', 'high-performance kernel-level dataplane', 'CNCF project'. Correct answer echoes all three: 'CNCF project', 'eBPF dataplane', 'NetworkPolicy support'. No distractor mentions any of these.",
+      "suggestion": "Add stem keywords to distractors, e.g. B: 'Flannel -- a CNCF project providing overlay networking with basic dataplane'."
     },
     {
       "id": "s03-q050",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (B) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option B uses backticks for `kubectl set image` while A, C, D have none.",
-      "suggestion": "Add backticks to distractors: A could backtick `Deployment`, C could backtick `Deployment`, D could backtick `Ingress`."
-    },
-    {
-      "id": "s03-q055",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option D uses backticks for `fallback-svc` while A, B, C have none.",
-      "suggestion": "Add backticks to at least one or two distractor options to break the visual pattern."
-    },
-    {
-      "id": "s03-q059",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (C) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option C uses backticks for `web` and `api` while A, B, D have none.",
-      "suggestion": "Add backtick formatting to distractors for consistency since the question discusses Policy A and Policy B."
-    },
-    {
-      "id": "s03-q065",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option D uses backticks for `kube-dns` while A, B, C have none.",
-      "suggestion": "Add backticks to distractors: A could backtick pod components, B could backtick `Service`, C could backtick `kube-apiserver`."
-    },
-    {
-      "id": "s03-q082",
-      "type": "formatting-asymmetry",
-      "severity": "medium",
-      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
-      "detail": "Option D uses backticks for `IngressClass` and `nginx` while A, B, C have none.",
-      "suggestion": "Add backticks to distractors to balance formatting."
-    },
-    {
-      "id": "s03-q012",
-      "type": "irrelevant-reference",
+      "type": "keyword-echo",
       "severity": "minor",
-      "what": "Reference URL points to headless-services but question is about service mesh sidecar patterns",
-      "detail": "Reference URL 'https://kubernetes.io/docs/concepts/services-networking/service/#headless-services' is unrelated to the service mesh sidecar proxy topic.",
-      "suggestion": "Change to a relevant URL like https://istio.io/latest/docs/concepts/what-is-istio/ or https://linkerd.io/2/overview/"
+      "what": "Stem term 'downtime' echoed only in correct answer",
+      "detail": "Stem asks about 'zero-downtime deployment'. Only option B contains 'downtime' ('rolling update strategy for zero downtime'). Distractors don't use the word.",
+      "suggestion": "Remove trailing 'for zero downtime' from option B since the stem already asks about it."
+    },
+    {
+      "id": "s03-q072",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Correct answer is the only option WITHOUT backtick formatting",
+      "detail": "Option A (correct) has 0 backticks. Options B, C, D each use backtick formatting (`ClusterIP`, `NodePort`, `dnsPolicy`, etc.).",
+      "suggestion": "Add backtick formatting to the correct answer: 'Using `gRPC` with `HTTP/2` connection multiplexing'."
+    },
+    {
+      "id": "s03-q073",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Correct answer is the only option WITHOUT backtick formatting",
+      "detail": "Option D (correct) has 0 backticks. Options A, B, C all contain backtick-formatted metric names.",
+      "suggestion": "Add backticks to the correct answer: 'No built-in metric exists; use CNI-level flow logs (e.g., `Hubble`) or `eBPF`-based monitoring'."
     }
   ]
 }

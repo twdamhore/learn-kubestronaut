@@ -1,40 +1,88 @@
 {
   "set": "07",
-  "round": 19,
+  "round": 20,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 10,
   "issues": [
     {
+      "id": "s07-q100",
+      "type": "diagram-giveaway",
+      "severity": "major",
+      "what": "Diagram literally labels the correct answer with 'Correct:' and 'Wrong:'",
+      "detail": "The SVG contains 'Correct: Verify push success before deploying' and 'Wrong: Deploy before push completes' which directly states the answer.",
+      "suggestion": "Replace 'Correct:'/'Wrong:' labels with neutral 'Scenario 1'/'Scenario 2' with '?' marks."
+    },
+    {
+      "id": "s07-q088",
+      "type": "diagram-giveaway",
+      "severity": "major",
+      "what": "Diagram shows complete SIGTERM -> grace period -> SIGKILL flow, directly stating the answer",
+      "detail": "SVG shows 'SIGTERM -> Grace period (30s) -> SIGKILL' plus explanatory text matching the correct answer (C) exactly.",
+      "suggestion": "Replace signal names with 'Signal ?' placeholders and remove explanatory text."
+    },
+    {
+      "id": "s07-q068",
+      "type": "diagram-giveaway",
+      "severity": "major",
+      "what": "Diagram titled 'Kubelet Eviction Flow' directly reveals the answer",
+      "detail": "Diagram shows 'Node Memory -> Below threshold (eviction signal) -> Evict Pod' plus 'Unlike OOMKill, eviction is a kubelet-level decision', matching correct answer (D).",
+      "suggestion": "Change title to 'Pod Termination Flow' and replace revealing text with '???' placeholders."
+    },
+    {
+      "id": "s07-q085",
+      "type": "diagram-giveaway",
+      "severity": "major",
+      "what": "Diagram shows exact liveness probe failure flow including 'Kill & Restart'",
+      "detail": "Diagram shows '/tmp/healthy exists (exit 0)' -> 'File deleted, cat fails (exit 1)' -> 'Kill & Restart' plus 'failureThreshold consecutive failures triggers restart', matching correct answer (B).",
+      "suggestion": "Replace outcome annotations with '???' placeholders."
+    },
+    {
       "id": "s07-q037",
-      "type": "diagram-reveals-answer",
-      "severity": "minor",
-      "what": "SVG diagram text directly states the correct answer (300s startup, probes disabled)",
-      "detail": "The diagram contains 'Max startup time: 30 x 10 = 300s' and 'Liveness + Readiness disabled until startup succeeds' which directly states the correct answer (option C). A test-taker can answer from the diagram alone.",
-      "suggestion": "Replace the diagram text with neutral labels like 'Phase 1: ???' and 'Phase 2: ???' to remove the direct answer reveal."
+      "type": "diagram-giveaway",
+      "severity": "medium",
+      "what": "Diagram shows 'Startup Probe Active (0-300s)' followed by Liveness/Readiness, revealing answer",
+      "detail": "Diagram shows timeline with 300s value and probe sequencing, directly mapping to correct answer (C).",
+      "suggestion": "Replace '0-300s' with '???' and probe labels with '??? probe(s)'."
     },
     {
-      "id": "s07-q078",
-      "type": "diagram-reveals-answer",
-      "severity": "minor",
-      "what": "SVG diagram text states 'Rollout stalled' and 'Old pods preserved', matching correct answer",
-      "detail": "The diagram reads 'Rollout stalled: new pod never Ready' and 'Old pods preserved (maxUnavailable=0)' which is a verbatim summary of option B (correct).",
-      "suggestion": "Replace diagram text with neutral labels like 'What happens to old pods?' and 'What happens to the rollout?' using '???' placeholders."
+      "id": "s07-q011",
+      "type": "diagram-giveaway",
+      "severity": "medium",
+      "what": "Diagram text 'Main containers never start until ALL init containers succeed' directly states answer",
+      "detail": "Diagram shows init container crash loop and blocked main container with explanatory text matching correct answer (B).",
+      "suggestion": "Remove the explanatory text and change 'Main Container (blocked)' to 'Main Container (???)'."
     },
     {
-      "id": "s07-q056",
+      "id": "s07-q018",
+      "type": "option-length-balance",
+      "severity": "medium",
+      "what": "Correct answer is 47% shorter than distractor average",
+      "detail": "Option lengths: A=75, B=29 (correct), C=35, D=55. Correct answer (29 chars) is 47.3% shorter than distractor average (55.0 chars).",
+      "suggestion": "Pad correct option or trim distractors to bring all within 40-60 char range."
+    },
+    {
+      "id": "s07-q055",
       "type": "option-length-balance",
       "severity": "minor",
-      "what": "Correct answer (D) is ~19% longer than distractor average",
-      "detail": "Correct answer D is ~176 chars vs ~149 avg for others (19% longer). The description extends further with 'before reporting the condition ProgressDeadlineExceeded as failed'.",
-      "suggestion": "Shorten to '`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before marking it as failed'."
+      "what": "Correct answer is 19% longer than distractor average",
+      "detail": "Option lengths: A=168 (correct), B=139, C=143, D=142. Correct answer is 18.9% longer than distractor average (141.3 chars).",
+      "suggestion": "Shorten option A slightly or add detail to distractors."
     },
     {
       "id": "s07-q093",
-      "type": "option-length-balance",
-      "severity": "major",
-      "what": "Correct answer (B) is ~33% longer than distractor average",
-      "detail": "Correct answer B is ~166 chars vs ~125 avg for others (33% longer, 42% longer than shortest option A at ~117). Packs two specific examples while other options are concise.",
-      "suggestion": "Shorten to 'The container received a SIGKILL (signal 9) from an external source such as a manual kill command or system-level memory pressure'."
+      "type": "factual-accuracy",
+      "severity": "minor",
+      "what": "Explanation incorrectly claims applications cannot choose exit code 137",
+      "detail": "An application CAN voluntarily call exit(137). The 128+signal convention is set by the shell/kernel but nothing prevents a program from using exit(137).",
+      "suggestion": "Change to: 'While an application could technically call exit(137), this exit code conventionally indicates SIGKILL (128+9)'."
+    },
+    {
+      "id": "s07-q009",
+      "type": "factual-accuracy",
+      "severity": "minor",
+      "what": "Explanation says default-container feature was GA in 1.27; actually GA in 1.29",
+      "detail": "The feature went beta in 1.27 and GA in 1.29, not GA in 1.27.",
+      "suggestion": "Change '(GA since 1.27)' to '(beta in 1.27, GA in 1.29)'."
     }
   ]
 }

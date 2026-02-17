@@ -66,7 +66,7 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`Burstable` — but only when the node has sufficient available resources to schedule this pod"
+      "`Burstable` — the scheduler assigns this class based on current node resource availability at scheduling time"
     ],
     answer: 1,
     explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: QoS classification is determined solely by resource spec completeness, not by node availability\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
@@ -144,9 +144,9 @@ var questions = [
     diagram: null,
     options: [
       "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
-      "Both pods have equal eviction priority since they both have resource values explicitly specified in their spec",
+      "Both pods have equal eviction priority since they both have resource values explicitly specified in their `spec`",
       "This pod is protected from eviction because it has a memory limit set which prevents any OOM killing action",
-      "The pod with the higher absolute memory limit is always evicted first, regardless of its assigned QoS class"
+      "The pod with the higher absolute memory limit is always evicted first, regardless of its assigned `QoS` class"
     ],
     answer: 0,
     explanation: "Kubernetes evicts pods based on QoS class priority: `BestEffort` pods are evicted first, then `Burstable`, and `Guaranteed` pods last. This pod has unequal requests and limits, making it `Burstable`. Under node memory pressure, it would be evicted before a `Guaranteed` pod. Having a memory limit does not prevent eviction — it prevents the container from using more than the limit. Eviction order considers QoS class, not just absolute resource values.\n\nWhy other options are wrong:\n- B: Having resource specs does not make eviction priority equal; QoS class determines the order\n- C: Memory limits prevent usage beyond the cap but do not protect pods from node-level eviction\n- D: Eviction priority is based on QoS class first, not absolute resource limit values\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
@@ -758,7 +758,7 @@ var questions = [
       "Enable the `DynamicConfigReload` feature gate on the kubelet to allow automatic config propagation",
       "Set `restartPolicy: OnConfigChange` on the pod spec to make Kubernetes restart it on config updates",
       "Use `kubectl apply --live-reload` to push ConfigMap changes directly into running container processes",
-      "Use a sidecar that watches the mounted ConfigMap volume for changes and signals the process"
+      "Use a sidecar that watches the mounted ConfigMap volume for changes and sends a signal (e.g., `SIGHUP`) to the main process"
     ],
     answer: 3,
     explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. There is no `restartPolicy: OnConfigChange`, no `kubectl apply --live-reload` flag, and no `DynamicConfigReload` feature gate in Kubernetes.\n\nWhy other options are wrong:\n- A: There is no DynamicConfigReload feature gate in Kubernetes\n- B: There is no restartPolicy: OnConfigChange in the Kubernetes pod spec\n- C: There is no kubectl apply --live-reload flag\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -930,7 +930,7 @@ var questions = [
       "Raw binary bytes — Kubernetes handles the encoding transparently on behalf of the user",
       "Hexadecimal string representation of the binary data with no additional encoding needed",
       "Base64-encoded string — `binaryData` fields must be base64-encoded before submission",
-      "URL-encoded string using percent-encoding for all non-ASCII bytes in the binary content"
+      "URL-encoded string using `percent-encoding` for all non-ASCII bytes in the binary content"
     ],
     answer: 2,
     explanation: "The `binaryData` field in a ConfigMap stores binary data as base64-encoded strings. This is because the Kubernetes API uses JSON/YAML serialization, which cannot represent raw binary data. When the ConfigMap is mounted as a volume, the data is automatically decoded back to its original binary form. Neither hex, URL-encoding, nor raw binary are supported formats for this field.\n\nWhy other options are wrong:\n- A: The Kubernetes API uses JSON/YAML serialization and cannot handle raw binary bytes in data fields\n- B: Hexadecimal encoding is not a supported format for binaryData fields\n- D: URL percent-encoding is not a supported format for binaryData fields\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#configmap-object",
@@ -1375,8 +1375,8 @@ var questions = [
     text: "A container exceeds its memory limit by allocating more memory than `resources.limits.memory` allows. What is the immediate consequence?",
     diagram: null,
     options: [
-      "The container is throttled and its memory allocations are slowed down until usage drops below the configured limit",
-      "The excess memory allocation silently fails and returns null to the application without killing the container process",
+      "The container is throttled and its memory allocations are slowed down until usage drops below the configured `limits.memory`",
+      "The excess memory allocation silently fails and returns `null` to the application without killing the container process",
       "The container continues running but Kubernetes logs a warning and triggers an alert to the cluster administrator",
       "The container process is killed by the OOM killer, and the pod's `restartPolicy` determines if it gets restarted"
     ],
