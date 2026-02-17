@@ -190,7 +190,7 @@ var questions = [
       "A service mesh such as Istio or Linkerd for traffic management"
     ],
     answer: 3,
-    explanation: "Service meshes like Istio inject a sidecar proxy (e.g., Envoy) into each pod and configure iptables rules within the pod's network namespace to intercept traffic for mutual TLS, retries, and observability. CNI plugins configure pod-level networking at creation time but do not inject proxies. kube-proxy manages Service-level rules on the node, not inside pod namespaces. PodDisruptionBudgets control voluntary disruptions, not traffic.\n\nWhy other options are wrong:\n- A: CNI plugins like Flannel configure pod networking at creation time but do not inject sidecar proxies into pods.\n- B: PodDisruptionBudgets control voluntary disruptions (e.g., node drain) and have nothing to do with traffic interception.\n- C: kube-proxy manages Service-level forwarding rules on the node, not iptables rules inside individual pod network namespaces.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
+    explanation: "Service meshes like Istio inject a sidecar proxy (e.g., Envoy) into each pod and configure iptables rules within the pod's network namespace to intercept traffic for mutual TLS, retries, and observability. CNI plugins configure pod-level networking at creation time but do not inject proxies. kube-proxy manages Service-level rules on the node, not inside pod namespaces. PodDisruptionBudgets control voluntary disruptions, not traffic.\n\nWhy other options are wrong:\n- A: CNI plugins like Flannel configure pod networking at creation time but do not inject sidecar proxies into pods.\n- B: PodDisruptionBudgets control voluntary disruptions (e.g., node drain) and have nothing to do with traffic interception.\n- C: kube-proxy manages Service-level forwarding rules on the node, not iptables rules inside individual pod network namespaces.\n\nReference: https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/",
     verify: null
   },
   {
@@ -600,10 +600,10 @@ var questions = [
     text: "A pod's `/etc/resolv.conf` shows `nameserver 10.96.0.10`. What does this IP address typically represent?",
     diagram: null,
     options: [
-      "The IP of the node's local DNS cache daemon running on each worker",
-      "The kube-apiserver's ClusterIP used for cluster management traffic",
+      "The IP of the node's local `DNS cache daemon` running on each worker",
+      "The `kube-apiserver`'s `ClusterIP` used for cluster management traffic",
       "The ClusterIP of the `kube-dns` Service in the `kube-system` ns",
-      "A hardcoded Google Public DNS address configured in the base image"
+      "A hardcoded Google Public DNS address (`8.8.8.8`) configured in the base image"
     ],
     answer: 2,
     explanation: "The `nameserver` entry in a pod's `resolv.conf` points to the `ClusterIP` of the `kube-dns` Service (which fronts CoreDNS) in the `kube-system` namespace. This is typically `10.96.0.10` in default kubeadm clusters. It is not a node-local cache by default. The API server uses a different IP. Google DNS uses `8.8.8.8`, not `10.96.0.10`.\n\nWhy other options are wrong:\n- A: By default, Kubernetes does not run a node-local DNS cache daemon; the nameserver entry points to the cluster DNS Service.\n- B: The kube-apiserver has its own ClusterIP (often 10.96.0.1 in kubeadm), which is different from the DNS Service IP.\n- D: Google Public DNS uses 8.8.8.8 and 8.8.4.4, not addresses in the 10.96.x.x service CIDR range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
@@ -792,10 +792,10 @@ var questions = [
     text: "A CI pipeline builds a new container image and needs to update a Kubernetes `Deployment` to use it. The cluster uses an Ingress to route traffic. Which approach ensures zero-downtime deployment?",
     diagram: null,
     options: [
-      "Delete the Deployment and recreate it with the new image tag specified in the pod template spec",
+      "Delete the `Deployment` and recreate it with the new image tag specified in the pod template spec",
       "Use `kubectl set image` on the Deployment with a rolling update strategy for zero downtime",
-      "Scale the Deployment to zero replicas, update the image tag, then scale back up to the count",
-      "Edit the Ingress to point to a new Service while the old Deployment is still running and ready"
+      "Scale the `Deployment` to zero replicas, update the image tag, then scale back up to the count",
+      "Edit the `Ingress` to point to a new Service while the old Deployment is still running and ready"
     ],
     answer: 1,
     explanation: "`kubectl set image` combined with a `RollingUpdate` strategy incrementally replaces old pods with new ones, ensuring continuous availability. Deleting and recreating causes downtime. Scaling to zero before updating guarantees downtime. Editing the Ingress alone does not update the pod image and creates a split configuration that is hard to manage.\n\nWhy other options are wrong:\n- A: Deleting and recreating a Deployment causes downtime while old pods are removed and new ones start.\n- C: Scaling to zero before updating guarantees a period of zero availability (downtime).\n- D: Editing the Ingress alone does not update the pod image; it only changes routing without deploying new code.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -872,9 +872,9 @@ var questions = [
     text: "An Ingress resource specifies a `defaultBackend` pointing to `fallback-svc:80`. What is the purpose of this configuration?",
     diagram: null,
     options: [
-      "It serves as a health check endpoint for the Ingress controller to verify backend pod availability",
-      "It redirects all HTTPS traffic to HTTP on port 80 for unencrypted backend service communications",
-      "It defines the primary backend service that takes higher priority over all other routing rule sets",
+      "It serves as a health check endpoint for the `Ingress` controller to verify backend pod availability",
+      "It redirects all HTTPS traffic to HTTP on port 80 for unencrypted `backend` service communications",
+      "It defines the primary backend service that takes higher priority over all other `Ingress` rule sets",
       "It routes requests not matching any defined host or path rule to the `fallback-svc` backend"
     ],
     answer: 3,
@@ -936,10 +936,10 @@ var questions = [
     text: "Two `NetworkPolicy` objects exist in the same namespace: Policy A allows ingress from `app: web` on port 80, and Policy B allows ingress from `app: api` on port 443. Both select the same target pod `app: server`. What is the combined effect?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
-      "Only Policy A takes effect because it was created first and has priority in the namespace",
-      "Only Policy B takes effect because port 443 is treated as higher priority than port 80",
+      "Only `Policy A` takes effect because it was created first and has priority in the namespace",
+      "Only `Policy B` takes effect because port `443` is treated as higher priority than port `80`",
       "Both policies merge additively — ingress from `web` on 80 AND from `api` on 443 is allowed",
-      "The policies conflict with each other and therefore all ingress traffic is denied by default"
+      "The policies conflict with each other and therefore all `ingress` traffic is denied by default"
     ],
     answer: 2,
     explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on port number; both policies are applied equally.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1032,9 +1032,9 @@ var questions = [
     text: "An application pod cannot resolve any DNS names. Running `nslookup kubernetes.default` from inside the pod fails. Which step should the engineer take first?",
     diagram: null,
     options: [
-      "Increase the pod's memory limit to allow DNS caching and larger response buffer allocation",
-      "Delete and recreate the pod's Service to force re-registration of the DNS endpoint records",
-      "Restart the kube-apiserver to ensure DNS-related resources are properly synced and available",
+      "Increase the pod's `memory` limit to allow DNS caching and larger response buffer allocation",
+      "Delete and recreate the pod's `Service` to force re-registration of the DNS endpoint records",
+      "Restart the `kube-apiserver` to ensure DNS-related resources are properly synced and available",
       "Check that the CoreDNS pods are running and the `kube-dns` Service has valid endpoints"
     ],
     answer: 3,
@@ -1304,9 +1304,9 @@ var questions = [
     text: "A team configures an Ingress with `ingressClassName: nginx`. The cluster has two Ingress controllers: one with class `nginx` and another with class `traefik`. What determines which controller processes this Ingress?",
     diagram: null,
     options: [
-      "The controller that was installed first in the cluster has priority over any newer controller",
-      "Both controllers process the Ingress simultaneously and the first to respond wins the route",
-      "The kube-apiserver assigns the Ingress to the controller with the least current load value",
+      "The `controller` that was installed first in the cluster has priority over any newer controller",
+      "Both controllers process the `Ingress` simultaneously and the first to respond wins the route",
+      "The `kube-apiserver` assigns the Ingress to the controller with the least current load value",
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
     ],
     answer: 3,

@@ -251,7 +251,7 @@ var questions = [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
       "B. DaemonSet Pods automatically include tolerations for all taints",
       "C. The drain command cannot evict any Pods in the `kube-system` namespace",
-      "D. `kubectl drain` skips DaemonSet-managed Pods unless `--ignore-daemonsets` is passed"
+      "D. `kubectl drain` skips DaemonSet-managed Pods by default"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but not for all taints; the reason drain skips them is different\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -392,7 +392,7 @@ var questions = [
     text: "During a rolling node upgrade, you want to ensure the kube-proxy Pods on upgraded nodes are also running the new version. How does kube-proxy typically get upgraded on worker nodes?",
     diagram: null,
     options: [
-      "A. kube-proxy runs as a static Pod managed by the kubelet on each node",
+      "A. kube-proxy runs as a static Pod managed by the `kubelet` on each node",
       "B. kube-proxy must be manually upgraded on each node via SSH connection",
       "C. kube-proxy is compiled directly into the kubelet binary on each node",
       "D. kube-proxy runs as a DaemonSet and upgrades via `kubeadm upgrade`"
@@ -553,9 +553,9 @@ var questions = [
     diagram: null,
     options: [
       "A. `scheduler_scheduling_attempt_duration_seconds`",
-      "B. `kubelet_pod_start_duration_seconds`",
-      "C. `apiserver_request_duration_seconds`",
-      "D. `etcd_request_duration_seconds`"
+      "B. `kubelet_pod_start_duration_seconds` from the kubelet",
+      "C. `apiserver_request_duration_seconds` from the API server",
+      "D. `etcd_request_duration_seconds` from the etcd cluster"
     ],
     answer: 0,
     explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.\n\nWhy other options are wrong:\n- B: kubelet_pod_start_duration_seconds measures Pod startup time after scheduling, a different phase\n- C: apiserver_request_duration_seconds measures API server request latency, not scheduling latency\n- D: etcd_request_duration_seconds measures etcd request latency, not scheduling-specific latency\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
@@ -760,7 +760,7 @@ var questions = [
     text: "An organization operates multiple Kubernetes clusters and wants to standardize their etcd backup procedure. Which practice aligns with cloud-native operational principles?",
     diagram: null,
     options: [
-      "A. Manual SSH into each control-plane node to run etcd backup scripts on a weekly basis",
+      "A. Manual SSH into each control-plane node to run `etcdctl` backup scripts on a weekly basis",
       "C. Relying on the cloud provider to handle full VM backups including the etcd data volume",
       "B. Automated CronJobs that run `etcdctl snapshot save` and store backups in object store",
       "D. Taking etcd backups only before planned maintenance windows and major upgrade events"
@@ -1067,7 +1067,7 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. The `globalDefault` field requires all existing Pods to be restarted before the new default takes effect on them"
+      "D. The `globalDefault` field requires all existing Pods to be restarted to take effect"
     ],
     answer: 0,
     explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault is a valid and recognized field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -1178,7 +1178,7 @@ var questions = [
     options: [
       "A. The snapshot file was originally taken from a completely different cluster altogether",
       "B. The `--initial-cluster-token` was not changed during restore, causing conflict",
-      "C. The API server version is incompatible with the etcd version in the restored backup",
+      "C. The API server version is incompatible with the `etcd` version in the restored backup",
       "D. The etcd TLS certificates have expired and must be reissued before the restore step"
     ],
     answer: 1,
@@ -1320,7 +1320,7 @@ var questions = [
     text: "What is the purpose of the <code>--pod-eviction-timeout</code> flag (or equivalent setting) on the kube-controller-manager in relation to node failures?",
     diagram: null,
     options: [
-      "A. It sets the maximum time for a graceful Pod shutdown during eviction operations now",
+      "A. It sets the maximum time for a graceful Pod shutdown during `eviction` operations now",
       "B. It controls the rate at which Pods are evicted from nodes during a drain operation run",
       "C. It defines how long the controller waits before evicting Pods from `NotReady` nodes",
       "D. It sets the timeout for Pod readiness probes before marking Pods as not available yet"

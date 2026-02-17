@@ -600,9 +600,9 @@ var questions = [
     text: "A frontend application needs to discover and communicate with a backend Service named `inventory-api` in the `production` namespace. The frontend is deployed in the same namespace. What DNS name should the frontend use to reach the backend?",
     diagram: null,
     options: [
-      "`inventory-api.production.pod.cluster.local`",
-      "`inventory-api.cluster.local` as short name",
-      "`production.inventory-api.svc.cluster.local`",
+      "`inventory-api.production.pod.cluster.local`, using the Pod DNS subdomain for the namespace",
+      "`inventory-api.cluster.local`, as the minimal short-form name from any namespace",
+      "`production.inventory-api.svc.cluster.local`, following the namespace-first DNS convention",
       "`inventory-api` since the Service is in the same namespace as the frontend Pod"
     ],
     answer: 3,
@@ -1045,7 +1045,7 @@ var questions = [
     id: "s01-q066",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which field in the Pod spec influences eviction priority, and what value makes a Pod least likely to be evicted?",
+    text: "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which configuration provides the strongest protection against eviction?",
     diagram: null,
     options: [
       "Set `spec.priority` to a high value; the scheduler never evicts high-priority Pods from any node",

@@ -393,7 +393,7 @@ var questions = [
     text: "A team wants to deploy workloads on Kubernetes that automatically adjust capacity to match demand — including dropping to zero replicas when idle. Which CNCF graduated project provides this serverless capability natively on Kubernetes?",
     diagram: null,
     options: [
-      "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes",
+      "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero",
       "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows on Kubernetes pods",
       "KEDA — a CNCF graduated event-driven autoscaler triggering Pod scaling from external sources",
       "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
@@ -652,8 +652,8 @@ var questions = [
     options: [
       "Storing session data in a Redis cluster shared by all running application instances in the environment",
       "Keeping user session data in local process memory and routing returning users to the same instance via sticky sessions",
-      "Using environment variables to inject configuration values into the application process at startup",
-      "Writing application logs to stdout so they can be captured by external logging infrastructure tools"
+      "Using environment variables defined in the deployment manifest to inject config values into the process at startup",
+      "Writing application logs as an unbuffered event stream to stdout so external logging infrastructure can capture them"
     ],
     answer: 1,
     explanation: "Factor VI (Processes) requires that applications execute as stateless processes. Any data that needs to persist must be stored in a stateful backing service (e.g., a database or Redis). Keeping session data in local process memory (sticky sessions) violates this principle because the data is lost when the process restarts or is rescheduled. Using Redis for sessions, environment-based config, and stdout logging all conform to twelve-factor principles.\n\nWhy other options are wrong:\n- A: Storing session data in Redis is correct because it externalizes state to a backing service\n- C: Using environment variables for config injection is Factor III compliance, not a violation\n- D: Writing logs to stdout follows Factor XI (Logs) and does not violate Factor VI\n\nReference: https://12factor.net/processes",
@@ -1421,7 +1421,7 @@ var questions = [
     diagram: null,
     options: [
       "3 replicas — the HPA adds one replica per 70% utilization increment above the target threshold",
-      "4 replicas — the HPA scales proportionally based on the ratio of current utilization to the target threshold value",
+      "4 replicas — the HPA scales proportionally using the ratio of current utilization to the target value",
       "10 replicas — the HPA scales to the maximum immediately whenever utilization exceeds the target value",
       "2 replicas — the HPA cannot scale above the current count until the next scheduled evaluation period"
     ],

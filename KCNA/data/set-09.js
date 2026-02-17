@@ -89,7 +89,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="60" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Git Repo</text><rect x="150" y="70" width="100" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Argo CD</text><rect x="290" y="70" width="100" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="340" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">K8s Cluster</text><line x1="110" y1="95" x2="148" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9a)"/><line x1="250" y1="95" x2="288" y2="95" stroke="#999" stroke-width="2" stroke-dasharray="6,3"/><text x="200" y="155" text-anchor="middle" fill="#555" font-size="11" font-style="italic">Why no auto-deploy?</text><defs><marker id="arrow9a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
       "Argo CD requires Flux to be installed as a co-controller for enabling automatic sync operations",
-      "The application sync policy is set to <code>manual</code> rather than <code>automated</code>",
+      "The application sync policy is configured as <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
       "Git webhooks are not supported by Argo CD for detecting repository changes automatically",
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source"
     ],
@@ -200,7 +200,7 @@ var questions = [
     text: "A distributed tracing system using Jaeger shows incomplete traces for requests that pass through 4 microservices. The first two services show spans, but the last two do not. All services are instrumented with OpenTelemetry SDKs. What is the most likely cause?",
     diagram: null,
     options: [
-      "Service 2 is not propagating trace context headers (e.g., <code>traceparent</code>) in its outgoing requests to Service 3, breaking the trace chain",
+      "Service 2 is not propagating trace context headers in its outgoing requests to Service 3, so the trace is broken",
       "Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits",
       "The Jaeger collector has run out of available storage space and is dropping newly received span data",
       "OpenTelemetry only supports tracing for gRPC-based services using the OTLP protocol and cannot instrument HTTP-based endpoints"
@@ -346,7 +346,7 @@ var questions = [
     options: [
       "A DNS policy exception added in the CoreDNS ConfigMap to allow cross-namespace metric collection",
       "An annotation on the Prometheus Pod to bypass all NetworkPolicy restrictions in the backend namespace",
-      "A ServiceAccount with elevated cluster-wide privileges assigned to the Prometheus Pod for scraping",
+      "A `ServiceAccount` with elevated cluster-wide privileges assigned to the Prometheus Pod for scraping",
       "A NetworkPolicy with a `namespaceSelector` for monitoring and a `podSelector` matching the scraper"
     ],
     answer: 3,
@@ -840,7 +840,7 @@ var questions = [
     text: "A team configures a Horizontal Pod Autoscaler (HPA) targeting 70% average CPU utilization for their Deployment with <code>minReplicas: 2</code> and <code>maxReplicas: 10</code>. Current average CPU utilization across 4 replicas is 90%. How does the HPA calculate the desired replica count?",
     diagram: null,
     options: [
-      "It doubles the current replica count from 4 to 8 replicas to bring utilization below the target threshold",
+      "It doubles the current count (<code>2 * currentReplicas = 2 * 4 = 8</code>) to bring utilization below the target threshold",
       "It adds 1 replica at a time in successive reconciliation cycles until utilization drops below the 70% target",
       "It immediately scales to <code>maxReplicas</code> (10) because current utilization exceeds the configured target",
       "It computes <code>ceil(currentReplicas * (currentUtilization / targetUtilization))</code> = <code>ceil(4 * 90/70) = 6</code>"
@@ -968,7 +968,7 @@ var questions = [
     text: "A Prometheus instance is configured with a <code>scrape_interval</code> of 15 seconds and a <code>scrape_timeout</code> of 10 seconds. One target consistently takes 12 seconds to respond to scrape requests. What is the impact on Prometheus metrics collection for this target?",
     diagram: null,
     options: [
-      "Prometheus waits the full 12 seconds and successfully collects the metrics from the slow target endpoint",
+      "Prometheus waits the full 12 seconds and successfully collects the metrics since it is within the `scrape_interval`",
       "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
       "The scrape fails because the 12-second response exceeds the 10-second `scrape_timeout` and `up` reads 0",
       "The target is permanently removed from the scrape configuration after three consecutive timeout failures"
@@ -1160,8 +1160,8 @@ var questions = [
     text: "A developer creates a PersistentVolumeClaim requesting <code>10Gi</code> of storage with <code>accessModes: [ReadWriteMany]</code>. The only available StorageClass provisions AWS EBS volumes. What happens?",
     diagram: null,
     options: [
-      "The PVC is bound to a 10Gi EBS volume that supports ReadWriteMany access mode across multiple nodes",
-      "The provisioner automatically creates an NFS share on top of the EBS volume to support shared access",
+      "The PVC is bound to a 10Gi EBS volume that supports `ReadWriteMany` access mode across multiple nodes",
+      "The provisioner automatically creates an NFS share on top of the `EBS` volume to support `ReadWriteMany` access",
       "The PVC is created with <code>ReadWriteOnce</code> mode, silently ignoring the requested access mode",
       "The PVC stays `Pending` because AWS EBS only supports `ReadWriteOnce`, not `ReadWriteMany`"
     ],
@@ -1560,7 +1560,7 @@ var questions = [
     text: "A Kubernetes cluster uses the <code>admission webhook</code> mechanism. A ValidatingWebhookConfiguration is configured to validate all Pod creation requests. If the webhook endpoint is unreachable, what happens to Pod creation attempts by default?",
     diagram: null,
     options: [
-      "It depends on <code>failurePolicy</code>: <code>Fail</code> rejects the request; <code>Ignore</code> lets it proceed",
+      "The behavior depends on the <code>failurePolicy</code> field: <code>Fail</code> rejects the Pod creation request, while <code>Ignore</code> allows it to proceed without validation",
       "The API server retries the webhook indefinitely until the endpoint becomes available and responds back",
       "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
       "Pod creation proceeds normally because validating admission webhooks are advisory only and never block"

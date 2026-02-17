@@ -904,9 +904,9 @@ var questions = [
     text: "A StatefulSet runs a database that stores encryption keys in a projected volume combining a Secret and a ConfigMap. If the Secret is deleted while the Pod is running, what happens to the mounted data?",
     diagram: null,
     options: [
-      "The mounted Secret files immediately disappear from the running container",
-      "The Pod is immediately terminated by the kubelet due to missing Secret",
-      "The projected volume controller recreates the missing Secret automatically",
+      "The mounted Secret files immediately disappear from the running container's filesystem",
+      "The Pod is immediately terminated by the kubelet because the Secret reference is invalid",
+      "The projected volume controller detects the deletion and recreates the Secret automatically",
       "Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt"
     ],
     answer: 3,
@@ -1544,10 +1544,10 @@ var questions = [
     text: "A Role grants `get` on `configmaps` with `resourceNames: [\"app-config\"]`. A user bound to this Role runs `kubectl get configmaps`. What happens?",
     diagram: null,
     options: [
-      "Only `app-config` is returned in the listing",
+      "Only `app-config` is returned because `resourceNames` filters the listing",
       "The request returns 403 Forbidden because `list` is required",
-      "All ConfigMaps in the namespace are returned",
-      "An empty list with zero items is returned"
+      "All ConfigMaps in the namespace are returned ignoring `resourceNames`",
+      "An empty list with zero items is returned to the requesting user"
     ],
     answer: 1,
     explanation: "The `kubectl get configmaps` command uses the `list` verb, which is not granted by this Role. The `get` verb with `resourceNames` only works when the specific resource name is requested (e.g., `kubectl get configmap app-config`). Without `list`, the user cannot enumerate ConfigMaps.\n\nWhy other options are wrong:\n- A: Only the named resource is accessible via get; list requires its own verb grant\n- C: get does not implicitly include list; they are separate verbs in RBAC\n- D: The request returns a Forbidden error (403), not an empty list\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",

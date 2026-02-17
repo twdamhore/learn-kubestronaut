@@ -56,7 +56,7 @@ var questions = [
     text: "A cluster has three nodes labeled `zone=us-east-1a`, `zone=us-east-1b`, and `zone=us-east-1c`. A Deployment with 3 replicas specifies `topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: zone`, `whenUnsatisfiable: DoNotSchedule`, and `nodeTaintsPolicy: Ignore`. Node `us-east-1c` becomes `NotReady`. When the Deployment is scaled to 6 replicas, how are the new pods distributed?",
     diagram: null,
     options: [
-      "A. 3 pods on us-east-1a and 3 on us-east-1b; the topology constraint is satisfied across the two available zones",
+      "A. 3 pods on `us-east-1a` and 3 on `us-east-1b`; the topology constraint is satisfied across the two available zones",
       "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate the skew",
       "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely",
       "D. 5 pods run across three zones and 1 remains Pending because `maxSkew: 1` includes the unavailable zone in its skew calculation"
@@ -185,7 +185,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Move credentials to a Secret object with `type: Opaque`, mount as a volume, and enable encryption at rest in etcd",
-      "B. Store credentials in the container image's environment file following Factor III (Config) since it separates config from code",
+      "B. Store credentials in the container image's environment file following `Factor III` (Config) since it separates config from code",
       "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory loaded at startup from a vault",
       "D. Apply Factor IV (Backing Services) by hardcoding the database URL as an attached resource reference in the Deployment spec"
     ],
@@ -920,7 +920,7 @@ var questions = [
     text: "A highly available Kubernetes cluster has 3 control-plane nodes, each running `kube-apiserver`, `kube-controller-manager`, and `kube-scheduler`. How do the controller-manager and scheduler coordinate to prevent duplicate work across the 3 instances?",
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='80' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 1</text><text x='80' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='80' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='150' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='200' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 2</text><text x='200' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='200' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='270' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='320' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 3</text><text x='320' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='320' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='100' y='120' width='200' height='40' rx='6' fill='#1a1a2e' stroke='#FF9800' stroke-width='1.5'/><text x='200' y='145' text-anchor='middle' fill='#FF9800' font-size='10'>???</text><line x1='80' y1='90' x2='180' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='90' x2='200' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='320' y1='90' x2='220' y2='118' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
-      "A. All three instances process work simultaneously using distributed locking on individual resources stored in etcd",
+      "A. All three instances process work simultaneously using distributed locking on individual resources stored in `etcd`",
       "D. They use leader election via Lease objects in `kube-system`; only the leader reconciles while others stand by",
       "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
       "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy"
@@ -1177,7 +1177,7 @@ var questions = [
     diagram: null,
     options: [
       "A. KEDA calculates 50 replicas (500 messages / 10 per replica), but the `maxReplicaCount` caps the result at 20",
-      "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds the maximum capacity",
+      "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds `maxReplicaCount`",
       "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
       "D. KEDA computes 50 replicas but scales to 20 in a single step, then pauses scaling until the next evaluation run"
     ],
@@ -1577,7 +1577,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Flagger pauses the canary and waits for manual approval to either continue the rollout or initiate a rollback",
-      "B. Flagger immediately scales the canary to zero and routes 100% traffic to the primary, marking the canary as failed",
+      "B. Flagger immediately scales the canary to zero and routes 100% traffic to the `primary`, marking the canary as failed",
       "C. Flagger retries the failed iteration up to the configured `threshold` count before initiating a full rollback",
       "D. Flagger reduces the canary traffic weight by half and re-runs analysis to confirm the issue before deciding next"
     ],

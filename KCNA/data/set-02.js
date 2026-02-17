@@ -670,7 +670,7 @@ var questions = [
     id: "s02-q041",
     domain: "Container Orchestration",
     subsection: "Storage",
-    text: "A team needs to project multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
+    text: "A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
     diagram: null,
     options: [
       "An `emptyDir` volume with an init container that copies data from each ConfigMap and Secret source",
@@ -1222,9 +1222,9 @@ var questions = [
     diagram: null,
     options: [
       "`kube_pod_container_status_restarts_total` with `kube_pod_container_status_last_terminated_reason` for OOMKilled, plus `kube_pod_container_resource_limits` for memory",
-      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, available capacity, and saturation, which reveals infrastructure pressure but not container-level OOM events",
-      "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network traffic analysis, revealing bandwidth consumption patterns but not memory termination causes",
-      "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica tracking, showing desired versus ready pod counts but not individual container kill reasons"
+      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, capacity, and resource saturation levels across the cluster",
+      "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network throughput analysis and bandwidth consumption tracking",
+      "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica availability and desired state reconciliation tracking"
     ],
     answer: 0,
     explanation: "To identify OOM-killed containers, `kube_pod_container_status_restarts_total` tracks restart counts, and `kube_pod_container_status_last_terminated_reason` can filter for `OOMKilled`. Combining this with `kube_pod_container_resource_limits{resource=\"memory\"}` shows which containers have low limits relative to their needs. Node-level metrics do not identify specific containers. Network and replica metrics are unrelated to memory issues.\n\nWhy other options are wrong:\n- B: Node-level memory and CPU metrics do not identify specific containers being OOM-killed\n- C: Network traffic metrics are unrelated to memory OOM issues\n- D: Deployment replica metrics track availability, not memory-related container terminations\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
