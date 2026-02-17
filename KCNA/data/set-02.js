@@ -196,7 +196,7 @@ var questions = [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
       "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
-      "Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access"
+      "Mount the ConfigMap volume at /app/config using items to select settings.yaml, implying read-only"
     ],
     answer: 0,
     explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: While items can select specific keys, this approach does not explicitly enforce read-only access via the readOnly mount flag\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
@@ -498,7 +498,7 @@ var questions = [
       "Request: 256Mi, Limit: 256Mi — the default limit value is used for both fields automatically",
       "Request: 0, Limit: 256Mi — requests default to zero when not specified by the pod specification",
       "Request: 128Mi, Limit: 256Mi — the LimitRange injects defaults for unspecified resource fields",
-      "The pod creation fails because the developer must explicitly specify resource values when quota exists"
+      "The pod creation fails because the LimitRange requires the developer to explicitly specify resource values"
     ],
     answer: 2,
     explanation: "A LimitRange with `default` and `defaultRequest` values automatically injects these into containers that do not specify their own resource values. `defaultRequest.memory` sets the request to 128Mi and `default.memory` sets the limit to 256Mi. Requests do not default to zero or to the limit value. The pod creation does not fail — LimitRanges are specifically designed to provide defaults so that ResourceQuotas can be enforced.\n\nWhy other options are wrong:\n- A: The request defaults to the defaultRequest value (128Mi), not the limit value (256Mi)\n- B: Requests do not default to zero; the LimitRange defaultRequest field sets the value\n- D: Pod creation does not fail because LimitRange is specifically designed to inject defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",

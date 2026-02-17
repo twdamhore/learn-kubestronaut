@@ -1032,9 +1032,9 @@ var questions = [
     text: "A team is designing a stateful microservice for Kubernetes and must decide on a data persistence strategy. Which principle should guide their choice between local volumes, network-attached storage, and object storage?",
     diagram: null,
     options: [
-      "Always use the cheapest storage option available regardless of performance or durability characteristics",
+      "Prioritize the cheapest storage option to minimize infrastructure costs even if performance differs",
       "Match the storage type to the workload's I/O pattern, durability needs, and horizontal scaling goals",
-      "Always use local volumes for maximum performance regardless of availability or replication concerns",
+      "Prefer local volumes for their performance advantages and accept the trade-off in availability",
       "Use only object storage because it is considered the most cloud-native and portable storage option"
     ],
     answer: 1,

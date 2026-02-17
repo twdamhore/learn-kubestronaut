@@ -89,13 +89,13 @@ var questions = [
     text: "A platform engineer is configuring a Kubernetes cluster that uses Cilium as the CNI plugin. They want to enforce network policies at Layer 7 (HTTP). Which statement about Cilium is accurate?",
     diagram: null,
     options: [
-      "Cilium relies exclusively on iptables rules and cannot inspect any Layer 7 traffic at all",
-      "Cilium is a CNCF incubating project that requires Envoy sidecars in every Pod for basic L3/L4 networking",
-      "Cilium replaces kube-proxy but cannot enforce any form of Kubernetes NetworkPolicy rules",
+      "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar proxy",
+      "Cilium is a CNCF incubating project that relies on Envoy sidecars for basic L3/L4 networking between Pods",
+      "Cilium can replace kube-proxy for service routing but depends on Calico for Kubernetes NetworkPolicy enforcement",
       "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
     ],
     answer: 3,
-    explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.\n\nWhy other options are wrong:\n- A: Cilium uses eBPF, not exclusively iptables; it can inspect L7 traffic using eBPF and optionally Envoy\n- B: Cilium is CNCF graduated (not incubating) and does not require Envoy sidecars for basic L3/L4\n- C: Cilium can replace kube-proxy AND enforce Kubernetes NetworkPolicy rules\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.\n\nWhy other options are wrong:\n- A: Cilium uses eBPF for packet filtering, not primarily iptables; it handles L7 inspection natively via eBPF and optionally Envoy, without requiring a separate sidecar\n- B: Cilium is CNCF graduated (not incubating) and uses eBPF directly for L3/L4 networking without requiring Envoy sidecars\n- C: Cilium enforces Kubernetes NetworkPolicy rules natively; it does not depend on Calico for policy enforcement\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get pods -n kube-system -l k8s-app=cilium"
   },
   {
@@ -907,13 +907,13 @@ var questions = [
     text: "A team is adopting OpenTelemetry to instrument their Go microservices. They want to send traces to Jaeger and metrics to Prometheus from the same instrumentation library. Which statement about OpenTelemetry is accurate?",
     diagram: null,
     options: [
-      "OpenTelemetry only supports distributed tracing; separate libraries are needed for metrics collection and log aggregation",
-      "OpenTelemetry is a proprietary standard owned by Jaeger that only supports data export in Jaeger's native format",
-      "OpenTelemetry replaces Prometheus entirely and cannot export metrics data in the Prometheus exposition text format",
+      "OpenTelemetry focuses primarily on distributed tracing and delegates metrics collection to Prometheus client libraries",
+      "OpenTelemetry is a CNCF sandbox project that standardises trace export formats but requires Jaeger SDKs for instrumentation",
+      "OpenTelemetry provides unified instrumentation for traces and metrics but has deprecated its log signal in favour of Fluentd",
       "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
     ],
     answer: 3,
-    explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.\n\nWhy other options are wrong:\n- A: OTel supports traces, metrics, AND logs; it is not limited to tracing only\n- B: OTel is vendor-neutral and CNCF graduated, not proprietary to Jaeger; supports multiple export formats\n- C: OTel complements Prometheus and can export metrics in Prometheus format; it does not replace it\n\nReference: https://opentelemetry.io/docs/",
+    explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.\n\nWhy other options are wrong:\n- A: OTel provides its own metrics APIs and SDKs; it does not delegate metrics collection to Prometheus client libraries\n- B: OTel is CNCF graduated (not sandbox) and provides its own instrumentation SDKs; it does not require Jaeger SDKs\n- C: OTel actively supports the log signal alongside traces and metrics; it has not deprecated logs in favour of Fluentd\n\nReference: https://opentelemetry.io/docs/",
     verify: null
   },
   {

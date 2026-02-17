@@ -346,8 +346,8 @@ var questions = [
     options: [
       "A DNS policy exception added in the CoreDNS ConfigMap to allow cross-namespace metric collection",
       "An annotation on the Prometheus Pod to bypass all NetworkPolicy restrictions in the backend namespace",
-      "A `ServiceAccount` with elevated cluster-wide privileges assigned to the Prometheus Pod for scraping",
-      "A NetworkPolicy with a `namespaceSelector` for monitoring and a `podSelector` matching the scraper"
+      "A <code>ServiceAccount</code> with elevated cluster-wide privileges assigned to the Prometheus Pod for scraping",
+      "A NetworkPolicy with a <code>namespaceSelector</code> for monitoring and a <code>podSelector</code> matching the scraper"
     ],
     answer: 3,
     explanation: "NetworkPolicies support cross-namespace access control using `namespaceSelector` combined with `podSelector`. To allow the Prometheus Pod in the `monitoring` namespace to reach backend Pods, a new ingress rule must specify both the namespace and the Pod labels. Annotations and ServiceAccounts do not override NetworkPolicy enforcement.\n\nWhy other options are wrong:\n- A: DNS policies in CoreDNS do not override NetworkPolicy enforcement at the network layer\n- B: Annotations cannot bypass NetworkPolicy; enforcement is done at the CNI level, not by annotation\n- C: ServiceAccount privileges control API access, not network-level traffic allowed by NetworkPolicy\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -968,9 +968,9 @@ var questions = [
     text: "A Prometheus instance is configured with a <code>scrape_interval</code> of 15 seconds and a <code>scrape_timeout</code> of 10 seconds. One target consistently takes 12 seconds to respond to scrape requests. What is the impact on Prometheus metrics collection for this target?",
     diagram: null,
     options: [
-      "Prometheus waits the full 12 seconds and successfully collects the metrics since it is within the `scrape_interval`",
+      "Prometheus waits the full 12 seconds and successfully collects the metrics since it is within the <code>scrape_interval</code>",
       "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
-      "The scrape fails because the 12-second response exceeds the 10-second `scrape_timeout` and `up` reads 0",
+      "The scrape fails because the 12-second response exceeds the 10-second <code>scrape_timeout</code> and <code>up</code> reads 0",
       "The target is permanently removed from the scrape configuration after three consecutive timeout failures"
     ],
     answer: 2,
@@ -1160,10 +1160,10 @@ var questions = [
     text: "A developer creates a PersistentVolumeClaim requesting <code>10Gi</code> of storage with <code>accessModes: [ReadWriteMany]</code>. The only available StorageClass provisions AWS EBS volumes. What happens?",
     diagram: null,
     options: [
-      "The PVC is bound to a 10Gi EBS volume that supports `ReadWriteMany` access mode across multiple nodes",
-      "The provisioner automatically creates an NFS share on top of the `EBS` volume to support `ReadWriteMany` access",
+      "The PVC is bound to a 10Gi EBS volume that supports <code>ReadWriteMany</code> access mode across multiple nodes",
+      "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume to support <code>ReadWriteMany</code> access",
       "The PVC is created with <code>ReadWriteOnce</code> mode, silently ignoring the requested access mode",
-      "The PVC stays `Pending` because AWS EBS only supports `ReadWriteOnce`, not `ReadWriteMany`"
+      "The PVC stays <code>Pending</code> because AWS EBS only supports <code>ReadWriteOnce</code>, not <code>ReadWriteMany</code>"
     ],
     answer: 3,
     explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.\n\nWhy other options are wrong:\n- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",

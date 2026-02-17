@@ -587,10 +587,10 @@ var questions = [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
       "B. `kubeadm certs check-expiration` — lists all PKI certificates and their expiration dates",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
-      "D. `openssl x509 -enddate -noout -in <cert-path>` — checks one certificate at a time"
+      "D. `kubeadm certs renew` — regenerates expiring certificates but does not list their expiration dates"
     ],
     answer: 1,
-    explanation: "`kubeadm certs check-expiration` is the purpose-built command that lists every PKI certificate managed by kubeadm (API server, etcd, front-proxy, etc.) along with its expiration date and remaining validity period, all in a single summary table.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- C: There is no `etcdctl cert status` command; etcdctl does not include a certificate inspection subcommand\n- D: `openssl x509` can inspect a single certificate file, but it requires knowing the exact file path and only checks one certificate at a time rather than listing all cluster certificates\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
+    explanation: "`kubeadm certs check-expiration` is the purpose-built command that lists every PKI certificate managed by kubeadm (API server, etcd, front-proxy, etc.) along with its expiration date and remaining validity period, all in a single summary table.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- C: There is no `etcdctl cert status` command; etcdctl does not include a certificate inspection subcommand\n- D: `kubeadm certs renew` regenerates certificates approaching expiration but does not display a summary of certificate expiration dates\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
     verify: "kubeadm certs check-expiration"
   },
   {
@@ -619,7 +619,7 @@ var questions = [
       "A. etcd-operator from the CoreOS project",
       "B. Longhorn, a distributed storage tool",
       "C. Velero, a backup and restore project",
-      "D. Stash, a backup and recovery tooling"
+      "D. Stash, a backup and restore toolkit"
     ],
     answer: 2,
     explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes via the Kubernetes API. It enables disaster recovery, data migration, and cluster portability. Velero does not manage etcd directly but works at the Kubernetes resource level.\n\nWhy other options are wrong:\n- A: etcd-operator manages etcd clusters, not Kubernetes resource backup and restore\n- B: Longhorn is a distributed block storage system, not a backup and restore tool\n- D: Stash is a third-party tool by AppsCode, not a CNCF project\n\nReference: https://velero.io/",
@@ -1070,7 +1070,7 @@ var questions = [
       "D. The `globalDefault` field is deprecated and has no effect in Kubernetes v1.27 and later versions"
     ],
     answer: 0,
-    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: The `globalDefault` field is not deprecated; it remains a fully supported and functional field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: The `globalDefault` field is not deprecated; it remains a fully supported and functional field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1402,7 +1402,7 @@ var questions = [
     options: [
       "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if issues arise",
       "B. Deploy to a separate staging cluster that never undergoes any scheduled maintenance procedures",
-      "C. Add a manual approval gate where an operator visually inspects the full cluster readiness state",
+      "C. Add a manual approval gate in the pipeline where an operator inspects cluster readiness",
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"
     ],
     answer: 3,

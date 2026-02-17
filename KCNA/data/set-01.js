@@ -421,7 +421,7 @@ var questions = [
     id: "s01-q027",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "A company is designing a highly available Kubernetes control plane. They need to understand which component serves as the single source of truth for all cluster state. Which component stores all cluster data persistently?",
+    text: "A company is designing a highly available Kubernetes control plane. They need to understand which component serves as the single source of truth for all cluster state. Which component stores all cluster data?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="10" width="200" height="40" rx="8" fill="#326CE5" stroke="#fff" stroke-width="2"/><text x="200" y="36" text-anchor="middle" fill="white" font-size="13">API Server</text><rect x="10" y="80" width="120" height="40" rx="8" fill="#555" stroke="#aaa" stroke-width="1.5"/><text x="70" y="106" text-anchor="middle" fill="white" font-size="11">Scheduler</text><rect x="270" y="80" width="120" height="40" rx="8" fill="#555" stroke="#aaa" stroke-width="1.5"/><text x="330" y="106" text-anchor="middle" fill="white" font-size="11">Controller Mgr</text><rect x="130" y="160" width="140" height="50" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="2"/><text x="200" y="190" text-anchor="middle" fill="white" font-size="14" font-weight="bold">???</text><line x1="200" y1="50" x2="70" y2="80" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="50" x2="330" y2="80" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="50" x2="200" y2="160" stroke="#FFD700" stroke-width="2" stroke-dasharray="5,3"/><text x="220" y="110" fill="#FFD700" font-size="11">reads/writes</text></svg>',
     options: [
       "The `kube-apiserver`, which stores state in its internal memory cache for fast access",
@@ -491,7 +491,7 @@ var questions = [
       "The node's container runtime has reached its maximum image cache size and cannot pull any new images",
       "The cluster nodes cannot reach the container registry, or the Pod lacks required `imagePullSecrets`",
       "The `kube-scheduler` has placed the Pod on a node that does not support the container image format",
-      "The `ImagePullBackOff` status always indicates the image tag does not exist in the remote registry"
+      "The `ImagePullBackOff` status most commonly indicates the image tag does not exist in the remote registry"
     ],
     answer: 1,
     explanation: "The `ImagePullBackOff` status means the kubelet failed to pull the container image. Even if the image exists and the registry is accessible from outside the cluster, the cluster nodes themselves need network access to the registry. For private registries, the Pod or ServiceAccount must have `imagePullSecrets` configured. Container runtimes do not have a maximum cache size that blocks pulls. Image format incompatibility is extremely rare with modern runtimes. The error can occur for multiple reasons, not just missing tags.\n\nWhy other options are wrong:\n- A: Container runtimes do not have a maximum image cache size that blocks new pulls.\n- C: Modern container runtimes support standard OCI images; format incompatibility is extremely rare.\n- D: ImagePullBackOff can occur for multiple reasons (network, auth, missing tag), not just missing tags.\n\nReference: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
@@ -533,7 +533,7 @@ var questions = [
     id: "s01-q034",
     domain: "Cloud Native Observability",
     subsection: "Tracing",
-    text: "A microservices team is troubleshooting high latency in a request that flows through 5 services. They need to identify which service is causing the bottleneck. Which observability technique allows them to track a single request as it propagates through multiple services?",
+    text: "A microservices team is troubleshooting high latency in a request that flows through 5 services. They need to identify which service is causing the bottleneck. Which observability technique allows them to track a single request as it traverses multiple services?",
     diagram: null,
     options: [
       "Centralized logging with correlated timestamps across all services in the system",
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which configuration provides the strongest protection against eviction?",
     diagram: null,
     options: [
-      "Set `spec.priority` to a high value; the scheduler never evicts high-priority Pods from any node",
+      "Set `spec.priority` to a high value; the scheduler avoids evicting high-priority Pods during resource pressure events",
       "Set resource `requests` equal to `limits` (Guaranteed QoS), making the Pod least likely to be evicted",
       "Set `spec.terminationGracePeriodSeconds` to a very high value to delay the eviction process entirely",
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
@@ -1257,7 +1257,7 @@ var questions = [
     diagram: null,
     options: [
       "A `VerticalPodAutoscaler` that increases the CPU requests of existing Pods automatically",
-      "A `CronJob` that periodically checks CPU usage and runs `kubectl scale` commands to adjust",
+      "A `CronJob` that periodically checks CPU utilization and runs `kubectl scale` commands to adjust",
       "A `HorizontalPodAutoscaler` (HPA) targeting 70% average CPU utilization for Deployment",
       "A `ResourceQuota` with a CPU threshold that triggers scaling events when it is exceeded"
     ],
@@ -1430,7 +1430,7 @@ var questions = [
     domain: "Cloud Native Observability",
     subsection: "Monitoring",
     text: "A team deploys the Kubernetes Metrics Server in their cluster. They notice that `kubectl top pods` now shows CPU and memory usage. Which resource metrics does the Metrics Server collect, and what is its primary consumer?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="100" height="40" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="80" y="35" text-anchor="middle" fill="#ccc" font-size="11">Kubelet</text><rect x="30" y="70" width="100" height="40" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="80" y="95" text-anchor="middle" fill="#ccc" font-size="11">Kubelet</text><rect x="160" y="40" width="120" height="40" rx="6" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="220" y="55" text-anchor="middle" fill="white" font-size="10">Metrics Server</text><text x="220" y="70" text-anchor="middle" fill="white" font-size="9">???</text><rect x="310" y="10" width="80" height="35" rx="6" fill="#4CAF50" stroke="#fff" stroke-width="1"/><text x="350" y="32" text-anchor="middle" fill="white" font-size="10">Consumer A</text><rect x="310" y="55" width="80" height="35" rx="6" fill="#FF9800" stroke="#fff" stroke-width="1"/><text x="350" y="77" text-anchor="middle" fill="white" font-size="10">Consumer B</text><line x1="130" y1="30" x2="160" y2="55" stroke="#aaa" stroke-width="1.5"/><line x1="130" y1="90" x2="160" y2="65" stroke="#aaa" stroke-width="1.5"/><line x1="280" y1="50" x2="310" y2="30" stroke="#4CAF50" stroke-width="1.5"/><line x1="280" y1="65" x2="310" y2="72" stroke="#FF9800" stroke-width="1.5"/><text x="145" y="45" fill="#aaa" font-size="8">scrape</text><text x="295" y="42" fill="#aaa" font-size="8">query</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="100" height="40" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="80" y="35" text-anchor="middle" fill="#ccc" font-size="11">Node Agent</text><rect x="30" y="70" width="100" height="40" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="80" y="95" text-anchor="middle" fill="#ccc" font-size="11">Node Agent</text><rect x="160" y="40" width="120" height="40" rx="6" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="220" y="55" text-anchor="middle" fill="white" font-size="10">Metrics Server</text><text x="220" y="70" text-anchor="middle" fill="white" font-size="9">???</text><rect x="310" y="10" width="80" height="35" rx="6" fill="#4CAF50" stroke="#fff" stroke-width="1"/><text x="350" y="32" text-anchor="middle" fill="white" font-size="10">Consumer A</text><rect x="310" y="55" width="80" height="35" rx="6" fill="#FF9800" stroke="#fff" stroke-width="1"/><text x="350" y="77" text-anchor="middle" fill="white" font-size="10">Consumer B</text><line x1="130" y1="30" x2="160" y2="55" stroke="#aaa" stroke-width="1.5"/><line x1="130" y1="90" x2="160" y2="65" stroke="#aaa" stroke-width="1.5"/><line x1="280" y1="50" x2="310" y2="30" stroke="#4CAF50" stroke-width="1.5"/><line x1="280" y1="65" x2="310" y2="72" stroke="#FF9800" stroke-width="1.5"/><text x="145" y="45" fill="#aaa" font-size="8">scrape</text><text x="295" y="42" fill="#aaa" font-size="8">query</text></svg>',
     options: [
       "It collects disk I/O and network metrics, primarily used by Prometheus for alerting on node health",
       "It collects CPU and memory usage from kubelets, consumed by the HorizontalPodAutoscaler and top",
@@ -1494,7 +1494,7 @@ var questions = [
     domain: "Cloud Native Application Delivery",
     subsection: "Deployment Strategies",
     text: "A team wants to perform a blue-green deployment for their application on Kubernetes. They have the current version (blue) running and want to deploy the new version (green) alongside it, then switch all traffic at once. How can they implement this using native Kubernetes resources?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="120" height="50" rx="8" fill="#2196F3" stroke="#fff" stroke-width="1.5"/><text x="70" y="100" text-anchor="middle" fill="white" font-size="11">Blue (v1)</text><text x="70" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="270" y="80" width="120" height="50" rx="8" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/><text x="330" y="100" text-anchor="middle" fill="white" font-size="11">Green (v2)</text><text x="330" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="140" y="10" width="120" height="40" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="12">Service</text><line x1="170" y1="50" x2="70" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><line x1="230" y1="50" x2="330" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><text x="200" y="170" text-anchor="middle" fill="#ccc" font-size="12">? How does traffic switch ?</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="120" height="50" rx="8" fill="#2196F3" stroke="#fff" stroke-width="1.5"/><text x="70" y="100" text-anchor="middle" fill="white" font-size="11">Blue (v1)</text><text x="70" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="270" y="80" width="120" height="50" rx="8" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/><text x="330" y="100" text-anchor="middle" fill="white" font-size="11">Green (v2)</text><text x="330" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="140" y="10" width="120" height="40" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="12">???</text><line x1="170" y1="50" x2="70" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><line x1="230" y1="50" x2="330" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><text x="200" y="170" text-anchor="middle" fill="#ccc" font-size="12">? How does traffic switch ?</text></svg>',
     options: [
       "Use a single Deployment and update the image tag, which performs a blue-green switch automatically per rollout",
       "Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods",
