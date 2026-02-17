@@ -1,7 +1,32 @@
 {
   "set": "10",
-  "round": 17,
+  "round": 18,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 3,
+  "issues": [
+    {
+      "id": "s10-q004",
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (D, index 3) is ~28% longer than the average of the other three options",
+      "detail": "Option D (~126 chars: '5 pods run (2 in us-east-1a, 2 in us-east-1b, 1 existing in us-east-1c) and 1 remains Pending because `maxSkew: 1` includes the unavailable zone') vs others averaging ~98 chars (A ~97, B ~100, C ~97). The detailed breakdown with specific pod counts and the parenthetical explanation make the correct answer notably longer, which is a test-taking cue.",
+      "suggestion": "Shorten D by removing the parenthetical breakdown, e.g. '5 pods run across three zones and 1 remains Pending because `maxSkew: 1` includes the unavailable zone in its skew calculation'. Alternatively, lengthen the distractors with similarly specific pod-count details."
+    },
+    {
+      "id": "s10-q020",
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (A, index 0) is ~24% longer than the average of the other three options",
+      "detail": "Option A (~132 chars: 'The pod's `ndots:5` setting causes search-domain expansion even for the seemingly-qualified FQDN (4 dots < 5), and a trailing dot would force absolute resolution') vs others averaging ~107 chars (B ~110, C ~105, D ~105). The correct answer packs two explanatory details (the dot count and the trailing-dot fix) while distractors are single-concept statements.",
+      "suggestion": "Split the two concepts so A focuses on the cause only, e.g. 'The pod's `ndots:5` setting causes the resolver to try search-domain expansion for the FQDN because it has only 4 dots, which is less than ndots'. Move the trailing-dot detail to the explanation only."
+    },
+    {
+      "id": "s10-q066",
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (C, index 2) is ~23% longer than the average of the other three options",
+      "detail": "Option C (~123 chars: 'The container spawned child processes whose memory is not reported by the application's /metrics endpoint but is counted in the cgroup memory total') vs others averaging ~100 chars (A ~101, B ~101, D ~99). The correct answer contains a compound explanation linking child processes, /metrics reporting, and cgroup accounting.",
+      "suggestion": "Shorten C to a single concept, e.g. 'The container's child worker processes consume additional memory counted by the cgroup but not by the app's /metrics endpoint'. Alternatively, lengthen distractors to similar complexity."
+    }
+  ]
 }

@@ -1,48 +1,72 @@
 {
   "set": "01",
-  "round": 17,
+  "round": 18,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 8,
   "issues": [
     {
       "id": "s01-q003",
       "type": "giveaway",
       "severity": "minor",
       "what": "Diagram arrow label 'manages' points from the mystery component box to the Pod, narrowing the answer",
-      "detail": "The SVG diagram shows a Worker Node with a '???' box (the mystery component), a Container Runtime, and a Pod containing a crashed and restarting container. A dashed yellow arrow from '???' to the Pod is labeled 'manages'. While multiple components interact with Pods, the 'manages' label combined with the visible Container Runtime (shown as separate) strongly hints at the kubelet (answer index 2), since the Container Runtime is already visible and labeled. The test-taker can reason: it is not the Container Runtime (already shown), so it must be the kubelet.",
-      "suggestion": "Remove the 'manages' label from the arrow, or replace it with a neutral label like '???' to avoid revealing the relationship. Alternatively, remove the arrow entirely and just show the mystery box alongside the Pod."
+      "detail": "The SVG diagram shows a Worker Node with a '???' box, a Container Runtime, and a Pod containing a crashed and restarting container. A dashed yellow arrow from '???' to the Pod is labeled 'manages'. Since the Container Runtime is already visible and separately labeled, the test-taker can immediately eliminate option B (container runtime) and reason that the mystery component 'managing' Pods must be the kubelet (answer index 2). The 'manages' label is the specific verb used in the correct answer's description.",
+      "suggestion": "Remove the 'manages' label from the arrow, or replace it with a neutral symbol like '???' to avoid revealing the relationship. Alternatively, remove the arrow entirely."
+    },
+    {
+      "id": "s01-q004",
+      "type": "option_length",
+      "severity": "minor",
+      "what": "Options split into two long (A, B ~78 chars) and two short (C, D ~40 chars), creating a structural pattern",
+      "detail": "Character counts: A='`dockerd` bypassing the CRI layer entirely via the built-in dockershim adapter' (77), B='`rkt` (Rocket) with a pre-CRI container format based on the appc specification' (78), C='`containerd` with the CRI plugin enabled' (40, CORRECT), D='`LXC` with the Kubernetes bridge module' (39). Options A and B are roughly double the length of C and D. While the correct answer C does not uniquely stand out (D is similarly short), the 2-long-vs-2-short pattern is a structural imbalance that a test-savvy student could notice.",
+      "suggestion": "Pad options C and D with additional qualifying detail, e.g. C: '`containerd` with the CRI plugin enabled, communicating via the standard gRPC interface' and D: '`LXC` with a custom Kubernetes bridge module for container lifecycle management'."
     },
     {
       "id": "s01-q038",
-      "type": "option_length",
+      "type": "giveaway",
       "severity": "minor",
-      "what": "Correct option D (index 3) is noticeably shorter than the other three options",
-      "detail": "Option lengths: A='`inventory-api.production.pod.cluster.local`' (49 chars), B='`inventory-api.cluster.local` as short name' (44 chars), C='`production.inventory-api.svc.cluster.local`' (45 chars), D='`inventory-api` or the FQDN `.svc` suffix' (42 chars). The correct answer D is the shortest at 42 chars. While the percentage difference is only ~11% from the average of others (46), the options are all short DNS-style answers and the correct one has a distinctly different structure (uses 'or' to combine two forms), which makes it stand out as 'the one that covers multiple cases' — a common test-taking giveaway pattern.",
-      "suggestion": "Rewrite option D to be more specific about the full FQDN, e.g.: '`inventory-api` as the short name, or `inventory-api.production.svc.cluster.local`' to match the specificity level of the other options."
+      "what": "Correct option uses a distinctive 'X or Y' structure that signals it covers multiple valid forms",
+      "detail": "Option D (correct, index 3): '`inventory-api` or the FQDN `.svc` suffix' uses an 'or' construction combining two valid forms, while all other options present a single specific DNS name. Test-savvy students often recognize that the answer 'covering multiple cases' is correct. The structural difference makes it stand out even without DNS knowledge.",
+      "suggestion": "Rewrite option D to present a single specific form, e.g.: '`inventory-api` since the Service is in the same namespace as the frontend Pod'. Or: '`inventory-api.production.svc.cluster.local` as the full Service DNS entry'."
     },
     {
       "id": "s01-q067",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram shows both ClusterIP and External IP on the Service box, directly hinting at the hierarchical answer",
-      "detail": "The SVG diagram shows a Service box with both 'ClusterIP: 10.96.x.x' and 'External IP: 203.0.x.x' displayed, plus three Pods below it. The question asks how LoadBalancer relates to other Service types. The diagram visually demonstrates that a LoadBalancer Service has BOTH a ClusterIP and an external IP, which directly supports option A (index 0): 'LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three.' The diagram eliminates options B (independent), C (replaces ClusterIP), and D (headless) by visually showing both IPs coexist.",
-      "suggestion": "Simplify the diagram to show just a generic Service box with a '?' about how external and internal access relate, without showing both IP types simultaneously. Or show the Service with only the external IP and the question mark about internal access."
+      "what": "Diagram shows both ClusterIP and External IP on the Service box, directly revealing the hierarchical answer",
+      "detail": "The SVG diagram displays a Service box with both 'ClusterIP: 10.96.x.x' and 'External IP: 203.0.x.x'. This visually demonstrates that a LoadBalancer Service has both IP types simultaneously, which directly supports option A (index 0): 'LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three.' It eliminates B (independent), C (replaces ClusterIP), and D (headless) by showing both IPs coexist.",
+      "suggestion": "Simplify the diagram to show just a generic Service box with a '?' and the question text about how external and internal access relate, without displaying both IP addresses simultaneously."
     },
     {
       "id": "s01-q073",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram layout visually reveals the correct component ordering sequence",
-      "detail": "The SVG diagram shows: API Server at the top, Controller Mgr on the left, Scheduler in the center, etcd on the right, and Kubelet at the bottom. Lines flow from API Server down to all control plane components, and from Scheduler down to Kubelet. The text '? What is the correct order ?' is displayed. The spatial layout (API Server -> Controller Mgr + Scheduler -> Kubelet) mirrors the correct answer (option C, index 2): 'API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers.' The top-to-bottom visual flow gives away the sequence.",
-      "suggestion": "Arrange the components in a non-sequential layout, such as a ring or grid, without the top-to-bottom flow that implies ordering. Remove directional lines that suggest sequence."
+      "what": "Diagram top-to-bottom layout mirrors the correct control plane event sequence",
+      "detail": "The SVG shows API Server at top, Controller Mgr and Scheduler in the middle row, and Kubelet at the bottom, with directional lines flowing downward. This spatial layout directly mirrors the correct answer (index 2): 'API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers.' The top-to-bottom visual flow gives away the sequential order.",
+      "suggestion": "Arrange the components in a non-sequential layout such as a ring or grid without top-to-bottom flow. Remove directional lines that suggest sequence, and let the student determine the order."
+    },
+    {
+      "id": "s01-q090",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels reveal exactly what Metrics Server collects and its consumers, matching the correct answer verbatim",
+      "detail": "The SVG diagram shows 'Metrics Server' with 'CPU + Memory' inside the box, 'Kubelet' boxes on the left with 'scrape' arrows pointing to it, and 'HPA' and 'kubectl top' boxes on the right with 'query' arrows. The correct answer (index 1) states: 'It collects CPU and memory usage from kubelets, consumed by the HorizontalPodAutoscaler and top.' Every key detail of the correct answer is visually labeled in the diagram, making it trivial to identify without any prior knowledge.",
+      "suggestion": "Replace the specific labels inside the Metrics Server box with '???' and remove the 'HPA' and 'kubectl top' consumer labels. Show generic 'Consumer A' and 'Consumer B' boxes instead, so the diagram illustrates architecture without revealing the answer."
     },
     {
       "id": "s01-q094",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram shows two Deployments with a Service and connecting lines that reveal the selector-switch mechanism",
-      "detail": "The SVG diagram shows 'Blue (v1)' and 'Green (v2)' as two separate boxes with a Service box above them. A solid line connects Service to Blue, and a dashed line connects Service to Green. The dashed line from Service to Green (the new version) visually suggests that traffic WILL switch to Green, which is exactly the mechanism in the correct answer (option B, index 1): 'Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods.' The solid vs dashed line styling reveals the switching mechanism.",
-      "suggestion": "Use the same line style (both solid or both dashed) for the connections from the Service to both Deployments, so neither is visually favored. Alternatively, show no connecting lines and let the student determine the traffic routing mechanism."
+      "what": "Diagram uses solid vs dashed line styles to visually indicate the traffic switching mechanism",
+      "detail": "The SVG shows 'Blue (v1)' and 'Green (v2)' as two separate boxes with a Service box above them. A solid blue line connects Service to Blue, while a dashed green line connects Service to Green. The line styling difference (solid = active, dashed = pending) visually communicates that traffic will switch from Blue to Green via the Service, which is exactly the mechanism in the correct answer (index 1): updating the Service selector.",
+      "suggestion": "Use identical line styles for both connections (both solid or both dashed), so neither deployment appears visually favored. Alternatively, show no connecting lines and let the student determine the routing mechanism."
+    },
+    {
+      "id": "s01-q099",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram explicitly labels 'ServiceAccount' with 'projected token' and shows 'mounts' and 'auth' arrows",
+      "detail": "The SVG diagram shows a Pod connected to a 'ServiceAccount' box (with '+ projected token' subtext) via a 'mounts' arrow, and the Pod has an 'auth' arrow to the API Server. The correct answer (index 1) is 'The ServiceAccount mechanism, which mounts a projected token volume into each Pod.' Every keyword in the correct answer (ServiceAccount, mounts, projected token) appears as a label in the diagram, making it trivially identifiable.",
+      "suggestion": "Replace the 'ServiceAccount' label with '???' and remove the '+ projected token' subtext and 'mounts' label. Show a generic 'Authentication Mechanism' box with a neutral '???' connection to the Pod."
     }
   ]
 }

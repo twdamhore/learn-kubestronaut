@@ -1,15 +1,15 @@
 {
   "set": "02",
-  "round": 17,
+  "round": 18,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 5,
   "issues": [
     {
       "id": "s02-q005",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "SVG diagram visually reveals the correct answer by showing two separate boxes",
-      "detail": "The SVG diagram shows the 'Volume Mount: /etc/config' heading with two separate rectangular boxes labeled 'app.properties' and 'logging.conf' displayed side-by-side. This visual layout directly suggests the correct answer (B: 'A directory with two files, app.properties and logging.conf, each holding its value') by depicting the keys as two independent entities. The other options (single combined file, subdirectories, single JSON file) are visually contradicted by the diagram showing two distinct boxes. A student could select the correct answer purely from the diagram without knowing Kubernetes ConfigMap volume behavior.",
+      "what": "SVG diagram visually reveals the correct answer by showing two separate file-like boxes",
+      "detail": "The SVG diagram shows the 'Volume Mount: /etc/config' heading with two separate rectangular boxes labeled 'app.properties' and 'logging.conf' displayed side-by-side. This visual layout directly suggests the correct answer (B: 'A directory with two files, app.properties and logging.conf, each holding its value') by depicting the keys as two independent file-like entities. The other options (single combined file, subdirectories, single JSON file) are visually contradicted by the diagram showing two distinct boxes. A student could select the correct answer purely from the diagram without knowing Kubernetes ConfigMap volume behavior.",
       "suggestion": "Redesign the diagram to be neutral: show a single box labeled 'ConfigMap: app-config' with the two keys listed inside it as data entries, then an arrow pointing to '/etc/config' with a '?' label. Remove the two separate boxes that depict the keys as individual file-like entities. The diagram should illustrate the setup (ConfigMap with keys), not the result (how files appear)."
     },
     {
@@ -17,8 +17,24 @@
       "type": "option_length",
       "severity": "minor",
       "what": "Option D is dramatically longer than all other options including the correct answer",
-      "detail": "Character counts: A (correct, answer=0): 93, B: 93, C: 95, D: 164. Option D is 76% longer than the average of the other three options (93.7 chars). While D is a distractor (not the correct answer), such a dramatic length outlier can still create an unnatural distribution that signals to test-savvy students that D was 'over-explained' to compensate for being wrong. The correct answer A and distractors B/C are tightly clustered (~93-95 chars) while D is almost double.",
+      "detail": "Character counts: A (correct, answer=0): 93, B: 93, C: 95, D: 164. Option D is 76% longer than the average of the other three options (~93.7 chars). While D is a distractor (not the correct answer), such a dramatic length outlier can still create an unnatural distribution that signals to test-savvy students that D was over-explained to compensate for being wrong. The correct answer A and distractors B/C are tightly clustered (~93-95 chars) while D is almost double.",
       "suggestion": "Shorten option D to approximately 90-100 chars. For example: 'Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access' (~100 chars)."
+    },
+    {
+      "id": "s02-q021",
+      "type": "option_length",
+      "severity": "minor",
+      "what": "Correct answer D is shortest; distractor C contains self-defeating language",
+      "detail": "Character counts: A: 96, B: 96, C: 143, D (correct, answer=3): 91. Average of distractors A/B/C: 111.7 chars. The correct answer D is 18.5% shorter than the distractor average. Option C (143 chars) includes extra qualifying clauses ('requiring a new image build for every config change across all environments') that function as a self-defeating distractor by overemphasizing the drawback within the option text itself. A test-savvy student might pick the shortest, cleanest option.",
+      "suggestion": "Trim option C to reduce the gap. For example: 'Build a new container image with the updated configuration baked in for every environment' (~88 chars). Also consider slightly extending option D: 'Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference' (~105 chars)."
+    },
+    {
+      "id": "s02-q038",
+      "type": "option_length",
+      "severity": "minor",
+      "what": "Distractor B is a dramatic length outlier at 141 chars vs 94-96 for the other three options",
+      "detail": "Character counts: A: 95, B: 141, C: 96, D (correct, answer=3): 94. Overall average: 106.5 chars. Option B is 32% longer than the overall average and roughly 48% longer than any individual other option. The three non-B options cluster tightly at 94-96 chars while B stands apart at 141 chars. This signals to test-savvy students that B is an over-explained distractor trying to sound authoritative with extra detail, making it easier to eliminate.",
+      "suggestion": "Shorten option B to approximately 95 chars. For example: 'Secret volume file permissions default to 0644 and can only be changed by the container runtime config' (~100 chars)."
     },
     {
       "id": "s02-q074",
@@ -26,15 +42,7 @@
       "severity": "moderate",
       "what": "Correct answer is 43% longer than the average distractor length",
       "detail": "Character counts: A (correct, answer=0): 165, B: 112, C: 117, D: 116. Average of distractors B/C/D: 115 chars. The correct answer A is 43.5% longer than the distractor average. The correct option lists three specific metric names while each distractor lists only two metrics. A test-savvy student could identify the correct answer by observing it is the most detailed and longest option, following the common MCQ pattern where the correct answer is the most thorough.",
-      "suggestion": "Equalize lengths by either (1) shortening option A, e.g., '`kube_pod_container_status_restarts_total` with `last_terminated_reason` filtering for OOMKilled, plus resource limits metrics' (~110 chars), or (2) lengthening the distractors to include more descriptive text bringing them to ~150 chars each."
-    },
-    {
-      "id": "s02-q021",
-      "type": "option_length",
-      "severity": "minor",
-      "what": "Correct answer D is shortest while distractor C is notably longer",
-      "detail": "Character counts: A: 96, B: 96, C: 143, D (correct, answer=3): 91. Average of distractors A/B/C: 111.7 chars. The correct answer D is 18.5% shorter than the distractor average. Option C (143 chars) includes extra qualifying clauses ('requiring a new image build for every config change across all environments') that function somewhat as a self-defeating distractor by overemphasizing the drawback within the option text itself. A test-savvy student might pick the shortest, cleanest option.",
-      "suggestion": "Trim option C to reduce the gap. For example: 'Build a new container image with the updated configuration baked in for every environment' (~88 chars). Also consider slightly extending option D: 'Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference' (~105 chars)."
+      "suggestion": "Equalize lengths by either (1) shortening option A, e.g., 'Restart count and last-terminated-reason metrics filtered for OOMKilled, combined with resource limits metrics for memory' (~110 chars), or (2) lengthening the distractors to include more descriptive text bringing them to ~150 chars each."
     }
   ]
 }

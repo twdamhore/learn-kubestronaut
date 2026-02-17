@@ -1,72 +1,48 @@
 {
   "set": "09",
-  "round": 17,
+  "round": 18,
   "total_reviewed": 100,
-  "issues_found": 8,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s09-q004",
-      "type": "option-length",
-      "severity": "minor",
-      "what": "Correct answer (C) is noticeably longer than all distractors",
-      "detail": "Option lengths (stripped of HTML): A=97, B=94, C=92, D=89. All four options are fairly close here (range 89-97). However the correct answer C contains a distinctive triple-feature list ('traces, metrics, and logs') that exactly mirrors the stem phrase 'traces, metrics, and logs', making it a keyword giveaway rather than a pure length issue.",
-      "suggestion": "Rephrase the stem to say 'all three telemetry signal types' instead of listing 'traces, metrics, and logs' verbatim. This prevents the student from pattern-matching the stem phrase to the correct option."
-    },
-    {
-      "id": "s09-q006",
-      "type": "giveaway",
-      "severity": "minor",
-      "what": "SVG diagram dashed line between Argo CD and K8s Cluster hints at blocked deployment",
-      "detail": "The diagram uses a solid arrow from Git Repo to Argo CD but a dashed line (stroke-dasharray='6,3') from Argo CD to K8s Cluster with gray color (#999). The visual contrast between 'connected' (solid) and 'not connected' (dashed) combined with 'Why no auto-deploy?' text nudges the test-taker toward understanding the sync is disabled/manual. The previous round flagged this same issue; the text was fixed but the dashed-vs-solid visual cue remains.",
-      "suggestion": "Make both arrows the same style (both solid or both dashed) so the diagram shows the architecture neutrally without visually implying the Argo-CD-to-Cluster link is broken or blocked."
-    },
-    {
       "id": "s09-q013",
-      "type": "option-length",
+      "type": "option-length-balance",
       "severity": "minor",
-      "what": "Correct answer (A) is significantly longer than other options",
-      "detail": "Option lengths: A=121 ('Service 2 is not propagating trace context headers...breaking the trace chain'), B=93, C=90, D=95. Correct answer A is 121 chars vs average of others ~93. That is a ~30% deviation. The extra specificity (naming 'traceparent' header and 'Service 3') makes it stand out as the most detailed option.",
-      "suggestion": "Pad distractors with plausible detail. For example, B could become 'Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits' and C could name a specific component."
-    },
-    {
-      "id": "s09-q020",
-      "type": "factual",
-      "severity": "major",
-      "what": "Correct answer (C) states 'helm rollback my-release 0' means previous release, which is inaccurate",
-      "detail": "The Helm documentation for 'helm rollback' states that the REVISION argument is the revision number to roll back to. Passing revision 0 is not documented as a special 'previous release' shorthand. In practice 'helm rollback my-release' (with no revision number) rolls back to the previous release. Providing '0' as a revision may cause an error or undefined behavior depending on the Helm version. The claim that 'revision 0 is a special value meaning roll back to the immediately previous release' is not reliably documented.",
-      "suggestion": "Change the correct answer to option B ('helm rollback my-release 1') for rolling back to the first revision if that is the intent, or rewrite option C to use 'helm rollback my-release' (no revision argument) which truly rolls back to the previous release. Update the explanation accordingly."
-    },
-    {
-      "id": "s09-q040",
-      "type": "option-length",
-      "severity": "minor",
-      "what": "Correct answer (B) is noticeably longer than distractors",
-      "detail": "Option lengths (stripped of HTML code tags): A=83 ('rate(http_requests_total...) * 100...'), B=96 ('sum(rate(...)) / sum(rate(...)) * 100'), C=81 ('count(...) / count(...) * 100...'), D=80 ('histogram_quantile(0.99, rate(...))...'). Correct answer B at 96 chars is ~19% above the average of the other three (~81). The more elaborate expression with nested sum/rate stands out.",
-      "suggestion": "Extend the other PromQL expressions slightly to be more verbose. For example, option A could include 'to calculate the percentage of total incoming requests' and option C could add 'using instant vector matching'."
-    },
-    {
-      "id": "s09-q051",
-      "type": "option-length",
-      "severity": "minor",
-      "what": "Correct answer (A) is longer than other options and most detailed",
-      "detail": "Option lengths: A=118 ('The replica count stays at the kubectl edit value because kubectl apply uses the last-applied annotation to detect changes'), B=103, C=106, D=113. While the spread is moderate (~118 vs avg 107), option A is the most specific in naming the mechanism ('last-applied annotation'). Option D also names the mechanism but states the wrong outcome.",
-      "suggestion": "No action strictly required; the length deviation is under 15% from the average of others. Option D provides a plausible counterweight. Low priority."
+      "what": "Correct answer (A) is significantly longer than the other three options",
+      "detail": "Option A (correct, ~121 chars stripped): 'Service 2 is not propagating trace context headers (e.g., traceparent) in its outgoing requests to Service 3, breaking the trace chain'. Options B (~93), C (~90), D (~95) average ~93 chars. The correct answer is ~30% longer than the average of the distractors, making it stand out visually as the most detailed and specific option.",
+      "suggestion": "Pad one or two distractors with plausible technical detail. For example, expand B to 'Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits' or expand D to mention specific protocol names."
     },
     {
       "id": "s09-q057",
-      "type": "giveaway",
+      "type": "giveaway-diagram",
       "severity": "minor",
-      "what": "SVG diagram labels 'Continuous reconciliation loop' hint directly at GitOps controller answer",
-      "detail": "The diagram text says 'Continuous reconciliation loop' in italics at the bottom. This phrase is a signature description of GitOps controllers (Argo CD/Flux), directly pointing to option B ('Deploy a GitOps controller (Argo CD or Flux) with automated sync and self-healing to reconcile drift'). The word 'reconcile' appears in both the diagram and the correct answer.",
-      "suggestion": "Change the diagram label to something neutral like 'How to detect and revert manual changes?' which describes the problem without hinting at the reconciliation loop mechanism."
+      "what": "SVG diagram text 'Continuous reconciliation loop' directly hints at the GitOps controller answer",
+      "detail": "The diagram includes the italic text 'Continuous reconciliation loop' at the bottom. This phrase is a signature description of GitOps controllers (Argo CD, Flux), and the word 'reconcile' appears in both the diagram and the correct answer B ('Deploy a GitOps controller (Argo CD or Flux) with automated sync and self-healing to reconcile drift'). A test-wise student can match the diagram label to the correct answer without domain knowledge.",
+      "suggestion": "Change the diagram label to a neutral problem statement like 'How to detect and revert manual changes?' which describes the desired outcome without naming the reconciliation mechanism."
     },
     {
       "id": "s09-q068",
-      "type": "giveaway",
+      "type": "giveaway-diagram",
+      "severity": "major",
+      "what": "SVG diagram labels the traffic controller as 'Ingress / Mesh' and shows '50%' splits, directly revealing the correct answer",
+      "detail": "The diagram's top box is labeled 'Ingress / Mesh' with weighted '50%' arrows to both stable and canary Deployments. The correct answer B is 'Use a service mesh or Ingress controller with weighted routing to send 50% of traffic to the canary'. The diagram names both 'Ingress' and 'Mesh' in the routing component -- exactly the terms in the correct answer -- and shows the precise 50% split the question asks about. This is a direct giveaway.",
+      "suggestion": "Relabel the top box to something neutral like 'Traffic Router' or '???' and remove the '50%' percentage labels from the arrows. The question stem already states the desired 50% target, so the diagram should illustrate the architecture without revealing the mechanism."
+    },
+    {
+      "id": "s09-q085",
+      "type": "factual-accuracy",
       "severity": "minor",
-      "what": "SVG diagram labels show '50% traffic' on both stable and canary, hinting at weighted routing answer",
-      "detail": "The diagram explicitly shows '50%' traffic labels on arrows to both Stable (v1 - 9 Pods) and Canary (v2 - 1 Pod), visually demonstrating that traffic weighting is decoupled from Pod count. This directly points the test-taker to option B ('Use a service mesh or Ingress controller with weighted routing') since only a mesh/ingress can achieve 50/50 with a 9:1 Pod ratio.",
-      "suggestion": "Remove the '50%' traffic labels from the arrows and instead use generic '?' marks or simply show the architecture without traffic percentages. The question text already specifies the desired 50% target."
+      "what": "Reference URL is unrelated to the question topic",
+      "detail": "The question is about API gateway and service mesh patterns for centralizing cross-cutting concerns (authentication, rate limiting, logging). The reference URL points to 'https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer', which documents the LoadBalancer Service type and is completely unrelated to the API gateway/service mesh topic.",
+      "suggestion": "Change the reference to a relevant URL such as 'https://istio.io/latest/docs/concepts/what-is-istio/' or 'https://www.cncf.io/projects/' or another resource about API gateway or service mesh patterns for cross-cutting concerns."
+    },
+    {
+      "id": "s09-q004",
+      "type": "giveaway-keyword",
+      "severity": "minor",
+      "what": "Stem phrase 'traces, metrics, and logs' appears verbatim only in the correct answer",
+      "detail": "The question stem asks for a framework that 'supports traces, metrics, and logs'. The correct answer C uses the exact same triple-feature list: 'unified APIs, SDKs, and collectors for traces, metrics, and logs'. While the distractors also mention subsets of these telemetry types, only option C mirrors the stem's exact three-item list, enabling pattern-matching without domain knowledge.",
+      "suggestion": "Rephrase the stem to say 'all three telemetry signal types' or 'the three pillars of observability' instead of listing 'traces, metrics, and logs' verbatim. This forces the student to know which three signals those are rather than simply matching text."
     }
   ]
 }

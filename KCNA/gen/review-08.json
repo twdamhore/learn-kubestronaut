@@ -1,40 +1,40 @@
 {
   "set": "08",
-  "round": 17,
+  "round": 18,
   "total_reviewed": 100,
   "issues_found": 4,
   "issues": [
     {
       "id": "s08-q025",
-      "type": "option-length-balance",
+      "type": "giveaway-stem-keyword-echo",
       "severity": "minor",
-      "what": "Correct answer (A) is ~24% longer than the average of the other three options",
-      "detail": "Option lengths — A (correct): 99 chars ('Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes'), B: 79 chars, C: 83 chars, D: 78 chars. Average of B/C/D is ~80. The correct answer is 24% longer. Additionally, the stem mentions 'scale to zero' and 'CloudEvents', which map directly to option A's 'scale-to-zero' and 'Eventing'. The other distractors are significantly shorter and do not echo the stem's keywords.",
-      "suggestion": "Shorten A to ~85 chars: 'Knative — a CNCF graduated serverless platform with scale-to-zero and eventing on Kubernetes'. Also pad C slightly: 'KEDA — a CNCF graduated event-driven autoscaler that triggers Kubernetes Pod scaling from external event sources'"
+      "what": "Stem keywords 'scale to zero' and 'CloudEvents' echo verbatim only in the correct option (A)",
+      "detail": "The stem says 'automatically scale to zero when idle and scale up on incoming HTTP requests or CloudEvents'. Option A is the only one containing 'scale-to-zero' and 'Eventing' (CloudEvents). Options B/C/D do not echo any of these stem keywords. Additionally, option A (100 chars) is ~14% longer than the average of B/C/D (~88 chars), which is borderline but combined with the keyword echo creates a recognizable pattern.",
+      "suggestion": "Generalize the stem to avoid echoing specific option wording. For example: 'A team wants to deploy workloads on Kubernetes that automatically adjust capacity to match demand — including dropping to zero replicas when idle. Which CNCF graduated project provides this serverless capability natively on Kubernetes?'"
     },
     {
       "id": "s08-q041",
       "type": "giveaway-self-defeating-distractor",
       "severity": "minor",
-      "what": "Option B explicitly states its own negative consequence, making it an obvious violation",
-      "detail": "Option B reads 'Keeping user session data in local process memory, causing session loss if the instance is restarted'. The clause 'causing session loss if the instance is restarted' is a self-defeating phrase that tells the test-taker exactly why this is wrong. The other distractors don't explain their own consequences. A well-crafted distractor should not contain its own refutation.",
+      "what": "Option B contains a self-defeating clause that reveals why it is wrong",
+      "detail": "Option B reads 'Keeping user session data in local process memory, causing session loss if the instance is restarted'. The clause 'causing session loss if the instance is restarted' tells the test-taker exactly why this option violates the stateless process factor. The other three distractors do not explain their own negative consequences. A well-crafted distractor should not contain its own refutation.",
       "suggestion": "Remove the self-defeating clause. Rewrite B as: 'Keeping user session data in local process memory and routing returning users to the same instance via sticky sessions'"
     },
     {
       "id": "s08-q089",
       "type": "giveaway-shows-work",
       "severity": "minor",
-      "what": "Correct answer (B) contains an embedded formula and calculation that signals it is the authoritative answer",
-      "detail": "Option B reads: 'The HPA calculates `ceil(currentReplicas * (currentUtilization / target))` = `ceil(2 * 140/70)` = 4'. This 'shows its work' pattern — embedding the official formula and step-by-step calculation — is a common exam-writing giveaway. Options that show mathematical derivations are almost always correct in practice exams, making this too easy to identify even without K8s knowledge. Other options just state a number with a brief rationale.",
+      "what": "Correct option B embeds the official formula and step-by-step calculation, signaling it is authoritative",
+      "detail": "Option B reads: 'The HPA calculates `ceil(currentReplicas * (currentUtilization / target))` = `ceil(2 * 140/70)` = 4'. This 'shows its work' pattern — embedding the official HPA formula, substituting the values, and arriving at 4 — makes the answer immediately identifiable as the authoritative one even without deep Kubernetes knowledge. The other options just state a number with a brief rationale. This asymmetric level of detail is a common exam-writing giveaway.",
       "suggestion": "Move the formula to the explanation. Simplify B to: '4 replicas — the HPA scales proportionally based on the ratio of current utilization to the target threshold value'. This keeps the correct answer (4) while removing the authoritative formula giveaway."
     },
     {
-      "id": "s08-q006",
-      "type": "option-length-balance",
+      "id": "s08-q058",
+      "type": "factual-accuracy",
       "severity": "minor",
-      "what": "Correct answer (D) is ~16% shorter than the average of the other three options",
-      "detail": "Option lengths — A: 85 chars, B: 99 chars, C: 82 chars, D (correct): 76 chars. Average of A/B/C is ~88.7. The correct answer D (76) is 14-16% shorter. The distractors all include extra qualifying clauses ('at all', 'for basic L3/L4 networking', 'any form of') while the correct answer is comparatively concise and clean-sounding.",
-      "suggestion": "Pad D slightly to ~87 chars: 'Cilium leverages eBPF for high-performance networking, observability, and Layer 7 policy enforcement capabilities'"
+      "what": "Explanation incorrectly claims Cortex has a 'different CNCF and project status' from Thanos",
+      "detail": "The explanation for why option B (Cortex) is wrong states: 'Cortex is now part of the Grafana Mimir lineage; it has a different CNCF and project status.' In reality, Cortex is also a CNCF incubating project — the same maturity level as Thanos. While the answer (Thanos) is correct and the option B text itself is reasonable (noting Cortex's migration to Mimir), the explanation's claim about 'different CNCF and project status' is factually inaccurate and could confuse learners.",
+      "suggestion": "Correct the explanation for option B to: 'B: Cortex is also CNCF incubating but its active development has largely migrated to the Grafana Mimir project; Thanos remains the standard CNCF answer for extending Prometheus with long-term storage and global querying'"
     }
   ]
 }
