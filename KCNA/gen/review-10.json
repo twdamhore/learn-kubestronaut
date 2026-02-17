@@ -1,24 +1,7 @@
 {
   "set": "10",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
-  "issues_found": 2,
-  "issues": [
-    {
-      "id": "s10-q028",
-      "type": "giveaway",
-      "severity": "major",
-      "what": "Diagram text 'Compensating transactions' directly reveals the correct answer",
-      "detail": "The SVG diagram includes the label 'Compensating transactions' on a dashed orange arrow flowing from the failed Shipping service back toward Payment and Inventory. The correct answer (option B, index 0) states 'Execute compensating transactions in reverse: release the inventory reservation, then refund the payment.' The diagram literally names the mechanism that the question is testing knowledge of. A student can read the diagram label and match it to the only option containing 'compensating transactions' without understanding the Saga pattern.",
-      "suggestion": "Remove the 'Compensating transactions' text from the diagram. Replace it with a neutral label such as '?' or 'How to handle?' on the dashed arrow, or remove the reverse-flow arrow entirely. The diagram should only illustrate the forward flow (Order -> Payment SUCCESS -> Inventory SUCCESS -> Shipping FAILED) without naming the recovery mechanism."
-    },
-    {
-      "id": "s10-q066",
-      "type": "ambiguous",
-      "severity": "minor",
-      "what": "Options A (page cache in cgroup) and C (child processes) are both plausible causes of OOM despite low self-reported RSS",
-      "detail": "Option A says 'The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit.' Option C (the marked answer) says child processes not reported by /metrics are counted in cgroup total. Both are legitimate, well-documented causes of OOM kills when application-level RSS appears under the limit. The explanation dismisses A by saying page cache is 'typically reclaimable and usually does not trigger OOM kill,' but under cgroup v2 with memory.max enforcement, page cache counts toward the memory limit and can contribute to OOM if the cgroup is at its limit and the kernel cannot reclaim quickly enough (e.g., dirty pages being written back). The question does not provide enough detail (e.g., whether the app does heavy file I/O, whether it forks workers) to definitively rule out either cause.",
-      "suggestion": "Strengthen the question stem to make child processes the unambiguous cause. For example, add a detail like 'The application is a web server that spawns worker processes to handle requests' or 'kubectl top pod shows memory usage at 510Mi while the app reports 480Mi.' Alternatively, change option A to something clearly wrong, such as 'The kernel reserves 10% of the memory limit for internal overhead, reducing the effective limit to ~460Mi.'"
-    }
-  ]
+  "issues_found": 0,
+  "issues": []
 }

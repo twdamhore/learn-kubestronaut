@@ -1,40 +1,40 @@
 {
   "set": "08",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
   "issues_found": 4,
   "issues": [
     {
-      "id": "s08-q005",
-      "type": "giveaway",
+      "id": "s08-q025",
+      "type": "option-length-balance",
       "severity": "minor",
-      "what": "Diagram title 'Database-per-Service Pattern' hints at the correct answer",
-      "detail": "The SVG diagram title text reads 'Database-per-Service Pattern', which is a hallmark of loose coupling in microservices. Since the correct answer (option A) is 'Loose coupling', the diagram title directly reinforces the answer by illustrating the principle. A test-taker can see separate databases per service in the title and immediately associate that with loose coupling without needing deeper knowledge.",
-      "suggestion": "Change the diagram title to a neutral label such as 'Microservices Communication Layout' or 'Service Decomposition Architecture'. The visual of three services with three databases already conveys the pattern without naming it outright."
+      "what": "Correct answer (A) is ~24% longer than the average of the other three options",
+      "detail": "Option lengths — A (correct): 99 chars ('Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes'), B: 79 chars, C: 83 chars, D: 78 chars. Average of B/C/D is ~80. The correct answer is 24% longer. Additionally, the stem mentions 'scale to zero' and 'CloudEvents', which map directly to option A's 'scale-to-zero' and 'Eventing'. The other distractors are significantly shorter and do not echo the stem's keywords.",
+      "suggestion": "Shorten A to ~85 chars: 'Knative — a CNCF graduated serverless platform with scale-to-zero and eventing on Kubernetes'. Also pad C slightly: 'KEDA — a CNCF graduated event-driven autoscaler that triggers Kubernetes Pod scaling from external event sources'"
     },
     {
       "id": "s08-q041",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram labels 'session in mem' in red directly reveal the violation",
-      "detail": "The SVG diagram shows three instances each labeled 'session in mem' in a distinctive red/pink color (#fca5a5), visually flagging in-memory session data as the problem. The correct answer (option B) is 'Keeping user session data in local process memory'. A student can read the red 'session in mem' labels and immediately identify option B as the violation without understanding the twelve-factor methodology. The Redis box at the bottom labeled 'shared session store' further reveals the correct alternative.",
-      "suggestion": "Change the instance annotations to neutral labels like 'Instance 1/2/3' without revealing what is stored in memory. Alternatively, remove the diagram entirely since the question is conceptual and does not benefit from a diagram that gives away the answer."
+      "type": "giveaway-self-defeating-distractor",
+      "severity": "minor",
+      "what": "Option B explicitly states its own negative consequence, making it an obvious violation",
+      "detail": "Option B reads 'Keeping user session data in local process memory, causing session loss if the instance is restarted'. The clause 'causing session loss if the instance is restarted' is a self-defeating phrase that tells the test-taker exactly why this is wrong. The other distractors don't explain their own consequences. A well-crafted distractor should not contain its own refutation.",
+      "suggestion": "Remove the self-defeating clause. Rewrite B as: 'Keeping user session data in local process memory and routing returning users to the same instance via sticky sessions'"
     },
     {
       "id": "s08-q089",
-      "type": "ambiguous",
-      "severity": "moderate",
-      "what": "Option A and option B both yield 4 replicas — only the reasoning differs",
-      "detail": "Option A states 'the HPA doubles the current count to halve utilization' which arrives at 4 replicas. Option B gives the official formula ceil(2 * 140/70) = 4 replicas. Both produce the same correct numerical answer. The explanation marks A wrong because it 'ignores the standard formula', but a test-taker who correctly computes 4 replicas and selects A would be penalized. In a real exam, two options producing the same correct numerical answer creates confusion.",
-      "suggestion": "Rewrite option A so it arrives at a different (incorrect) number. For example: '3 replicas — the HPA adds one replica per 70% utilization increment above the target threshold' which gives a clearly wrong answer."
+      "type": "giveaway-shows-work",
+      "severity": "minor",
+      "what": "Correct answer (B) contains an embedded formula and calculation that signals it is the authoritative answer",
+      "detail": "Option B reads: 'The HPA calculates `ceil(currentReplicas * (currentUtilization / target))` = `ceil(2 * 140/70)` = 4'. This 'shows its work' pattern — embedding the official formula and step-by-step calculation — is a common exam-writing giveaway. Options that show mathematical derivations are almost always correct in practice exams, making this too easy to identify even without K8s knowledge. Other options just state a number with a brief rationale.",
+      "suggestion": "Move the formula to the explanation. Simplify B to: '4 replicas — the HPA scales proportionally based on the ratio of current utilization to the target threshold value'. This keeps the correct answer (4) while removing the authoritative formula giveaway."
     },
     {
-      "id": "s08-q097",
-      "type": "wrong_explanation",
+      "id": "s08-q006",
+      "type": "option-length-balance",
       "severity": "minor",
-      "what": "Explanation for option A contains confusing self-contradictory language",
-      "detail": "The 'Why other options are wrong' section for option A reads: 'Pods, Services, ConfigMaps are indeed namespace-scoped, but this option is correct, not a wrong answer to select.' Saying 'this option is correct' in a section explaining why options are wrong is self-contradictory and confusing. Option A is a true statement about namespace-scoped resources but it does not answer the question about which resources are NOT namespaced — making it an incorrect choice, not a 'correct' one.",
-      "suggestion": "Rewrite the explanation to: 'A: Pods, Services, and ConfigMaps are indeed namespace-scoped, but the question asks which resources are NOT namespaced — this option lists namespace-scoped resources, not cluster-scoped ones.'"
+      "what": "Correct answer (D) is ~16% shorter than the average of the other three options",
+      "detail": "Option lengths — A: 85 chars, B: 99 chars, C: 82 chars, D (correct): 76 chars. Average of A/B/C is ~88.7. The correct answer D (76) is 14-16% shorter. The distractors all include extra qualifying clauses ('at all', 'for basic L3/L4 networking', 'any form of') while the correct answer is comparatively concise and clean-sounding.",
+      "suggestion": "Pad D slightly to ~87 chars: 'Cilium leverages eBPF for high-performance networking, observability, and Layer 7 policy enforcement capabilities'"
     }
   ]
 }

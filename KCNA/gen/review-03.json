@@ -1,40 +1,64 @@
 {
   "set": "03",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 7,
   "issues": [
-    {
-      "id": "s03-q017",
-      "type": "giveaway",
-      "severity": "critical",
-      "what": "Diagram explicitly shows the DNS record pattern that is the correct answer",
-      "detail": "The SVG diagram labels each pod with text 'cache-0.cache.ns', 'cache-1.cache.ns', 'cache-2.cache.ns' directly below the pod boxes. This is exactly the pattern described in the correct answer (option D, index 3): 'A records like cache-0.cache.<ns>.svc.cluster.local for each pod'. A student can simply read the diagram annotations and match them to option D without any DNS knowledge.",
-      "suggestion": "Remove the DNS name annotations ('cache-0.cache.ns', etc.) from below each pod. The diagram should show only the headless Service and pod names (cache-0, cache-1, cache-2) with connecting lines, and place a '?' label where the DNS pattern would be. Alternatively, remove the diagram entirely since the question text is self-sufficient."
-    },
     {
       "id": "s03-q045",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram labels three answer options and colors the correct one green",
-      "detail": "The SVG diagram includes three labeled boxes on the right side: 'Circuit Breaker' (filled with #4CAF50 green), 'Retry with Backoff' (filled with #FF9800 orange), and 'Timeout' (filled with #9C27B0 purple). The green color is universally associated with 'correct' or 'good', and the correct answer is indeed 'Circuit Breaker' (option B, index 1). This color-based visual cue reveals the answer.",
-      "suggestion": "Either give all three pattern boxes the same neutral fill color (e.g., all #555 grey), or replace the pattern names with generic labels like 'Pattern 1', 'Pattern 2', 'Pattern 3'. Alternatively, remove the three pattern boxes from the diagram and show only the order-svc to inventory-svc interaction with the 'SLOW' annotation."
+      "what": "Diagram labels three resilience patterns with color cues favoring the correct answer",
+      "detail": "The SVG diagram includes three labeled boxes on the right side: 'Circuit Breaker' (filled #78909C), 'Retry with Backoff' (#78909C), and 'Timeout' (#78909C). While all three now share the same grey fill, the diagram still explicitly names the three patterns that correspond to options A (timeout), B (circuit breaker), and C (retry). The correct answer (option B, circuit breaker) is named first in the diagram's vertical list, giving it visual prominence. More importantly, the diagram literally names the correct answer option text, reducing the question to pattern recognition rather than knowledge testing.",
+      "suggestion": "Replace the three pattern labels with generic placeholders like 'Pattern ?', 'Pattern ?', 'Pattern ?' or remove them entirely. The diagram should only depict the order-svc to inventory-svc interaction with the 'SLOW' label, letting the student identify the resilience pattern from knowledge rather than reading it from the diagram."
     },
     {
       "id": "s03-q046",
       "type": "giveaway",
       "severity": "minor",
-      "what": "Distinctive keyword from the stem appears only in the correct option",
-      "detail": "The question stem uses the phrase 'standards-based API' and the correct option D says 'Gateway API — the standards-based routing project'. The exact phrase 'standards-based' does not appear in any other option. A test-taking strategy of matching distinctive keywords from the stem to options would identify D without domain knowledge.",
-      "suggestion": "Rephrase the question stem to avoid using 'standards-based'. For example: 'Which CNCF project provides a role-oriented API for configuring advanced traffic routing in Kubernetes, designed as the evolution of the Ingress resource?' Alternatively, add 'standards-based' or 'standards-compliant' to one of the distractor option descriptions."
+      "what": "Stem keyword 'role-oriented' appears conceptually only in the correct option's description context",
+      "detail": "The question stem uses the distinctive phrase 'role-oriented API' and 'successor to the Ingress resource'. The correct option D says 'Gateway API -- the standards-based routing project'. While the previous round fixed 'standards-based' from the stem, the phrase 'role-oriented' in the stem is a very specific descriptor that is uniquely associated with Gateway API in the CNCF ecosystem. No distractor mentions roles or role-based configuration. A student familiar with test-taking strategies could match this distinctive terminology to Gateway API without deep knowledge.",
+      "suggestion": "Rephrase the stem to use more generic language, e.g., 'Which CNCF project defines an expressive, extensible API for configuring advanced traffic routing in Kubernetes, designed as the evolution of the Ingress resource?' This removes the very specific 'role-oriented' keyword that uniquely maps to Gateway API documentation."
+    },
+    {
+      "id": "s03-q047",
+      "type": "factual",
+      "severity": "moderate",
+      "what": "The referenced kube-state-metrics metric name may not be accurate",
+      "detail": "The correct answer references `kube_endpoint_address` with label `ready=\"true\"` from kube-state-metrics. However, the actual kube-state-metrics metrics for endpoints are `kube_endpoint_address_available` and `kube_endpoint_address_not_ready` (or in newer versions, `kube_endpoint_info`). The option B (`kube_endpoint_address_available`) which is dismissed as 'not a standard kube-state-metrics metric' may actually be more accurate than the accepted answer's `kube_endpoint_address`. The kube-state-metrics project has changed endpoint metric names across versions. This creates ambiguity about which answer is truly correct.",
+      "suggestion": "Rewrite the question to focus on a more stable, well-known metric pattern. For example, ask about using `kube_endpoint_address_available` (which does exist in kube-state-metrics) or rephrase to ask about a general monitoring approach rather than a specific metric name. Alternatively, verify the exact metric name against the current kube-state-metrics release and update both the correct answer and distractors accordingly."
+    },
+    {
+      "id": "s03-q052",
+      "type": "factual",
+      "severity": "moderate",
+      "what": "Default EndpointSlice maximum is 100, but the explanation for option A is misleading",
+      "detail": "The correct answer (B, index 1) states 100 endpoints per slice, which is correct as the default. However, the explanation for option A says '1000 is not the default; it is the configurable maximum upper bound.' The actual configurable maximum upper bound for --max-endpoints-per-slice is 1000, which is correct. But options C (250) and D (500) are dismissed without noting that some documentation or older versions may have referenced different defaults. The answer is factually correct but the explanation could be more precise about the 100 default being set by the EndpointSlice controller.",
+      "suggestion": "No change needed to the answer (100 is correct). Optionally clarify the explanation: 'The EndpointSlice controller defaults to a maximum of 100 endpoints per slice. The --max-endpoints-per-slice flag on kube-controller-manager can adjust this up to 1000.'"
     },
     {
       "id": "s03-q078",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram annotations reveal the mechanism of the correct answer",
-      "detail": "The SVG diagram includes text 'A + AAAA sent simultaneously', 'one query lost', and '→ delay observed'. These annotations describe the exact mechanism of the correct answer (option D, index 3): simultaneous A and AAAA queries where one is lost due to conntrack races. While '??? root cause ???' is used as a placeholder, the specific mention of 'A + AAAA sent simultaneously' and 'one query lost' narrows the answer to option D exclusively, as no other option involves dual query types.",
-      "suggestion": "Replace the detailed mechanism annotations with more generic labels. For example, show 'App Pod → CoreDNS → Upstream DNS' with 'DNS queries' on the arrows and '~5s delay intermittently' as the observed symptom. Remove 'A + AAAA sent simultaneously' and 'one query lost' as they reveal the root cause mechanism."
+      "what": "Diagram still contains annotations that narrow down the root cause mechanism",
+      "detail": "The SVG diagram shows a flow from 'App Pod' to 'CoreDNS' to 'Upstream DNS' with a '~5s delay intermittently' annotation in red. While previous rounds removed the most egregious hints ('A + AAAA sent simultaneously', 'one query lost'), the specific '~5s delay' annotation in red is still quite revealing. The 5-second timeout is the signature symptom of the conntrack race condition (option D), as it matches the DNS retry timeout exactly. Options A and B would not produce a characteristic 5-second pattern. This visual cue still helps narrow to the correct answer.",
+      "suggestion": "Change the delay annotation to something more generic like 'intermittent slow queries' or 'occasional delays' without specifying the exact 5-second duration, which is a strong diagnostic clue for the conntrack race answer."
+    },
+    {
+      "id": "s03-q015",
+      "type": "option-length",
+      "severity": "minor",
+      "what": "Correct answer (A, index 0) is noticeably shorter in phrasing style compared to other options",
+      "detail": "Option A (correct): 'Apply a policy in `finance` on `app: payment` allowing ingress from `web` with `role: gateway` on port 8443' (95 chars). Option B: 'Apply a policy in `web` on `role: gateway` allowing egress to `finance` namespace on port 8443 for payment services' (113 chars). Option C: 'Apply a policy in `finance` on all pods allowing ingress from any pod in the cluster on port 8443 regardless of labels' (119 chars). Option D: 'Apply a policy in `finance` on `app: payment` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443 for all sources' (118 chars). The correct answer is ~19% shorter than the average of distractors (117 chars). This is borderline but combined with the fact that A is the most concise and specific answer, test-savvy students may notice the pattern.",
+      "suggestion": "Pad option A slightly, e.g., 'Apply a policy in `finance` on `app: payment` pods allowing ingress from `web` namespace with `role: gateway` on port 8443'."
+    },
+    {
+      "id": "s03-q097",
+      "type": "option-length",
+      "severity": "minor",
+      "what": "Option lengths are imbalanced with trailing whitespace in option C",
+      "detail": "Option A (correct): '`helm install <release> <chart> --set networkPolicy.enabled=true`' (65 chars). Option B: '`helm install <release> <chart> --enable-network-policy` as a flag' (66 chars). Option C: '`kubectl apply -f values.yaml --set networkPolicy.enabled=true`  ' (65 chars with trailing spaces). Option D: '`helm template <chart> | kubectl apply -f -` to render and apply' (64 chars). The options are well-balanced in length, but option C has trailing whitespace (two spaces at the end) which is a minor formatting issue that could appear odd in rendering.",
+      "suggestion": "Remove the trailing whitespace from option C: '`kubectl apply -f values.yaml --set networkPolicy.enabled=true`'"
     }
   ]
 }

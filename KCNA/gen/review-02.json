@@ -1,48 +1,40 @@
 {
   "set": "02",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 4,
   "issues": [
     {
-      "id": "s02-q012",
-      "type": "ambiguous",
+      "id": "s02-q005",
+      "type": "giveaway",
       "severity": "moderate",
-      "what": "Option B (init container + emptyDir read-only) is also a valid and commonly used approach",
-      "detail": "The question asks for 'the correct approach' to make a ConfigMap file available read-only at a specific path. Option A (readOnly + subPath) is correct, but Option B (init container copies ConfigMap to emptyDir, mount emptyDir read-only) is also a fully valid and widely used pattern in production. The explanation dismisses B as 'unnecessary complexity', but it is a legitimate approach, especially when additional preprocessing of the config file is needed. Both approaches achieve the stated requirement. The question should ask for the 'most direct' or 'simplest' approach to disambiguate.",
-      "suggestion": "Change the stem from 'What is the correct approach?' to 'What is the most straightforward Kubernetes-native approach?' to make clear that the simplest solution is preferred. Alternatively, modify option B to be more clearly wrong, e.g., by introducing a factual error in its description."
+      "what": "SVG diagram visually reveals the correct answer by showing two separate boxes",
+      "detail": "The SVG diagram shows the 'Volume Mount: /etc/config' heading with two separate rectangular boxes labeled 'app.properties' and 'logging.conf' displayed side-by-side. This visual layout directly suggests the correct answer (B: 'A directory with two files, app.properties and logging.conf, each holding its value') by depicting the keys as two independent entities. The other options (single combined file, subdirectories, single JSON file) are visually contradicted by the diagram showing two distinct boxes. A student could select the correct answer purely from the diagram without knowing Kubernetes ConfigMap volume behavior.",
+      "suggestion": "Redesign the diagram to be neutral: show a single box labeled 'ConfigMap: app-config' with the two keys listed inside it as data entries, then an arrow pointing to '/etc/config' with a '?' label. Remove the two separate boxes that depict the keys as individual file-like entities. The diagram should illustrate the setup (ConfigMap with keys), not the result (how files appear)."
     },
     {
       "id": "s02-q012",
-      "type": "mcq_quality",
+      "type": "option_length",
       "severity": "minor",
-      "what": "Option D is obviously wrong due to nonsensical claim",
-      "detail": "Option D states 'Mount the ConfigMap volume directly at /app/config/settings.yaml; no extra configuration is needed since volumes always mount at the exact file path'. The claim that 'volumes always mount at the exact file path' is so obviously incorrect that it makes this a throwaway option, effectively reducing the question to 3 choices. Anyone with basic Linux or container knowledge knows volumes mount at directories, not file paths, by default.",
-      "suggestion": "Rewrite option D to be a more plausible distractor, e.g., 'Mount the ConfigMap volume at /app/config and use items to select only the settings.yaml key, which makes the mount read-only by limiting visible keys'."
+      "what": "Option D is dramatically longer than all other options including the correct answer",
+      "detail": "Character counts: A (correct, answer=0): 93, B: 93, C: 95, D: 164. Option D is 76% longer than the average of the other three options (93.7 chars). While D is a distractor (not the correct answer), such a dramatic length outlier can still create an unnatural distribution that signals to test-savvy students that D was 'over-explained' to compensate for being wrong. The correct answer A and distractors B/C are tightly clustered (~93-95 chars) while D is almost double.",
+      "suggestion": "Shorten option D to approximately 90-100 chars. For example: 'Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access' (~100 chars)."
     },
     {
-      "id": "s02-q038",
-      "type": "mcq_quality",
-      "severity": "minor",
-      "what": "Option B uses an absolute 'always/never' statement making it obviously wrong",
-      "detail": "Option B states 'File permissions in Secret volumes are always 0644 and cannot be changed by any configuration'. The word 'always' combined with 'cannot be changed by any configuration' is an obvious absolute that experienced test-takers would immediately dismiss, reducing this to effectively a 3-choice question. In contrast, the other options use more measured language.",
-      "suggestion": "Soften option B to make it a more plausible distractor, e.g., 'File permissions in Secret volumes default to 0644 and can only be changed by the container runtime configuration, not through the pod spec'."
-    },
-    {
-      "id": "s02-q087",
-      "type": "ambiguous",
+      "id": "s02-q074",
+      "type": "option_length",
       "severity": "moderate",
-      "what": "The scenario does not clearly establish a namespace mismatch; the kubelet cache/timing explanation is also plausible",
-      "detail": "The question states the ConfigMap was 'recently deleted and recreated with the same name' and asks what 'likely happened'. The correct answer (B) claims it was recreated in a different namespace. However, the question says 'the same name' without mentioning a namespace change, and option C (kubelet cache propagation delay) is also a plausible explanation for a transient 'not found' error shortly after recreation. The explanation dismisses C by saying cache delay is 'transient', but the question says the pod is currently in CreateContainerConfigError, which could be a transient state. The stem should hint at why a namespace mismatch is the likely cause.",
-      "suggestion": "Add a hint to the stem, e.g., 'The ConfigMap was recently deleted and recreated with the same name by a different team member.' Or change the scenario to explicitly state the error persists after several minutes, ruling out cache delay. Alternatively, add a detail like 'kubectl get configmap app-settings shows the ConfigMap exists' (implying the user checked the wrong namespace)."
+      "what": "Correct answer is 43% longer than the average distractor length",
+      "detail": "Character counts: A (correct, answer=0): 165, B: 112, C: 117, D: 116. Average of distractors B/C/D: 115 chars. The correct answer A is 43.5% longer than the distractor average. The correct option lists three specific metric names while each distractor lists only two metrics. A test-savvy student could identify the correct answer by observing it is the most detailed and longest option, following the common MCQ pattern where the correct answer is the most thorough.",
+      "suggestion": "Equalize lengths by either (1) shortening option A, e.g., '`kube_pod_container_status_restarts_total` with `last_terminated_reason` filtering for OOMKilled, plus resource limits metrics' (~110 chars), or (2) lengthening the distractors to include more descriptive text bringing them to ~150 chars each."
     },
     {
-      "id": "s02-q094",
-      "type": "ambiguous",
+      "id": "s02-q021",
+      "type": "option_length",
       "severity": "minor",
-      "what": "Option A (shared ConfigMap with coupling trade-off) is a valid pragmatic choice that many teams use",
-      "detail": "The question asks for the 'recommended approach' to reduce config duplication across 15 services sharing the same Redis config. Option C (Helm library templates / Kustomize overlays) is marked correct and is the most sophisticated approach. However, option A (single shared ConfigMap, accepting coupling) is a perfectly valid and widely used approach for shared infrastructure config like Redis connection details, which change infrequently and affect all consumers equally. The question's framing as 'recommended' rather than 'ideal' makes both defensible.",
-      "suggestion": "Strengthen the stem by adding context that makes coupling a clear problem, e.g., 'The team frequently updates Redis settings per-service for testing purposes' or 'Some services may need to migrate to different Redis instances independently'. This would make the coupling trade-off in option A clearly unacceptable."
+      "what": "Correct answer D is shortest while distractor C is notably longer",
+      "detail": "Character counts: A: 96, B: 96, C: 143, D (correct, answer=3): 91. Average of distractors A/B/C: 111.7 chars. The correct answer D is 18.5% shorter than the distractor average. Option C (143 chars) includes extra qualifying clauses ('requiring a new image build for every config change across all environments') that function somewhat as a self-defeating distractor by overemphasizing the drawback within the option text itself. A test-savvy student might pick the shortest, cleanest option.",
+      "suggestion": "Trim option C to reduce the gap. For example: 'Build a new container image with the updated configuration baked in for every environment' (~88 chars). Also consider slightly extending option D: 'Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference' (~105 chars)."
     }
   ]
 }

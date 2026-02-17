@@ -1,48 +1,64 @@
 {
   "set": "06",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 7,
   "issues": [
     {
-      "id": "s06-q008",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram labels reveal the correct scheduling mechanism",
-      "detail": "The SVG diagram includes the text 'topologyKey: kubernetes.io/hostname' at the bottom inside a labeled box. The correct answer B is 'Pod affinity with topologyKey: kubernetes.io/hostname specified'. The diagram directly names the exact topology key and mechanism that appears verbatim in the correct option, making the question trivially solvable by reading the diagram without understanding pod affinity concepts.",
-      "suggestion": "Remove the 'topologyKey: kubernetes.io/hostname' text from the bottom box. Replace it with a neutral label such as 'Same Node' or 'Node X' to show co-location without revealing the scheduling construct used."
+      "id": "s06-q010",
+      "type": "option_length_balance",
+      "severity": "minor",
+      "what": "Option C has suspicious trailing filler word 'component'",
+      "detail": "Option C: 'etcd -> kubelet -> kube-apiserver -> kube-proxy -> kube-controller-manager component' has the word 'component' appended, which reads unnaturally compared to the parallel structure of the other three options that use only component names separated by arrows. This inconsistency makes C look padded.",
+      "suggestion": "Remove 'component' from the end of option C so it reads 'etcd -> kubelet -> kube-apiserver -> kube-proxy -> kube-controller-manager'."
     },
     {
-      "id": "s06-q019",
-      "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram visual cues hint at the correct answer",
-      "detail": "The SVG diagram uses a red dashed line from the Service to the evicting Pod labeled 'removed', while healthy pods have solid green lines. The red dashed styling with 'removed' text strongly hints that the connection (endpoint) is being removed, pointing directly to answer B ('The endpoint controller removes the terminating Pod from Service Endpoints'). The green bottom box 'What happens to the Service endpoints?' is neutral, but the 'removed' label on the dashed line gives away the mechanism.",
-      "suggestion": "Remove the 'removed' text label from the dashed line connecting the Service to the evicting Pod. The dashed red styling alone without the label would show the pod is in a different state without directly revealing the endpoint removal mechanism."
+      "id": "s06-q016",
+      "type": "option_length_balance",
+      "severity": "medium",
+      "what": "Correct answer D is dramatically longer than all other options",
+      "detail": "Option D (correct, answer index 3): '`kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed' is ~102 chars. Options A (~58 chars), B (~60 chars), C (~66 chars) average ~61 chars. D is ~67% longer than the average of the other three, far exceeding the 30% outlier threshold. The longest-is-correct pattern is a known test-taking giveaway.",
+      "suggestion": "Shorten D to something like '`kubectl drain` skips DaemonSet-managed Pods unless `--ignore-daemonsets` is passed'. Alternatively, pad A/B/C with additional detail."
     },
     {
-      "id": "s06-q036",
-      "type": "giveaway",
+      "id": "s06-q035",
+      "type": "giveaway_formatting",
       "severity": "minor",
-      "what": "Diagram annotation text directly states the answer",
-      "detail": "The diagram includes the text 'Filter removes ineligible nodes; Score ranks the rest' and 'Node C: filtered out (taint, resource, etc.)'. The correct answer B is 'Nodes that do not meet the Pod's hard constraints are eliminated'. The diagram annotation 'Filter removes ineligible nodes' is a near-paraphrase of the correct answer, making the question trivially solvable by reading the diagram caption.",
-      "suggestion": "Remove or simplify the explanatory caption text. Replace 'Filter removes ineligible nodes; Score ranks the rest' with a neutral label like 'What happens in each phase?' and remove 'Node C: filtered out' explanation, leaving just the visual of Node C in dashed/red styling."
+      "what": "Distractor options have awkward trailing filler words that make them look artificial",
+      "detail": "Option A (correct): '`scheduler_scheduling_attempt_duration_seconds`'. Options B/C/D have trailing filler: 'metric name', 'metric name', 'metric name type'. These filler words are inconsistent with option A and draw attention to A as the only naturally-formatted option, acting as a subtle giveaway.",
+      "suggestion": "Remove the trailing filler from B, C, D so all four options are just backtick-formatted metric names. This makes all options stylistically consistent."
     },
     {
       "id": "s06-q056",
-      "type": "ambiguous",
+      "type": "giveaway_keyword",
       "severity": "minor",
-      "what": "Both container runtime and CNI plugin issues cause NotReady status",
-      "detail": "The question asks which component is 'most likely misconfigured' when a newly joined node shows NotReady. The correct answer is D (CNI plugin), but the explanation itself acknowledges 'The kubelet reports a node as NotReady when the container runtime or network plugin is not functioning.' Option B (container runtime such as containerd) is equally plausible. The explanation's attempt to distinguish them ('the question asks about the most likely cause when kubelet is running') is weak since a misconfigured container runtime would not prevent the kubelet from running either.",
-      "suggestion": "Strengthen the question stem to narrow toward CNI specifically. For example, add context like 'The kubelet logs show runtime is healthy but network plugin is not ready' or 'The node conditions show KubeletReady but NetworkUnavailable'. Alternatively, change option B to something clearly wrong like 'The kube-apiserver certificate for node communication'."
+      "what": "Stem explicitly states 'NetworkUnavailable: True' which directly reveals the CNI answer",
+      "detail": "The stem says the node condition shows 'NetworkUnavailable: True'. The NetworkUnavailable condition in Kubernetes is set specifically when the CNI plugin is not configured. This makes option D ('The CNI plugin for Pod network setup') almost directly readable from the stem without needing deeper understanding. While this resolves the previous round's ambiguity between runtime and CNI, it makes the question too easy.",
+      "suggestion": "Soften the stem to something like 'but the node conditions show an issue with networking readiness' without naming the exact condition, or keep it as-is if the goal is to test knowledge of the NetworkUnavailable condition mapping."
     },
     {
-      "id": "s06-q100",
-      "type": "giveaway",
+      "id": "s06-q067",
+      "type": "giveaway_self_defeating",
       "severity": "minor",
-      "what": "Diagram visual cues hint that all taints are matched",
-      "detail": "The SVG diagram shows three different taints, each with a green dashed line connecting to the central 'Which taints are matched?' box. Drawing green lines from ALL three taints to the center visually implies that all three are matched, directly hinting at the correct answer C ('All taints are matched, it is a wildcard toleration'). If only some were matched, the visual would show fewer connections.",
-      "suggestion": "Use a uniform neutral color (e.g., gray) for the connecting lines instead of green, or use question-mark labels on each line (e.g., 'match?' on each) to avoid implying all are matched. Alternatively, remove the connecting lines entirely and just show the three taints above and the question box below."
+      "what": "Option D is a weak distractor claiming globalDefault is not a valid field",
+      "detail": "Option D states '`globalDefault` is not a recognized valid field in the PriorityClass resource spec'. This is easily eliminated by anyone with basic PriorityClass familiarity, as globalDefault is commonly documented and used. It effectively reduces the question to 3 choices.",
+      "suggestion": "Replace D with a more plausible distractor, e.g. 'The `globalDefault` field requires all existing Pods to be restarted before the new default takes effect'."
+    },
+    {
+      "id": "s06-q088",
+      "type": "giveaway_formatting",
+      "severity": "minor",
+      "what": "Correct answer is the only option containing a concrete kubectl command",
+      "detail": "Option D (correct) includes '`kubectl get nodes`' -- a specific command with backtick formatting. Options A, B, C are all abstract descriptions without any concrete commands. Test-takers trained to look for the most specific/actionable option will gravitate to D purely on stylistic grounds.",
+      "suggestion": "Add a concrete command to at least one distractor, e.g. change C to 'Add a manual approval gate where an operator runs `kubectl cluster-info` to visually inspect readiness'."
+    },
+    {
+      "id": "s06-q070",
+      "type": "factual_accuracy",
+      "severity": "low",
+      "what": "The etcd default database size answer is correct but the explanation's detail about 8 GB could be refined",
+      "detail": "The answer D (2 GB) is correct. The explanation for option C states '8 GB is the recommended maximum configurable size, not the default'. The etcd documentation states the maximum recommended size is 8 GB, but the hard maximum is configurable beyond that. The distinction is accurate enough for a KCNA-level question. This is informational only.",
+      "suggestion": "No change required. The factual content is sufficiently accurate for the certification level."
     }
   ]
 }

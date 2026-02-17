@@ -1,32 +1,48 @@
 {
   "set": "01",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
-  "issues_found": 3,
+  "issues_found": 5,
   "issues": [
+    {
+      "id": "s01-q003",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram arrow label 'manages' points from the mystery component box to the Pod, narrowing the answer",
+      "detail": "The SVG diagram shows a Worker Node with a '???' box (the mystery component), a Container Runtime, and a Pod containing a crashed and restarting container. A dashed yellow arrow from '???' to the Pod is labeled 'manages'. While multiple components interact with Pods, the 'manages' label combined with the visible Container Runtime (shown as separate) strongly hints at the kubelet (answer index 2), since the Container Runtime is already visible and labeled. The test-taker can reason: it is not the Container Runtime (already shown), so it must be the kubelet.",
+      "suggestion": "Remove the 'manages' label from the arrow, or replace it with a neutral label like '???' to avoid revealing the relationship. Alternatively, remove the arrow entirely and just show the mystery box alongside the Pod."
+    },
+    {
+      "id": "s01-q038",
+      "type": "option_length",
+      "severity": "minor",
+      "what": "Correct option D (index 3) is noticeably shorter than the other three options",
+      "detail": "Option lengths: A='`inventory-api.production.pod.cluster.local`' (49 chars), B='`inventory-api.cluster.local` as short name' (44 chars), C='`production.inventory-api.svc.cluster.local`' (45 chars), D='`inventory-api` or the FQDN `.svc` suffix' (42 chars). The correct answer D is the shortest at 42 chars. While the percentage difference is only ~11% from the average of others (46), the options are all short DNS-style answers and the correct one has a distinctly different structure (uses 'or' to combine two forms), which makes it stand out as 'the one that covers multiple cases' — a common test-taking giveaway pattern.",
+      "suggestion": "Rewrite option D to be more specific about the full FQDN, e.g.: '`inventory-api` as the short name, or `inventory-api.production.svc.cluster.local`' to match the specificity level of the other options."
+    },
     {
       "id": "s01-q067",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram directly reveals the Service type hierarchy that is the correct answer",
-      "detail": "The SVG diagram shows three stacked boxes labeled 'External LoadBalancer', 'NodePort (auto)', and 'ClusterIP (auto)' in a top-down hierarchy with connecting lines, plus three Pods below. The '(auto)' annotations on NodePort and ClusterIP directly reveal that LoadBalancer automatically includes both, which is exactly what option A (index 0) states: 'LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three.' A student can read the answer from the diagram without any Kubernetes knowledge.",
-      "suggestion": "Replace the diagram with one that shows only a LoadBalancer Service with both a ClusterIP and an external IP visible (as the question text describes), without labeling the hierarchy or using '(auto)' annotations. For example, show a Service box with two IP addresses (internal and external) and Pods behind it, letting the student determine the relationship from their knowledge."
+      "what": "Diagram shows both ClusterIP and External IP on the Service box, directly hinting at the hierarchical answer",
+      "detail": "The SVG diagram shows a Service box with both 'ClusterIP: 10.96.x.x' and 'External IP: 203.0.x.x' displayed, plus three Pods below it. The question asks how LoadBalancer relates to other Service types. The diagram visually demonstrates that a LoadBalancer Service has BOTH a ClusterIP and an external IP, which directly supports option A (index 0): 'LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three.' The diagram eliminates options B (independent), C (replaces ClusterIP), and D (headless) by visually showing both IPs coexist.",
+      "suggestion": "Simplify the diagram to show just a generic Service box with a '?' about how external and internal access relate, without showing both IP types simultaneously. Or show the Service with only the external IP and the question mark about internal access."
     },
     {
       "id": "s01-q073",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram shows the exact numbered sequence that is the correct answer",
-      "detail": "The SVG diagram displays a numbered sequence: '1. API Server - stores Deployment in etcd', '2. Controller Mgr - creates ReplicaSet -> Pods', '3. Scheduler - assigns Pods to nodes', '4. Kubelet - starts containers on node'. The correct answer (option C, index 2) describes this exact sequence: 'API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers.' The diagram literally spells out the answer step by step.",
-      "suggestion": "Replace the diagram with one that shows the control plane components without numbered steps or action descriptions. For example, show the API Server, Controller Manager, Scheduler, etcd, and Kubelet as boxes with unlabeled connecting lines, and ask the student to identify the correct ordering from their knowledge."
+      "what": "Diagram layout visually reveals the correct component ordering sequence",
+      "detail": "The SVG diagram shows: API Server at the top, Controller Mgr on the left, Scheduler in the center, etcd on the right, and Kubelet at the bottom. Lines flow from API Server down to all control plane components, and from Scheduler down to Kubelet. The text '? What is the correct order ?' is displayed. The spatial layout (API Server -> Controller Mgr + Scheduler -> Kubelet) mirrors the correct answer (option C, index 2): 'API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers.' The top-to-bottom visual flow gives away the sequence.",
+      "suggestion": "Arrange the components in a non-sequential layout, such as a ring or grid, without the top-to-bottom flow that implies ordering. Remove directional lines that suggest sequence."
     },
     {
       "id": "s01-q094",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram annotation reveals the blue-green switching mechanism that is the correct answer",
-      "detail": "The SVG diagram shows two Deployments (Blue v1 and Green v2), a Service box, and a text annotation at the bottom reading 'Switch selector: version=v1 -> version=v2'. The correct answer (option B, index 1) states: 'Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods'. The diagram's annotation explicitly describes the selector-switch mechanism, making the answer readable directly from the visual without any prior knowledge.",
-      "suggestion": "Remove or neutralize the annotation text. Show the two Deployments, the Service, and connecting lines without revealing the switching mechanism. For example, show the Service with a '?' or just connecting lines to both Deployments, letting the student determine how traffic is switched."
+      "what": "Diagram shows two Deployments with a Service and connecting lines that reveal the selector-switch mechanism",
+      "detail": "The SVG diagram shows 'Blue (v1)' and 'Green (v2)' as two separate boxes with a Service box above them. A solid line connects Service to Blue, and a dashed line connects Service to Green. The dashed line from Service to Green (the new version) visually suggests that traffic WILL switch to Green, which is exactly the mechanism in the correct answer (option B, index 1): 'Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods.' The solid vs dashed line styling reveals the switching mechanism.",
+      "suggestion": "Use the same line style (both solid or both dashed) for the connections from the Service to both Deployments, so neither is visually favored. Alternatively, show no connecting lines and let the student determine the traffic routing mechanism."
     }
   ]
 }

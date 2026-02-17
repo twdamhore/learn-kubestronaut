@@ -1,48 +1,48 @@
 {
   "set": "07",
-  "round": 16,
+  "round": 17,
   "total_reviewed": 100,
   "issues_found": 5,
   "issues": [
     {
-      "id": "s07-q004",
+      "id": "s07-q046",
       "type": "giveaway",
       "severity": "minor",
-      "what": "SVG diagram text directly states the answer",
-      "detail": "The diagram includes the text 'Linux kernel sends SIGKILL (signal 9) when cgroup memory limit exceeded' and 'Exit code = 128 + 9 = 137', which directly spells out the answer (option C: the container exceeded its configured limits.memory and the Linux kernel killed it). A student can read the diagram alone to answer without any Kubernetes knowledge.",
-      "suggestion": "Simplify the diagram to show only the generic lifecycle states (Running -> Terminated) without mentioning the cgroup memory limit mechanism or the exit code calculation. The explanation already covers these details."
-    },
-    {
-      "id": "s07-q018",
-      "type": "giveaway",
-      "severity": "minor",
-      "what": "Distractors are self-defeating by explaining why they are wrong",
-      "detail": "Options A, C, and D each include explanatory clauses that reveal they are not the correct answer. Option A says 'for a one-time sorted list' (contradicts 'continuously updating'), option C says 'but does not track restart counts', and option D says 'but not live updates'. These self-disqualifying phrases make it trivial to eliminate distractors without knowledge, leaving only option B.",
-      "suggestion": "Remove the parenthetical explanatory phrases from each option. For example: A: '`kubectl get pods -A --sort-by=...`' B: '`kubectl get pods -A --watch`' C: '`kubectl top pods --all-namespaces`' D: '`kubectl get events -A --field-selector reason=Killing`'. Let the student determine which provides continuous output."
+      "what": "All three distractors are self-defeating with embedded explanations of why they are wrong",
+      "detail": "Each incorrect option contains a trailing clause that explicitly disqualifies it: A ends with 'which only shows terminal pod states and not gradual memory trends', C ends with 'which lacks per-container granularity for leaks', and D ends with 'which is reactive and only triggers after OOM events'. Meanwhile, the correct answer (B) has a purely positive description: 'tracked over time, showing continuous upward trend approaching the limit'. A test-taker can eliminate A/C/D purely by reading the self-disqualifying phrases, without any Prometheus knowledge.",
+      "suggestion": "Remove the explanatory clauses from distractors and make them neutral: A: '`kube_pod_status_phase` filtered to `Failed` to detect pods entering terminal failure states', C: '`node_memory_MemAvailable_bytes` to monitor available memory on each node in the cluster', D: '`kube_pod_container_status_restarts_total` to count the number of container restarts over time'."
     },
     {
       "id": "s07-q055",
-      "type": "ambiguous",
-      "severity": "minor",
-      "what": "Options A and B overlap significantly; B is essentially a restatement of a consequence of A",
-      "detail": "Option A says 'policyTypes includes Egress but no egress rules are defined, all outbound traffic (including DNS) is denied'. Option B says 'The NetworkPolicy blocks all traffic including DNS queries, so the pods cannot resolve any hostnames'. These are effectively the same explanation from different angles. The explanation even acknowledges this: 'B: This is a consequence of option A (DNS uses egress), not a separate root cause explanation.' A well-prepared student could reasonably argue B is also correct since it describes the same mechanism.",
-      "suggestion": "Replace option B with a clearly distinct distractor, e.g., 'The NetworkPolicy Ingress rule only allows traffic from app=frontend, so all other pods including the database are denied inbound connections to the api pods' which is true but does not explain the COMPLETE communication breakdown (it only explains half of it)."
+      "type": "giveaway",
+      "severity": "major",
+      "what": "SVG diagram annotations directly reveal the answer mechanism",
+      "detail": "The diagram contains text annotations that spell out the answer: 'Without an egress section, all egress is implicitly denied' and 'CORRECTION: egress is only denied if egress policyType is set' and 'Check policyTypes field to understand actual behavior'. The 'deny' label (in red) on the api->database arrow and the 'allow' label (in green) on the frontend->api arrow visually show the traffic flow. These directly explain why the correct answer (A: policyTypes includes Egress but no egress rules defined) is correct.",
+      "suggestion": "Simplify the diagram to show only the three pods (frontend, api, database) and arrows indicating traffic flow directions, without labeling them as 'allow' or 'deny' and without the explanatory text annotations. Remove all lines after the database rect. Let the student determine the policy effect."
     },
     {
       "id": "s07-q056",
-      "type": "giveaway",
+      "type": "option_length",
       "severity": "minor",
-      "what": "Correct option is significantly longer and more descriptive than distractors",
-      "detail": "Option D (the correct answer) is notably more detailed: 'spec.progressDeadlineSeconds -- defines the timeout after which a stalled Deployment reports ProgressDeadlineExceeded'. Options A, B, and C have shorter, simpler descriptions. The additional specificity and the inclusion of the exact condition name 'ProgressDeadlineExceeded' makes the correct answer stand out by length and detail.",
-      "suggestion": "Equalize option lengths. For example, add similar detail to the distractors: A: 'spec.template.spec.terminationGracePeriodSeconds -- defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process' B: 'spec.strategy.rollingUpdate.maxSurge -- defines the maximum number of pods above desired count during an update rollout'."
+      "what": "Correct answer (D) is notably shorter than the other three options",
+      "detail": "Character counts: A=155 ('spec.template.spec.terminationGracePeriodSeconds -- defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process'), B=124, C=132, D=103 (correct: 'spec.progressDeadlineSeconds -- defines the timeout after which a stalled Deployment reports ProgressDeadlineExceeded'). Average of A/B/C=137. D is 24.8% shorter than the average of the others, exceeding the 15% threshold.",
+      "suggestion": "Pad option D slightly: '`spec.progressDeadlineSeconds` -- defines the maximum time the Deployment controller waits for rollout progress before reporting a `ProgressDeadlineExceeded` condition'."
+    },
+    {
+      "id": "s07-q055",
+      "type": "option_length",
+      "severity": "minor",
+      "what": "Correct answer (A) is significantly longer than all other options",
+      "detail": "Character counts: A=156 (correct: 'Because policyTypes includes Egress but no egress rules are defined, all outbound traffic (including DNS) is denied alongside unrestricted ingress being locked down'), B=118, C=120, D=108. Average of B/C/D=115. A is 35.6% longer than the average of the others, well exceeding the 15% threshold. The correct answer stands out as the longest option.",
+      "suggestion": "Shorten A and lengthen distractors to balance: A: 'Because policyTypes includes Egress but no egress rules are defined, all outbound traffic including DNS is denied'. Pad B to: 'The NetworkPolicy Ingress rule only allows traffic from app=frontend, so all other pods including database are denied inbound connections to api'."
     },
     {
       "id": "s07-q093",
-      "type": "mcq_quality",
+      "type": "factual",
       "severity": "minor",
-      "what": "Options C and D are obviously implausible, making this effectively a 2-choice question",
-      "detail": "Option C ('The container's storage volume became read-only, forcing an immediate termination with signal 9 from the Linux kernel') is technically nonsensical -- a read-only filesystem does not trigger SIGKILL. Option D ('The container image has a known bug that causes exit code 137 on any Linux system') is absurd since exit code 137 is a kernel-level signal, not an application-chosen exit code. Both are so clearly wrong that any student with basic Linux knowledge can eliminate them, reducing this to a 2-choice question between A and B.",
-      "suggestion": "Replace C and D with more plausible distractors, e.g., C: 'The container exceeded its configured CPU limits, causing the kernel to terminate the process with SIGKILL' and D: 'The node kubelet sent SIGKILL because the container failed to respond to a graceful shutdown SIGTERM within the termination grace period'."
+      "what": "Option D describes a legitimate cause of exit code 137 that is only differentiated by the subtle 'Reason: Error' vs 'Reason: Killing' distinction",
+      "detail": "Option D ('The kubelet sent SIGKILL because the container failed to respond to a graceful SIGTERM within the terminationGracePeriodSeconds') is a real scenario that produces exit code 137. The explanation correctly notes it would show 'Reason: Killing' not 'Reason: Error', but this is a very subtle distinction that may confuse well-prepared students who know this is a valid SIGKILL source. The question stem does mention 'Reason: Error' but the differentiation is easy to miss.",
+      "suggestion": "Make option D more clearly distinguishable by changing it to a scenario that does NOT produce exit code 137, e.g., 'The kubelet sent SIGTERM (signal 15) because the container failed its liveness probe health check, resulting in exit code 143 (128+15)'. This makes D clearly incorrect because the exit code would be 143, not 137."
     }
   ]
 }
