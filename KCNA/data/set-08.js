@@ -924,12 +924,12 @@ var questions = [
     diagram: null,
     options: [
       "Grafana Loki — a horizontally scalable log aggregation system designed for cost efficiency and simplicity",
-      "Cortex — a horizontally scalable Prometheus-compatible TSDB that is now part of the Mimir project lineage",
+      "Cortex — a horizontally scalable multi-tenant Prometheus-compatible TSDB for long-term metric storage",
       "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
       "Thanos — extends Prometheus with long-term storage, global querying, and downsampling capabilities"
     ],
     answer: 3,
-    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is also CNCF incubating but its active development has largely migrated to the Grafana Mimir project; Thanos remains the standard CNCF answer for extending Prometheus with long-term storage and global querying\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
+    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is a CNCF project with similar capabilities, but Thanos is the standard answer for extending Prometheus with long-term storage and global querying as a CNCF incubating project\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
     verify: null
   },
   {

@@ -683,10 +683,10 @@ var questions = [
       "Individual databases use inherently stronger encryption algorithms",
       "Shared databases cannot be effectively secured with network policies",
       "A breach in one service's database does not expose other services' data",
-      "Individual databases do not require any form of user authentication"
+      "Individual databases reduce the number of network connections that must be monitored"
     ],
     answer: 2,
-    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies; the concern is blast radius, not securability\n- D: All databases require authentication regardless of whether they are shared or per-service\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies; the concern is blast radius, not securability\n- D: Per-service databases actually increase the total number of connections to monitor; the security benefit is blast-radius reduction, not fewer connections\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
