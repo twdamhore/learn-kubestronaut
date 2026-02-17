@@ -1,72 +1,24 @@
 {
   "set": "04",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
-  "issues_found": 8,
+  "issues_found": 2,
   "issues": [
     {
       "id": "s04-q013",
-      "type": "factual_accuracy",
-      "severity": "high",
-      "what": "Longhorn graduated from CNCF in November 2024, making the question ambiguous with two valid answers",
-      "detail": "The question asks which CNCF graduated project provides 'distributed block storage specifically designed for Kubernetes.' The correct answer is Rook (option C, index 2). However, Longhorn (option A) graduated from CNCF on November 20, 2024. The explanation states 'Longhorn is a CNCF incubating project, not graduated' which is now factually incorrect. Both Rook and Longhorn are CNCF graduated projects that provide distributed block storage for Kubernetes, so the question now has two correct answers. Additionally, the explanation for option D states 'OpenEBS is a CNCF sandbox project, not graduated' but OpenEBS has been archived from CNCF.",
-      "suggestion": "Rewrite the question to focus on a distinguishing attribute. For example: 'Which CNCF graduated project provides storage orchestration by managing Ceph clusters on Kubernetes?' This makes Rook uniquely correct. Update the Longhorn explanation to 'Longhorn is also a CNCF graduated project providing block storage but does not orchestrate Ceph clusters' and update OpenEBS to 'OpenEBS was a CNCF sandbox project (now archived), not graduated.'"
-    },
-    {
-      "id": "s04-q022",
-      "type": "factual_accuracy",
-      "severity": "medium",
-      "what": "Explanation uses wrong letter label: says 'B' when it should say 'C'",
-      "detail": "The correct answer is option B (index 1: 'Deploy a distributed storage solution like Ceph via Rook...'). The 'Why other options are wrong' section lists: 'A: Manual backup scripts...' (correct), 'B: A single NFS server is a single point of failure...' (WRONG letter), 'D: Disabling persistence...' (correct). The text about 'A single NFS server' describes option C ('Store all data on a single NFS server located outside the cluster...'), not option B. Option C's explanation is labeled as B, and option C is never referenced.",
-      "suggestion": "Change '- B: A single NFS server is a single point of failure and does not provide self-healing distributed storage' to '- C: A single NFS server is a single point of failure and does not provide self-healing distributed storage'."
-    },
-    {
-      "id": "s04-q096",
-      "type": "option_length_balance",
-      "severity": "moderate",
-      "what": "Correct option D is 30% longer than the average of the other three options",
-      "detail": "Character counts: A=93, B=99, C=100, D=127 (correct). Average of distractors (A,B,C)=97.3. Option D is 30.5% longer, exceeding the 15% threshold. The comparative clause 'while ReadWriteOnce allows multiple pods on the same node' adds length to the correct answer that the distractors lack, making it stand out as the more nuanced/complete option.",
-      "suggestion": "Shorten option D to remove the comparative clause, e.g., '`ReadWriteOncePod` restricts the volume to exactly one pod across the entire cluster, not just one node'. Then pad a distractor, e.g., option A: 'They are identical in behavior; `ReadWriteOncePod` is simply a renamed alias introduced to replace `ReadWriteOnce` in newer API versions'."
-    },
-    {
-      "id": "s04-q077",
-      "type": "giveaway_detection",
-      "severity": "moderate",
-      "what": "SVG diagram directly illustrates the correct answer by showing two independent PV-PVC pairs",
-      "detail": "The diagram shows 'Source PVC' bound to 'PV-source (10Gi)' and 'Clone PVC' bound to 'PV-clone (10Gi)' with a 'clone' arrow between them. This directly depicts the correct answer (option B, index 1): a new PV is provisioned with a copy of the data. Option A (shared PV via symbolic link) is visually contradicted by two separate PVs. Option C (source deleted) is contradicted by the source still being shown. A student can read the answer from the diagram alone.",
-      "suggestion": "Replace 'PV-clone (10Gi)' with 'PV-??? (?Gi)' and change the Clone PVC label to show '???' for its bound state. Alternatively, remove the bottom PV row and show only the PVCs with an ambiguous arrow."
-    },
-    {
-      "id": "s04-q061",
-      "type": "giveaway_detection",
-      "severity": "minor",
-      "what": "SVG diagram illustrates the exact correct procedure: edit PVC -> CSI expands -> PV grows",
-      "detail": "The diagram shows 'PVC: 10Gi (edit to 20Gi)' -> 'CSI Driver (expands volume)' -> 'PV: 20Gi (expanded)', directly depicting the correct answer (option B, index 1). The step labels 'edit to 20Gi', 'expands volume', and 'expanded' reveal the procedure and eliminate options A (delete/recreate), C (edit PV directly), and D (create second PVC).",
-      "suggestion": "Replace step labels with placeholders: 'PVC: 10Gi' -> '??? Process' -> 'PV: ??? Gi'. Remove the revealing annotations."
-    },
-    {
-      "id": "s04-q005",
-      "type": "giveaway_detection",
-      "severity": "minor",
-      "what": "SVG diagram reveals StatefulSet by showing ordinal-named pods with per-replica PVCs",
-      "detail": "The diagram shows pods 'db-0', 'db-1', 'db-2' each with individual PVCs ('pvc-0', 'pvc-1', 'pvc-2') bound to separate PVs. While the controller title says 'Controller ???', the ordinal naming and per-pod PVC pattern are defining StatefulSet characteristics, visually confirming option C (StatefulSet with volumeClaimTemplates) and ruling out the other three options.",
-      "suggestion": "Replace pod names with 'Pod A', 'Pod B', 'Pod C' and PVC labels with 'PVC-A', 'PVC-B', 'PVC-C' to avoid revealing the StatefulSet naming convention."
+      "type": "factual-accuracy",
+      "severity": "major",
+      "what": "Explanation incorrectly says Longhorn is CNCF graduated; it is incubating",
+      "detail": "The explanation for why option A is wrong states 'Longhorn is also a CNCF graduated project providing block storage but does not orchestrate Ceph clusters.' Longhorn is a CNCF incubating project, not graduated. This contradicts Q36 in the same file which correctly identifies Longhorn as 'a CNCF incubating project.'",
+      "suggestion": "Change 'Longhorn is also a CNCF graduated project' to 'Longhorn is a CNCF incubating project' in the explanation."
     },
     {
       "id": "s04-q098",
-      "type": "giveaway_detection",
-      "severity": "minor",
-      "what": "Stem keyword 'maximum number of pods that can be unavailable' maps directly to 'maxUnavailable' field name",
-      "detail": "The question stem asks about 'the maximum number of pods that can be unavailable during a rolling update.' The correct option B contains 'maxUnavailable: 1', which is the literal Kubernetes field name derived from the stem's description. A test-taker could guess correctly by matching the English description to the field name without understanding the feature.",
-      "suggestion": "Rephrase the stem to: 'A team managing a Redis Sentinel StatefulSet wants to speed up rolling updates by allowing more than one pod to be updated simultaneously. Which StatefulSet parameter, when its feature gate is enabled, controls update parallelism?'"
-    },
-    {
-      "id": "s04-q034",
-      "type": "giveaway_detection",
-      "severity": "minor",
-      "what": "SVG annotation 'kubelet decodes' partially reveals the answer about base64 decoding",
-      "detail": "The diagram arrow between 'Secret (base64-encoded data)' and '??? format (on ??? medium)' is annotated with 'kubelet decodes'. This reveals that the kubelet performs decoding of base64 data, which directly supports correct answer D ('plain-text files in a tmpfs filesystem where the base64 encoding is decoded automatically') and eliminates option B ('base64-encoded files on-disk').",
-      "suggestion": "Change the arrow annotation from 'kubelet decodes' to 'kubelet processes' or remove the annotation entirely, keeping only the '??? format' and '??? medium' placeholders as unknowns."
+      "type": "stem-answer-mismatch",
+      "severity": "medium",
+      "what": "Option shows maxUnavailable: 1 (default) but stem asks about speeding up updates",
+      "detail": "The stem says the team 'wants to speed up rolling updates by allowing more than one pod to be updated simultaneously'. The correct answer shows `maxUnavailable: 1` which is the default single-pod behavior and does not speed anything up. The explanation even says `maxUnavailable: 2` would allow two pods simultaneously.",
+      "suggestion": "Change the option to: '`spec.updateStrategy.rollingUpdate.maxUnavailable` — controls how many pods can be down during the update' (remove the specific value of 1)."
     }
   ]
 }

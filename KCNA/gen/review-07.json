@@ -1,40 +1,40 @@
 {
   "set": "07",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
   "issues_found": 4,
   "issues": [
     {
-      "id": "s07-q046",
-      "type": "giveaway",
+      "id": "s07-q037",
+      "type": "diagram-reveals-answer",
       "severity": "minor",
-      "what": "All three distractors contain self-defeating trailing clauses that explain why they are wrong",
-      "detail": "Each incorrect option ends with a disqualifying phrase: A ends with 'which only shows terminal pod states and not gradual memory trends', C ends with 'which lacks per-container granularity for leaks', D ends with 'which is reactive and only triggers after OOM events'. The correct answer B has a purely positive description ('tracked over time, showing continuous upward trend approaching the limit'). A test-taker can eliminate A/C/D by reading those embedded explanations without needing Prometheus knowledge.",
-      "suggestion": "Remove the self-disqualifying clauses from distractors. Rewrite as neutral descriptions: A: '`kube_pod_status_phase` filtered to `Failed` to detect pods entering terminal failure states before OOM events occur', C: '`node_memory_MemAvailable_bytes` to monitor available memory on each node hosting the application pods', D: '`kube_pod_container_status_restarts_total` to count the number of container restarts and correlate with memory trends'."
+      "what": "SVG diagram text directly states the correct answer (300s startup, probes disabled)",
+      "detail": "The diagram contains 'Max startup time: 30 x 10 = 300s' and 'Liveness + Readiness disabled until startup succeeds' which directly states the correct answer (option C). A test-taker can answer from the diagram alone.",
+      "suggestion": "Replace the diagram text with neutral labels like 'Phase 1: ???' and 'Phase 2: ???' to remove the direct answer reveal."
     },
     {
-      "id": "s07-q055",
-      "type": "giveaway",
-      "severity": "major",
-      "what": "SVG diagram annotations directly reveal the answer mechanism",
-      "detail": "The diagram contains text annotations that explicitly state the answer: 'Without an egress section, all egress is implicitly denied', 'CORRECTION: egress is only denied if egress policyType is set', and 'Check policyTypes field to understand actual behavior'. The 'deny' label (in red) on the api->database arrow and 'allow' label (in green) on the frontend->api arrow also visually reveal the traffic policy. A test-taker can answer purely from reading the diagram text without analyzing the question or options.",
-      "suggestion": "Remove all explanatory text annotations from the diagram. Keep only the three pod boxes (frontend, api with 'selected' highlight, database) and neutral directional arrows without allow/deny labels or color-coded hints. Let the student determine traffic flow effects from the question stem."
+      "id": "s07-q078",
+      "type": "diagram-reveals-answer",
+      "severity": "minor",
+      "what": "SVG diagram text states 'Rollout stalled' and 'Old pods preserved', matching correct answer",
+      "detail": "The diagram reads 'Rollout stalled: new pod never Ready' and 'Old pods preserved (maxUnavailable=0)' which is a verbatim summary of option B (correct).",
+      "suggestion": "Replace diagram text with neutral labels like 'What happens to old pods?' and 'What happens to the rollout?' using '???' placeholders."
     },
     {
       "id": "s07-q056",
-      "type": "option_length",
+      "type": "option-length-balance",
       "severity": "minor",
-      "what": "Correct answer (D) is notably shorter than the other three options",
-      "detail": "Character counts: A~155, B~138, C~148, D~119 (correct). Average of A/B/C = 147. D is ~19% shorter than the average of the other three, exceeding the 15% threshold. The shortest option being correct can cue test-wise students.",
-      "suggestion": "Pad option D to match the other options' length: '`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before reporting the condition `ProgressDeadlineExceeded` as failed'."
+      "what": "Correct answer (D) is ~19% longer than distractor average",
+      "detail": "Correct answer D is ~176 chars vs ~149 avg for others (19% longer). The description extends further with 'before reporting the condition ProgressDeadlineExceeded as failed'.",
+      "suggestion": "Shorten to '`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before marking it as failed'."
     },
     {
       "id": "s07-q093",
-      "type": "factual",
-      "severity": "minor",
-      "what": "Option B includes 'liveness probe' as an example SIGKILL source, but liveness probe kills typically show Reason: Killing, not Reason: Error",
-      "detail": "The question stem specifies the container's State shows 'Reason: Error'. Option B (correct answer) lists 'the liveness probe or a manual kill -9' as SIGKILL sources. However, when the kubelet kills a container due to liveness probe failure, the terminated state reason is typically 'Killing', not 'Error'. Only external SIGKILL sources (manual kill -9, kernel OOM without annotation) produce 'Reason: Error'. Including 'liveness probe' in option B blurs the distinction the question is testing and overlaps with option D's scenario.",
-      "suggestion": "Remove the liveness probe reference from option B: 'The container received a SIGKILL (signal 9) from an external source such as a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure'. This makes B unambiguously correct and clearly distinct from D."
+      "type": "option-length-balance",
+      "severity": "major",
+      "what": "Correct answer (B) is ~33% longer than distractor average",
+      "detail": "Correct answer B is ~166 chars vs ~125 avg for others (33% longer, 42% longer than shortest option A at ~117). Packs two specific examples while other options are concise.",
+      "suggestion": "Shorten to 'The container received a SIGKILL (signal 9) from an external source such as a manual kill command or system-level memory pressure'."
     }
   ]
 }

@@ -1,48 +1,24 @@
 {
   "set": "02",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s02-q005",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "SVG diagram visually reveals the correct answer by showing two separate file-like boxes",
-      "detail": "The SVG diagram shows the 'Volume Mount: /etc/config' heading with two separate rectangular boxes labeled 'app.properties' and 'logging.conf' displayed side-by-side. This visual layout directly suggests the correct answer (B: 'A directory with two files, app.properties and logging.conf, each holding its value') by depicting the keys as two independent file-like entities. The other options (single combined file, subdirectories, single JSON file) are visually contradicted by the diagram showing two distinct boxes. A student could select the correct answer purely from the diagram without knowing Kubernetes ConfigMap volume behavior.",
-      "suggestion": "Redesign the diagram to be neutral: show a single box labeled 'ConfigMap: app-config' with the two keys listed inside it as data entries, then an arrow pointing to '/etc/config' with a '?' label. Remove the two separate boxes that depict the keys as individual file-like entities. The diagram should illustrate the setup (ConfigMap with keys), not the result (how files appear)."
-    },
-    {
-      "id": "s02-q012",
-      "type": "option_length",
-      "severity": "minor",
-      "what": "Option D is dramatically longer than all other options including the correct answer",
-      "detail": "Character counts: A (correct, answer=0): 93, B: 93, C: 95, D: 164. Option D is 76% longer than the average of the other three options (~93.7 chars). While D is a distractor (not the correct answer), such a dramatic length outlier can still create an unnatural distribution that signals to test-savvy students that D was over-explained to compensate for being wrong. The correct answer A and distractors B/C are tightly clustered (~93-95 chars) while D is almost double.",
-      "suggestion": "Shorten option D to approximately 90-100 chars. For example: 'Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access' (~100 chars)."
-    },
-    {
-      "id": "s02-q021",
-      "type": "option_length",
-      "severity": "minor",
-      "what": "Correct answer D is shortest; distractor C contains self-defeating language",
-      "detail": "Character counts: A: 96, B: 96, C: 143, D (correct, answer=3): 91. Average of distractors A/B/C: 111.7 chars. The correct answer D is 18.5% shorter than the distractor average. Option C (143 chars) includes extra qualifying clauses ('requiring a new image build for every config change across all environments') that function as a self-defeating distractor by overemphasizing the drawback within the option text itself. A test-savvy student might pick the shortest, cleanest option.",
-      "suggestion": "Trim option C to reduce the gap. For example: 'Build a new container image with the updated configuration baked in for every environment' (~88 chars). Also consider slightly extending option D: 'Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference' (~105 chars)."
-    },
-    {
-      "id": "s02-q038",
-      "type": "option_length",
-      "severity": "minor",
-      "what": "Distractor B is a dramatic length outlier at 141 chars vs 94-96 for the other three options",
-      "detail": "Character counts: A: 95, B: 141, C: 96, D (correct, answer=3): 94. Overall average: 106.5 chars. Option B is 32% longer than the overall average and roughly 48% longer than any individual other option. The three non-B options cluster tightly at 94-96 chars while B stands apart at 141 chars. This signals to test-savvy students that B is an over-explained distractor trying to sound authoritative with extra detail, making it easier to eliminate.",
-      "suggestion": "Shorten option B to approximately 95 chars. For example: 'Secret volume file permissions default to 0644 and can only be changed by the container runtime config' (~100 chars)."
-    },
-    {
       "id": "s02-q074",
-      "type": "option_length",
-      "severity": "moderate",
-      "what": "Correct answer is 43% longer than the average distractor length",
-      "detail": "Character counts: A (correct, answer=0): 165, B: 112, C: 117, D: 116. Average of distractors B/C/D: 115 chars. The correct answer A is 43.5% longer than the distractor average. The correct option lists three specific metric names while each distractor lists only two metrics. A test-savvy student could identify the correct answer by observing it is the most detailed and longest option, following the common MCQ pattern where the correct answer is the most thorough.",
-      "suggestion": "Equalize lengths by either (1) shortening option A, e.g., 'Restart count and last-terminated-reason metrics filtered for OOMKilled, combined with resource limits metrics for memory' (~110 chars), or (2) lengthening the distractors to include more descriptive text bringing them to ~150 chars each."
+      "type": "giveaway-self-defeating-distractors",
+      "severity": "major",
+      "what": "All three wrong options explicitly state what they cannot do, making elimination trivial",
+      "detail": "Options B, C, and D each end with a clause that explicitly disqualifies them: B ends with 'but not container-level OOM events', C ends with 'but not memory termination causes', D ends with 'but not individual container kill reasons'. A test-taker can eliminate all three wrong options without any Kubernetes knowledge simply by noticing each wrong option admits its own irrelevance. The correct option A (164 chars) is also noticeably shorter than B (201 chars), C (196 chars), and D (198 chars).",
+      "suggestion": "Rewrite the wrong options to remove the self-defeating 'but not...' clauses. For example: B: '`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, capacity, and resource saturation levels across the cluster', C: '`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network throughput analysis and bandwidth consumption tracking', D: '`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica availability and desired state reconciliation tracking'."
+    },
+    {
+      "id": "s02-q041",
+      "type": "giveaway-keyword-echo",
+      "severity": "medium",
+      "what": "Stem verb 'project' echoes directly to the correct answer's 'projected' volume type",
+      "detail": "The stem says 'A team needs to project multiple ConfigMaps and a Secret into the same directory.' The verb 'project' appears only in the correct answer (D): 'A `projected` volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount'. None of the other three options contain 'project' or 'projected'. A test-taker unfamiliar with projected volumes could still identify the correct answer by matching the stem keyword to the option.",
+      "suggestion": "Rephrase the stem to avoid using the word 'project'. For example: 'A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?'"
     }
   ]
 }

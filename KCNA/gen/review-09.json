@@ -1,48 +1,64 @@
 {
   "set": "09",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 7,
   "issues": [
+    {
+      "id": "s09-q006",
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (B) is 25.8% shorter than distractor average",
+      "detail": "Correct answer is 66 chars vs avg 89.0 for others (25.8% shorter). Noticeably more concise than distractors.",
+      "suggestion": "Pad the correct option slightly, e.g. 'The application sync policy is configured as manual rather than automated, so changes are detected but not applied'."
+    },
+    {
+      "id": "s09-q022",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer (D) uses backticks; distractors have no code formatting",
+      "detail": "Correct answer uses backticks for `namespaceSelector` and `podSelector` while all distractors are plain text.",
+      "suggestion": "Add backtick formatting to at least one distractor."
+    },
+    {
+      "id": "s09-q053",
+      "type": "giveaway-shows-work",
+      "severity": "medium",
+      "what": "Correct answer contains HPA formula with computation while distractors are plain prose",
+      "detail": "Correct answer (D) has 'ceil(currentReplicas * (currentUtilization / targetUtilization)) = ceil(4 * 90/70) = 6' while all others describe behaviors in plain prose. The formula makes it structurally distinct.",
+      "suggestion": "Add formula-like content to at least one distractor, e.g. A: 'It doubles the current count (2 * currentReplicas = 2 * 4 = 8) to bring utilization below threshold'."
+    },
+    {
+      "id": "s09-q061",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Only correct answer (C) uses backticks; distractors have no code formatting",
+      "detail": "Correct answer uses backticks for `scrape_timeout` and `up` while all distractors are plain text.",
+      "suggestion": "Add code formatting to at least one distractor."
+    },
+    {
+      "id": "s09-q073",
+      "type": "formatting-asymmetry",
+      "severity": "minor",
+      "what": "Correct answer (D) uses backticks while other options have inconsistent formatting",
+      "detail": "Option D uses backticks for `Pending`, `ReadWriteOnce`, `ReadWriteMany` while options A/B have none. Mixed backtick/code-tag usage.",
+      "suggestion": "Normalize formatting across all options — add code tags to A and B as well."
+    },
+    {
+      "id": "s09-q098",
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (A) is 24.8% shorter than distractor average",
+      "detail": "Correct answer is 77 chars vs avg 102.3 for others (24.8% shorter). The three distractors are nearly identical in length while the correct answer is notably shorter.",
+      "suggestion": "Expand option A slightly, e.g. 'The behavior depends on the failurePolicy field: Fail rejects the Pod creation request, while Ignore allows it to proceed without validation'."
+    },
     {
       "id": "s09-q013",
       "type": "option-length-balance",
       "severity": "minor",
-      "what": "Correct answer (A) is significantly longer than the other three options",
-      "detail": "Option A (correct, ~121 chars stripped): 'Service 2 is not propagating trace context headers (e.g., traceparent) in its outgoing requests to Service 3, breaking the trace chain'. Options B (~93), C (~90), D (~95) average ~93 chars. The correct answer is ~30% longer than the average of the distractors, making it stand out visually as the most detailed and specific option.",
-      "suggestion": "Pad one or two distractors with plausible technical detail. For example, expand B to 'Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits' or expand D to mention specific protocol names."
-    },
-    {
-      "id": "s09-q057",
-      "type": "giveaway-diagram",
-      "severity": "minor",
-      "what": "SVG diagram text 'Continuous reconciliation loop' directly hints at the GitOps controller answer",
-      "detail": "The diagram includes the italic text 'Continuous reconciliation loop' at the bottom. This phrase is a signature description of GitOps controllers (Argo CD, Flux), and the word 'reconcile' appears in both the diagram and the correct answer B ('Deploy a GitOps controller (Argo CD or Flux) with automated sync and self-healing to reconcile drift'). A test-wise student can match the diagram label to the correct answer without domain knowledge.",
-      "suggestion": "Change the diagram label to a neutral problem statement like 'How to detect and revert manual changes?' which describes the desired outcome without naming the reconciliation mechanism."
-    },
-    {
-      "id": "s09-q068",
-      "type": "giveaway-diagram",
-      "severity": "major",
-      "what": "SVG diagram labels the traffic controller as 'Ingress / Mesh' and shows '50%' splits, directly revealing the correct answer",
-      "detail": "The diagram's top box is labeled 'Ingress / Mesh' with weighted '50%' arrows to both stable and canary Deployments. The correct answer B is 'Use a service mesh or Ingress controller with weighted routing to send 50% of traffic to the canary'. The diagram names both 'Ingress' and 'Mesh' in the routing component -- exactly the terms in the correct answer -- and shows the precise 50% split the question asks about. This is a direct giveaway.",
-      "suggestion": "Relabel the top box to something neutral like 'Traffic Router' or '???' and remove the '50%' percentage labels from the arrows. The question stem already states the desired 50% target, so the diagram should illustrate the architecture without revealing the mechanism."
-    },
-    {
-      "id": "s09-q085",
-      "type": "factual-accuracy",
-      "severity": "minor",
-      "what": "Reference URL is unrelated to the question topic",
-      "detail": "The question is about API gateway and service mesh patterns for centralizing cross-cutting concerns (authentication, rate limiting, logging). The reference URL points to 'https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer', which documents the LoadBalancer Service type and is completely unrelated to the API gateway/service mesh topic.",
-      "suggestion": "Change the reference to a relevant URL such as 'https://istio.io/latest/docs/concepts/what-is-istio/' or 'https://www.cncf.io/projects/' or another resource about API gateway or service mesh patterns for cross-cutting concerns."
-    },
-    {
-      "id": "s09-q004",
-      "type": "giveaway-keyword",
-      "severity": "minor",
-      "what": "Stem phrase 'traces, metrics, and logs' appears verbatim only in the correct answer",
-      "detail": "The question stem asks for a framework that 'supports traces, metrics, and logs'. The correct answer C uses the exact same triple-feature list: 'unified APIs, SDKs, and collectors for traces, metrics, and logs'. While the distractors also mention subsets of these telemetry types, only option C mirrors the stem's exact three-item list, enabling pattern-matching without domain knowledge.",
-      "suggestion": "Rephrase the stem to say 'all three telemetry signal types' or 'the three pillars of observability' instead of listing 'traces, metrics, and logs' verbatim. This forces the student to know which three signals those are rather than simply matching text."
+      "what": "Correct answer (A) is 18.2% longer than distractor average",
+      "detail": "Correct answer is 134 chars vs avg 113.3 for others (18.2% longer). Marginally over 15% threshold.",
+      "suggestion": "Slightly trim option A by removing 'e.g., traceparent' or shortening 'breaking the trace chain'."
     }
   ]
 }

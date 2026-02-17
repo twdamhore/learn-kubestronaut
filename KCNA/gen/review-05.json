@@ -1,48 +1,24 @@
 {
   "set": "05",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 2,
   "issues": [
     {
-      "id": "s05-q068",
-      "type": "factual-accuracy",
-      "severity": "high",
-      "what": "Explanation and option D incorrectly claim baseline profile prohibits hostPath volumes",
-      "detail": "The explanation states: 'The baseline profile also prohibits hostPath volumes — only the privileged profile allows them.' This is factually incorrect. Per the Kubernetes Pod Security Standards documentation, the baseline profile does NOT restrict hostPath volumes. Only the restricted profile restricts volume types (to configMap, csi, downwardAPI, emptyDir, ephemeral, persistentVolumeClaim, projected, and secret). Option D text ('hostPath volumes are allowed under the baseline profile as long as readOnly: true is set') is also incorrect — baseline allows hostPath without any readOnly condition. The correct answer (index 1, option B) is still correct, but the explanation and option D contain factual errors. This was flagged in round 17 but remains unfixed.",
-      "suggestion": "Fix option D to: 'No, but `hostPath` volumes are allowed under the `baseline` profile without restriction'. Fix the explanation's discussion of D to: 'D: The baseline profile does not restrict hostPath volumes; only the restricted profile prohibits them. The readOnly condition is irrelevant since baseline imposes no hostPath restriction.' Also fix the explanation paragraph that says 'The baseline profile also prohibits hostPath volumes' to 'The baseline profile does not restrict hostPath volumes; however, the restricted profile does prohibit them.'"
-    },
-    {
-      "id": "s05-q023",
-      "type": "giveaway",
-      "severity": "medium",
-      "what": "Dash-separated descriptions in options reveal the answer; correct option D is also ~28% longer than the average distractor",
-      "detail": "The question stem asks about preventing privilege escalation via 'setuid binaries'. Option D contains '`allowPrivilegeEscalation: false` — prevents a process from gaining more privileges than its parent', which directly matches the stem via the embedded description. A student can match 'escalate privileges using setuid' to 'prevents a process from gaining more privileges' without knowing what the field actually does. Additionally, option D (correct, ~100 chars) is ~28% longer than the average of options A (~81), B (~82), and C (~72), averaging ~78 chars. This exceeds the 15% correct-answer-vs-others threshold. Flagged in round 17 but unfixed.",
-      "suggestion": "Remove the dash descriptions from all options. Use only the field names: A) '`readOnlyRootFilesystem: true`', B) '`runAsNonRoot: true`', C) '`privileged: false`', D) '`allowPrivilegeEscalation: false`'. This tests whether the student knows what each field does and also equalizes option lengths."
-    },
-    {
-      "id": "s05-q048",
-      "type": "giveaway",
-      "severity": "medium",
-      "what": "Dash-separated permission descriptions make the correct answer trivially identifiable by keyword matching",
-      "detail": "The question asks for a role allowing viewing 'but not modify anything'. Each option includes a dash-description: A says 'read and write', B says 'read and write', C says 'read-only access', D says 'full unrestricted access'. The student simply matches 'read-only' (option C) to 'view...not modify' in the stem without needing to know what the built-in view ClusterRole actually grants. This tests reading comprehension rather than Kubernetes knowledge. Flagged in round 17 but unfixed.",
-      "suggestion": "Remove the dash-separated descriptions. Use only the ClusterRole names: A) '`admin`', B) '`edit`', C) '`view`', D) '`cluster-admin`'. This tests whether the student knows what each built-in role provides."
-    },
-    {
-      "id": "s05-q086",
+      "id": "s05-q057",
       "type": "option-length-balance",
-      "severity": "medium",
-      "what": "Option D is dramatically longer than the other three options (~73% longer than average)",
-      "detail": "Character lengths: A=77 ('`kubernetes.io/name: app` is set automatically by the Kubernetes control plane'), B=79 ('The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace'), C=82 ('A custom label matching the `namespaceSelector` in the policy, such as `name: app`'), D=138 ('No label is needed because NetworkPolicy namespaceSelector automatically resolves namespace names to their IP ranges without using labels'). Option D is ~138 chars vs. the average of the other three (~79 chars), a difference of ~73%. This far exceeds the 30% threshold for any single option being dramatically different. Savvy test-takers recognize overly verbose wrong answers as distractor padding. Flagged in round 17 but unfixed.",
-      "suggestion": "Shorten D to approximately 80 characters, e.g.: 'No label is needed; `namespaceSelector` resolves namespace names to IPs automatically'."
+      "severity": "minor",
+      "what": "Correct answer (D) is 25.8% longer than distractor average",
+      "detail": "Correct answer (opt 3) is 91 chars vs average 72.3 chars for the other three (25.8% longer). Uses a compound sentence with semicolon making it noticeably more detailed.",
+      "suggestion": "Shorten correct answer to 'Existing mounted data remains temporarily until the kubelet sync fails' (~70 chars), or lengthen distractors by adding detail."
     },
     {
       "id": "s05-q097",
-      "type": "giveaway",
-      "severity": "low",
-      "what": "Distractor options contain self-defeating reasoning that reveals they are wrong without RBAC knowledge",
-      "detail": "Options A, C, and D embed flawed reasoning visible in their text: A says 'automatically filters the list results' (implies get does list), C says 'implicitly includes list access' (explicit claim of implicit behavior is a common wrong-answer tell), D says 'while the list verb was implied by get' (same). A careful reader can eliminate A, C, and D by recognizing these as suspiciously hedged claims without needing to know actual RBAC semantics. The correct answer B is the only option that makes a clean factual assertion. Flagged in round 17 but unfixed.",
-      "suggestion": "Simplify all options to reduce embedded reasoning. For example: A='Only `app-config` is returned in the listing', B='The request returns 403 Forbidden because `list` is required', C='All ConfigMaps in the namespace are returned', D='An empty list with zero items is returned'."
+      "type": "option-length-balance",
+      "severity": "minor",
+      "what": "Correct answer (B) is 39.5% longer than distractor average",
+      "detail": "Correct answer (opt 1) is 60 chars vs average 43.0 for others (39.5% longer). Contains HTTP status code + verb name detail while distractors are 44, 44, 41 chars.",
+      "suggestion": "Lengthen distractors: A: 'Only `app-config` is returned because `resourceNames` filters the listing', C: 'All ConfigMaps in the namespace are returned ignoring `resourceNames`', D: 'An empty list with zero items is returned to the requesting user'."
     }
   ]
 }

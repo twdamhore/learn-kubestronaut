@@ -1,72 +1,64 @@
 {
   "set": "03",
-  "round": 18,
+  "round": 19,
   "total_reviewed": 100,
-  "issues_found": 8,
+  "issues_found": 7,
   "issues": [
     {
-      "id": "s03-q019",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Stem keywords 'eBPF dataplane' appear verbatim only in the correct option",
-      "detail": "The question stem says 'high-performance eBPF dataplane'. Only option A (the correct answer) mentions 'eBPF dataplane'. Options B, C, and D describe their respective technologies without using the word 'eBPF'. A test-savvy student can match the stem keyword 'eBPF' directly to the correct option without needing to know what Cilium, Flannel, kube-router, or Multus actually do.",
-      "suggestion": "Rephrase the stem to avoid the specific keyword, e.g., 'They need support for NetworkPolicy enforcement and a high-performance kernel-level dataplane. Which CNCF project fits this requirement?' Alternatively, add 'eBPF' as a descriptor in one or more distractor options (e.g., 'kube-router -- a networking solution using BGP and eBPF for route distribution') so the keyword is not unique to the correct answer."
+      "id": "s03-q038",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (C) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option C uses backticks for `kube-dns` and `kube-system` while A, B, D have no backticks. This visually signals C as the technical answer.",
+      "suggestion": "Add backticks to distractors: A could use `DNS cache daemon`, B could use `kube-apiserver` and `ClusterIP`, D could use `8.8.8.8`."
     },
     {
-      "id": "s03-q043",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Stem keywords 'eBPF' and 'kube-proxy replacement' are echoed verbatim only in the correct option",
-      "detail": "The stem says 'using eBPF, replacing kube-proxy entirely'. Option C (correct) says 'Cilium with its eBPF-based kube-proxy replacement feature'. No other option mentions either 'eBPF' or 'kube-proxy replacement'. The correct answer is trivially identifiable by keyword matching alone. This is essentially the same giveaway pattern as q019 but even more direct since both distinctive stem phrases appear only in the correct option.",
-      "suggestion": "Rephrase the stem to be less explicit, e.g., 'An organization wants to implement network-level identity and segmentation for their Kubernetes workloads using a kernel-level dataplane, eliminating a standard networking component. Which CNCF project supports this?' Alternatively, introduce 'kube-proxy' references into distractors (e.g., 'Calico with its iptables dataplane that can replace kube-proxy for policy enforcement')."
+      "id": "s03-q050",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (B) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option B uses backticks for `kubectl set image` while A, C, D have none.",
+      "suggestion": "Add backticks to distractors: A could backtick `Deployment`, C could backtick `Deployment`, D could backtick `Ingress`."
     },
     {
-      "id": "s03-q045",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram labels three resilience patterns including the correct answer by name",
-      "detail": "The SVG diagram includes three labeled boxes on the right side: 'Circuit Breaker', 'Retry with Backoff', and 'Timeout'. These labels directly name the concepts tested in options A, B, and C. The correct answer (B, circuit breaker) is listed first in the diagram and the question asks which pattern 'prevents this cascade'. A student can read the answer from the diagram without needing to know what a circuit breaker does. This issue was flagged in round 17 and remains unfixed.",
-      "suggestion": "Replace the three pattern labels with generic placeholders like 'Pattern 1', 'Pattern 2', 'Pattern 3' or remove them entirely. The diagram should only depict the order-svc to inventory-svc interaction with the 'SLOW' label."
+      "id": "s03-q055",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option D uses backticks for `fallback-svc` while A, B, C have none.",
+      "suggestion": "Add backticks to at least one or two distractor options to break the visual pattern."
     },
     {
-      "id": "s03-q047",
-      "type": "factual",
-      "severity": "moderate",
-      "what": "The kube-state-metrics metric name 'kube_endpoint_address' may not be accurate",
-      "detail": "The correct answer references `kube_endpoint_address` with label `ready=\"true\"` from kube-state-metrics. In current kube-state-metrics versions, the actual endpoint-related metrics are `kube_endpoint_address_available` and `kube_endpoint_address_not_ready` (gauge metrics showing counts), or `kube_endpoint_info`. Option B (`kube_endpoint_address_available`) which is dismissed as 'not a standard metric' may actually be the more accurate metric name. This ambiguity was flagged in round 17 and remains unresolved.",
-      "suggestion": "Verify the metric name against current kube-state-metrics documentation. If `kube_endpoint_address_available` is valid (it is in many versions), either swap the correct answer to B or rewrite the question to use a different, more stable metric approach. Alternatively, reframe the question around a general monitoring strategy rather than specific metric names that vary across kube-state-metrics versions."
+      "id": "s03-q059",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (C) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option C uses backticks for `web` and `api` while A, B, D have none.",
+      "suggestion": "Add backtick formatting to distractors for consistency since the question discusses Policy A and Policy B."
     },
     {
-      "id": "s03-q071",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Stem keyword 'Rust-based micro-proxy' appears verbatim only in the correct option",
-      "detail": "The stem says 'using a Rust-based micro-proxy instead of Envoy'. Option C (correct) says 'Linkerd -- a lightweight mesh using a Rust-based micro-proxy layer'. No other option mentions 'Rust-based' or 'micro-proxy'. The answer can be identified purely by keyword matching without knowing anything about the CNCF ecosystem. This is the same giveaway pattern as q019 and q043.",
-      "suggestion": "Rephrase the stem to avoid the distinctive keyword, e.g., 'Which CNCF project provides a lightweight service mesh focused on simplicity and minimal resource overhead, using a purpose-built sidecar proxy designed for low latency?' This tests whether the student knows Linkerd's differentiator without handing them the exact keyword to match."
+      "id": "s03-q065",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option D uses backticks for `kube-dns` while A, B, C have none.",
+      "suggestion": "Add backticks to distractors: A could backtick pod components, B could backtick `Service`, C could backtick `kube-apiserver`."
     },
     {
-      "id": "s03-q078",
-      "type": "giveaway",
+      "id": "s03-q082",
+      "type": "formatting-asymmetry",
+      "severity": "medium",
+      "what": "Only correct answer (D) uses backticks; all 3 distractors have zero backticks",
+      "detail": "Option D uses backticks for `IngressClass` and `nginx` while A, B, C have none.",
+      "suggestion": "Add backticks to distractors to balance formatting."
+    },
+    {
+      "id": "s03-q012",
+      "type": "irrelevant-reference",
       "severity": "minor",
-      "what": "Diagram annotation '~5s delay' is a diagnostic signature that points to the conntrack race answer",
-      "detail": "The SVG diagram shows '~5s delay intermittently' in red text. The 5-second timeout is the well-known signature of the Linux conntrack race condition between simultaneous A and AAAA DNS queries (option D, the correct answer). Options A (too many upstream resolvers) and B (kube-proxy throttling) would not produce a characteristic 5-second delay pattern. Option C (ndots) causes extra lookups but typically at sub-second intervals. The specific '5s' figure in the diagram is a strong diagnostic clue. This was flagged in round 17 and remains unfixed.",
-      "suggestion": "Change the delay annotation to something more generic like 'intermittent slow queries' or 'occasional high latency' without specifying the exact 5-second duration."
-    },
-    {
-      "id": "s03-q097",
-      "type": "formatting",
-      "severity": "minor",
-      "what": "Option C has trailing whitespace",
-      "detail": "Option C reads '`kubectl apply -f values.yaml --set networkPolicy.enabled=true`  ' with two trailing spaces. This is a minor formatting issue that may render oddly in some contexts. Flagged in round 17 and still present.",
-      "suggestion": "Remove the trailing whitespace from option C: '`kubectl apply -f values.yaml --set networkPolicy.enabled=true`'"
-    },
-    {
-      "id": "s03-q015",
-      "type": "option-length",
-      "severity": "minor",
-      "what": "Correct answer (A, index 0) is noticeably shorter than the three distractors",
-      "detail": "Option A (correct): 'Apply a policy in `finance` on `app: payment` allowing ingress from `web` with `role: gateway` on port 8443' (~105 chars). Option B: ~114 chars. Option C: ~119 chars. Option D: ~118 chars. The correct answer is approximately 10-13% shorter than the average distractor length (~117 chars). This is borderline but worth noting as it was flagged in round 17 as well. Combined with the pattern that shorter, more precise answers tend to be correct, a test-savvy student might exploit this.",
-      "suggestion": "Pad option A slightly, e.g., 'Apply a policy in `finance` on `app: payment` pods allowing ingress from `web` namespace with `role: gateway` on port 8443'."
+      "what": "Reference URL points to headless-services but question is about service mesh sidecar patterns",
+      "detail": "Reference URL 'https://kubernetes.io/docs/concepts/services-networking/service/#headless-services' is unrelated to the service mesh sidecar proxy topic.",
+      "suggestion": "Change to a relevant URL like https://istio.io/latest/docs/concepts/what-is-istio/ or https://linkerd.io/2/overview/"
     }
   ]
 }
