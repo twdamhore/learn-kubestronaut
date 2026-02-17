@@ -146,7 +146,7 @@ var questions = [
       "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
       "Both pods have equal eviction priority since they both have resource values explicitly specified in their `spec`",
       "This pod is protected from eviction because it has a memory limit set which prevents any OOM killing action",
-      "The pod with the higher absolute memory limit is always evicted first, regardless of its assigned `QoS` class"
+      "The pod with the higher absolute memory limit is evicted first because resource allocation size determines eviction priority over `QoS` class"
     ],
     answer: 0,
     explanation: "Kubernetes evicts pods based on QoS class priority: `BestEffort` pods are evicted first, then `Burstable`, and `Guaranteed` pods last. This pod has unequal requests and limits, making it `Burstable`. Under node memory pressure, it would be evicted before a `Guaranteed` pod. Having a memory limit does not prevent eviction — it prevents the container from using more than the limit. Eviction order considers QoS class, not just absolute resource values.\n\nWhy other options are wrong:\n- B: Having resource specs does not make eviction priority equal; QoS class determines the order\n- C: Memory limits prevent usage beyond the cap but do not protect pods from node-level eviction\n- D: Eviction priority is based on QoS class first, not absolute resource limit values\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
@@ -175,7 +175,7 @@ var questions = [
     text: "An engineer creates a ConfigMap from a file using `kubectl create configmap nginx-conf --from-file=nginx.conf`. Later they mount this ConfigMap into a pod. What will be the key name in the ConfigMap's `data` field?",
     diagram: null,
     options: [
-      "The key will be `data` since `--from-file` always uses a generic key name by default",
+      "The key will be `data` since `--from-file` uses a generic key name derived from the flag name by default",
       "The key will be auto-generated as a SHA hash of the file contents for uniqueness",
       "The key will be `nginx-conf`, matching the ConfigMap name that was specified on create",
       "The key will be `nginx.conf` because the filename becomes the key name by default"
@@ -626,7 +626,7 @@ var questions = [
     diagram: null,
     options: [
       "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
-      "Secret volume file permissions default to 0644 and can only be changed by the container runtime configuration",
+      "Secret volume file permissions default to 0644 and are controlled by the container runtime configuration settings",
       "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
       "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control permissions"
     ],
@@ -866,7 +866,7 @@ var questions = [
       "Zero is assigned as the request and the pod becomes `BestEffort` quality of service class",
       "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
       "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
-      "The pod creation fails because requests must be explicitly specified whenever limits are set"
+      "The pod creation fails because the admission controller requires explicit requests when limits are defined in the spec"
     ],
     answer: 1,
     explanation: "When a container specifies a limit but no request for a resource, Kubernetes automatically sets the request equal to the limit. This means the container effectively gets `requests.memory: 256Mi` and `limits.memory: 256Mi`. The pod does not become BestEffort (it has resource specifications) and creation does not fail. Kubernetes does not use a half-of-limit default.\n\nWhy other options are wrong:\n- A: The request is not zero; it is set equal to the limit, so the pod is not BestEffort\n- C: Kubernetes does not use a half-of-limit default for requests\n- D: Pod creation does not fail; Kubernetes auto-sets requests to match limits\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -912,7 +912,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod is created but the CPU limit is automatically capped at 2 cores by the LimitRange enforcer",
-      "The LimitRange is ignored because it only applies to memory resources, not CPU specifications",
+      "The LimitRange is ignored because CPU constraints require a separate CpuLimitRange resource definition",
       "The pod is created in `Pending` state until a node with 4 CPUs becomes available for scheduling",
       "Pod creation is rejected because the container CPU limit exceeds the LimitRange max of 2 cores"
     ],
@@ -1058,7 +1058,7 @@ var questions = [
     diagram: null,
     options: [
       "No — `args` does not support variable substitution; the `command` field is the supported location in pod specs",
-      "No — variable substitution in `args` only works with ConfigMap values, not with Secret-sourced values",
+      "No — variable substitution in `args` is limited to ConfigMap-sourced values and does not resolve Secret references",
       "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` using env vars",
       "Yes — but the `enableServiceLinks` field must be explicitly set to `true` on the pod specification"
     ],
@@ -1524,7 +1524,7 @@ var questions = [
     diagram: null,
     options: [
       "Configuration files should be compiled into the application binary for maximum runtime performance and efficiency",
-      "All configuration must be stored in environment variables only — file-based configuration is not cloud-native",
+      "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires additional tooling",
       "Configuration should only be managed by a dedicated operations team using manual `kubectl` commands directly",
       "ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"
     ],

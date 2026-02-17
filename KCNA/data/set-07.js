@@ -459,10 +459,10 @@ var questions = [
       "The kubelet restarts the container after a back-off delay because exit code 1 indicates a transient failure",
       "Kubernetes will delete the failed pod and then schedule a replacement pod on a different cluster node",
       "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts",
-      "The `restartPolicy: Never` causes the scheduler to delete and replace the pod on another node"
+      "The `restartPolicy: Never` causes the kubelet to mark the pod as succeeded and clear its resource allocation from the node"
     ],
     answer: 2,
-    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: Exit code 1 does not cause the kubelet to treat the failure as transient; restartPolicy: Never is honoured and no restart occurs\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: restartPolicy: Never does not trigger deletion or rescheduling; the pod stays on its original node in Failed state\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
+    explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: Exit code 1 does not cause the kubelet to treat the failure as transient; restartPolicy: Never is honoured and no restart occurs\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: A failed container (exit code 1) is not marked as succeeded; restartPolicy: Never keeps the pod in Failed state, it does not change the pod phase to Succeeded\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.restartPolicy}'"
   },
   {
@@ -1579,10 +1579,10 @@ var questions = [
       "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes",
       "The pods need to be restarted for the new iptables rules to take effect because they cache network state at startup time",
       "The Service got a new ClusterIP. Clients should use DNS names instead of hardcoded IPs, since DNS resolves to the new IP",
-      "Services must always use `type: ExternalName` to support IP changes and ensure that clients can handle address transitions"
+      "Switching the Service to `type: ExternalName` would decouple the Service from a fixed ClusterIP and allow transparent IP resolution for clients"
     ],
     answer: 2,
-    explanation: "When a Service is deleted and recreated, it typically gets a new ClusterIP (unless explicitly specified). Clients that cached the old IP will fail. Using DNS names ensures clients always resolve to the current Service IP. DNS records are updated by CoreDNS automatically when Services are created or modified.\n\nWhy other options are wrong:\n- A: kube-proxy does update iptables for new Services; the issue is client-side IP caching, not kube-proxy\n- B: Pods do not need restarts for iptables; DNS resolution happens per-request and adapts to new IPs\n- D: ExternalName is for CNAME mapping to external services, not for handling ClusterIP changes\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    explanation: "When a Service is deleted and recreated, it typically gets a new ClusterIP (unless explicitly specified). Clients that cached the old IP will fail. Using DNS names ensures clients always resolve to the current Service IP. DNS records are updated by CoreDNS automatically when Services are created or modified.\n\nWhy other options are wrong:\n- A: kube-proxy does update iptables for new Services; the issue is client-side IP caching, not kube-proxy\n- B: Pods do not need restarts for iptables; DNS resolution happens per-request and adapts to new IPs\n- D: ExternalName maps a Service to an external DNS name via CNAME; it is not a solution for internal ClusterIP changes\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.clusterIP}'"
   },
   {

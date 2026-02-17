@@ -185,12 +185,12 @@ var questions = [
     diagram: null,
     options: [
       "Verify every request regardless of its source network location",
-      "Trust all traffic that originates from within the cluster network",
+      "Authenticate external traffic at the perimeter and trust internal service-to-service calls",
       "Encrypt only external-facing traffic at the ingress gateway layer",
-      "Rely on network perimeter firewalls to handle all access control"
+      "Combine perimeter firewalls with namespace isolation to secure the cluster network"
     ],
     answer: 0,
-    explanation: "Zero-trust security requires that every request is authenticated, authorized, and encrypted regardless of whether it originates from inside or outside the network perimeter. This contrasts with perimeter-based models that implicitly trust internal traffic.\n\nWhy other options are wrong:\n- B: Zero-trust explicitly rejects trusting traffic based on network origin\n- C: Zero-trust requires encryption of all traffic, not just external-facing traffic\n- D: Zero-trust moves beyond perimeter-based security models\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "Zero-trust security requires that every request is authenticated, authorized, and encrypted regardless of whether it originates from inside or outside the network perimeter. This contrasts with perimeter-based models that implicitly trust internal traffic.\n\nWhy other options are wrong:\n- B: Zero-trust requires verifying every call, including internal service-to-service traffic, not just external requests\n- C: Zero-trust requires encryption of all traffic, not just external-facing traffic\n- D: Zero-trust requires per-request verification and does not rely on perimeter firewalls or namespace boundaries alone\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -715,10 +715,10 @@ var questions = [
       "Immediately, because the volume is directly backed by the API server",
       "Only after the Pod is manually restarted by an administrator or tool",
       "After the kubelet sync period, which is up to a few minutes by default",
-      "Never, because Secrets mounted into running containers are immutable"
+      "After the Secret is deleted and recreated as a new resource in the namespace"
     ],
     answer: 2,
-    explanation: "When a Secret is mounted as a volume, the kubelet periodically syncs the mounted content with the API server. The update delay depends on the kubelet's sync period and cache propagation delay, typically up to a couple of minutes. Secrets mounted as environment variables require a Pod restart.\n\nWhy other options are wrong:\n- A: Updates are not immediate; there is a kubelet sync delay\n- B: Volume-mounted Secrets update without Pod restart (unlike env var-mounted Secrets)\n- D: Mounted Secrets are updated by the kubelet; they are not immutable once mounted\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
+    explanation: "When a Secret is mounted as a volume, the kubelet periodically syncs the mounted content with the API server. The update delay depends on the kubelet's sync period and cache propagation delay, typically up to a couple of minutes. Secrets mounted as environment variables require a Pod restart.\n\nWhy other options are wrong:\n- A: Updates are not immediate; there is a kubelet sync delay\n- B: Volume-mounted Secrets update without Pod restart (unlike env var-mounted Secrets)\n- D: Deleting and recreating is unnecessary; the kubelet picks up changes to the existing Secret automatically\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
     verify: "kubectl exec <pod> -- cat /etc/creds/<key>"
   },
   {
@@ -760,10 +760,10 @@ var questions = [
     text: "You need to allow a user read-only access to resources across all namespaces without any modification rights. Which built-in ClusterRole is appropriate?",
     diagram: null,
     options: [
-      "`admin`",
-      "`edit`",
-      "`view`",
-      "`cluster-admin`"
+      "`admin` — grants full read-write access within a namespace",
+      "`edit` — grants read-write access without role management",
+      "`view` — grants read-only access to most resources",
+      "`cluster-admin` — grants unrestricted cluster-wide access"
     ],
     answer: 2,
     explanation: "The built-in `view` ClusterRole grants read-only access to most resources in a namespace. When bound via a ClusterRoleBinding, it allows viewing resources across all namespaces. The `admin` and `edit` roles grant modification permissions, and `cluster-admin` grants full access.\n\nWhy other options are wrong:\n- A: admin grants read and write access, exceeding the read-only requirement\n- B: edit allows modification of resources, exceeding the read-only requirement\n- D: cluster-admin grants full unrestricted access, far exceeding what is needed\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles",
@@ -1179,10 +1179,10 @@ var questions = [
       "Cold-start Pods must re-authenticate and fetch Secrets, increasing startup latency",
       "Secrets are automatically deleted from etcd whenever Pods scale down to zero replicas",
       "Scale-to-zero disables RBAC for the namespace until a new Pod instance is launched",
-      "Functions cannot access the Kubernetes API during cold start initialization phases"
+      "Cold-start Pods use cached credentials from the previous instance, risking stale tokens"
     ],
     answer: 0,
-    explanation: "When a serverless function scales to zero and a new Pod is created on the next request, it must re-authenticate with any external secret stores or API endpoints. This increases cold-start latency and requires that tokens and credentials are still valid. Projected ServiceAccount tokens handle this by issuing fresh tokens.\n\nWhy other options are wrong:\n- B: Secrets remain in etcd regardless of Pod scaling; they are not deleted when Pods scale down\n- C: Scale-to-zero does not affect RBAC configuration for the namespace\n- D: Functions can access the Kubernetes API during cold start via projected ServiceAccount tokens\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
+    explanation: "When a serverless function scales to zero and a new Pod is created on the next request, it must re-authenticate with any external secret stores or API endpoints. This increases cold-start latency and requires that tokens and credentials are still valid. Projected ServiceAccount tokens handle this by issuing fresh tokens.\n\nWhy other options are wrong:\n- B: Secrets remain in etcd regardless of Pod scaling; they are not deleted when Pods scale down\n- C: Scale-to-zero does not affect RBAC configuration for the namespace\n- D: Cold-start Pods receive fresh projected tokens; they do not reuse cached credentials from previous instances\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
     verify: "kubectl get ksvc -A"
   },
   {

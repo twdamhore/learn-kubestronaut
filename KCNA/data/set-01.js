@@ -297,7 +297,7 @@ var questions = [
     diagram: null,
     options: [
       "Apply `nodeSelector` on ML Pods to target GPU nodes, and add taints to GPU nodes with tolerations",
-      "Use a `ResourceQuota` to reserve GPU nodes exclusively for machine learning workloads in the cluster",
+      "Use a `ResourceQuota` to reserve GPU nodes for machine learning workloads by limiting resource consumption per namespace",
       "Set `nodeName` directly in the ML Pod specs to hardcode specific GPU node names for scheduling",
       "Configure the `kube-scheduler` with a custom profile that only considers GPU nodes for all Pods"
     ],
@@ -1275,7 +1275,7 @@ var questions = [
       "It does not create any DNS records, so Pods must discover each other using environment variables only",
       "It creates a ClusterIP but hides it from `kubectl get svc` output for additional security purposes",
       "DNS queries for the Service return individual Pod IPs instead of a virtual IP, enabling direct access",
-      "It disables load balancing entirely, routing all traffic to only the first Pod in the endpoint list"
+      "It routes all client traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
     ],
     answer: 2,
     explanation: "A headless Service (`clusterIP: None`) does not get a virtual IP. Instead, DNS queries for the Service name return A records for all the Pod IPs backing the Service. This allows clients to discover and connect to individual Pods directly, which is essential for stateful applications like databases. Headless Services still create DNS records. The ClusterIP is not hidden. Traffic is not limited to one Pod.\n\nWhy other options are wrong:\n- A: Headless Services do create DNS records — they return individual Pod IP A records.\n- B: The ClusterIP is not hidden; it is explicitly set to None, meaning no virtual IP is allocated.\n- D: Traffic is not limited to one Pod; DNS returns all Pod IPs for client-side selection.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "Yes, ReplicaSets should be created directly when you need more than 10 replicas for performance reasons",
       "No, because ReplicaSets are deprecated and will be removed in a future Kubernetes version release",
-      "Yes, ReplicaSets are required for stateful applications where Deployments cannot be used at all",
+      "Yes, ReplicaSets provide finer-grained control over Pod identity and ordering that Deployments do not support natively",
       "No, Deployments manage ReplicaSets and add rolling update and rollback capabilities on top of them"
     ],
     answer: 3,
@@ -1371,7 +1371,7 @@ var questions = [
       "Declarative commands execute faster because they skip validation against the API server entirely",
       "Declarative config describes the desired end state, enabling version control and reproducibility",
       "Declarative manifests automatically retry failed operations until the desired state is fully achieved",
-      "Declarative management eliminates the need for YAML files by using command-line flags exclusively"
+      "Declarative management simplifies operations by inferring the desired state from command-line flags rather than requiring manifest files"
     ],
     answer: 1,
     explanation: "Declarative management (using `kubectl apply` with YAML/JSON manifests) describes the desired state rather than the steps to get there. This enables version control of infrastructure, audit trails through Git history, and reproducible deployments across environments. Declarative commands do not skip validation. Retry logic is handled by controllers, not the declarative approach itself. Declarative management relies on manifest files (YAML/JSON), not command-line flags.\n\nWhy other options are wrong:\n- A: Declarative commands do not skip validation; they are fully validated by the API server.\n- C: Retry logic is handled by Kubernetes controllers, not inherently by the declarative approach itself.\n- D: Declarative management relies on manifest files (YAML/JSON), not command-line flags.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/",
@@ -1594,7 +1594,7 @@ var questions = [
     options: [
       "They are identical in behavior; `create` is simply an alias for `apply` with the same semantics and output",
       "`kubectl create` is imperative and fails if the resource exists; `kubectl apply` is declarative and updates",
-      "`kubectl create` is for initial creation only and `kubectl apply` is for updates only; neither can do both",
+      "`kubectl create` handles initial resource creation while `kubectl apply` handles subsequent updates, each optimized for its stage",
       "`kubectl apply` requires YAML input while `kubectl create` works only with command-line flags for resources"
     ],
     answer: 1,

@@ -539,7 +539,7 @@ var questions = [
       "A. Containers continue running because the runtime upgrade is fully transparent to them",
       "B. All containers are stopped and must be restarted individually by the kubelet process",
       "C. The node must be drained first because runtime upgrades need no running containers",
-      "D. Pods with `restartPolicy: Always` are restarted automatically by the kubelet, while other Pods are permanently terminated"
+      "D. Pods with `restartPolicy: Always` survive the runtime upgrade; others are terminated permanently"
     ],
     answer: 2,
     explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
@@ -1067,7 +1067,7 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. The `globalDefault` field is deprecated and has no effect in Kubernetes v1.27 and later versions"
+      "D. The `globalDefault` field was removed from the PriorityClass spec in Kubernetes v1.27 and later"
     ],
     answer: 0,
     explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: The `globalDefault` field is not deprecated; it remains a fully supported and functional field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -1483,7 +1483,7 @@ var questions = [
       "A. The GitOps controller deletes resources not present in the Git repository state",
       "B. The cluster state takes precedence and the Git repository state is left as stale",
       "C. The GitOps controller reconciles the cluster to match the Git repository state",
-      "D. The GitOps controller pauses sync and requires manual intervention from admin"
+      "D. The GitOps controller enters a conflict-resolution mode and waits for operator input"
     ],
     answer: 2,
     explanation: "GitOps controllers like Flux and Argo CD continuously reconcile cluster state to match the Git repository. After a restore from backup, any drift (resources present in Git but different or missing in the cluster) triggers the controller to reapply the desired state from Git.\n\nWhy other options are wrong:\n- A: Deletion of resources not in Git depends on the pruning configuration, not a guaranteed default behavior after restore\n- B: In GitOps, Git is the source of truth; cluster state never takes precedence over Git\n- D: GitOps controllers do not pause; they continuously reconcile automatically\n\nReference: https://fluxcd.io/flux/concepts/",

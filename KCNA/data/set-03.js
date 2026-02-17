@@ -138,8 +138,8 @@ var questions = [
     options: [
       "No — pods on different nodes traverse kube-proxy which performs source NAT on cross-node packets",
       "Yes — the Kubernetes networking model requires every pod to have a routable IP without NAT",
-      "Only if a `LoadBalancer` Service is placed in front of both pods to bridge node boundaries",
-      "Only if both pods are in the same namespace and share an identical network policy selector"
+      "Cross-node communication requires a `LoadBalancer` Service to bridge node boundaries between pod networks",
+      "Cross-node communication requires both pods to share the same namespace and network policy selector"
     ],
     answer: 1,
     explanation: "The Kubernetes networking model mandates that every pod gets a unique, routable IP and that pods can communicate directly across nodes without NAT. CNI plugins like Calico implement this requirement using BGP, VXLAN, or IP-in-IP overlays. kube-proxy handles Service traffic, not direct pod-to-pod traffic. Neither Services nor namespace boundaries affect this fundamental guarantee.\n\nWhy other options are wrong:\n- A: kube-proxy handles Service-level traffic (ClusterIP, NodePort), not direct pod-to-pod communication, and does not perform source NAT on pod traffic.\n- C: A LoadBalancer Service is for external access; it is not needed for basic pod-to-pod communication across nodes.\n- D: Namespace boundaries and network policy selectors do not affect the fundamental pod-to-pod networking guarantee.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
@@ -728,8 +728,8 @@ var questions = [
     text: "Which CNCF project provides a role-oriented API for configuring advanced traffic routing in Kubernetes, designed as the successor to the Ingress resource?",
     diagram: null,
     options: [
-      "Envoy Gateway — an Envoy-based ingress project tool",
-      "Ambassador — a developer-focused API gateway project",
+      "Envoy Gateway — an Envoy-based API ingress project",
+      "Ambassador — a developer-focused API gateway solution",
       "Contour — an Envoy-powered Ingress controller tool",
       "Gateway API — the standards-based routing project"
     ],
@@ -1130,7 +1130,7 @@ var questions = [
     options: [
       "Istio — a full-featured service mesh using Envoy sidecar proxies",
       "Consul Connect — HashiCorp's service mesh with built-in discovery",
-      "Linkerd — a lightweight mesh using a Rust-based micro-proxy layer",
+      "Linkerd — a CNCF graduated mesh using a Rust-based sidecar proxy",
       "Open Service Mesh — a lightweight SMI-compatible service mesh tool"
     ],
     answer: 2,
@@ -1403,7 +1403,7 @@ var questions = [
       "Yes, because kube-proxy intercepts DNS queries regardless of the configured nameserver address",
       "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
       "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
-      "No, because `dnsPolicy: None` prevents the kubelet from injecting any DNS settings, leaving the pod without resolver configuration"
+      "No, because `dnsPolicy: None` disables all kubelet-injected DNS settings, leaving the pod with no resolver"
     ],
     answer: 2,
     explanation: "With `dnsPolicy: None`, the pod uses only the nameservers specified in `dnsConfig`. Since `8.8.8.8` (Google Public DNS) has no knowledge of `*.svc.cluster.local` names, cluster-internal Service names will fail to resolve. kube-proxy does not intercept DNS. Not all queries go through CoreDNS when `None` is set. `dnsPolicy: None` does not disable DNS — it requires explicit configuration via `dnsConfig`.\n\nWhy other options are wrong:\n- A: kube-proxy does not intercept DNS queries; it manages Service-level iptables/IPVS forwarding rules.\n- B: With `dnsPolicy: None`, queries are NOT routed through CoreDNS; they go only to the specified nameservers.\n- D: `dnsPolicy: None` does not disable DNS; it requires the user to provide explicit DNS configuration via `dnsConfig`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",

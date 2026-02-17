@@ -1384,7 +1384,7 @@ var questions = [
     text: "A pod with `restartPolicy: OnFailure` runs a Job. The container exits with exit code 0 (success). The kubelet observes the exit. What happens next, and what is the final pod phase?",
     diagram: null,
     options: [
-      "A. The container is restarted because the kubelet always restarts containers in any non-`Never` restart policy regardless of exit code",
+      "A. The container is restarted because the kubelet interprets OnFailure as restarting containers on any exit, including successful completion with exit code 0",
       "B. The Job controller creates a new pod because it interprets the completed pod as needing replacement to meet its completions target",
       "C. The container is not restarted, but the pod phase stays `Running` with a `Terminated` container until the Job controller cleans up",
       "D. The container is not restarted (exit 0 = success); the pod transitions to `Succeeded` and remains until Job TTL or deletion"
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A multi-cluster setup uses Cilium Cluster Mesh to connect two clusters. Cluster A has a Service `backend` in namespace `app`. Cluster B needs to access this service. Both clusters have their own `backend` Service in the `app` namespace with different backends. How does Cilium Cluster Mesh handle service discovery?",
     diagram: null,
     options: [
-      "A. Cluster B's local service takes precedence; local services always override remote services in the Cluster Mesh config",
+      "A. Cluster B's local service takes precedence; Cluster Mesh prioritizes local endpoints over remote endpoints by default in merged services",
       "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined endpoints",
       "C. Service names conflict and Cluster Mesh rejects the configuration, requiring globally unique service names across clusters",
       "D. Each cluster maintains its own namespace; cross-cluster access requires explicit `<service>.<cluster>` DNS entry mappings"

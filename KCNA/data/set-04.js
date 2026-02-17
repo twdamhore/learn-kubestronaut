@@ -490,7 +490,7 @@ var questions = [
     options: [
       "The PV must support `ReadWriteMany` access, or the team should use an external object store like S3 instead",
       "The application must switch to using `emptyDir` volumes because horizontal scaling requires ephemeral storage",
-      "Horizontal scaling is impossible with any form of persistent storage in a Kubernetes cluster environment",
+      "Horizontal scaling requires each pod to mount a separate copy of the same ReadWriteOnce PV, which the scheduler handles transparently",
       "Each pod replica must write to a separate directory on the same `ReadWriteOnce` volume to avoid conflicts"
     ],
     answer: 0,
@@ -777,7 +777,7 @@ var questions = [
     diagram: null,
     options: [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
-      "Serverless functions running on Kubernetes cannot access any form of persistent or ephemeral storage at all",
+      "Serverless frameworks on Kubernetes default to in-memory scratch space, since PVC mounts are not enabled in standard Knative function pod templates",
       "PersistentVolumes are automatically deleted by the platform whenever serverless functions scale down to zero pods",
       "Knative only supports `emptyDir` volumes and does not allow any PersistentVolumeClaim mounts in function pods"
     ],
@@ -822,7 +822,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Storage",
     text: "A CSI driver specification defines three plugin services: Identity, Controller, and Node. Which operations does the Node plugin service handle?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="10" width="300" height="40" rx="6" fill="#326CE5"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="13" font-weight="bold">CSI Driver Architecture</text><rect x="20" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="75" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Identity</text><text x="75" y="105" text-anchor="middle" font-size="9" fill="#666">GetPluginInfo</text><text x="75" y="117" text-anchor="middle" font-size="9" fill="#666">GetCapabilities</text><rect x="145" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="200" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Controller</text><text x="200" y="105" text-anchor="middle" font-size="9" fill="#666">CreateVolume</text><text x="200" y="117" text-anchor="middle" font-size="9" fill="#666">ControllerPublish</text><rect x="270" y="70" width="110" height="55" rx="4" fill="#A8D08D" stroke="#6AA84F"/><text x="325" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Node</text><text x="325" y="105" text-anchor="middle" font-size="9" fill="#333">Operation 1</text><text x="325" y="117" text-anchor="middle" font-size="9" fill="#333">Operation 2</text><rect x="20" y="155" width="170" height="35" rx="4" fill="#FFF3CD" stroke="#FFC107"/><text x="105" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Controller Node</text><rect x="210" y="155" width="170" height="35" rx="4" fill="#D4EDDA" stroke="#28A745"/><text x="295" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Every Worker</text><line x1="75" y1="125" x2="75" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="200" y1="125" x2="105" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="325" y1="125" x2="295" y2="155" stroke="#28A745" stroke-width="1.5" stroke-dasharray="4"/></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="10" width="300" height="40" rx="6" fill="#326CE5"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="13" font-weight="bold">CSI Driver Architecture</text><rect x="20" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="75" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Identity</text><text x="75" y="105" text-anchor="middle" font-size="9" fill="#666">GetPluginInfo</text><text x="75" y="117" text-anchor="middle" font-size="9" fill="#666">GetCapabilities</text><rect x="145" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="200" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Controller</text><text x="200" y="105" text-anchor="middle" font-size="9" fill="#666">Ctrl Op 1</text><text x="200" y="117" text-anchor="middle" font-size="9" fill="#666">Ctrl Op 2</text><rect x="270" y="70" width="110" height="55" rx="4" fill="#A8D08D" stroke="#6AA84F"/><text x="325" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Node</text><text x="325" y="105" text-anchor="middle" font-size="9" fill="#333">Operation 1</text><text x="325" y="117" text-anchor="middle" font-size="9" fill="#333">Operation 2</text><rect x="20" y="155" width="170" height="35" rx="4" fill="#FFF3CD" stroke="#FFC107"/><text x="105" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Controller Node</text><rect x="210" y="155" width="170" height="35" rx="4" fill="#D4EDDA" stroke="#28A745"/><text x="295" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Every Worker</text><line x1="75" y1="125" x2="75" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="200" y1="125" x2="105" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="325" y1="125" x2="295" y2="155" stroke="#28A745" stroke-width="1.5" stroke-dasharray="4"/></svg>',
     options: [
       "Creating and deleting volumes on the storage backend via the Controller plugin's RPC interface",
       "Registering the CSI driver with the Kubernetes API server using the node-driver-registrar sidecar",
@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "It is a bug in the StatefulSet controller that has not been fixed and is tracked in a known issue",
       "Retaining PVCs prevents data loss; when the pod is recreated with the same ordinal it reattaches",
-      "PVCs cannot be deleted once created under any circumstances regardless of the reclaim policy set",
+      "PVCs in Lost state are automatically re-created by the StatefulSet controller to restore the previous binding",
       "The kubelet does not have RBAC permissions to delete PVCs so they remain after pod termination"
     ],
     answer: 1,
@@ -1083,7 +1083,7 @@ var questions = [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
       "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster",
       "The PV is still attached to the old node because the `VolumeAttachment` object was not cleaned up",
-      "`ReadWriteOnce` PVs cannot be moved between nodes under any circumstances in a Kubernetes cluster"
+      "The PV detach from the rebooted node was delayed because the CSI driver requires a graceful unmount before reattachment"
     ],
     answer: 2,
     explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: RWO PVs can be moved between nodes; the issue is stale VolumeAttachment, not a permanent restriction\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -1193,7 +1193,7 @@ var questions = [
     diagram: null,
     options: [
       "PVCs are deleted when the StatefulSet is deleted, but retained when pods are scaled down by count",
-      "PVCs are retained when the StatefulSet is deleted, but deleted when individual pods are scaled down",
+      "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted, preserving data independently",
       "All PVCs are always deleted regardless of which operation triggered the removal of the StatefulSet",
       "This field is not valid in the StatefulSet spec and is rejected by the API server upon submission"
     ],
@@ -1384,7 +1384,7 @@ var questions = [
     text: "A centralized logging system collects logs from all pods using a DaemonSet-based log collector (e.g., Fluentd). Logs from StatefulSet pods include the pod name, which contains the ordinal index. Why is this useful for debugging stateful workloads?",
     diagram: null,
     options: [
-      "It is not useful; all StatefulSet pod logs are identical regardless of which replica produced the output",
+      "The ordinal is useful for pod scheduling decisions, but log collectors strip ordinal information before indexing",
       "The ordinal in the pod name correlates logs with specific replicas, helping debug per-instance issues",
       "The ordinal index is used by Fluentd to sort collected log entries in strict chronological timestamp order",
       "Fluentd uses the ordinal to determine log rotation frequency and maximum file size per replica instance"
