@@ -1,16 +1,40 @@
 {
   "set": "08",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 4,
   "issues": [
     {
-      "id": "s08-q012",
+      "id": "s08-q005",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram title 'Database-per-Service Pattern' hints at the correct answer",
+      "detail": "The SVG diagram title text reads 'Database-per-Service Pattern', which is a hallmark of loose coupling in microservices. Since the correct answer (option A) is 'Loose coupling', the diagram title directly reinforces the answer by illustrating the principle. A test-taker can see separate databases per service in the title and immediately associate that with loose coupling without needing deeper knowledge.",
+      "suggestion": "Change the diagram title to a neutral label such as 'Microservices Communication Layout' or 'Service Decomposition Architecture'. The visual of three services with three databases already conveys the pattern without naming it outright."
+    },
+    {
+      "id": "s08-q041",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram title 'Service Mesh Architecture' directly reveals the correct answer",
-      "detail": "The SVG diagram title text reads 'Service Mesh Architecture' and the diagram shows sidecar proxies with mTLS and a Control Plane. The correct answer (option C) is the only option that mentions 'service mesh.' A student can read the diagram title and immediately select option C without any Kubernetes knowledge.",
-      "suggestion": "Change the diagram title from 'Service Mesh Architecture' to a neutral label such as 'Inter-Service Communication Pattern' or 'Sidecar Proxy Architecture'. This preserves the pedagogical value of the diagram while requiring students to identify the pattern from the architecture shown rather than from the title text."
+      "what": "Diagram labels 'session in mem' in red directly reveal the violation",
+      "detail": "The SVG diagram shows three instances each labeled 'session in mem' in a distinctive red/pink color (#fca5a5), visually flagging in-memory session data as the problem. The correct answer (option B) is 'Keeping user session data in local process memory'. A student can read the red 'session in mem' labels and immediately identify option B as the violation without understanding the twelve-factor methodology. The Redis box at the bottom labeled 'shared session store' further reveals the correct alternative.",
+      "suggestion": "Change the instance annotations to neutral labels like 'Instance 1/2/3' without revealing what is stored in memory. Alternatively, remove the diagram entirely since the question is conceptual and does not benefit from a diagram that gives away the answer."
+    },
+    {
+      "id": "s08-q089",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "what": "Option A and option B both yield 4 replicas — only the reasoning differs",
+      "detail": "Option A states 'the HPA doubles the current count to halve utilization' which arrives at 4 replicas. Option B gives the official formula ceil(2 * 140/70) = 4 replicas. Both produce the same correct numerical answer. The explanation marks A wrong because it 'ignores the standard formula', but a test-taker who correctly computes 4 replicas and selects A would be penalized. In a real exam, two options producing the same correct numerical answer creates confusion.",
+      "suggestion": "Rewrite option A so it arrives at a different (incorrect) number. For example: '3 replicas — the HPA adds one replica per 70% utilization increment above the target threshold' which gives a clearly wrong answer."
+    },
+    {
+      "id": "s08-q097",
+      "type": "wrong_explanation",
+      "severity": "minor",
+      "what": "Explanation for option A contains confusing self-contradictory language",
+      "detail": "The 'Why other options are wrong' section for option A reads: 'Pods, Services, ConfigMaps are indeed namespace-scoped, but this option is correct, not a wrong answer to select.' Saying 'this option is correct' in a section explaining why options are wrong is self-contradictory and confusing. Option A is a true statement about namespace-scoped resources but it does not answer the question about which resources are NOT namespaced — making it an incorrect choice, not a 'correct' one.",
+      "suggestion": "Rewrite the explanation to: 'A: Pods, Services, and ConfigMaps are indeed namespace-scoped, but the question asks which resources are NOT namespaced — this option lists namespace-scoped resources, not cluster-scoped ones.'"
     }
   ]
 }

@@ -1,24 +1,24 @@
 {
   "set": "10",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
   "issues_found": 2,
   "issues": [
     {
-      "id": "s10-q091",
+      "id": "s10-q028",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram annotation still reveals that the validating webhook sees the mutated pod",
-      "detail": "The SVG diagram includes the annotation text 'Validating WH sees mutated pod with sidecar missing limits'. The core insight of this question is whether the validating webhook sees changes made by the mutating webhook. The annotation directly confirms this mechanism, allowing a student to eliminate option A ('validating webhooks cannot see any mutations from mutating webhooks') and identify option B (the correct answer) without understanding the admission controller chain ordering. The previous round removed the explicit 'REJECTS' label and the 'X' blocking path to etcd, but this remaining annotation still leaks the key reasoning.",
-      "suggestion": "Change the annotation to a neutral description such as 'What is the outcome?' or remove it entirely. The diagram already shows the chain (API Request -> Mutating WH with +sidecar (no limits) -> Validating WH checking limits -> ? -> etcd) which provides sufficient context without revealing whether the validating webhook sees the mutation."
+      "severity": "major",
+      "what": "Diagram text 'Compensating transactions' directly reveals the correct answer",
+      "detail": "The SVG diagram includes the label 'Compensating transactions' on a dashed orange arrow flowing from the failed Shipping service back toward Payment and Inventory. The correct answer (option B, index 0) states 'Execute compensating transactions in reverse: release the inventory reservation, then refund the payment.' The diagram literally names the mechanism that the question is testing knowledge of. A student can read the diagram label and match it to the only option containing 'compensating transactions' without understanding the Saga pattern.",
+      "suggestion": "Remove the 'Compensating transactions' text from the diagram. Replace it with a neutral label such as '?' or 'How to handle?' on the dashed arrow, or remove the reverse-flow arrow entirely. The diagram should only illustrate the forward flow (Order -> Payment SUCCESS -> Inventory SUCCESS -> Shipping FAILED) without naming the recovery mechanism."
     },
     {
-      "id": "s10-q058",
-      "type": "giveaway",
+      "id": "s10-q066",
+      "type": "ambiguous",
       "severity": "minor",
-      "what": "Diagram uses solid line from CP1 vs dashed lines from CP2/CP3, subtly suggesting one node is active",
-      "detail": "The SVG diagram draws a solid line (stroke-width 1.5, no dash) from Control Plane 1 to the '???' coordination box, but uses dashed lines (stroke-dasharray='4', stroke-width 1) from Control Plane 2 and 3. This visual distinction subtly implies CP1 has a different (active) relationship compared to CP2 and CP3, hinting at a leader/standby pattern. While the '???' label keeps the specific mechanism ambiguous, the solid-vs-dashed distinction narrows the possible answers toward leader election (option D) over alternatives like simultaneous processing (A) or namespace partitioning (B).",
-      "suggestion": "Use the same line style for all three control plane connections to the coordination box (either all solid or all dashed) to avoid implying a leader/standby relationship. The diagram should present a neutral visual where all three nodes appear equivalent."
+      "what": "Options A (page cache in cgroup) and C (child processes) are both plausible causes of OOM despite low self-reported RSS",
+      "detail": "Option A says 'The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit.' Option C (the marked answer) says child processes not reported by /metrics are counted in cgroup total. Both are legitimate, well-documented causes of OOM kills when application-level RSS appears under the limit. The explanation dismisses A by saying page cache is 'typically reclaimable and usually does not trigger OOM kill,' but under cgroup v2 with memory.max enforcement, page cache counts toward the memory limit and can contribute to OOM if the cgroup is at its limit and the kernel cannot reclaim quickly enough (e.g., dirty pages being written back). The question does not provide enough detail (e.g., whether the app does heavy file I/O, whether it forks workers) to definitively rule out either cause.",
+      "suggestion": "Strengthen the question stem to make child processes the unambiguous cause. For example, add a detail like 'The application is a web server that spawns worker processes to handle requests' or 'kubectl top pod shows memory usage at 510Mi while the app reports 480Mi.' Alternatively, change option A to something clearly wrong, such as 'The kernel reserves 10% of the memory limit for internal overhead, reducing the effective limit to ~460Mi.'"
     }
   ]
 }

@@ -1,24 +1,32 @@
 {
   "set": "01",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 3,
   "issues": [
     {
-      "id": "s01-q033",
-      "type": "wrong_explanation",
-      "severity": "moderate",
-      "what": "Explanation labels for options B and C are swapped",
-      "detail": "In the 'Why other options are wrong' section, the explanation for B says 'Bundling environment-specific config into the image means rebuilding for each environment' — but option B is 'Use a centralized configuration server that the application queries at startup for its settings'. Meanwhile, the explanation for C says 'While configuration servers exist, the twelve-factor methodology specifically advocates for environment-based configuration, not centralized servers' — but option C is 'Bundle environment-specific configuration files into the container image at build time per stage'. The B and C explanations have been transposed.",
-      "suggestion": "Swap the labels so that B explains why a centralized configuration server is wrong ('While configuration servers exist, the twelve-factor methodology specifically advocates for environment-based configuration, not centralized servers') and C explains why bundling config in images is wrong ('Bundling environment-specific config into the image means rebuilding for each environment')."
-    },
-    {
-      "id": "s01-q018",
+      "id": "s01-q067",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Question stem contains the word 'sidecar' which is the correct answer",
-      "detail": "The question stem reads 'a logging sidecar that reads the application's log files from a shared volume'. The correct answer (option A) is 'The sidecar pattern'. The word 'sidecar' in the stem directly reveals the answer without requiring the student to identify the pattern from the described behavior. The diagram giveaway from round 14 was fixed (renamed to 'Helper Container'), but the stem itself still contains the giveaway.",
-      "suggestion": "Replace 'a logging sidecar' in the stem with a neutral description such as 'a helper container' or 'a secondary container'. For example: 'A developer defines a Pod with two containers: an application container and a helper container that reads the application's log files from a shared volume.'"
+      "what": "Diagram directly reveals the Service type hierarchy that is the correct answer",
+      "detail": "The SVG diagram shows three stacked boxes labeled 'External LoadBalancer', 'NodePort (auto)', and 'ClusterIP (auto)' in a top-down hierarchy with connecting lines, plus three Pods below. The '(auto)' annotations on NodePort and ClusterIP directly reveal that LoadBalancer automatically includes both, which is exactly what option A (index 0) states: 'LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three.' A student can read the answer from the diagram without any Kubernetes knowledge.",
+      "suggestion": "Replace the diagram with one that shows only a LoadBalancer Service with both a ClusterIP and an external IP visible (as the question text describes), without labeling the hierarchy or using '(auto)' annotations. For example, show a Service box with two IP addresses (internal and external) and Pods behind it, letting the student determine the relationship from their knowledge."
+    },
+    {
+      "id": "s01-q073",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram shows the exact numbered sequence that is the correct answer",
+      "detail": "The SVG diagram displays a numbered sequence: '1. API Server - stores Deployment in etcd', '2. Controller Mgr - creates ReplicaSet -> Pods', '3. Scheduler - assigns Pods to nodes', '4. Kubelet - starts containers on node'. The correct answer (option C, index 2) describes this exact sequence: 'API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers.' The diagram literally spells out the answer step by step.",
+      "suggestion": "Replace the diagram with one that shows the control plane components without numbered steps or action descriptions. For example, show the API Server, Controller Manager, Scheduler, etcd, and Kubelet as boxes with unlabeled connecting lines, and ask the student to identify the correct ordering from their knowledge."
+    },
+    {
+      "id": "s01-q094",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram annotation reveals the blue-green switching mechanism that is the correct answer",
+      "detail": "The SVG diagram shows two Deployments (Blue v1 and Green v2), a Service box, and a text annotation at the bottom reading 'Switch selector: version=v1 -> version=v2'. The correct answer (option B, index 1) states: 'Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods'. The diagram's annotation explicitly describes the selector-switch mechanism, making the answer readable directly from the visual without any prior knowledge.",
+      "suggestion": "Remove or neutralize the annotation text. Show the two Deployments, the Service, and connecting lines without revealing the switching mechanism. For example, show the Service with a '?' or just connecting lines to both Deployments, letting the student determine how traffic is switched."
     }
   ]
 }

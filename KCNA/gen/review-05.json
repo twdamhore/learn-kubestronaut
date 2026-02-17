@@ -1,48 +1,56 @@
 {
   "set": "05",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 5,
+  "issues_found": 6,
   "issues": [
     {
-      "id": "s05-q023",
+      "id": "s05-q004",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Diagram places a '?' marker directly under the Admission (PSA) box and uses dashed/dimmed styling for etcd",
+      "detail": "The SVG diagram shows the request flow: kubectl -> API Server (AuthN/AuthZ) -> Admission (PSA) -> etcd. A large yellow '?' is placed directly below the Admission (PSA) box, drawing the eye to it as the point of interest. The etcd box uses a dashed stroke (stroke-dasharray='4,3') and a dimmed color (#6272a4 instead of #4cc9f0), and the connecting line is also dashed with the dimmed color, suggesting the request does not reach etcd. Together these visual cues directly hint that the answer is 'During admission' (option C, index 2).",
+      "suggestion": "Either remove the '?' from below the Admission box or place '?' markers at multiple stages (e.g., under Scheduler, Kubelet too) so the diagram does not single out the correct answer. Use the same stroke style (solid, same color) for all boxes including etcd so no visual cues hint at where the request stops."
+    },
+    {
+      "id": "s05-q005",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Options C and D explicitly state whether they block setuid, making pattern-matching trivial",
-      "detail": "The question asks 'Which securityContext field prevents [setuid escalation]?' Option C says 'does not block setuid escalation' (self-disqualifying) and option D says 'blocks setuid binaries from gaining privileges' (self-identifying as correct). A student can answer correctly by simply matching the keyword 'setuid' from the question to the options without understanding any of the security context fields.",
-      "suggestion": "Remove the explicit setuid references from options C and D. Reword to: C: '`privileged: false` -- disables privileged mode for the container process' and D: '`allowPrivilegeEscalation: false` -- prevents a process from gaining more privileges than its parent'. This forces the student to know what allowPrivilegeEscalation actually does rather than pattern-matching."
+      "what": "Correct option's description directly paraphrases the question stem",
+      "detail": "The stem asks 'Which open-source tool is specifically designed for container image vulnerability scanning?' Option D states 'Trivy, which scans container images for known vulnerabilities' — a near-verbatim restatement. The other options describe clearly unrelated functions (runtime syscall monitoring, admission policies, TLS certificates). A test-taker can pattern-match 'scan container images' from the stem to option D without knowing what Trivy is.",
+      "suggestion": "Remove the descriptive clauses from all options so the student must know what each tool does. Rewrite as: A) 'Falco', B) 'Open Policy Agent (OPA)', C) 'cert-manager', D) 'Trivy'. Alternatively, make the descriptions less explicit: D) 'Trivy, which analyzes container artifacts for security issues'."
+    },
+    {
+      "id": "s05-q008",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Correct option's description directly paraphrases the question stem keywords",
+      "detail": "The stem asks for 'real-time detection of anomalous system calls within running containers.' Option D says 'Falco with custom rules that monitor container syscall events.' The keywords 'system calls'/'syscall' and 'containers' appear in both the stem and only the correct option. The other options describe unrelated telemetry categories (metrics, logs, tracing) making pattern-matching trivial.",
+      "suggestion": "Remove the descriptive clauses from all options or make them more generic. For example: D) 'Falco with custom rules for runtime security monitoring'. This requires the student to know that Falco specifically intercepts syscalls rather than matching 'syscall' from stem to option."
+    },
+    {
+      "id": "s05-q019",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram directly illustrates the correct answer components and their relationships",
+      "detail": "The SVG diagram shows three boxes — 'ClusterRole', 'ClusterRoleBinding', and 'ServiceAccount' — with labeled arrows: 'references' (ClusterRole -> ClusterRoleBinding) and 'binds to' (ClusterRoleBinding -> ServiceAccount). This is exactly what option B describes: 'A ClusterRole and a ClusterRoleBinding for the account.' The diagram removes all ambiguity and makes the question trivially solvable by reading the diagram alone.",
+      "suggestion": "Replace the diagram with a generic RBAC architecture showing multiple paths (Role + RoleBinding, ClusterRole + RoleBinding, ClusterRole + ClusterRoleBinding) all with '?' labels, so the student must choose which combination grants cluster-wide access. Alternatively, remove the diagram entirely since the question is conceptual."
     },
     {
       "id": "s05-q036",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram labels traffic as ALLOWED and DENIED, directly revealing the answer",
-      "detail": "The SVG diagram shows a green arrow labeled 'ALLOWED' from the same-namespace Pod (role: backend in ns: database) to the target, and a red dashed arrow labeled 'DENIED' from the cross-namespace Pod (role: backend in ns: other). This directly reveals that cross-namespace traffic is denied and same-namespace traffic is allowed, which is the correct answer A (index 0). A student needs only to read the diagram to answer without understanding NetworkPolicy scoping.",
-      "suggestion": "Replace the 'ALLOWED' and 'DENIED' labels with '?' marks on both arrows (e.g., 'Allowed?' on each), and remove the green/red color distinction. Use a neutral color for both arrows so the student must reason about whether podSelector crosses namespace boundaries."
-    },
-    {
-      "id": "s05-q052",
-      "type": "wrong_explanation",
       "severity": "minor",
-      "what": "Explanation contradicts itself about authenticator ordering",
-      "detail": "The explanation for why option A is wrong says 'There is no fixed order; all authenticators are tried and the first success wins.' But the explanation for why option B is wrong says 'The order is not randomized; authenticators are tried deterministically.' These statements are contradictory -- if authenticators are tried deterministically, then there IS a fixed order. The Kubernetes API server does process authenticator plugins in a deterministic order; the key distinction is that ALL are tried (not just the first) and the first to succeed determines identity.",
-      "suggestion": "Change the explanation for why A is wrong to: 'While authenticators are evaluated in a deterministic order, the key behavior is that all configured authenticators are tried for each request and the first to successfully validate the credentials determines the identity. Option A implies a rigid sequential chain where earlier methods would prevent later ones from being tried.'"
+      "what": "Solid vs dashed arrow styling hints at allowed vs blocked traffic",
+      "detail": "The diagram uses a solid arrow from the same-namespace Pod (role: backend in ns: database) to the target, and a dashed arrow (stroke-dasharray='6,3') from the cross-namespace Pod (role: backend in ns: other) to the target. Both have '?' labels, but the visual distinction between solid (established/allowed) and dashed (uncertain/blocked) lines provides a visual cue that same-namespace traffic works while cross-namespace does not — which is the correct answer (A, index 0).",
+      "suggestion": "Use the same line style (both solid or both dashed) for the two arrows so the visual presentation does not hint at the answer. Both arrows should look identical except for their source location."
     },
     {
-      "id": "s05-q082",
+      "id": "s05-q069",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram lists specific exposure vectors for env vars vs volume mounts, directly revealing the answer",
-      "detail": "The SVG diagram enumerates the exact exposure vectors for environment variables (/proc/pid/environ, crash dumps, docker inspect, app framework logs, child process inherit) labeled 'MULTIPLE VECTORS' and contrasts with volume mounts (tmpfs/file perms, not in env listing, not in crash dumps, auto-rotated) labeled 'REDUCED SURFACE'. The correct answer D ('Env vars are visible in process listings, crash dumps, and logs; volume files are not') is directly readable from the diagram without any knowledge.",
-      "suggestion": "Simplify the diagram to show two generic boxes labeled 'Env Vars' and 'Volume Mount' with a question mark or 'Which is more secure?' between them, without listing the specific exposure vectors. The detailed reasons should only appear in the explanation after the student has answered."
-    },
-    {
-      "id": "s05-q097",
-      "type": "mcq_quality",
-      "severity": "minor",
-      "what": "Correct option B is significantly longer than the three distractors",
-      "detail": "Option B (the correct answer) is approximately 155 characters: 'The request is forbidden because the Role only grants `get` on specific names, but `kubectl get configmaps` without a name requires the `list` verb, which is not granted'. The other options are 70-85 characters each. Test-savvy students may select the longest option by default, as longer options often contain the correct nuanced explanation.",
-      "suggestion": "Pad the distractors with additional detail to balance lengths. For example: A: 'Only `app-config` is returned because the `get` verb with `resourceNames` automatically filters the list results to show matching resources only' and D: 'An empty list is returned with zero items because while the `list` verb was implied by `get`, the `resourceNames` restriction filters out all results'."
+      "what": "Diagram explicitly labels the impersonation scenario matching the correct answer",
+      "detail": "The SVG diagram shows an 'Attacker' box with a red border connecting to 'API Server' with the label 'impersonate', and a dashed line from 'Attacker' down to a 'cluster-admin' box labeled 'acts as'. This directly illustrates the correct answer B: 'The user can act as any user or group, effectively gaining cluster-admin.' The diagram removes the need to reason about the security implications of the impersonate verb.",
+      "suggestion": "Replace the diagram with a more neutral illustration that shows the impersonate verb as a concept without explicitly showing the attacker gaining cluster-admin. For example, show 'User A' -> 'API Server' with 'impersonate' and multiple possible target identities with '?' marks, so the student must reason about which identities can be impersonated."
     }
   ]
 }

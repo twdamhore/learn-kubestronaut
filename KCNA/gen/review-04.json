@@ -1,40 +1,48 @@
 {
   "set": "04",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 4,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s04-q034",
+      "id": "s04-q052",
       "type": "giveaway",
       "severity": "moderate",
-      "what": "Diagram explicitly shows 'Plain-text files on tmpfs (RAM)' which is the verbatim answer",
-      "detail": "The SVG diagram contains text 'Plain-text files' and 'on tmpfs (RAM)' in the middle box, with an arrow labeled 'kubelet decodes' from the base64-encoded Secret. Option D (index 3, the correct answer) reads 'As plain-text files in a tmpfs filesystem where the base64 encoding is decoded automatically.' A student can select the correct answer by reading the diagram alone without understanding how Secret volumes work internally.",
-      "suggestion": "Replace the middle box text with generic labels like 'Decoded files' and '??? storage medium' or simply '??? format on ???' to require the student to know both the decoding behavior and the tmpfs backing."
+      "what": "Diagram labels 'NodeStageVolume' and 'NodePublishVolume' in the Node box directly match the correct answer",
+      "detail": "The SVG diagram explicitly shows the Node plugin box containing the text 'NodeStageVolume' and 'NodePublishVolume'. The correct answer (option D, index 3) reads 'Staging (formatting/mounting to a global path) and publishing (bind-mounting into the pod) volumes'. A student can match 'NodeStageVolume' to 'Staging' and 'NodePublishVolume' to 'publishing' without understanding the CSI architecture. The diagram also shows the Controller box with 'CreateVolume' and 'ControllerPublish', which helps eliminate option A. Effectively, the diagram answers the question.",
+      "suggestion": "Replace the operation labels inside each box with '???' placeholders, e.g., 'Operation 1' / 'Operation 2' or simply remove the sub-labels and keep only the service names (Identity, Controller, Node) with '???' for their operations."
     },
     {
       "id": "s04-q059",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram contains '1:1 binding only' text and shows PVC-2 explicitly denied, directly revealing the answer",
-      "detail": "The SVG diagram includes the label '1:1 binding only' between the two PVC attempts, and shows PVC-2 with red dashed border, red 'X' marker, and label '(Denied)'. This directly reveals that a PV can only bind to one PVC at a time (option B, index 1, the correct answer). The diagram removes the need for any knowledge about PV-PVC binding mechanics.",
-      "suggestion": "Remove the '1:1 binding only' label and change PVC-2's label from '(Denied)' to '(???)'. Keep the visual structure showing two PVCs attempting to bind to one PV but let the student determine the outcome."
+      "severity": "minor",
+      "what": "Diagram uses red X mark and red dashed border on PVC-2 strongly hinting it cannot bind",
+      "detail": "The SVG diagram shows PVC-1 as green (Bound) and PVC-2 with a red dashed border, red stroke (#CC0000), and a large red 'X' symbol between PV and PVC-2. While the PVC-2 label says '(???)' which is properly obscured, the red X visual cue strongly suggests denial/failure, pointing the student toward option B (index 1): 'No, a PV can only be bound to one PVC at a time.' The visual cues make it clear PVC-2 is rejected without needing to know the binding rules.",
+      "suggestion": "Remove the red X mark and change the PVC-2 stroke color to a neutral grey (#999). Use a dashed connector line in grey with a '?' label to indicate uncertainty rather than denial. The question mark in the label '(???)' is good but the red X undermines it."
     },
     {
-      "id": "s04-q095",
-      "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram shows the full chain 'PVC Deleted -> PV Deleted -> Cloud Disk Deleted' revealing the answer",
-      "detail": "The SVG diagram explicitly shows three sequential steps: PVC is deleted, PV is deleted (in red), and Cloud Disk is deleted (in red). This directly reveals option B (index 1, the correct answer) which states 'Both the PV object and underlying storage resource (e.g., cloud disk) are automatically deleted.' A student can read the entire answer from the diagram without understanding reclaim policies.",
-      "suggestion": "Replace 'PV Deleted' with 'PV ???' and 'Cloud Disk Deleted' with 'Cloud Disk ???' to keep the visual flow but require the student to know what the Delete reclaim policy actually does."
+      "id": "s04-q001",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Access mode matching behavior may surprise test-takers familiar with real-world Kubernetes behavior",
+      "detail": "The question states a PV has ReadWriteMany and a PVC requests ReadWriteOnce. The marked answer (B, index 1) says the PVC stays Pending because access modes do not exactly match. While technically correct per Kubernetes implementation (literal set matching), many practitioners and even some documentation suggest RWX is a superset of RWO capabilities. The explanation is technically sound, but option A ('The PVC binds because ReadWriteMany satisfies ReadWriteOnce') could appear correct to knowledgeable practitioners who reason about capabilities rather than Kubernetes's literal matching algorithm. The question is defensible but borderline.",
+      "suggestion": "Add a brief clarifying phrase to the stem, e.g., 'Given Kubernetes uses literal set matching for access modes...' to reduce ambiguity and make the question test knowledge of the specific matching algorithm rather than storage capabilities."
     },
     {
-      "id": "s04-q005",
+      "id": "s04-q089",
       "type": "giveaway",
       "severity": "minor",
-      "what": "Diagram PVC names (data-db-0/1/2) reveal the StatefulSet volumeClaimTemplates naming pattern",
-      "detail": "While the controller label was fixed to 'Controller ???' in round 14, the diagram still shows PVC names 'PVC data-db-0', 'PVC data-db-1', 'PVC data-db-2' which follow the exact StatefulSet volumeClaimTemplates naming pattern (<template-name>-<statefulset-name>-<ordinal>). Option C (index 2, the correct answer) mentions 'StatefulSet with volumeClaimTemplates for per-replica persistent storage.' A student familiar with StatefulSet naming can identify the answer from the PVC names alone.",
-      "suggestion": "Replace the PVC names with generic labels like 'PVC-A', 'PVC-B', 'PVC-C' or 'PVC ???-0', 'PVC ???-1', 'PVC ???-2' to avoid revealing the naming convention."
+      "what": "Correct option is significantly longer than the other three options",
+      "detail": "Option C (index 2, the correct answer) reads: 'The VOLUME instruction is not translated into Kubernetes volume mounts — the container runtime may create anonymous bind mounts, but these are outside Kubernetes management' (roughly 160 characters). The other three options are all substantially shorter (roughly 90-100 characters each). The longer, more nuanced option stands out as the answer because it contains a qualifying clause that makes it more precise.",
+      "suggestion": "Expand the other options to be closer in length to option C. For example, option A could become 'The runtime creates an anonymous emptyDir-like volume at the declared path, managed by the container runtime as a Kubernetes-tracked ephemeral volume' and similarly lengthen options B and D."
+    },
+    {
+      "id": "s04-q043",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Question asks about label-based matching for PV-PVC binding but answer says PVs don't support spec.selector",
+      "detail": "The question asks 'Which resource supports label-based matching for PV-PVC binding?' The correct answer (A, index 0) states 'spec.selector on PVs is not valid — only PVCs support selector fields for matching labels.' However, the question stem says the admin wants to pre-provision PVs that can ONLY be claimed by PVCs matching a specific label selector, implying the admin wants to restrict PVs. The answer correctly notes this is done from the PVC side, but option B (claimRef pre-binds by name) is also a valid way for an admin to restrict which PVC binds to a specific PV, just not by label. The question could be clearer about asking specifically about label-selector-based matching.",
+      "suggestion": "Rephrase the question to more clearly focus on the PVC side: 'Which Kubernetes resource spec field supports label-based selector matching during PV-PVC binding?' This makes it clearer the question is about where the selector field lives."
     }
   ]
 }

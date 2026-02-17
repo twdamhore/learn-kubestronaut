@@ -1,7 +1,16 @@
 {
   "set": "09",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 0,
-  "issues": []
+  "issues_found": 1,
+  "issues": [
+    {
+      "id": "s09-q006",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "SVG diagram labels hint at the correct answer",
+      "detail": "The diagram shows a dashed line between Argo CD and K8s Cluster with the red text 'blocked?' and the label 'Sync Policy: ?' at the bottom. The dashed/blocked visual cue combined with the explicit 'Sync Policy: ?' text directly points the test-taker to option B ('The application sync policy is set to manual rather than automated') without requiring any Argo CD knowledge.",
+      "suggestion": "Remove the 'Sync Policy: ?' label and the 'blocked?' annotation. Instead, show the same three-box architecture (Git Repo -> Argo CD -> K8s Cluster) with a generic question mark or 'Why no auto-deploy?' text that does not directly reference sync policy."
+    }
+  ]
 }

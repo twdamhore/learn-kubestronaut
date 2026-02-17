@@ -1,32 +1,48 @@
 {
   "set": "06",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 3,
+  "issues_found": 5,
   "issues": [
+    {
+      "id": "s06-q008",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels reveal the correct scheduling mechanism",
+      "detail": "The SVG diagram includes the text 'topologyKey: kubernetes.io/hostname' at the bottom inside a labeled box. The correct answer B is 'Pod affinity with topologyKey: kubernetes.io/hostname specified'. The diagram directly names the exact topology key and mechanism that appears verbatim in the correct option, making the question trivially solvable by reading the diagram without understanding pod affinity concepts.",
+      "suggestion": "Remove the 'topologyKey: kubernetes.io/hostname' text from the bottom box. Replace it with a neutral label such as 'Same Node' or 'Node X' to show co-location without revealing the scheduling construct used."
+    },
     {
       "id": "s06-q019",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram text directly states the correct answer",
-      "detail": "The SVG diagram contains a green box at the bottom with the text 'Endpoint controller removes evicted Pod from Endpoints'. This is essentially verbatim the correct answer option B ('The endpoint controller removes the terminating Pod from Service Endpoints'). A student can read the diagram text and select the answer without understanding the concept.",
-      "suggestion": "Replace the bottom text with something neutral like 'How does the Service stop routing to the evicted Pod?' or remove the explanatory box entirely, leaving only the visual showing the dashed/removed connection to the evicting Pod."
+      "severity": "minor",
+      "what": "Diagram visual cues hint at the correct answer",
+      "detail": "The SVG diagram uses a red dashed line from the Service to the evicting Pod labeled 'removed', while healthy pods have solid green lines. The red dashed styling with 'removed' text strongly hints that the connection (endpoint) is being removed, pointing directly to answer B ('The endpoint controller removes the terminating Pod from Service Endpoints'). The green bottom box 'What happens to the Service endpoints?' is neutral, but the 'removed' label on the dashed line gives away the mechanism.",
+      "suggestion": "Remove the 'removed' text label from the dashed line connecting the Service to the evicting Pod. The dashed red styling alone without the label would show the pod is in a different state without directly revealing the endpoint removal mechanism."
     },
     {
-      "id": "s06-q087",
+      "id": "s06-q036",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram title and steps directly reveal the answer",
-      "detail": "The SVG diagram title is 'Canary Node Upgrade Strategy' and the numbered steps explicitly describe the canary process: '1. Upgrade one node first, 2. Migrate subset of workloads, 3. Validate health and metrics, 4. If OK, proceed with remaining, 5. If not, rollback the canary node'. This is a verbatim description of option C ('Upgrade one canary node first, validate its workloads, then proceed with the rest'). The diagram makes the question trivial.",
-      "suggestion": "Change the diagram title to something neutral like 'Node Upgrade Strategy' and replace the numbered steps with a generic visual showing one upgraded node alongside three old-version nodes with a question mark, without spelling out the strategy name or steps."
+      "severity": "minor",
+      "what": "Diagram annotation text directly states the answer",
+      "detail": "The diagram includes the text 'Filter removes ineligible nodes; Score ranks the rest' and 'Node C: filtered out (taint, resource, etc.)'. The correct answer B is 'Nodes that do not meet the Pod's hard constraints are eliminated'. The diagram annotation 'Filter removes ineligible nodes' is a near-paraphrase of the correct answer, making the question trivially solvable by reading the diagram caption.",
+      "suggestion": "Remove or simplify the explanatory caption text. Replace 'Filter removes ineligible nodes; Score ranks the rest' with a neutral label like 'What happens in each phase?' and remove 'Node C: filtered out' explanation, leaving just the visual of Node C in dashed/red styling."
+    },
+    {
+      "id": "s06-q056",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Both container runtime and CNI plugin issues cause NotReady status",
+      "detail": "The question asks which component is 'most likely misconfigured' when a newly joined node shows NotReady. The correct answer is D (CNI plugin), but the explanation itself acknowledges 'The kubelet reports a node as NotReady when the container runtime or network plugin is not functioning.' Option B (container runtime such as containerd) is equally plausible. The explanation's attempt to distinguish them ('the question asks about the most likely cause when kubelet is running') is weak since a misconfigured container runtime would not prevent the kubelet from running either.",
+      "suggestion": "Strengthen the question stem to narrow toward CNI specifically. For example, add context like 'The kubelet logs show runtime is healthy but network plugin is not ready' or 'The node conditions show KubeletReady but NetworkUnavailable'. Alternatively, change option B to something clearly wrong like 'The kube-apiserver certificate for node communication'."
     },
     {
       "id": "s06-q100",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram title and labels directly reveal the answer",
-      "detail": "The SVG diagram title says 'Wildcard Toleration: operator=Exists (no key)' and includes a green box labeled 'All taints matched' with bottom text 'Pod can schedule on any node regardless of taints'. This directly gives away answer C ('All taints are matched, it is a wildcard toleration'). The word 'wildcard' appears in both the diagram title and the correct option text.",
-      "suggestion": "Change the diagram title to 'Toleration: operator=Exists (no key)' (removing 'Wildcard'). Replace the green 'All taints matched' box with a question mark box like 'Which taints are matched?'. Remove the bottom explanatory text."
+      "severity": "minor",
+      "what": "Diagram visual cues hint that all taints are matched",
+      "detail": "The SVG diagram shows three different taints, each with a green dashed line connecting to the central 'Which taints are matched?' box. Drawing green lines from ALL three taints to the center visually implies that all three are matched, directly hinting at the correct answer C ('All taints are matched, it is a wildcard toleration'). If only some were matched, the visual would show fewer connections.",
+      "suggestion": "Use a uniform neutral color (e.g., gray) for the connecting lines instead of green, or use question-mark labels on each line (e.g., 'match?' on each) to avoid implying all are matched. Alternatively, remove the connecting lines entirely and just show the three taints above and the question box below."
     }
   ]
 }

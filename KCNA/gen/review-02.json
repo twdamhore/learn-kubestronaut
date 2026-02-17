@@ -1,16 +1,48 @@
 {
   "set": "02",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s02-q050",
-      "type": "giveaway",
-      "severity": "critical",
-      "what": "Diagram reveals the answer by showing the exact solution with labels",
-      "detail": "The SVG diagram explicitly shows 'Stable (v1)' with 'config-v1', 'Canary (v2)' with 'config-v2', plus the text 'Each version references its own ConfigMap' and 'Separate Deployments + separate ConfigMaps'. This directly matches option A ('Create versioned ConfigMaps (config-v1, config-v2) and have each Deployment reference its own'). A student can identify the correct answer without any Kubernetes knowledge by reading the diagram text alone.",
-      "suggestion": "Replace the diagram labels with neutral placeholders. For example, change 'config-v1' and 'config-v2' to '???' or 'which config?', remove the text 'Each version references its own ConfigMap', and replace 'Separate Deployments + separate ConfigMaps' with a question like 'How should configuration be managed for both versions?'. The diagram should illustrate the scenario (two deployment versions with different traffic splits) without revealing the configuration strategy."
+      "id": "s02-q012",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "what": "Option B (init container + emptyDir read-only) is also a valid and commonly used approach",
+      "detail": "The question asks for 'the correct approach' to make a ConfigMap file available read-only at a specific path. Option A (readOnly + subPath) is correct, but Option B (init container copies ConfigMap to emptyDir, mount emptyDir read-only) is also a fully valid and widely used pattern in production. The explanation dismisses B as 'unnecessary complexity', but it is a legitimate approach, especially when additional preprocessing of the config file is needed. Both approaches achieve the stated requirement. The question should ask for the 'most direct' or 'simplest' approach to disambiguate.",
+      "suggestion": "Change the stem from 'What is the correct approach?' to 'What is the most straightforward Kubernetes-native approach?' to make clear that the simplest solution is preferred. Alternatively, modify option B to be more clearly wrong, e.g., by introducing a factual error in its description."
+    },
+    {
+      "id": "s02-q012",
+      "type": "mcq_quality",
+      "severity": "minor",
+      "what": "Option D is obviously wrong due to nonsensical claim",
+      "detail": "Option D states 'Mount the ConfigMap volume directly at /app/config/settings.yaml; no extra configuration is needed since volumes always mount at the exact file path'. The claim that 'volumes always mount at the exact file path' is so obviously incorrect that it makes this a throwaway option, effectively reducing the question to 3 choices. Anyone with basic Linux or container knowledge knows volumes mount at directories, not file paths, by default.",
+      "suggestion": "Rewrite option D to be a more plausible distractor, e.g., 'Mount the ConfigMap volume at /app/config and use items to select only the settings.yaml key, which makes the mount read-only by limiting visible keys'."
+    },
+    {
+      "id": "s02-q038",
+      "type": "mcq_quality",
+      "severity": "minor",
+      "what": "Option B uses an absolute 'always/never' statement making it obviously wrong",
+      "detail": "Option B states 'File permissions in Secret volumes are always 0644 and cannot be changed by any configuration'. The word 'always' combined with 'cannot be changed by any configuration' is an obvious absolute that experienced test-takers would immediately dismiss, reducing this to effectively a 3-choice question. In contrast, the other options use more measured language.",
+      "suggestion": "Soften option B to make it a more plausible distractor, e.g., 'File permissions in Secret volumes default to 0644 and can only be changed by the container runtime configuration, not through the pod spec'."
+    },
+    {
+      "id": "s02-q087",
+      "type": "ambiguous",
+      "severity": "moderate",
+      "what": "The scenario does not clearly establish a namespace mismatch; the kubelet cache/timing explanation is also plausible",
+      "detail": "The question states the ConfigMap was 'recently deleted and recreated with the same name' and asks what 'likely happened'. The correct answer (B) claims it was recreated in a different namespace. However, the question says 'the same name' without mentioning a namespace change, and option C (kubelet cache propagation delay) is also a plausible explanation for a transient 'not found' error shortly after recreation. The explanation dismisses C by saying cache delay is 'transient', but the question says the pod is currently in CreateContainerConfigError, which could be a transient state. The stem should hint at why a namespace mismatch is the likely cause.",
+      "suggestion": "Add a hint to the stem, e.g., 'The ConfigMap was recently deleted and recreated with the same name by a different team member.' Or change the scenario to explicitly state the error persists after several minutes, ruling out cache delay. Alternatively, add a detail like 'kubectl get configmap app-settings shows the ConfigMap exists' (implying the user checked the wrong namespace)."
+    },
+    {
+      "id": "s02-q094",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Option A (shared ConfigMap with coupling trade-off) is a valid pragmatic choice that many teams use",
+      "detail": "The question asks for the 'recommended approach' to reduce config duplication across 15 services sharing the same Redis config. Option C (Helm library templates / Kustomize overlays) is marked correct and is the most sophisticated approach. However, option A (single shared ConfigMap, accepting coupling) is a perfectly valid and widely used approach for shared infrastructure config like Redis connection details, which change infrequently and affect all consumers equally. The question's framing as 'recommended' rather than 'ideal' makes both defensible.",
+      "suggestion": "Strengthen the stem by adding context that makes coupling a clear problem, e.g., 'The team frequently updates Redis settings per-service for testing purposes' or 'Some services may need to migrate to different Redis instances independently'. This would make the coupling trade-off in option A clearly unacceptable."
     }
   ]
 }

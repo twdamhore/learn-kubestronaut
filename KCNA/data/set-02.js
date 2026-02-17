@@ -190,13 +190,13 @@ var questions = [
     id: "s02-q012",
     domain: "Container Orchestration",
     subsection: "Storage",
-    text: "A stateful application requires a configuration file to be available at `/app/config/settings.yaml` inside the container, but the file must be read-only. The configuration is stored in a ConfigMap. What is the correct approach?",
+    text: "A stateful application requires a configuration file to be available at `/app/config/settings.yaml` inside the container, but the file must be read-only. The configuration is stored in a ConfigMap. What is the most straightforward Kubernetes-native approach?",
     diagram: null,
     options: [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
       "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
-      "Mount the ConfigMap volume directly at /app/config/settings.yaml; no extra configuration is needed since volumes always mount at the exact file path"
+      "Mount the ConfigMap volume at /app/config and use `items` to select only the settings.yaml key, which implicitly makes the mount read-only by limiting visible keys"
     ],
     answer: 0,
     explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: Mounting the ConfigMap at a path replaces the entire directory; targeting a single file requires subPath\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
@@ -626,7 +626,7 @@ var questions = [
     diagram: null,
     options: [
       "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
-      "File permissions in Secret volumes are always `0644` and cannot be changed by any configuration",
+      "File permissions in Secret volumes default to 0644 and can only be changed by the container runtime configuration, not through the Pod spec",
       "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
       "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control permissions"
     ],
@@ -1438,7 +1438,7 @@ var questions = [
     id: "s02-q087",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A pod is in `CreateContainerConfigError` state. Running `kubectl describe pod` shows: `Error: configmap \"app-settings\" not found`. The ConfigMap was recently deleted and recreated with the same name. What likely happened?",
+    text: "A pod is in `CreateContainerConfigError` state. Running `kubectl describe pod` shows: `Error: configmap \"app-settings\" not found`. A colleague deleted and recreated the ConfigMap with the same name. Running `kubectl get configmap app-settings` shows the ConfigMap exists, yet the Pod remains in CreateContainerConfigError. What likely happened?",
     diagram: null,
     options: [
       "Kubernetes caches ConfigMap references and the internal cache has not been invalidated yet after the recreation",
@@ -1552,7 +1552,7 @@ var questions = [
     id: "s02-q094",
     domain: "Cloud Native Architecture",
     subsection: "Microservices",
-    text: "A microservices team discovers that 15 of their 20 services share the same Redis connection configuration (host, port, password). Currently each has its own ConfigMap with duplicated values. What is the recommended approach to reduce configuration duplication?",
+    text: "A microservices team discovers that 15 of their 20 services share the same Redis connection configuration (host, port, password). Currently each has its own ConfigMap with duplicated values. The team needs to roll out Redis configuration changes per-service for A/B testing of a new Redis cluster. What is the recommended approach to reduce configuration duplication while supporting per-service overrides?",
     diagram: null,
     options: [
       "Create a single shared ConfigMap referenced by all 15 services, accepting the coupling trade-off to reduce duplication",

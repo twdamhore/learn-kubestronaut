@@ -1,16 +1,48 @@
 {
   "set": "07",
-  "round": 15,
+  "round": 16,
   "total_reviewed": 100,
-  "issues_found": 1,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s07-q031",
+      "id": "s07-q004",
       "type": "giveaway",
-      "severity": "moderate",
-      "what": "Diagram SVG labels the correct answer layer with 'ERROR HERE', allowing pattern-matching without knowledge",
-      "detail": "The diagram shows the container runtime stack (kubelet -> CRI -> OCI Runtime -> Linux Kernel) and explicitly marks the OCI Runtime (runc) layer with '-- ERROR HERE' in a red-highlighted box. The correct answer (index 3) is 'The CRI (e.g., containerd) relaying an OCI runtime error from runc during pod sandbox creation'. A student can simply look at the diagram, see 'ERROR HERE' next to 'OCI Runtime (runc)', and select the only option mentioning OCI runtime and runc, without needing to understand the container runtime stack or parse the error message. The diagram should present the stack layers neutrally (without indicating which layer has the error) so students must analyze the error message text in the question stem to identify the correct layer.",
-      "suggestion": "Remove '-- ERROR HERE' from the OCI Runtime layer label in the SVG. Change it to just 'OCI Runtime (runc)' with the same neutral styling as other layers. The question stem's error message ('OCI runtime create failed') is sufficient for a knowledgeable student to identify the correct layer."
+      "severity": "minor",
+      "what": "SVG diagram text directly states the answer",
+      "detail": "The diagram includes the text 'Linux kernel sends SIGKILL (signal 9) when cgroup memory limit exceeded' and 'Exit code = 128 + 9 = 137', which directly spells out the answer (option C: the container exceeded its configured limits.memory and the Linux kernel killed it). A student can read the diagram alone to answer without any Kubernetes knowledge.",
+      "suggestion": "Simplify the diagram to show only the generic lifecycle states (Running -> Terminated) without mentioning the cgroup memory limit mechanism or the exit code calculation. The explanation already covers these details."
+    },
+    {
+      "id": "s07-q018",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Distractors are self-defeating by explaining why they are wrong",
+      "detail": "Options A, C, and D each include explanatory clauses that reveal they are not the correct answer. Option A says 'for a one-time sorted list' (contradicts 'continuously updating'), option C says 'but does not track restart counts', and option D says 'but not live updates'. These self-disqualifying phrases make it trivial to eliminate distractors without knowledge, leaving only option B.",
+      "suggestion": "Remove the parenthetical explanatory phrases from each option. For example: A: '`kubectl get pods -A --sort-by=...`' B: '`kubectl get pods -A --watch`' C: '`kubectl top pods --all-namespaces`' D: '`kubectl get events -A --field-selector reason=Killing`'. Let the student determine which provides continuous output."
+    },
+    {
+      "id": "s07-q055",
+      "type": "ambiguous",
+      "severity": "minor",
+      "what": "Options A and B overlap significantly; B is essentially a restatement of a consequence of A",
+      "detail": "Option A says 'policyTypes includes Egress but no egress rules are defined, all outbound traffic (including DNS) is denied'. Option B says 'The NetworkPolicy blocks all traffic including DNS queries, so the pods cannot resolve any hostnames'. These are effectively the same explanation from different angles. The explanation even acknowledges this: 'B: This is a consequence of option A (DNS uses egress), not a separate root cause explanation.' A well-prepared student could reasonably argue B is also correct since it describes the same mechanism.",
+      "suggestion": "Replace option B with a clearly distinct distractor, e.g., 'The NetworkPolicy Ingress rule only allows traffic from app=frontend, so all other pods including the database are denied inbound connections to the api pods' which is true but does not explain the COMPLETE communication breakdown (it only explains half of it)."
+    },
+    {
+      "id": "s07-q056",
+      "type": "giveaway",
+      "severity": "minor",
+      "what": "Correct option is significantly longer and more descriptive than distractors",
+      "detail": "Option D (the correct answer) is notably more detailed: 'spec.progressDeadlineSeconds -- defines the timeout after which a stalled Deployment reports ProgressDeadlineExceeded'. Options A, B, and C have shorter, simpler descriptions. The additional specificity and the inclusion of the exact condition name 'ProgressDeadlineExceeded' makes the correct answer stand out by length and detail.",
+      "suggestion": "Equalize option lengths. For example, add similar detail to the distractors: A: 'spec.template.spec.terminationGracePeriodSeconds -- defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process' B: 'spec.strategy.rollingUpdate.maxSurge -- defines the maximum number of pods above desired count during an update rollout'."
+    },
+    {
+      "id": "s07-q093",
+      "type": "mcq_quality",
+      "severity": "minor",
+      "what": "Options C and D are obviously implausible, making this effectively a 2-choice question",
+      "detail": "Option C ('The container's storage volume became read-only, forcing an immediate termination with signal 9 from the Linux kernel') is technically nonsensical -- a read-only filesystem does not trigger SIGKILL. Option D ('The container image has a known bug that causes exit code 137 on any Linux system') is absurd since exit code 137 is a kernel-level signal, not an application-chosen exit code. Both are so clearly wrong that any student with basic Linux knowledge can eliminate them, reducing this to a 2-choice question between A and B.",
+      "suggestion": "Replace C and D with more plausible distractors, e.g., C: 'The container exceeded its configured CPU limits, causing the kernel to terminate the process with SIGKILL' and D: 'The node kubelet sent SIGKILL because the container failed to respond to a graceful shutdown SIGTERM within the termination grace period'."
     }
   ]
 }
