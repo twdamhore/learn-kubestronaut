@@ -1,56 +1,48 @@
 {
   "set": "05",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
-  "issues_found": 6,
+  "issues_found": 5,
   "issues": [
     {
-      "id": "s05-q068",
+      "id": "s05-q023",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Options C and D explicitly state whether they block setuid, making pattern-matching trivial",
+      "detail": "The question asks 'Which securityContext field prevents [setuid escalation]?' Option C says 'does not block setuid escalation' (self-disqualifying) and option D says 'blocks setuid binaries from gaining privileges' (self-identifying as correct). A student can answer correctly by simply matching the keyword 'setuid' from the question to the options without understanding any of the security context fields.",
+      "suggestion": "Remove the explicit setuid references from options C and D. Reword to: C: '`privileged: false` -- disables privileged mode for the container process' and D: '`allowPrivilegeEscalation: false` -- prevents a process from gaining more privileges than its parent'. This forces the student to know what allowPrivilegeEscalation actually does rather than pattern-matching."
+    },
+    {
+      "id": "s05-q036",
+      "type": "giveaway",
+      "severity": "moderate",
+      "what": "Diagram labels traffic as ALLOWED and DENIED, directly revealing the answer",
+      "detail": "The SVG diagram shows a green arrow labeled 'ALLOWED' from the same-namespace Pod (role: backend in ns: database) to the target, and a red dashed arrow labeled 'DENIED' from the cross-namespace Pod (role: backend in ns: other). This directly reveals that cross-namespace traffic is denied and same-namespace traffic is allowed, which is the correct answer A (index 0). A student needs only to read the diagram to answer without understanding NetworkPolicy scoping.",
+      "suggestion": "Replace the 'ALLOWED' and 'DENIED' labels with '?' marks on both arrows (e.g., 'Allowed?' on each), and remove the green/red color distinction. Use a neutral color for both arrows so the student must reason about whether podSelector crosses namespace boundaries."
+    },
+    {
+      "id": "s05-q052",
       "type": "wrong_explanation",
-      "severity": "high",
-      "what": "Explanation incorrectly states baseline profile permits hostPath volumes",
-      "detail": "The explanation says 'Note that the baseline profile does permit hostPath volumes' but according to the official Kubernetes Pod Security Standards documentation (kubernetes.io/docs/concepts/security/pod-security-standards/), the baseline profile ALSO prohibits hostPath volumes. Only the privileged profile allows hostPath. Option D also incorrectly claims 'hostPath volumes are allowed under the baseline profile as long as readOnly: true is set' -- baseline prohibits hostPath regardless of readOnly.",
-      "suggestion": "Change the explanation to: 'The restricted Pod Security Standard prohibits hostPath volumes entirely, as does the baseline profile. HostPath volumes are only permitted under the privileged profile. For log collectors requiring host access, the namespace must use the privileged profile or the Pods must be exempted from enforcement.' Also fix option D to say something like: 'No, but you can apply an exemption for specific Pods in the PSA configuration' to provide a more accurate wrong answer."
+      "severity": "minor",
+      "what": "Explanation contradicts itself about authenticator ordering",
+      "detail": "The explanation for why option A is wrong says 'There is no fixed order; all authenticators are tried and the first success wins.' But the explanation for why option B is wrong says 'The order is not randomized; authenticators are tried deterministically.' These statements are contradictory -- if authenticators are tried deterministically, then there IS a fixed order. The Kubernetes API server does process authenticator plugins in a deterministic order; the key distinction is that ALL are tried (not just the first) and the first to succeed determines identity.",
+      "suggestion": "Change the explanation for why A is wrong to: 'While authenticators are evaluated in a deterministic order, the key behavior is that all configured authenticators are tried for each request and the first to successfully validate the credentials determines the identity. Option A implies a rigid sequential chain where earlier methods would prevent later ones from being tried.'"
     },
     {
-      "id": "s05-q004",
+      "id": "s05-q082",
       "type": "giveaway",
-      "severity": "low",
-      "what": "Diagram explicitly labels 'REJECTED HERE' at the Admission (PSA) stage and highlights it in red",
-      "detail": "The SVG diagram shows the API request flow through kubectl -> API Server -> Admission (PSA) -> etcd, with the Admission box highlighted in red and text 'REJECTED HERE' below it. This directly reveals the correct answer (C, index 2) without requiring any knowledge.",
-      "suggestion": "Remove the 'REJECTED HERE' text and the red highlighting from the Admission box. Use a neutral question mark or highlight all stages equally so the student must determine the rejection point."
+      "severity": "moderate",
+      "what": "Diagram lists specific exposure vectors for env vars vs volume mounts, directly revealing the answer",
+      "detail": "The SVG diagram enumerates the exact exposure vectors for environment variables (/proc/pid/environ, crash dumps, docker inspect, app framework logs, child process inherit) labeled 'MULTIPLE VECTORS' and contrasts with volume mounts (tmpfs/file perms, not in env listing, not in crash dumps, auto-rotated) labeled 'REDUCED SURFACE'. The correct answer D ('Env vars are visible in process listings, crash dumps, and logs; volume files are not') is directly readable from the diagram without any knowledge.",
+      "suggestion": "Simplify the diagram to show two generic boxes labeled 'Env Vars' and 'Volume Mount' with a question mark or 'Which is more secure?' between them, without listing the specific exposure vectors. The detailed reasons should only appear in the explanation after the student has answered."
     },
     {
-      "id": "s05-q016",
-      "type": "giveaway",
-      "severity": "low",
-      "what": "Diagram shows 'drop: [ALL]' and 'add: [NET_BIND_SERVICE]' with 'Effective: NET_BIND_SERVICE' directly matching answer B",
-      "detail": "The SVG diagram displays two boxes: 'drop: [ALL]' and 'add: [NET_BIND_SERVICE]' leading to 'Effective: NET_BIND_SERVICE' and 'minimal privilege'. This exactly matches option B (index 1), allowing test-takers to select the answer from the diagram alone.",
-      "suggestion": "Remove the diagram or make it generic (e.g., show 'drop: [?]' and 'add: [?]' with 'Effective: ?' so the student must know which capabilities to drop and add)."
-    },
-    {
-      "id": "s05-q053",
-      "type": "giveaway",
-      "severity": "low",
-      "what": "Diagram shows 'UID = 2000' for Container A and 'UID = 1000' for Container B, directly revealing the answer",
-      "detail": "The SVG diagram explicitly shows Container A with 'runAsUser: 2000' and 'UID = 2000', and Container B with '(no override)' and 'UID = 1000'. This directly reveals that the container-level setting (2000) overrides the pod-level (1000), which is the correct answer B (index 1).",
-      "suggestion": "Replace 'UID = 2000' and 'UID = 1000' with 'UID = ?' in both containers so the student must determine the effective UID."
-    },
-    {
-      "id": "s05-q086",
-      "type": "ambiguous",
-      "severity": "medium",
-      "what": "Option D is partially correct since Kubernetes 1.22+ auto-labels namespaces with kubernetes.io/metadata.name",
-      "detail": "Option D states 'No label is needed because NetworkPolicy namespaceSelector matches namespaces by their metadata.name field directly without using labels.' Since Kubernetes 1.22+, namespaces automatically get the label kubernetes.io/metadata.name matching their name. While the namespaceSelector still technically uses labels (not the metadata.name field directly), the practical effect is that no manual labeling is needed if the policy uses this auto-label. The correct answer C says 'A custom label matching the namespaceSelector' which is true but may confuse students who know about the auto-label.",
-      "suggestion": "Reword option D more clearly to be wrong, e.g., 'No label is needed because namespaceSelector matches by the namespace metadata.name field directly, bypassing labels entirely.' Also update the explanation to mention the kubernetes.io/metadata.name auto-label as an alternative to custom labels."
-    },
-    {
-      "id": "s05-q093",
-      "type": "giveaway",
-      "severity": "low",
-      "what": "Diagram shows request flow Pod -> Webhook -> REJECTED, directly revealing the answer",
-      "detail": "The SVG diagram shows 'Pod (no RC)' flowing through 'Webhook' to 'REJECTED' and includes text 'runtimeClassName required'. This directly reveals the correct answer B (index 1) that the webhook rejects the Pod.",
-      "suggestion": "Remove or simplify the diagram to show 'Pod (no RC)' -> 'Webhook' -> '?' without the 'REJECTED' outcome."
+      "id": "s05-q097",
+      "type": "mcq_quality",
+      "severity": "minor",
+      "what": "Correct option B is significantly longer than the three distractors",
+      "detail": "Option B (the correct answer) is approximately 155 characters: 'The request is forbidden because the Role only grants `get` on specific names, but `kubectl get configmaps` without a name requires the `list` verb, which is not granted'. The other options are 70-85 characters each. Test-savvy students may select the longest option by default, as longer options often contain the correct nuanced explanation.",
+      "suggestion": "Pad the distractors with additional detail to balance lengths. For example: A: 'Only `app-config` is returned because the `get` verb with `resourceNames` automatically filters the list results to show matching resources only' and D: 'An empty list is returned with zero items because while the `list` verb was implied by `get`, the `resourceNames` restriction filters out all results'."
     }
   ]
 }

@@ -1,32 +1,32 @@
 {
   "set": "06",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
   "issues_found": 3,
   "issues": [
     {
-      "id": "s06-q008",
+      "id": "s06-q019",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram title directly reveals the answer",
-      "detail": "The SVG diagram title text reads 'Pod Affinity – Same Node' and the dashed line between the two Pods is labeled 'affinity'. This immediately tells the test-taker the answer is B (Pod affinity) without needing to read the options or think about the concept.",
-      "suggestion": "Change the diagram title to something neutral like 'Scheduling Constraint – Same Node' and relabel the dashed line between Pods to 'co-locate?' or remove the label entirely."
+      "severity": "moderate",
+      "what": "Diagram text directly states the correct answer",
+      "detail": "The SVG diagram contains a green box at the bottom with the text 'Endpoint controller removes evicted Pod from Endpoints'. This is essentially verbatim the correct answer option B ('The endpoint controller removes the terminating Pod from Service Endpoints'). A student can read the diagram text and select the answer without understanding the concept.",
+      "suggestion": "Replace the bottom text with something neutral like 'How does the Service stop routing to the evicted Pod?' or remove the explanatory box entirely, leaving only the visual showing the dashed/removed connection to the evicting Pod."
     },
     {
-      "id": "s06-q053",
+      "id": "s06-q087",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram directly shows the correct answer text",
-      "detail": "The SVG diagram includes the text 'Eligible: A, B' at the bottom. Node A has label env=production with the taint, and Node B has label env=production without the taint. This directly reveals the answer is D ('Any node with label env=production, regardless of the backend taint key') because the diagram shows both production nodes are eligible regardless of taint status.",
-      "suggestion": "Remove the 'Eligible: A, B' text from the diagram, or remove the diagram entirely. The question is clear enough without the visual aid."
+      "severity": "moderate",
+      "what": "Diagram title and steps directly reveal the answer",
+      "detail": "The SVG diagram title is 'Canary Node Upgrade Strategy' and the numbered steps explicitly describe the canary process: '1. Upgrade one node first, 2. Migrate subset of workloads, 3. Validate health and metrics, 4. If OK, proceed with remaining, 5. If not, rollback the canary node'. This is a verbatim description of option C ('Upgrade one canary node first, validate its workloads, then proceed with the rest'). The diagram makes the question trivial.",
+      "suggestion": "Change the diagram title to something neutral like 'Node Upgrade Strategy' and replace the numbered steps with a generic visual showing one upgraded node alongside three old-version nodes with a question mark, without spelling out the strategy name or steps."
     },
     {
-      "id": "s06-q096",
+      "id": "s06-q100",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram directly reveals the answer",
-      "detail": "The SVG diagram shows a ranked list with '1. Lowest PriorityClass value selected first' highlighted in green at the top. This directly reveals the answer is C ('Pod priority value is the main factor, lowest-priority Pods go first').",
-      "suggestion": "Either remove the diagram or make it show the general preemption flow without explicitly stating the priority-based selection order."
+      "severity": "moderate",
+      "what": "Diagram title and labels directly reveal the answer",
+      "detail": "The SVG diagram title says 'Wildcard Toleration: operator=Exists (no key)' and includes a green box labeled 'All taints matched' with bottom text 'Pod can schedule on any node regardless of taints'. This directly gives away answer C ('All taints are matched, it is a wildcard toleration'). The word 'wildcard' appears in both the diagram title and the correct option text.",
+      "suggestion": "Change the diagram title to 'Toleration: operator=Exists (no key)' (removing 'Wildcard'). Replace the green 'All taints matched' box with a question mark box like 'Which taints are matched?'. Remove the bottom explanatory text."
     }
   ]
 }

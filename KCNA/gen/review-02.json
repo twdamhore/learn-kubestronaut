@@ -1,43 +1,16 @@
 {
   "set": "02",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
-  "issues_found": 7,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s02-q005",
+      "id": "s02-q050",
       "type": "giveaway",
-      "detail": "The SVG diagram explicitly states 'Each key becomes a file. File content = value of the key.' which directly matches option B ('A directory with two files...each holding its value'). The diagram removes any need for Kubernetes knowledge to answer correctly."
-    },
-    {
-      "id": "s02-q030",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows 'Request: 128Mi' and 'Limit: 256Mi' with the label 'Applied automatically to pods without specs'. These exact values appear only in option C ('Request: 128Mi, Limit: 256Mi'), making the answer trivially identifiable from the diagram alone."
-    },
-    {
-      "id": "s02-q053",
-      "type": "giveaway",
-      "detail": "The SVG diagram highlights the 'Admission' box in red (#e63946) with 'Rejected here' pointing to it and a dashed line. This directly reveals the answer is option C ('During admission control'). The color coding and label make the answer obvious without reading the question."
-    },
-    {
-      "id": "s02-q076",
-      "type": "giveaway",
-      "detail": "The SVG diagram labels the two containers with 'items: app-a.conf' and 'items: app-b.conf' and states 'Each volume uses items to select specific keys'. This directly matches option C ('Define two volumes from the same ConfigMap, each using items to select the needed key')."
-    },
-    {
-      "id": "s02-q085",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows numbered steps: '1. LimitRanger Injects 128Mi' -> '2. ResourceQuota Checks total' -> 'Persist to etcd' with text 'LimitRanger runs first (mutating), then ResourceQuota validates the total.' This directly matches option D and makes it trivially answerable."
-    },
-    {
-      "id": "s02-q096",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows 'Fluentd + K8s metadata plugin' with an arrow from 'Kubernetes API' labeled with a dashed line. This directly matches option B ('The Fluentd Kubernetes metadata filter plugin queries the API'). The diagram reveals the answer visually."
-    },
-    {
-      "id": "s02-q100",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows the full chain: 'ConfigMap content changes -> sha256 -> Annotation checksum changes -> Pod Template spec changes -> rollout' with the summary 'ConfigMap change -> new checksum -> pod template change -> rolling update'. This directly matches option B and makes the answer obvious."
+      "severity": "critical",
+      "what": "Diagram reveals the answer by showing the exact solution with labels",
+      "detail": "The SVG diagram explicitly shows 'Stable (v1)' with 'config-v1', 'Canary (v2)' with 'config-v2', plus the text 'Each version references its own ConfigMap' and 'Separate Deployments + separate ConfigMaps'. This directly matches option A ('Create versioned ConfigMaps (config-v1, config-v2) and have each Deployment reference its own'). A student can identify the correct answer without any Kubernetes knowledge by reading the diagram text alone.",
+      "suggestion": "Replace the diagram labels with neutral placeholders. For example, change 'config-v1' and 'config-v2' to '???' or 'which config?', remove the text 'Each version references its own ConfigMap', and replace 'Separate Deployments + separate ConfigMaps' with a question like 'How should configuration be managed for both versions?'. The diagram should illustrate the scenario (two deployment versions with different traffic splits) without revealing the configuration strategy."
     }
   ]
 }

@@ -1,50 +1,16 @@
 {
   "set": "08",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
-  "issues_found": 7,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s08-q009",
+      "id": "s08-q012",
       "type": "giveaway",
-      "detail": "The SVG diagram is titled 'Prometheus Pull-Based Monitoring', contains a box labeled 'Prometheus Server', and shows 'scrape' arrows to service /metrics endpoints. This directly reveals the correct answer (C: Prometheus) without requiring any knowledge.",
-      "suggestion": "Replace the diagram title with a generic label like 'Pull-Based Monitoring Architecture' and label the server box as 'Monitoring Server' instead of 'Prometheus Server'. Remove the word 'Prometheus' from all diagram elements."
-    },
-    {
-      "id": "s08-q041",
-      "type": "giveaway",
-      "detail": "The SVG diagram explicitly labels 'X Violation: sticky sessions' in red and annotates each instance with 'session in mem', directly pointing to answer B (keeping session data in local process memory). The diagram also shows 'Correct: externalize state' pointing to Redis.",
-      "suggestion": "Remove the 'X Violation' and 'Correct' annotations from the diagram. Show only the architecture without indicating which approach is right or wrong. Let the student identify the violation from their knowledge."
-    },
-    {
-      "id": "s08-q073",
-      "type": "giveaway",
-      "detail": "The SVG diagram title is 'API Gateway Pattern' and the central box is labeled 'API Gateway' with 'Auth | Rate Limit | Route'. This directly reveals answer C (API Gateway pattern) without requiring knowledge of the pattern.",
-      "suggestion": "Replace the diagram title with a generic label like 'Centralized Request Handling' and relabel the box as 'Central Component' or '???' to avoid giving away the pattern name."
-    },
-    {
-      "id": "s08-q080",
-      "type": "giveaway",
-      "detail": "The SVG diagram title is 'Node-Level Logging Agent Pattern' which exactly matches answer B. The diagram also labels the agent as 'Fluentd Agent' and shows the /var/log path, making the answer trivially obvious.",
-      "suggestion": "Change the diagram title to 'Cluster Logging Architecture' and label the agent box generically as 'Log Agent' without specifying the pattern name or Fluentd."
-    },
-    {
-      "id": "s08-q086",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows 'cloud-controller-mgr' at the top with three sub-components labeled 'Node Controller', 'Route Controller', and 'Service Controller'. This directly reveals answer B, which lists exactly these three controllers.",
-      "suggestion": "Either remove the diagram entirely or make it generic by labeling the sub-components as 'Controller 1', 'Controller 2', 'Controller 3' without specifying their types."
-    },
-    {
-      "id": "s08-q090",
-      "type": "giveaway",
-      "detail": "The SVG diagram shows the Service with a solid thick line pointing to 'Green (v2)' and a dashed thin line to 'Blue (v1)', with the label 'selector switch'. This directly reveals answer B (update the Service selector to match green Pods).",
-      "suggestion": "Make both lines the same style (e.g., both dashed or both solid) and remove the 'selector switch' label to let students determine the switching mechanism themselves."
-    },
-    {
-      "id": "s08-q046",
-      "type": "ambiguous",
-      "detail": "The question states the node controller 'marks the node as NotReady' for a network partition, but then correctly applies the 'unreachable:NoExecute' taint. Technically, a network partition causes Ready=Unknown (unreachable taint), while NotReady corresponds to Ready=False (not-ready taint). The kubectl output shows 'NotReady' for both, but mixing the terminology in the question stem could confuse well-prepared candidates who know the distinction.",
-      "suggestion": "Change 'marks the node as NotReady' to 'marks the node condition Ready as Unknown' or 'the node shows as NotReady in kubectl get nodes output' to clarify the distinction."
+      "severity": "moderate",
+      "what": "Diagram title 'Service Mesh Architecture' directly reveals the correct answer",
+      "detail": "The SVG diagram title text reads 'Service Mesh Architecture' and the diagram shows sidecar proxies with mTLS and a Control Plane. The correct answer (option C) is the only option that mentions 'service mesh.' A student can read the diagram title and immediately select option C without any Kubernetes knowledge.",
+      "suggestion": "Change the diagram title from 'Service Mesh Architecture' to a neutral label such as 'Inter-Service Communication Pattern' or 'Sidecar Proxy Architecture'. This preserves the pedagogical value of the diagram while requiring students to identify the pattern from the architecture shown rather than from the title text."
     }
   ]
 }

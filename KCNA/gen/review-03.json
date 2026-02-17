@@ -1,32 +1,32 @@
 {
   "set": "03",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
   "issues_found": 3,
   "issues": [
     {
-      "id": "s03-q003",
+      "id": "s03-q078",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "Diagram labels the correct answer",
-      "detail": "The SVG diagram has the word 'Ingress' prominently displayed as the top-level routing component. Since the correct answer (D) is 'An Ingress resource with path-based rules', a test-taker can pattern-match the diagram label to the only option containing 'Ingress' without understanding the concept.",
-      "suggestion": "Replace the 'Ingress' text in the diagram with a generic label like 'L7 Router' or '?' to avoid directly naming the answer. The diagram structure (path-based fan-out to two services) is pedagogically valuable and should be kept."
+      "severity": "critical",
+      "what": "Diagram directly reveals the correct answer",
+      "detail": "The SVG diagram contains the text 'conntrack race', 'drops one packet', and '→ 5s timeout', which are the exact mechanism described by the correct answer (option D: 'The Linux conntrack table races between simultaneous A and AAAA queries, causing one to drop'). A student can read the answer directly from the diagram without any Kubernetes knowledge.",
+      "suggestion": "Replace the diagram text with neutral labels. For example, show the flow as 'App Pod → CoreDNS → Upstream DNS' with 'A + AAAA sent simultaneously' on one side and '?' or 'one query lost' on the other, without mentioning 'conntrack race' or the specific timeout value. The diagram should illustrate the problem scenario, not the root cause."
     },
     {
-      "id": "s03-q041",
-      "type": "giveaway",
-      "severity": "major",
-      "what": "Diagram explicitly shows the answer",
-      "detail": "The SVG diagram shows 'Ingress blocked' and 'Egress blocked' with red X marks, and the text 'policyTypes: [Ingress, Egress] — no rules defined'. This directly reveals that answer A ('All ingress and egress traffic is denied') is correct. A student can read the answer from the diagram without understanding NetworkPolicy semantics.",
-      "suggestion": "Replace the diagram with a neutral one that shows the policy applied to the pods without indicating blocked/allowed status — e.g., show the pod with the policy label and arrows with question marks for both directions. Alternatively, remove the diagram entirely since the question text is self-sufficient."
+      "id": "s03-q078",
+      "type": "wrong_explanation",
+      "severity": "moderate",
+      "what": "The 'Why other options are wrong' labels B and C are swapped",
+      "detail": "In the 'Why other options are wrong' section, label B discusses 'ndots' (which is actually option C at index 2), and label C discusses 'kube-proxy throttling' (which is actually option B at index 1). The options are: A=CoreDNS upstream resolvers, B=kube-proxy throttle, C=ndots setting, D=conntrack race. The explanation body text is correct but the lettered labels in the 'Why other options are wrong' block are transposed.",
+      "suggestion": "Swap the B and C entries so they read: '- B: kube-proxy does not throttle or rate-limit DNS traffic; it manages Service-level forwarding rules.' and '- C: A high ndots value causes extra DNS query attempts but does not explain the specific 5-second timeout pattern from conntrack races.'"
     },
     {
-      "id": "s03-q076",
+      "id": "s03-q090",
       "type": "giveaway",
-      "severity": "major",
-      "what": "Diagram contains the exact DNS name from the correct answer",
-      "detail": "The SVG diagram includes the text 'DNS: myhost.mysubdomain.<ns>.svc.cluster.local' at the bottom, which is exactly the pattern in option A. A test-taker can simply read the answer from the diagram without understanding the hostname/subdomain DNS mechanics.",
-      "suggestion": "Remove the DNS line from the diagram or replace it with a generic '?' label. Keep the diagram showing the headless Service and pod with hostname/subdomain fields, but let the student derive the DNS name themselves."
+      "severity": "moderate",
+      "what": "Diagram labels all components of the correct answer",
+      "detail": "The SVG diagram displays five labeled boxes: 'NetworkPolicy (L3/L4)', 'mTLS (Service Mesh)', 'Identity-based Auth', 'Encrypted Traffic', and 'Default Deny All'. These map directly to the correct answer (option A: 'Default-deny NetworkPolicy, mTLS via a service mesh, and identity-based authorization rules'). A student can match the diagram labels to the answer without understanding zero-trust networking principles.",
+      "suggestion": "Replace the specific technology labels with generic placeholders. For example, use labels like 'Layer ?', 'Auth method ?', 'Encryption ?', 'Default policy ?' or show a generic zero-trust architecture diagram with '?' in each box. Alternatively, remove the diagram since the question text is self-sufficient."
     }
   ]
 }

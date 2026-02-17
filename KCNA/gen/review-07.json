@@ -1,24 +1,16 @@
 {
   "set": "07",
-  "round": 14,
+  "round": 15,
   "total_reviewed": 100,
-  "issues_found": 2,
+  "issues_found": 1,
   "issues": [
     {
-      "id": "s07-q029",
+      "id": "s07-q031",
       "type": "giveaway",
-      "severity": "minor",
-      "what": "The stem states `restartPolicy` is `Never`, and only the correct option (index 2) contains the phrase `restartPolicy: Never`. A test-taker can select the correct answer by pattern-matching the config value from the stem to the only option that quotes it, without understanding the actual behavior.",
-      "correction": "Rephrase the correct option to not quote `restartPolicy: Never` verbatim, e.g., 'The pod remains in Error state indefinitely; its restart policy prevents the kubelet from restarting it'. Alternatively, mention restartPolicy in one of the wrong options too (e.g., 'The restartPolicy: Never setting causes the scheduler to delete and replace the pod on another node').",
-      "answer_correct": true
-    },
-    {
-      "id": "s07-q056",
-      "type": "giveaway",
-      "severity": "minor",
-      "what": "The stem asks 'What parameter controls how long Kubernetes waits before marking the rollout as failed?' and the correct option (index 3) says 'sets maximum time before rollout is marked failed' — the phrase 'rollout is/as marked failed' appears verbatim in both the stem and only the correct answer, enabling pattern-matching without knowledge.",
-      "correction": "Rephrase the correct option to avoid echoing the stem, e.g., '`spec.progressDeadlineSeconds` which defines the timeout after which a stalled rollout is reported as ProgressDeadlineExceeded'. Alternatively, add similar phrasing to a wrong option.",
-      "answer_correct": true
+      "severity": "moderate",
+      "what": "Diagram SVG labels the correct answer layer with 'ERROR HERE', allowing pattern-matching without knowledge",
+      "detail": "The diagram shows the container runtime stack (kubelet -> CRI -> OCI Runtime -> Linux Kernel) and explicitly marks the OCI Runtime (runc) layer with '-- ERROR HERE' in a red-highlighted box. The correct answer (index 3) is 'The CRI (e.g., containerd) relaying an OCI runtime error from runc during pod sandbox creation'. A student can simply look at the diagram, see 'ERROR HERE' next to 'OCI Runtime (runc)', and select the only option mentioning OCI runtime and runc, without needing to understand the container runtime stack or parse the error message. The diagram should present the stack layers neutrally (without indicating which layer has the error) so students must analyze the error message text in the question stem to identify the correct layer.",
+      "suggestion": "Remove '-- ERROR HERE' from the OCI Runtime layer label in the SVG. Change it to just 'OCI Runtime (runc)' with the same neutral styling as other layers. The question stem's error message ('OCI runtime create failed') is sufficient for a knowledgeable student to identify the correct layer."
     }
   ]
 }
