@@ -106,9 +106,13 @@
     b2.onclick = resetAll;
     var b3 = el('button', 'btn btn-success', null, 'Show Summary');
     b3.onclick = showSummary;
+    var b4 = el('button', 'btn btn-jump', null, 'Next Unanswered');
+    b4.id = 'btn-next-unanswered';
+    b4.onclick = jumpToNextUnanswered;
     actions.appendChild(b1);
     actions.appendChild(b2);
     actions.appendChild(b3);
+    actions.appendChild(b4);
     content.appendChild(actions);
 
     var summary = el('div', 'summary-section');
@@ -288,6 +292,28 @@
     s.scrollIntoView({ behavior: 'smooth' });
   }
 
+  /* ─── Jump to next unanswered ─── */
+  function jumpToNextUnanswered() {
+    for (var d = 0; d < state.displayIndices.length; d++) {
+      var qIdx = state.displayIndices[d];
+      if (state.answered[qIdx] === undefined) {
+        var card = document.getElementById('question-' + qIdx);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+  }
+
+  function updateJumpButton() {
+    var btn = document.getElementById('btn-next-unanswered');
+    if (!btn) return;
+    var hasUnanswered = false;
+    for (var d = 0; d < state.displayIndices.length; d++) {
+      if (state.answered[state.displayIndices[d]] === undefined) { hasUnanswered = true; break; }
+    }
+    btn.disabled = !hasUnanswered;
+  }
+
   /* ─── Order toggle ─── */
   function setOrder(order) {
     state.order = order;
@@ -375,6 +401,7 @@
     }
     var pf = document.getElementById('progress-fill');
     if (pf) pf.style.width = (ans / questions.length * 100) + '%';
+    updateJumpButton();
   }
 
   /* ─── Lab Section ─── */

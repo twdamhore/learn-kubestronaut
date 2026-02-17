@@ -215,6 +215,21 @@ body {
   background: #f5f5f5;
 }
 
+.btn-jump {
+  background: #e65100;
+  color: white;
+}
+
+.btn-jump:hover {
+  background: #f57c00;
+}
+
+.btn-jump:disabled {
+  background: #bdbdbd;
+  color: #757575;
+  cursor: not-allowed;
+}
+
 /* Question cards */
 .question-card {
   background: var(--card-bg);
