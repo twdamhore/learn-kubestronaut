@@ -154,7 +154,7 @@ var questions = [
     options: [
       "A. kubelet -> kube-apiserver -> kube-controller-manager -> kube-scheduler -> kube-proxy",
       "B. kube-apiserver -> kube-controller-manager -> kube-scheduler -> kubelet -> kube-proxy",
-      "C. etcd -> kubelet -> kube-apiserver -> kube-proxy -> kube-controller-manager component",
+      "C. etcd -> kubelet -> kube-apiserver -> kube-proxy -> kube-controller-manager",
       "D. kube-scheduler -> kube-controller-manager -> kube-apiserver -> kubelet -> kube-proxy"
     ],
     answer: 1,
@@ -251,7 +251,7 @@ var questions = [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
       "B. DaemonSet Pods automatically include tolerations for all taints",
       "C. The drain command cannot evict any Pods in the `kube-system` namespace",
-      "D. `kubectl drain` refuses to evict DaemonSet-managed Pods and requires the `--ignore-daemonsets` flag to proceed"
+      "D. `kubectl drain` skips DaemonSet-managed Pods unless `--ignore-daemonsets` is passed"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but not for all taints; the reason drain skips them is different\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -553,9 +553,9 @@ var questions = [
     diagram: null,
     options: [
       "A. `scheduler_scheduling_attempt_duration_seconds`",
-      "B. `kubelet_pod_start_duration_seconds` metric name",
-      "C. `apiserver_request_duration_seconds` metric name",
-      "D. `etcd_request_duration_seconds` metric name type"
+      "B. `kubelet_pod_start_duration_seconds`",
+      "C. `apiserver_request_duration_seconds`",
+      "D. `etcd_request_duration_seconds`"
     ],
     answer: 0,
     explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.\n\nWhy other options are wrong:\n- B: kubelet_pod_start_duration_seconds measures Pod startup time after scheduling, a different phase\n- C: apiserver_request_duration_seconds measures API server request latency, not scheduling latency\n- D: etcd_request_duration_seconds measures etcd request latency, not scheduling-specific latency\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
@@ -1067,7 +1067,7 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. `globalDefault` is not a recognized valid field in the PriorityClass resource spec"
+      "D. The `globalDefault` field requires all existing Pods to be restarted before the new default takes effect on them"
     ],
     answer: 0,
     explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting Pods does not update their priority; priority is set by the admission controller at creation time\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault is a valid and recognized field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A CI/CD pipeline must verify that node maintenance operations complete successfully before deploying new application versions. Which approach best integrates cluster readiness checks into the pipeline?",
     diagram: null,
     options: [
-      "A. Skip pre-deployment checks entirely and rely on Kubernetes self-healing for recovery instead",
+      "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if issues arise",
       "B. Deploy to a separate staging cluster that never undergoes any scheduled maintenance procedures",
       "C. Add a manual approval gate where an operator visually inspects the full cluster readiness state",
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"

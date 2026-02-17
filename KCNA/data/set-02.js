@@ -77,7 +77,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
     text: "A team mounts a ConfigMap as a volume at `/etc/config` inside a container. The ConfigMap has two keys: `app.properties` and `logging.conf`. What will the container see at `/etc/config`?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Volume Mount: /etc/config</text><rect x="30" y="55" width="160" height="40" rx="5" fill="#326CE5"/><text x="110" y="80" text-anchor="middle" fill="white" font-size="12">app.properties</text><rect x="210" y="55" width="160" height="40" rx="5" fill="#326CE5"/><text x="290" y="80" text-anchor="middle" fill="white" font-size="12">logging.conf</text><rect x="30" y="115" width="340" height="55" rx="5" fill="#16213e" stroke="#326CE5" stroke-width="1"/><text x="200" y="142" text-anchor="middle" fill="#e0e0e0" font-size="13">How are keys exposed inside the container?</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">ConfigMap Volume Mount</text><rect x="30" y="50" width="150" height="70" rx="5" fill="#16213e" stroke="#326CE5" stroke-width="1"/><text x="105" y="70" text-anchor="middle" fill="#326CE5" font-size="11" font-weight="bold">ConfigMap: app-config</text><text x="105" y="90" text-anchor="middle" fill="#ccc" font-size="10">key: app.properties</text><text x="105" y="106" text-anchor="middle" fill="#ccc" font-size="10">key: logging.conf</text><line x1="180" y1="85" x2="230" y2="85" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/><text x="205" y="78" text-anchor="middle" fill="#e0e0e0" font-size="12">?</text><defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/></marker></defs><rect x="235" y="60" width="140" height="50" rx="5" fill="#16213e" stroke="#326CE5" stroke-width="1"/><text x="305" y="82" text-anchor="middle" fill="#e0e0e0" font-size="11">/etc/config</text><text x="305" y="100" text-anchor="middle" fill="#aaa" font-size="10">contents = ?</text><text x="200" y="165" text-anchor="middle" fill="#aaa" font-size="11">What does the container see at the mount path?</text></svg>',
     options: [
       "A single file called `configmap.yaml` that combines both keys and their corresponding values",
       "A directory with two files, `app.properties` and `logging.conf`, each holding its value",
@@ -196,7 +196,7 @@ var questions = [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
       "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
-      "Mount the ConfigMap volume at /app/config and use `items` to select only the settings.yaml key, which implicitly makes the mount read-only by limiting visible keys"
+      "Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access"
     ],
     answer: 0,
     explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: Mounting the ConfigMap at a path replaces the entire directory; targeting a single file requires subPath\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
@@ -341,8 +341,8 @@ var questions = [
     options: [
       "SSH into each running pod and manually update the configuration files in place on the filesystem",
       "Use `kubectl edit` to modify the running Deployment and let pods pick up the changes dynamically",
-      "Build a new container image with the updated configuration baked in, requiring a new image build for every config change across all environments",
-      "Create a new ConfigMap version, then trigger a Deployment rollout by updating the reference"
+      "Build a new container image with the updated configuration baked in for every environment",
+      "Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference"
     ],
     answer: 3,
     explanation: "Immutable infrastructure means not modifying running instances. While option C (rebuilding the image) follows immutable principles for application code, for configuration changes, creating a new ConfigMap and updating the Deployment reference (e.g., changing a ConfigMap name hash annotation) triggers a rollout that replaces pods with new ones using the updated configuration. This avoids SSH access and in-place edits. Using `kubectl edit` to modify running resources can work but modifying only the ConfigMap without triggering a rollout may leave pods with stale configuration.\n\nWhy other options are wrong:\n- A: SSH into pods violates immutable infrastructure principles and is a security anti-pattern\n- B: kubectl edit modifies the running resource but may not trigger a pod rollout for ConfigMap changes\n- C: Rebuilding the image for every config change is wasteful when ConfigMaps separate config from code\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -626,7 +626,7 @@ var questions = [
     diagram: null,
     options: [
       "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
-      "File permissions in Secret volumes default to 0644 and can only be changed by the container runtime configuration, not through the Pod spec",
+      "Secret volume file permissions default to 0644 and can only be changed by the container runtime configuration",
       "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
       "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control permissions"
     ],
@@ -1222,9 +1222,9 @@ var questions = [
     diagram: null,
     options: [
       "`kube_pod_container_status_restarts_total` with `kube_pod_container_status_last_terminated_reason` for OOMKilled, plus `kube_pod_container_resource_limits` for memory",
-      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health and available capacity",
-      "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod network traffic analysis",
-      "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica tracking"
+      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, available capacity, and saturation, which reveals infrastructure pressure but not container-level OOM events",
+      "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network traffic analysis, revealing bandwidth consumption patterns but not memory termination causes",
+      "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica tracking, showing desired versus ready pod counts but not individual container kill reasons"
     ],
     answer: 0,
     explanation: "To identify OOM-killed containers, `kube_pod_container_status_restarts_total` tracks restart counts, and `kube_pod_container_status_last_terminated_reason` can filter for `OOMKilled`. Combining this with `kube_pod_container_resource_limits{resource=\"memory\"}` shows which containers have low limits relative to their needs. Node-level metrics do not identify specific containers. Network and replica metrics are unrelated to memory issues.\n\nWhy other options are wrong:\n- B: Node-level memory and CPU metrics do not identify specific containers being OOM-killed\n- C: Network traffic metrics are unrelated to memory OOM issues\n- D: Deployment replica metrics track availability, not memory-related container terminations\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",

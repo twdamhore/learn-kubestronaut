@@ -59,7 +59,7 @@ var questions = [
       "A. 3 pods on us-east-1a and 3 on us-east-1b; the topology constraint is satisfied across the two available zones",
       "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate the skew",
       "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely",
-      "D. 5 pods run (2 in us-east-1a, 2 in us-east-1b, 1 existing in us-east-1c) and 1 remains Pending because `maxSkew: 1` includes the unavailable zone"
+      "D. 5 pods run across three zones and 1 remains Pending because `maxSkew: 1` includes the unavailable zone in its skew calculation"
     ],
     answer: 3,
     explanation: "With `nodeTaintsPolicy: Ignore`, the scheduler includes tainted (NotReady) nodes in the topology spread calculation even though pods cannot be scheduled there. The original 3 replicas were distributed 1 per zone. When us-east-1c goes NotReady, its pod still counts in the skew calculation. With `maxSkew: 1` and `DoNotSchedule`, the scheduler can place pods on zones a and b until each has 2 pods (skew of 2\u22121=1, within maxSkew). This yields 2+2+1=5 running pods. The 6th pod cannot be scheduled on any healthy zone without exceeding maxSkew (that would create a skew of 3\u22121=2), so 1 pod remains Pending. Note: since K8s 1.27, the default `nodeTaintsPolicy` is `Honor`, which would exclude the NotReady zone and allow 3+3 distribution across the two healthy zones.\n\nWhy other options are wrong:\n- A: With nodeTaintsPolicy: Ignore, the NotReady zone is included in skew calculation, preventing a 3-3 split; maxSkew:1 would be violated\n- B: Two pods are not Pending; the scheduler can still place pods on healthy zones up to the skew limit (2 per zone)\n- C: nodeTaintsPolicy: Ignore means the NotReady node is NOT excluded from calculation; it is still counted in the topology domain\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#node-taints-policy",
@@ -312,7 +312,7 @@ var questions = [
     text: "A cluster uses CoreDNS for service discovery. A pod in namespace `team-a` tries to resolve `api-service.team-b.svc.cluster.local` but resolving the FQDN is significantly slower than expected, with DNS debug logs showing unnecessary search-domain lookups. The service exists and has endpoints. Running `nslookup api-service.team-b` from the same pod succeeds quickly. What is the most likely cause of the slow FQDN resolution?",
     diagram: null,
     options: [
-      "A. The pod's `ndots:5` setting causes search-domain expansion even for the seemingly-qualified FQDN (4 dots < 5), and a trailing dot would force absolute resolution",
+      "A. The pod's `ndots:5` setting causes the resolver to try search-domain expansion for the FQDN because it has only 4 dots, which is less than ndots",
       "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from the `team-a` namespace pods",
       "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed zone list",
       "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
@@ -1050,7 +1050,7 @@ var questions = [
     options: [
       "A. The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit",
       "B. The kubelet's eviction threshold was triggered before the container reached its limit, killing the largest memory consumer pod",
-      "C. The container spawned child processes whose memory is not reported by the application's /metrics endpoint but is counted in the cgroup memory total",
+      "C. The container's child worker processes consume additional memory counted by the cgroup but not by the app's /metrics endpoint",
       "D. Memory fragmentation caused the kernel to report higher memory usage than actual RSS, triggering the OOM kill prematurely"
     ],
     answer: 2,

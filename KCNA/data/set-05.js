@@ -360,10 +360,10 @@ var questions = [
     text: "An attacker gains access to a container and tries to escalate privileges using `setuid` binaries. Which `securityContext` field prevents this?",
     diagram: null,
     options: [
-      "`readOnlyRootFilesystem: true` — prevents writes to the container root filesystem",
-      "`runAsNonRoot: true` — ensures the container process does not run as UID zero root",
-      "`privileged: false` — disables privileged mode for the container process",
-      "`allowPrivilegeEscalation: false` — prevents a process from gaining more privileges than its parent"
+      "`readOnlyRootFilesystem: true`",
+      "`runAsNonRoot: true`",
+      "`privileged: false`",
+      "`allowPrivilegeEscalation: false`"
     ],
     answer: 3,
     explanation: "Setting `allowPrivilegeEscalation: false` prevents a process from gaining more privileges than its parent, which blocks `setuid` and `setgid` binaries. `readOnlyRootFilesystem` prevents writes but not privilege escalation. `runAsNonRoot` ensures a non-root UID but does not block setuid.\n\nWhy other options are wrong:\n- A: readOnlyRootFilesystem prevents filesystem writes but does not block setuid privilege escalation\n- B: runAsNonRoot prevents running as root but does not block setuid binaries from escalating\n- C: privileged: false disables privileged mode but a non-privileged container can still use setuid\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
@@ -760,10 +760,10 @@ var questions = [
     text: "You need to allow a user to view resources across all namespaces but not modify anything. Which built-in ClusterRole is appropriate?",
     diagram: null,
     options: [
-      "`admin` — grants read and write access to most namespace resources",
-      "`edit` — allows read and write access but excludes Roles and bindings",
-      "`view` — grants read-only access to resources across all namespaces",
-      "`cluster-admin` — grants full unrestricted access to every resource"
+      "`admin`",
+      "`edit`",
+      "`view`",
+      "`cluster-admin`"
     ],
     answer: 2,
     explanation: "The built-in `view` ClusterRole grants read-only access to most resources in a namespace. When bound via a ClusterRoleBinding, it allows viewing resources across all namespaces. The `admin` and `edit` roles grant modification permissions, and `cluster-admin` grants full access.\n\nWhy other options are wrong:\n- A: admin grants read and write access, exceeding the read-only requirement\n- B: edit allows modification of resources, exceeding the read-only requirement\n- D: cluster-admin grants full unrestricted access, far exceeding what is needed\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles",
@@ -1083,10 +1083,10 @@ var questions = [
       "Yes, because DaemonSets are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
-      "No, but `hostPath` volumes are allowed under the `baseline` profile as long as `readOnly: true` is set"
+      "No, but `hostPath` volumes are allowed under the `baseline` profile without restriction"
     ],
     answer: 1,
-    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile also prohibits hostPath volumes — only the privileged profile allows them. For log collectors requiring host access, the namespace must use the privileged profile or the Pods must be exempted from the restricted/baseline profile.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile also prohibits hostPath volumes; hostPath is only allowed under the privileged profile\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile does not restrict hostPath volumes; however, the restricted profile does prohibit them. For log collectors requiring host access, the namespace must use the baseline or privileged profile, or the Pods must be exempted from the restricted profile.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile does not restrict hostPath volumes; only the restricted profile prohibits them\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl label ns logging pod-security.kubernetes.io/enforce=restricted --dry-run=server"
   },
   {
@@ -1371,7 +1371,7 @@ var questions = [
       "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
       "The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
       "A custom label matching the `namespaceSelector` in the policy, such as `name: app`",
-      "No label is needed because NetworkPolicy namespaceSelector automatically resolves namespace names to their IP ranges without using labels"
+      "No label is needed; `namespaceSelector` resolves namespace names to IPs automatically"
     ],
     answer: 2,
     explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. Since Kubernetes 1.22+, every namespace automatically gets the `kubernetes.io/metadata.name` label matching its name, so that auto-label is guaranteed and can be used in selectors. However, the question asks about a custom label beyond the auto-assigned one — if the NetworkPolicy's `namespaceSelector` uses a custom label (e.g., `name: app`), the `app` namespace must have that label applied manually.\n\nWhy other options are wrong:\n- A: kubernetes.io/name is not a standard auto-label; the auto-label is kubernetes.io/metadata.name (since 1.22)\n- B: app.kubernetes.io/managed-by: networkpolicy is not a standard label for namespace matching\n- D: namespaceSelector works via labels, not by resolving names to IP ranges; however, note that since Kubernetes 1.22+ every namespace automatically receives the `kubernetes.io/metadata.name` label, which can be used as an alternative to custom labels in namespaceSelector\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -1544,10 +1544,10 @@ var questions = [
     text: "A Role grants `get` on `configmaps` with `resourceNames: [\"app-config\"]`. A user bound to this Role runs `kubectl get configmaps`. What happens?",
     diagram: null,
     options: [
-      "Only `app-config` is returned because the `get` verb with `resourceNames` automatically filters the list results to show matching resources only",
-      "The request is forbidden because `kubectl get configmaps` without a name requires the `list` verb, which this Role does not grant",
-      "All ConfigMaps are returned because the `get` verb implicitly includes `list` access for resources in the same namespace",
-      "An empty list is returned with zero items because while the `list` verb was implied by `get`, the `resourceNames` restriction filters out all results"
+      "Only `app-config` is returned in the listing",
+      "The request returns 403 Forbidden because `list` is required",
+      "All ConfigMaps in the namespace are returned",
+      "An empty list with zero items is returned"
     ],
     answer: 1,
     explanation: "The `kubectl get configmaps` command uses the `list` verb, which is not granted by this Role. The `get` verb with `resourceNames` only works when the specific resource name is requested (e.g., `kubectl get configmap app-config`). Without `list`, the user cannot enumerate ConfigMaps.\n\nWhy other options are wrong:\n- A: Only the named resource is accessible via get; list requires its own verb grant\n- C: get does not implicitly include list; they are separate verbs in RBAC\n- D: The request returns a Forbidden error (403), not an empty list\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",

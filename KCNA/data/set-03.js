@@ -232,7 +232,7 @@ var questions = [
     text: "A security team mandates that only the `api-gateway` pods (label `role: gateway`) in namespace `web` can send traffic to `payment` pods (label `app: payment`) in namespace `finance` on port 8443. Which `NetworkPolicy` target and rule combination achieves this?",
     diagram: null,
     options: [
-      "Apply a policy in `finance` on `app: payment` allowing ingress from `web` with `role: gateway` on port 8443",
+      "Apply a policy in `finance` on `app: payment` pods allowing ingress from `web` namespace with `role: gateway` on port 8443",
       "Apply a policy in `web` on `role: gateway` allowing egress to `finance` namespace on port 8443 for payment services",
       "Apply a policy in `finance` on all pods allowing ingress from any pod in the cluster on port 8443 regardless of labels",
       "Apply a policy in `finance` on `app: payment` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443 for all sources"
@@ -293,7 +293,7 @@ var questions = [
     id: "s03-q019",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A platform team evaluates CNI plugins for their new production cluster. They need support for `NetworkPolicy` enforcement and high-performance eBPF dataplane. Which CNCF project fits this requirement?",
+    text: "A platform team evaluates CNI plugins for their new production cluster. They need support for NetworkPolicy enforcement and a high-performance kernel-level dataplane. Which CNCF project fits this requirement?",
     diagram: null,
     options: [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
@@ -677,7 +677,7 @@ var questions = [
     id: "s03-q043",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "An organization wants to implement network-level identity and segmentation for their Kubernetes workloads using eBPF, replacing kube-proxy entirely. Which CNCF project supports this kube-proxy replacement mode?",
+    text: "An organization wants to implement network-level identity and segmentation using a kernel-level dataplane, eliminating a standard networking component. Which CNCF project supports this?",
     diagram: null,
     options: [
       "Flannel with its VXLAN overlay dataplane for pod networking",
@@ -710,7 +710,7 @@ var questions = [
     domain: "Cloud Native Architecture",
     subsection: "Microservices",
     text: "A microservices architecture experiences cascading failures when the `inventory` service becomes slow. Requests back up in the `order` service. Which resilience pattern, typically implemented at the network layer by a service mesh, prevents this cascade?",
-    diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="40" rx="4" fill="#326CE5"/><text x="60" y="95" text-anchor="middle" fill="#fff" font-size="11">order-svc</text><rect x="150" y="70" width="100" height="40" rx="4" fill="#FF5722"/><text x="200" y="95" text-anchor="middle" fill="#fff" font-size="11">inventory-svc</text><text x="200" y="60" text-anchor="middle" fill="#f44" font-size="10">SLOW</text><line x1="110" y1="90" x2="150" y2="90" stroke="#999" stroke-width="2"/><rect x="280" y="25" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="45" text-anchor="middle" fill="#fff" font-size="10">Circuit Breaker</text><rect x="280" y="70" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="90" text-anchor="middle" fill="#fff" font-size="10">Retry with Backoff</text><rect x="280" y="115" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="135" text-anchor="middle" fill="#fff" font-size="10">Timeout</text></svg>',
+    diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="40" rx="4" fill="#326CE5"/><text x="60" y="95" text-anchor="middle" fill="#fff" font-size="11">order-svc</text><rect x="150" y="70" width="100" height="40" rx="4" fill="#FF5722"/><text x="200" y="95" text-anchor="middle" fill="#fff" font-size="11">inventory-svc</text><text x="200" y="60" text-anchor="middle" fill="#f44" font-size="10">SLOW</text><line x1="110" y1="90" x2="150" y2="90" stroke="#999" stroke-width="2"/><rect x="280" y="25" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="45" text-anchor="middle" fill="#fff" font-size="10">Pattern 1</text><rect x="280" y="70" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="90" text-anchor="middle" fill="#fff" font-size="10">Pattern 2</text><rect x="280" y="115" width="110" height="30" rx="4" fill="#78909C"/><text x="335" y="135" text-anchor="middle" fill="#fff" font-size="10">Pattern 3</text></svg>',
     options: [
       "The timeout pattern, which limits how long the order service waits for a response from inventory",
       "The circuit breaker pattern, which stops sending requests to a failing upstream past a threshold",
@@ -741,16 +741,16 @@ var questions = [
     id: "s03-q047",
     domain: "Cloud Native Observability",
     subsection: "Monitoring",
-    text: "A cluster operator wants to alert when a Service has zero ready endpoints for more than 5 minutes. Which Prometheus metric best serves this use case?",
+    text: "A cluster operator wants to alert when a Service has zero ready endpoints for more than 5 minutes. Which kube-state-metrics metric best serves this use case?",
     diagram: null,
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
       "`kube_endpoint_address_available` with a configured threshold of zero ready endpoints",
-      "`kube_endpoint_address` with label `ready=\"true\"` from kube-state-metrics equal to zero for the Service",
+      "`kube_endpoint_address` with label `ready=\"true\"` equal to zero for the Service",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "`kube_endpoint_address` is a kube-state-metrics metric that exposes one time series per endpoint address with a `ready` label (`true` or `false`). Alerting when `count(kube_endpoint_address{ready='true', namespace='...', endpoint='...'}) == 0` for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_address_available` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/service/endpoint-metrics.md",
+    explanation: "kube-state-metrics exposes endpoint address metrics with a `ready` label (`true` or `false`). Alerting when the count of ready endpoint addresses equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_address_available` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
     verify: null
   },
   {
@@ -1125,7 +1125,7 @@ var questions = [
     id: "s03-q071",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which CNCF project provides a lightweight service mesh focused on simplicity and minimal resource overhead, using a Rust-based micro-proxy instead of Envoy?",
+    text: "Which CNCF project provides a lightweight service mesh focused on simplicity and minimal resource overhead, using a purpose-built sidecar proxy designed for low latency?",
     diagram: null,
     options: [
       "Istio — a full-featured service mesh using Envoy sidecar proxies",
@@ -1238,7 +1238,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
     text: "An SRE notices that DNS lookups from pods occasionally take 5 seconds. What is the most likely cause in Linux-based clusters?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="100" height="35" rx="4" fill="#326CE5"/><text x="80" y="32" text-anchor="middle" fill="#fff" font-size="10">App Pod</text><rect x="30" y="80" width="100" height="35" rx="4" fill="#FF9800"/><text x="80" y="102" text-anchor="middle" fill="#fff" font-size="10">CoreDNS</text><rect x="30" y="150" width="100" height="35" rx="4" fill="#4CAF50"/><text x="80" y="172" text-anchor="middle" fill="#fff" font-size="10">Upstream DNS</text><line x1="80" y1="45" x2="80" y2="80" stroke="#999" stroke-width="1.5"/><line x1="80" y1="115" x2="80" y2="150" stroke="#999" stroke-width="1.5"/><text x="130" y="35" fill="#ccc" font-size="9">DNS queries</text><text x="130" y="105" fill="#ccc" font-size="9">DNS queries</text><text x="250" y="90" fill="#f44" font-size="10">~5s delay</text><text x="250" y="105" fill="#f44" font-size="10">intermittently</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="100" height="35" rx="4" fill="#326CE5"/><text x="80" y="32" text-anchor="middle" fill="#fff" font-size="10">App Pod</text><rect x="30" y="80" width="100" height="35" rx="4" fill="#FF9800"/><text x="80" y="102" text-anchor="middle" fill="#fff" font-size="10">CoreDNS</text><rect x="30" y="150" width="100" height="35" rx="4" fill="#4CAF50"/><text x="80" y="172" text-anchor="middle" fill="#fff" font-size="10">Upstream DNS</text><line x1="80" y1="45" x2="80" y2="80" stroke="#999" stroke-width="1.5"/><line x1="80" y1="115" x2="80" y2="150" stroke="#999" stroke-width="1.5"/><text x="130" y="35" fill="#ccc" font-size="9">DNS queries</text><text x="130" y="105" fill="#ccc" font-size="9">DNS queries</text><text x="250" y="90" fill="#f44" font-size="10">intermittent</text><text x="250" y="105" fill="#f44" font-size="10">slow queries</text></svg>',
     options: [
       "CoreDNS is configured with too many upstream resolvers causing slow query forwarding chain lookups",
       "kube-proxy iptables rules throttle DNS traffic to prevent DDoS overload on the CoreDNS endpoints",
@@ -1546,7 +1546,7 @@ var questions = [
     options: [
       "`helm install <release> <chart> --set networkPolicy.enabled=true`",
       "`helm install <release> <chart> --enable-network-policy` as a flag",
-      "`kubectl apply -f values.yaml --set networkPolicy.enabled=true`  ",
+      "`kubectl apply -f values.yaml --set networkPolicy.enabled=true`",
       "`helm template <chart> | kubectl apply -f -` to render and apply"
     ],
     answer: 0,

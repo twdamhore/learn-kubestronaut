@@ -390,7 +390,7 @@ var questions = [
     id: "s08-q025",
     domain: "Cloud Native Architecture",
     subsection: "Serverless",
-    text: "A team wants to deploy event-driven workloads on Kubernetes that automatically scale to zero when idle and scale up on incoming HTTP requests or CloudEvents. Which CNCF graduated project provides this serverless capability on top of Kubernetes?",
+    text: "A team wants to deploy workloads on Kubernetes that automatically adjust capacity to match demand — including dropping to zero replicas when idle. Which CNCF graduated project provides this serverless capability natively on Kubernetes?",
     diagram: null,
     options: [
       "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero on Kubernetes",
@@ -651,7 +651,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="170" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Factor VI: Stateless Processes</text><rect x="30" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="75" y="68" text-anchor="middle" fill="white" font-size="9">Instance 1</text><rect x="155" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="200" y="68" text-anchor="middle" fill="white" font-size="9">Instance 2</text><rect x="280" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="325" y="68" text-anchor="middle" fill="white" font-size="9">Instance 3</text><rect x="120" y="110" width="160" height="35" rx="6" fill="#1e40af" stroke="#3b82f6"/><text x="200" y="132" text-anchor="middle" fill="white" font-size="9">External Store (?)</text></svg>',
     options: [
       "Storing session data in a Redis cluster shared by all running application instances in the environment",
-      "Keeping user session data in local process memory, causing session loss if the instance is restarted",
+      "Keeping user session data in local process memory and routing returning users to the same instance via sticky sessions",
       "Using environment variables to inject configuration values into the application process at startup",
       "Writing application logs to stdout so they can be captured by external logging infrastructure tools"
     ],
@@ -929,7 +929,7 @@ var questions = [
       "Thanos — extends Prometheus with long-term storage, global querying, and downsampling capabilities"
     ],
     answer: 3,
-    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is now part of the Grafana Mimir lineage; it has a different CNCF and project status\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
+    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is also CNCF incubating but its active development has largely migrated to the Grafana Mimir project; Thanos remains the standard CNCF answer for extending Prometheus with long-term storage and global querying\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
     verify: null
   },
   {
@@ -1421,7 +1421,7 @@ var questions = [
     diagram: null,
     options: [
       "3 replicas — the HPA adds one replica per 70% utilization increment above the target threshold",
-      "The HPA calculates `ceil(currentReplicas * (currentUtilization / target))` = `ceil(2 * 140/70)` = 4",
+      "4 replicas — the HPA scales proportionally based on the ratio of current utilization to the target threshold value",
       "10 replicas — the HPA scales to the maximum immediately whenever utilization exceeds the target value",
       "2 replicas — the HPA cannot scale above the current count until the next scheduled evaluation period"
     ],
