@@ -837,7 +837,7 @@ var questions = [
     id: "s01-q053",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A team has a Deployment with 3 replicas running version `v1.0` of their application. They update the image to `v1.1`, but the new version has a critical bug. They need to quickly revert to the previous working version. What is the fastest way to rollback?",
+    text: "A team has a Deployment with 3 replicas running version `v1.0` of their application. They update the image to `v1.1`, but the new version has a critical bug. They need to quickly restore the last known-good version. What is the fastest way to rollback?",
     diagram: null,
     options: [
       "Delete the Deployment and recreate it with the `v1.0` image tag specified in the manifest",
@@ -901,7 +901,7 @@ var questions = [
     id: "s01-q057",
     domain: "Container Orchestration",
     subsection: "Storage",
-    text: "A team needs dynamically provisioned storage for their PostgreSQL StatefulSet. They want the storage to be automatically created when a PVC is submitted, without an administrator manually creating PersistentVolumes. Which Kubernetes resource enables this?",
+    text: "A team needs on-demand provisioned storage for their PostgreSQL StatefulSet. They want the storage to be automatically created when a PVC is submitted, without an administrator manually creating PersistentVolumes. Which Kubernetes resource enables this?",
     diagram: null,
     options: [
       "A `PersistentVolume` with `reclaimPolicy: Retain` that is pre-provisioned by an administrator",
@@ -1381,7 +1381,7 @@ var questions = [
     id: "s01-q087",
     domain: "Cloud Native Architecture",
     subsection: "Microservices",
-    text: "A team is migrating from a monolith to microservices and needs to decide how services communicate. They need reliable asynchronous communication where messages are not lost if a service is temporarily down. Which pattern should they adopt?",
+    text: "A team is migrating from a monolith to microservices and needs to decide how services communicate. They need reliable, decoupled communication where messages are not lost if a service is temporarily down. Which pattern should they adopt?",
     diagram: null,
     options: [
       "Asynchronous messaging through a broker like NATS or RabbitMQ that persists messages",
@@ -1397,7 +1397,7 @@ var questions = [
     id: "s01-q088",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A team needs to collect OpenTelemetry traces, metrics, and logs from their Kubernetes applications. They want a vendor-neutral, unified collection pipeline that can export data to multiple backends. Which CNCF project provides this?",
+    text: "A team needs to collect distributed traces, metrics, and logs from their Kubernetes applications. They want a vendor-neutral, unified collection pipeline that can export data to multiple backends. Which CNCF project provides this?",
     diagram: null,
     options: [
       "Prometheus, which supports traces, metrics, and logs through its multi-signal receiver",

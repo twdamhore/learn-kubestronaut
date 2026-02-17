@@ -72,7 +72,7 @@ var questions = [
     text: "A platform team configures Prometheus to scrape metrics from application Pods. They add the annotation <code>prometheus.io/scrape: \"true\"</code> to their Pod spec, but Prometheus is not collecting metrics. The Prometheus configuration uses <code>kubernetes_sd_configs</code> with role <code>pod</code>. What should they check first?",
     diagram: null,
     options: [
-      "Whether the Prometheus server has enough CPU and memory resources allocated to scrape all configured targets",
+      "Whether the Prometheus server has enough CPU and memory resources allocated to scrape all configured <code>/metrics</code> targets",
       "Whether the application Pods have a readiness probe defined that gates the scraping of metrics endpoints",
       "Whether the Prometheus Operator CRDs are correctly installed and reconciled within the current cluster",
       "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct port"
@@ -171,7 +171,7 @@ var questions = [
       "The scheduler assigns it to one of the V100 nodes since both are NVIDIA GPUs with compatible compute capabilities",
       "The Pod remains in <code>Pending</code> state because no node matches the label <code>accelerator: nvidia-tesla-a100</code>",
       "The Pod is scheduled on a V100 node but the container fails to start due to incompatible GPU driver versions",
-      "The scheduler automatically creates the missing label on the most suitable node that has available GPU resources"
+      "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with available GPU resources"
     ],
     answer: 1,
     explanation: "A `nodeSelector` enforces an exact label match. Since the cluster nodes have `accelerator=nvidia-tesla-v100` but the Pod requests `accelerator=nvidia-tesla-a100`, no node satisfies the constraint. The Pod remains `Pending` with a `FailedScheduling` event until a matching node becomes available.\n\nWhy other options are wrong:\n- A: nodeSelector requires exact label match; v100 and a100 are different values regardless of GPU family\n- C: The Pod never gets scheduled, so there is no container start or driver compatibility issue\n- D: The scheduler never creates labels; it only evaluates existing node labels against Pod constraints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -474,7 +474,7 @@ var questions = [
     options: [
       "Enable the <code>DB</code> parameter on Fluent Bit's tail input to persist file read offsets across restarts",
       "Switch from Fluent Bit to Fluentd, which automatically handles log file offset tracking by default",
-      "Configure Elasticsearch to deduplicate log entries automatically using unique document IDs per entry",
+      "Configure Elasticsearch to deduplicate log entries automatically using unique <code>_id</code> document fields per entry",
       "Reduce Fluent Bit's buffer size to minimize the volume of re-sent logs after each node restart event"
     ],
     answer: 0,
@@ -744,7 +744,7 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record for the Service name that load-balances across all Pod IPs using kube-proxy rules in round-robin fashion",
+      "A single A record for the Service name that load-balances across all Pod IPs using <code>kube-proxy</code> rules in round-robin fashion",
       "Only SRV records are created for headless Services; A records are not supported for Pods managed by StatefulSets",
       "No DNS records are created because headless Services do not participate in the Kubernetes DNS resolution system",
       "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service A record"
@@ -889,7 +889,7 @@ var questions = [
     diagram: null,
     options: [
       "Existing running Pods are immediately terminated because the scheduler manages their full lifecycle",
-      "The kube-apiserver stops accepting new Pod creation requests until the scheduler recovers fully",
+      "The <code>kube-apiserver</code> stops accepting new Pod creation requests until the scheduler recovers fully",
       "All Services lose their ClusterIP addresses because the scheduler is responsible for allocating them",
       "New Pods remain <code>Pending</code> with no node assignment, but existing running Pods are unaffected"
     ],
@@ -1112,7 +1112,7 @@ var questions = [
     text: "After upgrading a Deployment's container image, all new Pods are stuck in <code>Pending</code> state. Running <code>kubectl describe pod</code> shows: <code>0/3 nodes are available: 3 Insufficient cpu</code>. The existing Pods from the old ReplicaSet are still running. What is happening?",
     diagram: null,
     options: [
-      "The new container image requires a different CPU architecture than the cluster's current worker nodes support",
+      "The new container image requires a different CPU architecture than the cluster's current <code>amd64</code> worker nodes support",
       "The cluster has run out of available IP addresses in the Pod CIDR range configured for the cluster network",
       "The new Pod spec requests more CPU than available, and <code>maxUnavailable: 0</code> blocks old Pod termination",
       "The kube-scheduler is not running and therefore cannot assign any new Pods to the available cluster nodes"
@@ -1128,7 +1128,7 @@ var questions = [
     text: "An application team creates an <code>ExternalName</code> Service pointing to <code>db.legacy-datacenter.example.com</code>. A Pod resolves this Service name and attempts to connect. What does Kubernetes return for a DNS lookup of this Service?",
     diagram: null,
     options: [
-      "The ClusterIP address of the Service, which the kube-proxy then forwards to the external hostname endpoint",
+      "The <code>ClusterIP</code> address of the Service, which kube-proxy then forwards to the external hostname endpoint",
       "An A record containing the pre-resolved IP address of the external hostname as cached by the CoreDNS server",
       "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client then resolves",
       "The Service returns an error because ExternalName Services cannot resolve external hostnames in Kubernetes"

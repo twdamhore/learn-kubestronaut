@@ -56,7 +56,7 @@ var questions = [
     text: "A pod's container is being `OOMKilled` repeatedly. The `kubectl describe pod` output shows `Last State: Terminated` with `Reason: OOMKilled` and `Exit Code: 137`. What does this tell you about the container?",
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Lifecycle</text><rect x="40" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="90" y="79" text-anchor="middle" fill="#e0e0e0" font-size="11">Running</text><line x1="140" y1="75" x2="200" y2="75" stroke="#888" stroke-width="1.5" marker-end="url(#arrow4)"/><text x="170" y="68" text-anchor="middle" fill="#aaa" font-size="10">?</text><rect x="200" y="55" width="150" height="40" rx="6" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="275" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">Terminated (Exit Code 137)</text><defs><marker id="arrow4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The container's liveness probe timed out and Kubernetes terminated the running process",
+      "The container's `livenessProbe` timed out and Kubernetes terminated the running process",
       "The node ran out of available disk space causing the container to be evicted by kubelet",
       "The container exceeded its configured `limits.memory` and the Linux kernel killed it",
       "The container failed its startup probe check and was terminated by the kubelet process"
@@ -574,7 +574,7 @@ var questions = [
       "Whether the `kube-proxy` instance running on that specific node is consuming excessive memory from the system resources"
     ],
     answer: 0,
-    explanation: "If the same DaemonSet pod works on other nodes but gets `OOMKilled` on one, the issue is likely node-specific. Higher memory pressure from other workloads on that node can cause the application to hit its 256Mi limit more quickly, especially if the OS or other processes reduce available memory. Checking `kubectl top node` and the node's workload density is the right approach.\n\nWhy other options are wrong:\n- B: DaemonSet update strategy affects how updates roll out, not memory usage on a specific node\n- C: Different container runtime versions do not typically cause significant memory overhead differences\n- D: kube-proxy uses minimal memory and is unlikely to cause OOMKill of other pods\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
+    explanation: "If the same DaemonSet pod works on other nodes but gets `OOMKilled` on one, the issue is likely node-specific. Other workloads on that node may cause the DaemonSet pod to handle more work (e.g., more network traffic, logging, or monitoring data), pushing its own memory usage past the 256Mi cgroup limit. Note that `OOMKilled` means the container exceeded its own cgroup memory limit (set by `limits.memory`), which is distinct from kubelet eviction due to overall node memory pressure. Checking `kubectl top pods` on that node and comparing workload patterns is the right approach.\n\nWhy other options are wrong:\n- B: DaemonSet update strategy affects how updates roll out, not memory usage on a specific node\n- C: Different container runtime versions do not typically cause significant memory overhead differences\n- D: kube-proxy uses minimal memory and is unlikely to cause OOMKill of other pods\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
     verify: "kubectl top node <node-name> && kubectl top pods --all-namespaces --field-selector spec.nodeName=<node-name>"
   },
   {
@@ -872,7 +872,7 @@ var questions = [
     text: "After deploying a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only defines an `ingress` rule allowing traffic from `app=frontend` but has no `egress` rules. What caused the complete communication breakdown?",
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
-      "Because `policyTypes` includes `Egress` but no egress rules are defined, all outbound traffic including DNS is denied",
+      "Because `policyTypes` includes `Egress` but no egress rules are defined, all outbound traffic from the selected pods including DNS resolution is blocked",
       "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods",
       "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
@@ -968,7 +968,7 @@ var questions = [
     text: "A node reports `DiskPressure: True` in its conditions. Pods on this node start getting evicted with `The node was low on resource: ephemeral-storage`. What type of storage is being exhausted?",
     diagram: null,
     options: [
-      "The PersistentVolumes that are attached to the pods running on that particular node in the cluster",
+      "The `PersistentVolume` mounts that are attached to the pods running on that particular node in the cluster",
       "The etcd data directory on the control plane node which stores the cluster's key-value state data",
       "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir`s",
       "The network-attached storage volumes used by the CSI driver to provision persistent volume claims"
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A Job has `backoffLimit: 3` and its pod keeps failing. After the third failure, what happens?",
     diagram: null,
     options: [
-      "The Job continues retrying indefinitely but with increasing back-off delays",
+      "The Job continues retrying indefinitely with increasing `backoffDelay` intervals",
       "The Job is marked as `Failed` and no more pods are created for it",
       "Kubernetes sends an alert to the cluster administrator via the event system",
       "The Job controller deletes the Job resource and all associated pods"
@@ -1257,7 +1257,7 @@ var questions = [
     diagram: null,
     options: [
       "Keep a minimum warm instance by setting Knative's `minScale: 1` to avoid cold starts for this function",
-      "Increase the container's CPU limits to speed up JIT compilation and reduce initialization time at startup",
+      "Increase the container's `resources.limits.cpu` to speed up JIT compilation and reduce initialization time",
       "Convert the function to a long-running Deployment to avoid the serverless model's cold start limitations",
       "Disable health checks entirely so the container is not killed during its lengthy initialization sequence"
     ],
@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
-      "ArgoCD does not support webhooks for Git notifications and only polls the repository on a fixed schedule",
+      "ArgoCD does not support webhooks for Git notifications and only polls the repository on a fixed `interval` schedule",
       "The Kubernetes cluster has reached its maximum number of allowed Deployments in the target namespace now",
       "Git repositories must be restarted after each push for ArgoCD to detect and process any incoming changes"
     ],

@@ -40,10 +40,10 @@ var questions = [
     text: "A Pod spec sets `runAsNonRoot: true` at the pod-level `securityContext`, but one container image has `USER root` in its Dockerfile. What occurs when this Pod is scheduled?",
     diagram: null,
     options: [
-      "The container runs as root, overriding the pod-level security setting",
+      "The container runs as root, overriding the pod-level `securityContext` setting",
       "The Pod is rejected at the admission stage with a security warning",
       "The container fails to start with a `RunAsNonRoot` validation error",
-      "Kubernetes automatically remaps root UID to the nobody UID 65534"
+      "Kubernetes automatically remaps root UID to the `nobody` UID 65534"
     ],
     answer: 2,
     explanation: "When `runAsNonRoot: true` is set and the container image specifies UID 0 (root), the kubelet rejects the container at startup. It does not override the security setting or remap the user. The error message indicates the container attempted to run as root.\n\nWhy other options are wrong:\n- A: The container does not override the pod-level runAsNonRoot setting; the kubelet enforces it\n- B: Rejection happens at container startup by the kubelet, not at the admission stage\n- D: Kubernetes does not automatically remap UIDs; no UID remapping mechanism exists for this\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
@@ -360,10 +360,10 @@ var questions = [
     text: "An attacker gains access to a container and tries to escalate privileges using `setuid` binaries. Which `securityContext` field prevents this?",
     diagram: null,
     options: [
-      "`readOnlyRootFilesystem: true`",
-      "`runAsNonRoot: true`",
-      "`privileged: false`",
-      "`allowPrivilegeEscalation: false`"
+      "The `readOnlyRootFilesystem: true` setting",
+      "The `runAsNonRoot: true` security setting",
+      "The `privileged: false` container setting",
+      "The `allowPrivilegeEscalation: false` setting"
     ],
     answer: 3,
     explanation: "Setting `allowPrivilegeEscalation: false` prevents a process from gaining more privileges than its parent, which blocks `setuid` and `setgid` binaries. `readOnlyRootFilesystem` prevents writes but not privilege escalation. `runAsNonRoot` ensures a non-root UID but does not block setuid.\n\nWhy other options are wrong:\n- A: readOnlyRootFilesystem prevents filesystem writes but does not block setuid privilege escalation\n- B: runAsNonRoot prevents running as root but does not block setuid binaries from escalating\n- C: privileged: false disables privileged mode but a non-privileged container can still use setuid\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
@@ -569,9 +569,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="180" height="90" rx="8" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="100" y="14" text-anchor="middle" fill="#4cc9f0" font-size="11">ns: database</text><rect x="30" y="45" width="140" height="35" rx="5" fill="#16213e" stroke="#f72585" stroke-width="1.5"/><text x="100" y="67" text-anchor="middle" fill="#f8f8f2" font-size="10">role: db (target)</text><rect x="10" y="130" width="180" height="80" rx="8" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="100" y="125" text-anchor="middle" fill="#4cc9f0" font-size="11">ns: database</text><rect x="30" y="150" width="140" height="35" rx="5" fill="#16213e" stroke="#bd93f9" stroke-width="1.5"/><text x="100" y="172" text-anchor="middle" fill="#f8f8f2" font-size="10">role: backend</text><rect x="220" y="130" width="170" height="80" rx="8" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="305" y="125" text-anchor="middle" fill="#4cc9f0" font-size="11">ns: other</text><rect x="240" y="150" width="130" height="35" rx="5" fill="#16213e" stroke="#bd93f9" stroke-width="1.5"/><text x="305" y="172" text-anchor="middle" fill="#f8f8f2" font-size="10">role: backend</text><line x1="100" y1="150" x2="100" y2="80" stroke="#bd93f9" stroke-width="2" marker-end="url(#arr2)"/><line x1="305" y1="150" x2="130" y2="80" stroke="#bd93f9" stroke-width="2" marker-end="url(#arr3)"/><text x="260" y="108" fill="#f1fa8c" font-size="10">?</text><text x="70" y="118" fill="#f1fa8c" font-size="10">?</text><defs><marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bd93f9"/></marker><marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#bd93f9"/></marker></defs></svg>',
     options: [
       "No, because `podSelector` only matches Pods in the policy's namespace",
-      "Yes, because the Pod label matches regardless of the source namespace",
+      "Yes, because the Pod label matches regardless of the source `namespace`",
       "Yes, if the originating namespace has exactly the same namespace name",
-      "No, because NetworkPolicies block all cross-namespace traffic by rule"
+      "No, because `NetworkPolicy` resources block all cross-namespace traffic"
     ],
     answer: 0,
     explanation: "A `podSelector` in a NetworkPolicy ingress rule only matches Pods within the same namespace as the policy. To allow traffic from a different namespace, you must add a `namespaceSelector` in the `from` block. Without it, only Pods in the `database` namespace with the matching label are permitted.\n\nWhy other options are wrong:\n- B: A podSelector alone only matches Pods in the policy's own namespace, not other namespaces\n- C: Namespace name matching is irrelevant; podSelector does not cross namespace boundaries\n- D: NetworkPolicies do not blanket-block cross-namespace traffic; they require proper selectors\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -757,7 +757,7 @@ var questions = [
     id: "s05-q048",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "You need to allow a user to view resources across all namespaces but not modify anything. Which built-in ClusterRole is appropriate?",
+    text: "You need to allow a user read-only access to resources across all namespaces without any modification rights. Which built-in ClusterRole is appropriate?",
     diagram: null,
     options: [
       "`admin`",
@@ -857,8 +857,8 @@ var questions = [
     diagram: null,
     options: [
       "All egress is denied because `Egress` is in `policyTypes` with no rules defined",
-      "All egress traffic is allowed because no explicit egress rules were specified",
-      "Egress is unaffected because only ingress rules were defined in this policy",
+      "All egress traffic is allowed because no explicit `egress` rules were specified",
+      "Egress is unaffected because only `ingress` rules were defined in this policy",
       "Egress defaults to whatever the namespace-level default network policy allows"
     ],
     answer: 0,
@@ -1045,7 +1045,7 @@ var questions = [
     id: "s05-q066",
     domain: "Cloud Native Observability",
     subsection: "Logging",
-    text: "A Pod is configured with an Istio sidecar proxy. The security team needs to log all requests denied by the sidecar's authorization policy. Where should they look for these logs?",
+    text: "A Pod is configured with a service mesh sidecar. The security team needs to log all requests denied by the sidecar's authorization policy. Where should they look for these logs?",
     diagram: null,
     options: [
       "In the application container's stdout log stream for request data",
@@ -1210,7 +1210,7 @@ var questions = [
     options: [
       "Only the standard CRUD verbs: `get`, `list`, `create`, `update`, `delete`",
       "All current and future verbs including subresources like `pods/exec`",
-      "All current verbs on Pods but not on any Pod subresources like exec",
+      "All current verbs on Pods but not on any Pod subresources like `exec`",
       "An error because wildcard characters are not valid in the `verbs` field"
     ],
     answer: 2,
@@ -1225,9 +1225,9 @@ var questions = [
     diagram: null,
     options: [
       "An HTTP 302 redirect response pointing to the external identity provider",
-      "A signed JWT containing the authenticated user's identity claim fields",
+      "A signed `JWT` containing the authenticated user's identity claim fields",
       "An HTTP 200 with a `TokenReview` response containing user identity",
-      "An HTTP 200 response with a plain-text username string in the body"
+      "An HTTP 200 response with a plain-text `username` string in the body"
     ],
     answer: 2,
     explanation: "The webhook token authenticator sends a `TokenReview` request to the external endpoint. The webhook must respond with HTTP 200 and a `TokenReview` response that includes the authenticated user's username, UID, and groups. This integrates Kubernetes with external identity systems.\n\nWhy other options are wrong:\n- A: The webhook does not return an HTTP redirect; it returns a TokenReview response\n- B: The webhook does not return a JWT; it returns a structured TokenReview API object\n- D: The response is not plain text; it must be a JSON TokenReview object\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#webhook-token-authentication",

@@ -472,8 +472,8 @@ var questions = [
     text: "A microservices platform runs payment and fraud-detection services. The team wants to ensure these Pods never share a node due to resource contention concerns. Which scheduling feature should they use?",
     diagram: null,
     options: [
-      "A. Node affinity rules targeting distinct and dedicated node pools per service",
-      "B. Taints on dedicated nodes combined with matching tolerations per service",
+      "A. `nodeAffinity` rules targeting distinct and dedicated node pools per service",
+      "B. `taints` on dedicated nodes combined with matching `tolerations` per service",
       "C. Pod anti-affinity with `topologyKey: kubernetes.io/hostname` configured",
       "D. Separate namespaces with resource quotas to isolate the two workloads"
     ],
@@ -649,9 +649,9 @@ var questions = [
     diagram: null,
     options: [
       "A. The Pod remains in `Pending` state until constraints are met",
-      "B. The Pod is scheduled on the least loaded zone automatically",
+      "B. The Pod is scheduled on the least loaded zone in `Running` state",
       "C. The scheduler ignores the constraint and schedules it normally",
-      "D. The Pod is scheduled but a warning event is emitted on the Pod"
+      "D. The Pod is scheduled but a `Warning` event is emitted on the Pod"
     ],
     answer: 0,
     explanation: "`DoNotSchedule` is a hard constraint: if the topology spread cannot be satisfied, the Pod remains Pending. The alternative `ScheduleAnyway` would allow scheduling even when the constraint is violated, choosing the topology that minimizes the skew.\n\nWhy other options are wrong:\n- B: DoNotSchedule does not fall back to least loaded zone; it enforces the constraint strictly\n- C: The scheduler does not ignore the constraint; DoNotSchedule is a hard requirement\n- D: No warning event is emitted while scheduling proceeds; the Pod stays Pending\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -808,8 +808,8 @@ var questions = [
     text: "You want to ensure that two replicas of a Redis cache are never on the same node. You configure pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code>. If the cluster only has 1 node, what happens to the second replica?",
     diagram: null,
     options: [
-      "A. Both replicas run on the same node with a scheduling warning event",
-      "B. The scheduler converts the hard anti-affinity rule to a soft preference",
+      "A. Both replicas run on the same node with a `Warning` scheduling event",
+      "B. The scheduler converts the hard anti-affinity rule to a `preferred` constraint",
       "C. The second replica remains in `Pending` state until a new node joins",
       "D. The second replica is placed on the same node but marked as degraded"
     ],
@@ -1193,9 +1193,9 @@ var questions = [
     diagram: null,
     options: [
       "C. The Pod remains in `Pending` state indefinitely, unscheduled",
-      "B. The API server rejects the Pod creation due to invalid config",
-      "A. The default scheduler picks up the Pod after a timeout period",
-      "D. The Pod is assigned to a random node directly by the kubelet"
+      "B. The API server rejects the Pod creation with a `ValidationError`",
+      "A. The default `kube-scheduler` picks up the Pod after a timeout period",
+      "D. The Pod is assigned to a random node directly by the `kubelet`"
     ],
     answer: 0,
     explanation: "When a Pod specifies a `schedulerName`, only that scheduler will process it. If the named scheduler is not running, no scheduler watches for or binds the Pod, leaving it in `Pending` state. The default scheduler ignores Pods assigned to other schedulers.\n\nWhy other options are wrong:\n- A: The default scheduler does not fall back to handling Pods assigned to other schedulers\n- B: The API server accepts any schedulerName; it does not validate that the scheduler exists\n- D: Kubelets do not assign Pods to nodes; they only run Pods already assigned by a scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
@@ -1497,9 +1497,9 @@ var questions = [
     diagram: null,
     options: [
       "A. The Pod remains in `Pending` state until more zones become available",
-      "B. The Pod is scheduled in the zone with the fewest matching Pods present",
+      "B. The Pod is scheduled in the zone with the fewest matching `Pods` present",
       "C. A new zone is automatically provisioned to satisfy the spread constraint",
-      "D. The anti-affinity rule is relaxed to use hostname-level topology instead"
+      "D. The anti-affinity rule is relaxed to use `kubernetes.io/hostname` instead"
     ],
     answer: 0,
     explanation: "With a hard anti-affinity (`required`) at the zone topology level, if every zone already has a matching Pod, no zone satisfies the constraint. The Pod stays Pending until a zone becomes available or the constraint is changed. The scheduler does not automatically relax the topology.\n\nWhy other options are wrong:\n- B: With required (hard) anti-affinity, the scheduler does not fall back to least-loaded; the Pod stays Pending\n- C: Kubernetes does not automatically provision new zones; infrastructure management is external\n- D: The scheduler does not automatically relax topology levels; the constraint is enforced as specified\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
@@ -1526,7 +1526,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
     text: "During preemption, the scheduler selects victim Pods to evict. Which factor has the highest priority when choosing victims?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Victim priority evaluation</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest/lowest-priority evictions</text></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Victim priority evaluation</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest ??? evictions</text></svg>',
     options: [
       "A. Pod age is the primary factor and older Pods are always evicted first",
       "B. Pod resource usage is checked and Pods using the most are evicted first",
@@ -1560,9 +1560,9 @@ var questions = [
     text: "A Helm chart includes a <code>Job</code> with a <code>helm.sh/hook: pre-upgrade</code> annotation that backs up the database before upgrades. During a cluster upgrade, the Job fails. What happens to the Helm release?",
     diagram: null,
     options: [
-      "A. The Helm upgrade proceeds anyway and the hook failure is logged but ignored",
+      "A. The Helm upgrade proceeds anyway and the hook failure is logged as a warning",
       "C. Helm automatically rolls back to the previous release version on hook failure",
-      "B. The upgrade fails and the release is marked FAILED, preserving the previously deployed resources",
+      "B. The upgrade fails and the release is marked FAILED, keeping previous resources",
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
     answer: 2,

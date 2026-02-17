@@ -262,7 +262,7 @@ var questions = [
     id: "s08-q017",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A Pod is stuck in `CrashLoopBackOff`. The application logs show it cannot connect to a required external API on port 443. The Pod runs in a namespace with a `default-deny` NetworkPolicy for egress. What is the most likely cause?",
+    text: "A Pod is stuck in `CrashLoopBackOff`. The application logs show it cannot connect to a required external API on port 443. The namespace has a policy that blocks all outbound traffic by default. What is the most likely cause?",
     diagram: null,
     options: [
       "The container image is missing the `curl` binary and TLS libraries needed for outbound HTTPS connections",
@@ -374,13 +374,13 @@ var questions = [
     id: "s08-q024",
     domain: "Container Orchestration",
     subsection: "Security",
-    text: "A security auditor requires that all Pods in a production namespace run as a non-root user and drop all Linux capabilities. With Pod Security Standards (PSS) enforced via the built-in admission controller, which profile meets this requirement?",
+    text: "A security auditor requires the strictest built-in Pod security profile for a production namespace — containers must not escalate privileges, and the profile must enforce the most hardened posture available. Which Pod Security Standards profile should the team apply?",
     diagram: null,
     options: [
       "`restricted` — requires non-root execution, drops all capabilities, disallows escalation",
       "`baseline` — prevents known privilege escalations but permits containers to run as root",
       "`privileged` — allows unrestricted Pod access with no security restrictions or enforcement",
-      "`audit` — logs security violations in the API server logs but does not enforce any rules"
+      "`audit` — records policy violations as annotations on API server audit-log events for review"
     ],
     answer: 0,
     explanation: "The `restricted` Pod Security Standard is the most hardened built-in profile. It requires containers to run as non-root, drop all capabilities, and disallow privilege escalation. Note that `readOnlyRootFilesystem` is recommended but not required by the restricted profile — it is a best practice rather than an enforced control. The `baseline` profile prevents known escalation vectors but is less strict. `audit` is an enforcement mode, not a profile level.\n\nWhy other options are wrong:\n- B: Baseline prevents known escalations but permits running as root, which is less strict\n- C: Privileged allows unrestricted access with no security enforcement at all\n- D: Audit is an enforcement mode (alongside enforce and warn), not a security profile level\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
@@ -1064,10 +1064,10 @@ var questions = [
     id: "s08-q067",
     domain: "Container Orchestration",
     subsection: "Security",
-    text: "A DevSecOps team wants to scan running containers for known CVEs in their installed packages. They also want to scan Kubernetes manifests for misconfigurations. Which open-source tool covers both container image vulnerability scanning and Kubernetes IaC misconfiguration scanning?",
+    text: "A DevSecOps team needs a single open-source tool that can detect known CVEs in container image packages and also flag misconfigurations in Kubernetes YAML manifests. Which tool provides both capabilities?",
     diagram: null,
     options: [
-      "Falco — detects runtime anomalies and security threats by monitoring kernel-level system calls in real time",
+      "Falco — detects runtime anomalies by monitoring kernel-level syscalls, complementing Trivy's static scans",
       "Trivy — an all-in-one scanner detecting vulnerabilities in images and misconfigurations in K8s manifests",
       "kube-bench — checks Kubernetes cluster node configuration against CIS security benchmark requirements",
       "OPA Gatekeeper — enforces custom admission policies on Kubernetes API requests via constraint templates"
@@ -1561,7 +1561,7 @@ var questions = [
     id: "s08-q098",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A team runs `kubectl logs <pod-name>` for a Pod that has restarted 5 times. The command only shows logs from the current container instance. How can they view logs from the previous container instance?",
+    text: "A team runs `kubectl logs <pod-name>` for a Pod that has restarted 5 times. The command only shows logs from the current container instance. How can they retrieve logs from the container instance that ran before the current one?",
     diagram: null,
     options: [
       "`kubectl logs <pod-name> --all-containers` — shows logs from all container restarts and sidecar containers",

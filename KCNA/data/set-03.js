@@ -315,7 +315,7 @@ var questions = [
       "Adding a `NetworkPolicy` for each service pair to enforce encrypted communication channels",
       "Configuring `readinessProbe` on each pod to handle retries and circuit breaking automatically",
       "Using a `CronJob` to rotate certificates and restart affected pods on a periodic schedule run",
-      "Deploying a service mesh that handles mTLS, retries, and circuit breaking via sidecars"
+      "Deploying a `service mesh` that handles mTLS, retries, and circuit breaking via sidecar proxies"
     ],
     answer: 3,
     explanation: "A service mesh (e.g., Istio, Linkerd) injects sidecar proxies that transparently handle mTLS, retries, circuit breaking, and observability without application code changes. `NetworkPolicy` controls access but does not handle encryption, retries, or circuit breaking. Readiness probes determine if a pod can serve traffic but do not perform retries. CronJob certificate rotation does not address retries or circuit breaking.\n\nWhy other options are wrong:\n- A: NetworkPolicy controls pod-to-pod access at L3/L4 but cannot handle mTLS, retries, or circuit breaking.\n- B: readinessProbe determines if a pod can serve traffic; it does not perform retries or circuit breaking.\n- C: A CronJob for certificate rotation addresses only one concern and does not handle retries or circuit breaking.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
@@ -360,7 +360,7 @@ var questions = [
     text: "A distributed application uses an Ingress controller, three microservices, and a database. Requests sometimes take over 10 seconds. Which observability practice helps identify which service introduces the latency?",
     diagram: null,
     options: [
-      "Distributed tracing with propagated trace context headers across services",
+      "Distributed tracing with propagated `trace-context` headers across services",
       "Increasing the log level to `DEBUG` on all pods and reading aggregated output",
       "Adding `livenessProbe` checks with a 2-second timeout to every container",
       "Creating a `NetworkPolicy` that logs all denied connections between services"
@@ -793,7 +793,7 @@ var questions = [
     diagram: null,
     options: [
       "Delete the `Deployment` and recreate it with the new image tag specified in the pod template spec",
-      "Use `kubectl set image` on the Deployment with a rolling update strategy",
+      "Use `kubectl set image` on the Deployment with a `RollingUpdate` strategy to replace pods incrementally",
       "Scale the `Deployment` to zero replicas, update the image tag, then scale back up to the count",
       "Edit the `Ingress` to point to a new Service while the old Deployment is still running and ready"
     ],
@@ -1163,7 +1163,7 @@ var questions = [
       "`kube_networkpolicy_labels` showing all policy labels attached to the resources in the namespace",
       "`kube_pod_status_phase` tracking pods stuck in `Pending` state due to scheduling or networking",
       "`kube_pod_container_status_restarts_total` counting container restarts caused by network issues",
-      "No built-in metric exists; the engineer should use CNI-level flow logs (e.g., `Hubble`) or `eBPF`-based monitoring tools"
+      "No built-in metric exists; the engineer should use CNI-level observability tools such as `Hubble`"
     ],
     answer: 3,
     explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
@@ -1445,7 +1445,7 @@ var questions = [
     id: "s03-q091",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which tool within the CNCF ecosystem provides network observability for Kubernetes by leveraging eBPF to generate flow logs and a service dependency map without requiring sidecar proxies?",
+    text: "Which CNCF ecosystem tool provides network observability for Kubernetes, including traffic visibility and a service dependency map, without requiring sidecar proxies?",
     diagram: null,
     options: [
       "Prometheus — a metrics collection and alerting toolkit for Kubernetes clusters",

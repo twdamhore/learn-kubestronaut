@@ -26,7 +26,7 @@ var questions = [
     options: [
       "A. The Deployment is created but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
       "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of `RuntimeDefault` or `Localhost`",
-      "C. The Deployment object is created, but the ReplicaSet fails to create pods because of the missing seccomp profile field",
+      "C. The Deployment object is created, but the `ReplicaSet` fails to create pods because of the missing seccomp profile field",
       "D. The pods are created with a default `RuntimeDefault` seccomp profile automatically injected by the Pod Security Admission controller"
     ],
     answer: 2,
@@ -987,7 +987,7 @@ var questions = [
       "A. Implement cluster autoscaler with aggressive scale-down settings and use VPA in `UpdateMode: Auto` for all namespaces to right-size pods automatically",
       "B. Apply `LimitRange` in dev namespaces to enforce lower defaults, use VPA in recommendation-only mode for dev, and keep production resource settings unchanged",
       "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods",
-      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size resource requests based on VPA recommendations for each workload"
+      "D. Move dev workloads to spot/preemptible nodes using `taints` and tolerations, and right-size resource requests based on VPA recommendations for each workload"
     ],
     answer: 3,
     explanation: "The optimal approach combines cost savings with appropriate risk tolerance. Development workloads can tolerate interruptions, making spot/preemptible nodes ideal (60-80% cost savings). Using VPA recommendations to right-size resource requests ensures that requested resources match actual usage (closing the 15% utilization vs 60% request gap). Taints and tolerations ensure only dev workloads land on spot nodes, protecting production. Option B only addresses defaults for new pods. Option C aggressively cuts quota without understanding actual needs.\n\nWhy other options are wrong:\n- A: VPA in UpdateMode: Auto for all namespaces could disrupt production by restarting pods; aggressive autoscaler scale-down may evict production workloads\n- B: LimitRange with lower defaults only affects new pods; existing pods keep their current resource settings unchanged\n- C: Cutting quota to 30% of current levels may be too aggressive without understanding actual usage patterns; it could break legitimate workloads\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",

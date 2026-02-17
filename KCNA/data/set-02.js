@@ -276,10 +276,10 @@ var questions = [
       "ConfigMap volume mounts are never updated; the pod must always be restarted",
       "The kubelet update interval defaults to 10 minutes, so the developer needs to wait longer",
       "Volumes mounted with `subPath` do not receive automatic updates from ConfigMap changes",
-      "The ConfigMap must have `immutable: false` explicitly set to allow live updates"
+      "A `subPath` mount requires `immutable: false` on the ConfigMap to allow live updates"
     ],
     answer: 2,
-    explanation: "This is an important caveat: when a ConfigMap is mounted using `subPath`, the kubelet does not update the file when the ConfigMap changes. Only full directory mounts (without `subPath`) receive automatic updates. The developer must restart the pod or switch to a full volume mount to get updates. ConfigMaps do not require `immutable: false` for updates — they are mutable by default. The kubelet sync period is typically around 60 seconds, not 10 minutes.\n\nWhy other options are wrong:\n- A: ConfigMap volume mounts without subPath do receive automatic updates from the kubelet\n- B: The kubelet sync period is around 60 seconds plus cache TTL, not 10 minutes\n- D: ConfigMaps are mutable by default; no explicit immutable: false setting is needed for updates\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    explanation: "This is an important caveat: when a ConfigMap is mounted using `subPath`, the kubelet does not update the file when the ConfigMap changes. Only full directory mounts (without `subPath`) receive automatic updates. The developer must restart the pod or switch to a full volume mount to get updates. ConfigMaps do not require `immutable: false` for updates — they are mutable by default. The kubelet sync period is typically around 60 seconds, not 10 minutes.\n\nWhy other options are wrong:\n- A: ConfigMap volume mounts without subPath do receive automatic updates from the kubelet\n- B: The kubelet sync period is around 60 seconds plus cache TTL, not 10 minutes\n- D: ConfigMaps are mutable by default; immutable: false is not a real setting and subPath mounts simply do not auto-update regardless\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
     verify: null
   },
 
@@ -543,10 +543,10 @@ var questions = [
     text: "A developer sets an environment variable in a pod using the Downward API: `fieldRef: {fieldPath: metadata.name}`. What value will this environment variable contain at runtime?",
     diagram: null,
     options: [
-      "The name of the Deployment or ReplicaSet controller that originally created the pod",
+      "The name of the parent controller (e.g., `myapp` from a Deployment named `myapp`)",
       "The name of the specific container defined within the pod's specification manifest",
       "The actual pod name with the generated suffix (e.g., `myapp-7d4b8c6f9-x2k4p`)",
-      "The namespace in which the pod is currently running inside the Kubernetes cluster"
+      "The namespace the pod runs in (e.g., `default` or `kube-system`) rather than its name"
     ],
     answer: 2,
     explanation: "The Downward API `metadata.name` field returns the pod's own name as assigned by Kubernetes, which for pods created by a ReplicaSet includes the generated random suffix. It does not return the Deployment name, container name, or namespace. To get the namespace, you would use `metadata.namespace`. To get labels or annotations, you would use `metadata.labels` or `metadata.annotations` respectively.\n\nWhy other options are wrong:\n- A: metadata.name returns the pod name, not the Deployment or ReplicaSet controller name\n- B: metadata.name returns the pod name, not the container name from the spec\n- D: metadata.name returns the pod name; for namespace, use metadata.namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/downward-api/",
@@ -755,10 +755,10 @@ var questions = [
     text: "A cloud-native application needs to handle configuration changes without downtime. The current approach requires a pod restart for every ConfigMap update. Which pattern enables dynamic configuration reloading?",
     diagram: null,
     options: [
-      "Enable the `DynamicConfigReload` feature gate on the kubelet to allow automatic config propagation",
-      "Set `restartPolicy: OnConfigChange` on the pod spec to make Kubernetes restart it on config updates",
+      "Enable the `DynamicConfigReload` feature gate on the kubelet to allow automatic config propagation to pods",
+      "Set `restartPolicy: OnConfigChange` on the pod spec to make Kubernetes restart it automatically on updates",
       "Use `kubectl apply --live-reload` to push ConfigMap changes directly into running container processes",
-      "Use a sidecar that watches the mounted ConfigMap volume for changes and sends a signal (e.g., `SIGHUP`) to the main process"
+      "Use a sidecar that watches the mounted ConfigMap volume and signals (e.g., `SIGHUP`) the main process"
     ],
     answer: 3,
     explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. There is no `restartPolicy: OnConfigChange`, no `kubectl apply --live-reload` flag, and no `DynamicConfigReload` feature gate in Kubernetes.\n\nWhy other options are wrong:\n- A: There is no DynamicConfigReload feature gate in Kubernetes\n- B: There is no restartPolicy: OnConfigChange in the Kubernetes pod spec\n- C: There is no kubectl apply --live-reload flag\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -824,7 +824,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Canary Deployment Scenario</text><rect x="30" y="55" width="150" height="70" rx="5" fill="#2d6a4f" stroke="#4caf50" stroke-width="1"/><text x="105" y="80" text-anchor="middle" fill="white" font-size="12">Stable (v1)</text><text x="105" y="100" text-anchor="middle" fill="#ccc" font-size="10">config = ???</text><text x="105" y="115" text-anchor="middle" fill="#ccc" font-size="10">90% traffic</text><rect x="220" y="55" width="150" height="70" rx="5" fill="#e63946" stroke="#ff6b6b" stroke-width="1"/><text x="295" y="80" text-anchor="middle" fill="white" font-size="12">Canary (v2)</text><text x="295" y="100" text-anchor="middle" fill="#ccc" font-size="10">config = ???</text><text x="295" y="115" text-anchor="middle" fill="#ccc" font-size="10">10% traffic</text><rect x="80" y="155" width="240" height="40" rx="5" fill="#16213e" stroke="#326CE5" stroke-width="1"/><text x="200" y="180" text-anchor="middle" fill="#e0e0e0" font-size="11">How should configuration be managed?</text><text x="200" y="220" text-anchor="middle" fill="#aaa" font-size="10">Each version needs different feature flags</text></svg>',
     options: [
       "Create versioned ConfigMaps (`config-v1`, `config-v2`) and have each Deployment reference its own",
-      "Store both versions' configuration in one ConfigMap with keys prefixed by version number for routing",
+      "Store both versions' config in one ConfigMap with keys prefixed by version (e.g., `v1-flags`, `v2-flags`)",
       "Use a single ConfigMap and toggle feature flags with environment variables set on each individual pod",
       "Use a single ConfigMap and rely on the application to detect its own version and load correct flags"
     ],
@@ -882,7 +882,7 @@ var questions = [
       "During authentication — the API server checks resource specs before authenticating the user identity",
       "During authorization — RBAC evaluates whether the user is allowed to create pods without limits set",
       "During admission control — validating webhooks inspect the pod spec after authn and authz complete",
-      "After persistence — etcd rejects the pod after it has been stored because it violates policy rules"
+      "After admission and persistence — etcd rejects the pod because it detects the policy violation itself"
     ],
     answer: 2,
     explanation: "The API server processes requests in order: authentication, authorization, then admission control. Admission controllers (including webhooks, LimitRanger, and ResourceQuota) inspect and potentially modify or reject requests after they pass authentication and authorization. etcd does not enforce policies — it stores whatever the API server sends. Authentication verifies identity, and authorization checks permissions, neither of which validates resource specifications.\n\nWhy other options are wrong:\n- A: Authentication verifies identity and does not inspect resource specifications\n- B: Authorization checks permissions (RBAC) and does not validate resource spec content\n- D: etcd stores data without policy enforcement; validation happens before persistence\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
@@ -960,7 +960,7 @@ var questions = [
     diagram: null,
     options: [
       "The name of the Kubernetes Service object that is associated with and routes traffic to this pod",
-      "This is invalid syntax — the Downward API does not support label field references in fieldPath",
+      "This is invalid — `fieldRef` does not support label selectors using bracket notation in fieldPath",
       "The pod's hostname as derived from the Service DNS entry registered in the cluster's CoreDNS",
       "The value of the `app.kubernetes.io/name` label that is set on the pod itself at creation"
     ],

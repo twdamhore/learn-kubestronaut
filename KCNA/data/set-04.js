@@ -233,7 +233,7 @@ var questions = [
     diagram: null,
     options: [
       "The kube-scheduler, which assigns volumes to nodes during the pod scheduling decision process",
-      "The kubelet on the target node, through the CSI node plugin's staging and publishing RPC calls",
+      "The kubelet on the target node, through the CSI node plugin's `NodeStageVolume` and publish RPCs",
       "The kube-controller-manager's PV controller, which manages volume lifecycle and binding state",
       "The external-attacher sidecar, which calls the CSI `ControllerPublishVolume` RPC to attach"
     ],
@@ -281,7 +281,7 @@ var questions = [
     diagram: null,
     options: [
       "Examine kubelet logs, CSI driver logs, and `kubectl describe pv/pvc` events for storage errors",
-      "Check only the Elasticsearch application logs inside the container for I/O error stack trace details",
+      "Check only the Elasticsearch application logs inside the container for `IOException` stack trace details",
       "Review the kube-scheduler logs for scheduling decisions related to pod placement on specific nodes",
       "Check the kube-apiserver audit logs for PVC creation timestamps and API request latencies"
     ],
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A StatefulSet-based MySQL cluster uses a headless Service. The administrator needs to create a separate Service that load-balances read traffic across all replicas while keeping the headless Service for direct pod addressing. Is this possible?",
     diagram: null,
     options: [
-      "No, a StatefulSet can only have one associated Service defined for it in the cluster at a time",
+      "No, a StatefulSet can only have one associated `Service` defined for it in the cluster at a time",
       "Yes, create a regular `ClusterIP` Service with the same selector to load-balance across pods",
       "Yes, but only if the pods are labeled differently so that each Service selects different targets",
       "No, load balancing across replicas is architecturally incompatible with StatefulSet workloads"
@@ -1176,7 +1176,7 @@ var questions = [
     text: "A monitoring dashboard tracks the `kube_persistentvolumeclaim_status_phase` metric from kube-state-metrics. What information does this metric provide?",
     diagram: null,
     options: [
-      "The I/O throughput of each PVC measured in bytes per second from the kubelet volume stats endpoint",
+      "The I/O throughput of each PVC measured in bytes per second from the `kubelet_volume_stats` endpoint",
       "The current phase (`Pending`, `Bound`, `Lost`) of each PVC exposed as a gauge metric with labels",
       "The total number of PVCs that have been created since the cluster was first started and initialized",
       "The actual storage capacity being consumed by each PVC as reported by the underlying CSI driver"
@@ -1275,7 +1275,7 @@ var questions = [
       "The mount fails because the PVC `ReadWriteOnce` access mode conflicts with the `readOnly` volume flag",
       "The `readOnly` flag is ignored by the kubelet because the PVC's access mode explicitly allows writes",
       "The PVC's access mode is changed automatically to `ReadOnlyMany` to match the `readOnly` mount flag",
-      "The container mounts the volume as read-only at the OS level, regardless of the PVC's access mode"
+      "The container mounts the volume as read-only at the OS level, regardless of the PVC's `accessModes`"
     ],
     answer: 3,
     explanation: "The `readOnly: true` field on a `volumeMount` controls how the volume is mounted inside the specific container. It is independent of the PVC's access mode, which controls node-level access. Even if the PVC allows read-write, the container will have a read-only mount. Other containers in the same pod can mount the same volume as read-write.\n\nWhy other options are wrong:\n- A: readOnly on volumeMount does not conflict with the PVC access mode; they operate at different levels\n- B: The readOnly flag is respected by the kubelet; it is not ignored when the PVC allows writes\n- C: The PVC access mode is not changed; readOnly on the mount is a container-level setting\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#claims-as-volumes",
@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "A Deployment with 1 replica running the migration container that restarts if the script fails on error",
-      "A CronJob scheduled to run every minute until the database migration script succeeds on the cluster",
+      "A `CronJob` scheduled to run every minute until the database migration script succeeds on the cluster",
       "A Job running the migration, configured as an `initContainer` dependency or Helm pre-upgrade hook",
       "A DaemonSet that runs the migration on every node in the cluster regardless of database pod placement"
     ],
@@ -1577,7 +1577,7 @@ var questions = [
     diagram: null,
     options: [
       "The Kubernetes scheduler's disk I/O priority for pods using this StorageClass for their volume claims",
-      "The maximum I/O rate that the kubelet allows for volume operations performed on the mounted PV path",
+      "The maximum I/O rate that the `kubelet` allows for volume operations performed on the mounted PV path",
       "The provisioned cloud disk characteristics — `gp3` sets the EBS volume type and `iops` sets the IOPS",
       "The replication factor for the PV across availability zones managed by the EBS CSI driver controller"
     ],
