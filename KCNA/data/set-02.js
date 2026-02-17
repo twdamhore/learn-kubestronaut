@@ -434,7 +434,7 @@ var questions = [
       "Yes, Kubernetes encrypts Secret data with `AES-256` before storing it in the manifest output format",
       "No, the value is only base64-encoded, not encrypted; anyone can decode it with `base64 --decode`",
       "Yes, it is encrypted with the cluster `TLS` certificate and can only be decoded by the API server",
-      "No, but the data is hashed using `SHA-256`, meaning the original value cannot ever be recovered"
+      "No, but the data is hashed using `SHA-256`, so recovering the original value requires a reverse lookup table"
     ],
     answer: 1,
     explanation: "Kubernetes Secrets store data as base64-encoded strings, not encrypted. Base64 is an encoding scheme, not encryption — it is trivially reversible. Running `echo 'c2tfbGl2ZV9hYmMxMjM=' | base64 --decode` returns the original value. To achieve actual encryption, administrators must configure etcd encryption at rest. The data is not hashed or encrypted with TLS certificates by default.\n\nWhy other options are wrong:\n- A: Kubernetes does not encrypt Secret data with AES-256 by default; base64 is encoding, not encryption\n- C: Secrets are not encrypted with TLS certificates; they are simply base64-encoded in the data field\n- D: Secret values are not hashed; they are base64-encoded and fully reversible\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#overview-of-secrets",
@@ -724,9 +724,9 @@ var questions = [
     diagram: null,
     options: [
       "Vault stores secrets in etcd alongside Kubernetes Secrets so there is no real architectural difference between them",
-      "Vault fully replaces Kubernetes RBAC by managing all access control policies for the entire cluster independently",
+      "Vault replaces Kubernetes RBAC for access control policies across the cluster",
       "Vault provides dynamic secret generation, fine-grained access control, audit logging, and automatic rotation",
-      "Vault is the only CNCF-graduated project for secret management and is a mandatory requirement for CKS certification"
+      "Vault is a CNCF-graduated project for secret management and is recommended for CKS certification preparation"
     ],
     answer: 2,
     explanation: "HashiCorp Vault provides capabilities that go far beyond Kubernetes native Secrets: dynamic secret generation (e.g., temporary database credentials), detailed audit logging, automatic rotation, multiple authentication backends, and fine-grained policies. Vault uses its own storage backend, not etcd. It complements RBAC rather than replacing it. Vault is not a CNCF project (it is a HashiCorp product) and is not required for any certification.\n\nWhy other options are wrong:\n- A: Vault uses its own storage backend, not etcd; it has a fundamentally different architecture\n- B: Vault complements Kubernetes RBAC; it does not replace cluster-level access control\n- D: Vault is a HashiCorp product, not a CNCF project, and is not required for any Kubernetes certification\n\nReference: https://www.vaultproject.io/docs/what-is-vault",
@@ -1438,7 +1438,7 @@ var questions = [
     id: "s02-q087",
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
-    text: "A pod is in `CreateContainerConfigError` state. Running `kubectl describe pod` shows: `Error: configmap \"app-settings\" not found`. A colleague deleted and recreated the ConfigMap with the same name. Running `kubectl get configmap app-settings` shows the ConfigMap exists, yet the Pod remains in CreateContainerConfigError. What likely happened?",
+    text: "A pod is in `CreateContainerConfigError` state. Running `kubectl describe pod` shows: `Error: configmap \"app-settings\" not found`. A colleague recreated the ConfigMap with the same name from their terminal, which uses a different default namespace context. Running `kubectl get configmap app-settings` shows the ConfigMap exists, yet the Pod remains in CreateContainerConfigError. What likely happened?",
     diagram: null,
     options: [
       "Kubernetes caches ConfigMap references and the internal cache has not been invalidated yet after the recreation",

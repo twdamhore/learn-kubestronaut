@@ -699,10 +699,10 @@ var questions = [
       "A. `NoSchedule` taint effect",
       "B. `NoExecute` taint effect",
       "C. `PreferNoSchedule` effect",
-      "D. `EvictExisting` as effect"
+      "D. `PreemptLowerPriority` as effect"
     ],
     answer: 0,
-    explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `EvictExisting` is not a valid taint effect.\n\nWhy other options are wrong:\n- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: EvictExisting is not a valid taint effect in Kubernetes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `PreemptLowerPriority` is a preemption policy value, not a valid taint effect.\n\nWhy other options are wrong:\n- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: PreemptLowerPriority is a Pod preemption policy value, not a taint effect\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl taint --help"
   },
   {
@@ -794,11 +794,11 @@ var questions = [
     options: [
       "A. `Guaranteed`",
       "B. `BestEffort`",
-      "C. `Standard`",
+      "C. `Baseline`",
       "D. `Burstable`"
     ],
     answer: 3,
-    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.\n\nWhy other options are wrong:\n- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Standard is not a valid Kubernetes QoS class\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
+    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.\n\nWhy other options are wrong:\n- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Baseline is a Pod Security Admission level, not a Kubernetes QoS class\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.qosClass}'"
   },
   {
@@ -888,7 +888,7 @@ var questions = [
     text: "A newly joined worker node shows <code>NotReady</code> status. The kubelet is running and the node is reachable. The kubelet logs show the container runtime is healthy, but the node condition shows <code>NetworkUnavailable: True</code>. Which component on the node is most likely misconfigured?",
     diagram: null,
     options: [
-      "A. kube-proxy, the network rules component",
+      "A. kube-proxy, the network rules component for Service routing",
       "B. The container runtime such as containerd",
       "C. CoreDNS, the cluster DNS resolver Pod",
       "D. The CNI plugin for Pod network setup"

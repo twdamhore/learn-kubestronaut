@@ -313,7 +313,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod may read or modify sensitive host files like `/etc/shadow`, enabling privilege escalation",
-      "The pod can only read files from `/etc` and cannot write to them, which poses no security risk at all",
+      "The pod can read files from `/etc` but the read-only access poses a limited security concern for node configuration",
       "The `hostPath` volume is encrypted by default so there is no meaningful security concern for the host",
       "The pod will crash because `/etc` is a protected system directory that cannot be mounted by containers"
     ],
@@ -779,7 +779,7 @@ var questions = [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
       "Serverless frameworks on Kubernetes default to in-memory scratch space, since PVC mounts are not enabled in standard Knative function pod templates",
       "PersistentVolumes are automatically deleted by the platform whenever serverless functions scale down to zero pods",
-      "Knative only supports `emptyDir` volumes and does not allow any PersistentVolumeClaim mounts in function pods"
+      "Knative defaults to `emptyDir` volumes and requires additional configuration for PersistentVolumeClaim mounts in function pods"
     ],
     answer: 0,
     explanation: "Serverless workloads scale to zero when idle, meaning PVs must be detached and reattached on each cold start, adding latency. Additionally, `ReadWriteOnce` PVs cannot be mounted by multiple pods simultaneously, which conflicts with serverless auto-scaling. This is why serverless architectures typically use object storage (e.g., S3) rather than PV-based storage.\n\nWhy other options are wrong:\n- B: Serverless functions in Kubernetes can technically access persistent and ephemeral storage\n- C: PVs are not automatically deleted when functions scale to zero; PVCs persist independently of pods\n- D: Knative does not restrict volumes to emptyDir only; PVCs can be configured in the pod template\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -874,7 +874,7 @@ var questions = [
     options: [
       "Managed database services are typically more cost-effective than self-hosted databases, making cost the primary factor favoring managed options",
       "Managed services handle backups, patching, replication, and failover, reducing the team's operations work",
-      "StatefulSets cannot provide persistent storage for databases running inside a Kubernetes cluster at all",
+      "StatefulSets are designed for stateless workloads and require additional operators for database persistent storage",
       "Managed services run inside the Kubernetes cluster alongside application pods for better network latency"
     ],
     answer: 1,

@@ -410,7 +410,7 @@ var questions = [
     options: [
       "Install a bare-metal load balancer implementation such as `MetalLB` to allocate external IPs",
       "Restart the kube-controller-manager with the `--cloud-provider=external` flag for LB support",
-      "Switch to `NodePort` since bare-metal clusters cannot provision external load balancer instances",
+      "Switch to `NodePort` because bare-metal clusters lack built-in external load balancer provisioning",
       "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal` to the Service"
     ],
     answer: 0,
@@ -1019,7 +1019,7 @@ var questions = [
       "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
       "BGP peering encrypts all inter-node traffic using IPsec by default for enhanced data protection",
       "BGP peering eliminates the need for kube-proxy entirely by handling service routing via BGP peers",
-      "BGP peering allows pods to use IPv6 addresses exclusively, which VXLAN does not support at all"
+      "BGP peering is primarily needed for IPv6 addressing, which VXLAN handles less efficiently"
     ],
     answer: 0,
     explanation: "With BGP peering, Calico advertises pod CIDR routes to physical routers, making pod IPs natively routable without the overhead of VXLAN encapsulation (extra headers, MTU reduction). BGP does not provide encryption — that requires separate configuration. kube-proxy is still needed for Service routing. Both BGP and VXLAN modes support IPv6.\n\nWhy other options are wrong:\n- B: BGP peering does not encrypt traffic by default; encryption requires separate configuration like WireGuard or IPsec.\n- C: BGP peering does not replace kube-proxy; kube-proxy is still needed for Service-level load balancing.\n- D: Both BGP and VXLAN modes support IPv6; BGP is not required exclusively for IPv6 addressing.\n\nReference: https://docs.tigera.io/calico/latest/networking/configuring/bgp",
@@ -1418,8 +1418,8 @@ var questions = [
     options: [
       "Yes, because `10.0.5.15` is within the `10.0.0.0/8` CIDR and matches the allow rule",
       "No, because `10.0.5.15` falls within the `except` block `10.0.5.0/24` and is excluded",
-      "Yes, because the `except` clause only applies to egress rules and not to ingress rules",
-      "No, because `ipBlock` rules do not apply to private IP ranges within the cluster network"
+      "Yes, because the `except` clause is evaluated differently for egress than for ingress rules",
+      "No, because `ipBlock` rules have reduced enforcement within the cluster's internal network"
     ],
     answer: 1,
     explanation: "The `except` field in an `ipBlock` excludes a subset of the CIDR. While `10.0.5.15` is within `10.0.0.0/8`, it is also within the excepted `10.0.5.0/24` range, so it is blocked. The `except` field applies to both ingress and egress. `ipBlock` works with any valid CIDR regardless of whether it is private or public.\n\nWhy other options are wrong:\n- A: While `10.0.5.15` is within `10.0.0.0/8`, it falls within the `except` block and is therefore excluded.\n- C: The `except` clause applies to both ingress and egress rules, not just egress.\n- D: `ipBlock` rules apply to any valid CIDR regardless of whether it is a private or public IP range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
