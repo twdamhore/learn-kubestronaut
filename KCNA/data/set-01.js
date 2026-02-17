@@ -88,13 +88,13 @@ var questions = [
     text: "A CTO is evaluating whether to adopt cloud native principles for their organization's software platform. They want to understand the core benefit that distinguishes cloud native applications from traditional monolithic deployments. Which statement best describes the primary advantage?",
     diagram: null,
     options: [
-      "Cloud native applications always cost less because they exclusively use serverless infrastructure for workloads",
-      "Cloud native applications must be written in Go or Rust to achieve the required performance characteristics",
-      "Cloud native applications eliminate the need for operational staff because they are fully self-healing systems",
+      "Cloud native applications reduce costs by favoring serverless infrastructure and pay-per-use billing models",
+      "Cloud native applications benefit most from languages like Go or Rust due to their concurrency characteristics",
+      "Cloud native applications reduce the need for operational staff by relying on self-healing system behaviors",
       "Cloud native applications are loosely coupled, resilient, and scalable, enabling reliable changes via automation"
     ],
     answer: 3,
-    explanation: "According to the CNCF definition, cloud native technologies enable organizations to build and run scalable applications that are loosely coupled, resilient, manageable, and observable. Combined with robust automation, they allow engineers to make high-impact changes frequently and predictably. Cloud native does not mandate specific languages, does not eliminate operations teams, and does not guarantee lower costs in all cases.\n\nWhy other options are wrong:\n- A: Cloud native does not guarantee lower costs and is not limited to serverless infrastructure.\n- B: Cloud native does not mandate any specific programming language.\n- C: Cloud native does not eliminate the need for operational staff; it empowers them with automation.\n\nReference: https://www.cncf.io/about/who-we-are/",
+    explanation: "According to the CNCF definition, cloud native technologies enable organizations to build and run scalable applications that are loosely coupled, resilient, manageable, and observable. Combined with robust automation, they allow engineers to make high-impact changes frequently and predictably. Cloud native does not mandate specific languages, does not eliminate operations teams, and does not guarantee lower costs in all cases.\n\nWhy other options are wrong:\n- A: Cloud native does not guarantee lower costs and is not limited to serverless infrastructure.\n- B: Cloud native does not mandate or favor any specific programming language.\n- C: Cloud native does not eliminate or significantly reduce the need for operational staff; it empowers them with automation.\n\nReference: https://www.cncf.io/about/who-we-are/",
     verify: null
   },
   {
@@ -665,7 +665,7 @@ var questions = [
     diagram: null,
     options: [
       "Deploy both services in the same Pod so they share a network namespace and avoid network failures",
-      "Add more replicas of the payment service to ensure it has enough capacity and never goes down",
+      "Add more replicas of the payment service to increase its availability and reduce the likelihood of downtime",
       "Increase the timeout value on the order service's HTTP client to give the payment service more time",
       "Implement the circuit breaker pattern in the order service to fail fast when payment is unavailable"
     ],
@@ -1464,10 +1464,10 @@ var questions = [
     text: "A team wants to ensure their container images do not contain known security vulnerabilities before deploying to production. At which stage of the CI/CD pipeline should vulnerability scanning occur?",
     diagram: null,
     options: [
-      "Only during the build stage, because scanning at other stages would slow down the entire pipeline",
-      "Only in production, where a runtime scanner monitors containers for vulnerabilities after deployment",
+      "During the build stage, since runtime scanning introduces unacceptable latency to the delivery pipeline",
+      "After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities",
       "At multiple stages: during the build, before deployment via admission control, and in the registry",
-      "Only when developers request it manually, to avoid blocking any automated deployment pipeline processes"
+      "When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"
     ],
     answer: 2,
     explanation: "A defense-in-depth approach scans at multiple stages. During the build, the CI pipeline scans the newly built image. Before deployment, an admission controller (like OPA Gatekeeper or Kyverno) can reject images with critical vulnerabilities. Registries can continuously scan stored images for newly discovered CVEs. Scanning only at build misses new vulnerabilities discovered later. Scanning only in production is too late. Manual scanning is unreliable.\n\nWhy other options are wrong:\n- A: Scanning only at build misses new vulnerabilities discovered after the image is built.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual scanning is unreliable and does not scale with automated deployment pipelines.\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",

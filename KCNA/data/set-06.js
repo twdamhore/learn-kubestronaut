@@ -201,7 +201,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Cluster API, for lifecycle management",
-      "B. Helm, for chart packaging and templates",
+      "B. Helm, for chart lifecycle and templates",
       "C. Argo CD, for GitOps delivery flow ops",
       "D. Flux, for continuous reconciliation sync"
     ],
@@ -217,7 +217,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The drain command will automatically migrate the local volume data to a different node in turn",
-      "D. Local volumes are automatically replicated across all nodes, so there is no data loss whatsoever",
+      "D. Local volumes are automatically replicated across all nodes, so there is no data loss",
       "C. The drain command will fail unless the `--force` flag is used for Pods with local volumes here",
       "B. The Pod is evicted but its data on the local volume is inaccessible from the new node"
     ],
@@ -294,7 +294,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Networking",
     text: "A node is being drained, and a Service backed by a Deployment has Pods on that node. What ensures traffic is not sent to the evicted Pods during the drain?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Service Endpoint Updates During Drain</text><rect x="140" y="42" width="120" height="35" rx="6" fill="#0d2137" stroke="#326ce5" stroke-width="1.5"/><text x="200" y="64" text-anchor="middle" fill="#ccc" font-size="11">Service</text><rect x="30" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="80" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="80" y="148" text-anchor="middle" fill="#888" font-size="9">Node A</text><rect x="150" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="200" y="148" text-anchor="middle" fill="#888" font-size="9">Node B</text><rect x="270" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#f44336" stroke-width="1.5" stroke-dasharray="5,3"/><text x="320" y="132" text-anchor="middle" fill="#f44336" font-size="10">Pod (evicting)</text><text x="320" y="148" text-anchor="middle" fill="#888" font-size="9">Node C (drain)</text><line x1="175" y1="77" x2="80" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="200" y1="77" x2="200" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="225" y1="77" x2="320" y2="110" stroke="#f44336" stroke-width="1.5" stroke-dasharray="4,3"/><text x="280" y="95" fill="#f44336" font-size="9">?</text><rect x="70" y="185" width="260" height="35" rx="6" fill="#1a2a1a" stroke="#4caf50" stroke-width="1"/><text x="200" y="207" text-anchor="middle" fill="#4caf50" font-size="10">What happens to the Service endpoints?</text></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Service Traffic During Drain</text><rect x="140" y="42" width="120" height="35" rx="6" fill="#0d2137" stroke="#326ce5" stroke-width="1.5"/><text x="200" y="64" text-anchor="middle" fill="#ccc" font-size="11">Service</text><rect x="30" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="80" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="80" y="148" text-anchor="middle" fill="#888" font-size="9">Node A</text><rect x="150" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="200" y="148" text-anchor="middle" fill="#888" font-size="9">Node B</text><rect x="270" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#f44336" stroke-width="1.5" stroke-dasharray="5,3"/><text x="320" y="132" text-anchor="middle" fill="#f44336" font-size="10">Pod (evicting)</text><text x="320" y="148" text-anchor="middle" fill="#888" font-size="9">Node C (drain)</text><line x1="175" y1="77" x2="80" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="200" y1="77" x2="200" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="225" y1="77" x2="320" y2="110" stroke="#f44336" stroke-width="1.5" stroke-dasharray="4,3"/><text x="280" y="95" fill="#f44336" font-size="9">?</text><rect x="70" y="185" width="260" height="35" rx="6" fill="#1a2a1a" stroke="#4caf50" stroke-width="1"/><text x="200" y="207" text-anchor="middle" fill="#4caf50" font-size="10">What happens to the Service endpoints?</text></svg>',
     options: [
       "A. The kube-proxy component immediately blocks all traffic to the drained node",
       "B. The endpoint controller removes the terminating Pod from Service Endpoints",
@@ -504,7 +504,7 @@ var questions = [
     text: "A node has the taint <code>special-hardware=fpga:PreferNoSchedule</code>. A Pod without any tolerations is submitted. What happens?",
     diagram: null,
     options: [
-      "A. The Pod is never scheduled on this node under any circumstances whatsoever",
+      "A. The Pod is not scheduled on this node because the taint blocks all untolerated Pods",
       "B. The Pod is scheduled on this node but receives a warning annotation on it",
       "C. The taint is invalid because `PreferNoSchedule` is not a recognized effect",
       "D. The Pod can be scheduled on this node if no other nodes are available"
@@ -587,7 +587,7 @@ var questions = [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
       "B. `kubeadm certs check-expiration` — lists all PKI certificates and their expiration dates",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
-      "D. `openssl x509 -enddate -noout -in /etc/kubernetes/pki/apiserver.crt` — requires knowing the exact file path"
+      "D. `openssl x509 -enddate -noout -in <cert-path>` — checks one certificate at a time"
     ],
     answer: 1,
     explanation: "`kubeadm certs check-expiration` is the purpose-built command that lists every PKI certificate managed by kubeadm (API server, etcd, front-proxy, etc.) along with its expiration date and remaining validity period, all in a single summary table.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- C: There is no `etcdctl cert status` command; etcdctl does not include a certificate inspection subcommand\n- D: `openssl x509` can inspect a single certificate file, but it requires knowing the exact file path and only checks one certificate at a time rather than listing all cluster certificates\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
@@ -664,13 +664,13 @@ var questions = [
     text: "After cordoning a node, you want to check how many allocatable resources remain across the cluster. Which approach gives the most accurate picture?",
     diagram: null,
     options: [
-      "A. `kubectl top nodes` to view current resource usage per node in the cluster",
+      "A. `kubectl top nodes` to view current allocatable usage per node in the cluster",
       "B. `kubectl get nodes -o wide` and check the STATUS column for each node entry",
       "C. `kubectl describe nodes` and sum `Allocatable` minus `Allocated resources`",
       "D. `kubectl get pods --all-namespaces | wc -l` to count the running Pod total"
     ],
     answer: 2,
-    explanation: "`kubectl describe nodes` shows both `Allocatable` resources (total available for Pods) and `Allocated resources` (currently requested). The difference represents remaining capacity. `kubectl top` shows actual usage, not allocatable capacity, which is different from schedulable capacity.\n\nWhy other options are wrong:\n- A: kubectl top shows current usage metrics, not allocatable vs. allocated capacity\n- B: kubectl get nodes -o wide shows status and version but not resource allocation details\n- D: Counting Pods does not reveal resource allocation levels; Pods vary in resource requests\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/",
+    explanation: "`kubectl describe nodes` shows both `Allocatable` resources (total available for Pods) and `Allocated resources` (currently requested). The difference represents remaining capacity. `kubectl top` shows actual usage, not allocatable capacity, which is different from schedulable capacity.\n\nWhy other options are wrong:\n- A: kubectl top shows current real-time usage metrics, not the allocatable vs. allocated capacity breakdown\n- B: kubectl get nodes -o wide shows status and version but not resource allocation details\n- D: Counting Pods does not reveal resource allocation levels; Pods vary in resource requests\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/",
     verify: "kubectl describe nodes | grep -A5 'Allocated resources'"
   },
   {
@@ -773,7 +773,7 @@ var questions = [
     id: "s06-q049",
     domain: "Container Orchestration",
     subsection: "Storage",
-    text: "Before draining a node with Pods using <code>emptyDir</code> volumes, you run <code>kubectl drain node3</code> and receive an error about Pods with local data. What flag resolves this?",
+    text: "You run <code>kubectl drain node3</code> and receive an error about Pods with local ephemeral data. What flag resolves this?",
     diagram: null,
     options: [
       "A. `--force` flag on the drain command",
@@ -1035,7 +1035,7 @@ var questions = [
       "A. `kubectl apply --dry-run=server` to simulate the deployment result",
       "B. `kubectl auth can-i` to check user permissions for the operation",
       "C. `helm lint` to validate the chart syntax and template rendering",
-      "D. A policy engine like OPA Gatekeeper or Kyverno with a constraint"
+      "D. A policy engine like `OPA Gatekeeper` or `Kyverno` with a constraint"
     ],
     answer: 3,
     explanation: "Policy engines like OPA Gatekeeper or Kyverno can enforce policies that reject manifests scheduling Pods on control-plane nodes. These can run as admission webhooks in the cluster or as CLI tools in CI pipelines. `--dry-run=server` validates syntax but not scheduling policies.\n\nWhy other options are wrong:\n- A: --dry-run=server validates API syntax and admission but does not check custom scheduling policies\n- B: kubectl auth can-i checks RBAC permissions, not manifest content or scheduling policies\n- C: helm lint validates chart structure and template syntax, not scheduling or placement policies\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
@@ -1083,7 +1083,7 @@ var questions = [
       "A. Scheduler Plugins (scheduling-plugins)",
       "B. Descheduler, the Pod rebalancing tool",
       "C. Kueue, the job queueing orchestrator",
-      "D. Volcano, the batch scheduling system"
+      "D. Volcano, the batch scheduling plugins system"
     ],
     answer: 0,
     explanation: "The Kubernetes Scheduler Plugins project provides a framework for extending the default scheduler with custom filter, score, and other plugins. It uses the scheduler framework API, allowing teams to add domain-specific logic without replacing the entire scheduler.\n\nWhy other options are wrong:\n- B: Descheduler rebalances Pods after scheduling but does not extend the scheduler with custom plugins\n- C: Kueue manages job queuing and admission but does not add custom scheduling plugins\n- D: Volcano is a batch scheduling system primarily for HPC/AI workloads, not a general scheduler plugin framework\n\nReference: https://github.com/kubernetes-sigs/scheduler-plugins",
@@ -1160,7 +1160,7 @@ var questions = [
     text: "A cluster runs workloads with very different resource profiles: small API Pods and large ML training Pods. Which node management strategy optimizes cost and scheduling?",
     diagram: null,
     options: [
-      "A. Use a single large node type that is big enough to accommodate all cluster workloads",
+      "A. Use a single large node type that is big enough to accommodate most cluster workloads",
       "B. Overcommit resources on all nodes to maximize the overall cluster utilization level",
       "C. Run all workloads exclusively on spot or preemptible instances to reduce total costs",
       "D. Use multiple node pools with different instance types and taints or nodeSelectors"
@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "D. kubeadm deletes all RBAC objects then recreates them from default templates only",
-      "B. kubeadm always overwrites all ClusterRoles with their default values on upgrade",
+      "B. kubeadm overwrites all ClusterRoles with their default values on upgrade",
       "C. Custom ClusterRoles are preserved because kubeadm never modifies existing RBAC",
       "A. kubeadm may overwrite system ClusterRoles it manages, removing custom rules"
     ],
@@ -1434,7 +1434,7 @@ var questions = [
     options: [
       "C. ResourceQuota for aggregates",
       "B. PodDisruptionBudget for uptime",
-      "A. LimitRange for per-Pod defaults",
+      "A. LimitRange for per-Pod resource defaults",
       "D. PriorityClass for scheduling"
     ],
     answer: 0,
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The high-priority Pod waits up to 300 seconds for the preempted Pod to terminate",
-      "B. The preempted Pod is killed immediately, ignoring its configured grace period time",
+      "B. The preempted Pod is killed immediately so the high-priority Pod starts without delay",
       "C. The scheduler finds an alternative node to avoid waiting the long grace period out",
       "D. The preempted Pod's grace period is automatically reduced to a default 30 seconds"
     ],
@@ -1526,7 +1526,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
     text: "During preemption, the scheduler selects victim Pods to evict. Which factor has the highest priority when choosing victims?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Victim priority evaluation</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest ??? evictions</text></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Factor 2: ???</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest ??? evictions</text></svg>',
     options: [
       "A. Pod age is the primary factor and older Pods are always evicted first",
       "B. Pod resource usage is checked and Pods using the most are evicted first",

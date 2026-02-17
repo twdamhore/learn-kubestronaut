@@ -600,7 +600,7 @@ var questions = [
     text: "A team migrating to cloud native architecture needs to decide on a service communication strategy. Service A (order processing) must call Service B (payment gateway) with guaranteed delivery even if B is temporarily unavailable. Service A also calls Service C (notification) where occasional message loss is acceptable. Which architecture best fits these requirements?",
     diagram: null,
     options: [
-      "A. Synchronous REST calls for both B and C with retry middleware and circuit breakers to handle transient failures",
+      "A. Synchronous REST calls for both B and C with retry middleware and circuit breakers to approximate guaranteed delivery",
       "D. Service mesh sidecars handling automatic retries for both B and C with configurable retry budgets per destination",
       "C. gRPC streaming for A-to-B with server-side retry interceptors, and webhook-based notifications for A-to-C events",
       "B. Async messaging with a persistent queue for A-to-B for guaranteed delivery, and fire-and-forget events for A-to-C"
@@ -1019,7 +1019,7 @@ var questions = [
       "A. Each container gets its own full copy of all image layers, consuming 3x the storage of a single container instance",
       "B. Base image layers are shared read-only via overlayfs, with each container getting its own thin read-write upper layer",
       "C. The first container pulls the image and subsequent containers use a copy-on-write clone of the first container's filesystem",
-      "D. Containerd deduplicates layers via content-addressable storage but extracts separate snapshots per container for isolation"
+      "D. Containerd deduplicates layers via content-addressable storage but overlayfs extracts separate snapshots per container for isolation"
     ],
     answer: 1,
     explanation: "Containerd with the overlayfs snapshotter leverages the union filesystem's layer-sharing capability. Image layers are stored once in the content store and shared as read-only lower layers across all containers using that image. Each container receives its own read-write upper directory where writes are captured. This means 3 containers sharing `ubuntu:22.04` consume the storage of one base image plus three thin upper layers. Option D describes the content store correctly but mischaracterizes the snapshot behavior — snapshots do share underlying layers.\n\nWhy other options are wrong:\n- A: Each container does NOT get a full copy; overlayfs shares read-only image layers across all containers using that image\n- C: The second container does not clone the first; all containers independently reference the same shared lower layers with their own upper layer\n- D: Content-addressable storage and snapshots do share underlying layers; the characterization that separate snapshots prevent sharing is incorrect\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A pod runs normally for hours, then is suddenly terminated with reason `OOMKilled`. The container's `resources.limits.memory` is set to `512Mi`. The application is a web server that spawns worker processes to handle requests, and `kubectl top pod` shows memory usage at 510Mi while the app's own /metrics endpoint reports 480Mi RSS. What explains the OOM kill despite the application reporting memory usage below the limit?",
     diagram: null,
     options: [
-      "A. The kernel's memory cgroup accounting includes page cache used by the container, which combined with RSS exceeded the limit",
+      "A. The kernel's memory cgroup accounting includes page cache from worker processes, which combined with RSS exceeded the limit",
       "B. The kubelet's eviction threshold was triggered before the container reached its limit, killing the largest memory consumer pod",
       "C. The container's child worker processes consume additional memory counted by the cgroup but not by the app's /metrics endpoint",
       "D. Memory fragmentation caused the kernel to report higher memory usage than actual RSS, triggering the OOM kill prematurely"
@@ -1114,7 +1114,7 @@ var questions = [
     options: [
       "A. The EndpointSlice controller takes time to propagate new endpoints to kube-proxy on all nodes, creating stale routing windows",
       "B. The Service selector change causes all existing TCP connections to terminate immediately, and reconnecting clients see 503 errors",
-      "C. The Service's `ClusterIP` virtual address is reallocated during the selector change, causing DNS resolution failures until the new VIP propagates to all CoreDNS caches",
+      "C. The Service's `ClusterIP` address is reallocated during the selector change, causing DNS resolution failures until the new VIP propagates",
       "D. The green pods' readiness probes have not yet been verified by the EndpointSlice controller at the moment of the selector switch"
     ],
     answer: 0,
@@ -1446,7 +1446,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
     text: "An admission controller chain processes a pod creation request in this order: MutatingAdmission -> ValidatingAdmission. A mutating webhook adds a sidecar container. A validating webhook checks that all containers have resource limits. The sidecar injected by the mutating webhook does not have resource limits. What is the outcome?",
-    diagram: "<svg viewBox='0 0 400 160' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='30' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='52' text-anchor='middle' fill='#fff' font-size='8'>API Request</text><text x='42' y='62' text-anchor='middle' fill='#fff' font-size='7'>Pod (1 ctr)</text><rect x='105' y='30' width='90' height='35' rx='5' fill='#FF9800' stroke='#fff'/><text x='150' y='48' text-anchor='middle' fill='#fff' font-size='8'>Mutating WH</text><text x='150' y='60' text-anchor='middle' fill='#fff' font-size='7'>+sidecar (no limits)</text><rect x='220' y='30' width='90' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='265' y='48' text-anchor='middle' fill='#fff' font-size='8'>Validating WH</text><text x='265' y='60' text-anchor='middle' fill='#aaa' font-size='7'>checks limits</text><rect x='335' y='30' width='55' height='35' rx='5' fill='#666' stroke='#fff' stroke-dasharray='3'/><text x='362' y='52' text-anchor='middle' fill='#aaa' font-size='8'>etcd</text><line x1='80' y1='47' x2='100' y2='47' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a4)'/><line x1='195' y1='47' x2='215' y2='47' stroke='#FF9800' stroke-width='1.5' marker-end='url(#a4)'/><line x1='310' y1='47' x2='330' y2='47' stroke='#aaa' stroke-width='1.5' stroke-dasharray='3'/><text x='320' y='40' fill='#aaa' font-size='7'>?</text><defs><marker id='a4' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
+    diagram: "<svg viewBox='0 0 400 160' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='30' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='52' text-anchor='middle' fill='#fff' font-size='8'>API Request</text><text x='42' y='62' text-anchor='middle' fill='#fff' font-size='7'>Pod (1 ctr)</text><rect x='105' y='30' width='90' height='35' rx='5' fill='#FF9800' stroke='#fff'/><text x='150' y='48' text-anchor='middle' fill='#fff' font-size='8'>Mutating WH</text><text x='150' y='60' text-anchor='middle' fill='#fff' font-size='7'>+sidecar</text><rect x='220' y='30' width='90' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='265' y='48' text-anchor='middle' fill='#fff' font-size='8'>Validating WH</text><text x='265' y='60' text-anchor='middle' fill='#aaa' font-size='7'>policy check</text><rect x='335' y='30' width='55' height='35' rx='5' fill='#666' stroke='#fff' stroke-dasharray='3'/><text x='362' y='52' text-anchor='middle' fill='#aaa' font-size='8'>etcd</text><line x1='80' y1='47' x2='100' y2='47' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a4)'/><line x1='195' y1='47' x2='215' y2='47' stroke='#FF9800' stroke-width='1.5' marker-end='url(#a4)'/><line x1='310' y1='47' x2='330' y2='47' stroke='#aaa' stroke-width='1.5' stroke-dasharray='3'/><text x='320' y='40' fill='#aaa' font-size='7'>?</text><defs><marker id='a4' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
       "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which has a sidecar without limits",
       "A. The pod is created with the sidecar but without limits, because validating webhooks cannot see any mutations from mutating webhooks",

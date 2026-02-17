@@ -105,7 +105,7 @@ var questions = [
     diagram: null,
     options: [
       "Refactor the application to emit structured logs to stdout/stderr for `kubectl logs` and aggregators",
-      "SSH into the node and read the application log files directly from the container's overlay filesystem layer",
+      "SSH into the node and read the application log files directly from the container's `overlay2` filesystem layer",
       "Mount a persistent volume to store application log files and set up a cron job to periodically collect them",
       "Disable container restart policies so the crashed container's filesystem persists for postmortem analysis"
     ],
@@ -328,7 +328,7 @@ var questions = [
     text: "A Deployment with 3 replicas shows the following after `kubectl get pods`:\n\n```\nNAME                   READY   STATUS             RESTARTS   AGE\nweb-6d8f9b-abc12       1/1     Running            0          2d\nweb-6d8f9b-def34       1/1     Running            0          2d\nweb-7c4e2a-ghi56       0/1     CrashLoopBackOff   8          12m\n```\n\nWhat can you infer about the deployment?",
     diagram: null,
     options: [
-      "All three pods belong to the same ReplicaSet and one has developed a corrupted container filesystem causing crashes",
+      "All three pods belong to the same ReplicaSet (`6d8f9b`) and one has developed a corrupted container filesystem causing crashes",
       "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while old pods (`6d8f9b`) remain",
       "The third pod was manually created outside of the Deployment controller and is unrelated to the current ReplicaSet",
       "The Deployment's replica count was scaled down from 3 to 2 and the excess pod is being terminated by the controller"
@@ -361,7 +361,7 @@ var questions = [
     diagram: null,
     options: [
       "The Kubernetes API server cached the old image tag and needs to be restarted to clear the internal cache entry",
-      "The deployment controller does not detect tag changes when the image name and tag string remain exactly the same",
+      "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
       "The container runtime installed on the nodes does not support pulling images using the mutable `latest` tag name",
       "With `imagePullPolicy: IfNotPresent`, the node uses its cached `myapp:latest` instead of pulling the update"
     ],
@@ -394,7 +394,7 @@ var questions = [
     options: [
       "The `kube-apiserver`, which cannot communicate with the node's kubelet after the upgrade process",
       "The `kube-scheduler`, which failed to properly register the node after the cluster upgrade completed",
-      "The CNI plugin on the node, which provides pod networking and reports network readiness to kubelet",
+      "The `CNI` plugin on the node, which provides pod networking and reports network readiness to kubelet",
       "The `etcd` instance on that node, which stores the node's persistent network configuration records"
     ],
     answer: 2,
@@ -488,7 +488,7 @@ var questions = [
     text: "A pod fails with the event: `Failed to create pod sandbox: rpc error: code = Unknown desc = failed to start sandbox container: Error response from daemon: OCI runtime create failed`. Which layer of the container stack is reporting this error?",
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="200" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Runtime Stack</text><rect x="50" y="50" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="71" text-anchor="middle" fill="#e0e0e0" font-size="11">kubelet</text><rect x="50" y="90" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="111" text-anchor="middle" fill="#e0e0e0" font-size="11">CRI (containerd / CRI-O)</text><rect x="50" y="130" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="151" text-anchor="middle" fill="#e0e0e0" font-size="11">OCI Runtime (runc)</text><rect x="50" y="170" width="300" height="32" rx="5" fill="#264653" stroke="#555" stroke-width="1.5"/><text x="200" y="191" text-anchor="middle" fill="#e0e0e0" font-size="11">Linux Kernel (cgroups, namespaces)</text></svg>',
     options: [
-      "The kube-scheduler, which could not find a valid node placement for the pod sandbox container creation request",
+      "The `kube-scheduler`, which could not find a valid node placement for the pod sandbox container creation request",
       "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
       "The CNI plugin, which failed to assign a valid network namespace to the new pod sandbox container on the node",
       "The CRI (e.g., containerd) relaying an OCI runtime error from `runc` during pod sandbox creation"
@@ -555,7 +555,7 @@ var questions = [
       "Whether the pod has an explicit `externalTrafficPolicy` annotation value set to `Local` in its spec",
       "Whether the pod's container has the `NET_ADMIN` Linux capability listed in its security context",
       "Whether the pod's `hostNetwork` field is set to `true` which would bypass the NodePort routing entirely",
-      "Whether the node's firewall or cloud security group allows inbound traffic on port 30080 from outside"
+      "Whether the node's firewall or cloud security group allows inbound traffic on port `30080` from outside"
     ],
     answer: 3,
     explanation: "When a NodePort Service is correctly configured and the pod is accessible internally but not externally, the issue is usually at the infrastructure layer. Node firewalls, cloud security groups, or network ACLs may be blocking inbound traffic on the NodePort range (default 30000-32767). Verifying that port 30080 is open on the node's firewall is the essential check.\n\nWhy other options are wrong:\n- A: externalTrafficPolicy is a Service-level field, not a pod annotation\n- B: NET_ADMIN capability is for network administration, not required for NodePort functionality\n- C: hostNetwork bypasses pod networking but does not directly relate to NodePort external access issues\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -842,7 +842,7 @@ var questions = [
     options: [
       "Increase the `limits.cpu` on the existing pods to give them more processing power for handling additional load",
       "Change the Deployment strategy from `RollingUpdate` to `Recreate` so all pods are replaced simultaneously",
-      "Reduce CPU requests per pod, add nodes with more CPU, or enable the cluster autoscaler for new nodes",
+      "Reduce `requests.cpu` per pod, add nodes with more CPU, or enable the cluster autoscaler for new nodes",
       "Set `priorityClassName: system-node-critical` on the Deployment to preempt lower-priority existing workloads"
     ],
     answer: 2,
@@ -906,7 +906,7 @@ var questions = [
     options: [
       "The container image was built for a different CPU architecture (e.g., `linux/arm64`) incompatible with `amd64`",
       "The Kubernetes version is incompatible with the Docker version that was used to build the container image",
-      "The container runtime on the cluster nodes does not support the OCI image format used by this container",
+      "The container runtime on the cluster nodes does not support the `OCI` image format used by this container",
       "The pod's security context prevents execution of the container's entrypoint binary on the scheduled node"
     ],
     answer: 0,
@@ -1017,7 +1017,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod's ServiceAccount CA bundle does not match the API server's TLS certificate, or the `kubernetes` Service is missing",
-      "The pod does not have its ServiceAccount token volume mounted, so mutual TLS authentication with the API server fails",
+      "The pod does not have its `ServiceAccount` token volume mounted, so mutual TLS authentication with the API server fails",
       "The pod needs a NetworkPolicy explicitly allowing egress traffic to the API server's endpoint IP address and port 443",
       "The API server only accepts connections from the control plane network, and pod traffic is routed through a different subnet"
     ],
@@ -1035,7 +1035,7 @@ var questions = [
       "Move the pod to the `production` namespace using `kubectl move` to place it alongside the existing Secret resource",
       "Add a cross-namespace reference in the pod spec using `secretRef.namespace: production` to access the remote Secret",
       "Create `db-credentials` in the `staging` namespace, or use ExternalSecrets to sync secrets across namespaces",
-      "Grant the pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding for cross-namespace Secret access"
+      "Grant the `staging` pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding for cross-namespace Secret access"
     ],
     answer: 2,
     explanation: "Secrets, like ConfigMaps and PVCs, are namespace-scoped. A pod can only reference Secrets in its own namespace. There is no `secretRef.namespace` field in the pod spec. The solution is to create the Secret in the pod's namespace. Tools like ExternalSecrets Operator or Sealed Secrets can automate cross-namespace secret distribution.\n\nWhy other options are wrong:\n- A: kubectl move is not a valid command; pods cannot be moved between namespaces\n- B: secretRef.namespace does not exist in the pod spec; Secrets are namespace-scoped\n- D: ClusterRoleBinding grants API access but pods can only mount Secrets from their own namespace\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -1112,7 +1112,7 @@ var questions = [
     text: "A pod has `priorityClassName: high-priority` set. During a resource crunch, the scheduler preempts a lower-priority pod to make room. What happens to the preempted pod?",
     diagram: null,
     options: [
-      "It is paused in place and automatically resumed when cluster resources become available again after rebalancing",
+      "It is `Paused` in place and automatically resumed when cluster resources become available again after rebalancing",
       "It is moved to a different node automatically by the scheduler without any interruption to the running process",
       "It is gracefully terminated and its owner controller creates a replacement that may stay `Pending` if resources are scarce",
       "It is deleted permanently from the cluster along with its owning controller, requiring a full manual redeployment"
@@ -1242,7 +1242,7 @@ var questions = [
     options: [
       "All old pods are immediately terminated by the controller to make room for the new replacement pod instances",
       "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
-      "Kubernetes automatically reverts to the previous Deployment revision when the new pod fails its readiness checks",
+      "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness check failures",
       "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
     ],
     answer: 1,
@@ -1590,7 +1590,7 @@ var questions = [
     domain: "Cloud Native Application Delivery",
     subsection: "CI/CD",
     text: "A CI pipeline builds a container image and pushes it to a registry, then updates the Deployment image tag. However, the pipeline sometimes deploys an image that has not finished being pushed, causing `ImagePullBackOff`. What practice prevents this race condition?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">CI/CD Image Push Race Condition</text><rect x="30" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><line x1="130" y1="72" x2="155" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="155" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="205" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Push Image</text><line x1="255" y1="72" x2="275" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="275" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="325" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Deploy</text><rect x="30" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="136" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><rect x="155" y="115" width="100" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="205" y="130" text-anchor="middle" fill="#e0e0e0" font-size="9">Push Image</text><text x="205" y="143" text-anchor="middle" fill="#e0e0e0" font-size="9">(still running)</text><rect x="200" y="115" width="100" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5" opacity="0.5"/><text x="250" y="136" text-anchor="middle" fill="#fff" font-size="9">Deploy (RACE!)</text><text x="200" y="180" text-anchor="middle" fill="#2a9d8f" font-size="10">Scenario 1: Verify push success before deploying</text><text x="200" y="200" text-anchor="middle" fill="#e76f51" font-size="10">Scenario 2: Deploy before push completes</text><text x="200" y="225" text-anchor="middle" fill="#aaa" font-size="10">Which scenario avoids the race condition?</text><defs><marker id="a100" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">CI/CD Image Push Race Condition</text><rect x="30" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><line x1="130" y1="72" x2="155" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="155" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="205" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Push Image</text><line x1="255" y1="72" x2="275" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="275" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="325" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Deploy</text><rect x="30" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="136" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><rect x="155" y="115" width="100" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="205" y="130" text-anchor="middle" fill="#e0e0e0" font-size="9">Push Image</text><text x="205" y="143" text-anchor="middle" fill="#e0e0e0" font-size="9">(still running)</text><rect x="200" y="115" width="100" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5" opacity="0.5"/><text x="250" y="136" text-anchor="middle" fill="#fff" font-size="9">Deploy (RACE!)</text><text x="200" y="180" text-anchor="middle" fill="#2a9d8f" font-size="10">Scenario 1: Sequential approach</text><text x="200" y="200" text-anchor="middle" fill="#e76f51" font-size="10">Scenario 2: Deploy before push completes</text><text x="200" y="225" text-anchor="middle" fill="#aaa" font-size="10">Which scenario avoids the race condition?</text><defs><marker id="a100" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
       "Ensuring the pipeline verifies the image push is complete (e.g., by pulling the digest) before updating the Deployment",
       "Using `imagePullPolicy: Always` so Kubernetes retries pulling until the image becomes available in the registry eventually",

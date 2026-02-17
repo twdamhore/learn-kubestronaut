@@ -54,7 +54,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
     text: "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
-    diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(PSA)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
+    diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(???)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
       "During scheduling by the kube-scheduler component",
       "During the image pull phase by the node kubelet",
@@ -90,11 +90,11 @@ var questions = [
     options: [
       "Create a Secret of type `kubernetes.io/service-account-token` annotated with the SA name",
       "Set `automountServiceAccountToken: true` in the Pod spec to get a long-lived token",
-      "Tokens are always auto-mounted into Pods and they never expire in any version",
+      "Projected tokens mounted via `automountServiceAccountToken` are long-lived and do not require separate Secret creation",
       "Run `kubectl token create deployer` to generate an OIDC-based token for the account"
     ],
     answer: 0,
-    explanation: "Starting in Kubernetes 1.24, the `LegacyServiceAccountTokenNoAutoGeneration` feature means Secrets are no longer auto-created for ServiceAccounts. To obtain a long-lived token, you must manually create a Secret of type `kubernetes.io/service-account-token` with the appropriate annotation referencing the ServiceAccount name.\n\nWhy other options are wrong:\n- B: automountServiceAccountToken controls whether a projected token is mounted in Pods, not whether a long-lived token Secret is created\n- C: In 1.24+, tokens are projected and short-lived (not permanent); they are not auto-generated as Secrets\n- D: kubectl create token generates a short-lived TokenRequest token, not a long-lived Secret-based one\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#manual-secret-management-for-serviceaccounts",
+    explanation: "Starting in Kubernetes 1.24, the `LegacyServiceAccountTokenNoAutoGeneration` feature means Secrets are no longer auto-created for ServiceAccounts. To obtain a long-lived token, you must manually create a Secret of type `kubernetes.io/service-account-token` with the appropriate annotation referencing the ServiceAccount name.\n\nWhy other options are wrong:\n- B: automountServiceAccountToken controls whether a projected token is mounted in Pods, not whether a long-lived token Secret is created\n- C: Projected tokens are short-lived (not long-lived) and are not a substitute for Secret-based tokens\n- D: kubectl create token generates a short-lived TokenRequest token, not a long-lived Secret-based one\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#manual-secret-management-for-serviceaccounts",
     verify: "kubectl get secrets -n staging -o yaml"
   },
   {
@@ -440,10 +440,10 @@ var questions = [
     text: "A security audit finds that containers in the `analytics` namespace are running with `seccompProfile: Unconfined`. The team wants to enforce the `RuntimeDefault` seccomp profile. Which resource enforces this at the namespace level?",
     diagram: null,
     options: [
-      "A LimitRange resource that targets container security context settings",
+      "A `LimitRange` resource that targets container security context settings",
       "Pod Security Admission with the `restricted` profile on the namespace",
-      "A ResourceQuota configured to limit allowed seccomp profile types",
-      "A MutatingWebhookConfiguration that patches Pod security context"
+      "A `ResourceQuota` configured to limit allowed seccomp profile types",
+      "A `MutatingWebhookConfiguration` that patches Pod security context"
     ],
     answer: 1,
     explanation: "The Pod Security Admission controller with the `restricted` profile requires containers to set `seccompProfile.type` to `RuntimeDefault` or `Localhost`. Enforcing this on the namespace rejects Pods that use `Unconfined`. LimitRange and ResourceQuota do not govern security contexts.\n\nWhy other options are wrong:\n- A: LimitRange controls resource limits and defaults, not security context settings\n- C: ResourceQuota manages resource consumption quotas, not seccomp profiles\n- D: A MutatingWebhookConfiguration could enforce this but is not a built-in Kubernetes resource for this purpose\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
@@ -635,10 +635,10 @@ var questions = [
       "Execute commands inside any Pod in any namespace via exec",
       "Execute commands only in Pods that he originally created",
       "View Pod execution logs across the entire cluster scope",
-      "Nothing, because `pods/exec` is not a valid subresource"
+      "Create Pods but not execute commands inside existing containers"
     ],
     answer: 0,
-    explanation: "The `pods/exec` subresource controls access to `kubectl exec` functionality. A ClusterRoleBinding with this permission grants Dave the ability to exec into any Pod in any namespace. This is a highly privileged permission that should be carefully restricted.\n\nWhy other options are wrong:\n- B: pods/exec access is not restricted to self-created Pods; it applies to all Pods\n- C: pods/exec grants exec access, not log viewing (that would be pods/log)\n- D: pods/exec is a valid subresource in Kubernetes RBAC\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
+    explanation: "The `pods/exec` subresource controls access to `kubectl exec` functionality. A ClusterRoleBinding with this permission grants Dave the ability to exec into any Pod in any namespace. This is a highly privileged permission that should be carefully restricted.\n\nWhy other options are wrong:\n- B: pods/exec access is not restricted to self-created Pods; it applies to all Pods\n- C: pods/exec grants exec access, not log viewing (that would be pods/log)\n- D: The rule grants exec access specifically via pods/exec, not Pod creation which requires the `create` verb on `pods`\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
     verify: "kubectl auth can-i create pods/exec --as=dave --all-namespaces"
   },
   {
@@ -649,7 +649,7 @@ var questions = [
     diagram: null,
     options: [
       "Kubernetes audit logs with the `RequestResponse` audit level",
-      "Container stdout and stderr logs from the affected Pod output",
+      "Container `stdout` and `stderr` logs from the affected Pod output",
       "Prometheus time-series metrics tracking ConfigMap operations",
       "Distributed tracing spans captured from the running application"
     ],
@@ -664,13 +664,13 @@ var questions = [
     text: "A CronJob is configured to run a backup script that requires access to the Kubernetes API. The CronJob's Pod template specifies `serviceAccountName: backup-sa`. When does the projected token for `backup-sa` expire by default?",
     diagram: null,
     options: [
-      "The projected token never expires regardless of Pod state",
+      "After the Pod completes and is garbage collected by the controller",
       "After 1 hour, the default projected token expiration time",
       "After the Pod terminates and its resources are cleaned up",
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Projected tokens do expire; non-expiring tokens are the legacy behavior\n- C: Token expiration is time-based, not tied to Pod termination\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Token expiration is time-based (approximately 1 hour), not tied to Pod lifecycle or garbage collection\n- C: Token expiration is time-based, not tied to Pod termination\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -699,10 +699,10 @@ var questions = [
       "Receive a stream of Secret objects including full data as changes occur",
       "Only receive notifications when Secrets change, not their actual data values",
       "List all Secrets once at startup but never receive subsequent updates",
-      "Nothing, because `watch` is not a valid RBAC verb for Secret resources"
+      "Read Secret metadata only, without access to the encoded data values"
     ],
     answer: 0,
-    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives updates, unlike list which is one-time\n- D: Watch is a valid RBAC verb for all resources including Secrets\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives updates, unlike list which is one-time\n- D: Watch events include the full Secret object, not just metadata; there is no metadata-only watch mode\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i watch secrets --as=system:serviceaccount:monitoring:prometheus -n monitoring"
   },
   {
@@ -1146,11 +1146,11 @@ var questions = [
     options: [
       "Yes, because intra-cluster traffic between Pods is always allowed",
       "No, because the egress rule only allows traffic to `10.0.0.0/8`",
-      "Yes, because NetworkPolicies do not affect cluster-internal traffic",
+      "Yes, because NetworkPolicies do not affect traffic to `192.168.0.0/16`",
       "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
     ],
     answer: 1,
-    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster traffic is subject to NetworkPolicy enforcement; it is not always allowed\n- C: NetworkPolicies affect both internal and external traffic\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster traffic is subject to NetworkPolicy enforcement; it is not always allowed\n- C: NetworkPolicies affect traffic to all CIDRs including `192.168.0.0/16`; there is no exemption for internal ranges\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -o jsonpath='{.items[*].spec.egress}'"
   },
   {
@@ -1355,10 +1355,10 @@ var questions = [
       "Access to Pod health check endpoints and metrics scraping targets",
       "Access to health check resources across all namespaces in the cluster",
       "Access to the API server's `/healthz` and `/metrics` HTTP endpoints",
-      "Nothing, because `nonResourceURLs` is not a valid field in RBAC rules"
+      "Read-only access to all custom resource definitions across the cluster"
     ],
     answer: 2,
-    explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.\n\nWhy other options are wrong:\n- A: nonResourceURLs access API server HTTP endpoints, not Pod health checks or metrics targets\n- B: nonResourceURLs are URL paths, not Kubernetes resource types across namespaces\n- D: nonResourceURLs is a valid field in ClusterRole rules\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",
+    explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.\n\nWhy other options are wrong:\n- A: nonResourceURLs access API server HTTP endpoints, not Pod health checks or metrics targets\n- B: nonResourceURLs are URL paths, not Kubernetes resource types across namespaces\n- D: nonResourceURLs grant access to specific API server HTTP paths, not to custom resource definitions\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",
     verify: "kubectl auth can-i get /healthz --as=<user>"
   },
   {
@@ -1481,12 +1481,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="30" width="100" height="45" rx="6" fill="#16213e" stroke="#4cc9f0" stroke-width="2"/><text x="70" y="57" text-anchor="middle" fill="#f8f8f2" font-size="11">Pod (no RC)</text><rect x="160" y="30" width="100" height="45" rx="6" fill="#16213e" stroke="#f1fa8c" stroke-width="2"/><text x="210" y="57" text-anchor="middle" fill="#f8f8f2" font-size="11">Webhook</text><rect x="300" y="30" width="90" height="45" rx="6" fill="#16213e" stroke="#4cc9f0" stroke-width="2"/><text x="345" y="57" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="120" y1="52" x2="160" y2="52" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#arr5)"/><line x1="260" y1="52" x2="300" y2="52" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#arr6)"/><defs><marker id="arr5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker><marker id="arr6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
       "The Pod is created with the cluster default runtime class applied",
-      "The Pod is rejected by the configured validating admission webhook",
+      "The API server rejects the Pod creation request before it is persisted",
       "The webhook mutates the Pod spec to add a default runtime class value",
       "The Pod enters a pending state until a runtime class value is assigned"
     ],
     answer: 1,
-    explanation: "A validating admission webhook that requires `runtimeClassName` will reject Pods that do not specify it. This is a common pattern for enforcing that all workloads explicitly declare their runtime, ensuring security-sensitive workloads use hardened runtimes like gVisor or Kata.\n\nWhy other options are wrong:\n- A: The webhook rejects the Pod, so it is not created with a default runtime class\n- C: A validating webhook does not mutate Pod specs; that requires a mutating webhook\n- D: The Pod is rejected immediately, not put in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
+    explanation: "A validating admission webhook that requires `runtimeClassName` will reject Pods that do not specify it. This is a common pattern for enforcing that all workloads explicitly declare their runtime, ensuring security-sensitive workloads use hardened runtimes like gVisor or Kata.\n\nWhy other options are wrong:\n- A: The validating webhook rejects the Pod, so it is not created with a default runtime class\n- C: A validating webhook does not mutate Pod specs; that requires a mutating webhook\n- D: The Pod is rejected immediately, not put in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
     verify: "kubectl get validatingwebhookconfigurations -o yaml"
   },
   {

@@ -297,7 +297,7 @@ var questions = [
     diagram: null,
     options: [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
-      "Flannel — a CNCF project providing overlay networking with a basic dataplane for pod connectivity",
+      "Flannel — a CNCF project providing overlay networking with a basic dataplane",
       "kube-router — a networking project using BGP with an iptables dataplane",
       "Multus — a CNCF sandbox project that attaches multiple network interfaces to pods"
     ],
@@ -408,7 +408,7 @@ var questions = [
     text: "A developer deploys a `LoadBalancer` Service in a bare-metal cluster without a cloud provider. The Service remains in `Pending` state for the external IP. What is the most likely solution?",
     diagram: null,
     options: [
-      "Install a bare-metal load balancer implementation such as MetalLB to allocate external IPs",
+      "Install a bare-metal load balancer implementation such as `MetalLB` to allocate external IPs",
       "Restart the kube-controller-manager with the `--cloud-provider=external` flag for LB support",
       "Switch to `NodePort` since bare-metal clusters cannot provision external load balancer instances",
       "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal` to the Service"
@@ -488,7 +488,7 @@ var questions = [
     text: "A `NodePort` Service is created without specifying a port number. Which range does Kubernetes use to auto-assign the node port?",
     diagram: null,
     options: [
-      "80–443 reserved for standard HTTP and HTTPS protocol traffic",
+      "80–443 reserved for standard HTTP and HTTPS traffic, not NodePort ranges",
       "1024–65535 which covers the entire non-privileged port range",
       "30000–32767 which is the default NodePort allocation range",
       "49152–65535 which is the IANA dynamic and private port range"
@@ -537,7 +537,7 @@ var questions = [
     diagram: null,
     options: [
       "The DNS for `api.example.com` does not point to the Ingress controller's external IP",
-      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, causing a routing conflict",
+      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, conflicting with `api.example.com` routing",
       "The Ingress controller in use does not support host-based routing, only path-based routing rules",
       "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
     ],
@@ -841,7 +841,7 @@ var questions = [
     diagram: null,
     options: [
       "`spec.loadBalancerSourceRanges` set to allowed CIDR blocks",
-      "`spec.externalTrafficPolicy: Restricted` to limit source IPs",
+      "`spec.externalTrafficPolicy: Restricted` to limit loadBalancer source IPs",
       "`metadata.annotations.allowed-ips` to define allowed clients",
       "`spec.selector.sourceIP` matching allowed client IP ranges"
     ],
@@ -856,7 +856,7 @@ var questions = [
     text: "A `NetworkPolicy` allows ingress from pods labeled `role: frontend` to pods labeled `app: backend` on port 443. A pod labeled both `role: frontend` and `app: backend` sends traffic to another `app: backend` pod on port 443. Is this traffic allowed?",
     diagram: null,
     options: [
-      "No, because a pod cannot be both source and destination of the same policy match criteria",
+      "No, because a pod with `role: frontend` cannot also be a destination of the same policy",
       "Yes, but only if an explicit egress rule is also defined allowing traffic on port 443 outbound",
       "No, because the policy only allows traffic from pods that lack the `app: backend` label value",
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"

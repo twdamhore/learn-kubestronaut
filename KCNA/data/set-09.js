@@ -41,7 +41,7 @@ var questions = [
     diagram: null,
     options: [
       "The payment-service is in a different namespace than <code>billing</code>, so the DNS name does not resolve",
-      "ClusterIP addresses are only accessible from outside the cluster via the external load balancer",
+      "<code>ClusterIP</code> addresses are only accessible from outside the cluster via the external load balancer",
       "The order-service container image does not include the libraries required for DNS-based resolution",
       "ClusterIP Services cannot be used for direct inter-Pod communication within the cluster network"
     ],
@@ -600,13 +600,13 @@ var questions = [
     text: "A team is containerizing their application and debating how to handle configuration. One engineer suggests baking database credentials into the container image for simplicity. According to cloud-native best practices, why is this problematic?",
     diagram: null,
     options: [
-      "Container images cannot contain text files, so credentials must always be injected at runtime through volume mounts or environment variables",
+      "Baking credentials into the image is acceptable as long as the registry uses TLS for image pulls",
       "Baking credentials into the image violates separating config from code, creates security risk, and requires rebuilding per environment",
-      "Container registries automatically strip any files identified as credentials from uploaded images during the push process",
-      "Kubernetes does not mount the container filesystem at runtime, so embedded files are completely inaccessible to the application"
+      "Container registries scan and redact embedded credentials from image layers automatically during push",
+      "Embedding credentials is acceptable if the image is stored in a private registry with strict access controls"
     ],
     answer: 1,
-    explanation: "Cloud-native applications should externalize configuration, especially secrets, from the container image. Embedding credentials in the image means the same image cannot be used across environments without rebuilding, the credentials are exposed to anyone with image pull access, and rotation requires a new image build and deployment cycle. Kubernetes Secrets or external secret managers should be used instead.\n\nWhy other options are wrong:\n- A: Container images can contain any files including text; there is no such restriction\n- C: Container registries do not strip credentials from images; they store images as-is\n- D: Kubernetes mounts the container filesystem at runtime; embedded files are fully accessible\n\nReference: https://12factor.net/config",
+    explanation: "Cloud-native applications should externalize configuration, especially secrets, from the container image. Embedding credentials in the image means the same image cannot be used across environments without rebuilding, the credentials are exposed to anyone with image pull access, and rotation requires a new image build and deployment cycle. Kubernetes Secrets or external secret managers should be used instead.\n\nWhy other options are wrong:\n- A: TLS protects images in transit but does not protect credentials embedded inside image layers from anyone with pull access\n- C: Container registries store images as-is and do not scan or redact embedded credentials from layers\n- D: Storing an image in a private registry limits who can pull it but does not address credential rotation, environment coupling, or layer inspection risks\n\nReference: https://12factor.net/config",
     verify: null
   },
   {
@@ -666,7 +666,7 @@ var questions = [
     options: [
       "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke network access",
       "A NetworkPolicy selecting all Pods with <code>policyTypes: [\"Egress\"]</code> and no egress rules defined",
-      "A NetworkPolicy with empty <code>podSelector</code> and empty <code>ingress</code> array applied to <code>team-beta</code>",
+      "A NetworkPolicy with empty <code>podSelector</code>, <code>policyTypes: [\"Ingress\"]</code>, and no ingress rules in <code>team-beta</code>",
       "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace object"
     ],
     answer: 2,
@@ -808,7 +808,7 @@ var questions = [
     text: "A developer runs <code>kubectl apply -f deployment.yaml</code> and the Deployment is created. Minutes later, another team member runs <code>kubectl edit deployment my-app</code> and changes the replica count. The next time the first developer runs <code>kubectl apply -f deployment.yaml</code> (which still has the original replica count), what happens to the replica count?",
     diagram: null,
     options: [
-      "The replica count stays at the <code>kubectl edit</code> value because <code>kubectl apply</code> uses the last-applied annotation to detect changes",
+      "The replica count stays at the <code>kubectl edit</code> value because <code>kubectl apply</code> performs a three-way merge and the file has not changed",
       "The command fails with a conflict error because the live cluster state differs from the local manifest file that was applied",
       "Kubernetes automatically chooses the higher replica count to avoid disruption to the currently running workload in the cluster",
       "The replica count reverts to the file value because <code>kubectl apply</code> uses a three-way merge of the file, annotation, and live state"
@@ -1034,11 +1034,11 @@ var questions = [
     options: [
       "3 old ReplicaSets as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
       "0 old ReplicaSets, because Kubernetes automatically cleans up all inactive ReplicaSets after updates",
-      "7 old ReplicaSets are retained in the cluster, one for each historical revision of the Deployment",
+      "7 old ReplicaSets are retained in the cluster because <code>revisionHistoryLimit</code> only caps ReplicaSets older than 30 days",
       "1 old ReplicaSet is retained, representing only the immediately previous version of the Deployment"
     ],
     answer: 0,
-    explanation: "The `revisionHistoryLimit` field controls how many old ReplicaSets (with 0 replicas) are kept for rollback purposes. With a limit of 3, Kubernetes retains the 3 most recent old ReplicaSets plus the current active one. Older ReplicaSets beyond the limit are garbage collected. This allows rolling back to any of the last 3 revisions.\n\nWhy other options are wrong:\n- B: Kubernetes does not clean up all inactive ReplicaSets; it retains them up to revisionHistoryLimit\n- C: Only revisionHistoryLimit old ReplicaSets are kept, not one per historical revision\n- D: More than 1 old ReplicaSet is retained; the limit of 3 means the 3 most recent old ones are kept\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit",
+    explanation: "The `revisionHistoryLimit` field controls how many old ReplicaSets (with 0 replicas) are kept for rollback purposes. With a limit of 3, Kubernetes retains the 3 most recent old ReplicaSets plus the current active one. Older ReplicaSets beyond the limit are garbage collected. This allows rolling back to any of the last 3 revisions.\n\nWhy other options are wrong:\n- B: Kubernetes does not clean up all inactive ReplicaSets; it retains them up to revisionHistoryLimit\n- C: revisionHistoryLimit does not use an age-based cap; it always retains exactly the specified number of old ReplicaSets\n- D: More than 1 old ReplicaSet is retained; the limit of 3 means the 3 most recent old ones are kept\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit",
     verify: "kubectl get replicaset -l app=<deployment-name>"
   },
   {
@@ -1067,10 +1067,10 @@ var questions = [
       "Pods keep running, the node is marked <code>NotReady</code>, and the control plane begins evicting Pods after timeout",
       "The kubelet automatically restarts all Pods on the node to attempt reconnection to the API server endpoint",
       "All Pods on the node are immediately terminated by the container runtime when the network partition occurs",
-      "The Pods are instantly rescheduled to other available nodes in the cluster without any termination delay"
+      "The Pods are instantly marked <code>Failed</code> and rescheduled to other available nodes without any termination delay"
     ],
     answer: 0,
-    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady` (Ready condition becomes `Unknown`). The `node.kubernetes.io/unreachable:NoExecute` taint is applied, and after the configured toleration period (default 5 minutes), the control plane starts evicting Pods from the unreachable node.\n\nWhy other options are wrong:\n- B: The kubelet does not restart Pods to reconnect to the API server; Pods continue running\n- C: Pods are not immediately terminated; the container runtime operates independently of the API connection\n- D: Pods are not instantly rescheduled; there is a toleration timeout (default 300s) before eviction begins\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
+    explanation: "When the kubelet loses contact with the API server, existing Pods keep running because the container runtime operates independently. However, the node's Lease object is not renewed, and the node controller marks the node as `NotReady` (Ready condition becomes `Unknown`). The `node.kubernetes.io/unreachable:NoExecute` taint is applied, and after the configured toleration period (default 5 minutes), the control plane starts evicting Pods from the unreachable node.\n\nWhy other options are wrong:\n- B: The kubelet does not restart Pods to reconnect to the API server; Pods continue running\n- C: Pods are not immediately terminated; the container runtime operates independently of the API connection\n- D: Pods are not instantly marked Failed or rescheduled; there is a toleration timeout (default 300s) before eviction begins\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
     verify: "kubectl get node <node-name> -o jsonpath='{.status.conditions[?(@.type==\"Ready\")].status}'"
   },
   {
@@ -1178,11 +1178,11 @@ var questions = [
     options: [
       "Init containers cannot share any volumes with the main container due to Kubernetes isolation requirements for initialization",
       "The init and main containers mount different volumes or <code>mountPath</code> values, so files are written to one path and read from another",
-      "Init container data is automatically cleared by the kubelet when the main container starts to ensure a clean filesystem state",
+      "Init container data is automatically cleared from the <code>emptyDir</code> volume when the main container starts to ensure a clean state",
       "The init container's exit code 0 actually indicates it encountered an error during execution and did not write files successfully"
     ],
     answer: 1,
-    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers can share volumes with main containers; this is a common and supported pattern\n- C: The kubelet does not clear init container data; volumes persist across container transitions\n- D: Exit code 0 indicates success; it means the init container completed its task without errors\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers can share volumes with main containers; this is a common and supported pattern\n- C: The kubelet does not clear emptyDir or other volume data between init and main containers; volumes persist across container transitions\n- D: Exit code 0 indicates success; it means the init container completed its task without errors\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.initContainers[*].volumeMounts}'"
   },
   {
@@ -1257,12 +1257,12 @@ var questions = [
     diagram: null,
     options: [
       "JSON logs consume significantly less storage space than plain text logs due to their compact and compressed format",
-      "Fluentd cannot parse plain text log formats under any circumstances and requires all input to be valid JSON",
+      "Fluentd requires custom Lua scripts to parse plain text, making it impractical for large clusters",
       "Structured JSON logs enable consistent parsing and querying in log aggregation systems without custom regex",
-      "JSON is the only format supported by Elasticsearch for log indexing and all other formats are rejected outright"
+      "Elasticsearch indexes JSON logs natively but requires additional ingest pipelines for non-JSON formats"
     ],
     answer: 2,
-    explanation: "Structured JSON logs provide key-value pairs that log aggregation systems can parse automatically and consistently. This enables reliable filtering (e.g., by severity, request ID, or user) and indexing without custom regex patterns per service. While Fluentd can parse various formats, inconsistent unstructured logs require per-service parser configurations that are fragile and hard to maintain.\n\nWhy other options are wrong:\n- A: JSON is typically larger than plain text due to key names; it does not save storage space\n- B: Fluentd supports many input formats including plain text via configurable parser plugins\n- D: Elasticsearch supports multiple formats; JSON is preferred but not the only accepted format\n\nReference: https://docs.fluentd.org/",
+    explanation: "Structured JSON logs provide key-value pairs that log aggregation systems can parse automatically and consistently. This enables reliable filtering (e.g., by severity, request ID, or user) and indexing without custom regex patterns per service. While Fluentd can parse various formats, inconsistent unstructured logs require per-service parser configurations that are fragile and hard to maintain.\n\nWhy other options are wrong:\n- A: JSON is typically larger than plain text due to key names; it does not save storage space\n- B: Fluentd parses plain text via built-in parser plugins, not Lua scripts; it works well at scale\n- D: Elasticsearch can index non-JSON data without extra ingest pipelines using its built-in processors\n\nReference: https://docs.fluentd.org/",
     verify: null
   },
   {
@@ -1339,10 +1339,10 @@ var questions = [
       "The Service YAML is malformed and needs the <code>loadBalancerIP</code> field explicitly specified in the spec",
       "The kube-proxy DaemonSet needs to be restarted to detect the new LoadBalancer Service type correctly",
       "Bare-metal clusters lack a cloud load balancer; MetalLB or similar must be installed to allocate IPs",
-      "LoadBalancer Services are only supported in Kubernetes versions 1.25 and above with the feature gate"
+      "The cluster's CoreDNS must be configured with an external DNS provider before LoadBalancer IPs can be allocated"
     ],
     answer: 2,
-    explanation: "The `LoadBalancer` Service type relies on an external cloud provider's load balancer integration to provision an external IP. In bare-metal environments, no such integration exists by default, so the external IP remains `<pending>`. MetalLB is a popular solution that provides a network load balancer implementation for bare-metal clusters, enabling IP address allocation for LoadBalancer Services.\n\nWhy other options are wrong:\n- A: The YAML is valid; loadBalancerIP is optional and the issue is the lack of a load balancer controller\n- B: Restarting kube-proxy does not provision external IPs; kube-proxy handles iptables, not IP allocation\n- D: LoadBalancer Services are supported in all Kubernetes versions; there is no version or feature gate restriction\n\nReference: https://metallb.io/",
+    explanation: "The `LoadBalancer` Service type relies on an external cloud provider's load balancer integration to provision an external IP. In bare-metal environments, no such integration exists by default, so the external IP remains `<pending>`. MetalLB is a popular solution that provides a network load balancer implementation for bare-metal clusters, enabling IP address allocation for LoadBalancer Services.\n\nWhy other options are wrong:\n- A: The YAML is valid; loadBalancerIP is optional and the issue is the lack of a load balancer controller\n- B: Restarting kube-proxy does not provision external IPs; kube-proxy handles iptables, not IP allocation\n- D: CoreDNS handles service discovery, not IP allocation; LoadBalancer IP provisioning requires a load balancer controller\n\nReference: https://metallb.io/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.status.loadBalancer}'"
   },
   {

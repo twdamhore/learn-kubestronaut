@@ -197,7 +197,7 @@ var questions = [
     id: "s04-q013",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A platform team is evaluating CNCF projects for providing persistent storage to Kubernetes workloads. Which CNCF graduated project provides storage orchestration by managing Ceph clusters on Kubernetes?",
+    text: "A platform team is evaluating CNCF projects for providing persistent storage to Kubernetes workloads. Which CNCF graduated project provides storage orchestration for distributed storage clusters on Kubernetes?",
     diagram: null,
     options: [
       "Longhorn — a lightweight distributed block storage system built for Kubernetes workloads",
@@ -249,7 +249,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod can be scheduled to any node because the local volume data is automatically replicated across nodes",
-      "The pod is scheduled to a random node and the local volume is transparently migrated to it at pod runtime",
+      "The pod is scheduled to a random node and the local volume is transparently migrated via `kubelet` at runtime",
       "The scheduler ignores volume locality and selects the node with the most available CPU and memory headroom",
       "The pod is constrained to `worker-03` because local PVs have node affinity that restricts pod placement"
     ],
@@ -526,7 +526,7 @@ var questions = [
       "`container_fs_usage_bytes` paired with `container_fs_limit_bytes` from cAdvisor"
     ],
     answer: 2,
-    explanation: "The kubelet exposes `kubelet_volume_stats_capacity_bytes` and `kubelet_volume_stats_used_bytes` metrics for each mounted PV. These allow you to calculate usage percentages and set up alerts for volumes approaching full capacity. The `container_fs_*` metrics refer to container filesystem overlays, not PV-mounted volumes.\n\nWhy other options are wrong:\n- A: kube_persistentvolume_capacity_bytes and kube_persistentvolume_used_bytes are not real metrics from kube-state-metrics\n- B: node_disk_io_time_seconds_total and node_disk_read_bytes_total measure node-level disk I/O, not PV capacity/usage\n- D: container_fs_usage_bytes and container_fs_limit_bytes track container overlay filesystem usage, not mounted PV volumes\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The kubelet exposes `kubelet_volume_stats_capacity_bytes` and `kubelet_volume_stats_used_bytes` metrics for each mounted PV. These allow you to calculate usage percentages and set up alerts for volumes approaching full capacity. The `container_fs_*` metrics refer to container filesystem overlays, not PV-mounted volumes.\n\nWhy other options are wrong:\n- A: kube_persistentvolume_capacity_bytes is a real kube-state-metrics metric, but kube_persistentvolume_used_bytes does not exist; this pairing cannot track used capacity\n- B: node_disk_io_time_seconds_total and node_disk_read_bytes_total measure node-level disk I/O, not PV capacity/usage\n- D: container_fs_usage_bytes and container_fs_limit_bytes track container overlay filesystem usage, not mounted PV volumes\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /api/v1/nodes/<node>/proxy/metrics | grep kubelet_volume_stats"
   },
   {
@@ -648,7 +648,7 @@ var questions = [
     text: "A cluster uses a StorageClass with `volumeBindingMode: WaitForFirstConsumer` for zone-aware provisioning. A pod requests a PVC with this StorageClass and has a `nodeSelector` restricting it to zone `us-east-1a`. Where is the PV provisioned?",
     diagram: null,
     options: [
-      "In a random zone since the `StorageClass` does not consider pod placement or node topology constraints",
+      "In a random zone outside `us-east-1a` since the `StorageClass` does not consider pod topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
       "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone as the pod",
       "The PV is provisioned immediately when the `PVC` is created, before the pod is scheduled to any node"
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "On the node by the kubelet when mounting the PV, passed as options to the `mount` system call",
-      "On the storage backend when creating new volumes as part of the dynamic provisioning workflow",
+      "On the storage backend when creating new volumes as part of the `provisioner` workflow",
       "On the kube-apiserver when validating PVC requests and checking storage class parameter syntax",
       "On the PVC object as metadata annotations that describe preferred mount configuration options"
     ],

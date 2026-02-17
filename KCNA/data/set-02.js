@@ -199,7 +199,7 @@ var questions = [
       "Mount the ConfigMap volume at /app/config using items to select settings.yaml, which implicitly enforces read-only access"
     ],
     answer: 0,
-    explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: Mounting the ConfigMap at a path replaces the entire directory; targeting a single file requires subPath\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
+    explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: While items can select specific keys, this approach does not explicitly enforce read-only access via the readOnly mount flag\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
     verify: "kubectl explain pod.spec.containers.volumeMounts.readOnly"
   },
   {
@@ -431,10 +431,10 @@ var questions = [
     text: "A team creates a Secret using `kubectl create secret generic api-keys --from-literal=stripe=sk_live_abc123`. When they run `kubectl get secret api-keys -o yaml`, the value appears as `c2tfbGl2ZV9hYmMxMjM=`. A junior engineer asks if the data is encrypted. What is the correct explanation?",
     diagram: null,
     options: [
-      "Yes, Kubernetes encrypts Secret data with AES-256 before storing it in the manifest output format",
+      "Yes, Kubernetes encrypts Secret data with `AES-256` before storing it in the manifest output format",
       "No, the value is only base64-encoded, not encrypted; anyone can decode it with `base64 --decode`",
-      "Yes, it is encrypted with the cluster TLS certificate and can only be decoded by the API server",
-      "No, but the data is hashed using SHA-256, meaning the original value cannot ever be recovered"
+      "Yes, it is encrypted with the cluster `TLS` certificate and can only be decoded by the API server",
+      "No, but the data is hashed using `SHA-256`, meaning the original value cannot ever be recovered"
     ],
     answer: 1,
     explanation: "Kubernetes Secrets store data as base64-encoded strings, not encrypted. Base64 is an encoding scheme, not encryption — it is trivially reversible. Running `echo 'c2tfbGl2ZV9hYmMxMjM=' | base64 --decode` returns the original value. To achieve actual encryption, administrators must configure etcd encryption at rest. The data is not hashed or encrypted with TLS certificates by default.\n\nWhy other options are wrong:\n- A: Kubernetes does not encrypt Secret data with AES-256 by default; base64 is encoding, not encryption\n- C: Secrets are not encrypted with TLS certificates; they are simply base64-encoded in the data field\n- D: Secret values are not hashed; they are base64-encoded and fully reversible\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#overview-of-secrets",
@@ -876,7 +876,7 @@ var questions = [
     id: "s02-q053",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "A team uses an admission controller to enforce that all pods in the `production` namespace must have resource limits. A pod without limits is submitted to the API server. At which stage is the pod rejected?",
+    text: "A team configures a policy that rejects any pod in the `production` namespace that lacks resource limits. A pod without limits is submitted to the API server. At which stage is the pod rejected?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">API Server Request Flow</text><rect x="20" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="60" y="77" text-anchor="middle" fill="white" font-size="10">AuthN</text><line x1="100" y1="72" x2="120" y2="72" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/><rect x="120" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="160" y="77" text-anchor="middle" fill="white" font-size="10">AuthZ</text><line x1="200" y1="72" x2="220" y2="72" stroke="#555" stroke-width="2"/><rect x="220" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="260" y="77" text-anchor="middle" fill="white" font-size="10">Admission</text><line x1="300" y1="72" x2="320" y2="72" stroke="#555" stroke-width="2"/><rect x="320" y="55" width="60" height="35" rx="5" fill="#326CE5"/><text x="350" y="77" text-anchor="middle" fill="white" font-size="10">etcd</text><text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="11">Where is the pod rejected? (?)</text></svg>',
     options: [
       "During authentication — the API server checks resource specs before authenticating the user identity",
@@ -1041,13 +1041,13 @@ var questions = [
     text: "A container runs as a non-root user (UID 1000) and mounts a Secret volume. The files in the mount are owned by root with mode `0600`. The application cannot read the files. What is the fix?",
     diagram: null,
     options: [
-      "Set `runAsUser: 0` in the securityContext to run as root, as this is the only way to read Secret mount volumes",
+      "Set `runAsUser: 0` in the securityContext so the container runs as root and matches file ownership",
       "Use `defaultMode: 0444` on the Secret volume to make files world-readable, or set `fsGroup` in securityContext",
-      "Secrets cannot be mounted into non-root containers at all — use environment variables as the workaround instead",
-      "Add `privileged: true` to the container securityContext to bypass all file permission checks on mounted volumes"
+      "Secrets mounted in non-root containers require a ServiceAccount with elevated RBAC permissions to read",
+      "Add `privileged: true` to the container securityContext to inherit the host filesystem permission model"
     ],
     answer: 1,
-    explanation: "Setting `defaultMode: 0444` makes the files readable by all users. Alternatively, setting `fsGroup` in the pod's `securityContext` changes the group ownership of volume files to the specified GID, allowing the non-root user to read them. Running as root or privileged mode is unnecessary and violates security best practices. Secrets can absolutely be mounted into non-root containers — the permissions just need to be configured correctly.\n\nWhy other options are wrong:\n- A: Running as root is unnecessary and violates security best practices when permission fixes exist\n- C: Secrets can be mounted into non-root containers; only the file permissions need adjustment\n- D: Privileged mode bypasses all security and is far more than needed for a file permission issue\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#secret",
+    explanation: "Setting `defaultMode: 0444` makes the files readable by all users. Alternatively, setting `fsGroup` in the pod's `securityContext` changes the group ownership of volume files to the specified GID, allowing the non-root user to read them. Running as root or privileged mode is unnecessary and violates security best practices. Secrets can absolutely be mounted into non-root containers — the permissions just need to be configured correctly.\n\nWhy other options are wrong:\n- A: Running as root is unnecessary and violates security best practices when permission fixes exist\n- C: RBAC and ServiceAccounts control API access, not filesystem permissions inside a container\n- D: Privileged mode grants full host access and is far more than needed for a file permission issue\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#secret",
     verify: "kubectl explain pod.spec.securityContext.fsGroup"
   },
   {
