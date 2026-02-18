@@ -187,10 +187,10 @@ var questions = [
       "A. New Pods are prevented from scheduling but existing Pods continue to run on the node",
       "B. Pods without a matching toleration are evicted after the tolerationSeconds period",
       "C. The node is immediately removed from the cluster and all running Pods are terminated",
-      "D. Only DaemonSet-managed Pods are evicted from the node when it goes offline entirely"
+      "D. DaemonSet-managed Pods are evicted first, while other Pods remain on the unreachable node"
     ],
     answer: 1,
-    explanation: "`NoExecute` taints not only prevent new Pod scheduling but also evict existing Pods that lack a matching toleration. Pods can specify `tolerationSeconds` to remain for a grace period before eviction. This mechanism ensures workloads are moved off unhealthy nodes automatically.\n\nWhy other options are wrong:\n- A: NoExecute does more than NoSchedule; it also evicts existing Pods, not just blocks new ones\n- C: The node is not removed from the cluster; it remains registered but marked as unreachable\n- D: DaemonSet Pods typically have tolerations for unreachable taints and are NOT evicted; regular Pods are evicted\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    explanation: "`NoExecute` taints not only prevent new Pod scheduling but also evict existing Pods that lack a matching toleration. Pods can specify `tolerationSeconds` to remain for a grace period before eviction. This mechanism ensures workloads are moved off unhealthy nodes automatically.\n\nWhy other options are wrong:\n- A: NoExecute does more than NoSchedule; it also evicts existing Pods, not just blocks new ones\n- C: The node is not removed from the cluster; it remains registered but marked as unreachable\n- D: DaemonSet Pods typically have tolerations for unreachable taints and are NOT evicted first; regular Pods without tolerations are evicted\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -536,13 +536,13 @@ var questions = [
     text: "During a node upgrade, the container runtime is upgraded from one version to another. What happens to running containers on that node during the runtime upgrade?",
     diagram: null,
     options: [
-      "A. Containers continue running because the runtime upgrade is fully transparent to them",
+      "A. Containers continue running because the runtime upgrade preserves running process state",
       "B. All containers are stopped and must be restarted individually by the kubelet process",
       "C. The node must be drained first because runtime upgrades need no running containers",
       "D. Pods with `restartPolicy: Always` are restarted by kubelet after the upgrade; others remain stopped"
     ],
     answer: 2,
-    explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
+    explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers; process state is not preserved\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl drain <node-name> --ignore-daemonsets"
   },
   {
@@ -1241,12 +1241,12 @@ var questions = [
     diagram: null,
     options: [
       "A. The weight=100 rule must be fully satisfied; the weight=1 rule is treated as optional",
-      "B. Only the highest-weight rule is evaluated by the scheduler, lower ones are discarded",
+      "B. The highest-weight rule dominates scoring; lower-weight rules have minimal influence",
       "C. Weights are percentages, so weight=100 means the rule is fully mandatory",
       "D. Nodes matching weight=100 score 100x higher for that term than weight=1 matches"
     ],
     answer: 3,
-    explanation: "Weights in preferred node affinity range from 1 to 100 and are used as multipliers in the scoring phase. A node matching the weight=100 term receives 100 points for that term versus 1 point for the other. The scheduler sums all scores to rank nodes, making higher-weight preferences more influential.\n\nWhy other options are wrong:\n- A: Preferred affinity terms are never hard constraints regardless of weight; they only influence scoring\n- B: All preferred terms are evaluated and their scores summed; lower-weight rules are not discarded\n- C: Weights are scoring multipliers (1-100), not percentages; they do not make rules mandatory\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity-weight",
+    explanation: "Weights in preferred node affinity range from 1 to 100 and are used as multipliers in the scoring phase. A node matching the weight=100 term receives 100 points for that term versus 1 point for the other. The scheduler sums all scores to rank nodes, making higher-weight preferences more influential.\n\nWhy other options are wrong:\n- A: Preferred affinity terms are never hard constraints regardless of weight; they only influence scoring\n- B: All preferred terms are evaluated and their scores summed; lower-weight rules still contribute to the final score\n- C: Weights are scoring multipliers (1-100), not percentages; they do not make rules mandatory\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity-weight",
     verify: "kubectl explain pod.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution"
   },
   {
@@ -1305,12 +1305,12 @@ var questions = [
     diagram: null,
     options: [
       "D. kubeadm deletes most RBAC objects then recreates them from default templates during the upgrade",
-      "B. kubeadm resets most ClusterRoles to their default definitions during the upgrade process",
+      "B. kubeadm preserves system ClusterRoles but removes any custom ClusterRoleBindings during the upgrade",
       "C. Custom ClusterRoles are typically preserved since kubeadm avoids modifying user-created RBAC",
       "A. kubeadm may overwrite the system ClusterRoles it manages during upgrades, removing custom rules"
     ],
     answer: 3,
-    explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.\n\nWhy other options are wrong:\n- B: kubeadm does not overwrite ALL ClusterRoles; it manages specific system roles only\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.\n\nWhy other options are wrong:\n- B: kubeadm does not remove custom ClusterRoleBindings; it updates its managed system roles but leaves user-created bindings intact\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get clusterrole system:kube-scheduler -o yaml"
   },
   {

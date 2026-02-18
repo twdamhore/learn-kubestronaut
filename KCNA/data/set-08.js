@@ -829,11 +829,11 @@ var questions = [
     options: [
       "IPVS offers O(1) connection processing via hash lookups, improving performance for large clusters",
       "IPVS encrypts all Service traffic using mutual TLS without requiring a service mesh or extra certs",
-      "IPVS replaces CoreDNS entirely by performing DNS resolution for Service names at the kernel level",
+      "IPVS handles both Service routing and DNS resolution for Service names at the kernel level",
       "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs using BGP"
     ],
     answer: 0,
-    explanation: "IPVS (IP Virtual Server) uses hash tables in the Linux kernel for Service routing decisions, providing O(1) time complexity regardless of the number of Services. In contrast, iptables rules are processed sequentially (O(n)), which causes performance degradation as the number of Services grows. IPVS also supports multiple load-balancing algorithms (round-robin, least connections, etc.).\n\nWhy other options are wrong:\n- B: IPVS does not encrypt traffic with mTLS; encryption requires a service mesh or TLS certificates\n- C: IPVS does not replace CoreDNS; it handles Service routing, not DNS resolution\n- D: IPVS still uses ClusterIP addresses; it does not eliminate them or use BGP for routing\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#proxy-mode-ipvs",
+    explanation: "IPVS (IP Virtual Server) uses hash tables in the Linux kernel for Service routing decisions, providing O(1) time complexity regardless of the number of Services. In contrast, iptables rules are processed sequentially (O(n)), which causes performance degradation as the number of Services grows. IPVS also supports multiple load-balancing algorithms (round-robin, least connections, etc.).\n\nWhy other options are wrong:\n- B: IPVS does not encrypt traffic with mTLS; encryption requires a service mesh or TLS certificates\n- C: IPVS handles Service routing only; DNS resolution remains the responsibility of CoreDNS\n- D: IPVS still uses ClusterIP addresses; it does not eliminate them or use BGP for routing\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#proxy-mode-ipvs",
     verify: "kubectl get configmap kube-proxy -n kube-system -o yaml | grep mode"
   },
   {
@@ -891,13 +891,13 @@ var questions = [
     text: "A platform team is configuring the Kubernetes Gateway API as a replacement for the Ingress resource. Which improvement does the Gateway API provide over the traditional Ingress?",
     diagram: null,
     options: [
-      "The Gateway API removes the need for any controller — all routing is handled entirely by kube-proxy on each node in the cluster",
+      "The Gateway API delegates all routing decisions to kube-proxy, which handles L7 path-based routing on each node",
       "The Gateway API replaces Services and Endpoints with a single resource combining routing, load balancing, and backend selection",
       "It encrypts cluster network traffic at the transport layer using built-in TLS certificate management",
       "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
     ],
     answer: 3,
-    explanation: "The Gateway API improves upon Ingress by introducing a role-oriented resource model: `GatewayClass` (infrastructure provider), `Gateway` (load balancer instance), and `HTTPRoute`/`TLSRoute`/etc. (routing rules). This separation enables better multi-tenancy, cross-namespace routing, and more expressive routing capabilities like header-based matching, traffic splitting, and request mirroring.\n\nWhy other options are wrong:\n- A: Gateway API still requires a controller implementation; kube-proxy does not handle L7 routing\n- B: Gateway API does not replace Services/Endpoints; it provides additional routing resources on top\n- C: Gateway API does not provide built-in TLS certificate management; TLS still requires external certificates\n\nReference: https://gateway-api.sigs.k8s.io/",
+    explanation: "The Gateway API improves upon Ingress by introducing a role-oriented resource model: `GatewayClass` (infrastructure provider), `Gateway` (load balancer instance), and `HTTPRoute`/`TLSRoute`/etc. (routing rules). This separation enables better multi-tenancy, cross-namespace routing, and more expressive routing capabilities like header-based matching, traffic splitting, and request mirroring.\n\nWhy other options are wrong:\n- A: Gateway API requires a controller implementation; kube-proxy operates at L4 and does not handle L7 path-based routing\n- B: Gateway API does not replace Services/Endpoints; it provides additional routing resources on top\n- C: Gateway API does not provide built-in TLS certificate management; TLS still requires external certificates\n\nReference: https://gateway-api.sigs.k8s.io/",
     verify: "kubectl get gateways.gateway.networking.k8s.io"
   },
   {
@@ -923,13 +923,13 @@ var questions = [
     text: "An operations team wants to add a sidecar to each Prometheus instance that uploads local TSDB blocks to object storage while providing a unified query layer across all instances. Which CNCF incubating project uses this sidecar-based approach?",
     diagram: null,
     options: [
-      "Grafana Loki — a horizontally scalable log aggregation system designed for cost efficiency and simplicity",
-      "Cortex — ingests metrics via remote-write into a shared multi-tenant TSDB independent of Prometheus storage",
+      "Grafana Loki — a horizontally scalable log aggregation system that stores chunks in object storage for cost efficiency",
+      "Cortex — ingests metrics via remote-write into a shared multi-tenant TSDB with its own query layer for federation",
       "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
       "Thanos — extends Prometheus with a sidecar that ships blocks to object storage and a global query layer"
     ],
     answer: 3,
-    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex uses a different approach: it ingests metrics via Prometheus remote-write into its own distributed TSDB, rather than extending existing Prometheus instances with sidecars.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex ingests metrics via remote-write into a separate multi-tenant TSDB rather than using a sidecar-based approach that extends existing Prometheus instances\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
+    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex uses a different approach: it ingests metrics via Prometheus remote-write into its own distributed TSDB, rather than extending existing Prometheus instances with sidecars.\n\nWhy other options are wrong:\n- A: Grafana Loki stores log chunks in object storage but is a log aggregation system, not a Prometheus metrics solution\n- B: Cortex has its own query layer but ingests via remote-write into a separate TSDB rather than using a sidecar-based approach\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
     verify: null
   },
   {
@@ -958,10 +958,10 @@ var questions = [
       "gVisor interposes a user-space kernel (Sentry) intercepting system calls, reducing host attack surface",
       "gVisor encrypts all container filesystem data at rest using hardware-backed encryption on the host storage",
       "gVisor runs each container inside a full virtual machine using QEMU for complete hardware-level isolation",
-      "gVisor disables all Linux capabilities and seccomp profiles entirely, making containers fully unprivileged"
+      "gVisor restricts Linux capabilities and applies strict seccomp profiles to reduce the container privilege surface"
     ],
     answer: 0,
-    explanation: "gVisor provides an additional layer of isolation by running a user-space kernel (called Sentry) that intercepts container system calls. Instead of allowing containers to make direct syscalls to the host kernel, gVisor implements a subset of the Linux system call interface in user space. This significantly reduces the host kernel's attack surface. Kata Containers use full VMs, while gVisor uses a user-space kernel approach.\n\nWhy other options are wrong:\n- B: gVisor does not encrypt filesystem data; it interposes syscalls for isolation\n- C: gVisor does not use full VMs/QEMU; that describes Kata Containers which use lightweight VMs\n- D: gVisor does not simply disable capabilities/seccomp; it runs a user-space kernel intercepting syscalls\n\nReference: https://gvisor.dev/docs/",
+    explanation: "gVisor provides an additional layer of isolation by running a user-space kernel (called Sentry) that intercepts container system calls. Instead of allowing containers to make direct syscalls to the host kernel, gVisor implements a subset of the Linux system call interface in user space. This significantly reduces the host kernel's attack surface. Kata Containers use full VMs, while gVisor uses a user-space kernel approach.\n\nWhy other options are wrong:\n- B: gVisor does not encrypt filesystem data; it interposes syscalls for isolation\n- C: gVisor does not use full VMs/QEMU; that describes Kata Containers which use lightweight VMs\n- D: gVisor does more than restrict capabilities or seccomp profiles; it interposes a user-space kernel to intercept syscalls\n\nReference: https://gvisor.dev/docs/",
     verify: null
   },
   {

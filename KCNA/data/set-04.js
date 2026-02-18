@@ -110,7 +110,7 @@ var questions = [
       "The PVC remains unbound because the scheduler has not yet assigned it to a specific availability zone in the region"
     ],
     answer: 0,
-    explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: There is no default 10Gi PVC limit; PVC sizes are constrained only by ResourceQuota if configured\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: The scheduler does not assign PVCs to availability zones during binding; PVC pending state here is caused by access mode mismatch, not zone assignment\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
     verify: "kubectl describe pvc <pvc-name>"
   },
   {
@@ -728,7 +728,7 @@ var questions = [
     text: "A PV is created with `persistentVolumeReclaimPolicy: Recycle`. What does the `Recycle` policy do when the bound PVC is deleted?",
     diagram: null,
     options: [
-      "The PV and its stored data are permanently deleted from the underlying storage backend by the controller",
+      "The PV and its underlying storage are deleted from the backend by the controller",
       "The PV is archived to a designated backup location in the cluster before its data is deleted permanently",
       "The PV runs a basic `rm -rf` on the volume contents and returns to `Available` state for new claims",
       "The PV is retained indefinitely in `Released` state until an administrator performs a manual cleanup step"
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "No effect on scheduling or eviction; `DiskPressure` is an informational metric only for monitoring",
       "All existing pods on the node are immediately terminated and rescheduled to other available nodes",
-      "The node is automatically drained and cordoned permanently by the controller until disk is freed",
+      "The node is automatically drained and cordoned by the controller until the disk pressure condition is resolved",
       "The scheduler stops placing new pods on the node, and the kubelet may evict pods to reclaim disk"
     ],
     answer: 3,
@@ -1006,7 +1006,7 @@ var questions = [
       "The kubelet does not have RBAC permissions to delete PVCs so they remain after pod termination"
     ],
     answer: 1,
-    explanation: "StatefulSets are designed for stateful workloads where data preservation is critical. When a pod is deleted (intentionally or due to failure), the PVC is retained so that the replacement pod (with the same ordinal and name) can reattach to the same data. This ensures data survives pod rescheduling, node failures, and intentional restarts.\n\nWhy other options are wrong:\n- A: PVC retention is an intentional design feature for data safety, not a bug\n- C: PVCs can be deleted; they are not permanently immutable resources in the cluster\n- D: The kubelet is not involved in PVC deletion; PVCs are API objects managed by the controller-manager\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    explanation: "StatefulSets are designed for stateful workloads where data preservation is critical. When a pod is deleted (intentionally or due to failure), the PVC is retained so that the replacement pod (with the same ordinal and name) can reattach to the same data. This ensures data survives pod rescheduling, node failures, and intentional restarts.\n\nWhy other options are wrong:\n- A: PVC retention is an intentional design feature for data safety, not a bug\n- C: The StatefulSet controller does not auto-recreate PVCs in Lost state; Lost indicates the bound PV was deleted and requires manual intervention\n- D: The kubelet is not involved in PVC deletion; PVCs are API objects managed by the controller-manager\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc -l app=<statefulset>"
   },
   {

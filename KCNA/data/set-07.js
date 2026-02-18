@@ -584,13 +584,13 @@ var questions = [
     text: "A `startupProbe` is configured on a container with `failureThreshold: 30` and `periodSeconds: 10`. The application takes about 3 minutes to initialize. What is the purpose of the `startupProbe` in this scenario?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Startup Probe Timeline</text><line x1="40" y1="80" x2="370" y2="80" stroke="#555" stroke-width="2"/><rect x="40" y="65" width="200" height="30" rx="4" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="140" y="84" text-anchor="middle" fill="#e0e0e0" font-size="10">Startup Probe Active (???)</text><rect x="240" y="65" width="60" height="30" rx="4" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="270" y="84" text-anchor="middle" fill="#e0e0e0" font-size="9">??? probe(s)</text><rect x="305" y="65" width="60" height="30" rx="4" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="335" y="84" text-anchor="middle" fill="#e0e0e0" font-size="9">??? probe(s)</text><text x="40" y="120" fill="#aaa" font-size="10">failureThreshold: 30</text><text x="40" y="138" fill="#aaa" font-size="10">periodSeconds: 10</text><text x="40" y="156" fill="#aaa" font-size="10">Max startup time: ???</text><text x="40" y="174" fill="#e76f51" font-size="10">Liveness + Readiness behavior: ???</text></svg>',
     options: [
-      "It replaces the readiness probe entirely and solely determines when the pod first receives Service traffic",
+      "It takes over from the readiness probe and determines when the pod first receives Service traffic",
       "It continuously monitors the application process and restarts it if startup takes longer than 30 seconds total",
       "It gives the application up to 300 seconds to start before liveness and readiness probes begin checking",
       "It signals the scheduler to delay placing additional pods on the same node until this one becomes healthy"
     ],
     answer: 2,
-    explanation: "The `startupProbe` protects slow-starting containers from being killed by liveness probes during initialization. With `failureThreshold: 30` and `periodSeconds: 10`, the container has up to 300 seconds (5 minutes) to start. Until the startup probe succeeds, liveness and readiness probes are disabled. Once it passes, the other probes take over.\n\nWhy other options are wrong:\n- A: startupProbe does not replace the readiness probe; it temporarily disables both liveness and readiness\n- B: startupProbe allows up to 300s (30x10), not 30s; it does not continuously monitor after success\n- D: startupProbe has no interaction with the scheduler; it runs on the kubelet, not during scheduling\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes",
+    explanation: "The `startupProbe` protects slow-starting containers from being killed by liveness probes during initialization. With `failureThreshold: 30` and `periodSeconds: 10`, the container has up to 300 seconds (5 minutes) to start. Until the startup probe succeeds, liveness and readiness probes are disabled. Once it passes, the other probes take over.\n\nWhy other options are wrong:\n- A: startupProbe does not take over from the readiness probe; it temporarily disables both liveness and readiness\n- B: startupProbe allows up to 300s (30x10), not 30s; it does not continuously monitor after success\n- D: startupProbe has no interaction with the scheduler; it runs on the kubelet, not during scheduling\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Startup'"
   },
   {
@@ -616,13 +616,13 @@ var questions = [
     text: "In a distributed microservices system, a chain of calls (A -> B -> C) is experiencing intermittent failures. Service C's pods are healthy, but Service B logs show `context deadline exceeded` when calling Service C. What technique would help pinpoint the latency source?",
     diagram: null,
     options: [
-      "Scale up the number of replicas to handle the increased load and reduce request latency",
+      "Scale up replicas across the distributed service chain to handle the increased load and reduce latency",
       "Restarting all pods in the request chain to clear any stale connections or cached network state data",
       "Implementing distributed tracing (e.g., Jaeger or Zipkin) to visualize latency across each hop",
       "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
     ],
     answer: 2,
-    explanation: "Distributed tracing propagates a correlation ID through each service in a request chain, recording timing at each hop. Tools like Jaeger or Zipkin visualize the end-to-end trace, making it easy to identify which service or network hop introduces the latency. This is more effective than guessing or restarting pods for intermittent issues.\n\nWhy other options are wrong:\n- A: More replicas might help if the issue is load, but does not help identify the latency source\n- B: Restarting pods is a shotgun approach that does not diagnose the root cause of intermittent failures\n- D: CPU limits can cause throttling but adding them does not diagnose the existing latency problem\n\nReference: https://www.jaegertracing.io/docs/latest/getting-started/",
+    explanation: "Distributed tracing propagates a correlation ID through each service in a request chain, recording timing at each hop. Tools like Jaeger or Zipkin visualize the end-to-end trace, making it easy to identify which service or network hop introduces the latency. This is more effective than guessing or restarting pods for intermittent issues.\n\nWhy other options are wrong:\n- A: Scaling replicas across the distributed chain might help if the issue is load, but does not identify the latency source\n- B: Restarting pods is a shotgun approach that does not diagnose the root cause of intermittent failures\n- D: CPU limits can cause throttling but adding them does not diagnose the existing latency problem\n\nReference: https://www.jaegertracing.io/docs/latest/getting-started/",
     verify: null
   },
   {
@@ -1224,13 +1224,13 @@ var questions = [
     text: "After deploying a pod, `kubectl describe pod` shows `Warning  FailedScheduling  0/3 nodes are available: 3 node(s) didn't match pod topology spread constraints`. What are topology spread constraints?",
     diagram: null,
     options: [
-      "Rules that prevent pods from being scheduled on nodes with specific CPU architectures or hardware configurations",
+      "Constraints that prevent pods from being scheduled on nodes with specific CPU architectures or hardware configs",
       "Limits on the total number of pods that can run on a single node regardless of available resources or capacity",
       "Security rules that restrict pod-to-pod network communication based on the physical node topology layout",
       "Constraints controlling how pods distribute across failure domains (nodes, zones) for high availability"
     ],
     answer: 3,
-    explanation: "Pod topology spread constraints define how pods should be distributed across topology domains (nodes, availability zones, regions). They specify a `maxSkew` that limits how unevenly pods can be spread. If the constraint cannot be satisfied (e.g., not enough nodes in each zone), the pod stays `Pending`. This promotes high availability by preventing all replicas from landing on the same node or zone.\n\nWhy other options are wrong:\n- A: Architecture restrictions use nodeSelector or nodeAffinity, not topology spread constraints\n- B: Pod count limits per node use node resource capacity, not topology spread constraints\n- C: Network communication restrictions use NetworkPolicy, not topology spread constraints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    explanation: "Pod topology spread constraints define how pods should be distributed across topology domains (nodes, availability zones, regions). They specify a `maxSkew` that limits how unevenly pods can be spread. If the constraint cannot be satisfied (e.g., not enough nodes in each zone), the pod stays `Pending`. This promotes high availability by preventing all replicas from landing on the same node or zone.\n\nWhy other options are wrong:\n- A: Architecture-based constraints use nodeSelector or nodeAffinity, not topology spread constraints\n- B: Pod count limits per node use node resource capacity, not topology spread constraints\n- C: Network communication restrictions use NetworkPolicy, not topology spread constraints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.topologySpreadConstraints}'"
   },
   {
@@ -1257,12 +1257,12 @@ var questions = [
     diagram: null,
     options: [
       "Keep a minimum warm instance by setting Knative's `minScale: 1` to avoid cold starts for this function",
-      "Increase the container's `resources.limits.cpu` to speed up JIT compilation and reduce initialization time",
+      "Increase the Knative Service's `resources.limits.cpu` to speed up JIT compilation and reduce initialization time",
       "Convert the function to a long-running Deployment to avoid the serverless model's cold start limitations",
       "Disable health checks entirely so the container is not killed during its lengthy initialization sequence"
     ],
     answer: 0,
-    explanation: "Setting `minScale: 1` in Knative's scaling configuration keeps at least one pod instance running at all times, eliminating cold starts. While this sacrifices some serverless cost benefits, it is the pragmatic cloud native solution for latency-sensitive functions. Additionally, you could increase the request timeout or optimize the container's startup time.\n\nWhy other options are wrong:\n- B: CPU limits may help but do not eliminate cold starts when scaling from zero instances\n- C: Converting to a Deployment abandons serverless benefits; minScale: 1 preserves the serverless model\n- D: Disabling health checks removes safety mechanisms and does not address the timeout during cold start\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-bounds/",
+    explanation: "Setting `minScale: 1` in Knative's scaling configuration keeps at least one pod instance running at all times, eliminating cold starts. While this sacrifices some serverless cost benefits, it is the pragmatic cloud native solution for latency-sensitive functions. Additionally, you could increase the request timeout or optimize the container's startup time.\n\nWhy other options are wrong:\n- B: Increasing CPU limits on the Knative Service may help but does not eliminate cold starts when scaling from zero\n- C: Converting to a Deployment abandons serverless benefits; minScale: 1 preserves the serverless model\n- D: Disabling health checks removes safety mechanisms and does not address the timeout during cold start\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-bounds/",
     verify: null
   },
   {

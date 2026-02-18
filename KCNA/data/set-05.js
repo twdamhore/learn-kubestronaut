@@ -664,13 +664,13 @@ var questions = [
     text: "A CronJob is configured to run a backup script that requires access to the Kubernetes API. The CronJob's Pod template specifies `serviceAccountName: backup-sa`. When does the projected token for `backup-sa` expire by default?",
     diagram: null,
     options: [
-      "After the Pod completes and is garbage collected by the controller",
+      "After the Pod completes and is garbage collected by the system",
       "After 1 hour, the default projected token expiration time",
-      "After the Pod terminates and its resources are cleaned up",
+      "After 90 minutes, matching the kubelet credential rotation cycle",
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Token expiration is time-based (approximately 1 hour), not tied to Pod lifecycle or garbage collection\n- C: Token expiration is time-based, not tied to Pod termination\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Token expiration is time-based (approximately 1 hour), not tied to Pod lifecycle or garbage collection\n- C: The default projected token lifetime is approximately 1 hour (3600s), not 90 minutes; kubelet credential rotation is a separate mechanism\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -1192,13 +1192,13 @@ var questions = [
     text: "A security team receives excessive alerts from the cluster's monitoring system about Pod Security Standards violations. Many are false positives from system workloads. What is the recommended approach to reduce noise?",
     diagram: null,
     options: [
-      "Disable all security alerts entirely to reduce the overall operational burden",
+      "Reduce security alert volume by raising all threshold levels to their maximum values",
       "Configure exemptions for system namespaces and tune alert thresholds properly",
       "Move all system workloads to a separate dedicated cluster to avoid conflicts",
       "Replace the automated monitoring with periodic manual security audit processes"
     ],
     answer: 1,
-    explanation: "Pod Security Admission supports namespace-level exemptions for known system workloads. Configuring exemptions for `kube-system` and other infrastructure namespaces, along with tuning alert thresholds, reduces false positives while maintaining visibility for application namespaces.\n\nWhy other options are wrong:\n- A: Disabling all alerts removes security visibility entirely\n- C: Moving system workloads to a separate cluster is excessive and operationally complex\n- D: Manual audits are not scalable and do not provide continuous monitoring\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/#exemptions",
+    explanation: "Pod Security Admission supports namespace-level exemptions for known system workloads. Configuring exemptions for `kube-system` and other infrastructure namespaces, along with tuning alert thresholds, reduces false positives while maintaining visibility for application namespaces.\n\nWhy other options are wrong:\n- A: Raising all thresholds to maximum effectively silences meaningful alerts and removes security visibility\n- C: Moving system workloads to a separate cluster is excessive and operationally complex\n- D: Manual audits are not scalable and do not provide continuous monitoring\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/#exemptions",
     verify: "kubectl get ns kube-system -o yaml | grep pod-security"
   },
   {

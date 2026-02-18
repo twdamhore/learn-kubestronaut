@@ -234,7 +234,7 @@ var questions = [
     options: [
       "Incubating, which indicates the project is production-ready and widely adopted by users",
       "Graduated, which signifies the project has met rigorous maturity and adoption criteria",
-      "Stable, which means the project's API is frozen and no breaking changes will ever occur",
+      "Stable, which means the project has reached API maturity and guarantees backward compatibility",
       "Enterprise, which certifies the project for regulated industry use and compliance needs"
     ],
     answer: 1,
@@ -747,10 +747,10 @@ var questions = [
       "The `kube-scheduler`, because it must understand new scheduling features before other components",
       "The `kubelet` on worker nodes, because they must be ready to handle new Pod specifications first",
       "The `kube-apiserver`, because all components communicate through it and need the new API version",
-      "The `etcd` cluster, because it must support the new data schema before any component can be upgraded"
+      "The `kube-controller-manager`, because controllers must reconcile resources before the API server"
     ],
     answer: 2,
-    explanation: "After etcd is upgraded separately (which kubeadm handles automatically before other components), the recommended upgrade order for the remaining control plane components starts with the `kube-apiserver` because all other components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes.\n\nWhy other options are wrong:\n- A: The scheduler should be upgraded after the API server, not before.\n- B: Kubelets on worker nodes are upgraded last, not first.\n- D: etcd is upgraded separately before the API server triad; the question specifically asks about the non-etcd control plane components.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    explanation: "After etcd is upgraded separately (which kubeadm handles automatically before other components), the recommended upgrade order for the remaining control plane components starts with the `kube-apiserver` because all other components and kubelets communicate through it. The API server must be able to serve the new API versions that upgraded components will use. After the API server, you upgrade the `kube-controller-manager` and `kube-scheduler`, then the `kubelet` and `kube-proxy` on nodes.\n\nWhy other options are wrong:\n- A: The scheduler should be upgraded after the API server, not before.\n- B: Kubelets on worker nodes are upgraded last, not first.\n- D: The controller-manager is upgraded after the API server, not before it.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
     verify: "microk8s kubectl version"
   },
   {
@@ -1368,7 +1368,7 @@ var questions = [
     text: "A team is debating whether to use declarative or imperative approaches for managing their Kubernetes resources. The senior engineer advocates for declarative management. What is the key advantage of the declarative approach?",
     diagram: null,
     options: [
-      "Declarative commands execute faster because they skip validation against the API server entirely",
+      "Declarative commands execute faster because they bypass most of the validation checks performed by the API server",
       "Declarative config describes the desired end state, enabling version control and reproducibility",
       "Declarative manifests automatically retry failed operations until the desired state is fully achieved",
       "Declarative management simplifies operations by inferring the desired state from command-line flags rather than requiring manifest files"
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A team needs to collect distributed traces, metrics, and logs from their Kubernetes applications. They want a vendor-neutral, unified collection pipeline that can export data to multiple backends. Which CNCF project provides this?",
     diagram: null,
     options: [
-      "Prometheus, which supports traces, metrics, and logs through its multi-signal receiver",
+      "Prometheus, which offers vendor-neutral collection of traces, metrics, and logs in one pipeline",
       "OpenTelemetry Collector, which receives, processes, and exports telemetry neutrally",
       "Grafana Loki, which provides unified collection of all three telemetry signal types",
       "Fluentd, which has been extended to export traces and metrics alongside log streams"
@@ -1483,7 +1483,7 @@ var questions = [
       "The Git repository has been updated with new changes that have not yet been applied to the cluster",
       "The live cluster state differs from the desired state in Git because manual edits introduced drift",
       "Argo CD has lost connectivity to the Git repository and cannot verify the current application state",
-      "The application has errors and Argo CD cannot determine what the correct cluster state should be"
+      "The application has errors and Argo CD reports a health check failure for the deployed resources"
     ],
     answer: 1,
     explanation: "In GitOps, the Git repository is the source of truth. When someone manually modifies a resource in the cluster (like using `kubectl edit`), the live state drifts from the desired state in Git. Argo CD detects this difference and reports the application as `OutOfSync`. The fix is either to sync the application (reverting the manual change) or update Git to reflect the desired change. This is not about Git repository changes, connectivity issues, or application errors.\n\nWhy other options are wrong:\n- A: OutOfSync in this scenario is caused by manual cluster edits, not by new Git changes.\n- C: Argo CD connectivity issues would show a different status, not OutOfSync.\n- D: Application errors produce a \"Degraded\" health status, not an OutOfSync sync status.\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/app_status/",

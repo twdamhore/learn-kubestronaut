@@ -362,7 +362,7 @@ var questions = [
     options: [
       "Distributed tracing with propagated `trace-context` headers across services",
       "Increasing the log level to `DEBUG` on all pods and reading aggregated output",
-      "Adding `livenessProbe` checks with a 2-second timeout to every container",
+      "Adding `livenessProbe` checks with a 2-second timeout to every container in the distributed system",
       "Creating a `NetworkPolicy` that logs all denied connections between services"
     ],
     answer: 0,
@@ -568,7 +568,7 @@ var questions = [
     text: "A Service of type `ClusterIP` has the annotation `service.kubernetes.io/topology-mode: Auto`. What behavior does this enable?",
     diagram: null,
     options: [
-      "Traffic between zones is encrypted automatically by kube-proxy using IPsec tunnels",
+      "Traffic between topology zones is encrypted automatically by kube-proxy using IPsec tunnels",
       "kube-proxy prefers routing traffic to endpoints in the same topology zone as the client",
       "The Service is replicated across multiple clusters for geographic high availability setup",
       "Pods are scheduled only in the zone with the most available resources for the workload"
@@ -730,7 +730,7 @@ var questions = [
     options: [
       "Envoy Gateway — an Envoy-based API ingress project",
       "Ambassador — a developer-focused API gateway solution",
-      "Contour — an Envoy-powered Ingress controller tool",
+      "Contour — an Envoy-powered Ingress routing controller",
       "Gateway API — the standards-based routing project"
     ],
     answer: 3,
@@ -920,13 +920,13 @@ var questions = [
     text: "A pod specification includes `dnsPolicy: ClusterFirst`. The pod needs to resolve both cluster-internal service names and external hostnames like `example.com`. Which behavior results from this policy?",
     diagram: null,
     options: [
-      "Only cluster-internal names are resolved; external names fail to resolve entirely for the pod",
-      "The pod uses the node's DNS settings exclusively, bypassing CoreDNS for all lookups it makes",
+      "Cluster-internal names are resolved but external names may time out depending on upstream configuration",
+      "The pod uses the node DNS settings by default, querying CoreDNS for cluster-local names",
       "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
-      "The pod alternates between CoreDNS and the node's DNS resolver in a random sequence pattern"
+      "The pod queries CoreDNS and the node resolver in round-robin order based on the search domain list"
     ],
     answer: 2,
-    explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.\n\nWhy other options are wrong:\n- A: External names are not blocked; CoreDNS forwards unresolved queries to upstream DNS servers.\n- B: `Default` policy uses node DNS settings; `ClusterFirst` sends queries to CoreDNS first.\n- D: There is no random alternation between DNS resolvers; `ClusterFirst` always queries CoreDNS first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
+    explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.\n\nWhy other options are wrong:\n- A: External names are not merely dependent on upstream configuration; CoreDNS actively forwards unresolved queries to upstream DNS servers.\n- B: `ClusterFirst` sends queries to CoreDNS first, not to the node DNS by default; the `Default` policy uses node DNS settings.\n- D: There is no round-robin order between CoreDNS and the node resolver; `ClusterFirst` always queries CoreDNS first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.dnsPolicy}'"
   },
   {
@@ -937,12 +937,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
       "Only `Policy A` takes effect because it was created first and has priority in the namespace",
-      "Only `Policy B` takes effect because port `443` is treated as higher priority than port `80`",
+      "Policy B overrides Policy A because it was created more recently in the namespace",
       "Both policies merge additively — ingress from `web` on 80 AND from `api` on 443 is allowed",
       "The policies conflict with each other and therefore all `ingress` traffic is denied by default"
     ],
     answer: 2,
-    explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on port number; both policies are applied equally.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on creation time; multiple NetworkPolicies are always unioned regardless of when they were created.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: "kubectl get networkpolicy -n <namespace>"
   },
   {
@@ -1018,11 +1018,11 @@ var questions = [
     options: [
       "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
       "BGP peering encrypts all inter-node traffic using IPsec by default for enhanced data protection",
-      "BGP peering eliminates the need for kube-proxy entirely by handling service routing via BGP peers",
+      "BGP peering reduces reliance on kube-proxy by handling some service routing decisions via BGP peers",
       "BGP peering is primarily needed for IPv6 addressing, which VXLAN handles less efficiently"
     ],
     answer: 0,
-    explanation: "With BGP peering, Calico advertises pod CIDR routes to physical routers, making pod IPs natively routable without the overhead of VXLAN encapsulation (extra headers, MTU reduction). BGP does not provide encryption — that requires separate configuration. kube-proxy is still needed for Service routing. Both BGP and VXLAN modes support IPv6.\n\nWhy other options are wrong:\n- B: BGP peering does not encrypt traffic by default; encryption requires separate configuration like WireGuard or IPsec.\n- C: BGP peering does not replace kube-proxy; kube-proxy is still needed for Service-level load balancing.\n- D: Both BGP and VXLAN modes support IPv6; BGP is not required exclusively for IPv6 addressing.\n\nReference: https://docs.tigera.io/calico/latest/networking/configuring/bgp",
+    explanation: "With BGP peering, Calico advertises pod CIDR routes to physical routers, making pod IPs natively routable without the overhead of VXLAN encapsulation (extra headers, MTU reduction). BGP does not provide encryption — that requires separate configuration. kube-proxy is still needed for Service routing. Both BGP and VXLAN modes support IPv6.\n\nWhy other options are wrong:\n- B: BGP peering does not encrypt traffic by default; encryption requires separate configuration like WireGuard or IPsec.\n- C: BGP peering does not reduce reliance on kube-proxy for service routing; kube-proxy is still needed for Service-level load balancing.\n- D: Both BGP and VXLAN modes support IPv6; BGP is not required exclusively for IPv6 addressing.\n\nReference: https://docs.tigera.io/calico/latest/networking/configuring/bgp",
     verify: null
   },
   {
@@ -1114,7 +1114,7 @@ var questions = [
     options: [
       "The request is immediately rejected with a 503 error because no backend pod is available",
       "Knative's activator component holds the request while a pod is created then forwards it",
-      "The request is queued in CoreDNS until the pod IP becomes available in the DNS records",
+      "The request is queued in the Knative CoreDNS layer until the pod IP becomes available in DNS",
       "The Ingress controller retries the request indefinitely until a backend pod finally appears"
     ],
     answer: 1,
@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "The controller matching the `IngressClass` that was installed first in the cluster takes priority",
-      "Both controllers process the `Ingress` simultaneously and the first to respond wins the route",
+      "Both the `nginx` and `traefik` controllers process the `Ingress` and the first to respond wins",
       "The `kube-apiserver` assigns the Ingress to the controller with the least current load value",
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
     ],
