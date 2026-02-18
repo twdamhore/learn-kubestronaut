@@ -153,7 +153,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod's image pull secret is missing and all nodes are refusing to process the pull request from the registry",
-      "The pod's `nodeAffinity` rules explicitly exclude every available node in the cluster based on their current labels",
+      "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current labels",
       "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
     ],
@@ -248,7 +248,7 @@ var questions = [
     text: "A pod is stuck in `Pending` state. The events show: `0/3 nodes are available: 1 node(s) had taint {gpu=true: NoSchedule}, 2 node(s) had taint {maintenance: NoSchedule}`. The pod needs to run on the GPU node. What should you add to the pod spec?",
     diagram: null,
     options: [
-      "A `nodeSelector` matching the GPU node's labels to direct scheduling there",
+      "A nodeSelector matching the GPU node's labels to override the taint and direct scheduling there",
       "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"` in metadata",
       "A toleration for the taint `gpu=true:NoSchedule` to allow pod placement",
       "A resource request for `nvidia.com/gpu: 1` under the container resources spec"
@@ -486,7 +486,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Container Runtimes",
     text: "A pod fails with the event: `Failed to create pod sandbox: rpc error: code = Unknown desc = failed to start sandbox container: Error response from daemon: OCI runtime create failed`. Which layer of the container stack is reporting this error?",
-    diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="200" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Runtime Stack</text><rect x="50" y="50" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="71" text-anchor="middle" fill="#e0e0e0" font-size="11">kubelet</text><rect x="50" y="90" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="111" text-anchor="middle" fill="#e0e0e0" font-size="11">CRI (containerd / CRI-O)</text><rect x="50" y="130" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="151" text-anchor="middle" fill="#e0e0e0" font-size="11">OCI Runtime (runc)</text><rect x="50" y="170" width="300" height="32" rx="5" fill="#264653" stroke="#555" stroke-width="1.5"/><text x="200" y="191" text-anchor="middle" fill="#e0e0e0" font-size="11">Linux Kernel (cgroups, namespaces)</text></svg>',
+    diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="200" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Stack Layers</text><rect x="50" y="50" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="71" text-anchor="middle" fill="#e0e0e0" font-size="11">kubelet</text><rect x="50" y="90" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="111" text-anchor="middle" fill="#e0e0e0" font-size="11">Layer 2 (???)</text><rect x="50" y="130" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="151" text-anchor="middle" fill="#e0e0e0" font-size="11">Layer 3 (???)</text><rect x="50" y="170" width="300" height="32" rx="5" fill="#264653" stroke="#555" stroke-width="1.5"/><text x="200" y="191" text-anchor="middle" fill="#e0e0e0" font-size="11">Linux Kernel (cgroups, namespaces)</text></svg>',
     options: [
       "The `kube-scheduler`, which could not find a valid node placement for the pod sandbox container creation request",
       "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
@@ -616,7 +616,7 @@ var questions = [
     text: "In a distributed microservices system, a chain of calls (A -> B -> C) is experiencing intermittent failures. Service C's pods are healthy, but Service B logs show `context deadline exceeded` when calling Service C. What technique would help pinpoint the latency source?",
     diagram: null,
     options: [
-      "Increasing the replica count of Service C pods to handle more concurrent incoming requests from upstream",
+      "Scale up the number of replicas to handle the increased load and reduce request latency",
       "Restarting all pods in the request chain to clear any stale connections or cached network state data",
       "Implementing distributed tracing (e.g., Jaeger or Zipkin) to visualize latency across each hop",
       "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
@@ -1209,7 +1209,7 @@ var questions = [
     diagram: null,
     options: [
       "The node does not have 500m CPU available for scheduling the new pod that the ReplicaSet is trying to create in production",
-      "The pod's CPU request of 500m exceeds the maximum allowed by a `LimitRange` configured in the production namespace resource",
+      "The pod's CPU request of 500m exceeds the maximum allowed by the namespace's compute-quota LimitRange policy",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
       "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
     ],
@@ -1435,7 +1435,7 @@ var questions = [
       "The pod exceeded its resource limits after 5 minutes, so the kubelet's eviction manager terminated it to reclaim node resources",
       "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction after 5 minutes",
       "The scheduler detected a better node for the pod and performed a live migration after the 300-second warm-up period elapsed",
-      "A `PodDisruptionBudget` allowed the eviction after the 300-second minimum uptime threshold was reached for the workload"
+      "The pod's NoExecute toleration expired because the PodDisruptionBudget overrides tolerationSeconds after a 300-second window"
     ],
     answer: 1,
     explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node's `Ready` condition becomes `False`), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.\n\nWhy other options are wrong:\n- A: OOMKill shows exit code 137 with OOMKilled reason, not an eviction after exactly 5 minutes\n- C: Kubernetes does not perform live pod migration; pods are terminated and recreated\n- D: PDB does not have a minimum uptime threshold; it protects against voluntary disruptions\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
@@ -1483,10 +1483,10 @@ var questions = [
       "The application explicitly calls exit(137) in its error handler to signal a custom fatal error condition to the orchestration layer",
       "The container received a SIGKILL (signal 9) from an external source such as a manual kill command or system-level memory pressure",
       "The container exceeded its configured CPU limits, causing the kernel to throttle and eventually terminate the process with SIGKILL",
-      "The kubelet sent SIGKILL because the container failed to respond to a graceful SIGTERM within the terminationGracePeriodSeconds"
+      "The kubelet sent SIGTERM (signal 15) because the container exceeded its terminationGracePeriodSeconds, producing exit code 143 (128+15)"
     ],
     answer: 1,
-    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: While an application could call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external signal, not an application-chosen exit code\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: This describes the graceful shutdown sequence (SIGTERM then SIGKILL), which would show Reason: Killing, not Reason: Error\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
+    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: While an application could call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external signal, not an application-chosen exit code\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: Exit code 143 indicates SIGTERM (128+15), not SIGKILL; the question states exit code 137 which is SIGKILL (128+9)\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Last State'"
   },
   {

@@ -120,7 +120,7 @@ var questions = [
     text: "An operations team has deployed a Kubernetes cluster and wants to set up monitoring for cluster-level metrics such as CPU usage, memory consumption, and Pod counts. Which tool from the CNCF ecosystem is the de facto standard for collecting and querying time-series metrics in Kubernetes environments?",
     diagram: null,
     options: [
-      "Fluentd, which collects and forwards metric data from nodes to a central backend",
+      "Fluentd, which collects and forwards time-series metric data from nodes to a central backend",
       "Grafana, which collects metrics directly from kubelets and stores them internally",
       "Prometheus, which scrapes metric endpoints and stores time-series data natively",
       "Jaeger, which provides distributed metrics collection and aggregation pipelines"
@@ -1067,7 +1067,7 @@ var questions = [
       "LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three",
       "LoadBalancer is independent of ClusterIP and NodePort; it creates a completely separate traffic path",
       "LoadBalancer replaces ClusterIP with an external IP, so the Service is no longer internally accessible",
-      "LoadBalancer only works with headless Services that have no ClusterIP assigned in the cluster config"
+      "LoadBalancer requires a headless Service with no ClusterIP, as the external IP replaces the virtual cluster IP"
     ],
     answer: 0,
     explanation: "Kubernetes Service types are hierarchical. A `LoadBalancer` Service automatically provisions a cloud load balancer, a `NodePort`, and a `ClusterIP`. Traffic can reach the Pods via the external load balancer, any node's IP on the NodePort, or the internal ClusterIP. They are not independent paths. The ClusterIP is not replaced. Headless Services (no ClusterIP) are incompatible with LoadBalancer type.\n\nWhy other options are wrong:\n- B: LoadBalancer is not independent — it builds on NodePort and ClusterIP hierarchically.\n- C: LoadBalancer does not replace the ClusterIP; the service remains internally accessible via ClusterIP.\n- D: Headless Services (clusterIP: None) are incompatible with LoadBalancer type.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer",
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A team creates a headless Service by setting `clusterIP: None`. They want to understand how this differs from a regular ClusterIP Service. What is the behavior of a headless Service?",
     diagram: null,
     options: [
-      "It does not create any DNS records, so Pods must discover each other using environment variables only",
+      "It does not create DNS records, so Pods rely on environment variables injected by the kubelet for discovery",
       "It creates a ClusterIP but hides it from `kubectl get svc` output for additional security purposes",
       "DNS queries for the Service return individual Pod IPs instead of a virtual IP, enabling direct access",
       "It routes all client traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
@@ -1320,7 +1320,7 @@ var questions = [
     text: "A cluster administrator needs to create a service account that can list and get Pods in the `development` namespace but cannot delete or create them. Which RBAC resources should they create?",
     diagram: null,
     options: [
-      "A `ClusterRole` with `get` and `list` verbs on Pods, and a `ClusterRoleBinding` to the service account",
+      "A `ClusterRole` with `get` and `list` verbs on Pods, and a `ClusterRoleBinding` scoped to `development`",
       "A `Role` in `development` with `get` and `list` on Pods, and a `RoleBinding` to the service account",
       "A `Role` with all verbs on Pods, then create a `NetworkPolicy` to restrict any write operations from it",
       "A `ServiceAccount` annotated with `rbac.authorization.kubernetes.io/verbs: get,list` for automatic binding"
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Functions are short-lived, event-driven compute units scaled automatically by the platform",
       "Functions are long-running processes that handle multiple requests concurrently in a thread pool",
-      "Functions must be compiled to WebAssembly (Wasm) for compatibility with Kubernetes runtimes",
+      "Functions are typically compiled to WebAssembly (Wasm) because Kubernetes runtimes require Wasm for efficient cold-start performance",
       "Functions require dedicated nodes with specialized hardware to execute efficiently at scale"
     ],
     answer: 0,

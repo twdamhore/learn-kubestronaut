@@ -66,10 +66,10 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`Guaranteed` — the scheduler promotes the pod to Guaranteed because at least one resource type has equal requests and limits across the pod"
+      "`BestEffort` — the scheduler classifies any pod with partial resource definitions as BestEffort until all containers specify both requests and limits"
     ],
     answer: 1,
-    explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: Guaranteed requires every container to set both CPU and memory with requests equal to limits; having one resource type match is insufficient\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: BestEffort requires zero resource specs on all containers; partial specs make the pod Burstable, not BestEffort\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
     verify: "kubectl describe pod <pod-name> | grep 'QoS Class'"
   },
   {
@@ -576,7 +576,7 @@ var questions = [
     diagram: null,
     options: [
       "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB of data",
-      "Split the data across two ConfigMaps and merge them inside the container at startup using an init container script",
+      "Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container script",
       "Increase the ConfigMap size limit by modifying the API server's `--max-configmap-size` startup configuration flag",
       "Use a Secret instead of a ConfigMap, which supports up to 10 MiB of data storage for larger configuration files"
     ],
@@ -673,7 +673,7 @@ var questions = [
     text: "A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
     diagram: null,
     options: [
-      "An `emptyDir` volume with an init container that copies data from each ConfigMap and Secret source",
+      "An `emptyDir` volume with an init container that copies data from each of the ConfigMaps and the Secret source",
       "A `persistentVolumeClaim` that aggregates data from multiple ConfigMap and Secret sources together",
       "A `hostPath` volume that maps to a pre-populated directory on the node's local disk filesystem path",
       "A `projected` volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount"
@@ -1266,10 +1266,10 @@ var questions = [
       "Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory",
       "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name",
       "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
-      "Create two separate ConfigMaps because a single ConfigMap cannot be mounted selectively in different containers"
+      "Create two separate ConfigMaps because mounting specific keys from a shared ConfigMap requires complex projected volume configurations that are error-prone"
     ],
     answer: 2,
-    explanation: "You can define multiple volumes referencing the same ConfigMap, each using the `items` field to select specific keys. Volume A selects `app-a.conf` and volume B selects `app-b.conf`. Each volume is then mounted in the appropriate container. `subPath` is a volume mount property, not a ConfigMap property. A single ConfigMap can absolutely be used selectively. Mounting the full ConfigMap in both containers would expose unnecessary files.\n\nWhy other options are wrong:\n- A: Mounting the full ConfigMap in both containers exposes unnecessary files to each container\n- B: subPath is a volumeMount property, not a ConfigMap-level property for splitting by container\n- D: A single ConfigMap can be mounted selectively using the items field on the volume definition\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
+    explanation: "You can define multiple volumes referencing the same ConfigMap, each using the `items` field to select specific keys. Volume A selects `app-a.conf` and volume B selects `app-b.conf`. Each volume is then mounted in the appropriate container. `subPath` is a volume mount property, not a ConfigMap property. A single ConfigMap can absolutely be used selectively. Mounting the full ConfigMap in both containers would expose unnecessary files.\n\nWhy other options are wrong:\n- A: Mounting the full ConfigMap in both containers exposes unnecessary files to each container\n- B: subPath is a volumeMount property, not a ConfigMap-level property for splitting by container\n- D: A single ConfigMap can be mounted selectively using the items field on the volume definition; no projected volumes are needed\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
     verify: "kubectl explain pod.spec.volumes.configMap.items"
   },
   {

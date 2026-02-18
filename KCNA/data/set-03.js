@@ -536,7 +536,7 @@ var questions = [
     text: "An Ingress resource specifies `host: api.example.com` with a backend pointing to service `api-svc` on port 80. The Ingress controller is running, but requests to `api.example.com` time out or fail to connect. Which is the most likely cause?",
     diagram: null,
     options: [
-      "The DNS for `api.example.com` does not point to the Ingress controller's external IP",
+      "The DNS record for `api.example.com` does not resolve to the Ingress controller's external IP address",
       "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, conflicting with `api.example.com` routing",
       "The Ingress controller in use does not support host-based routing, only path-based routing rules",
       "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
@@ -745,7 +745,7 @@ var questions = [
     diagram: null,
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
-      "`kube_endpoint_address_available` with a configured threshold of zero ready endpoints",
+      "`kube_endpoint_ready_count` with a configured threshold of zero ready endpoints",
       "`kube_endpoint_address` with label `ready=\"true\"` equal to zero for the Service",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
@@ -954,7 +954,7 @@ var questions = [
     options: [
       "The custom search domain replaces all default cluster search domains in the pod's `resolv.conf`",
       "The custom search domain is appended to the default cluster search domains in `resolv.conf`",
-      "The `dnsConfig` is ignored because `ClusterFirst` always uses only the default cluster domains",
+      "The `dnsConfig` entries are overridden because `ClusterFirst` takes precedence and uses the default cluster domains",
       "The pod enters an error state because `dnsConfig` and `dnsPolicy` cannot be used in the same pod"
     ],
     answer: 1,
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A team configures an Ingress with `ingressClassName: nginx`. The cluster has two Ingress controllers: one with class `nginx` and another with class `traefik`. What determines which controller processes this Ingress?",
     diagram: null,
     options: [
-      "The `controller` that was installed first in the cluster has priority over any newer controller",
+      "The controller matching `nginx` that was installed first in the cluster takes priority over any newer one",
       "Both controllers process the `Ingress` simultaneously and the first to respond wins the route",
       "The `kube-apiserver` assigns the Ingress to the controller with the least current load value",
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
@@ -1560,8 +1560,8 @@ var questions = [
     text: "A Service's `spec.ipFamilyPolicy` is set to `PreferDualStack`. The cluster supports dual-stack. What ClusterIP addresses does this Service receive?",
     diagram: null,
     options: [
-      "Only an IPv4 ClusterIP is assigned because IPv4 is always the preferred address family",
-      "Only an IPv6 ClusterIP is assigned because dual-stack clusters default to IPv6 addresses",
+      "An IPv4 ClusterIP is assigned as the primary, with IPv6 available via a separate Service",
+      "An IPv6 ClusterIP is assigned as primary because dual-stack clusters prioritize IPv6 addressing",
       "Both an IPv4 and IPv6 ClusterIP, with the primary family set by the cluster's default",
       "No ClusterIP is assigned — PreferDualStack turns it into a headless Service automatically"
     ],

@@ -72,10 +72,10 @@ var questions = [
     text: "A security team wants to scan container images for known CVEs before they are deployed into the cluster. Which open-source tool is specifically designed for container image vulnerability scanning?",
     diagram: null,
     options: [
-      "Falco",
+      "Falco runtime monitor",
       "Open Policy Agent (OPA)",
-      "cert-manager",
-      "Trivy"
+      "cert-manager by Jetstack",
+      "Trivy by Aqua Security"
     ],
     answer: 3,
     explanation: "Trivy (by Aqua Security) is a widely adopted open-source vulnerability scanner for container images, filesystems, and Git repositories. Falco focuses on runtime threat detection, OPA handles policy enforcement, and cert-manager manages TLS certificates.\n\nWhy other options are wrong:\n- A: Falco monitors runtime syscall activity, not container image vulnerabilities\n- B: OPA evaluates admission policies, not vulnerability scanning\n- C: cert-manager automates TLS certificate management, unrelated to CVE scanning\n\nReference: https://aquasecurity.github.io/trivy/",
@@ -184,7 +184,7 @@ var questions = [
     text: "A team adopts a zero-trust security model for their cloud native application. Which principle does this model emphasize?",
     diagram: null,
     options: [
-      "Verify every request regardless of its source network location",
+      "Verify every request regardless of its source network location or trust level",
       "Authenticate external traffic at the perimeter and trust internal service-to-service calls",
       "Encrypt only external-facing traffic at the ingress gateway layer",
       "Combine perimeter firewalls with namespace isolation to secure the cluster network"
@@ -232,7 +232,7 @@ var questions = [
     text: "A Role in the `finance` namespace grants `get` and `list` on the `secrets` resource. A RoleBinding binds this Role to user `bob`. An administrator is concerned about security. Why might this be problematic?",
     diagram: null,
     options: [
-      "Roles cannot grant any access permissions to Secret resources in a namespace",
+      "Roles granting Secret access require additional approval from a cluster administrator",
       "Bob can read all Secrets in `finance`, potentially exposing sensitive credentials",
       "RoleBindings that reference Secret access require cluster-admin level approval",
       "The `get` verb on Secrets only returns object metadata, not the actual data values"
@@ -955,7 +955,7 @@ var questions = [
       "Each microservice must implement its own TLS termination at the service level",
       "If the gateway is compromised, all backend services are accessible unauthenticated",
       "Microservices behind the gateway are unable to use service mesh capabilities",
-      "The gateway cannot enforce per-service rate limiting on individual endpoints"
+      "The gateway introduces additional latency that offsets the security benefits of centralized authentication"
     ],
     answer: 1,
     explanation: "Centralizing authentication at the gateway creates a single point of failure. If the gateway is compromised or bypassed, backend services that trust the gateway without performing their own verification are exposed. Defense in depth recommends each service also validates identity tokens.\n\nWhy other options are wrong:\n- A: TLS termination is handled by the gateway, not individual microservices in this pattern\n- C: Microservices behind a gateway can still use service mesh capabilities\n- D: API gateways can enforce per-service rate limiting; this is not a limitation\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Completed Pods are immediately removed from the cluster after job finishes",
       "Completed Pods have their mounted volumes automatically encrypted at rest",
-      "Completed Pods cannot be inspected or queried by any user in the cluster",
+      "Completed Pods have their environment variables redacted from describe output for security",
       "Env vars and volume mounts with sensitive data remain accessible via kubectl"
     ],
     answer: 3,

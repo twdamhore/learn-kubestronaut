@@ -92,7 +92,7 @@ var questions = [
       "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar proxy",
       "Cilium is a CNCF incubating project that relies on Envoy sidecars for basic L3/L4 networking between Pods",
       "Cilium can replace kube-proxy for service routing but depends on Calico for Kubernetes NetworkPolicy enforcement",
-      "Cilium leverages eBPF for networking, observability, and Layer 7 policy enforcement"
+      "Cilium leverages eBPF for high-performance networking, observability, and Layer 7 policy enforcement without sidecars"
     ],
     answer: 3,
     explanation: "Cilium is a CNCF graduated project that uses eBPF (extended Berkeley Packet Filter) technology in the Linux kernel to provide high-performance networking, security, and observability. It can enforce both Layer 3/4 and Layer 7 policies without requiring sidecar proxies. While Cilium can optionally integrate with Envoy for advanced L7 features, it does not mandate sidecars.\n\nWhy other options are wrong:\n- A: Cilium uses eBPF for packet filtering, not primarily iptables; it handles L7 inspection natively via eBPF and optionally Envoy, without requiring a separate sidecar\n- B: Cilium is CNCF graduated (not incubating) and uses eBPF directly for L3/L4 networking without requiring Envoy sidecars\n- C: Cilium enforces Kubernetes NetworkPolicy rules natively; it does not depend on Calico for policy enforcement\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -362,7 +362,7 @@ var questions = [
     diagram: null,
     options: [
       "Add a label `gpu=true` and use `nodeSelector` on ML Pods — but this alone does not repel non-ML Pods from GPU nodes",
-      "Set `priorityClassName: high` on ML Pods so they always preempt lower-priority workloads from GPU-labeled nodes",
+      "Set `priorityClassName: high` on ML Pods so they can preempt lower-priority workloads from GPU-labeled nodes when needed",
       "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
       "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
     ],
@@ -987,7 +987,7 @@ var questions = [
     text: "A team deploys a gRPC-based microservice behind a Kubernetes Service. They notice that all traffic is going to a single Pod despite having 3 replicas. What is the most likely cause?",
     diagram: null,
     options: [
-      "gRPC is not a supported protocol for Kubernetes Services and always requires an external third-party load balancer",
+      "gRPC traffic requires a dedicated external load balancer because Kubernetes Services do not support HTTP/2 multiplexed streams",
       "The Pods have different resource limits configured, causing the kube-scheduler to prefer one Pod over the others",
       "gRPC uses HTTP/2 persistent connections; `kube-proxy` does L4 balancing per connection so one connection routes to one Pod",
       "The Service `sessionAffinity` is set to `ClientIP` by default, which pins all traffic from one client to a single Pod"
@@ -1147,7 +1147,7 @@ var questions = [
     text: "A multi-master Kubernetes cluster runs 3 etcd instances. During a network partition, one etcd member becomes isolated. Can the remaining two members still accept writes?",
     diagram: null,
     options: [
-      "No — all 3 etcd members must be available and reachable for the cluster to accept any read or write operations",
+      "No — etcd requires full membership agreement through a two-phase commit before processing any client read or write requests",
       "Yes — etcd uses Raft consensus requiring a majority quorum; with 2 of 3 members the quorum is maintained",
       "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles data afterward",
       "No — etcd immediately promotes one of the remaining members to operate as a standalone single-node instance"
@@ -1597,7 +1597,7 @@ var questions = [
     diagram: null,
     options: [
       "Argo CD uses a push-based model while Flux uses a pull-based model representing fundamentally different approaches",
-      "Argo CD can only deploy Helm charts while Flux can only deploy plain Kubernetes manifests from Git repositories",
+      "Argo CD focuses primarily on Helm chart releases while Flux specializes in deploying plain Kubernetes manifests from Git",
       "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers",
       "Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture"
     ],

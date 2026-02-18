@@ -85,7 +85,7 @@ var questions = [
     id: "s06-q006",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "You need a Pod to prefer nodes in availability zone <code>us-east-1a</code> but still schedule elsewhere if those nodes are full. Which scheduling construct should you use?",
+    text: "You need a Pod to ideally land on nodes in availability zone <code>us-east-1a</code> but still schedule elsewhere if those nodes are full. Which scheduling construct should you use?",
     diagram: null,
     options: [
       "C. `preferredDuringSchedulingIgnoredDuringExecution` node affinity",
@@ -250,7 +250,7 @@ var questions = [
     options: [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
       "B. DaemonSet Pods automatically include tolerations for all taints",
-      "C. The drain command cannot evict any Pods in the `kube-system` namespace",
+      "C. The drain command skips Pods in the kube-system namespace by default",
       "D. `kubectl drain` skips DaemonSet-managed Pods by default"
     ],
     answer: 3,
@@ -411,7 +411,7 @@ var questions = [
       "A. No, placing in zone A would make the skew 3 which exceeds `maxSkew: 1`",
       "B. Yes, `maxSkew` only applies to scaling down, not during new scheduling",
       "C. Yes, but only when zone A has significantly more allocatable resources",
-      "D. No, `topologySpreadConstraints` always requires strictly equal distribution"
+      "D. No, topologySpreadConstraints requires an exactly balanced distribution across all zones"
     ],
     answer: 0,
     explanation: "With zone A at 3 Pods and zone B at 1 Pod, the current skew is 2 (3-1). Adding another Pod to zone A would increase it to 3 (4-1), violating `maxSkew: 1`. The scheduler must place the Pod in zone B to keep the skew within bounds. The `whenUnsatisfiable` field controls behavior when constraints cannot be met.\n\nWhy other options are wrong:\n- B: maxSkew applies during scheduling, not only during scaling down\n- C: Available resources do not override maxSkew constraints in topology spread\n- D: topologySpreadConstraints use maxSkew to control allowed imbalance, not strict equality\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -838,7 +838,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
     text: "A Pod has both a `nodeSelector` for <code>env=production</code> and a toleration for the taint <code>team=backend:NoSchedule</code>. Which nodes can this Pod be scheduled on?",
-    diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="210" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">nodeSelector + Toleration Evaluation</text><rect x="20" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#326ce5" stroke-width="1.5"/><text x="105" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node A</text><text x="105" y="78" text-anchor="middle" fill="#4caf50" font-size="9">label: env=production</text><text x="105" y="94" text-anchor="middle" fill="#ff9800" font-size="9">taint: team=backend:NoSchedule</text><rect x="210" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="295" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node B</text><text x="295" y="78" text-anchor="middle" fill="#4caf50" font-size="9">label: env=production</text><text x="295" y="94" text-anchor="middle" fill="#888" font-size="9">no taint</text><rect x="20" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="105" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node C</text><text x="105" y="158" text-anchor="middle" fill="#f44336" font-size="9">label: env=staging</text><text x="105" y="174" text-anchor="middle" fill="#ff9800" font-size="9">taint: team=backend:NoSchedule</text><rect x="210" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="295" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node D</text><text x="295" y="158" text-anchor="middle" fill="#f44336" font-size="9">label: env=staging</text><text x="295" y="174" text-anchor="middle" fill="#888" font-size="9">no taint</text></svg>',
+    diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="210" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">nodeSelector + Toleration Evaluation</text><rect x="20" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="105" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node A</text><text x="105" y="78" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="105" y="94" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="210" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="295" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node B</text><text x="295" y="78" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="295" y="94" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="20" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="105" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node C</text><text x="105" y="158" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="105" y="174" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="210" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="295" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node D</text><text x="295" y="158" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="295" y="174" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text></svg>',
     options: [
       "D. Any node with label `env=production`, regardless of the backend taint key",
       "B. Any node with the taint `team=backend:NoSchedule` regardless of its labels",
@@ -891,7 +891,7 @@ var questions = [
       "A. kube-proxy, the network rules component for Service routing",
       "B. The container runtime such as containerd",
       "C. CoreDNS, the cluster DNS resolver Pod",
-      "D. The CNI plugin for Pod network setup"
+      "D. The CNI plugin responsible for Pod network configuration"
     ],
     answer: 3,
     explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: Container runtime issues can also cause NotReady, but the question asks about the most likely cause when kubelet is running\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
@@ -1162,7 +1162,7 @@ var questions = [
     options: [
       "A. Use a single large node type that is big enough to accommodate most cluster workloads",
       "B. Overcommit resources on all nodes to maximize the overall cluster utilization level",
-      "C. Run all workloads exclusively on spot or preemptible instances to reduce total costs",
+      "C. Run workloads primarily on spot or preemptible instances to reduce total costs",
       "D. Use multiple node pools with different instance types and taints or nodeSelectors"
     ],
     answer: 3,
@@ -1242,7 +1242,7 @@ var questions = [
     options: [
       "A. The weight=100 rule must be fully satisfied; the weight=1 rule is treated as optional",
       "B. Only the highest-weight rule is evaluated by the scheduler, lower ones are discarded",
-      "C. Weights are percentages, so weight=100 means the rule is always strictly enforced",
+      "C. Weights are percentages, so weight=100 means the rule is fully mandatory",
       "D. Nodes matching weight=100 score 100x higher for that term than weight=1 matches"
     ],
     answer: 3,
@@ -1307,7 +1307,7 @@ var questions = [
       "D. kubeadm deletes most RBAC objects then recreates them from default templates during the upgrade",
       "B. kubeadm resets most ClusterRoles to their default definitions during the upgrade process",
       "C. Custom ClusterRoles are typically preserved since kubeadm avoids modifying user-created RBAC",
-      "A. kubeadm may overwrite system ClusterRoles it manages, removing custom rules"
+      "A. kubeadm may overwrite the system ClusterRoles it manages during upgrades, removing custom rules"
     ],
     answer: 3,
     explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.\n\nWhy other options are wrong:\n- B: kubeadm does not overwrite ALL ClusterRoles; it manages specific system roles only\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
@@ -1354,7 +1354,7 @@ var questions = [
     options: [
       "A. Only taints with key `special-taint` and an empty string value",
       "B. All taints on the node regardless of their key, value, or effect",
-      "C. No taints at all, because a value field must always be specified",
+      "C. No taints at all, because a value field is required with operator: Exists",
       "D. All taints with key `special-taint` regardless of their value"
     ],
     answer: 3,
@@ -1382,7 +1382,7 @@ var questions = [
     domain: "Cloud Native Application Delivery",
     subsection: "Deployment Strategies",
     text: "During a rolling cluster upgrade, you want to validate that the new node version works correctly before upgrading all nodes. Which strategy achieves this?",
-    diagram: '<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="220" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Node Upgrade Approach</text><rect x="20" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="60" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 1</text><text x="60" y="76" text-anchor="middle" fill="#888" font-size="8">v1.28</text><rect x="110" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="150" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 2</text><text x="150" y="76" text-anchor="middle" fill="#888" font-size="8">v1.28</text><rect x="200" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="240" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 3</text><text x="240" y="76" text-anchor="middle" fill="#888" font-size="8">v1.28</text><rect x="290" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#4caf50" stroke-width="2"/><text x="330" y="62" text-anchor="middle" fill="#4caf50" font-size="9">Node 4</text><text x="330" y="76" text-anchor="middle" fill="#4caf50" font-size="8">v1.29</text><line x1="200" y1="100" x2="200" y2="115" stroke="#7ec8e3" stroke-width="1" stroke-dasharray="3,3"/><text x="200" y="130" text-anchor="middle" fill="#ff9800" font-size="10">Step 1: ???</text><text x="200" y="150" text-anchor="middle" fill="#ff9800" font-size="10">Step 2: ???</text><text x="200" y="170" text-anchor="middle" fill="#ff9800" font-size="10">Step 3: ???</text><text x="200" y="190" text-anchor="middle" fill="#4caf50" font-size="10">Step 4: ???</text><text x="200" y="210" text-anchor="middle" fill="#f44336" font-size="10">Step 5: ???</text></svg>',
+    diagram: '<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="220" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Node Upgrade Approach</text><rect x="20" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="60" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 1</text><text x="60" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="110" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="150" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 2</text><text x="150" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="200" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="240" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 3</text><text x="240" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="290" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="330" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 4</text><text x="330" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><line x1="200" y1="100" x2="200" y2="115" stroke="#7ec8e3" stroke-width="1" stroke-dasharray="3,3"/><text x="200" y="130" text-anchor="middle" fill="#ff9800" font-size="10">Step 1: ???</text><text x="200" y="150" text-anchor="middle" fill="#ff9800" font-size="10">Step 2: ???</text><text x="200" y="170" text-anchor="middle" fill="#ff9800" font-size="10">Step 3: ???</text><text x="200" y="190" text-anchor="middle" fill="#4caf50" font-size="10">Step 4: ???</text><text x="200" y="210" text-anchor="middle" fill="#f44336" font-size="10">Step 5: ???</text></svg>',
     options: [
       "A. Upgrade all worker nodes simultaneously for version consistency across the cluster",
       "B. Upgrade the control plane components only and skip the worker node upgrades fully",
@@ -1401,7 +1401,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if issues arise",
-      "B. Deploy to a separate staging cluster that never undergoes any scheduled maintenance procedures",
+      "B. Deploy to a separate staging cluster that has a different maintenance schedule",
       "C. Add a manual approval gate in the pipeline where an operator inspects cluster readiness",
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"
     ],
@@ -1413,7 +1413,7 @@ var questions = [
     id: "s06-q089",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "Which Kubernetes ecosystem project specifically addresses re-balancing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?",
+    text: "Which Kubernetes ecosystem project specifically addresses redistributing Pod placement after scheduling decisions become suboptimal over time due to node additions, removals, or policy changes?",
     diagram: null,
     options: [
       "A. Descheduler for rebalancing Pods",
@@ -1432,7 +1432,7 @@ var questions = [
     text: "A cluster administrator wants to prevent namespaces from consuming more than their allocated share of CPU and memory. Which Kubernetes resource enforces namespace-level aggregate resource limits?",
     diagram: null,
     options: [
-      "C. ResourceQuota for aggregates",
+      "C. ResourceQuota for namespace totals",
       "B. PodDisruptionBudget for uptime",
       "A. LimitRange for per-Pod resource defaults",
       "D. PriorityClass for scheduling"
@@ -1595,7 +1595,7 @@ var questions = [
       "A. Only taints with the `NoSchedule` effect are matched",
       "B. Only taints that have no value set are matched by it",
       "C. All taints are matched, it is a wildcard toleration",
-      "D. No taints are matched since a key is always required"
+      "D. No taints are matched because omitting the key makes the toleration invalid"
     ],
     answer: 2,
     explanation: "A toleration with `operator: Exists` and no key specified acts as a wildcard that matches every possible taint. This means the Pod can be scheduled on any node regardless of its taints. This is sometimes used for infrastructure Pods that must run everywhere.\n\nWhy other options are wrong:\n- A: Without a key, the Exists operator matches all taints regardless of effect, not just NoSchedule\n- B: Without a key, it matches all taints regardless of their value, not just valueless taints\n- D: A key is not required with operator: Exists; omitting the key creates a wildcard toleration\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",

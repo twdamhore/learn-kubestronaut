@@ -457,7 +457,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Priority 0, because only one `globalDefault` PriorityClass can exist and the system ignores user-created default values",
-      "B. Priority 2000000000, because system priority classes always take precedence over any user-defined global default values",
+      "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault PriorityClass is configured by users",
       "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to pods without an explicit assignment",
       "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class"
     ],
@@ -555,7 +555,7 @@ var questions = [
       "A. Node A, because `nodeSelector` takes precedence over `nodeAffinity` and Node A satisfies the GPU requirement",
       "B. Node B, because it is the only node satisfying both the `nodeSelector` AND the `nodeAffinity` rule simultaneously",
       "C. Node C, because `nodeAffinity` with `required` rules overrides `nodeSelector` when both are specified",
-      "D. The pod remains Pending because `nodeSelector` and `nodeAffinity` cannot be used together and the spec is invalid"
+      "D. The pod remains Pending because nodeSelector is deprecated when nodeAffinity is present, and the scheduler ignores nodeSelector constraints"
     ],
     answer: 1,
     explanation: "When both `nodeSelector` and `nodeAffinity` are specified, a node must satisfy ALL constraints. The `nodeSelector` requires `gpu: nvidia`, and the `nodeAffinity` requires `zone: us-west-2a`. Only Node B has both labels, making it the sole valid scheduling target. Node A fails the zone affinity, Node C fails the GPU selector. Both mechanisms are valid when used together and form an AND relationship — the pod is only scheduled on nodes matching all criteria.\n\nWhy other options are wrong:\n- A: nodeSelector does not take precedence over nodeAffinity; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not override nodeSelector; a node must satisfy both simultaneously\n- D: nodeSelector and nodeAffinity can be used together; the pod spec is valid and both constraints are enforced\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -859,7 +859,7 @@ var questions = [
       "A. All 4 replicas are scheduled — anti-affinity is per-replica and does not prevent co-location within the same Deployment",
       "B. 3 replicas schedule (one per node) and the 4th remains Pending because no node satisfies the anti-affinity constraint",
       "C. The scheduler ignores anti-affinity for the 4th replica and co-locates it with an existing replica on the least-loaded node",
-      "D. All 4 replicas remain Pending because the anti-affinity creates a circular dependency that the scheduler cannot resolve"
+      "D. All 4 replicas remain Pending because requiredDuringScheduling anti-affinity is evaluated before any pods are placed, blocking all scheduling"
     ],
     answer: 1,
     explanation: "Required pod anti-affinity with `topologyKey: kubernetes.io/hostname` ensures that no two pods matching the label selector are placed on the same node. With 3 nodes, only 3 replicas can be scheduled (one per node). The 4th replica cannot find a node without a matching pod, so it remains Pending indefinitely. The `required` level is a hard constraint — the scheduler will not violate it. Using `preferred` anti-affinity would allow the 4th pod to be co-located as a soft preference.\n\nWhy other options are wrong:\n- A: Anti-affinity is not per-replica in a special way; it prevents co-location of any matching pods, including within the same Deployment\n- C: The scheduler does not ignore required anti-affinity; required constraints are hard rules that cannot be violated\n- D: Pods do not all remain Pending; the first three can be scheduled one per node without violating anti-affinity\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
@@ -936,7 +936,7 @@ var questions = [
     text: "A team containerizes a legacy application that stores user sessions in local filesystem files under `/var/sessions`. The application runs as a Deployment with 3 replicas behind a ClusterIP Service. Users report that they are randomly logged out. What is the root cause and the best cloud native solution?",
     diagram: null,
     options: [
-      "A. Use a `ReadWriteMany` PersistentVolume shared across all replicas so every pod can access the same session files stored on disk",
+      "A. Use a ReadWriteMany PersistentVolume shared across all replicas so every pod can access the same filesystem-based session data",
       "B. Replace filesystem sessions with external Redis or Memcached and use `sessionAffinity: ClientIP` as a transitional step",
       "C. Convert the Deployment to a StatefulSet so each replica gets a dedicated PersistentVolume for storing its own session files",
       "D. Add `sessionAffinity: ClientIP` to the Service to ensure each user always reaches the same pod where their session is stored"
@@ -971,7 +971,7 @@ var questions = [
       "A. The Ingress forwards the original path `/v2/users`, but `api-v2` expects requests at `/users` without the prefix",
       "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` path rule",
       "C. The nginx Ingress strips TLS before forwarding and the `api-v2` service rejects non-HTTPS backend connections",
-      "D. The Ingress controller cannot route to two different services under the same host with overlapping path prefixes"
+      "D. The Ingress controller merges overlapping path rules into a single backend, so /v2/users is routed to api-v1 instead of api-v2"
     ],
     answer: 0,
     explanation: "By default, the nginx Ingress controller forwards the request with the original path intact. When `/v2/users` matches the `/v2` prefix rule, the full path `/v2/users` is sent to the `api-v2` backend. If the application only handles routes starting at `/` (e.g., `/users`), it returns 404 for `/v2/users`. The fix is to add the `nginx.ingress.kubernetes.io/rewrite-target` annotation to strip the path prefix. Option B is relevant but `pathType: Prefix` is typically already set for this use case.\n\nWhy other options are wrong:\n- B: pathType: Prefix is relevant but is typically already set; the core issue is that the full path including prefix is forwarded to the backend\n- C: TLS termination at the ingress is standard behavior; backends typically receive HTTP, and api-v2 would be configured to accept HTTP on its backend port\n- D: The ingress controller can route to multiple services under the same host with different path prefixes; this is a core ingress feature\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource",
@@ -1146,7 +1146,7 @@ var questions = [
     options: [
       "A. Node 5 drops the request because there is no local backend pod and the default `externalTrafficPolicy` is `Local`",
       "B. Node 5's kube-proxy forwards the request to a node with a backend pod via DNAT, adding SNAT for the return path",
-      "C. Node 5 responds with a TCP RST because NodePort services only listen on nodes that have local backend pods running",
+      "C. Node 5 responds with a TCP RST because kube-proxy removes NodePort iptables rules for services without local endpoints on that node",
       "D. The request is forwarded to the ClusterIP which distributes it to a backend pod without performing any NAT at all"
     ],
     answer: 1,
@@ -1322,7 +1322,7 @@ var questions = [
     options: [
       "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` still honors `maxSkew: 1` as a soft preference",
       "B. Pods are distributed based solely on available node capacity: 4 in zone-a, 1 in zone-b, and 1 in zone-c nodes",
-      "C. Pods are distributed 2-2-2 across zones, identical to `DoNotSchedule`, because the maximum skew can be satisfied",
+      "C. Pods are distributed 3-2-1 across zones proportional to node count, identical to DoNotSchedule behavior when skew can be relaxed",
       "D. Pods are distributed unevenly because `ScheduleAnyway` makes the constraint purely informational with no effect"
     ],
     answer: 0,

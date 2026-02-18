@@ -569,7 +569,7 @@ var questions = [
     diagram: null,
     options: [
       "Longhorn requires an external Ceph cluster to serve as the backend storage for all provisioned volumes",
-      "Longhorn only supports `ReadWriteMany` access mode and cannot provision `ReadWriteOnce` block volumes",
+      "Longhorn primarily targets `ReadWriteMany` access mode and delegates `ReadWriteOnce` provisioning to a secondary NFS layer",
       "Longhorn replaces the kubelet's volume management entirely with its own node-level storage controller",
       "Longhorn creates replicated block volumes using local disks and manages them via a CSI driver per node"
     ],
@@ -650,7 +650,7 @@ var questions = [
     options: [
       "In a random zone outside `us-east-1a` since the `StorageClass` does not consider pod topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
-      "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone as the pod",
+      "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone where the pod is scheduled",
       "The PV is provisioned immediately when the `PVC` is created because `WaitForFirstConsumer` only delays binding, not provisioning"
     ],
     answer: 2,
@@ -1083,7 +1083,7 @@ var questions = [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
       "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster",
       "The PV is still attached to the old node because the `VolumeAttachment` object was not cleaned up",
-      "The PV detach from the rebooted node was delayed because the CSI driver requires a graceful unmount before reattachment"
+      "The PV detach from the rebooted node was delayed because the `CSI` driver requires a graceful unmount before reattachment"
     ],
     answer: 2,
     explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: RWO PVs can be moved between nodes; the issue is stale VolumeAttachment, not a permanent restriction\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
