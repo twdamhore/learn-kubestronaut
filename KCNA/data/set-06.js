@@ -249,8 +249,8 @@ var questions = [
     diagram: null,
     options: [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
-      "B. DaemonSet Pods automatically include tolerations for all taints",
-      "C. The drain command skips Pods in the kube-system namespace by default",
+      "B. DaemonSet Pods automatically include `tolerations` for all taints",
+      "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
       "D. `kubectl drain` skips DaemonSet-managed Pods by default"
     ],
     answer: 3,
@@ -294,7 +294,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Networking",
     text: "A node is being drained, and a Service backed by a Deployment has Pods on that node. What ensures traffic is not sent to the evicted Pods during the drain?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Service Traffic During Drain</text><rect x="140" y="42" width="120" height="35" rx="6" fill="#0d2137" stroke="#326ce5" stroke-width="1.5"/><text x="200" y="64" text-anchor="middle" fill="#ccc" font-size="11">Service</text><rect x="30" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="80" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="80" y="148" text-anchor="middle" fill="#888" font-size="9">Node A</text><rect x="150" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="200" y="148" text-anchor="middle" fill="#888" font-size="9">Node B</text><rect x="270" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#f44336" stroke-width="1.5" stroke-dasharray="5,3"/><text x="320" y="132" text-anchor="middle" fill="#f44336" font-size="10">Pod (evicting)</text><text x="320" y="148" text-anchor="middle" fill="#888" font-size="9">Node C (drain)</text><line x1="175" y1="77" x2="80" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="200" y1="77" x2="200" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="225" y1="77" x2="320" y2="110" stroke="#f44336" stroke-width="1.5" stroke-dasharray="4,3"/><text x="280" y="95" fill="#f44336" font-size="9">?</text><rect x="70" y="185" width="260" height="35" rx="6" fill="#1a2a1a" stroke="#4caf50" stroke-width="1"/><text x="200" y="207" text-anchor="middle" fill="#4caf50" font-size="10">What happens to the Service endpoints?</text></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Service Traffic During Drain</text><rect x="140" y="42" width="120" height="35" rx="6" fill="#0d2137" stroke="#326ce5" stroke-width="1.5"/><text x="200" y="64" text-anchor="middle" fill="#ccc" font-size="11">Service</text><rect x="30" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="80" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="80" y="148" text-anchor="middle" fill="#888" font-size="9">Node A</text><rect x="150" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="132" text-anchor="middle" fill="#4caf50" font-size="10">Pod (healthy)</text><text x="200" y="148" text-anchor="middle" fill="#888" font-size="9">Node B</text><rect x="270" y="110" width="100" height="50" rx="6" fill="#0d2137" stroke="#888" stroke-width="1.5" stroke-dasharray="5,3"/><text x="320" y="132" text-anchor="middle" fill="#aaa" font-size="10">Pod (draining)</text><text x="320" y="148" text-anchor="middle" fill="#888" font-size="9">Node C (drain)</text><line x1="175" y1="77" x2="80" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="200" y1="77" x2="200" y2="110" stroke="#4caf50" stroke-width="1.5"/><line x1="225" y1="77" x2="320" y2="110" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/><text x="280" y="95" fill="#888" font-size="9">?</text><rect x="70" y="185" width="260" height="35" rx="6" fill="#1a2a1a" stroke="#888" stroke-width="1"/><text x="200" y="207" text-anchor="middle" fill="#aaa" font-size="10">What mechanism protects traffic?</text></svg>',
     options: [
       "A. The kube-proxy component immediately blocks all traffic to the drained node",
       "B. The endpoint controller removes the terminating Pod from Service Endpoints",
@@ -888,10 +888,10 @@ var questions = [
     text: "A newly joined worker node shows <code>NotReady</code> status. The kubelet is running and the node is reachable. The kubelet logs show the container runtime is healthy, but the node condition shows <code>NetworkUnavailable: True</code>. Which component on the node is most likely misconfigured?",
     diagram: null,
     options: [
-      "A. kube-proxy, the network rules component for Service routing",
-      "B. The container runtime such as containerd",
-      "C. CoreDNS, the cluster DNS resolver Pod",
-      "D. The CNI plugin responsible for Pod network configuration"
+      "A. kube-proxy, the component managing Service routing rules",
+      "B. The container runtime interface such as containerd",
+      "C. CoreDNS, the cluster-level DNS resolver for Pods",
+      "D. The CNI plugin handling Pod network configuration"
     ],
     answer: 3,
     explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: Container runtime issues can also cause NotReady, but the question asks about the most likely cause when kubelet is running\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
@@ -953,7 +953,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The kubelet config for the correct CRI socket path to containerd",
-      "B. Whether the node has sufficient disk space for container operations",
+      "B. Whether the node has sufficient disk space for kubelet container operations",
       "C. The container image registry network connectivity and pull access",
       "D. The kernel version compatibility with the new containerd version"
     ],
@@ -1385,12 +1385,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="220" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Node Upgrade Approach</text><rect x="20" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="60" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 1</text><text x="60" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="110" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="150" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 2</text><text x="150" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="200" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="240" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 3</text><text x="240" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="290" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="330" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 4</text><text x="330" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><line x1="200" y1="100" x2="200" y2="115" stroke="#7ec8e3" stroke-width="1" stroke-dasharray="3,3"/><text x="200" y="130" text-anchor="middle" fill="#ff9800" font-size="10">Step 1: ???</text><text x="200" y="150" text-anchor="middle" fill="#ff9800" font-size="10">Step 2: ???</text><text x="200" y="170" text-anchor="middle" fill="#ff9800" font-size="10">Step 3: ???</text><text x="200" y="190" text-anchor="middle" fill="#4caf50" font-size="10">Step 4: ???</text><text x="200" y="210" text-anchor="middle" fill="#f44336" font-size="10">Step 5: ???</text></svg>',
     options: [
       "A. Upgrade all worker nodes simultaneously for version consistency across the cluster",
-      "B. Upgrade the control plane components only and skip the worker node upgrades fully",
+      "B. Upgrade the control plane components only and validate them without upgrading workers",
       "C. Upgrade one canary node first, validate its workloads, then proceed with the rest",
       "D. Run two separate clusters during the transition and migrate workloads between them"
     ],
     answer: 2,
-    explanation: "Upgrading a single canary node first allows validation of the new version with real workloads before committing to a full rollout. If issues are found, only one node needs to be rolled back. This minimizes risk while providing confidence in the upgrade process.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade risks cluster-wide issues with no ability to isolate and validate before committing\n- B: Upgrading only the control plane leaves workers unvalidated and creates persistent version skew\n- D: Running two separate clusters is operationally complex and expensive for a simple version validation\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    explanation: "Upgrading a single canary node first allows validation of the new version with real workloads before committing to a full rollout. If issues are found, only one node needs to be rolled back. This minimizes risk while providing confidence in the upgrade process.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade risks cluster-wide issues with no ability to isolate and validate before committing\n- B: Upgrading and validating only the control plane leaves workers untested and creates persistent version skew\n- D: Running two separate clusters is operationally complex and expensive for a simple version validation\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get nodes -o wide"
   },
   {
@@ -1464,7 +1464,7 @@ var questions = [
     text: "A cloud-native platform team automates node lifecycle management. When a node is cordoned via <code>kubectl cordon</code>, which field on the Node object is modified to signal the scheduler?",
     diagram: null,
     options: [
-      "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` entry",
+      "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` label for the scheduler",
       "B. `status.conditions` adds a new `Schedulable: False` condition to the node",
       "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled: true`",
       "D. `spec.unschedulable` is set to `true` signaling the scheduler to skip it"
@@ -1529,9 +1529,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Preemption Victim Selection</text><rect x="30" y="45" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="67" text-anchor="middle" fill="#aaa" font-size="11">Selection criteria: ???</text><rect x="30" y="90" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="112" text-anchor="middle" fill="#aaa" font-size="11">PDB violation count</text><rect x="30" y="135" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="157" text-anchor="middle" fill="#aaa" font-size="11">Factor 2: ???</text><rect x="30" y="180" width="340" height="35" rx="5" fill="#0d2137" stroke="#888" stroke-width="1.5"/><text x="200" y="202" text-anchor="middle" fill="#aaa" font-size="11">Resource accounting</text><text x="200" y="235" text-anchor="middle" fill="#888" font-size="9">Scheduler picks the node requiring fewest ??? evictions</text></svg>',
     options: [
       "A. Pod age is the primary factor, with the oldest Pods selected for eviction first",
-      "B. Pod resource usage is checked and Pods using the most are evicted first",
+      "B. Pod resource usage takes priority and Pods consuming the most are evicted first",
       "C. Pod priority value is the main factor, lowest-priority Pods go first",
-      "D. Pod namespace is checked and Pods in non-system namespaces go first"
+      "D. Pod namespace takes priority and Pods in non-system namespaces go first"
     ],
     answer: 2,
     explanation: "The scheduler prefers to evict the lowest-priority Pods first. Among candidate nodes, it chooses the one where the fewest evictions or the lowest-priority evictions are needed. PDB violations are also minimized. Pod age and namespace are not primary factors.\n\nWhy other options are wrong:\n- A: Pod age is not a primary factor in preemption victim selection\n- B: Actual resource usage is not the selection criterion; priority value determines victim selection\n- D: Pod namespace does not influence preemption victim selection; priority value is the main factor\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",

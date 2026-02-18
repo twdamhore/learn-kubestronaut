@@ -1208,7 +1208,7 @@ var questions = [
       "Nothing extra is needed — the tracing SDK automatically detects file changes and reloads its configuration",
       "The app must watch the mounted file for changes and reinitialize the tracing provider when it updates",
       "The kubelet must be restarted on the node to propagate ConfigMap changes to the volume mount inside",
-      "The tracing collector must be restarted — application-side configuration changes are entirely irrelevant"
+      "The tracing collector must be restarted — it owns the sampling-rate setting and pushes it to applications"
     ],
     answer: 1,
     explanation: "While Kubernetes automatically updates volume-mounted ConfigMaps (without subPath), the application must implement file-watching logic to detect changes and reconfigure itself. Most tracing SDKs do not automatically reload configuration from files. The kubelet does not need to be restarted — it periodically syncs ConfigMap data to volumes. The tracing collector endpoint may be separate, but the sampling rate is an application-side configuration.\n\nWhy other options are wrong:\n- A: Most tracing SDKs do not automatically detect and reload configuration from files\n- C: The kubelet does not need to be restarted; it periodically syncs ConfigMap data to volumes\n- D: Sampling rate is an application-side setting; restarting only the collector does not change it\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -1525,7 +1525,7 @@ var questions = [
     options: [
       "Configuration files should be compiled into the application binary for maximum runtime performance and efficiency",
       "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires additional tooling",
-      "Configuration should only be managed by a dedicated operations team using manual `kubectl` commands directly",
+      "Configuration is best managed by a dedicated operations team applying changes through `kubectl` commands",
       "ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"
     ],
     answer: 3,

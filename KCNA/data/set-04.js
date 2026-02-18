@@ -104,10 +104,10 @@ var questions = [
     text: "An operator notices that a PVC has been in `Pending` state for several minutes. The PVC requests `ReadWriteMany` access mode and 50Gi of storage. The cluster has several available PVs with 100Gi capacity but all are configured with `ReadWriteOnce`. What is the most likely cause?",
     diagram: null,
     options: [
-      "No PV supports the `ReadWriteMany` access mode that the PVC requests in its specification",
+      "No PV in the cluster supports the `ReadWriteMany` access mode that the PVC requires, so no binding candidate exists",
       "The PV's `ReadWriteOnce` access mode is compatible with the PVC's `ReadWriteMany` request but capacity mismatch prevents binding",
-      "The `PVC` is waiting for a pod to reference it before the binding process can be initiated",
-      "The PVC remains unbound because the scheduler has not yet assigned it to a specific availability zone"
+      "The PVC is waiting for a pod to reference it before the volume binding process can be triggered by the controller",
+      "The PVC remains unbound because the scheduler has not yet assigned it to a specific availability zone in the region"
     ],
     answer: 0,
     explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: There is no default 10Gi PVC limit; PVC sizes are constrained only by ResourceQuota if configured\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -1227,7 +1227,7 @@ var questions = [
       "The new PVC shares the same underlying PV as the source PVC using a symbolic link on the storage backend",
       "A new PV is provisioned with a copy of the source PVC's data and the new PVC binds to that new PV",
       "The source PVC is deleted and its PV is transferred to the new PVC as part of the cloning operation",
-      "Volume cloning is only supported for `emptyDir` volumes and is not available for PersistentVolumeClaims"
+      "Volume cloning primarily targets ephemeral `emptyDir` volumes and has limited PersistentVolumeClaim support"
     ],
     answer: 1,
     explanation: "CSI volume cloning creates a new PV that is a duplicate of the source PVC's underlying volume at the point of cloning. The new PVC binds to this new PV, creating two independent volumes. The source PVC and its data remain unchanged. Both PVCs must be in the same namespace and use the same StorageClass.\n\nWhy other options are wrong:\n- A: Cloning creates a new independent PV; it does not share the underlying storage via symbolic links\n- C: The source PVC is not deleted during cloning; both PVCs exist independently after the operation\n- D: Volume cloning is supported for PVCs via CSI drivers; it is not limited to emptyDir volumes\n\nReference: https://kubernetes.io/docs/concepts/storage/volume-pvc-datasource/",
@@ -1557,7 +1557,7 @@ var questions = [
     id: "s04-q098",
     domain: "Kubernetes Fundamentals",
     subsection: "Workloads",
-    text: "A team managing a Redis Sentinel StatefulSet wants to speed up rolling updates by allowing more than one pod to be updated simultaneously. Which StatefulSet parameter controls update parallelism?",
+    text: "A team managing a Redis Sentinel StatefulSet wants to speed up rolling updates by allowing more than one pod to be updated at the same time. Which StatefulSet parameter controls update parallelism?",
     diagram: null,
     options: [
       "`spec.minReadySeconds` — ensures each pod is ready for a specified duration before proceeding with rollout",

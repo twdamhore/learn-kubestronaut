@@ -920,16 +920,16 @@ var questions = [
     id: "s08-q058",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "An operations team wants to extend their Prometheus monitoring with long-term storage and a global query view across multiple Prometheus instances. Which CNCF incubating project provides this capability?",
+    text: "An operations team wants to add a sidecar to each Prometheus instance that uploads local TSDB blocks to object storage while providing a unified query layer across all instances. Which CNCF incubating project uses this sidecar-based approach?",
     diagram: null,
     options: [
       "Grafana Loki — a horizontally scalable log aggregation system designed for cost efficiency and simplicity",
-      "Cortex — a horizontally scalable multi-tenant Prometheus-compatible TSDB for long-term metric storage",
+      "Cortex — ingests metrics via remote-write into a shared multi-tenant TSDB independent of Prometheus storage",
       "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
-      "Thanos — extends Prometheus with long-term storage, global querying, and downsampling capabilities"
+      "Thanos — extends Prometheus with a sidecar that ships blocks to object storage and a global query layer"
     ],
     answer: 3,
-    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex and VictoriaMetrics offer similar capabilities but have different project lineages and CNCF statuses.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex is also a CNCF incubating project for long-term Prometheus storage, but it uses a separate remote-write architecture rather than extending existing Prometheus instances via sidecars\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
+    explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex uses a different approach: it ingests metrics via Prometheus remote-write into its own distributed TSDB, rather than extending existing Prometheus instances with sidecars.\n\nWhy other options are wrong:\n- A: Grafana Loki is a log aggregation system, not a Prometheus long-term storage solution\n- B: Cortex ingests metrics via remote-write into a separate multi-tenant TSDB rather than using a sidecar-based approach that extends existing Prometheus instances\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
     verify: null
   },
   {
@@ -968,16 +968,16 @@ var questions = [
     id: "s08-q061",
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
-    text: "An administrator needs to backup the entire Kubernetes cluster state. They decide to take a snapshot of etcd. Which `etcdctl` command creates a snapshot of the etcd database?",
+    text: "An administrator needs to backup the entire Kubernetes cluster state stored in etcd. Which `etcdctl` command creates a point-in-time backup of the etcd database?",
     diagram: null,
     options: [
       "`etcdctl member list --endpoints=https://127.0.0.1:2379` to display all current cluster members list",
       "`etcdctl snapshot save /backup/etcd-snapshot.db --endpoints=... --cacert=... --cert=... --key=...`",
-      "`etcdctl defrag --endpoints=https://127.0.0.1:2379` to reclaim fragmented storage on the database",
+      "`etcdctl snapshot status /backup/etcd-snapshot.db` to verify integrity of an existing etcd snapshot",
       "`etcdctl put /backup/trigger true --endpoints=https://127.0.0.1:2379` to write a backup signal key"
     ],
     answer: 1,
-    explanation: "`etcdctl snapshot save` creates a point-in-time snapshot of the etcd database, which contains all cluster state including Pods, Services, ConfigMaps, and Secrets. The command requires TLS certificate parameters when etcd is configured with client certificate authentication. `member list` shows cluster members, `defrag` compacts the database, and `put` writes a key-value pair.\n\nWhy other options are wrong:\n- A: member list displays cluster members, it does not create a backup snapshot\n- C: defrag reclaims fragmented storage space, it does not create a backup snapshot\n- D: put writes a key-value pair to etcd, it does not create a backup snapshot\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#snapshot-using-etcdctl-options",
+    explanation: "`etcdctl snapshot save` creates a point-in-time snapshot of the etcd database, which contains all cluster state including Pods, Services, ConfigMaps, and Secrets. The command requires TLS certificate parameters when etcd is configured with client certificate authentication. `member list` shows cluster members, `snapshot status` verifies an existing snapshot, and `put` writes a key-value pair.\n\nWhy other options are wrong:\n- A: member list displays cluster members, it does not create a backup snapshot\n- C: snapshot status only verifies the integrity of an existing snapshot file; it does not create one\n- D: put writes a key-value pair to etcd, it does not create a backup snapshot\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#snapshot-using-etcdctl-options",
     verify: "ETCDCTL_API=3 etcdctl snapshot status /backup/etcd-snapshot.db"
   },
   {
@@ -1279,7 +1279,7 @@ var questions = [
       "Sidecar logging — a logging container is injected into every Pod to capture and forward application logs",
       "Node-level logging agent — a DaemonSet reads container logs from `/var/log/containers/` on each node",
       "Application-level logging — each application writes logs directly to a remote centralized logging service",
-      "Event-driven logging — a controller watches Kubernetes `Events` and forwards them as structured log entries"
+      "Event-driven logging — a DaemonSet watches Kubernetes `Events` and forwards them as structured log entries"
     ],
     answer: 1,
     explanation: "The node-level logging agent pattern deploys a DaemonSet (e.g., Fluentd, Fluent Bit, or Filebeat) on every node. The agent reads container log files from the standard node path (`/var/log/containers/`) where the container runtime writes stdout/stderr output. This approach requires no application changes and provides cluster-wide log collection. Sidecar logging adds containers per Pod, which uses more resources.\n\nWhy other options are wrong:\n- A: Sidecar logging injects a container per Pod, not a DaemonSet reading node-level log files\n- C: Application-level logging requires code changes to write directly to a remote service\n- D: Event-driven logging watches K8s Events, not container stdout/stderr log files\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-node-logging-agent",
@@ -1468,13 +1468,13 @@ var questions = [
     text: "A team deploys an application but the Pod shows `CreateContainerConfigError`. The container spec references a Secret named `app-creds` as an environment variable source. The Secret does not exist in the namespace. What is the expected behavior?",
     diagram: null,
     options: [
-      "The Pod starts normally with empty environment variables since the referenced Secret resource is not found in the namespace",
+      "The `CreateContainerConfigError` is transient and resolves automatically once kubelet retries and skips missing refs",
       "The kubelet creates the missing Secret automatically with default empty values and proceeds to start the container Pod",
       "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read the missing credentials",
       "The container cannot start because mandatory env var references to non-existent Secrets cause `CreateContainerConfigError`"
     ],
     answer: 3,
-    explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.\n\nWhy other options are wrong:\n- A: The Pod does NOT start normally; mandatory Secret references cause CreateContainerConfigError\n- B: The kubelet does NOT auto-create missing Secrets; the reference must exist or be marked optional\n- C: The container never starts so it cannot crash; CrashLoopBackOff requires the container to start first\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables",
+    explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.\n\nWhy other options are wrong:\n- A: CreateContainerConfigError is NOT transient; it persists until the Secret is created or the reference is marked optional\n- B: The kubelet does NOT auto-create missing Secrets; the reference must exist or be marked optional\n- C: The container never starts so it cannot crash; CrashLoopBackOff requires the container to start first\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables",
     verify: "kubectl describe pod <pod-name> | grep -A5 Error"
   },
   {
@@ -1516,13 +1516,13 @@ var questions = [
     text: "A Pod is stuck in `Pending` state. Running `kubectl describe pod` shows the event: `0/5 nodes are available: 2 node(s) had taint {node-role.kubernetes.io/control-plane: }, 3 node(s) didn't match Pod's node affinity/selector`. What does this indicate?",
     diagram: null,
     options: [
-      "The Pod's container image cannot be found in the configured container registry endpoint on any node",
+      "The Pod's `nodeAffinity` rule is valid but the container image cannot be pulled from the registry on any node",
       "The Pod has a `nodeSelector` or `nodeAffinity` not matching any worker node, plus control-plane taints",
       "The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster",
       "The Pod's `resource requests` exceed the total combined capacity of all 5 nodes in the cluster group"
     ],
     answer: 1,
-    explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.\n\nWhy other options are wrong:\n- A: Image not found would show ImagePullBackOff, not scheduling failure messages about node matching\n- C: The message shows 2 control-plane + 3 worker nodes = 5 total, not all 5 being control-plane nodes\n- D: Insufficient resources would show 'Insufficient cpu/memory' messages, not node affinity mismatch\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
+    explanation: "The scheduling message indicates two issues: (1) the 2 control-plane nodes have taints that the Pod does not tolerate, making them ineligible, and (2) the remaining 3 worker nodes do not match the Pod's `nodeSelector` or `nodeAffinity` requirements. To fix this, either update the Pod's node affinity to match available worker node labels or add the expected labels to worker nodes.\n\nWhy other options are wrong:\n- A: Image pull failures would show ImagePullBackOff after scheduling, not a scheduling failure message about node matching\n- C: The message shows 2 control-plane + 3 worker nodes = 5 total, not all 5 being control-plane nodes\n- D: Insufficient resources would show 'Insufficient cpu/memory' messages, not node affinity mismatch\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
     verify: "kubectl describe pod <pod-name> | grep -A10 Events"
   },
   {

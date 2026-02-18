@@ -246,7 +246,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Security",
     text: "You need to restrict a container to only use capabilities `NET_BIND_SERVICE` and nothing else. Which `securityContext` configuration achieves this?",
-    diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><text x="200" y="20" text-anchor="middle" fill="#4cc9f0" font-size="12">Capabilities Configuration</text><rect x="20" y="35" width="170" height="65" rx="6" fill="#1a1a2e" stroke="#ff5555" stroke-width="2"/><text x="105" y="55" text-anchor="middle" fill="#ff5555" font-size="11">drop: [?]</text><text x="105" y="75" text-anchor="middle" fill="#6272a4" font-size="9">Which caps to drop?</text><rect x="210" y="35" width="170" height="65" rx="6" fill="#1a1a2e" stroke="#50fa7b" stroke-width="2"/><text x="295" y="55" text-anchor="middle" fill="#50fa7b" font-size="11">add: [?]</text><text x="295" y="80" text-anchor="middle" fill="#6272a4" font-size="9">Which caps to add?</text><rect x="100" y="120" width="200" height="45" rx="6" fill="#16213e" stroke="#f1fa8c" stroke-width="2"/><text x="200" y="140" text-anchor="middle" fill="#f1fa8c" font-size="11">Effective: ?</text><text x="200" y="155" text-anchor="middle" fill="#f8f8f2" font-size="9">minimal privilege</text><line x1="105" y1="100" x2="175" y2="120" stroke="#ff5555" stroke-width="1.5"/><line x1="295" y1="100" x2="225" y2="120" stroke="#50fa7b" stroke-width="1.5"/></svg>',
+    diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><text x="200" y="20" text-anchor="middle" fill="#4cc9f0" font-size="12">Capabilities Configuration</text><rect x="20" y="35" width="170" height="65" rx="6" fill="#1a1a2e" stroke="#ff5555" stroke-width="2"/><text x="105" y="55" text-anchor="middle" fill="#ff5555" font-size="11">drop: [?]</text><text x="105" y="75" text-anchor="middle" fill="#6272a4" font-size="9">Which caps to drop?</text><rect x="210" y="35" width="170" height="65" rx="6" fill="#1a1a2e" stroke="#50fa7b" stroke-width="2"/><text x="295" y="55" text-anchor="middle" fill="#50fa7b" font-size="11">add: [?]</text><text x="295" y="80" text-anchor="middle" fill="#6272a4" font-size="9">Which caps to add?</text><rect x="100" y="120" width="200" height="45" rx="6" fill="#16213e" stroke="#f1fa8c" stroke-width="2"/><text x="200" y="140" text-anchor="middle" fill="#f1fa8c" font-size="11">Effective: ?</text><text x="200" y="155" text-anchor="middle" fill="#f8f8f2" font-size="9">???</text><line x1="105" y1="100" x2="175" y2="120" stroke="#ff5555" stroke-width="1.5"/><line x1="295" y1="100" x2="225" y2="120" stroke="#50fa7b" stroke-width="1.5"/></svg>',
     options: [
       "Set `capabilities: { add: [NET_BIND_SERVICE] }` without dropping any others",
       "Set `capabilities: { drop: [ALL], add: [NET_BIND_SERVICE] }` in the spec",
@@ -601,12 +601,12 @@ var questions = [
     diagram: null,
     options: [
       "Helm automatically encrypts all Secret values embedded in the chart package",
-      "Helm chart templates cannot include Kubernetes Secret resource definitions",
+      "Helm charts in public repositories require signed TLS certificates to install",
       "The default values file may contain sensitive data visible to anyone with access",
       "Public Helm repositories enforce RBAC-based access control on chart downloads"
     ],
     answer: 2,
-    explanation: "Helm values files included in the chart are plaintext and visible to anyone who can access the repository. If default values contain passwords or tokens, they are exposed. Sensitive values should be overridden at install time or managed with tools like Helm Secrets plugin.\n\nWhy other options are wrong:\n- A: Helm does not automatically encrypt Secret values in chart packages\n- B: Helm chart templates can include Secret resource definitions\n- D: Public Helm repositories do not enforce RBAC; anyone with network access can download charts\n\nReference: https://helm.sh/docs/chart_best_practices/values/",
+    explanation: "Helm values files included in the chart are plaintext and visible to anyone who can access the repository. If default values contain passwords or tokens, they are exposed. Sensitive values should be overridden at install time or managed with tools like Helm Secrets plugin.\n\nWhy other options are wrong:\n- A: Helm does not automatically encrypt Secret values in chart packages\n- B: Public Helm repositories do not require signed TLS certificates to install charts\n- D: Public Helm repositories do not enforce RBAC; anyone with network access can download charts\n\nReference: https://helm.sh/docs/chart_best_practices/values/",
     verify: "helm show values <chart> | grep -i secret"
   },
   {
@@ -827,10 +827,10 @@ var questions = [
       "In a fixed order: certificates first, then bearer tokens, then OIDC",
       "The evaluation order is randomized differently for each request",
       "All configured authenticators are tried; the first success is used",
-      "Only one authentication method can be configured and active at once"
+      "Each authenticator is assigned to specific namespaces and evaluated only there"
     ],
     answer: 2,
-    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: While authenticators are evaluated in a deterministic order based on configuration, there is no single canonical sequence; the key behavior is that all are tried and the first success wins\n- B: The order is not randomized; authenticators are tried in a deterministic, configuration-dependent order\n- D: Multiple authentication methods can be configured and active simultaneously\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
+    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: While authenticators are evaluated in a deterministic order based on configuration, there is no single canonical sequence; the key behavior is that all are tried and the first success wins\n- B: The order is not randomized; authenticators are tried in a deterministic, configuration-dependent order\n- D: Authenticators are not scoped to namespaces; they operate cluster-wide on every request\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
     verify: "kubectl get pods -n kube-system kube-apiserver-<node> -o yaml | grep auth"
   },
   {

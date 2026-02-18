@@ -1096,7 +1096,7 @@ var questions = [
     text: "A developer uses `kubectl apply -f deployment.yaml` to create a Deployment. A few minutes later, they modify the YAML file and run the same command again. What happens?",
     diagram: null,
     options: [
-      "Kubernetes rejects the command because the Deployment already exists and cannot be modified with `apply`",
+      "Kubernetes rejects the command because the Deployment already exists and requires `edit` to modify",
       "Kubernetes deletes the existing Deployment and creates a new one from the updated YAML manifest file",
       "Kubernetes performs a three-way merge comparing the last applied config, live state, and new file",
       "Kubernetes creates a duplicate Deployment with an auto-generated suffix to avoid name conflicts"
@@ -1403,7 +1403,7 @@ var questions = [
       "Prometheus, which supports traces, metrics, and logs through its multi-signal receiver",
       "OpenTelemetry Collector, which receives, processes, and exports telemetry neutrally",
       "Grafana Loki, which provides unified collection of all three telemetry signal types",
-      "Fluentd, which has been extended to handle traces and metrics alongside log streams"
+      "Fluentd, which has been extended to export traces and metrics alongside log streams"
     ],
     answer: 1,
     explanation: "The OpenTelemetry Collector is a vendor-neutral agent that can receive, process, and export traces, metrics, and logs. It supports multiple input formats and can export to various backends (Jaeger, Prometheus, Zipkin, commercial vendors). Prometheus primarily handles metrics, not traces or logs. Grafana Loki handles logs, not all three signals. Fluentd handles logs primarily and does not natively process traces and metrics.\n\nWhy other options are wrong:\n- A: Prometheus primarily handles metrics; it does not natively support traces or logs.\n- C: Grafana Loki handles logs only, not all three telemetry signal types.\n- D: Fluentd handles log aggregation primarily; it does not natively process distributed traces or metrics.\n\nReference: https://opentelemetry.io/docs/collector/",
@@ -1547,7 +1547,7 @@ var questions = [
       "The ClusterIP assigned to the Service, which proxies traffic to the external hostname",
       "A CNAME record resolving to `legacy-db.example.com`, with no ClusterIP or proxy used",
       "A direct TCP connection to the external hostname, handled by `kube-proxy` on the node",
-      "An error, because Services cannot reference external resources outside the cluster network"
+      "An error, because Services are generally limited to routing traffic within the cluster network"
     ],
     answer: 1,
     explanation: "An `ExternalName` Service creates a CNAME record in the cluster DNS that maps the Service name to the specified external hostname. No ClusterIP is allocated, and no proxying occurs through kube-proxy. The DNS resolution simply returns the CNAME, and the client connects directly to the external host. This is useful for integrating external services into the Kubernetes service discovery mechanism.\n\nWhy other options are wrong:\n- A: ExternalName Services do not get a ClusterIP and do not proxy traffic.\n- C: kube-proxy does not handle ExternalName resolution; it is purely a DNS CNAME response.\n- D: Services can reference external resources via ExternalName; it is a supported feature.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",

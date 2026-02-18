@@ -142,7 +142,7 @@ var questions = [
       "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
     ],
     answer: 2,
-    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.24, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.24+, omitting `-c` defaults to the first container in the pod spec (beta in 1.27, GA in 1.29), but using `-c` explicitly is the recommended practice for clarity and correctness.\n\nWhy other options are wrong:\n- A: Without -c in multi-container pods, older versions error out; newer versions default to first container, not necessarily the desired one\n- B: kubectl describe does not show container logs; it shows events and resource metadata\n- D: kubectl exec cat reads files inside the container, but the app may not write to that path and this is not the kubectl logs mechanism\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
+    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.24, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.24+, omitting `-c` defaults to the first container in the pod spec (beta in 1.28, GA in 1.29), but using `-c` explicitly is the recommended practice for clarity and correctness.\n\nWhy other options are wrong:\n- A: Without -c in multi-container pods, older versions error out; newer versions default to first container, not necessarily the desired one\n- B: kubectl describe does not show container logs; it shows events and resource metadata\n- D: kubectl exec cat reads files inside the container, but the app may not write to that path and this is not the kubectl logs mechanism\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
     verify: "kubectl logs <pod-name> -c app --tail=20"
   },
   {
@@ -953,12 +953,12 @@ var questions = [
     diagram: null,
     options: [
       "Increasing the timeout values in all upstream services to wait longer for slow responses from Service D",
-      "Adding more replicas to Service D to handle the increased load and reduce its average response latency",
+      "Adding more replicas to Service D so the circuit breaker threshold is never reached under normal load",
       "Deploying all four services in the same pod to eliminate any network latency between service-to-service calls",
       "Implementing the circuit breaker pattern so upstream services fail fast when Service D becomes unhealthy"
     ],
     answer: 3,
-    explanation: "The circuit breaker pattern monitors downstream failures and opens the circuit (stops sending requests) when a failure threshold is reached. This prevents upstream services from waiting on slow/failing downstream calls, breaking the cascade. Service meshes like Istio provide circuit breaker functionality out of the box. Increasing timeouts would actually worsen the cascade.\n\nWhy other options are wrong:\n- A: Increasing timeouts worsens cascading failures by keeping more connections open longer\n- B: Adding replicas may help if load is the issue, but does not break the cascade when the service is genuinely slow\n- C: Deploying all services in one pod violates microservice principles and creates a single point of failure\n\nReference: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+    explanation: "The circuit breaker pattern monitors downstream failures and opens the circuit (stops sending requests) when a failure threshold is reached. This prevents upstream services from waiting on slow/failing downstream calls, breaking the cascade. Service meshes like Istio provide circuit breaker functionality out of the box. Increasing timeouts would actually worsen the cascade.\n\nWhy other options are wrong:\n- A: Increasing timeouts worsens cascading failures by keeping more connections open longer\n- B: Adding replicas may reduce load, but does not implement the circuit breaker pattern itself; a genuinely slow service still causes cascading waits\n- C: Deploying all services in one pod violates microservice principles and creates a single point of failure\n\nReference: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
     verify: null
   },
   {
@@ -1115,7 +1115,7 @@ var questions = [
       "It is `Paused` in place and automatically resumed when cluster resources become available again after rebalancing",
       "It is moved to a different node automatically by the scheduler without any interruption to the running process",
       "It is gracefully terminated and its owner controller creates a replacement that may stay `Pending` if resources are scarce",
-      "It is deleted permanently from the cluster along with its owning controller, requiring a full manual redeployment"
+      "It is terminated along with its owning controller, requiring the operator to redeploy both resources afterward"
     ],
     answer: 2,
     explanation: "Preemption gracefully terminates the lower-priority pod (respecting its `terminationGracePeriodSeconds`). If the pod is managed by a controller like a Deployment or ReplicaSet, the controller creates a replacement pod. However, the replacement may also end up `Pending` if cluster resources remain constrained. Preemption does not migrate pods—it terminates them.\n\nWhy other options are wrong:\n- A: Kubernetes does not pause pods; preempted pods are terminated\n- B: Pod migration is not a Kubernetes feature; pods are terminated and recreated, not live-migrated\n- D: Preemption only terminates the pod, not its owning controller; the controller persists and creates replacements\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
@@ -1305,12 +1305,12 @@ var questions = [
     diagram: null,
     options: [
       "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
-      "ArgoCD does not support webhooks for Git notifications and only polls the repository on a fixed `interval` schedule",
-      "The Kubernetes cluster has reached its maximum number of allowed Deployments in the target namespace now",
-      "Git repositories need a webhook configuration for ArgoCD to detect and process incoming changes efficiently"
+      "ArgoCD caches the last-known Git state and requires a manual `argocd app refresh` to pick up any new commits",
+      "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
+      "ArgoCD's sync process ignores changes to Kustomize overlays and only tracks plain YAML manifests in the repository"
     ],
     answer: 0,
-    explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD supports webhooks for real-time notification of Git changes\n- C: Maximum Deployment count is not a standard Kubernetes or ArgoCD limitation\n- D: Git repositories do not need restarting; ArgoCD polls or receives webhooks automatically\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
+    explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD automatically refreshes via polling (default 3 minutes) and webhooks; a manual refresh is not required\n- C: Resource quotas block pod creation, not ArgoCD's sync detection; the app would show OutOfSync, not Synced\n- D: ArgoCD fully supports Kustomize overlays, Helm charts, and plain YAML; it does not ignore any supported config format\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
     verify: null
   },
   {
@@ -1321,7 +1321,7 @@ var questions = [
     diagram: null,
     options: [
       "The IP addresses of the nodes where the StatefulSet pods are running, returned through the cluster DNS system",
-      "Multiple cluster IPs allocated to the Service for load balancing across the StatefulSet pod member instances",
+      "Multiple virtual IPs allocated by the headless Service for load balancing across the StatefulSet pod instances",
       "The IP addresses of the `kube-proxy` instances on each node that handle traffic routing for this Service type",
       "The individual pod IPs of each StatefulSet member, since a headless Service returns pod IPs instead of a VIP"
     ],

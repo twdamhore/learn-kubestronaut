@@ -362,7 +362,7 @@ var questions = [
     options: [
       "The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
-      "DNS resolution maps Service ClusterIP addresses to internal IP ranges rather than supporting hostname-based queries",
+      "CoreDNS maps ClusterIP addresses to IP ranges and does not support hostname-based Service lookups",
       "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
     ],
     answer: 3,
@@ -600,10 +600,10 @@ var questions = [
     text: "A team is containerizing their application and debating how to handle configuration. One engineer suggests baking database credentials into the container image for simplicity. According to cloud-native best practices, why is this problematic?",
     diagram: null,
     options: [
-      "Baking credentials into the image is acceptable as long as the registry uses TLS for image pulls",
-      "Baking credentials into the image violates config-from-code separation and creates security risks requiring rebuilds per environment",
-      "Container registries scan and redact embedded credentials from image layers automatically during push",
-      "Embedding credentials is acceptable if the image is stored in a private registry with strict access controls"
+      "Baking credentials into the image is acceptable as long as the container registry enforces TLS for pulls",
+      "It violates config-from-code separation and creates security risks that require rebuilds per environment",
+      "Container registries scan and automatically redact embedded credentials from image layers during push",
+      "Embedding credentials is acceptable if the image is stored in a private registry with access controls"
     ],
     answer: 1,
     explanation: "Cloud-native applications should externalize configuration, especially secrets, from the container image. Embedding credentials in the image means the same image cannot be used across environments without rebuilding, the credentials are exposed to anyone with image pull access, and rotation requires a new image build and deployment cycle. Kubernetes Secrets or external secret managers should be used instead.\n\nWhy other options are wrong:\n- A: TLS protects images in transit but does not protect credentials embedded inside image layers from anyone with pull access\n- C: Container registries store images as-is and do not scan or redact embedded credentials from layers\n- D: Storing an image in a private registry limits who can pull it but does not address credential rotation, environment coupling, or layer inspection risks\n\nReference: https://12factor.net/config",
@@ -664,10 +664,10 @@ var questions = [
     text: "A multi-tenant Kubernetes cluster has two teams, each with their own namespace: <code>team-alpha</code> and <code>team-beta</code>. By default, Pods in both namespaces can communicate freely. The cluster admin wants to implement a default-deny ingress policy for the <code>team-beta</code> namespace. Which NetworkPolicy achieves this?",
     diagram: null,
     options: [
-      "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke network access",
+      "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke all network access",
       "A NetworkPolicy selecting all Pods with <code>policyTypes: [\"Egress\"]</code> and no egress rules defined",
-      "A default-deny <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> blocking all inbound traffic",
-      "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace object"
+      "A <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> in that namespace",
+      "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace metadata"
     ],
     answer: 2,
     explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods) and `policyTypes: [\"Ingress\"]` creates a default-deny ingress rule for the entire namespace. Either omitting the `ingress` field entirely or setting it to an empty array (`ingress: []`) achieves the same default-deny effect — both result in no ingress being allowed. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.\n\nWhy other options are wrong:\n- A: Deleting the default ServiceAccount does not affect network access; ServiceAccounts control API auth\n- B: A policy with policyTypes Egress and no egress rules denies egress, not ingress traffic\n- D: Annotations on namespaces do not enforce network isolation; only NetworkPolicy objects do\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-ingress-traffic",
@@ -729,12 +729,12 @@ var questions = [
     diagram: null,
     options: [
       "CI/CD pipelines bypass audit trails and allow cluster state to diverge from version-controlled manifests",
-      "The <code>kubectl apply</code> command is deprecated and will be removed in upcoming future Kubernetes versions",
-      "The kubectl apply command sends image references to the cluster but does not verify image signatures, leaving the pipeline vulnerable to supply-chain attacks",
-      "Push-based deployments introduce latency because kubectl must wait for image pull completion on every node before reporting success"
+      "The <code>kubectl apply</code> command is deprecated and scheduled for removal in upcoming Kubernetes releases",
+      "The <code>kubectl apply</code> command does not verify container image signatures before updating Deployments",
+      "Push-based deployments add latency because kubectl waits for image pulls on every node before returning"
     ],
     answer: 0,
-    explanation: "Directly calling `kubectl apply` from CI/CD pipelines (push-based deployment) requires the pipeline to have cluster credentials, which is a security risk. It also means the cluster state may drift from what is in version control if manual changes are made. GitOps approaches (pull-based, using tools like Argo CD or Flux) mitigate these issues by making Git the single source of truth.\n\nWhy other options are wrong:\n- B: kubectl apply is not deprecated; it remains a core kubectl command in all current versions\n- C: kubectl apply does not verify image signatures, but that is an image verification concern, not the primary risk of push-based deployment itself\n- D: kubectl apply returns once the API server accepts the manifest; it does not wait for image pulls on every node\n\nReference: https://www.gitops.tech/",
+    explanation: "Directly calling `kubectl apply` from CI/CD pipelines (push-based deployment) requires the pipeline to have cluster credentials, which is a security risk. It also means the cluster state may drift from what is in version control if manual changes are made. GitOps approaches (pull-based, using tools like Argo CD or Flux) mitigate these issues by making Git the single source of truth.\n\nWhy other options are wrong:\n- B: kubectl apply is not deprecated; it remains a core kubectl command in all current versions\n- C: Image signature verification is a supply-chain concern, not the primary risk of push-based deployment itself\n- D: kubectl apply returns once the API server accepts the manifest; it does not wait for image pulls on every node\n\nReference: https://www.gitops.tech/",
     verify: null
   },
   {
@@ -827,10 +827,10 @@ var questions = [
       "The <code>exec</code> verb on the <code>pods</code> resource in the Role within the <code>dev</code> namespace",
       "The <code>update</code> verb on the <code>pods</code> resource in the Role within the <code>dev</code> namespace",
       "The <code>create</code> verb on the <code>pods/exec</code> subresource in the Role for this namespace",
-      "The <code>delete</code> verb on the <code>pods</code> resource in the Role, since exec operations are treated as destructive actions by RBAC"
+      "The <code>delete</code> verb on the <code>pods</code> resource in the Role for the <code>dev</code> namespace"
     ],
     answer: 2,
-    explanation: "In Kubernetes RBAC, `kubectl exec` creates an exec subresource on the Pod. The required permission is the `create` verb on the `pods/exec` subresource, not a verb on the `pods` resource itself. Similarly, `kubectl port-forward` requires `create` on `pods/portforward`, and `kubectl logs` requires `get` on `pods/log`.\n\nWhy other options are wrong:\n- A: There is no exec verb on pods resource; exec is a subresource requiring create on pods/exec\n- B: The update verb on pods allows modifying Pod specs, not executing commands inside containers\n- D: The delete verb on pods allows deleting Pods, not executing commands; exec is a subresource operation, not a destructive action\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    explanation: "In Kubernetes RBAC, `kubectl exec` creates an exec subresource on the Pod. The required permission is the `create` verb on the `pods/exec` subresource, not a verb on the `pods` resource itself. Similarly, `kubectl port-forward` requires `create` on `pods/portforward`, and `kubectl logs` requires `get` on `pods/log`.\n\nWhy other options are wrong:\n- A: There is no exec verb on pods resource; exec is a subresource requiring create on pods/exec\n- B: The update verb on pods allows modifying Pod specs, not executing commands inside containers\n- D: The delete verb on pods allows deleting Pods, not executing commands inside containers\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i create pods/exec -n dev --as=<user>"
   },
   {
@@ -1560,10 +1560,10 @@ var questions = [
     text: "A Kubernetes cluster uses the <code>admission webhook</code> mechanism. A ValidatingWebhookConfiguration is configured to validate all Pod creation requests. If the webhook endpoint is unreachable, what happens to Pod creation attempts by default?",
     diagram: null,
     options: [
-      "The <code>failurePolicy</code> field controls whether the API server rejects (<code>Fail</code>) or allows (<code>Ignore</code>) requests when the webhook is unreachable",
-      "The API server retries the webhook indefinitely until the endpoint becomes available and responds back",
-      "All admission webhooks in the cluster are automatically disabled when any single <code>webhook</code> is unreachable",
-      "Pod creation proceeds normally because validating admission webhooks are advisory only and never block"
+      "The <code>failurePolicy</code> field determines whether the API server rejects or allows requests when unreachable",
+      "The API server retries the webhook call indefinitely until the endpoint becomes reachable and responds",
+      "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
+      "Pod creation proceeds normally because validating admission webhooks are advisory and do not block requests"
     ],
     answer: 0,
     explanation: "The `failurePolicy` field in a webhook configuration determines behavior when the webhook endpoint is unreachable. The default is `Fail`, which rejects the API request to ensure that validation cannot be bypassed. Setting it to `Ignore` allows the request to proceed, which is less secure but prevents webhook outages from blocking cluster operations.\n\nWhy other options are wrong:\n- B: The API server does not retry webhooks indefinitely; it respects the failurePolicy setting\n- C: Other webhooks are not affected; each webhook's failurePolicy is evaluated independently\n- D: Validating webhooks can block requests with Fail policy; they are not advisory-only by default\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy",

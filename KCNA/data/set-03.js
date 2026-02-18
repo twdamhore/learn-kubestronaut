@@ -298,7 +298,7 @@ var questions = [
     options: [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
       "Flannel — a CNCF project providing overlay networking with a basic dataplane",
-      "kube-router — a networking project using BGP with an iptables dataplane",
+      "kube-router — a networking project using BGP with NetworkPolicy via iptables",
       "Multus — a CNCF sandbox project that attaches multiple network interfaces to pods"
     ],
     answer: 0,
@@ -518,7 +518,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
     text: "Which Kubernetes component watches for Service and Endpoint changes and updates the network rules on each node?",
-    diagram: '<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="30" rx="4" fill="#326CE5"/><text x="200" y="25" text-anchor="middle" fill="#fff" font-size="11">API Server</text><line x1="200" y1="35" x2="200" y2="60" stroke="#999" stroke-width="1.5"/><text x="210" y="52" fill="#ccc" font-size="9">watch</text><rect x="130" y="60" width="140" height="30" rx="4" fill="#FF9800"/><text x="200" y="80" text-anchor="middle" fill="#fff" font-size="11">? (component)</text><line x1="140" y1="90" x2="60" y2="120" stroke="#999" stroke-width="1"/><line x1="200" y1="90" x2="200" y2="120" stroke="#999" stroke-width="1"/><line x1="260" y1="90" x2="340" y2="120" stroke="#999" stroke-width="1"/><rect x="10" y="120" width="100" height="25" rx="3" fill="#555"/><text x="60" y="137" text-anchor="middle" fill="#fff" font-size="9">iptables/IPVS</text><rect x="150" y="120" width="100" height="25" rx="3" fill="#555"/><text x="200" y="137" text-anchor="middle" fill="#fff" font-size="9">iptables/IPVS</text><rect x="290" y="120" width="100" height="25" rx="3" fill="#555"/><text x="340" y="137" text-anchor="middle" fill="#fff" font-size="9">iptables/IPVS</text><text x="60" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 1</text><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 2</text><text x="340" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 3</text></svg>',
+    diagram: '<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="30" rx="4" fill="#326CE5"/><text x="200" y="25" text-anchor="middle" fill="#fff" font-size="11">API Server</text><line x1="200" y1="35" x2="200" y2="60" stroke="#999" stroke-width="1.5"/><text x="210" y="52" fill="#ccc" font-size="9">watch</text><rect x="130" y="60" width="140" height="30" rx="4" fill="#FF9800"/><text x="200" y="80" text-anchor="middle" fill="#fff" font-size="11">? (component)</text><line x1="140" y1="90" x2="60" y2="120" stroke="#999" stroke-width="1"/><line x1="200" y1="90" x2="200" y2="120" stroke="#999" stroke-width="1"/><line x1="260" y1="90" x2="340" y2="120" stroke="#999" stroke-width="1"/><rect x="10" y="120" width="100" height="25" rx="3" fill="#555"/><text x="60" y="137" text-anchor="middle" fill="#fff" font-size="9">network rules</text><rect x="150" y="120" width="100" height="25" rx="3" fill="#555"/><text x="200" y="137" text-anchor="middle" fill="#fff" font-size="9">network rules</text><rect x="290" y="120" width="100" height="25" rx="3" fill="#555"/><text x="340" y="137" text-anchor="middle" fill="#fff" font-size="9">network rules</text><text x="60" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 1</text><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 2</text><text x="340" y="155" text-anchor="middle" fill="#aaa" font-size="8">Node 3</text></svg>',
     options: [
       "kubelet — the primary node agent that manages pod lifecycle on nodes",
       "kube-proxy — the component that programs network forwarding rules",
@@ -750,7 +750,7 @@ var questions = [
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "kube-state-metrics exposes endpoint address metrics with a `ready` label (`true` or `false`). Alerting when the count of ready endpoint addresses equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_address_available` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_address_available` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
+    explanation: "kube-state-metrics exposes endpoint address metrics with a `ready` label (`true` or `false`). Alerting when the count of ready endpoint addresses equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_ready_count` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_ready_count` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
     verify: null
   },
   {
@@ -874,7 +874,7 @@ var questions = [
     options: [
       "It serves as a health check endpoint for the `Ingress` controller to verify backend pod availability",
       "It redirects all HTTPS traffic to HTTP on port 80 for unencrypted `backend` service communications",
-      "It defines the primary backend service that takes higher priority over all other `Ingress` rule sets",
+      "It makes `fallback-svc` the primary backend that takes higher priority over all other Ingress rules",
       "It routes requests not matching any defined host or path rule to the `fallback-svc` backend"
     ],
     answer: 3,
@@ -981,7 +981,7 @@ var questions = [
     id: "s03-q062",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "An operator wants pods of a network-intensive application to be spread across different failure zones to survive a zone outage. Which scheduling feature achieves this?",
+    text: "An operator wants pods of a network-intensive application to be distributed across different failure zones to survive a zone outage. Which scheduling feature achieves this?",
     diagram: null,
     options: [
       "`nodeSelector` with a specific zone label to place pods on nodes in the target zone",
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A team configures an Ingress with `ingressClassName: nginx`. The cluster has two Ingress controllers: one with class `nginx` and another with class `traefik`. What determines which controller processes this Ingress?",
     diagram: null,
     options: [
-      "The controller matching `nginx` that was installed first in the cluster takes priority over any newer one",
+      "The controller matching the `IngressClass` that was installed first in the cluster takes priority",
       "Both controllers process the `Ingress` simultaneously and the first to respond wins the route",
       "The `kube-apiserver` assigns the Ingress to the controller with the least current load value",
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
@@ -1482,7 +1482,7 @@ var questions = [
     options: [
       "The kube-scheduler dispatching pods to nodes in the cluster",
       "The kubelet's HTTP server on the affected node under pressure",
-      "CoreDNS handling DNS resolution queries from cluster pods now",
+      "CoreDNS handling DNS resolution queries forwarded by the kubelet",
       "The Ingress controller proxying external requests to backends"
     ],
     answer: 1,
