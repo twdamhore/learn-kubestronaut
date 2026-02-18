@@ -233,12 +233,12 @@ var questions = [
     diagram: null,
     options: [
       "A. Blue-green node pool replacement",
-      "B. In-place rolling update on nodes",
+      "B. In-place rolling update on the existing pool",
       "C. Canary deployment of new version",
       "D. Recreate strategy replacing all"
     ],
     answer: 0,
-    explanation: "This is a blue-green node replacement strategy where a new set of nodes (green) is provisioned alongside existing nodes (blue). Workloads are migrated by cordoning and draining old nodes. Once verified, old nodes are decommissioned, enabling quick rollback by keeping them temporarily.\n\nWhy other options are wrong:\n- B: In-place rolling update upgrades nodes one at a time in-place, not by creating a parallel pool\n- C: Canary deployment upgrades a single node first to validate, not a full parallel pool\n- D: Recreate strategy would take everything down at once, not run parallel pools\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
+    explanation: "This is a blue-green node replacement strategy where a new set of nodes (green) is provisioned alongside existing nodes (blue). Workloads are migrated by cordoning and draining old nodes. Once verified, old nodes are decommissioned, enabling quick rollback by keeping them temporarily.\n\nWhy other options are wrong:\n- B: In-place rolling update upgrades nodes one at a time within the existing pool, not by creating a parallel pool\n- C: Canary deployment upgrades a single node first to validate, not a full parallel pool\n- D: Recreate strategy would take everything down at once, not run parallel pools\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
     verify: "kubectl get nodes --show-labels"
   },
   {
@@ -744,13 +744,13 @@ var questions = [
     text: "A critical system Pod uses the built-in PriorityClass <code>system-node-critical</code>. What scheduling priority does this grant?",
     diagram: null,
     options: [
-      "A. Priority value of 1000, scheduled before default-priority Pods only",
+      "A. Priority value of 1000, lower than other built-in classes",
       "B. Priority value of 2000001000, the highest built-in priority class",
       "C. Same as default priority but with guaranteed resource allocation",
       "D. Priority value of 100000000, ranked above the cluster-critical one"
     ],
     answer: 1,
-    explanation: "`system-node-critical` has a priority value of 2000001000, making it one of the highest built-in priority classes. It is intended for Pods essential to node operation such as kube-proxy. `system-cluster-critical` has a slightly lower value of 2000000000.\n\nWhy other options are wrong:\n- A: Priority value 1000 is far lower than system-node-critical; it is a typical user-defined priority\n- C: system-node-critical is not same as default priority; it has a specific very high value\n- D: 100000000 is not the value; system-node-critical is 2000001000, higher than system-cluster-critical at 2000000000\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    explanation: "`system-node-critical` has a priority value of 2000001000, making it one of the highest built-in priority classes. It is intended for Pods essential to node operation such as kube-proxy. `system-cluster-critical` has a slightly lower value of 2000000000.\n\nWhy other options are wrong:\n- A: Priority value 1000 is far lower than system-node-critical; it is a typical user-defined priority, not a built-in class value\n- C: system-node-critical is not same as default priority; it has a specific very high value\n- D: 100000000 is not the value; system-node-critical is 2000001000, higher than system-cluster-critical at 2000000000\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass system-node-critical"
   },
   {
@@ -858,7 +858,7 @@ var questions = [
     options: [
       "A. The ReplicaSet controller creates replacement Pods on other nodes",
       "B. The Pods are moved to another node with their full state preserved",
-      "C. The Pods are terminated and must then be manually recreated",
+      "C. The Pods are terminated and may need to be manually recreated by an admin",
       "D. The ReplicaSet is scaled to zero until the drained node returns"
     ],
     answer: 0,
@@ -1130,7 +1130,7 @@ var questions = [
     options: [
       "A. Services and DNS automatically resolve to the new Pod IP via endpoint updates",
       "B. The old IP address is preserved through a transparent IP address migration step",
-      "C. Other Pods must be restarted to discover the newly assigned IP of the new Pod",
+      "C. Other Pods may need a rolling restart to pick up the newly assigned Pod IP",
       "D. The CNI plugin broadcasts the new IP address to all other nodes in the cluster"
     ],
     answer: 0,
@@ -1272,13 +1272,13 @@ var questions = [
     text: "In a kubeadm cluster, where are the static Pod manifests for control-plane components stored by default?",
     diagram: null,
     options: [
-      "A. `/var/lib/kubelet/config.yaml` file",
+      "A. `/var/lib/kubelet/manifests/` directory",
       "B. `/opt/cni/bin/` plugin directory",
       "C. `/etc/kubernetes/manifests/` path",
       "D. `/etc/containerd/config.toml` file"
     ],
     answer: 2,
-    explanation: "kubeadm places static Pod manifests for kube-apiserver, kube-controller-manager, kube-scheduler, and etcd in `/etc/kubernetes/manifests/`. The kubelet watches this directory and automatically creates or updates Pods when manifests change.\n\nWhy other options are wrong:\n- A: /var/lib/kubelet/config.yaml is the kubelet configuration file, not static Pod manifests\n- B: /opt/cni/bin/ stores CNI plugin binaries, not Pod manifests\n- D: /etc/containerd/config.toml is the containerd runtime configuration, not Pod manifests\n\nReference: https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/#constants-and-well-known-values-and-paths",
+    explanation: "kubeadm places static Pod manifests for kube-apiserver, kube-controller-manager, kube-scheduler, and etcd in `/etc/kubernetes/manifests/`. The kubelet watches this directory and automatically creates or updates Pods when manifests change.\n\nWhy other options are wrong:\n- A: /var/lib/kubelet/manifests/ is not the default path; kubeadm uses /etc/kubernetes/manifests/\n- B: /opt/cni/bin/ stores CNI plugin binaries, not Pod manifests\n- D: /etc/containerd/config.toml is the containerd runtime configuration, not Pod manifests\n\nReference: https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/#constants-and-well-known-values-and-paths",
     verify: "ls /etc/kubernetes/manifests/"
   },
   {
@@ -1371,10 +1371,10 @@ var questions = [
       "A. A new PVC is created for the rescheduled Pod and the old data is abandoned",
       "B. The existing PVC is reused and the PV is attached to the new node",
       "C. The PVC is deleted and the data stored on the PersistentVolume is then lost",
-      "D. The Pod cannot start until it is manually rebound to the original target node"
+      "D. The Pod may remain pending until an admin rebinds the PVC to the original node"
     ],
     answer: 1,
-    explanation: "StatefulSet PVCs persist across Pod rescheduling. The existing PVC maintains its binding to the PV. Since the storage is network-attached, the PV can be detached from the old node and attached to the new node where the Pod is rescheduled, preserving data.\n\nWhy other options are wrong:\n- A: StatefulSet PVCs persist and are reused; new PVCs are not created for rescheduled Pods\n- C: PVCs are not deleted when StatefulSet Pods are rescheduled; they maintain their binding\n- D: Network-attached storage can be attached to the new node; manual rebinding to the original node is not required\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    explanation: "StatefulSet PVCs persist across Pod rescheduling. The existing PVC maintains its binding to the PV. Since the storage is network-attached, the PV can be detached from the old node and attached to the new node where the Pod is rescheduled, preserving data.\n\nWhy other options are wrong:\n- A: StatefulSet PVCs persist and are reused; new PVCs are not created for rescheduled Pods\n- C: PVCs are not deleted when StatefulSet Pods are rescheduled; they maintain their binding\n- D: Network-attached storage can be detached and reattached to the new node automatically; rebinding to the original node is not required\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc"
   },
   {
@@ -1465,7 +1465,7 @@ var questions = [
     diagram: null,
     options: [
       "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` label for the scheduler",
-      "B. `status.conditions` adds a new `Schedulable: False` condition to the node",
+      "B. `status.conditions` adds a `Schedulable: False` condition to signal unavailability",
       "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled: true`",
       "D. `spec.unschedulable` is set to `true` signaling the scheduler to skip it"
     ],

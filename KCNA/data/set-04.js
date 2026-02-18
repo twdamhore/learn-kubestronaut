@@ -91,10 +91,10 @@ var questions = [
       "Store all data in local container filesystems for optimal read and write performance at runtime",
       "Embed database drivers directly into the application binary to avoid any external service dependencies",
       "Treat backing services like databases as attached resources swapped without code changes",
-      "Use only in-memory storage inside the application process to maintain strict process statelessness"
+      "Treat in-memory caching as the primary data management strategy, avoiding external backing services for simplicity"
     ],
     answer: 2,
-    explanation: "The Twelve-Factor App methodology treats backing services (databases, caches, message queues) as attached resources, accessed via configuration. This means a MySQL database should be consumable via a URL and swappable without any code changes. This decouples the application from specific storage implementations.\n\nWhy other options are wrong:\n- A: Storing data in local container filesystems violates factor VI (processes should be stateless) and factor IV (backing services as attached resources)\n- B: Embedding drivers violates the principle of treating backing services as swappable attached resources\n- D: In-memory-only storage is not a data persistence strategy; it conflicts with the concept of durable backing services\n\nReference: https://12factor.net/backing-services",
+    explanation: "The Twelve-Factor App methodology treats backing services (databases, caches, message queues) as attached resources, accessed via configuration. This means a MySQL database should be consumable via a URL and swappable without any code changes. This decouples the application from specific storage implementations.\n\nWhy other options are wrong:\n- A: Storing data in local container filesystems violates factor VI (processes should be stateless) and factor IV (backing services as attached resources)\n- B: Embedding drivers violates the principle of treating backing services as swappable attached resources\n- D: Relying on in-memory caching as the primary strategy avoids external backing services, which directly contradicts factor IV (backing services as attached resources)\n\nReference: https://12factor.net/backing-services",
     verify: null
   },
   {
@@ -152,7 +152,7 @@ var questions = [
     text: "A pod mounts a `configMap` volume to provide configuration files to the application. After updating the ConfigMap data with `kubectl edit configmap`, how does Kubernetes propagate the change to running pods?",
     diagram: null,
     options: [
-      "The pod must be restarted manually because ConfigMap volumes are never updated after initial mount",
+      "ConfigMap volume mounts reflect only the state at initial mount time, requiring a pod restart to pick up changes",
       "The API server pushes changes directly to the container filesystem in real time via a streaming API",
       "A new pod is automatically created by the controller to replace the one using the outdated ConfigMap",
       "The kubelet periodically syncs mounted ConfigMap volumes, updating the files without a pod restart"
@@ -347,10 +347,10 @@ var questions = [
       "Use local node storage combined with manual backup scripts that are run periodically via cron jobs",
       "Deploy a distributed storage solution like Ceph via Rook that provides replication and self-healing",
       "Store all data on a single NFS server located outside the cluster to centralize data management tasks",
-      "Disable all persistence entirely and rely on application-level in-memory caching for data management"
+      "Use application-managed in-memory replication across pods, avoiding external storage dependencies for simplicity"
     ],
     answer: 1,
-    explanation: "Cloud-native storage practices favor distributed, software-defined storage systems that provide replication, self-healing, and are managed declaratively within Kubernetes. Solutions like Ceph (managed by Rook) align with these principles by treating storage as code and automating operations. Single points of failure like a standalone NFS server do not meet HA requirements.\n\nWhy other options are wrong:\n- A: Manual backup scripts with local storage lack self-healing and automated replication\n- C: A single NFS server is a single point of failure and does not provide self-healing distributed storage\n- D: Disabling persistence entirely is not viable for stateful applications requiring data durability\n\nReference: https://rook.io/docs/rook/latest/Getting-Started/intro/",
+    explanation: "Cloud-native storage practices favor distributed, software-defined storage systems that provide replication, self-healing, and are managed declaratively within Kubernetes. Solutions like Ceph (managed by Rook) align with these principles by treating storage as code and automating operations. Single points of failure like a standalone NFS server do not meet HA requirements.\n\nWhy other options are wrong:\n- A: Manual backup scripts with local storage lack self-healing and automated replication\n- C: A single NFS server is a single point of failure and does not provide self-healing distributed storage\n- D: In-memory replication across pods is not durable storage; pod failures would cause data loss for stateful applications\n\nReference: https://rook.io/docs/rook/latest/Getting-Started/intro/",
     verify: null
   },
   {
@@ -664,13 +664,13 @@ var questions = [
     text: "A microservices application uses the Event Sourcing pattern to store state changes. Each microservice writes events to an append-only event store. What is the primary benefit of this pattern for stateful microservices?",
     diagram: null,
     options: [
-      "It eliminates the need for any persistent storage by keeping all state exclusively in memory caches",
+      "It reduces latency by caching frequently accessed events in memory rather than querying the event store for each read",
       "It reduces storage costs by compressing and deduplicating all events into a single compacted record",
       "It ensures that all microservices share the same database schema for consistent cross-service queries",
       "It provides a full audit trail and enables state reconstruction from the event history at any point"
     ],
     answer: 3,
-    explanation: "Event Sourcing stores every state change as an immutable event. This provides a complete audit trail, enables temporal queries (state at any point in time), and supports event replay for debugging or rebuilding state. It is commonly used with CQRS (Command Query Responsibility Segregation) in microservices that require reliable state management.\n\nWhy other options are wrong:\n- A: Event Sourcing still requires persistent storage for the event store; it does not eliminate persistence\n- B: Events are stored individually; they are not compressed or deduplicated into a single record\n- C: Event Sourcing gives each service its own event store; services do not share database schemas\n\nReference: https://microservices.io/patterns/data/event-sourcing.html",
+    explanation: "Event Sourcing stores every state change as an immutable event. This provides a complete audit trail, enables temporal queries (state at any point in time), and supports event replay for debugging or rebuilding state. It is commonly used with CQRS (Command Query Responsibility Segregation) in microservices that require reliable state management.\n\nWhy other options are wrong:\n- A: Caching is a read optimization, not the primary benefit of Event Sourcing; the pattern's core value is the immutable event log itself\n- B: Events are stored individually; they are not compressed or deduplicated into a single record\n- C: Event Sourcing gives each service its own event store; services do not share database schemas\n\nReference: https://microservices.io/patterns/data/event-sourcing.html",
     verify: null
   },
   {
@@ -682,7 +682,7 @@ var questions = [
     options: [
       "`spec.selector` on the PVC, which accepts `matchLabels` to restrict binding to PVs with matching labels",
       "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC exists",
-      "`spec.nodeAffinity` restricts which nodes can mount the PV but does not control PVC label matching",
+      "`spec.nodeAffinity` acts as a node-level selector restricting which nodes can mount the PV, not PVC label matching",
       "`spec.storageClassName` ensures only PVCs with the matching class can bind but not by label value"
     ],
     answer: 0,
@@ -1035,7 +1035,7 @@ var questions = [
       "Prioritize the cheapest storage option to minimize infrastructure costs even if performance differs",
       "Match the storage type to the workload's I/O pattern, durability needs, and horizontal scaling goals",
       "Prefer local volumes for their performance advantages and accept the trade-off in availability",
-      "Use only object storage because it is considered the most cloud-native and portable storage option"
+      "Prefer object storage as the default choice given its broad API support and portability across cloud providers"
     ],
     answer: 1,
     explanation: "Cloud-native storage decisions should be driven by workload requirements. Local volumes offer lowest latency but lack replication. Network-attached block storage provides durability with moderate latency. Object storage scales infinitely but has higher latency. The correct choice depends on I/O patterns (random vs. sequential), durability needs, and horizontal scaling requirements.\n\nWhy other options are wrong:\n- A: Cheapest storage may not meet performance or durability requirements for the workload\n- C: Local volumes provide maximum performance but lack availability if the node fails\n- D: Object storage has higher latency and may not suit all workloads that need block-level I/O patterns\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/",
@@ -1530,7 +1530,7 @@ var questions = [
     options: [
       "They are identical; `ReadWriteOncePod` is just an alias for the `ReadWriteOnce` access mode in the API",
       "`ReadWriteOncePod` allows multiple pods to mount the volume but only one pod at a time can write to it",
-      "`ReadWriteOncePod` is only for ephemeral volumes and cannot be used with PersistentVolumeClaim resources",
+      "`ReadWriteOncePod` targets ephemeral CSI volumes and has limited integration with PersistentVolumeClaim workflows",
       "`ReadWriteOncePod` restricts the volume to exactly one pod across the entire cluster, not just one node"
     ],
     answer: 3,
@@ -1566,7 +1566,7 @@ var questions = [
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
     answer: 1,
-    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate. The feature progressed from alpha to beta in Kubernetes 1.30 (enabled by default). While the default rolling update strategy updates one pod at a time, `maxUnavailable` is the only parameter that lets you explicitly control update parallelism in a StatefulSet spec. Setting `maxUnavailable: 2` allows two pods to be updated simultaneously, speeding up rollouts at the cost of reduced availability during the update window. On clusters running Kubernetes < 1.30 or where the feature gate is explicitly disabled, this field is silently ignored.\n\nWhy other options are wrong:\n- A: minReadySeconds controls how long a pod must be ready before proceeding, not the maximum unavailable count\n- C: The replica count defines how many pods should run, not how many can be unavailable during updates\n- D: revisionHistoryLimit controls retained ControllerRevision objects, not update parallelism\n\nReference: https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/",
+    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate. Because it is feature-gated, the cluster administrator must explicitly enable it for the field to take effect. While the default rolling update strategy updates one pod at a time, `maxUnavailable` is the only parameter that lets you explicitly control update parallelism in a StatefulSet spec. Setting `maxUnavailable: 2` allows two pods to be updated simultaneously, speeding up rollouts at the cost of reduced availability during the update window. On clusters where the feature gate is not enabled, this field is silently ignored.\n\nWhy other options are wrong:\n- A: minReadySeconds controls how long a pod must be ready before proceeding, not the maximum unavailable count\n- C: The replica count defines how many pods should run, not how many can be unavailable during updates\n- D: revisionHistoryLimit controls retained ControllerRevision objects, not update parallelism\n\nReference: https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {

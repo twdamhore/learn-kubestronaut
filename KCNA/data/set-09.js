@@ -155,7 +155,7 @@ var questions = [
       "Adding a circuit breaker pattern to fail fast when a downstream service is unavailable and prevent cascading failures",
       "Merging the payment and order services back into a single monolith to reduce inter-service network hops",
       "Implementing synchronous retries with exponential backoff and jitter across all dependent services",
-      "Deploying all services onto a single node to eliminate network latency between microservice containers entirely"
+      "Deploying most services onto a shared node to reduce network latency between microservice containers"
     ],
     answer: 0,
     explanation: "The circuit breaker pattern monitors failures to a downstream service and, after a threshold is reached, trips the circuit to return errors immediately instead of waiting for timeouts. This prevents cascading failures by isolating the unhealthy service. Libraries like Istio's outlier detection or Resilience4j implement this pattern.\n\nWhy other options are wrong:\n- B: Re-merging into a monolith reverses the microservices migration and does not address the resilience issue\n- C: Retries with backoff can worsen cascading failures by adding more load to an already failing service\n- D: Deploying all services on one node creates a single point of failure and does not fix cascading timeouts\n\nReference: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
@@ -216,7 +216,7 @@ var questions = [
     text: "An application team creates a ConfigMap named <code>app-config</code> and mounts it as a volume in their Pod at <code>/etc/config</code>. They update the ConfigMap data using <code>kubectl edit configmap app-config</code>. After a few minutes, the files in the mounted volume reflect the new values. However, the application still uses the old configuration. Why?",
     diagram: null,
     options: [
-      "ConfigMap volume mounts are immutable after Pod creation and never update their contents on disk",
+      "ConfigMap volume mounts are cached at creation time and rarely refresh their contents without a pod restart",
       "Updated ConfigMaps require a new PersistentVolumeClaim to propagate the changed data to the Pod",
       "The application reads configuration only at startup and does not watch for file changes on disk",
       "The kubelet only syncs ConfigMap updates during scheduled node restarts or maintenance windows"
@@ -522,7 +522,7 @@ var questions = [
     options: [
       "<code>kubectl get all</code> does not include ConfigMaps; it returns only a predefined subset of resource types",
       "Label selectors cannot filter ConfigMaps because they are namespace-scoped rather than cluster-scoped",
-      "ConfigMaps do not support labels in Kubernetes and therefore cannot be filtered using label selectors",
+      "ConfigMaps have limited label support and are not commonly filtered using label selectors in production",
       "The <code>-l</code> flag only works with workload resources like Deployments, not configuration resources"
     ],
     answer: 0,
@@ -618,7 +618,7 @@ var questions = [
     options: [
       "It cordons the node and evicts all non-DaemonSet, non-mirror Pods while respecting PodDisruptionBudgets",
       "It stops the kubelet process on the node, archives all container logs, and marks the node as unavailable",
-      "It deletes the node object from the cluster, permanently removing it from the API server's node registry",
+      "It deletes the node object from the cluster, removing it from the scheduler's active node registry until re-added",
       "It live-migrates all running containers from the node to other available nodes without restarting them"
     ],
     answer: 0,
@@ -745,9 +745,9 @@ var questions = [
     diagram: null,
     options: [
       "A single A record for the Service name that load-balances across all Pod IPs using <code>kube-proxy</code> rules in round-robin fashion",
-      "SRV records are created for headless Services, while A records require additional DNS configuration that is not enabled by default for StatefulSets",
+      "SRV records are created for headless Services, while A records require additional DNS configuration not enabled by default",
       "No DNS records are created because headless Services do not participate in the Kubernetes DNS resolution system",
-      "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service A record"
+      "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service-level A record returning all Pod IPs"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.\n\nWhy other options are wrong:\n- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -986,7 +986,7 @@ var questions = [
     options: [
       "Create or update an <code>imagePullSecret</code> in the namespace and reference it in the Pod spec or ServiceAccount",
       "Recreate the Pod with <code>hostNetwork: true</code> to allow direct network access to the private registry endpoint",
-      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries only serve the latest tag",
+      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries primarily cache the latest tag and may not retain older tags reliably",
       "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for private registry lookups"
     ],
     answer: 0,
@@ -1291,7 +1291,7 @@ var questions = [
       "Immediately, because Flux receives a Git webhook notification for every push event to the repository branch",
       "Up to 5 minutes matching the reconciliation interval, unless a webhook or manual trigger is configured",
       "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later",
-      "The fix is never applied automatically; Flux requires manual approval for all changes after a failure"
+      "The fix requires manual approval in Flux before being applied to the cluster"
     ],
     answer: 1,
     explanation: "Flux reconciles on a configurable interval (5 minutes in this case). Without a Git webhook configured, Flux polls the repository at each interval. The fix will be applied at the next reconciliation cycle, which could be up to 5 minutes after the push. Configuring a webhook notification from Git to Flux triggers immediate reconciliation upon push, reducing the delay.\n\nWhy other options are wrong:\n- A: Webhook notifications supplement the reconciliation interval; they are not configured in this scenario\n- C: The timing is based on when the fix is pushed relative to the next reconciliation, not the broken push\n- D: Flux does not require manual approval after failures; it reconciles automatically on each interval\n\nReference: https://fluxcd.io/flux/concepts/",
@@ -1531,7 +1531,7 @@ var questions = [
       "The Pod receives a dedicated ClusterIP that routes traffic on port 80 through the kube-proxy rules",
       "The Pod creates a virtual network interface on the host that NATs all traffic to port 80 via iptables",
       "The Pod shares the host network namespace, binding to the node's IP on port 80, one Pod per node",
-      "The Pod can only communicate with other Pods using <code>hostNetwork: true</code> in the same cluster"
+      "The Pod communicates primarily with other hostNetwork Pods and has limited access to cluster-networked Pods"
     ],
     answer: 2,
     explanation: "When `hostNetwork: true` is set, the Pod uses the node's network namespace directly instead of getting its own. The container binds to the node's IP address on port 80, making it accessible via `<node-ip>:80`. This also means only one Pod with this configuration can bind to port 80 per node, since the port is occupied at the host level.\n\nWhy other options are wrong:\n- A: hostNetwork Pods do not get a ClusterIP; they use the node's IP address directly\n- B: No virtual interface or NAT is created; the Pod directly uses the host network namespace\n- D: hostNetwork Pods can communicate with all Pods; they are not restricted to other hostNetwork Pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",

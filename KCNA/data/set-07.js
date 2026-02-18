@@ -533,7 +533,7 @@ var questions = [
     id: "s07-q034",
     domain: "Cloud Native Observability",
     subsection: "Monitoring",
-    text: "You want to identify which pods are consuming the most CPU and memory in a namespace. Which command provides real-time resource usage metrics?",
+    text: "You want to identify which pods are consuming the most CPU and memory in a namespace. Which command provides live resource usage metrics?",
     diagram: null,
     options: [
       "`kubectl describe pods -n <namespace>` and look for the resource usage fields in the output section",
@@ -890,7 +890,7 @@ var questions = [
     options: [
       "`spec.template.spec.terminationGracePeriodSeconds` — defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process",
       "`spec.strategy.rollingUpdate.maxSurge` — defines the maximum number of pods created above the desired count during a rolling update rollout",
-      "`spec.minReadySeconds` — defines the minimum number of seconds a newly created pod must be ready without crashing before it is considered available",
+      "`spec.minReadySeconds` — defines the minimum number of seconds a newly created pod must be ready without crashing before it is considered available, not failed",
       "`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before marking it as failed"
     ],
     answer: 3,
@@ -1386,7 +1386,7 @@ var questions = [
     options: [
       "Run `kubectl logs -l app=payment -n payments --prefix` to stream from all matching pods with name prefixes",
       "Open individual `kubectl logs` commands for each pod in separate terminal windows and monitor them independently",
-      "Use `kubectl get pods -l app=payment` and pipe the output to a custom log aggregation script on your machine",
+      "Use `kubectl get pods -l app=payment` and pipe the output to a custom script matching pod names for log aggregation",
       "Deploy a new DaemonSet that captures logs from pods with the `payment` label and forwards them to a collector"
     ],
     answer: 0,

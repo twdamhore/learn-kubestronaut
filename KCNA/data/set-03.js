@@ -249,12 +249,12 @@ var questions = [
     diagram: null,
     options: [
       "`my-svc.default.svc.cluster.local`",
-      "`my-svc.cluster.local` as FQDN",
-      "`my-svc.svc.cluster.local` FQDN",
+      "`my-svc.alpha.cluster.local`",
+      "`my-svc.svc.cluster.local`",
       "`my-svc.alpha.svc.cluster.local`"
     ],
     answer: 3,
-    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.\n\nWhy other options are wrong:\n- A: Uses the `default` namespace, but the pod is in `alpha`; the first search domain uses the pod's own namespace.\n- B: `my-svc.cluster.local` skips the `svc` segment; this is not the first search domain tried.\n- C: `my-svc.svc.cluster.local` omits the namespace; the first search domain is `<namespace>.svc.cluster.local`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.\n\nWhy other options are wrong:\n- A: Uses the `default` namespace, but the pod is in `alpha`; the first search domain uses the pod's own namespace.\n- B: `my-svc.alpha.cluster.local` skips the `svc` segment; this is not a valid search domain.\n- C: `my-svc.svc.cluster.local` omits the namespace; the first search domain is `<namespace>.svc.cluster.local`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
     verify: "kubectl exec <pod> -n alpha -- cat /etc/resolv.conf"
   },
   {
@@ -857,7 +857,7 @@ var questions = [
     diagram: null,
     options: [
       "No, because the policy excludes pods that match both source and destination selectors from the allowed traffic flow",
-      "Yes, but only if an explicit egress rule is also defined allowing traffic on port 443 outbound",
+      "Yes, but only if an explicit egress rule on the `role: frontend` pod is also defined allowing port 443 outbound",
       "No, because the policy only allows traffic from pods that lack the `app: backend` label value",
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"
     ],
@@ -1017,7 +1017,7 @@ var questions = [
     diagram: null,
     options: [
       "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
-      "BGP peering encrypts all inter-node traffic using IPsec by default for enhanced data protection",
+      "BGP peering encrypts all inter-node traffic across the physical network using IPsec by default",
       "BGP peering reduces reliance on kube-proxy by handling some service routing decisions via BGP peers",
       "BGP peering is primarily needed for IPv6 addressing, which VXLAN handles less efficiently"
     ],
@@ -1096,7 +1096,7 @@ var questions = [
     text: "A team designs a cloud native application where each component exposes its health via a `/healthz` endpoint. The Ingress controller routes traffic only to healthy instances. Which cloud native principle does this primarily exemplify?",
     diagram: null,
     options: [
-      "Infrastructure as Code for declarative configuration management",
+      "Infrastructure as Code for declarative health-endpoint configuration management",
       "Observability and health signaling for self-healing systems",
       "Immutable infrastructure for reproducible deployment patterns",
       "Event-driven architecture for asynchronous message handling"
@@ -1145,7 +1145,7 @@ var questions = [
     diagram: null,
     options: [
       "Using `gRPC` with `HTTP/2` connection multiplexing instead of REST for inter-service communication",
-      "Replacing all `ClusterIP` Services with `NodePort` Services for more direct pod-to-pod routing",
+      "Replacing all `ClusterIP` Services with `NodePort` Services for more direct inter-service routing",
       "Setting all pod `dnsPolicy` to `None` to bypass DNS resolution latency on each service call",
       "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely"
     ],
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A pod uses `dnsPolicy: None` and provides custom `dnsConfig` with `nameservers: [\"8.8.8.8\"]`. Can this pod resolve cluster-internal Service names?",
     diagram: null,
     options: [
-      "Yes, because kube-proxy intercepts DNS queries regardless of the configured nameserver address",
+      "Yes, because kube-proxy intercepts cluster-internal DNS queries regardless of the configured nameserver",
       "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
       "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
       "No, because `dnsPolicy: None` disables all kubelet-injected DNS settings, leaving the pod with no resolver"

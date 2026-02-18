@@ -56,7 +56,7 @@ var questions = [
     text: "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
     diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(???)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
-      "During scheduling by the kube-scheduler component",
+      "During scheduling, after passing through the admission phase",
       "During the image pull phase by the node kubelet",
       "During admission by the PodSecurity admission plugin",
       "At runtime enforcement by the container runtime"
@@ -760,7 +760,7 @@ var questions = [
     text: "You need to allow a user read-only access to resources across all namespaces without any modification rights. Which built-in ClusterRole is appropriate?",
     diagram: null,
     options: [
-      "`admin` — grants full read-write access within a namespace",
+      "`admin` — grants read-only and write access within a namespace",
       "`edit` — grants read-write access without role management",
       "`view` — grants read-only access to most resources",
       "`cluster-admin` — grants unrestricted cluster-wide access"
@@ -1162,7 +1162,7 @@ var questions = [
     options: [
       "A `nodeSelector` entry matching the `security: high` node label",
       "A `toleration` matching the taint `security=high:NoSchedule`",
-      "A `nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution`",
+      "A `nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` to bypass the taint",
       "An annotation `scheduler.alpha.kubernetes.io/tolerations` on the Pod"
     ],
     answer: 1,
@@ -1529,7 +1529,7 @@ var questions = [
     diagram: null,
     options: [
       "Hardcode the token in the application source code and redeploy it monthly",
-      "Store the token in a ConfigMap for easier updates by the operations team",
+      "Store the token in a ConfigMap or external config file for easier updates",
       "Use an external secrets operator to sync the token from a vault automatically",
       "Create a new namespace for each monthly token rotation from the payment provider"
     ],

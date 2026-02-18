@@ -540,7 +540,7 @@ var questions = [
     options: [
       "Every Pod must share the same IP address as its host node to avoid unnecessary routing complexity across the cluster",
       "Pods must use a Service ClusterIP to communicate with Pods on other nodes since direct Pod-to-Pod traffic is blocked",
-      "Only Pods in the same namespace can communicate directly; any cross-namespace traffic requires an Ingress resource rule",
+      "Pods in the same namespace communicate more efficiently via optimized local routing rules; any cross-namespace traffic requires an Ingress resource rule",
       "All Pods can communicate across nodes without NAT, and each Pod receives its own unique cluster-routable IP address"
     ],
     answer: 3,
@@ -732,7 +732,7 @@ var questions = [
     options: [
       "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",
       "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
-      "The Pods continue running indefinitely on the isolated node and are never rescheduled to other healthy cluster nodes",
+      "The Pods continue running indefinitely on the isolated node and are rarely rescheduled automatically and may require manual intervention to restore",
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
     ],
     answer: 0,
@@ -1214,7 +1214,7 @@ var questions = [
     options: [
       "The Pod is created successfully because the CPU limit of 3 is still under the namespace quota limit of 8",
       "The Pod is created but throttled to use only 1 CPU request since that is all the remaining quota allows",
-      "The ResourceQuota is ignored because it only applies to Deployments and ReplicaSets, not individual Pods",
+      "The ResourceQuota is ignored because it primarily targets Deployments and ReplicaSets rather than individual Pod resources",
       "Pod creation is rejected because total CPU requests would be 5 (3 + 2), exceeding the quota of 4 total"
     ],
     answer: 3,
