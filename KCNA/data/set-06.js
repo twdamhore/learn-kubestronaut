@@ -873,7 +873,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone`",
-      "B. Deploy collectors as a DaemonSet to run across all cluster nodes",
+      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across all nodes",
       "C. Set `hostNetwork: true` on collector Pods for direct node access",
       "D. Configure a headless Service for the collector Pod endpoint group"
     ],
@@ -923,7 +923,7 @@ var questions = [
       "A. Horizontal Pod Autoscaler (HPA) for scaling",
       "B. Cluster Autoscaler for node provisioning",
       "C. LimitRange for default resource boundaries",
-      "D. Vertical Pod Autoscaler (VPA) for sizing"
+      "D. Vertical Pod Autoscaler (VPA) for resource tuning"
     ],
     answer: 3,
     explanation: "The Vertical Pod Autoscaler analyzes actual resource usage and recommends or automatically adjusts Pod resource requests and limits. This right-sizing reduces waste and improves scheduling efficiency. HPA scales replica count, not individual Pod resources.\n\nWhy other options are wrong:\n- A: HPA scales the number of replicas horizontally, not individual Pod resource requests\n- B: Cluster Autoscaler adds or removes nodes, not Pod resource requests\n- C: LimitRange sets default and maximum resource values but does not dynamically adjust based on usage\n\nReference: https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/",
@@ -968,7 +968,7 @@ var questions = [
     text: "A platform team implements resource requests and limits for all namespaces. Which Kubernetes object enforces default resource requests for Pods that do not specify them?",
     diagram: null,
     options: [
-      "A. ResourceQuota for namespace limits",
+      "A. ResourceQuota for namespace default limits",
       "B. PodSecurityPolicy for security rules",
       "C. LimitRange for default resources",
       "D. NetworkPolicy for traffic controls"
@@ -1337,7 +1337,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Setting `minScale: 1` to keep at least one Pod warm",
-      "B. Using `PreferNoSchedule` taints on maintenance nodes",
+      "B. Using `PreferNoSchedule` taints to scale workloads off maintenance nodes",
       "C. Configuring pod anti-affinity across availability zones",
       "D. Increasing the `terminationGracePeriodSeconds`"
     ],

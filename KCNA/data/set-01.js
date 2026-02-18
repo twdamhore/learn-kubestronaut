@@ -921,7 +921,7 @@ var questions = [
     diagram: null,
     options: [
       "It reduces container image sizes because only changed layers need to be rebuilt each time",
-      "It eliminates the need for version control since each image is a complete deployment artifact",
+      "It reduces the need for version control since each image is a self-contained deployment artifact",
       "It ensures consistency and reproducibility — every deployment uses a known, tested artifact",
       "It allows faster rollbacks because the container runtime can hot-swap layers without restarts"
     ],
@@ -1307,7 +1307,7 @@ var questions = [
       "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final stage",
       "Use a full Ubuntu base image and remove unnecessary packages with `apt-get remove` in the final layer",
       "Build the application on the host machine and copy the binary into a `latest` tagged base image",
-      "Use the `--squash` flag to compress all layers into one, eliminating all unused files entirely"
+      "Use the `--squash` flag to compress all layers into one, which removes most unused files from the image"
     ],
     answer: 0,
     explanation: "Multi-stage builds allow you to use a full build environment in an early stage and copy only the compiled artifacts into a minimal final stage (like `distroless` or `alpine`). This produces small, secure images without build tools or unnecessary packages. Removing packages from a full image still leaves layer history. Building on the host introduces inconsistencies. The `--squash` flag is experimental and does not selectively remove files from earlier layers.\n\nWhy other options are wrong:\n- B: Removing packages from a full image still leaves layer history and produces a larger image.\n- C: Building on the host introduces environment inconsistencies and may include unnecessary dependencies.\n- D: The --squash flag is experimental and does not selectively remove files from earlier layers.\n\nReference: https://docs.docker.com/build/building/multi-stage/",
@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "Declarative commands execute faster because they bypass most of the validation checks performed by the API server",
-      "Declarative config describes the desired end state, enabling version control and reproducibility",
+      "Declarative config describes the desired end state, enabling version control, audit trails, and reproducibility",
       "Declarative manifests automatically retry failed operations until the desired state is fully achieved",
       "Declarative management simplifies operations by inferring the desired state from command-line flags rather than requiring manifest files"
     ],
@@ -1450,7 +1450,7 @@ var questions = [
     options: [
       "Through HTTP headers like `traceparent` from W3C Trace Context forwarded to downstream calls",
       "Through shared environment variables like `TRACE_ID` that all Pods in the cluster can read during execution",
-      "Through Kubernetes annotations on Pod objects that services query via the API server at runtime",
+      "Through Kubernetes annotations on Pod objects that carry trace context, queried via the API server",
       "Through the CNI plugin, which embeds trace IDs in the IP packet headers for network-level tracing"
     ],
     answer: 0,

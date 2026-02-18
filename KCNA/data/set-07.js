@@ -277,7 +277,7 @@ var questions = [
     id: "s07-q018",
     domain: "Cloud Native Observability",
     subsection: "Monitoring",
-    text: "You want to watch pod restarts in real-time across all namespaces to identify unstable workloads. Which command provides a continuously updating view?",
+    text: "You want to monitor pod restarts in real-time across all namespaces to identify unstable workloads. Which command provides a continuously updating view?",
     diagram: null,
     options: [
       "`kubectl get pods -A --sort-by=restartCount`",
@@ -629,7 +629,7 @@ var questions = [
     id: "s07-q040",
     domain: "Cloud Native Application Delivery",
     subsection: "Helm",
-    text: "After running `helm upgrade myrelease ./mychart`, several pods are in `CrashLoopBackOff`. You need to quickly restore the previous working version. Which Helm command achieves this?",
+    text: "After running `helm upgrade myrelease ./mychart`, several pods are in `CrashLoopBackOff`. You need to quickly restore the last known working version. Which Helm command achieves this?",
     diagram: null,
     options: [
       "`helm rollback myrelease` to revert to the previous working release revision",
@@ -920,13 +920,13 @@ var questions = [
     text: "A pod in a StatefulSet named `cache-2` fails and is recreated. Unlike Deployments, the new pod has the exact same name `cache-2`. Why does this matter for troubleshooting?",
     diagram: null,
     options: [
-      "It does not matter because pod names are only cosmetic identifiers with no functional significance in Kubernetes operations",
+      "It simplifies log analysis because pod names appear in log entries, but has no impact on storage or network identity",
       "It causes DNS conflicts because two pods with the same name temporarily exist during the StatefulSet replacement cycle",
       "The stable identity means the pod reattaches to its PersistentVolumeClaim and DNS hostname, preserving data and identity",
       "The kubelet refuses to create a pod with a name that was previously used, causing the StatefulSet controller to stall out"
     ],
     answer: 2,
-    explanation: "StatefulSet pods have stable, predictable identities. When `cache-2` is recreated, it automatically binds to the same PVC (`data-cache-2`) and gets the same DNS name (`cache-2.cache-headless.namespace.svc`). This is important for debugging because data from the failed instance persists on the volume, and other services can still reach the pod at the same address.\n\nWhy other options are wrong:\n- A: Pod names are functional in StatefulSets; they determine PVC binding and DNS hostname\n- B: The old pod is fully deleted before the new one is created; there is no overlap or DNS conflict\n- D: Kubelet does not refuse previously used names; StatefulSets specifically reuse ordinal names\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    explanation: "StatefulSet pods have stable, predictable identities. When `cache-2` is recreated, it automatically binds to the same PVC (`data-cache-2`) and gets the same DNS name (`cache-2.cache-headless.namespace.svc`). This is important for debugging because data from the failed instance persists on the volume, and other services can still reach the pod at the same address.\n\nWhy other options are wrong:\n- A: Pod names in StatefulSets are functional, not just for logs; they determine PVC binding and DNS hostname\n- B: The old pod is fully deleted before the new one is created; there is no overlap or DNS conflict\n- D: Kubelet does not refuse previously used names; StatefulSets specifically reuse ordinal names\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
     verify: "kubectl get pvc | grep cache-2"
   },
   {
@@ -949,7 +949,7 @@ var questions = [
     id: "s07-q060",
     domain: "Cloud Native Architecture",
     subsection: "Microservices",
-    text: "A microservice mesh experiences cascading failures: when Service D becomes slow, Services C, B, and A all start timing out. What design pattern should be implemented to prevent this cascade?",
+    text: "A microservice mesh experiences cascading failures: when Service D becomes slow, Services C, B, and A all start timing out. What approach should be implemented to prevent this cascade?",
     diagram: null,
     options: [
       "Increasing the timeout values in all upstream services to wait longer for slow responses from Service D",
@@ -1080,7 +1080,7 @@ var questions = [
     text: "You need to check why a pod named `worker-7` was terminated. `kubectl describe pod worker-7` shows `Reason: Evicted` and `Message: The node was low on resource: memory`. What triggered this eviction?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Pod Termination Flow</text><rect x="30" y="55" width="110" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="85" y="77" text-anchor="middle" fill="#e0e0e0" font-size="10">Node Memory</text><line x1="140" y1="72" x2="165" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a68)"/><rect x="165" y="55" width="110" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="220" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">???</text><text x="220" y="83" text-anchor="middle" fill="#e0e0e0" font-size="9"></text><line x1="275" y1="72" x2="295" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a68)"/><rect x="295" y="55" width="80" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="335" y="77" text-anchor="middle" fill="#e0e0e0" font-size="10">???</text><text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="10">Termination priority: ???</text><text x="200" y="140" text-anchor="middle" fill="#aaa" font-size="10">Selection criteria: ???</text><text x="200" y="165" text-anchor="middle" fill="#e76f51" font-size="10">What mechanism triggered this termination?</text><defs><marker id="a68" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer process on the node operating system",
+      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer, which differs from eviction because it targets a single container",
       "The HorizontalPodAutoscaler scaled down the deployment and selected this specific pod for controlled termination",
       "A PodDisruptionBudget was violated and the pod was preempted by a higher-priority workload scheduled on the node",
       "The kubelet's eviction manager detected node memory fell below the eviction threshold and evicted the pod to reclaim it"
@@ -1274,11 +1274,11 @@ var questions = [
     options: [
       "Existing pods run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
       "All pods in the cluster immediately stop because the controller manager manages the container runtime directly",
-      "Only DaemonSet pods are affected because the controller manager specifically handles DaemonSet reconciliation",
+      "DaemonSet and Job pods are most affected because these controller loops have higher reconciliation frequency than ReplicaSet controllers",
       "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario"
     ],
     answer: 0,
-    explanation: "The `kube-controller-manager` runs all built-in controllers (ReplicaSet, Deployment, Job, Node, etc.). When it is down, existing pods continue to run (the kubelet manages running containers), but no reconciliation occurs. Dead pods are not replaced, scaling does not happen, and new Deployment rollouts stall. The scheduler and controller manager are separate components with distinct responsibilities.\n\nWhy other options are wrong:\n- B: Existing containers keep running under kubelet management; kube-controller-manager does not control the runtime\n- C: All controllers (ReplicaSet, Deployment, Job, DaemonSet, etc.) are affected, not just DaemonSet\n- D: The scheduler handles pod placement only; it does not take over controller responsibilities\n\nReference: https://kubernetes.io/docs/concepts/architecture/controller/",
+    explanation: "The `kube-controller-manager` runs all built-in controllers (ReplicaSet, Deployment, Job, Node, etc.). When it is down, existing pods continue to run (the kubelet manages running containers), but no reconciliation occurs. Dead pods are not replaced, scaling does not happen, and new Deployment rollouts stall. The scheduler and controller manager are separate components with distinct responsibilities.\n\nWhy other options are wrong:\n- B: Existing containers keep running under kubelet management; kube-controller-manager does not control the runtime\n- C: All controllers are equally affected; there is no difference in reconciliation frequency between DaemonSet, Job, and ReplicaSet controllers\n- D: The scheduler handles pod placement only; it does not take over controller responsibilities\n\nReference: https://kubernetes.io/docs/concepts/architecture/controller/",
     verify: null
   },
   {
@@ -1307,10 +1307,10 @@ var questions = [
       "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
       "ArgoCD caches the last-known Git state and requires a manual `argocd app refresh` to pick up any new commits",
       "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
-      "ArgoCD's sync process ignores changes to Kustomize overlays and only tracks plain YAML manifests in the repository"
+      "ArgoCD detected the change but its reconciliation loop is paused due to a configured sync window restriction on this application"
     ],
     answer: 0,
-    explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD automatically refreshes via polling (default 3 minutes) and webhooks; a manual refresh is not required\n- C: Resource quotas block pod creation, not ArgoCD's sync detection; the app would show OutOfSync, not Synced\n- D: ArgoCD fully supports Kustomize overlays, Helm charts, and plain YAML; it does not ignore any supported config format\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
+    explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD automatically refreshes via polling (default 3 minutes) and webhooks; a manual refresh is not required\n- C: Resource quotas block pod creation, not ArgoCD's sync detection; the app would show OutOfSync, not Synced\n- D: A sync window restriction would show the app as OutOfSync with sync blocked, not as Synced with the old version\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
     verify: null
   },
   {
@@ -1593,7 +1593,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">CI/CD Image Push Race Condition</text><rect x="30" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><line x1="130" y1="72" x2="155" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="155" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="205" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Push Image</text><line x1="255" y1="72" x2="275" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="275" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="325" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Deploy</text><rect x="30" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="80" y="136" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><rect x="155" y="115" width="100" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="205" y="130" text-anchor="middle" fill="#e0e0e0" font-size="9">Push Image</text><text x="205" y="143" text-anchor="middle" fill="#e0e0e0" font-size="9">(still running)</text><rect x="200" y="115" width="100" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5" opacity="0.5"/><text x="250" y="136" text-anchor="middle" fill="#fff" font-size="9">Deploy (RACE!)</text><text x="200" y="180" text-anchor="middle" fill="#2a9d8f" font-size="10">Scenario 1: Sequential approach</text><text x="200" y="200" text-anchor="middle" fill="#e76f51" font-size="10">Scenario 2: Deploy before push completes</text><text x="200" y="225" text-anchor="middle" fill="#aaa" font-size="10">Which scenario avoids the race condition?</text><defs><marker id="a100" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
       "Ensuring the pipeline verifies the image push is complete (e.g., by pulling the digest) before updating the Deployment",
-      "Using `imagePullPolicy: Always` so Kubernetes retries pulling until the image becomes available in the registry eventually",
+      "Using `imagePullPolicy: Always` in the pipeline so Kubernetes retries pulling until the image becomes available in the registry",
       "Setting a long `initialDelaySeconds` on the readiness probe to give the registry time to propagate the image to all nodes",
       "Configuring the container runtime to cache all images locally before deploying any workload updates to the cluster nodes"
     ],

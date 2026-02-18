@@ -744,9 +744,9 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.29. A CRD is created with two stored versions: `v1alpha1` and `v1beta1`, with `v1beta1` as the served and storage version. A conversion webhook is configured. An existing `v1alpha1` resource is stored in etcd. A client requests the resource via the `v1beta1` API. What happens?",
     diagram: null,
     options: [
-      "A. The API server reads the `v1alpha1` object from etcd and returns it directly, since both versions are stored in the CRD spec",
-      "B. The API server serves a cached `v1beta1` version that was pre-converted when the CRD storage version was originally updated",
-      "C. The request is rejected because `v1alpha1` resources cannot be served via `v1beta1` without first running a storage migration",
+      "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly since both versions are listed in the CRD spec",
+      "B. The conversion webhook pre-converted the resource when the storage version was updated, so the API server serves the cached `v1beta1` version",
+      "C. The conversion webhook cannot convert `v1alpha1` resources to `v1beta1` without first running a storage migration job",
       "D. The API server reads the `v1alpha1` object from etcd, calls the conversion webhook to convert it, and returns `v1beta1`"
     ],
     answer: 3,

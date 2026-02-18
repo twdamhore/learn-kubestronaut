@@ -310,7 +310,7 @@ var questions = [
       "Merge all 30 services into a monolith to reduce the total number of ConfigMaps needed in the cluster",
       "Use a centralized config tool like Spring Cloud Config or Consul, integrated with Kubernetes APIs",
       "Store all configurations in a single large ConfigMap shared across every service in the namespace",
-      "Eliminate ConfigMaps entirely and hardcode all configuration values in each service's Dockerfile"
+      "Reduce ConfigMap usage significantly by hardcoding most configuration values in each service's Dockerfile"
     ],
     answer: 1,
     explanation: "Centralized configuration management tools like Spring Cloud Config, HashiCorp Consul, or similar solutions provide a single source of truth for configuration across many services and environments. They can integrate with Kubernetes to dynamically provide configuration. Merging into a monolith defeats microservices benefits. A single shared ConfigMap creates tight coupling. Hardcoding in Dockerfiles violates configuration externalization principles.\n\nWhy other options are wrong:\n- A: Merging into a monolith defeats the benefits of microservices architecture\n- C: A single shared ConfigMap creates tight coupling between all 30 services\n- D: Hardcoding in Dockerfiles violates the principle of externalizing configuration\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -707,7 +707,7 @@ var questions = [
     text: "In a microservices architecture, each service has its own ConfigMap for configuration. Service A needs to know the database port that Service B uses. A developer proposes sharing Service B's ConfigMap with Service A. What is the architectural concern?",
     diagram: null,
     options: [
-      "ConfigMaps cannot be shared between pods that belong to different Deployments within a namespace",
+      "ConfigMaps are generally scoped to a single Deployment and are not designed to be shared across different Deployments within a namespace",
       "Sharing ConfigMaps creates tight coupling; changes to Service B's config could break Service A",
       "Kubernetes rate-limits ConfigMap read operations so sharing would cause pod performance degradation",
       "Shared ConfigMaps are automatically replicated across namespaces causing eventual data inconsistency"
@@ -776,7 +776,7 @@ var questions = [
       "The Secret value appears in plaintext in logs, potentially exposing it through log aggregation pipelines",
       "No concern — Kubernetes automatically redacts Secret values from all container log output by default",
       "The kubelet intercepts container log output and replaces any Secret values with `[REDACTED]` markers",
-      "Env vars from Secrets are not visible to the application process so they cannot be logged by the app"
+      "Env vars from Secrets are typically obscured from the application process so they are unlikely to appear in logs"
     ],
     answer: 0,
     explanation: "Kubernetes does not perform any log redaction. Once a Secret is injected as an environment variable, the application process has full access to its plaintext value. If the application logs environment variables, the secret appears in plaintext in container logs, which may be forwarded to centralized logging systems like Elasticsearch or Loki. Applications should be configured to avoid logging sensitive environment variables. Neither the kubelet nor the container runtime performs automatic redaction.\n\nWhy other options are wrong:\n- B: Kubernetes does not automatically redact Secret values from container logs\n- C: The kubelet does not intercept or modify container log output for Secret redaction\n- D: Env vars from Secrets are fully visible to the application process as regular environment variables\n\nReference: https://kubernetes.io/docs/concepts/security/secrets-good-practices/",
@@ -1241,7 +1241,7 @@ var questions = [
     options: [
       "The `b64enc` function uses weak encoding that can be easily broken by modern decoding tools and scripts",
       "The plaintext password is stored in the Helm release secret, which contains rendered manifests and values",
-      "Helm templates cannot access `.Values` inside Secret manifests due to template rendering restrictions",
+      "Helm templates have limited access to `.Values` inside Secret manifests due to template rendering restrictions",
       "Base64 encoding in templates causes Helm to double-encode the value when creating the Kubernetes Secret"
     ],
     answer: 1,
@@ -1407,7 +1407,7 @@ var questions = [
     text: "A namespace has both a LimitRange (setting default memory request to 128Mi) and a ResourceQuota (total memory requests limited to 1Gi). A developer creates a pod without specifying memory. What is the sequence of events?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Admission Control Sequence</text><rect x="20" y="55" width="100" height="45" rx="5" fill="#2d6a4f"/><text x="70" y="73" text-anchor="middle" fill="white" font-size="10">Step 1</text><text x="70" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="120" y1="77" x2="155" y2="77" stroke="#4caf50" stroke-width="2" marker-end="url(#a)"/><rect x="155" y="55" width="100" height="45" rx="5" fill="#e6a817"/><text x="205" y="73" text-anchor="middle" fill="white" font-size="10">Step 2</text><text x="205" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="255" y1="77" x2="290" y2="77" stroke="#e6a817" stroke-width="2"/><rect x="290" y="55" width="80" height="45" rx="5" fill="#326CE5"/><text x="330" y="73" text-anchor="middle" fill="white" font-size="10">Persist</text><text x="330" y="88" text-anchor="middle" fill="#ccc" font-size="9">to etcd</text><text x="200" y="145" text-anchor="middle" fill="#e0e0e0" font-size="11">What is the sequence of admission control?</text></svg>',
     options: [
-      "The ResourceQuota rejects the pod because it has no memory specification, and the LimitRange never runs its admission logic",
+      "The ResourceQuota rejects the pod because it has no memory specification, and the LimitRange rarely runs its admission logic beforehand",
       "The pod is created with no memory request and does not count against the ResourceQuota since no memory was requested",
       "Both admission controllers run simultaneously and the LimitRange default conflicts with the ResourceQuota check logic",
       "The LimitRanger first injects the 128Mi default, then the ResourceQuota controller checks if the total fits in 1Gi"
@@ -1655,7 +1655,7 @@ var questions = [
     text: "A Helm chart creates a ConfigMap and a Deployment. The team wants to ensure that whenever the ConfigMap content changes, the Deployment pods are automatically restarted. They add the annotation `checksum/config: {{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}` to the pod template. What does this achieve?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Helm Checksum Pattern</text><rect x="40" y="55" width="140" height="50" rx="5" fill="#326CE5"/><text x="110" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap</text><text x="110" y="92" text-anchor="middle" fill="#ccc" font-size="10">content changes</text><line x1="110" y1="105" x2="110" y2="125" stroke="#aaa" stroke-width="2"/><rect x="40" y="125" width="320" height="50" rx="5" fill="#16213e" stroke="#aaa" stroke-width="1"/><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="13">??? mechanism ???</text><line x1="200" y1="175" x2="200" y2="195" stroke="#aaa" stroke-width="2"/><rect x="130" y="195" width="140" height="35" rx="5" fill="#2d6a4f"/><text x="200" y="217" text-anchor="middle" fill="white" font-size="12">Rolling update occurs</text></svg>',
     options: [
-      "It embeds the ConfigMap content directly in the pod template, eliminating the need for a separate ConfigMap resource entirely",
+      "It embeds the ConfigMap content directly in the pod template, significantly reducing the need for a separate ConfigMap resource",
       "Any change to ConfigMap content changes the hash annotation, which alters the pod template spec and triggers a rolling update",
       "It encrypts the ConfigMap data using SHA-256 for security purposes so that sensitive configuration is protected at rest",
       "It validates ConfigMap content against a known checksum and blocks the deployment if the content is corrupted or tampered"

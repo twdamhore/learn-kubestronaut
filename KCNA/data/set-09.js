@@ -90,7 +90,7 @@ var questions = [
     options: [
       "Argo CD requires Flux to be installed as a co-controller for enabling automatic sync operations on the cluster",
       "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
-      "Git webhooks are not supported by Argo CD for detecting repository changes, so polling is the only option available",
+      "Git webhooks must be configured through a separate third-party integration because Argo CD relies on periodic polling for repository change detection",
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source"
     ],
     answer: 1,
@@ -745,7 +745,7 @@ var questions = [
     diagram: null,
     options: [
       "A single A record for the Service name that load-balances across all Pod IPs using <code>kube-proxy</code> rules in round-robin fashion",
-      "Only SRV records are created for headless Services; A records are not supported for Pods managed by StatefulSets",
+      "SRV records are created for headless Services, while A records require additional DNS configuration that is not enabled by default for StatefulSets",
       "No DNS records are created because headless Services do not participate in the Kubernetes DNS resolution system",
       "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service A record"
     ],
@@ -1000,7 +1000,7 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.28. A developer creates a Pod using the <code>apps/v1</code> API group for a Deployment and the <code>v1</code> API group for a ConfigMap. What determines which API group and version is used for a particular resource?",
     diagram: null,
     options: [
-      "The developer can freely choose any API group for any resource type during manifest creation in the cluster",
+      "The developer can select from multiple compatible API groups for each resource type during manifest creation in the cluster",
       "The API group used for each resource is determined by the namespace in which the resource is being created",
       "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent versions",
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
@@ -1256,7 +1256,7 @@ var questions = [
     text: "A platform team wants to implement structured logging across all microservices in their Kubernetes cluster. Currently, some services log in JSON format while others use unstructured plain text. They use Fluentd to collect and parse logs. What is the primary benefit of standardizing on JSON-formatted structured logs?",
     diagram: null,
     options: [
-      "JSON logs consume significantly less storage space than plain text logs due to their compact and compressed format",
+      "Structured JSON logs consume significantly less storage space than plain text logs due to their compact and compressed format",
       "Fluentd requires custom Lua scripts to parse plain text, making it impractical for large clusters",
       "Structured JSON logs enable consistent parsing and querying in log aggregation systems without custom regex",
       "Elasticsearch indexes JSON logs natively but requires additional ingest pipelines for non-JSON formats"
@@ -1480,7 +1480,7 @@ var questions = [
     text: "A team evaluates KEDA (Kubernetes Event-Driven Autoscaling) for their event-processing workload that consumes messages from an Apache Kafka topic. How does KEDA differ from the standard Horizontal Pod Autoscaler?",
     diagram: null,
     options: [
-      "KEDA manages its own scaling loop independently of the HPA, so they should not be configured for the same workload",
+      "KEDA manages its own scaling loop independently of the HPA for Kafka and other sources, so they should not be configured for the same workload",
       "KEDA scales on external event sources (Kafka lag, queue depth) and supports scaling to zero replicas",
       "KEDA is primarily designed for batch workloads and provides limited support for long-running Deployments",
       "KEDA provides faster scaling by bypassing the Kubernetes API server and directly managing Pod counts"
@@ -1514,7 +1514,7 @@ var questions = [
     options: [
       "Yes, annotations and labels are interchangeable for scheduling purposes in all Kubernetes versions",
       "Yes, but only if the annotation key follows the DNS naming convention required for node selectors",
-      "No, annotations can only be added to namespace-scoped objects like namespaces, not individual Pods",
+      "No, annotations are restricted to cluster-scoped objects and are not available on namespace-scoped resources like individual Pods",
       "No, annotations are metadata not used by selectors or scheduling; only labels support selection"
     ],
     answer: 3,
@@ -1563,7 +1563,7 @@ var questions = [
       "The <code>failurePolicy</code> field determines whether the API server rejects or allows requests when unreachable",
       "The API server retries the webhook call indefinitely until the endpoint becomes reachable and responds",
       "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
-      "Pod creation proceeds normally because validating admission webhooks are advisory and do not block requests"
+      "Pod creation proceeds normally because <code>ValidatingWebhookConfiguration</code> resources are advisory and do not block requests"
     ],
     answer: 0,
     explanation: "The `failurePolicy` field in a webhook configuration determines behavior when the webhook endpoint is unreachable. The default is `Fail`, which rejects the API request to ensure that validation cannot be bypassed. Setting it to `Ignore` allows the request to proceed, which is less secure but prevents webhook outages from blocking cluster operations.\n\nWhy other options are wrong:\n- B: The API server does not retry webhooks indefinitely; it respects the failurePolicy setting\n- C: Other webhooks are not affected; each webhook's failurePolicy is evaluated independently\n- D: Validating webhooks can block requests with Fail policy; they are not advisory-only by default\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy",
