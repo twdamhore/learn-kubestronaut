@@ -249,12 +249,12 @@ var questions = [
     diagram: null,
     options: [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
-      "B. DaemonSet Pods automatically include `tolerations` for all taints",
+      "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain operations",
       "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
       "D. `kubectl drain` skips DaemonSet-managed Pods by default"
     ],
     answer: 3,
-    explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but not for all taints; the reason drain skips them is different\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
+    explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but they do not prevent eviction during drain; drain skips them because they are DaemonSet-managed\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
     verify: "kubectl drain <node-name> --ignore-daemonsets --dry-run=client"
   },
   {
@@ -1147,7 +1147,7 @@ var questions = [
       "A. Pods are evicted in strict reverse ordinal order regardless of the management policy",
       "B. With `Parallel` policy, Pods are evicted in a different order than with `OrderedReady`",
       "C. With `Parallel`, replacement Pods can start simultaneously instead of sequentially",
-      "D. There is no difference during drain operations, the policy only affects initial creation"
+      "D. The policy primarily influences creation order, with minimal impact on eviction behavior"
     ],
     answer: 2,
     explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.\n\nWhy other options are wrong:\n- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: Parallel policy does not prevent eviction during drain; Pods are still evicted normally\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
@@ -1449,12 +1449,12 @@ var questions = [
     diagram: null,
     options: [
       "A. The high-priority Pod waits up to 300 seconds for the preempted Pod to terminate",
-      "B. The preempted Pod is killed immediately so the high-priority Pod starts without delay",
+      "B. The preempted Pod is terminated with a shortened grace period to free resources faster",
       "C. The scheduler finds an alternative node to avoid waiting the long grace period out",
       "D. The preempted Pod's grace period is automatically reduced to a default 30 seconds"
     ],
     answer: 0,
-    explanation: "Preemption respects the victim Pod's `terminationGracePeriodSeconds`. The nominated high-priority Pod must wait until the preempted Pod terminates (up to its full grace period) before resources are freed. This can delay scheduling of the high-priority Pod.\n\nWhy other options are wrong:\n- B: Preemption respects the victim Pod's terminationGracePeriodSeconds; it is not killed immediately\n- C: The scheduler selects the node during preemption; it does not avoid the node to skip the grace period\n- D: There is no automatic reduction of the grace period; the full configured value applies\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
+    explanation: "Preemption respects the victim Pod's `terminationGracePeriodSeconds`. The nominated high-priority Pod must wait until the preempted Pod terminates (up to its full grace period) before resources are freed. This can delay scheduling of the high-priority Pod.\n\nWhy other options are wrong:\n- B: Preemption respects the full terminationGracePeriodSeconds; the grace period is not shortened\n- C: The scheduler selects the node during preemption; it does not avoid the node to skip the grace period\n- D: There is no automatic reduction of the grace period; the full configured value applies\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
     verify: "kubectl describe pod <preempted-pod> | grep -i grace"
   },
   {

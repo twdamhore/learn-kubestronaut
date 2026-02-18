@@ -362,7 +362,7 @@ var questions = [
     diagram: null,
     options: [
       "Add a label `gpu=true` and use `nodeSelector` on ML Pods — but this alone does not repel non-ML Pods from GPU nodes",
-      "Set `priorityClassName: high` on ML Pods so they can preempt lower-priority workloads from GPU-labeled nodes when needed",
+      "Set `priorityClassName: high` on ML Pods so they preempt lower-priority workloads; combine with `NoSchedule` taint for full isolation",
       "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
       "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
     ],
@@ -1230,7 +1230,7 @@ var questions = [
     options: [
       "CRI-O supports both the Kubernetes CRI and Docker API, making it a drop-in replacement for Docker Engine on nodes",
       "CRI-O uses its own proprietary image format that is incompatible with OCI container images and Docker registries",
-      "CRI-O is purpose-built for Kubernetes, implementing only the CRI interface without Docker-specific build features",
+      "CRI-O is tailored for Kubernetes, implementing only the CRI interface without Docker-specific build or push features",
       "CRI-O bundles its own container storage driver and cannot leverage the host filesystem or existing storage config"
     ],
     answer: 2,
@@ -1293,12 +1293,12 @@ var questions = [
     diagram: null,
     options: [
       "`kubectl cordon <node>` — marks the node as unschedulable without evicting running Pods",
-      "`kubectl delete node <node>` — removes the node from the cluster entirely and permanently",
+      "`kubectl delete node <node>` — removes the node object from the cluster API registry",
       "`kubectl drain <node>` — cordons the node AND evicts all non-DaemonSet Pods from the node",
       "`kubectl taint nodes <node> maintenance=true:NoExecute` — evicts Pods lacking toleration"
     ],
     answer: 0,
-    explanation: "`kubectl cordon` marks a node as `SchedulingDisabled` (unschedulable), preventing new Pods from being assigned to it while allowing existing Pods to continue running. This is useful for preparation before maintenance. `kubectl drain` both cordons and evicts Pods. A `NoExecute` taint would actively evict running Pods. Deleting the node removes it from the cluster entirely.\n\nWhy other options are wrong:\n- B: kubectl delete node permanently removes the node from the cluster, not a temporary prevention\n- C: kubectl drain also evicts Pods from the node; the requirement is to keep existing Pods running\n- D: NoExecute taint evicts Pods lacking toleration; the requirement is to keep existing Pods running\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
+    explanation: "`kubectl cordon` marks a node as `SchedulingDisabled` (unschedulable), preventing new Pods from being assigned to it while allowing existing Pods to continue running. This is useful for preparation before maintenance. `kubectl drain` both cordons and evicts Pods. A `NoExecute` taint would actively evict running Pods. Deleting the node removes it from the cluster entirely.\n\nWhy other options are wrong:\n- B: kubectl delete node removes the node object from the cluster, not a temporary scheduling prevention\n- C: kubectl drain also evicts Pods from the node; the requirement is to keep existing Pods running\n- D: NoExecute taint evicts Pods lacking toleration; the requirement is to keep existing Pods running\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
     verify: "kubectl get nodes"
   },
   {

@@ -50,7 +50,7 @@ var questions = [
       "`kubernetes.io/tls` — requires `tls.crt` and `tls.key` fields for certificate data",
       "`Opaque` — the general-purpose Secret type that accepts any arbitrary key-value pair",
       "`kubernetes.io/dockerconfigjson` — intended for storing container registry credentials",
-      "`kubernetes.io/ssh-auth` — the standard type for any key-based authentication method"
+      "`kubernetes.io/ssh-auth` — stores SSH private keys, not X.509 certificate material"
     ],
     answer: 0,
     explanation: "The `kubernetes.io/tls` Secret type is specifically designed for TLS certificates and requires the `tls.crt` and `tls.key` fields. Ingress controllers look for this type when configured for TLS termination. `Opaque` could technically hold the data but lacks the validation and semantic meaning. `dockerconfigjson` is for container registry credentials. `ssh-auth` is for SSH private keys, not TLS certificates.\n\nWhy other options are wrong:\n- B: Opaque is general-purpose and lacks the tls.crt/tls.key validation that Ingress controllers expect\n- C: dockerconfigjson is specifically for container registry pull credentials, not TLS certificates\n- D: ssh-auth stores SSH private keys for SSH authentication, not X.509 TLS certificates\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets",
@@ -576,7 +576,7 @@ var questions = [
     diagram: null,
     options: [
       "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB of data",
-      "Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container script",
+      "Split the dataset across approximately two ConfigMaps and merge them inside the container at startup using an init container script",
       "Increase the ConfigMap size limit by modifying the API server's `--max-configmap-size` startup configuration flag",
       "Use a Secret instead of a ConfigMap, which supports up to 10 MiB of data storage for larger configuration files"
     ],
@@ -1239,7 +1239,7 @@ var questions = [
     text: "A Helm chart uses the template function `{{ .Values.database.password | b64enc }}` to base64-encode a database password before placing it in a Secret manifest. A security engineer points out a risk. What is it?",
     diagram: null,
     options: [
-      "The `b64enc` function uses weak encoding that can be easily broken by modern decoding tools and scripts",
+      "The `b64enc` function uses weak password encoding that can be easily broken by modern decoding tools and scripts",
       "The plaintext password is stored in the Helm release secret, which contains rendered manifests and values",
       "Helm templates have limited access to `.Values` inside Secret manifests due to template rendering restrictions",
       "Base64 encoding in templates causes Helm to double-encode the value when creating the Kubernetes Secret"
@@ -1407,7 +1407,7 @@ var questions = [
     text: "A namespace has both a LimitRange (setting default memory request to 128Mi) and a ResourceQuota (total memory requests limited to 1Gi). A developer creates a pod without specifying memory. What is the sequence of events?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Admission Control Sequence</text><rect x="20" y="55" width="100" height="45" rx="5" fill="#2d6a4f"/><text x="70" y="73" text-anchor="middle" fill="white" font-size="10">Step 1</text><text x="70" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="120" y1="77" x2="155" y2="77" stroke="#4caf50" stroke-width="2" marker-end="url(#a)"/><rect x="155" y="55" width="100" height="45" rx="5" fill="#e6a817"/><text x="205" y="73" text-anchor="middle" fill="white" font-size="10">Step 2</text><text x="205" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="255" y1="77" x2="290" y2="77" stroke="#e6a817" stroke-width="2"/><rect x="290" y="55" width="80" height="45" rx="5" fill="#326CE5"/><text x="330" y="73" text-anchor="middle" fill="white" font-size="10">Persist</text><text x="330" y="88" text-anchor="middle" fill="#ccc" font-size="9">to etcd</text><text x="200" y="145" text-anchor="middle" fill="#e0e0e0" font-size="11">What is the sequence of admission control?</text></svg>',
     options: [
-      "The ResourceQuota rejects the pod because it has no memory specification, and the LimitRange rarely runs its admission logic beforehand",
+      "The ResourceQuota rejects the pod because it has no memory specification such as 128Mi, and the LimitRange rarely runs its admission logic beforehand",
       "The pod is created with no memory request and does not count against the ResourceQuota since no memory was requested",
       "Both admission controllers run simultaneously and the LimitRange default conflicts with the ResourceQuota check logic",
       "The LimitRanger first injects the 128Mi default, then the ResourceQuota controller checks if the total fits in 1Gi"
@@ -1505,7 +1505,7 @@ var questions = [
     text: "After upgrading a Deployment, pods restart but crash with `OOMKilled`. The application has not changed — only the resource limits were reduced from `512Mi` to `256Mi`. The application's baseline memory usage is approximately 300Mi. What is the immediate fix?",
     diagram: null,
     options: [
-      "Add a memory swap configuration to the container runtime to handle the overflow beyond the set limit",
+      "Add a memory swap configuration to the container runtime to handle the overflow beyond the 300Mi baseline",
       "Reduce the memory request to zero so Kubernetes does not track or enforce memory usage on the pod",
       "Set `oomScoreAdj: -1000` on the container security context to prevent the OOM killer from acting",
       "Increase the memory limit to at least 300Mi to match baseline usage and account for runtime spikes"

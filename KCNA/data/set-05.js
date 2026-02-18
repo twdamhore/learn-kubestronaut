@@ -200,13 +200,13 @@ var questions = [
     text: "A container in a Pod attempts to use `CAP_NET_ADMIN` to modify network interfaces. The Pod spec does not include any `capabilities` configuration. What is the default behavior?",
     diagram: null,
     options: [
-      "All Linux capabilities are granted to containers by the default runtime config",
+      "Most common capabilities including `CAP_NET_ADMIN` are granted by the default runtime config",
       "`CAP_NET_ADMIN` is granted because it is included in the runtime default list",
       "The container runs with a default set that does not include `CAP_NET_ADMIN`",
       "The kubelet adds all `NET_*` capabilities automatically to each new container"
     ],
     answer: 2,
-    explanation: "By default, containers run with a limited set of Linux capabilities defined by the container runtime (e.g., containerd). `CAP_NET_ADMIN` is not in this default set. To use it, you must explicitly add it via `securityContext.capabilities.add` in the container spec.\n\nWhy other options are wrong:\n- A: Containers do not receive all capabilities by default; only a limited subset is granted\n- B: CAP_NET_ADMIN is not in the default capability set granted by container runtimes\n- D: The kubelet does not automatically add NET_* capabilities to containers\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
+    explanation: "By default, containers run with a limited set of Linux capabilities defined by the container runtime (e.g., containerd). `CAP_NET_ADMIN` is not in this default set. To use it, you must explicitly add it via `securityContext.capabilities.add` in the container spec.\n\nWhy other options are wrong:\n- A: CAP_NET_ADMIN is not among the common capabilities granted by default; the default set is deliberately minimal\n- B: CAP_NET_ADMIN is not in the default capability set granted by container runtimes\n- D: The kubelet does not automatically add NET_* capabilities to containers\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
     verify: "kubectl exec <pod> -- cat /proc/1/status | grep Cap"
   },
   {
@@ -1497,12 +1497,12 @@ var questions = [
     diagram: null,
     options: [
       "Traces encrypt sensitive data in transit between communicating services",
-      "Traces replace audit logs entirely for regulatory compliance purposes",
+      "Traces serve as the primary source for regulatory compliance auditing",
       "Traces automatically block requests detected as malicious in real time",
       "Traces show the full request path, helping identify compromised services"
     ],
     answer: 3,
-    explanation: "Distributed tracing captures the flow of requests across service boundaries. During a security incident, trace data reveals which services a request touched, the latency at each hop, and any anomalous patterns. This helps identify the compromised service and the extent of the breach.\n\nWhy other options are wrong:\n- A: Traces do not encrypt data in transit; encryption is handled by mTLS or network-layer security\n- B: Traces complement audit logs but do not replace them for compliance purposes\n- C: Traces are observability data; they do not block or intercept malicious requests\n\nReference: https://opentelemetry.io/docs/concepts/observability-primer/",
+    explanation: "Distributed tracing captures the flow of requests across service boundaries. During a security incident, trace data reveals which services a request touched, the latency at each hop, and any anomalous patterns. This helps identify the compromised service and the extent of the breach.\n\nWhy other options are wrong:\n- A: Traces do not encrypt data in transit; encryption is handled by mTLS or network-layer security\n- B: Traces complement audit logs but are not the primary source for regulatory compliance\n- C: Traces are observability data; they do not block or intercept malicious requests\n\nReference: https://opentelemetry.io/docs/concepts/observability-primer/",
     verify: "kubectl get pods -l app=otel-collector"
   },
   {

@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "The PVC access mode is set to `ReadOnlyMany` which prevents write operations from the mounted container",
-      "NFS volumes default to read-only mounts in Kubernetes unless the PVC explicitly requests ReadWriteMany access mode",
+      "NFS export volumes default to read-only mounts in Kubernetes unless the PVC explicitly requests ReadWriteMany permissions",
       "The container runs as a non-root UID that lacks write permissions on the NFS export's file ownership",
       "The kubelet does not support write operations on NFS volumes mounted via the in-tree volume plugin"
     ],
