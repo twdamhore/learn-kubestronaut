@@ -66,10 +66,10 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`BestEffort` — the scheduler classifies any pod with partial resource definitions as BestEffort until all containers specify both requests and limits"
+      "`Guaranteed` — because Kubernetes rounds up partial resource specifications to meet the Guaranteed threshold automatically"
     ],
     answer: 1,
-    explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: BestEffort requires zero resource specs on all containers; partial specs make the pod Burstable, not BestEffort\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: Kubernetes does not round up or auto-fill partial resource specifications; Guaranteed requires every container to explicitly set both CPU and memory with requests equal to limits\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
     verify: "kubectl describe pod <pod-name> | grep 'QoS Class'"
   },
   {
@@ -324,7 +324,7 @@ var questions = [
     diagram: null,
     options: [
       "External Secrets Operator syncs secrets from stores like AWS Secrets Manager into clusters",
-      "Argo CD encrypts Secrets during GitOps synchronization when deploying to target clusters",
+      "Argo CD integrates with external vaults to encrypt Secrets during GitOps synchronization when deploying to target clusters",
       "Fluentd collects Secret data from application logs and injects them into destination pods",
       "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments"
     ],
@@ -790,7 +790,7 @@ var questions = [
     diagram: null,
     options: [
       "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for memory data",
-      "`node_memory_MemTotal_bytes` and `node_memory_MemFree_bytes` for node-level memory availability data",
+      "`node_memory_MemTotal_bytes` and `kube_node_status_allocatable` for node-level memory limits and availability data",
       "`kube_pod_status_phase` and `kube_pod_container_status_restarts_total` for pod lifecycle monitoring",
       "`container_cpu_usage_seconds_total` and `container_cpu_cfs_throttled_seconds_total` for CPU metrics"
     ],

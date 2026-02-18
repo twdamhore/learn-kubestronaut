@@ -105,9 +105,9 @@ var questions = [
     diagram: null,
     options: [
       "No PV supports the `ReadWriteMany` access mode that the PVC requests in its specification",
-      "The PV capacity of `100Gi` is too large for the PVC request of only `50Gi` to match correctly",
+      "The PV's `ReadWriteOnce` access mode is compatible with the PVC's `ReadWriteMany` request but capacity mismatch prevents binding",
       "The `PVC` is waiting for a pod to reference it before the binding process can be initiated",
-      "PVCs cannot request more than 10Gi of storage by default without a `ResourceQuota` override"
+      "The PVC remains unbound because the scheduler has not yet assigned it to a specific availability zone"
     ],
     answer: 0,
     explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: There is no default 10Gi PVC limit; PVC sizes are constrained only by ResourceQuota if configured\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -169,7 +169,7 @@ var questions = [
     diagram: null,
     options: [
       "PVCs from `volumeClaimTemplates` are retained by default and must be deleted manually by the admin",
-      "All PVCs are automatically deleted along with every other resource managed by the Helm release object",
+      "All PVCs created by `volumeClaimTemplates` are automatically deleted along with every other resource managed by the Helm release",
       "Helm converts existing PVCs to `emptyDir` volumes as part of the pre-uninstall cleanup hook process",
       "The PVCs are archived and stored in a Helm backup secret in the release namespace for later recovery"
     ],
@@ -248,7 +248,7 @@ var questions = [
     text: "A pod uses a PVC backed by a PV that is a local volume on node `worker-03`. When the scheduler attempts to place the pod, what constraint does the local PV introduce?",
     diagram: null,
     options: [
-      "The pod can be scheduled to any node because the local volume data is automatically replicated across nodes",
+      "The pod can be scheduled to any node because the local volume on `worker-03` is automatically replicated across nodes",
       "The pod is scheduled to a random node and the local volume is transparently migrated via `kubelet` at runtime",
       "The scheduler ignores volume locality and selects the node with the most available CPU and memory headroom",
       "The pod is constrained to `worker-03` because local PVs have node affinity that restricts pod placement"
@@ -315,7 +315,7 @@ var questions = [
       "The pod may read or modify sensitive host files like `/etc/shadow`, enabling privilege escalation",
       "The pod can read files from `/etc` but the read-only access poses a limited security concern for node configuration",
       "The `hostPath` volume is encrypted by default so there is no meaningful security concern for the host",
-      "The pod will crash because `/etc` is a protected system directory that cannot be mounted by containers"
+      "The pod can mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath mounts"
     ],
     answer: 0,
     explanation: "Mounting `hostPath` volumes, especially to sensitive directories like `/etc`, is a significant security risk. A container with write access could modify host-level configuration files, create backdoor accounts, or escalate privileges. Pod Security Standards restrict `hostPath` usage, and most production clusters should disallow it except for system-level DaemonSets.\n\nWhy other options are wrong:\n- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted; they expose raw host filesystem paths to the container\n- D: The pod does not crash due to /etc being protected; containers can mount any host path if permitted\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
@@ -360,7 +360,7 @@ var questions = [
     text: "A GitOps team manages StatefulSet manifests in Git, including `volumeClaimTemplates`. An engineer modifies the storage size in the `volumeClaimTemplates` from 10Gi to 20Gi and merges the change. What happens when the GitOps controller applies this update?",
     diagram: null,
     options: [
-      "The StatefulSet is updated in-place and all existing `PVCs` are automatically resized by the controller",
+      "The `volumeClaimTemplates` change is applied in-place and all existing PVCs are automatically resized by the controller",
       "New `PVCs` are created at `20Gi` while old PVCs are deleted and their underlying storage is reclaimed",
       "The GitOps controller automatically recreates the entire `StatefulSet` resource with the new PVC size",
       "The update fails because `volumeClaimTemplates` in a StatefulSet are immutable after initial creation"
@@ -411,7 +411,7 @@ var questions = [
       "No, because the `storageClassName` values differ between the PV and PVC, preventing binding",
       "Yes, but Kubernetes will convert the PV's StorageClass from `fast-ssd` to `standard` value",
       "Yes, because the capacity and access modes match between the PV and PVC specifications exactly",
-      "No, because PVC specifications cannot include a `storageClassName` field in their definition"
+      "No, because `storageClassName` must match exactly but Kubernetes also requires the PV capacity to equal the PVC request precisely"
     ],
     answer: 0,
     explanation: "For a PVC to bind to a PV, the `storageClassName` must match in addition to capacity and access modes. A PVC requesting `standard` will not bind to a PV with `fast-ssd`. The StorageClass acts as a filter during PV selection. If dynamic provisioning is available for the `standard` class, a new PV will be provisioned instead.\n\nWhy other options are wrong:\n- B: Kubernetes does not convert or change a PV's StorageClass to match a PVC\n- C: Matching capacity and access modes is necessary but not sufficient; storageClassName must also match\n- D: PVCs can and must include a storageClassName field to control which PVs they bind to\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -1147,7 +1147,7 @@ var questions = [
       "The kube-apiserver sends a notification event to all running broker pods about the new cluster member",
       "Kafka brokers perform DNS lookups against the headless Service which returns updated A records for all",
       "The new broker automatically inherits the full cluster configuration from its provisioned PVC contents",
-      "Existing brokers cannot discover new members without a full restart of the headless Service and every pod"
+      "Existing brokers must be manually reconfigured with the new pod's IP address since headless Services do not update DNS records dynamically"
     ],
     answer: 1,
     explanation: "Headless Services provide DNS-based discovery for StatefulSet pods. When `kafka-3` becomes Running and Ready, the headless Service's DNS records are updated to include the new pod. Existing Kafka brokers that periodically resolve the Service DNS or use ZooKeeper/KRaft for cluster membership will discover the new member through these updated records.\n\nWhy other options are wrong:\n- A: The kube-apiserver does not send notification events directly to pods about cluster membership changes\n- C: PVCs contain data written by the application, not Kafka cluster configuration for new member discovery\n- D: Existing brokers can discover new members via DNS lookups without requiring a full restart of all pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
@@ -1194,7 +1194,7 @@ var questions = [
     options: [
       "PVCs are deleted when the StatefulSet is deleted, but retained when pods are scaled down by count",
       "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted, preserving data independently",
-      "All PVCs are always deleted regardless of which operation triggered the removal of the StatefulSet",
+      "PVCs are deleted when the StatefulSet is deleted, and also deleted when individual pods are scaled down",
       "This field is not valid in the StatefulSet spec and is rejected by the API server upon submission"
     ],
     answer: 0,
@@ -1481,7 +1481,7 @@ var questions = [
     diagram: null,
     options: [
       "Only the current revision is retained; all previous revisions are immediately deleted after updates",
-      "All 9 revisions are retained because Kubernetes never garbage collects ControllerRevision objects",
+      "All 9 revisions are retained because the revisionHistoryLimit setting applies to Deployment ReplicaSets, not StatefulSet ControllerRevisions",
       "6 ControllerRevision objects are retained (5 historical plus the current); the 3 oldest are garbage collected",
       "StatefulSets do not use ControllerRevision objects; they track updates via pod template hashes"
     ],

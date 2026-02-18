@@ -539,7 +539,7 @@ var questions = [
       "A. Containers continue running because the runtime upgrade is fully transparent to them",
       "B. All containers are stopped and must be restarted individually by the kubelet process",
       "C. The node must be drained first because runtime upgrades need no running containers",
-      "D. Pods with `restartPolicy: Always` survive the runtime upgrade; others are terminated permanently"
+      "D. Pods with `restartPolicy: Always` are restarted by kubelet after the upgrade; others remain stopped"
     ],
     answer: 2,
     explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
@@ -1145,7 +1145,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Pods are evicted in strict reverse ordinal order regardless of the management policy",
-      "B. With `Parallel` policy, Pods are never evicted during a drain operation on the node",
+      "B. With `Parallel` policy, Pods are evicted in a different order than with `OrderedReady`",
       "C. With `Parallel`, replacement Pods can start simultaneously instead of sequentially",
       "D. There is no difference during drain operations, the policy only affects initial creation"
     ],

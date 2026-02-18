@@ -1259,7 +1259,7 @@ var questions = [
       "Secrets cannot be used across namespaces; it must exist in the Pod's namespace",
       "The Secret name contains a typo preventing the kubelet from locating the resource",
       "TLS-type Secrets require a special RBAC role to access from within Pod containers",
-      "The Pod's ServiceAccount does not have the required permission to read that Secret"
+      "The Pod's ServiceAccount lacks permission to read Secrets from another namespace"
     ],
     answer: 0,
     explanation: "Kubernetes Secrets are namespace-scoped resources. A Pod can only reference Secrets within its own namespace. The Secret `tls-cert` must be created in the `production` namespace for the Pod to mount it. Cross-namespace Secret access is not supported natively.\n\nWhy other options are wrong:\n- B: The error message clearly states the Secret name, so a typo is not the issue here\n- C: TLS-type Secrets do not require special RBAC roles for Pod mounting\n- D: The Pod references the Secret in its spec; the SA permissions are for API access, not volume mounts\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -1275,7 +1275,7 @@ var questions = [
       "A vulnerability scanning framework specifically built for container images",
       "A network policy engine for controlling service-to-service communications",
       "A standard for issuing and verifying cryptographic identities to workloads",
-      "A secrets management system designed to replace native Kubernetes Secrets"
+      "A workload secrets management system designed to replace native Kubernetes Secrets"
     ],
     answer: 2,
     explanation: "SPIFFE (Secure Production Identity Framework For Everyone) defines a standard for workload identity, and SPIRE is its runtime implementation. It issues SPIFFE Verifiable Identity Documents (SVIDs) as X.509 certificates or JWT tokens, enabling workloads to authenticate to each other without application-level credential management.\n\nWhy other options are wrong:\n- A: SPIFFE is an identity framework, not a vulnerability scanner\n- B: SPIFFE provides workload identity, not network policy enforcement\n- D: SPIFFE issues cryptographic identities, not secrets management\n\nReference: https://spiffe.io/docs/latest/spiffe-about/overview/",

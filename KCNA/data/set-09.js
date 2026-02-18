@@ -89,7 +89,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="60" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Git Repo</text><rect x="150" y="70" width="100" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Argo CD</text><rect x="290" y="70" width="100" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="340" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">K8s Cluster</text><line x1="110" y1="95" x2="148" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9a)"/><line x1="250" y1="95" x2="288" y2="95" stroke="#999" stroke-width="2" stroke-dasharray="6,3"/><text x="200" y="155" text-anchor="middle" fill="#555" font-size="11" font-style="italic">Why no auto-deploy?</text><defs><marker id="arrow9a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
       "Argo CD requires Flux to be installed as a co-controller for enabling automatic sync operations on the cluster",
-      "The application sync policy is configured as <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
+      "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
       "Git webhooks are not supported by Argo CD for detecting repository changes, so polling is the only option available",
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source"
     ],
@@ -203,7 +203,7 @@ var questions = [
       "Service 2 is not propagating trace context headers in its outgoing requests to Service 3, so the trace is broken",
       "Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits",
       "The Jaeger collector has run out of available storage space and is dropping newly received span data",
-      "OpenTelemetry only supports tracing for gRPC-based services using the OTLP protocol and cannot instrument HTTP-based endpoints"
+      "OpenTelemetry focuses primarily on tracing gRPC-based services and has limited support for HTTP-based endpoint instrumentation"
     ],
     answer: 0,
     explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. Since spans appear for Services 1 and 2 but not 3 and 4, the break point is between Services 2 and 3 — Service 2 is not forwarding trace context headers in its outgoing requests. Without those headers, Services 3 and 4 create new independent traces instead of joining the original one. This is the most common cause of incomplete traces.\n\nWhy other options are wrong:\n- B: Jaeger has no such 2-span limit; traces can contain thousands of spans\n- C: Storage issues would cause random span loss across all traces, not a clean break at a specific service\n- D: OpenTelemetry supports both gRPC and HTTP instrumentation, plus many other protocols\n\nReference: https://opentelemetry.io/docs/concepts/context-propagation/",
@@ -362,7 +362,7 @@ var questions = [
     options: [
       "The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
-      "DNS resolution only works with Service ClusterIP addresses and does not support name-based lookups",
+      "DNS resolution maps Service ClusterIP addresses to internal IP ranges rather than supporting hostname-based queries",
       "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
     ],
     answer: 3,
@@ -666,7 +666,7 @@ var questions = [
     options: [
       "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke network access",
       "A NetworkPolicy selecting all Pods with <code>policyTypes: [\"Egress\"]</code> and no egress rules defined",
-      "A NetworkPolicy with empty <code>podSelector</code>, <code>policyTypes: [\"Ingress\"]</code>, and no ingress rules in <code>team-beta</code>",
+      "A default-deny <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> blocking all inbound traffic",
       "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace object"
     ],
     answer: 2,
@@ -1131,10 +1131,10 @@ var questions = [
       "The <code>ClusterIP</code> address of the Service, which kube-proxy then forwards to the external hostname endpoint",
       "An A record containing the pre-resolved IP address of the external hostname as cached by the CoreDNS server",
       "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client then resolves",
-      "The Service returns an error because ExternalName Services cannot resolve external hostnames in Kubernetes"
+      "ExternalName Services add latency to external hostname resolution by routing through kube-proxy"
     ],
     answer: 2,
-    explanation: "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external hostname. When a Pod queries the Service DNS name, CoreDNS returns a CNAME record. The client (or resolver) then follows the CNAME to resolve the actual IP address. No proxying or ClusterIP is involved.\n\nWhy other options are wrong:\n- A: ExternalName Services have no ClusterIP; they do not use kube-proxy for forwarding\n- B: ExternalName returns a CNAME record, not a pre-resolved A record; the client resolves the CNAME\n- D: ExternalName Services are fully supported and do resolve external hostnames via CNAME records\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
+    explanation: "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external hostname. When a Pod queries the Service DNS name, CoreDNS returns a CNAME record. The client (or resolver) then follows the CNAME to resolve the actual IP address. No proxying or ClusterIP is involved.\n\nWhy other options are wrong:\n- A: ExternalName Services have no ClusterIP; they do not use kube-proxy for forwarding\n- B: ExternalName returns a CNAME record, not a pre-resolved A record; the client resolves the CNAME\n- D: ExternalName Services do not route through kube-proxy; they return CNAME records directly via DNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.type}'"
   },
   {
@@ -1560,7 +1560,7 @@ var questions = [
     text: "A Kubernetes cluster uses the <code>admission webhook</code> mechanism. A ValidatingWebhookConfiguration is configured to validate all Pod creation requests. If the webhook endpoint is unreachable, what happens to Pod creation attempts by default?",
     diagram: null,
     options: [
-      "The <code>failurePolicy</code> field determines the outcome: <code>Fail</code> rejects the request, <code>Ignore</code> allows it to proceed",
+      "The <code>failurePolicy</code> field controls whether the API server rejects (<code>Fail</code>) or allows (<code>Ignore</code>) requests when the webhook is unreachable",
       "The API server retries the webhook indefinitely until the endpoint becomes available and responds back",
       "All admission webhooks in the cluster are automatically disabled when any single <code>webhook</code> is unreachable",
       "Pod creation proceeds normally because validating admission webhooks are advisory only and never block"

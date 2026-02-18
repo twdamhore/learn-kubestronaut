@@ -648,7 +648,7 @@ var questions = [
     text: "A developer creates a Pod with an `emptyDir` volume shared between two containers. Later, the Pod is rescheduled to a different node. What happens to the data stored in the `emptyDir` volume?",
     diagram: null,
     options: [
-      "The data is automatically migrated to the new node by the kubelet during Pod rescheduling",
+      "The emptyDir data is automatically migrated to the new node by the kubelet during Pod rescheduling",
       "The data persists on the original node and can be manually mounted on the new node later",
       "The data is preserved in `etcd` and restored automatically when the Pod starts on the new node",
       "The data is lost because `emptyDir` volumes share the same lifecycle as the Pod they belong to"
@@ -778,7 +778,7 @@ var questions = [
     options: [
       "By sending requests to `<any-node-ip>:31234`, as `kube-proxy` routes to Pods",
       "By sending requests to `<cluster-ip>:31234` from outside the cluster network",
-      "Only through a DNS lookup of `<service-name>.svc.cluster.local:31234`",
+      "Through a DNS lookup of `<service-name>.svc.cluster.local:31234` from any network",
       "By connecting to the Pod IP directly on port 31234 from external clients"
     ],
     answer: 0,
@@ -886,7 +886,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Troubleshooting",
     text: "A Pod is in the `Pending` state and has been for several minutes. Running `kubectl describe pod` shows the event: `0/3 nodes are available: 3 Insufficient memory`. What is the root cause and how should the team resolve it?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="35" rx="6" fill="#f44336" stroke="#fff" stroke-width="1.5"/><text x="200" y="28" text-anchor="middle" fill="white" font-size="12">Pod (Pending)</text><text x="200" y="55" text-anchor="middle" fill="#f44336" font-size="11">requests: 4Gi memory</text><rect x="10" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="65" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 1</text><text x="65" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 2Gi/4Gi</text><text x="65" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 2Gi</text><rect x="145" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="200" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 2</text><text x="200" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 3Gi/4Gi</text><text x="200" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 1Gi</text><rect x="280" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="335" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 3</text><text x="335" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 3.5Gi/4Gi</text><text x="335" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 0.5Gi</text><text x="200" y="170" text-anchor="middle" fill="#f44336" font-size="12">Insufficient memory on all nodes</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="35" rx="6" fill="#f44336" stroke="#fff" stroke-width="1.5"/><text x="200" y="28" text-anchor="middle" fill="white" font-size="12">Pod (Pending)</text><text x="200" y="55" text-anchor="middle" fill="#f44336" font-size="11">requests: 4Gi memory</text><rect x="10" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="65" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 1</text><text x="65" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 2Gi/4Gi</text><text x="65" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 2Gi</text><rect x="145" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="200" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 2</text><text x="200" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 3Gi/4Gi</text><text x="200" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 1Gi</text><rect x="280" y="80" width="110" height="60" rx="6" fill="#2d2d2d" stroke="#555" stroke-width="1.5"/><text x="335" y="100" text-anchor="middle" fill="#ccc" font-size="10">Node 3</text><text x="335" y="118" text-anchor="middle" fill="#FF9800" font-size="9">Alloc: 3.5Gi/4Gi</text><text x="335" y="132" text-anchor="middle" fill="#f44336" font-size="9">Available: 0.5Gi</text><text x="200" y="170" text-anchor="middle" fill="#f44336" font-size="12">Why is this Pod Pending?</text></svg>',
     options: [
       "The Pod's image is too large for the nodes' disk space; the team should use a smaller base image",
       "The Pod's memory request exceeds allocatable memory on all nodes; reduce the request or add nodes",
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Functions are short-lived, event-driven compute units scaled automatically by the platform",
       "Functions are long-running processes that handle multiple requests concurrently in a thread pool",
-      "Functions are typically compiled to WebAssembly (Wasm) because Kubernetes runtimes require Wasm for efficient cold-start performance",
+      "Functions are compiled to WebAssembly (Wasm) for efficient cold-start performance on Kubernetes runtimes",
       "Functions require dedicated nodes with specialized hardware to execute efficiently at scale"
     ],
     answer: 0,
@@ -1595,7 +1595,7 @@ var questions = [
       "They are identical in behavior; `create` is simply an alias for `apply` with the same semantics and output",
       "`kubectl create` is imperative and fails if the resource exists; `kubectl apply` is declarative and updates",
       "`kubectl create` handles initial resource creation while `kubectl apply` handles subsequent updates, each optimized for its stage",
-      "`kubectl apply` requires YAML input while `kubectl create` works only with command-line flags for resources"
+      "`kubectl apply` requires YAML input while `kubectl create` primarily uses command-line generators for resources"
     ],
     answer: 1,
     explanation: "`kubectl create` is an imperative command that creates a resource and returns an error if it already exists. `kubectl apply` is declarative — it creates the resource if it does not exist, or updates it if it does, by comparing the desired state with the current state. They are not interchangeable. Both can accept YAML input. `kubectl create` can also work with generators (like `kubectl create deployment`), and `kubectl apply` always requires a manifest file or stdin.\n\nWhy other options are wrong:\n- A: They are not identical; `create` is imperative and `apply` is declarative with different behaviors.\n- C: Both can create resources; `kubectl apply` creates if absent and updates if present.\n- D: Both `kubectl create` and `kubectl apply` can accept YAML input; `create` also supports generators.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/",

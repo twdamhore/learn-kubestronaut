@@ -152,7 +152,7 @@ var questions = [
     text: "A deployment's pods fail to start with the event: `Warning FailedScheduling: 0/5 nodes are available: 5 node(s) had taint {node.kubernetes.io/not-ready: }, that the pod didn't tolerate`. What does this mean?",
     diagram: null,
     options: [
-      "The pod's image pull secret is missing and all nodes are refusing to process the pull request from the registry",
+      "The pod's `imagePullSecret` is missing and all nodes are refusing to process the pull request from the registry",
       "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current labels",
       "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
@@ -811,7 +811,7 @@ var questions = [
       "The pod will be killed and restarted by the kubelet after the configured failure threshold is reached",
       "The pod continues running but is excluded from Service Endpoints, so it receives no client traffic",
       "The pod will be evicted from the current node and rescheduled on a healthier node in the cluster",
-      "There is no operational impact because readiness probes are strictly informational only in nature"
+      "Readiness probes provide supplementary health data but do not influence the Pod's traffic routing"
     ],
     answer: 1,
     explanation: "Readiness probe failures do not cause container restarts (that is the liveness probe's role). Instead, the kubelet marks the container as not ready, and the Endpoints controller removes the pod from the Service's endpoint list. The pod keeps running but receives no traffic. Once the probe passes again, the pod is added back to Endpoints.\n\nWhy other options are wrong:\n- A: Liveness probe failures cause restarts, not readiness failures; this is a readiness probe scenario\n- C: Readiness failures do not cause eviction or rescheduling\n- D: Readiness probes have direct operational impact by controlling Service endpoint membership\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes",
@@ -1019,7 +1019,7 @@ var questions = [
       "The pod's ServiceAccount CA bundle does not match the API server's TLS certificate, or the `kubernetes` Service is missing",
       "The pod does not have its `ServiceAccount` token volume mounted, so mutual TLS authentication with the API server fails",
       "The pod needs a NetworkPolicy explicitly allowing egress traffic to the API server's endpoint IP address and port 443",
-      "The API server only accepts connections from the control plane network, and pod traffic is routed through a different subnet"
+      "The API server restricts connections to the control plane network by default for security"
     ],
     answer: 0,
     explanation: "Pods access the API server through the `kubernetes` Service in the `default` namespace. A TLS error suggests the certificate chain is not trusted. The ServiceAccount token volume mounts the CA bundle at `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`. If this CA does not match the API server's certificate (e.g., after a certificate rotation), TLS verification fails.\n\nWhy other options are wrong:\n- B: Missing SA token volume causes authentication failures (401), not TLS handshake errors\n- C: NetworkPolicy blocking would cause connection timeout, not TLS handshake error\n- D: The API server accepts connections from pods by default via the kubernetes Service\n\nReference: https://kubernetes.io/docs/tasks/run-application/access-api-from-pod/",
@@ -1208,7 +1208,7 @@ var questions = [
     text: "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3600m, limited: 4000m`. What is preventing pod creation?",
     diagram: null,
     options: [
-      "The node does not have 500m CPU available for scheduling the new pod that the ReplicaSet is trying to create in production",
+      "The node does not have 500m CPU available for scheduling the new pod that the `ReplicaSet` is trying to create in production",
       "The pod's CPU request of 500m exceeds the maximum allowed by the namespace's compute-quota LimitRange policy",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
       "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
@@ -1291,7 +1291,7 @@ var questions = [
       "The writes silently fail and the application receives I/O errors after reaching the 100Mi size boundary",
       "The `emptyDir` volume automatically expands to accommodate the extra data beyond the configured limit",
       "The kubelet evicts the pod because it exceeded the ephemeral storage limit for the `emptyDir` volume",
-      "Nothing happens because `sizeLimit` is only an advisory value and is not enforced by the kubelet at all"
+      "The `sizeLimit` serves as a soft guideline and the kubelet logs a warning rather than evicting the Pod"
     ],
     answer: 2,
     explanation: "When `sizeLimit` is set on an `emptyDir` volume, the kubelet monitors its usage. If the volume exceeds the limit, the kubelet evicts the pod to reclaim resources. The pod's status will show `Evicted` with a message about exceeding ephemeral storage limits. This enforcement depends on the kubelet's periodic checks, so there may be a brief delay before eviction.\n\nWhy other options are wrong:\n- A: Writes do not silently fail; the data is written but the kubelet detects the overage and evicts\n- B: emptyDir volumes do not auto-expand; sizeLimit is a hard enforcement boundary\n- D: sizeLimit is enforced by the kubelet; it is not merely advisory\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -1307,7 +1307,7 @@ var questions = [
       "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
       "ArgoCD does not support webhooks for Git notifications and only polls the repository on a fixed `interval` schedule",
       "The Kubernetes cluster has reached its maximum number of allowed Deployments in the target namespace now",
-      "Git repositories must be restarted after each push for ArgoCD to detect and process any incoming changes"
+      "Git repositories need a webhook configuration for ArgoCD to detect and process incoming changes efficiently"
     ],
     answer: 0,
     explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD supports webhooks for real-time notification of Git changes\n- C: Maximum Deployment count is not a standard Kubernetes or ArgoCD limitation\n- D: Git repositories do not need restarting; ArgoCD polls or receives webhooks automatically\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
@@ -1432,7 +1432,7 @@ var questions = [
     text: "A pod is scheduled to a node and runs successfully for 5 minutes, but then is evicted. The pod had a toleration for `node.kubernetes.io/not-ready` with `tolerationSeconds: 300`. What happened?",
     diagram: null,
     options: [
-      "The pod exceeded its resource limits after 5 minutes, so the kubelet's eviction manager terminated it to reclaim node resources",
+      "The pod exceeded its resource limits after 5 minutes, so the kubelet's `eviction-manager` terminated it to reclaim node resources",
       "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction after 5 minutes",
       "The scheduler detected a better node for the pod and performed a live migration after the 300-second warm-up period elapsed",
       "The pod's NoExecute toleration expired because the PodDisruptionBudget overrides tolerationSeconds after a 300-second window"
@@ -1467,7 +1467,7 @@ var questions = [
       "The cluster is optimally sized because it has sufficient headroom for unexpected traffic spikes and burst workloads",
       "The low utilization indicates a monitoring error and the actual real-time resource usage is likely much higher overall",
       "The cluster is over-provisioned—resource requests are likely much higher than actual usage, or there are too many nodes",
-      "Node-level metrics are irrelevant to cost optimization analysis; only individual pod-level metrics matter for planning"
+      "Node-level metrics provide limited value for cost optimization compared to pod-level metrics for workload planning"
     ],
     answer: 2,
     explanation: "Low node utilization (15-20% CPU, 30% memory) combined with high costs strongly suggests over-provisioning. Common causes include overly generous resource requests, the cluster autoscaler not scaling down, or right-sizing not being performed. Tools like the Kubernetes Vertical Pod Autoscaler (VPA) can recommend better resource requests, and the cluster autoscaler can remove underutilized nodes.\n\nWhy other options are wrong:\n- A: 15-20% utilization at 3x expected cost is not optimal; it indicates significant waste\n- B: Low utilization from kubectl top is from the Metrics Server, which is reliable when installed\n- D: Node-level metrics are highly relevant; they show overall cluster utilization and capacity waste\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
