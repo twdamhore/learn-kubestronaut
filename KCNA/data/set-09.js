@@ -72,13 +72,13 @@ var questions = [
     text: "A platform team configures Prometheus to scrape metrics from application Pods. They add the annotation <code>prometheus.io/scrape: \"true\"</code> to their Pod spec, but Prometheus is not collecting metrics. The Prometheus configuration uses <code>kubernetes_sd_configs</code> with role <code>pod</code>. What should they check first?",
     diagram: null,
     options: [
-      "Whether the Prometheus server has enough CPU and memory resources allocated to scrape all configured <code>/metrics</code> targets",
+      "Whether the Prometheus server has enough CPU and memory resources allocated to scrape all targets annotated with <code>prometheus.io/scrape</code>",
       "Whether the application Pods have a readiness probe defined that gates the scraping of metrics endpoints",
       "Whether the Prometheus Operator CRDs are correctly installed and reconciled within the current cluster",
       "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct port"
     ],
     answer: 3,
-    explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.\n\nWhy other options are wrong:\n- A: Insufficient Prometheus resources would cause scrape timeouts, not total absence of target discovery\n- B: Readiness probes do not gate Prometheus scraping; scraping depends on SD config and relabeling\n- C: Prometheus Operator CRDs are not required when using raw kubernetes_sd_configs in a ConfigMap\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
+    explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.\n\nWhy other options are wrong:\n- A: Insufficient Prometheus resources would cause scrape timeouts or dropped scrapes, not total absence of target discovery\n- B: Readiness probes do not gate Prometheus scraping; scraping depends on SD config and relabeling\n- C: Prometheus Operator CRDs are not required when using raw kubernetes_sd_configs in a ConfigMap\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
     verify: "kubectl get configmap prometheus-config -n monitoring -o yaml | grep -A10 relabel"
   },
   {
@@ -250,11 +250,11 @@ var questions = [
     options: [
       "A second Job is created and runs concurrently alongside the still-active first Job instance",
       "The CronJob controller terminates the running 10:00 Job and immediately starts the 10:05 Job",
-      "The 10:05 Job is queued in a pending state and starts after the 10:00 Job finishes running",
+      "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job finishes running",
       "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
     ],
     answer: 3,
-    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller skips a scheduled run if a previous Job is still active. The 10:05 invocation is simply not created. This prevents overlapping executions, which is important for Jobs that access shared resources or have side effects that are not idempotent.\n\nWhy other options are wrong:\n- A: Forbid policy prevents concurrent runs; a second Job is not created alongside the active one\n- B: Forbid does not terminate running Jobs; the Replace policy would do that\n- C: The Job is not queued; it is simply skipped entirely when the previous Job is still active\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
+    explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller skips a scheduled run if a previous Job is still active. The 10:05 invocation is simply not created. This prevents overlapping executions, which is important for Jobs that access shared resources or have side effects that are not idempotent.\n\nWhy other options are wrong:\n- A: Forbid policy prevents concurrent runs; a second Job is not created alongside the active one\n- B: Forbid does not terminate running Jobs; the Replace policy would do that\n- C: Forbid does not queue Jobs; it simply skips the scheduled run when the previous Job is still active\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
     verify: "kubectl get cronjob <name> -o jsonpath='{.spec.concurrencyPolicy}'"
   },
   {
@@ -298,7 +298,7 @@ var questions = [
     options: [
       "Running etcd on nodes with fast SSD storage to reduce disk I/O latency for write-ahead log operations",
       "Increasing the number of etcd cluster members from 3 to 7 to better distribute the incoming read load",
-      "Disabling etcd authentication entirely to reduce per-request processing overhead on the cluster nodes",
+      "Disabling etcd authentication to reduce per-request processing overhead on the cluster nodes",
       "Configuring etcd to use an in-memory store instead of persistent storage for improved write throughput"
     ],
     answer: 0,
@@ -394,7 +394,7 @@ var questions = [
     options: [
       "Add a <code>nodeSelector</code> matching the new node's hostname label to target that specific node for scheduling",
       "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> to the DaemonSet's Pod template spec",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to trigger rescheduling on the new node",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to trigger rescheduling on the node tainted with <code>dedicated=monitoring:NoSchedule</code>",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -971,10 +971,10 @@ var questions = [
       "Prometheus waits the full 12 seconds and successfully collects the metrics since it is within the <code>scrape_interval</code>",
       "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
       "The scrape fails because the 12-second response exceeds the 10-second <code>scrape_timeout</code> and <code>up</code> reads 0",
-      "The target is permanently removed from the scrape configuration after three consecutive timeout failures"
+      "The target is dropped from the scrape configuration after three consecutive timeout failures"
     ],
     answer: 2,
-    explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.\n\nWhy other options are wrong:\n- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus never permanently removes targets from config; they remain and are retried each interval\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
+    explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.\n\nWhy other options are wrong:\n- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus does not drop targets from config after timeouts; they remain and are retried each interval\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
     verify: null
   },
   {
@@ -1034,7 +1034,7 @@ var questions = [
     options: [
       "3 old ReplicaSets as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
       "0 old ReplicaSets, because Kubernetes automatically cleans up all inactive ReplicaSets after updates",
-      "7 old ReplicaSets are retained in the cluster because <code>revisionHistoryLimit</code> only caps ReplicaSets older than 30 days",
+      "7 old ReplicaSets are retained in the cluster because <code>revisionHistoryLimit</code> caps ReplicaSets older than 30 days",
       "1 old ReplicaSet is retained, representing only the immediately previous version of the Deployment"
     ],
     answer: 0,
@@ -1225,7 +1225,7 @@ var questions = [
     diagram: null,
     options: [
       "All ingress and egress traffic is denied by default when a CNI plugin with NetworkPolicy support is installed in the cluster",
-      "Only egress traffic is allowed by default; all ingress traffic requires an explicit NetworkPolicy to be permitted in the namespace",
+      "Egress traffic is allowed by default while all ingress traffic requires an explicit NetworkPolicy to be permitted in the namespace",
       "The Pod can only communicate with other Pods in the same namespace because cross-namespace traffic is blocked by default",
       "All traffic is allowed because no NetworkPolicy selects this Pod; Kubernetes follows a default-allow model until a policy applies"
     ],
@@ -1270,7 +1270,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
     text: "A cluster administrator wants to understand the flow of a Pod creation request. They submit a Deployment manifest via <code>kubectl apply</code>. In which order do the control plane components process this request?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="110" height="35" rx="6" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="65" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold">kubectl apply</text><rect x="145" y="10" width="110" height="35" rx="6" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="200" y="32" text-anchor="middle" fill="white" font-size="10" font-weight="bold">API Server</text><rect x="145" y="80" width="110" height="35" rx="6" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">etcd</text><rect x="280" y="10" width="110" height="35" rx="6" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="335" y="27" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Controller</text><text x="335" y="39" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Manager</text><rect x="280" y="80" width="110" height="35" rx="6" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="335" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Scheduler</text><rect x="145" y="155" width="110" height="35" rx="6" fill="#00695C" stroke="#004D40" stroke-width="2"/><text x="200" y="177" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Kubelet</text><line x1="120" y1="93" x2="145" y2="93" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="45" x2="200" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="27" x2="280" y2="27" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="97" x2="280" y2="97" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="115" x2="200" y2="155" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="335" y1="45" x2="335" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><text x="200" y="145" text-anchor="middle" fill="#333" font-size="8" font-style="italic">order: ???</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="110" height="35" rx="6" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="65" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold">kubectl apply</text><rect x="145" y="10" width="110" height="35" rx="6" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="200" y="32" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Component A</text><rect x="145" y="80" width="110" height="35" rx="6" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component B</text><rect x="280" y="10" width="110" height="35" rx="6" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="335" y="32" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component C</text><rect x="280" y="80" width="110" height="35" rx="6" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="335" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component D</text><rect x="145" y="155" width="110" height="35" rx="6" fill="#00695C" stroke="#004D40" stroke-width="2"/><text x="200" y="177" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component E</text><line x1="120" y1="93" x2="145" y2="93" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="45" x2="200" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="27" x2="280" y2="27" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="97" x2="280" y2="97" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="115" x2="200" y2="155" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="335" y1="45" x2="335" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><text x="200" y="145" text-anchor="middle" fill="#333" font-size="8" font-style="italic">order: ???</text></svg>',
     options: [
       "kubectl sends the manifest to the scheduler, which forwards it to the API server for validation and storage in etcd",
       "API server stores the Deployment in etcd; controllers create ReplicaSet and Pods; scheduler assigns nodes; kubelet starts containers",
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A team runs a Deployment with a <code>strategy.type: Recreate</code>. They update the container image. What is the behavior during the update?",
     diagram: null,
     options: [
-      "New Pods are created first, then old Pods are terminated only once the new ones pass their readiness checks",
+      "New Pods are created first, then old Pods are terminated after the new ones pass their readiness checks",
       "Pods are replaced one at a time, similar to a rolling update strategy but with longer grace periods applied",
       "All existing Pods are terminated simultaneously, then new Pods are created, causing a brief downtime period",
       "The Deployment is paused until a cluster administrator manually reviews and approves the pending update"
@@ -1429,7 +1429,7 @@ var questions = [
     id: "s09-q090",
     domain: "Kubernetes Fundamentals",
     subsection: "Scheduling",
-    text: "A node in the cluster has the taint <code>node.kubernetes.io/memory-pressure:NoSchedule</code> applied automatically by the kubelet. What caused this taint to appear?",
+    text: "A node shows the taint <code>node.kubernetes.io/memory-pressure:NoSchedule</code>. No administrator has touched this node. What caused this taint?",
     diagram: null,
     options: [
       "An administrator manually tainted the node during a scheduled maintenance window for workload draining",

@@ -66,7 +66,7 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`Guaranteed` — because Kubernetes rounds up partial resource specifications to meet the Guaranteed threshold automatically"
+      "`Guaranteed` — because Kubernetes rounds up partial specs to meet the Guaranteed threshold"
     ],
     answer: 1,
     explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: Kubernetes does not round up or auto-fill partial resource specifications; Guaranteed requires every container to explicitly set both CPU and memory with requests equal to limits\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
@@ -146,7 +146,7 @@ var questions = [
       "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
       "Both pods have equal eviction priority since they both have resource values explicitly specified in their `spec`",
       "This pod is protected from eviction because it has a memory limit set which prevents any OOM killing action",
-      "The pod with the higher absolute memory limit is evicted first because resource allocation size determines eviction priority over `QoS` class"
+      "The pod with the higher absolute memory limit is evicted first because allocation size determines priority"
     ],
     answer: 0,
     explanation: "Kubernetes evicts pods based on QoS class priority: `BestEffort` pods are evicted first, then `Burstable`, and `Guaranteed` pods last. This pod has unequal requests and limits, making it `Burstable`. Under node memory pressure, it would be evicted before a `Guaranteed` pod. Having a memory limit does not prevent eviction — it prevents the container from using more than the limit. Eviction order considers QoS class, not just absolute resource values.\n\nWhy other options are wrong:\n- B: Having resource specs does not make eviction priority equal; QoS class determines the order\n- C: Memory limits prevent usage beyond the cap but do not protect pods from node-level eviction\n- D: Eviction priority is based on QoS class first, not absolute resource limit values\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
@@ -210,7 +210,7 @@ var questions = [
     diagram: null,
     options: [
       "Enable etcd encryption at rest by configuring an `EncryptionConfiguration` on the API server",
-      "Run `kubectl encrypt secret <name>` to individually encrypt each Secret with cluster-level keys",
+      "Run `kubectl encrypt secret <name>` to individually encrypt each Secret stored in etcd with cluster-level keys",
       "Set `encoded: true` on each Secret manifest to enable automatic AES-256 encryption at storage",
       "Switch all Secrets to ConfigMaps since ConfigMaps provide built-in encryption at rest by default"
     ],
@@ -410,7 +410,7 @@ var questions = [
       "Commit Secrets as base64-encoded values since Git does not display binary data in plain diffs",
       "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts",
       "Store Secrets in a separate private Git repository with tightly restricted team access controls",
-      "Avoid storing Secrets in Git entirely and create them manually via `kubectl create secret` each time"
+      "Avoid storing Secrets in Git and instead create them manually via `kubectl create secret` each time"
     ],
     answer: 1,
     explanation: "Sealed Secrets encrypts Secret data with a public key so that the encrypted form can be safely stored in Git. Only the Sealed Secrets controller in the cluster holds the private key to decrypt them. Base64 encoding is not encryption and is trivially decoded. A separate private repo still stores plaintext. Manual creation via `kubectl` breaks the GitOps principle of Git as the single source of truth.\n\nWhy other options are wrong:\n- A: Base64 is trivially reversible encoding, not encryption; committing base64 Secrets is insecure\n- C: A separate private repo still stores plaintext credentials, which is a security risk\n- D: Manual kubectl create breaks GitOps principle of Git as the single source of truth\n\nReference: https://github.com/bitnami-labs/sealed-secrets",
@@ -740,7 +740,7 @@ var questions = [
     diagram: null,
     options: [
       "Store keys in Kubernetes Secrets and reference them as env vars in the Knative Service spec",
-      "Embed the API keys directly in the function source code so they are always available at runtime",
+      "Embed the API keys directly in the function source code so they are available at runtime",
       "Pass the API keys as query parameters in the event trigger URL for the Knative function endpoint",
       "Store the API keys in a public ConfigMap so all serverless functions in the namespace can share"
     ],
@@ -877,7 +877,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Cluster Architecture",
     text: "A team configures a policy that rejects any pod in the `production` namespace that lacks resource limits. A pod without limits is submitted to the API server. At which stage is the pod rejected?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">API Server Request Flow</text><rect x="20" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="60" y="77" text-anchor="middle" fill="white" font-size="10">AuthN</text><line x1="100" y1="72" x2="120" y2="72" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/><rect x="120" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="160" y="77" text-anchor="middle" fill="white" font-size="10">AuthZ</text><line x1="200" y1="72" x2="220" y2="72" stroke="#555" stroke-width="2"/><rect x="220" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="260" y="77" text-anchor="middle" fill="white" font-size="10">Admission</text><line x1="300" y1="72" x2="320" y2="72" stroke="#555" stroke-width="2"/><rect x="320" y="55" width="60" height="35" rx="5" fill="#326CE5"/><text x="350" y="77" text-anchor="middle" fill="white" font-size="10">etcd</text><text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="11">Where is the pod rejected? (?)</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">API Server Request Flow</text><rect x="20" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="60" y="77" text-anchor="middle" fill="white" font-size="10">Stage 1</text><line x1="100" y1="72" x2="120" y2="72" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/><rect x="120" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="160" y="77" text-anchor="middle" fill="white" font-size="10">Stage 2</text><line x1="200" y1="72" x2="220" y2="72" stroke="#555" stroke-width="2"/><rect x="220" y="55" width="80" height="35" rx="5" fill="#326CE5"/><text x="260" y="77" text-anchor="middle" fill="white" font-size="10">Stage 3</text><line x1="300" y1="72" x2="320" y2="72" stroke="#555" stroke-width="2"/><rect x="320" y="55" width="60" height="35" rx="5" fill="#326CE5"/><text x="350" y="77" text-anchor="middle" fill="white" font-size="10">Stage 4</text><text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="11">Where is the pod rejected? (?)</text></svg>',
     options: [
       "During authentication — the API server checks resource specs before authenticating the user identity",
       "During authorization — RBAC evaluates whether the user is allowed to create pods without limits set",
@@ -959,7 +959,7 @@ var questions = [
     text: "A pod injects the name of the Service it belongs to as an environment variable using the Downward API. The developer tries `fieldRef: {fieldPath: metadata.labels['app.kubernetes.io/name']}`. What does this expose?",
     diagram: null,
     options: [
-      "The name of the Kubernetes Service object that is associated with and routes traffic to this pod",
+      "The name of the Kubernetes Service whose `app.kubernetes.io/name` selector matches this pod",
       "This is invalid — `fieldRef` does not support label selectors using bracket notation in fieldPath",
       "The pod's hostname as derived from the Service DNS entry registered in the cluster's CoreDNS",
       "The value of the `app.kubernetes.io/name` label that is set on the pod itself at creation"
@@ -1060,7 +1060,7 @@ var questions = [
       "No — `args` does not support variable substitution; the `command` field is the supported location in pod specs",
       "No — variable substitution in `args` is limited to ConfigMap-sourced values and does not resolve Secret references",
       "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` using env vars",
-      "Yes — but the `enableServiceLinks` field must be explicitly set to `true` on the pod specification"
+      "Yes — but `enableServiceLinks` should be set to `true` on the pod specification for it to work"
     ],
     answer: 2,
     explanation: "Kubernetes supports `$(VAR_NAME)` variable substitution in both the `command` and `args` fields of a container spec. The substitution uses environment variables defined for that container, regardless of whether they come from ConfigMaps, Secrets, or literal values. This is a Kubernetes-level substitution performed before the container starts, not a shell expansion. `enableServiceLinks` controls service-related environment variables and is unrelated to this feature.\n\nWhy other options are wrong:\n- A: Both command and args support $(VAR_NAME) substitution, not just command\n- B: Variable substitution works with env vars from any source including Secrets, not just ConfigMaps\n- D: enableServiceLinks controls service-related env vars and is unrelated to $(VAR_NAME) substitution\n\nReference: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#use-environment-variables-to-define-arguments",
@@ -1073,7 +1073,7 @@ var questions = [
     text: "A pod fails to start with the error: `Error: couldn't find key username in ConfigMap default/app-config`. The ConfigMap `app-config` exists in the `default` namespace. What is the most likely cause?",
     diagram: null,
     options: [
-      "The ConfigMap is immutable and new keys like `username` cannot be added after the initial creation",
+      "The ConfigMap is immutable and new keys like `username` are unlikely to be resolved after initial creation",
       "The pod and ConfigMap are in different namespaces despite both appearing to be in `default` namespace",
       "The ConfigMap was created with `--from-file` so the key is the filename, not `username` as expected",
       "ConfigMaps created with `kubectl apply` do not support direct key references from pod specifications"
@@ -1208,7 +1208,7 @@ var questions = [
       "Nothing extra is needed — the tracing SDK automatically detects file changes and reloads its configuration",
       "The app must watch the mounted file for changes and reinitialize the tracing provider when it updates",
       "The kubelet must be restarted on the node to propagate ConfigMap changes to the volume mount inside",
-      "The tracing collector must be restarted — it owns the sampling-rate setting and pushes it to applications"
+      "The tracing collector should be restarted — it owns the sampling-rate setting and pushes it to applications"
     ],
     answer: 1,
     explanation: "While Kubernetes automatically updates volume-mounted ConfigMaps (without subPath), the application must implement file-watching logic to detect changes and reconfigure itself. Most tracing SDKs do not automatically reload configuration from files. The kubelet does not need to be restarted — it periodically syncs ConfigMap data to volumes. The tracing collector endpoint may be separate, but the sampling rate is an application-side configuration.\n\nWhy other options are wrong:\n- A: Most tracing SDKs do not automatically detect and reload configuration from files\n- C: The kubelet does not need to be restarted; it periodically syncs ConfigMap data to volumes\n- D: Sampling rate is an application-side setting; restarting only the collector does not change it\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -1222,7 +1222,7 @@ var questions = [
     diagram: null,
     options: [
       "`kube_pod_container_status_restarts_total` with `kube_pod_container_status_last_terminated_reason` for OOMKilled, plus `kube_pod_container_resource_limits` for memory",
-      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health, capacity, and resource saturation levels across the cluster",
+      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health including OOM pressure, capacity, and saturation levels",
       "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network throughput analysis and bandwidth consumption tracking",
       "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica availability and desired state reconciliation tracking"
     ],
@@ -1266,7 +1266,7 @@ var questions = [
       "Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory",
       "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name",
       "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
-      "Create two separate ConfigMaps because mounting specific keys from a shared ConfigMap requires complex projected volume configurations that are error-prone"
+      "Create two separate ConfigMaps because a single ConfigMap does not support per-container key selection"
     ],
     answer: 2,
     explanation: "You can define multiple volumes referencing the same ConfigMap, each using the `items` field to select specific keys. Volume A selects `app-a.conf` and volume B selects `app-b.conf`. Each volume is then mounted in the appropriate container. `subPath` is a volume mount property, not a ConfigMap property. A single ConfigMap can absolutely be used selectively. Mounting the full ConfigMap in both containers would expose unnecessary files.\n\nWhy other options are wrong:\n- A: Mounting the full ConfigMap in both containers exposes unnecessary files to each container\n- B: subPath is a volumeMount property, not a ConfigMap-level property for splitting by container\n- D: A single ConfigMap can be mounted selectively using the items field on the volume definition; no projected volumes are needed\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
@@ -1345,7 +1345,7 @@ var questions = [
     options: [
       "Yes — `kubectl patch` can target individual fields within a ConfigMap data value using JSON path expression syntax",
       "No — ConfigMap data values are immutable after creation and can only be replaced by deleting and recreating them",
-      "Yes — but only if the ConfigMap was originally created with the `--structured-data` flag to enable nested patching",
+      "Yes — provided the ConfigMap was originally created with the `--structured-data` flag to enable nested patching",
       "No — `kubectl patch` operates on Kubernetes fields, not data value contents; the entire value must be replaced"
     ],
     answer: 3,
@@ -1653,7 +1653,7 @@ var questions = [
     domain: "Cloud Native Application Delivery",
     subsection: "Helm",
     text: "A Helm chart creates a ConfigMap and a Deployment. The team wants to ensure that whenever the ConfigMap content changes, the Deployment pods are automatically restarted. They add the annotation `checksum/config: {{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}` to the pod template. What does this achieve?",
-    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Helm Checksum Pattern</text><rect x="40" y="55" width="140" height="50" rx="5" fill="#326CE5"/><text x="110" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap</text><text x="110" y="92" text-anchor="middle" fill="#ccc" font-size="10">content changes</text><line x1="110" y1="105" x2="110" y2="125" stroke="#aaa" stroke-width="2"/><rect x="40" y="125" width="320" height="50" rx="5" fill="#16213e" stroke="#aaa" stroke-width="1"/><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="13">??? mechanism ???</text><line x1="200" y1="175" x2="200" y2="195" stroke="#aaa" stroke-width="2"/><rect x="130" y="195" width="140" height="35" rx="5" fill="#2d6a4f"/><text x="200" y="217" text-anchor="middle" fill="white" font-size="12">Rolling update occurs</text></svg>',
+    diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Helm Checksum Pattern</text><rect x="40" y="55" width="140" height="50" rx="5" fill="#326CE5"/><text x="110" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap</text><text x="110" y="92" text-anchor="middle" fill="#ccc" font-size="10">content changes</text><line x1="110" y1="105" x2="110" y2="125" stroke="#aaa" stroke-width="2"/><rect x="40" y="125" width="320" height="50" rx="5" fill="#16213e" stroke="#aaa" stroke-width="1"/><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="13">??? mechanism ???</text><line x1="200" y1="175" x2="200" y2="195" stroke="#aaa" stroke-width="2"/><rect x="130" y="195" width="140" height="35" rx="5" fill="#2d6a4f"/><text x="200" y="217" text-anchor="middle" fill="white" font-size="12">??? outcome</text></svg>',
     options: [
       "It embeds the ConfigMap content directly in the pod template, significantly reducing the need for a separate ConfigMap resource",
       "Any change to ConfigMap content changes the hash annotation, which alters the pod template spec and triggers a rolling update",

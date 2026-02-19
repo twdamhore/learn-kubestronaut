@@ -457,12 +457,12 @@ var questions = [
     diagram: null,
     options: [
       "A. High-priority Pods using this class are scheduled first but never preempt others",
-      "B. The PriorityClass is rejected by the API server because `preemptionPolicy: Never` is not a supported value",
+      "B. Pods using this class are queued last because Never marks them as lowest urgency",
       "C. Pods with this class can only preempt Pods that have a value below one hundred",
       "D. Lower-priority Pods are evicted from the node but their containers are not killed"
     ],
     answer: 0,
-    explanation: "Setting `preemptionPolicy: Never` means Pods with this PriorityClass are placed ahead in the scheduling queue but will not trigger eviction of running lower-priority Pods. They wait until resources become available naturally. This is useful for important but non-urgent workloads.\n\nWhy other options are wrong:\n- B: preemptionPolicy: Never is a valid field; it is supported since Kubernetes 1.24 GA\n- C: preemptionPolicy: Never means no preemption at all, not a threshold-based preemption\n- D: Preemption terminates victim Pods fully; there is no mechanism to evict Pods without killing containers\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#non-preempting-priority-class",
+    explanation: "Setting `preemptionPolicy: Never` means Pods with this PriorityClass are placed ahead in the scheduling queue but will not trigger eviction of running lower-priority Pods. They wait until resources become available naturally. This is useful for important but non-urgent workloads.\n\nWhy other options are wrong:\n- B: Never preemption does not mean lowest urgency or back-of-queue; the Pod still gets priority-based queue ordering, it simply does not evict others\n- C: preemptionPolicy: Never means no preemption at all, not a threshold-based preemption\n- D: Preemption terminates victim Pods fully; there is no mechanism to evict Pods without killing containers\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#non-preempting-priority-class",
     verify: "kubectl get priorityclass"
   },
   {
@@ -506,11 +506,11 @@ var questions = [
     options: [
       "A. The Pod is not scheduled on this node because the taint blocks all untolerated Pods",
       "B. The Pod is scheduled on this node but receives a warning annotation on it",
-      "C. The taint is invalid because `PreferNoSchedule` is not a recognized effect",
+      "C. The Pod is scheduled on this node but the scheduler logs a SoftConstraintViolation warning event",
       "D. The Pod can be scheduled on this node if no other nodes are available"
     ],
     answer: 3,
-    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.\n\nWhy other options are wrong:\n- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule is a recognized and valid taint effect alongside NoSchedule and NoExecute\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.\n\nWhy other options are wrong:\n- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule does not generate any SoftConstraintViolation event; when the Pod is placed there it is a normal scheduling decision, not a warning\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
-      "B. `kubeadm certs check-expiration` — lists all PKI certificates and their expiration dates",
+      "B. `kubeadm certs check-expiration` — prints a tabular summary of certificate validity and remaining time",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
       "D. `kubeadm certs renew` — regenerates expiring certificates but does not list their expiration dates"
     ],
@@ -618,7 +618,7 @@ var questions = [
     options: [
       "A. etcd-operator from the CoreOS project",
       "B. Longhorn, a distributed storage tool",
-      "C. Velero, a backup and restore project",
+      "C. Velero, a disaster-recovery and cluster-portability project",
       "D. Stash, a backup and restore toolkit"
     ],
     answer: 2,
@@ -794,11 +794,11 @@ var questions = [
     options: [
       "A. `Guaranteed`",
       "B. `BestEffort`",
-      "C. `Baseline`",
+      "C. `Throttled`",
       "D. `Burstable`"
     ],
     answer: 3,
-    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.\n\nWhy other options are wrong:\n- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Baseline is a Pod Security Admission level, not a Kubernetes QoS class\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
+    explanation: "A Pod with resource requests but no matching limits (or limits different from requests) is classified as `Burstable`. `Guaranteed` requires requests equal to limits for all containers. `BestEffort` applies when no requests or limits are set. QoS class affects eviction priority under resource pressure.\n\nWhy other options are wrong:\n- A: Guaranteed requires both requests and limits to be set and equal for all containers\n- B: BestEffort applies only when no requests or limits are set at all\n- C: Throttled is not a Kubernetes QoS class; the only three QoS classes are Guaranteed, Burstable, and BestEffort\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.qosClass}'"
   },
   {
@@ -1067,10 +1067,10 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. The `globalDefault` field was removed from the PriorityClass spec in Kubernetes v1.27 and later"
+      "D. The `globalDefault` field applies retroactively — existing Pods inherit the new value during the next sync cycle"
     ],
     answer: 0,
-    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: The `globalDefault` field is not deprecated; it remains a fully supported and functional field in the PriorityClass spec\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
+    explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault does not apply retroactively; Pod priority is set at creation time by the admission controller and is never updated by a sync cycle\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
     verify: "kubectl get priorityclass"
   },
   {
@@ -1354,11 +1354,11 @@ var questions = [
     options: [
       "A. Only taints with key `special-taint` and an empty string value",
       "B. All taints on the node regardless of their key, value, or effect",
-      "C. No taints at all, because a value field is required with operator: Exists",
+      "C. Only taints with key `special-taint` and an empty string value, because Exists matches empty values by default",
       "D. All taints with key `special-taint` regardless of their value"
     ],
     answer: 3,
-    explanation: "The `Exists` operator matches all taints with the specified key, regardless of their value. If no key is specified with `Exists`, it matches all taints. This is useful when you want to tolerate a taint key without caring about the specific value assigned.\n\nWhy other options are wrong:\n- A: Exists with a key matches any value for that key, not just empty string values\n- B: Exists with a specific key matches only that key's taints; matching all taints requires omitting the key\n- C: The value field is optional with operator: Exists; it is valid and functional without a value\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    explanation: "The `Exists` operator matches all taints with the specified key, regardless of their value. If no key is specified with `Exists`, it matches all taints. This is useful when you want to tolerate a taint key without caring about the specific value assigned.\n\nWhy other options are wrong:\n- A: Exists with a key matches any value for that key, not just empty string values\n- B: Exists with a specific key matches only that key's taints; matching all taints requires omitting the key\n- C: Exists with a key matches all values for that key, not just empty strings; the value field is ignored entirely\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl explain pod.spec.tolerations"
   },
   {
@@ -1513,12 +1513,12 @@ var questions = [
     diagram: null,
     options: [
       "A. Skip directly to v1.30 to reduce the total number of maintenance windows",
-      "B. Upgrade to v1.29 first since skipping one version is allowed, then v1.30",
+      "B. Upgrade to v1.28 first and pause for stability validation before proceeding to v1.29 and v1.30",
       "C. Build a new v1.30 cluster from scratch and migrate all existing workloads",
       "D. Upgrade sequentially: v1.27 -> v1.28 -> v1.29 -> v1.30, one at a time"
     ],
     answer: 3,
-    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: Skipping even one minor version is not supported by kubeadm; each minor version must be applied\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: While upgrading to v1.28 first is correct, the suggestion to pause for stability before continuing is not part of the Kubernetes recommendation; sequential upgrade without pausing is the standard approach\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubeadm upgrade plan"
   },
   {

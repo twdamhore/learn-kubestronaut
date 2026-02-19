@@ -249,8 +249,8 @@ var questions = [
     diagram: null,
     options: [
       "Deploy a logging agent as a sidecar container inside every application Pod",
-      "Deploy a single logging Deployment with `replicas` equal to the node count",
-      "Run a logging agent as a DaemonSet so one instance runs on each node automatically",
+      "Deploy a single logging Deployment with `replicas` equal to the node count that automatically adjusts",
+      "A DaemonSet, which guarantees a single Pod copy is present on all cluster nodes as they join",
       "Configure the kubelet to forward all container logs to the backend service directly"
     ],
     answer: 2,
@@ -265,9 +265,9 @@ var questions = [
     diagram: null,
     options: [
       "Developers push changes to Git, and a CI pipeline runs `kubectl apply` to deploy changes directly to the cluster",
-      "Operations staff manually review Git diffs and apply approved changes using `kubectl` during maintenance windows",
+      "Operations staff manually review Git diffs and reconcile the desired state by applying approved changes during windows",
       "The Git repository triggers webhooks that invoke the Kubernetes API server directly to create or update resources",
-      "An agent in the cluster continuously reconciles the actual state with the desired state declared in Git"
+      "An agent in the cluster continuously watches Git and corrects any drift between the live and declared configuration"
     ],
     answer: 3,
     explanation: "The core GitOps principle involves a cluster-resident agent (like Argo CD or Flux) that continuously watches a Git repository and reconciles the cluster state to match the declared desired state. This pull-based approach is more secure than push-based CI pipelines because the cluster pulls changes rather than external systems pushing to it. Direct webhook invocations and manual operations do not provide continuous reconciliation.\n\nWhy other options are wrong:\n- A: A CI pipeline pushing via kubectl apply is push-based, not GitOps-style continuous reconciliation.\n- B: Manual review and application during maintenance windows is not automated or continuously reconciled.\n- C: Webhooks invoking the API server directly are push-based and do not provide ongoing drift detection.\n\nReference: https://opengitops.dev/",
@@ -297,7 +297,7 @@ var questions = [
     diagram: null,
     options: [
       "Apply `nodeSelector` on ML Pods to target GPU nodes, and add taints to GPU nodes with tolerations",
-      "Use a `ResourceQuota` to reserve GPU nodes for machine learning workloads by limiting resource consumption per namespace",
+      "Use a `ResourceQuota` to reserve GPU nodes for ML workloads by capping resource usage per namespace",
       "Set `nodeName` directly in the ML Pod specs to hardcode specific GPU node names for scheduling",
       "Configure the `kube-scheduler` with a custom profile that only considers GPU nodes for all Pods"
     ],
@@ -488,7 +488,7 @@ var questions = [
     text: "After deploying a new application, a Pod is stuck in `ImagePullBackOff` status. The team verifies that the image name is correct and the registry is accessible from their laptops. What is the most likely cause within the cluster context?",
     diagram: null,
     options: [
-      "The node's container runtime has reached its maximum image cache size and cannot pull any new images",
+      "The node's `containerd` runtime has reached its maximum image cache size and cannot pull any new images",
       "The cluster nodes cannot reach the container registry, or the Pod lacks required `imagePullSecrets`",
       "The `kube-scheduler` has placed the Pod on a node that does not support the container image format",
       "The `ImagePullBackOff` status most commonly indicates the image tag does not exist in the remote registry"
@@ -616,9 +616,9 @@ var questions = [
     text: "A monitoring team needs to deploy a log collector agent on every node in the cluster, including new nodes that are added later. The agent should run exactly one instance per node. Which workload resource should they use?",
     diagram: null,
     options: [
-      "A Deployment with `replicas` set to the node count and a `podAntiAffinity` scheduling rule",
+      "A Deployment with `replicas` set to the node count and a `podAntiAffinity` rule that automatically spreads Pods",
       "A StatefulSet with node affinity rules targeting each node by its individual hostname label",
-      "A DaemonSet, which automatically schedules exactly one Pod on every node in the cluster",
+      "A DaemonSet, which ensures a single Pod copy is placed on each cluster node as nodes join",
       "A CronJob that periodically checks for new nodes and creates Pods on unmonitored ones"
     ],
     answer: 2,
@@ -744,8 +744,8 @@ var questions = [
     text: "During a cluster upgrade, the team needs to understand the order of component upgrades. After etcd has been upgraded separately, the Kubernetes documentation recommends a specific upgrade order for the remaining non-etcd control plane components (API server, controller-manager, scheduler). Which of these components should typically be upgraded first?",
     diagram: null,
     options: [
-      "The `kube-scheduler`, because it must understand new scheduling features before other components",
-      "The `kubelet` on worker nodes, because they must be ready to handle new Pod specifications first",
+      "The `kube-scheduler`, because it needs to understand new scheduling features before other components",
+      "The `kubelet` on worker nodes, because they should be ready to handle new Pod specifications first",
       "The `kube-apiserver`, because all components communicate through it and need the new API version",
       "The `kube-controller-manager`, because controllers must reconcile resources before the API server"
     ],
@@ -760,7 +760,7 @@ var questions = [
     text: "A team needs to run a database migration script exactly once before their main application starts in each Pod. The migration must complete successfully before the application container begins. Which Kubernetes feature provides this sequential startup behavior?",
     diagram: null,
     options: [
-      "An init container that runs the migration and must exit successfully before main ones",
+      "An init container that performs the migration and terminates with exit code 0 before app containers start",
       "A Job resource that runs the migration before the Deployment is created by the team",
       "A `postStart` lifecycle hook on the application container that runs the migration task",
       "A sidecar container with a higher `priority` value to ensure it starts before the app"
@@ -1371,7 +1371,7 @@ var questions = [
       "Declarative commands execute faster because they bypass most of the validation checks performed by the API server",
       "Declarative config describes the desired end state, enabling version control, audit trails, and reproducibility",
       "Declarative manifests automatically retry failed operations until the desired state is fully achieved",
-      "Declarative management simplifies operations by inferring the desired state from command-line flags rather than requiring manifest files"
+      "Declarative management infers the desired state from command-line flags instead of requiring manifest files"
     ],
     answer: 1,
     explanation: "Declarative management (using `kubectl apply` with YAML/JSON manifests) describes the desired state rather than the steps to get there. This enables version control of infrastructure, audit trails through Git history, and reproducible deployments across environments. Declarative commands do not skip validation. Retry logic is handled by controllers, not the declarative approach itself. Declarative management relies on manifest files (YAML/JSON), not command-line flags.\n\nWhy other options are wrong:\n- A: Declarative commands do not skip validation; they are fully validated by the API server.\n- C: Retry logic is handled by Kubernetes controllers, not inherently by the declarative approach itself.\n- D: Declarative management relies on manifest files (YAML/JSON), not command-line flags.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/",

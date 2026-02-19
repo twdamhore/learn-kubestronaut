@@ -155,7 +155,7 @@ var questions = [
       "`spec.selector.sticky: true` to pin each session to a single pod",
       "`spec.externalTrafficPolicy: Local` to route only to local pods",
       "`spec.type: StatefulSet` to enable persistent session handling",
-      "`spec.sessionAffinity: ClientIP` to bind clients to one pod"
+      "`spec.sessionAffinity: ClientIP` to route repeat requests from the same source to a fixed backend"
     ],
     answer: 3,
     explanation: "`sessionAffinity: ClientIP` configures the Service to route all requests from the same client IP to the same backend pod for a configurable timeout. There is no `selector.sticky` field. `externalTrafficPolicy: Local` avoids extra hops for external traffic but does not guarantee session stickiness. `StatefulSet` is a workload kind, not a Service field.\n\nWhy other options are wrong:\n- A: There is no `spec.selector.sticky` field in the Kubernetes Service API.\n- B: `externalTrafficPolicy: Local` avoids extra hops for external traffic but does not guarantee session stickiness.\n- C: `StatefulSet` is a workload controller kind, not a Service type or field; it cannot be used in `spec.type`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#proxy-mode-userspace",
@@ -424,13 +424,13 @@ var questions = [
     text: "A pod defines `readinessProbe` on port 8080. When the probe fails, what happens to the pod's IP in the Service's Endpoints object?",
     diagram: null,
     options: [
-      "The pod is terminated and replaced by the Deployment controller with a new replica instance",
+      "The pod is terminated and its entry in the Endpoints object is permanently deleted by the controller",
       "The pod's IP is removed from the Endpoints object so it stops receiving Service traffic",
       "The Service switches to a different port automatically to reach a healthy pod on the node",
       "kube-proxy doubles the health check frequency for that endpoint until the probe succeeds"
     ],
     answer: 1,
-    explanation: "When a readiness probe fails, the Endpoints controller removes the pod's IP from the associated Endpoints object, causing kube-proxy to stop forwarding traffic to that pod. The pod is not terminated — that would require a failed liveness probe. Services do not switch ports. kube-proxy does not control probe frequency; the kubelet does.\n\nWhy other options are wrong:\n- A: The pod is not terminated when a readiness probe fails; only a failed liveness probe triggers termination.\n- C: Services do not automatically switch ports; they forward to the configured targetPort.\n- D: kube-proxy does not control probe frequency; the kubelet manages probe scheduling.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+    explanation: "When a readiness probe fails, the Endpoints controller removes the pod's IP from the associated Endpoints object, causing kube-proxy to stop forwarding traffic to that pod. The pod is not terminated — that would require a failed liveness probe. Services do not switch ports. kube-proxy does not control probe frequency; the kubelet does.\n\nWhy other options are wrong:\n- A: The pod is not terminated when a readiness probe fails; only a failed liveness probe triggers termination. The Endpoints entry is temporarily removed, not permanently deleted.\n- C: Services do not automatically switch ports; they forward to the configured targetPort.\n- D: kube-proxy does not control probe frequency; the kubelet manages probe scheduling.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
     verify: "kubectl get endpoints <service-name>"
   },
   {
@@ -934,7 +934,7 @@ var questions = [
     domain: "Kubernetes Fundamentals",
     subsection: "Services & Networking",
     text: "Two `NetworkPolicy` objects exist in the same namespace: Policy A allows ingress from `app: web` on port 80, and Policy B allows ingress from `app: api` on port 443. Both select the same target pod `app: server`. What is the combined effect?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80 ?</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443 ?</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
       "Only `Policy A` takes effect because it was created first and has priority in the namespace",
       "Policy B overrides Policy A because it was created more recently in the namespace",
@@ -1064,13 +1064,13 @@ var questions = [
     text: "A `NetworkPolicy` allows egress only to a specific CIDR block `10.0.5.0/24` on port 5432. A pod selected by this policy tries to connect to a database at `10.0.5.10:5432` and to an external API at `203.0.113.50:443`. What happens?",
     diagram: null,
     options: [
-      "Both connections succeed because the CIDR allow rule also permits traffic to any destination on ports listed in the rule",
+      "Both connections succeed because the CIDR allow rule implicitly permits all destinations",
       "The database connection is blocked; the external API connection succeeds",
       "Both connections are blocked because the CIDR is a private range",
       "The database connection succeeds; the external API connection is blocked"
     ],
     answer: 3,
-    explanation: "The policy allows egress only to `10.0.5.0/24` on port 5432. The database at `10.0.5.10:5432` falls within this CIDR and port, so it succeeds. The external API at `203.0.113.50:443` is outside the allowed CIDR and port, so it is blocked. NetworkPolicy applies to both TCP and UDP. Private vs. public CIDR is irrelevant to policy enforcement.\n\nWhy other options are wrong:\n- A: NetworkPolicy applies to both TCP and UDP; egress policies do not only block UDP.\n- B: The database connection succeeds because `10.0.5.10:5432` falls within the allowed CIDR and port.\n- C: Both connections are not blocked; the one matching the CIDR and port rule succeeds.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "The policy allows egress only to `10.0.5.0/24` on port 5432. The database at `10.0.5.10:5432` falls within this CIDR and port, so it succeeds. The external API at `203.0.113.50:443` is outside the allowed CIDR and port, so it is blocked. NetworkPolicy applies to both TCP and UDP. Private vs. public CIDR is irrelevant to policy enforcement.\n\nWhy other options are wrong:\n- A: The CIDR allow rule does not implicitly permit all destinations; only `10.0.5.0/24` on port 5432 is allowed.\n- B: The database connection succeeds because `10.0.5.10:5432` falls within the allowed CIDR and port.\n- C: Both connections are not blocked; the one matching the CIDR and port rule succeeds.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {
@@ -1272,13 +1272,13 @@ var questions = [
     text: "A NodeLocal DNS Cache DaemonSet is deployed to improve DNS performance. How does it reduce load on CoreDNS?",
     diagram: null,
     options: [
-      "It replaces CoreDNS entirely with a more performant DNS server deployed as a DaemonSet on nodes",
+      "It acts as a node-level DNS server, intercepting queries so CoreDNS receives minimal traffic from pods",
       "It pre-populates all DNS records from etcd into node memory at startup to avoid CoreDNS queries",
       "It bypasses the `kube-dns` Service and sends queries directly to the CoreDNS pod IP on the node",
       "It runs a local caching agent on each node that serves cached responses and falls back to CoreDNS"
     ],
     answer: 3,
-    explanation: "NodeLocal DNS Cache runs as a DaemonSet with a DNS caching agent on each node. Pods query the local cache first. Cache hits are served without contacting CoreDNS, reducing its load and improving latency. It does not replace CoreDNS. It does not pre-populate all records. While it may avoid the Service VIP, the key benefit is caching, not just direct IP routing.\n\nWhy other options are wrong:\n- A: NodeLocal DNS Cache does not replace CoreDNS; it caches locally and falls back to CoreDNS for cache misses.\n- B: It does not pre-populate all DNS records from etcd; it caches records as they are queried on demand.\n- C: While it may bypass the kube-dns Service VIP, the primary benefit is caching, not just direct IP routing.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/",
+    explanation: "NodeLocal DNS Cache runs as a DaemonSet with a DNS caching agent on each node. Pods query the local cache first. Cache hits are served without contacting CoreDNS, reducing its load and improving latency. It does not replace CoreDNS. It does not pre-populate all records. While it may avoid the Service VIP, the key benefit is caching, not just direct IP routing.\n\nWhy other options are wrong:\n- A: NodeLocal DNS Cache does not replace CoreDNS or intercept all queries; it caches locally and falls back to CoreDNS for cache misses.\n- B: It does not pre-populate all DNS records from etcd; it caches records as they are queried on demand.\n- C: While it may bypass the kube-dns Service VIP, the primary benefit is caching, not just direct IP routing.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/",
     verify: "kubectl get daemonset node-local-dns -n kube-system"
   },
   {
@@ -1290,11 +1290,11 @@ var questions = [
     options: [
       "To the cloud load balancer, which then forwards the traffic back into the cluster for routing",
       "To the kube-apiserver, which acts as a proxy and forwards the request to the correct backend",
-      "The request fails because pods inside the cluster cannot reach the external load balancer IPs",
+      "The request is routed to the cloud load balancer, which drops it because the pod source IP is not in the allowed CIDR",
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
     ],
     answer: 3,
-    explanation: "kube-proxy programs rules (often called hairpin or loopback NAT) that intercept traffic destined for the Service's external load balancer IP from within the cluster and route it directly to the endpoints without the traffic leaving the cluster. The request does not go to the actual cloud LB. It does not fail. The API server is not in the data path.\n\nWhy other options are wrong:\n- A: The request does not go to the cloud load balancer; kube-proxy intercepts it locally with hairpin NAT rules.\n- B: The kube-apiserver is a control-plane component and is not in the data path for service traffic.\n- C: The request does not fail; kube-proxy handles hairpin routing for in-cluster access to external LB IPs.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
+    explanation: "kube-proxy programs rules (often called hairpin or loopback NAT) that intercept traffic destined for the Service's external load balancer IP from within the cluster and route it directly to the endpoints without the traffic leaving the cluster. The request does not go to the actual cloud LB. It does not fail. The API server is not in the data path.\n\nWhy other options are wrong:\n- A: The request does not go to the cloud load balancer; kube-proxy intercepts it locally with hairpin NAT rules.\n- B: The kube-apiserver is a control-plane component and is not in the data path for service traffic.\n- C: The request does not leave the cluster to reach the cloud LB; kube-proxy handles hairpin routing for in-cluster access to external LB IPs.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: "kubectl get svc <service-name> -o jsonpath='{.status.loadBalancer.ingress}'"
   },
   {
@@ -1481,12 +1481,12 @@ var questions = [
     diagram: null,
     options: [
       "The kube-scheduler dispatching pods to nodes in the cluster",
-      "The kubelet's HTTP server on the affected node under pressure",
+      "The kubelet's HTTP server on the affected node, responding slowly due to high pod count",
       "CoreDNS handling DNS resolution queries forwarded by the kubelet",
       "The Ingress controller proxying external requests to backends"
     ],
     answer: 1,
-    explanation: "The `kubelet_http_requests_duration_seconds_bucket` metric is exposed by the kubelet. Increasing latency for health check requests indicates the kubelet's HTTP server on that node is under pressure, possibly due to high pod count, disk I/O, or resource contention. The scheduler, CoreDNS, and Ingress controller have their own separate metrics.\n\nWhy other options are wrong:\n- A: The kube-scheduler has its own metrics; `kubelet_http_requests_duration_seconds_bucket` is a kubelet metric.\n- C: CoreDNS has its own DNS-specific metrics, not kubelet HTTP metrics.\n- D: The Ingress controller has its own latency metrics; this metric is specifically from the kubelet's HTTP server.\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The `kubelet_http_requests_duration_seconds_bucket` metric is exposed by the kubelet. Increasing latency for health check requests indicates the kubelet's HTTP server on that node is overloaded, possibly due to high pod count, disk I/O, or resource contention. The scheduler, CoreDNS, and Ingress controller have their own separate metrics.\n\nWhy other options are wrong:\n- A: The kube-scheduler has its own metrics; `kubelet_http_requests_duration_seconds_bucket` is a kubelet metric.\n- C: CoreDNS has its own DNS-specific metrics, not kubelet HTTP metrics.\n- D: The Ingress controller has its own latency metrics; this metric is specifically from the kubelet's HTTP server.\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: null
   },
   {
@@ -1562,7 +1562,7 @@ var questions = [
     options: [
       "An IPv4 ClusterIP is assigned as the primary, with IPv6 available via a separate Service",
       "An IPv6 ClusterIP is assigned as primary because dual-stack clusters prioritize IPv6 addressing",
-      "Both an IPv4 and IPv6 ClusterIP, with the primary family set by the cluster's default",
+      "An IPv4 and IPv6 ClusterIP are assigned, with the primary family determined by the cluster configuration",
       "No ClusterIP is assigned — PreferDualStack turns it into a headless Service automatically"
     ],
     answer: 2,

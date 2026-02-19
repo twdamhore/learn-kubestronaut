@@ -411,7 +411,7 @@ var questions = [
       "No, because the `storageClassName` values differ between the PV and PVC, preventing binding",
       "Yes, but Kubernetes will convert the PV's StorageClass from `fast-ssd` to `standard` value",
       "Yes, because the capacity and access modes match between the PV and PVC specifications exactly",
-      "No, because `storageClassName` must match exactly but Kubernetes also requires the PV capacity to equal the PVC request precisely"
+      "No, because `storageClassName` must match exactly and the PV capacity must also equal the PVC request"
     ],
     answer: 0,
     explanation: "For a PVC to bind to a PV, the `storageClassName` must match in addition to capacity and access modes. A PVC requesting `standard` will not bind to a PV with `fast-ssd`. The StorageClass acts as a filter during PV selection. If dynamic provisioning is available for the `standard` class, a new PV will be provisioned instead.\n\nWhy other options are wrong:\n- B: Kubernetes does not convert or change a PV's StorageClass to match a PVC\n- C: Matching capacity and access modes is necessary but not sufficient; storageClassName must also match\n- D: PVCs can and must include a storageClassName field to control which PVs they bind to\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -456,9 +456,9 @@ var questions = [
     text: "A team needs a volume that allows multiple pods on different nodes to read and write simultaneously. Which access mode should they configure on the PV?",
     diagram: null,
     options: [
-      "`ReadWriteMany` — allows read/write access by many nodes simultaneously",
+      "`ReadWriteMany` — allows read/write access by many nodes concurrently",
       "`ReadWriteOnce` — allows read/write access by only a single node at once",
-      "`ReadOnlyMany` — allows read-only access by many nodes at the same time",
+      "`ReadOnlyMany` — allows read-only access by many nodes simultaneously",
       "`ReadWriteOncePod` — allows read/write access by only one individual pod"
     ],
     answer: 0,
@@ -520,13 +520,13 @@ var questions = [
     text: "A platform engineer configures Prometheus to scrape kubelet metrics for PV monitoring. Which of the following metrics would help track the total capacity versus used capacity of a mounted PersistentVolume?",
     diagram: null,
     options: [
-      "`kube_persistentvolume_capacity_bytes` paired with `kube_persistentvolume_used_bytes`",
+      "`kubelet_volume_stats_inodes` paired with `kubelet_volume_stats_inodes_free`",
       "`node_disk_io_time_seconds_total` paired with `node_disk_read_bytes_total`",
       "`kubelet_volume_stats_capacity_bytes` paired with `kubelet_volume_stats_used_bytes`",
       "`container_fs_usage_bytes` paired with `container_fs_limit_bytes` from cAdvisor"
     ],
     answer: 2,
-    explanation: "The kubelet exposes `kubelet_volume_stats_capacity_bytes` and `kubelet_volume_stats_used_bytes` metrics for each mounted PV. These allow you to calculate usage percentages and set up alerts for volumes approaching full capacity. The `container_fs_*` metrics refer to container filesystem overlays, not PV-mounted volumes.\n\nWhy other options are wrong:\n- A: kube_persistentvolume_capacity_bytes is a real kube-state-metrics metric, but kube_persistentvolume_used_bytes does not exist; this pairing cannot track used capacity\n- B: node_disk_io_time_seconds_total and node_disk_read_bytes_total measure node-level disk I/O, not PV capacity/usage\n- D: container_fs_usage_bytes and container_fs_limit_bytes track container overlay filesystem usage, not mounted PV volumes\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The kubelet exposes `kubelet_volume_stats_capacity_bytes` and `kubelet_volume_stats_used_bytes` metrics for each mounted PV. These allow you to calculate usage percentages and set up alerts for volumes approaching full capacity. The `container_fs_*` metrics refer to container filesystem overlays, not PV-mounted volumes.\n\nWhy other options are wrong:\n- A: kubelet_volume_stats_inodes and kubelet_volume_stats_inodes_free track inode usage, not byte-level capacity versus used capacity\n- B: node_disk_io_time_seconds_total and node_disk_read_bytes_total measure node-level disk I/O, not PV capacity/usage\n- D: container_fs_usage_bytes and container_fs_limit_bytes track container overlay filesystem usage, not mounted PV volumes\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /api/v1/nodes/<node>/proxy/metrics | grep kubelet_volume_stats"
   },
   {
@@ -778,7 +778,7 @@ var questions = [
     options: [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
       "Serverless frameworks on Kubernetes default to in-memory scratch space, since PVC mounts are not enabled in standard Knative function pod templates",
-      "PersistentVolumes are automatically deleted by the platform whenever serverless functions scale down to zero pods",
+      "PersistentVolumes are reclaimed by the platform when serverless functions scale down to zero pods",
       "Knative defaults to `emptyDir` volumes and requires additional configuration for PersistentVolumeClaim mounts in function pods"
     ],
     answer: 0,
@@ -905,12 +905,12 @@ var questions = [
     diagram: null,
     options: [
       "The PVC has a syntax error in its YAML definition that prevents it from being processed by the API",
-      "The cluster has run out of available node disk space and cannot provision any new storage volumes",
+      "The cluster has run out of available node disk space and the provisioner cannot allocate new volumes",
       "The PVC references a StorageClass whose dynamic provisioner has not yet created the volume for it",
       "The PVC is already bound to a PV but the event message displayed by describe is stale and outdated"
     ],
     answer: 2,
-    explanation: "This event indicates the PVC is waiting for dynamic provisioning. The StorageClass's provisioner (typically an external CSI driver) has not yet created the PV. Common causes include: the provisioner pod is not running, the provisioner does not have the correct permissions, or cloud provider API limits are being hit. Checking the provisioner's logs is the next troubleshooting step.\n\nWhy other options are wrong:\n- A: This event does not indicate a syntax error; the PVC was accepted and is waiting for provisioning\n- B: This event is about volume provisioning, not node disk space; the provisioner has not created the PV\n- D: The PVC is in Pending state, not bound; the event message reflects the current waiting condition\n\nReference: https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/",
+    explanation: "This event indicates the PVC is waiting for dynamic provisioning. The StorageClass's provisioner (typically an external CSI driver) has not yet created the PV. Common causes include: the provisioner pod is not running, the provisioner does not have the correct permissions, or cloud provider API limits are being hit. Checking the provisioner's logs is the next troubleshooting step.\n\nWhy other options are wrong:\n- A: This event does not indicate a syntax error; the PVC was accepted and is waiting for provisioning\n- B: This event is about volume provisioning, not node disk space; the provisioner exists but has not yet created the PV\n- D: The PVC is in Pending state, not bound; the event message reflects the current waiting condition\n\nReference: https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/",
     verify: "kubectl get events --field-selector involvedObject.kind=PersistentVolumeClaim"
   },
   {
@@ -922,7 +922,7 @@ var questions = [
     options: [
       "CSI provides a uniform interface so storage vendors write one driver that works across orchestrators",
       "CSI standardizes container image formats across all registries used by container runtime environments",
-      "CSI defines network policies for container-to-container communication within a cluster environment",
+      "CSI defines a network interface specification for container-to-container communication in clusters",
       "CSI specifies CPU and memory resource management standards for containers running in orchestrators"
     ],
     answer: 0,
@@ -1067,7 +1067,7 @@ var questions = [
       "Use `RollingUpdate` with `partition` set to progressively lower values, verifying health each step",
       "Use `Recreate` strategy to replace all ZooKeeper nodes simultaneously in a single update batch run",
       "Delete the StatefulSet entirely and recreate it from scratch with the new container image version",
-      "Scale the StatefulSet down to 0 replicas, update the spec, then scale back up to full capacity"
+      "Scale the StatefulSet down to 0 replicas, update the spec, verify health, then scale back up"
     ],
     answer: 0,
     explanation: "The `partition` field in StatefulSet `RollingUpdate` strategy enables staged rollouts. Start with `partition: 4` to update only `pod-4`. After verifying health, set `partition: 3` to also update `pod-3`, and continue until all nodes are updated. This canary approach is ideal for clustered applications like ZooKeeper that require quorum maintenance during updates.\n\nWhy other options are wrong:\n- B: Recreate strategy does not exist for StatefulSets; it would also cause total cluster unavailability\n- C: Deleting and recreating the StatefulSet loses stability guarantees and causes full downtime\n- D: Scaling to 0 causes full downtime; the partition approach allows zero-downtime rolling updates\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
@@ -1147,10 +1147,10 @@ var questions = [
       "The kube-apiserver sends a notification event to all running broker pods about the new cluster member",
       "Kafka brokers perform DNS lookups against the headless Service which returns updated A records for all",
       "The new broker automatically inherits the full cluster configuration from its provisioned PVC contents",
-      "Existing brokers must be manually reconfigured with the new pod's IP address since headless Services do not update DNS records dynamically"
+      "Existing brokers must be manually reconfigured with the new pod's IP since headless Services do not update DNS"
     ],
     answer: 1,
-    explanation: "Headless Services provide DNS-based discovery for StatefulSet pods. When `kafka-3` becomes Running and Ready, the headless Service's DNS records are updated to include the new pod. Existing Kafka brokers that periodically resolve the Service DNS or use ZooKeeper/KRaft for cluster membership will discover the new member through these updated records.\n\nWhy other options are wrong:\n- A: The kube-apiserver does not send notification events directly to pods about cluster membership changes\n- C: PVCs contain data written by the application, not Kafka cluster configuration for new member discovery\n- D: Existing brokers can discover new members via DNS lookups without requiring a full restart of all pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    explanation: "Headless Services provide DNS-based discovery for StatefulSet pods. When `kafka-3` becomes Running and Ready, the headless Service's DNS records are updated to include the new pod. Existing Kafka brokers that periodically resolve the Service DNS or use ZooKeeper/KRaft for cluster membership will discover the new member through these updated records.\n\nWhy other options are wrong:\n- A: The kube-apiserver does not send notification events directly to pods about cluster membership changes\n- C: PVCs contain data written by the application, not Kafka cluster configuration for new member discovery\n- D: Headless Services do update DNS records dynamically; brokers discover new members via DNS lookups\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
     verify: "kubectl exec kafka-0 -- nslookup kafka-headless.default.svc.cluster.local"
   },
   {
@@ -1481,7 +1481,7 @@ var questions = [
     diagram: null,
     options: [
       "Only the current revision is retained; all previous revisions are immediately deleted after updates",
-      "All 9 revisions are retained because the revisionHistoryLimit setting applies to Deployment ReplicaSets, not StatefulSet ControllerRevisions",
+      "All 9 revisions are retained because revisionHistoryLimit applies to Deployment ReplicaSets, not StatefulSets",
       "6 ControllerRevision objects are retained (5 historical plus the current); the 3 oldest are garbage collected",
       "StatefulSets do not use ControllerRevision objects; they track updates via pod template hashes"
     ],
@@ -1560,7 +1560,7 @@ var questions = [
     text: "A team managing a Redis Sentinel StatefulSet wants to speed up rolling updates by allowing more than one pod to be updated at the same time. Which StatefulSet parameter controls update parallelism?",
     diagram: null,
     options: [
-      "`spec.minReadySeconds` — ensures each pod is ready for a specified duration before proceeding with rollout",
+      "`spec.minReadySeconds` — ensures each pod is ready for a specified duration before the rolling update proceeds",
       "`spec.updateStrategy.rollingUpdate.maxUnavailable: 2` — allows two pods to be updated simultaneously during the rollout",
       "`spec.replicas: 3` — the replica count itself ensures availability by maintaining the desired pod count",
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"

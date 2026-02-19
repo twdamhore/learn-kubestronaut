@@ -56,7 +56,7 @@ var questions = [
     text: "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
     diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(???)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
-      "During scheduling, after passing through the admission phase",
+      "During scheduling, after passing through the PodSecurity admission phase",
       "During the image pull phase by the node kubelet",
       "During admission by the PodSecurity admission plugin",
       "At runtime enforcement by the container runtime"
@@ -106,11 +106,11 @@ var questions = [
     options: [
       "Create and delete Deployments across all namespaces in the cluster",
       "Create and delete Deployments only in the `dev` namespace scope",
-      "Nothing, because ClusterRoles cannot be bound by namespace RoleBindings",
+      "Nothing, because ClusterRoles are only valid when bound by ClusterRoleBindings",
       "Create Deployments in `dev` but delete them across all other namespaces"
     ],
     answer: 1,
-    explanation: "A RoleBinding can reference a ClusterRole, but the permissions are scoped to the RoleBinding's namespace. Alice can only create and delete Deployments in the `dev` namespace, not cluster-wide. This pattern is commonly used to reuse ClusterRoles across multiple namespaces.\n\nWhy other options are wrong:\n- A: A RoleBinding scopes permissions to its own namespace, not cluster-wide\n- C: ClusterRoles can be bound by RoleBindings; this is a common and valid pattern\n- D: RBAC does not split verbs across different scopes; all granted verbs apply to the same namespace\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
+    explanation: "A RoleBinding can reference a ClusterRole, but the permissions are scoped to the RoleBinding's namespace. Alice can only create and delete Deployments in the `dev` namespace, not cluster-wide. This pattern is commonly used to reuse ClusterRoles across multiple namespaces.\n\nWhy other options are wrong:\n- A: A RoleBinding scopes permissions to its own namespace, not cluster-wide\n- C: ClusterRoles can be bound by RoleBindings; this is a common and valid pattern for reuse\n- D: RBAC does not split verbs across different scopes; all granted verbs apply to the same namespace\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl auth can-i create deployments --as=alice -n dev"
   },
   {
@@ -457,7 +457,7 @@ var questions = [
     diagram: null,
     options: [
       "DNS resolution works because NetworkPolicy does not affect DNS traffic",
-      "DNS resolution uses the node's resolver, fully bypassing the policy",
+      "DNS resolution uses the node's resolver, fully bypassing the egress policy",
       "DNS fails because UDP port 53 is not permitted by the egress rule",
       "The kubelet resolves DNS on behalf of the Pod before the connection"
     ],
@@ -521,12 +521,12 @@ var questions = [
     diagram: null,
     options: [
       "`apiserver_request_total` filtered with the HTTP code label `401`",
-      "`kubelet_http_requests_total` filtered with status label `denied`",
+      "`apiserver_audit_event_total` filtered with the stage label `ResponseComplete`",
       "`etcd_request_failed_total` tracking failed etcd store operations",
       "`scheduler_binding_errors_total` tracking Pod scheduling errors"
     ],
     answer: 0,
-    explanation: "The `apiserver_request_total` metric tracks all API server requests and includes a `code` label indicating the HTTP status code. Filtering for code `401` identifies failed authentication attempts. The other metrics track kubelet, etcd, or scheduler operations, not API authentication.\n\nWhy other options are wrong:\n- B: kubelet_http_requests_total tracks kubelet HTTP endpoints, not API server authentication\n- C: etcd_request_failed_total tracks etcd operation failures, not auth failures\n- D: scheduler_binding_errors_total tracks scheduling errors, not authentication failures\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The `apiserver_request_total` metric tracks all API server requests and includes a `code` label indicating the HTTP status code. Filtering for code `401` identifies failed authentication attempts. The other metrics track kubelet, etcd, or scheduler operations, not API authentication.\n\nWhy other options are wrong:\n- B: apiserver_audit_event_total tracks audit events, not authentication failures specifically\n- C: etcd_request_failed_total tracks etcd operation failures, not auth failures\n- D: scheduler_binding_errors_total tracks scheduling errors, not authentication failures\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /metrics | grep apiserver_request_total"
   },
   {
@@ -666,11 +666,11 @@ var questions = [
     options: [
       "After the Pod completes and is garbage collected by the system",
       "After 1 hour, the default projected token expiration time",
-      "After 90 minutes, matching the kubelet credential rotation cycle",
+      "After 90 minutes, matching the projected token rotation cycle",
       "After 24 hours following the initial token issuance time"
     ],
     answer: 1,
-    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Token expiration is time-based (approximately 1 hour), not tied to Pod lifecycle or garbage collection\n- C: The default projected token lifetime is approximately 1 hour (3600s), not 90 minutes; kubelet credential rotation is a separate mechanism\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
+    explanation: "In Kubernetes 1.21+, the default projected ServiceAccount token has a lifetime of approximately 1 hour (3600 seconds) and is automatically rotated by the kubelet before expiration. This is a significant security improvement over the legacy non-expiring tokens. The token is also bound to the Pod and audience-scoped.\n\nWhy other options are wrong:\n- A: Token expiration is time-based (approximately 1 hour), not tied to Pod lifecycle or garbage collection\n- C: The default projected token lifetime is approximately 1 hour (3600s), not 90 minutes\n- D: The default is approximately 1 hour (3600s), not 24 hours\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-tokens",
     verify: "kubectl get pod <pod> -o jsonpath='{.spec.volumes[*].projected.sources[*].serviceAccountToken.expirationSeconds}'"
   },
   {
@@ -681,12 +681,12 @@ var questions = [
     diagram: null,
     options: [
       "Individual databases use inherently stronger encryption algorithms",
-      "Shared databases cannot be effectively secured with network policies",
+      "Shared databases are harder to secure because every service needs broad access",
       "A breach in one service's database does not expose other services' data",
       "Individual databases reduce the number of network connections that must be monitored"
     ],
     answer: 2,
-    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies; the concern is blast radius, not securability\n- D: Per-service databases actually increase the total number of connections to monitor; the security benefit is blast-radius reduction, not fewer connections\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies and access controls; the concern is blast radius, not securability\n- D: Per-service databases actually increase the total number of connections to monitor; the security benefit is blast-radius reduction, not fewer connections\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -698,11 +698,11 @@ var questions = [
     options: [
       "Receive a stream of Secret objects including full data as changes occur",
       "Only receive notifications when Secrets change, not their actual data values",
-      "List all Secrets once at startup but never receive subsequent updates",
+      "List all Secrets once at startup but only receive metadata in subsequent updates",
       "Read Secret metadata only, without access to the encoded data values"
     ],
     answer: 0,
-    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives updates, unlike list which is one-time\n- D: Watch events include the full Secret object, not just metadata; there is no metadata-only watch mode\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives full updates, not just metadata\n- D: Watch events include the full Secret object, not just metadata; there is no metadata-only watch mode\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "kubectl auth can-i watch secrets --as=system:serviceaccount:monitoring:prometheus -n monitoring"
   },
   {
@@ -827,10 +827,10 @@ var questions = [
       "In a fixed order: certificates first, then bearer tokens, then OIDC",
       "The evaluation order is randomized differently for each request",
       "All configured authenticators are tried; the first success is used",
-      "Each authenticator is assigned to specific namespaces and evaluated only there"
+      "Each authenticator is assigned to specific API groups and evaluated per-group"
     ],
     answer: 2,
-    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: While authenticators are evaluated in a deterministic order based on configuration, there is no single canonical sequence; the key behavior is that all are tried and the first success wins\n- B: The order is not randomized; authenticators are tried in a deterministic, configuration-dependent order\n- D: Authenticators are not scoped to namespaces; they operate cluster-wide on every request\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
+    explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: While authenticators are evaluated in a deterministic order based on configuration, there is no single canonical sequence; the key behavior is that all are tried and the first success wins\n- B: The order is not randomized; authenticators are tried in a deterministic, configuration-dependent order\n- D: Authenticators are not scoped to API groups; they operate cluster-wide on every request\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
     verify: "kubectl get pods -n kube-system kube-apiserver-<node> -o yaml | grep auth"
   },
   {
@@ -838,7 +838,7 @@ var questions = [
     domain: "Container Orchestration",
     subsection: "Security",
     text: "A Pod runs with `securityContext.runAsUser: 1000` at the pod level, but one of its containers specifies `securityContext.runAsUser: 2000`. Which UID does that container use?",
-    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="340" height="180" rx="10" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#4cc9f0" font-size="12">Pod securityContext</text><text x="200" y="55" text-anchor="middle" fill="#f8f8f2" font-size="11">runAsUser: 1000</text><rect x="50" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#50fa7b" stroke-width="1.5"/><text x="115" y="100" text-anchor="middle" fill="#50fa7b" font-size="11">Container A</text><text x="115" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">runAsUser: 2000</text><text x="115" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text><rect x="220" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#ff79c6" stroke-width="1.5"/><text x="285" y="100" text-anchor="middle" fill="#ff79c6" font-size="11">Container B</text><text x="285" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">(no override)</text><text x="285" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text></svg>',
+    diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="340" height="180" rx="10" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#4cc9f0" font-size="12">Pod securityContext</text><text x="200" y="55" text-anchor="middle" fill="#f8f8f2" font-size="11">runAsUser: 1000</text><rect x="50" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#50fa7b" stroke-width="1.5"/><text x="115" y="100" text-anchor="middle" fill="#50fa7b" font-size="11">Container A</text><text x="115" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">container-level override</text><text x="115" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text><rect x="220" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#ff79c6" stroke-width="1.5"/><text x="285" y="100" text-anchor="middle" fill="#ff79c6" font-size="11">Container B</text><text x="285" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">(no override)</text><text x="285" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text></svg>',
     options: [
       "UID 1000, because pod-level settings take precedence over container-level settings",
       "UID 2000, because container-level settings override pod-level settings",
@@ -939,10 +939,10 @@ var questions = [
       "Tags are mutable and can be repointed to a different image; digests are immutable",
       "Digests download significantly faster than tags when pulling from registries",
       "Digests enable automatic vulnerability scanning during the image pull phase",
-      "Digests are required by Kubernetes admission controllers and tags are being deprecated in Pod image references"
+      "Digests are required by default admission controllers and tags are being deprecated"
     ],
     answer: 0,
-    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported in Pod image references and are not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
+    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported and not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
     verify: "kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[0].imageID}'"
   },
   {
@@ -955,10 +955,10 @@ var questions = [
       "Each microservice must implement its own TLS termination at the service level",
       "If the gateway is compromised, all backend services are accessible unauthenticated",
       "Microservices behind the gateway are unable to use service mesh capabilities",
-      "The gateway introduces additional latency that offsets the security benefits of centralized authentication"
+      "The gateway adds latency that offsets the security benefits of centralized auth"
     ],
     answer: 1,
-    explanation: "Centralizing authentication at the gateway creates a single point of failure. If the gateway is compromised or bypassed, backend services that trust the gateway without performing their own verification are exposed. Defense in depth recommends each service also validates identity tokens.\n\nWhy other options are wrong:\n- A: TLS termination is handled by the gateway, not individual microservices in this pattern\n- C: Microservices behind a gateway can still use service mesh capabilities\n- D: API gateways can enforce per-service rate limiting; this is not a limitation\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "Centralizing authentication at the gateway creates a single point of failure. If the gateway is compromised or bypassed, backend services that trust the gateway without performing their own verification are exposed. Defense in depth recommends each service also validates identity tokens.\n\nWhy other options are wrong:\n- A: TLS termination is handled by the gateway, not individual microservices in this pattern\n- C: Microservices behind a gateway can still use service mesh capabilities\n- D: Gateway latency is minimal and does not offset the security benefits of centralized auth\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -1001,7 +1001,7 @@ var questions = [
     diagram: null,
     options: [
       "Pod creation requests are rejected until the webhook endpoint becomes available",
-      "Pods are created normally by the API server, completely bypassing the webhook",
+      "Pods are created normally by the API server, completely bypassing the endpoint",
       "The API server queues incoming requests and retries for 30 seconds on failure",
       "The kube-controller-manager handles the admission in place of the failed webhook"
     ],
@@ -1144,7 +1144,7 @@ var questions = [
     text: "A NetworkPolicy allows egress from Pods labeled `app: worker` to an external CIDR `10.0.0.0/8` on port 5432. The cluster Pod CIDR is `192.168.0.0/16`. Can the worker Pods reach other Pods in the cluster?",
     diagram: null,
     options: [
-      "Yes, because intra-cluster Pod-to-Pod traffic is not subject to egress NetworkPolicy rules",
+      "Yes, because intra-cluster Pod traffic is exempt from egress rules",
       "No, because the egress rule only allows traffic to `10.0.0.0/8`",
       "Yes, because NetworkPolicies do not affect traffic to `192.168.0.0/16`",
       "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
@@ -1162,7 +1162,7 @@ var questions = [
     options: [
       "A `nodeSelector` entry matching the `security: high` node label",
       "A `toleration` matching the taint `security=high:NoSchedule`",
-      "A `nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` to bypass the taint",
+      "A `nodeAffinity` with a required scheduling rule to bypass the taint",
       "An annotation `scheduler.alpha.kubernetes.io/tolerations` on the Pod"
     ],
     answer: 1,
@@ -1306,11 +1306,11 @@ var questions = [
     options: [
       "Environment variables are not encrypted by Kubernetes while in transit between components",
       "Volume mounts automatically encrypt Secret data before writing it to the container disk",
-      "Environment variables are limited to 256 characters and cannot hold full Secret values",
+      "Environment variables are injected only once and are stale if the Secret is rotated",
       "Env vars are visible in process listings, crash dumps, and logs; volume files are not"
     ],
     answer: 3,
-    explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.\n\nWhy other options are wrong:\n- A: Neither env vars nor volume mounts are encrypted in transit between components by default\n- B: Volume mounts do not automatically encrypt Secret data; they use tmpfs with file permissions\n- C: Environment variables have no 256-character limit in Kubernetes\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
+    explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.\n\nWhy other options are wrong:\n- A: Neither env vars nor volume mounts are encrypted in transit between components by default\n- B: Volume mounts do not automatically encrypt Secret data; they use tmpfs with file permissions\n- C: While env vars are indeed injected at start and do not auto-update, the primary security concern is exposure in process listings and logs\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
     verify: "kubectl exec <pod> -- env | grep SECRET"
   },
   {
@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
-      "The label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
+      "A custom label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
       "The custom label `team: app` matching the policy's `namespaceSelector`",
       "No label is needed; `namespaceSelector` resolves namespace names to IPs automatically"
     ],
