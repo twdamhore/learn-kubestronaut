@@ -377,8 +377,8 @@ var questions = [
     diagram: null,
     options: [
       "Set the Deployment strategy to `Recreate` with a `minReadySeconds` value of 30 for safe transitions",
-      "Use a StatefulSet instead of a Deployment because StatefulSets support ordered rolling updates",
-      "Create a new Deployment alongside the old one and shift traffic using a Service selector change",
+      "Use a `StatefulSet` instead of a `Deployment` because `StatefulSets` support ordered rolling updates",
+      "Create a new `Deployment` alongside the old one and shift traffic using a `Service` selector change",
       "Set the Deployment strategy to `RollingUpdate` with `maxUnavailable: 1` and `maxSurge: 1`"
     ],
     answer: 3,
@@ -760,13 +760,13 @@ var questions = [
     text: "A team needs to run a database migration script exactly once before their main application starts in each Pod. The migration must complete successfully before the application container begins. Which Kubernetes feature provides this sequential startup behavior?",
     diagram: null,
     options: [
-      "An init container that performs the migration and terminates with exit code 0 before app containers start",
-      "A Job resource that runs the migration before the Deployment is created by the team",
+      "An init container that runs the migration to completion before the app containers start",
+      "A Job resource that runs the migration as a separate workload before the Deployment is created",
       "A `postStart` lifecycle hook on the application container that runs the migration task",
       "A sidecar container with a higher `priority` value to ensure it starts before the app"
     ],
     answer: 0,
-    explanation: "Init containers are specialized containers that run before the main application containers in a Pod. They run sequentially, and each must complete successfully (exit code 0) before the next init container or main container starts. `postStart` hooks run after the container starts and do not block other containers. A separate Job would need external orchestration. Sidecar containers run concurrently with the main container, and there is no priority-based startup ordering for regular containers.\n\nWhy other options are wrong:\n- B: A separate Job requires external orchestration to coordinate timing with the Deployment.\n- C: A postStart hook runs after the container starts and does not block other containers from starting.\n- D: Sidecar containers run concurrently with the main container; there is no priority-based startup ordering for regular containers.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
+    explanation: "Init containers are specialized containers that run before the main application containers in a Pod. They run sequentially, and each must complete successfully (exit code 0) before the next init container or main container starts. `postStart` hooks run concurrently with the container's ENTRYPOINT, so there is no guarantee the migration finishes before the app process begins. A separate Job would need external orchestration. Sidecar containers run concurrently with the main container, and there is no priority-based startup ordering for regular containers.\n\nWhy other options are wrong:\n- B: A separate Job requires external orchestration to coordinate timing with the Deployment.\n- C: A postStart hook runs concurrently with the container's ENTRYPOINT, so it cannot guarantee the migration completes before the app starts.\n- D: Sidecar containers run concurrently with the main container; there is no priority-based startup ordering for regular containers.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
     verify: null
   },
   {
@@ -1113,12 +1113,12 @@ var questions = [
     diagram: null,
     options: [
       "Configure `PodSecurityPolicy` (PSP) objects to define allowed security contexts for the cluster",
-      "Use Pod Security Admission (PSA) with the `restricted` profile enforced at the namespace level",
+      "Use Pod Security Admission (PSA) with the `restricted` profile enforced across all namespaces",
       "Deploy a custom webhook that intercepts all Pod creation requests and inspects security contexts",
       "Set `allowPrivilegeEscalation: false` in the kubelet configuration to block all privileged Pods"
     ],
     answer: 1,
-    explanation: "Pod Security Admission (PSA) is the successor to PodSecurityPolicy (which was removed in Kubernetes v1.25). PSA defines three profiles — `privileged`, `baseline`, and `restricted` — that can be enforced, audited, or warned at the namespace level. The `restricted` profile prohibits privileged containers and dangerous capabilities. PodSecurityPolicies are deprecated and removed. Custom webhooks work but add complexity. The kubelet does not have a global privilege-blocking configuration.\n\nWhy other options are wrong:\n- A: PodSecurityPolicy (PSP) was removed in Kubernetes v1.25 and is no longer available.\n- C: Custom webhooks work but add significant complexity compared to the built-in PSA mechanism.\n- D: The kubelet does not have a global configuration to block all privileged containers.\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    explanation: "Pod Security Admission (PSA) is the successor to PodSecurityPolicy (which was removed in Kubernetes v1.25). PSA defines three profiles — `privileged`, `baseline`, and `restricted` — that can be enforced, audited, or warned per namespace, or configured cluster-wide via admission defaults. The `restricted` profile prohibits privileged containers and dangerous capabilities. PodSecurityPolicies are deprecated and removed. Custom webhooks work but add complexity. The kubelet does not have a global privilege-blocking configuration.\n\nWhy other options are wrong:\n- A: PodSecurityPolicy (PSP) was removed in Kubernetes v1.25 and is no longer available.\n- C: Custom webhooks work but add significant complexity compared to the built-in PSA mechanism.\n- D: The kubelet does not have a global configuration to block all privileged containers.\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: null
   },
   {
@@ -1384,13 +1384,13 @@ var questions = [
     text: "A team is migrating from a monolith to microservices and needs to decide how services communicate. They need reliable, decoupled communication where messages are not lost if a service is temporarily down. Which pattern should they adopt?",
     diagram: null,
     options: [
-      "Asynchronous messaging through a broker like NATS or RabbitMQ that persists messages",
+      "Asynchronous messaging through a broker like RabbitMQ or Kafka that persists messages",
       "Synchronous REST API calls with retry logic and exponential backoff between services",
       "Shared database tables where services write messages for each other to read and process",
       "gRPC streaming connections that buffer messages in memory during service downtime periods"
     ],
     answer: 0,
-    explanation: "A message broker (like NATS, RabbitMQ, or Kafka) provides durable, asynchronous communication between services. Messages are persisted in the broker, so if a consuming service is down, messages queue up and are delivered when it recovers. Synchronous REST calls fail when the target is down, even with retries. Shared database tables create tight coupling. gRPC in-memory buffers are lost if either side restarts.\n\nWhy other options are wrong:\n- B: Synchronous REST calls fail when the target is down; retry logic does not solve message persistence during outages.\n- C: Shared database tables create tight coupling between services and are an anti-pattern.\n- D: gRPC in-memory buffers are lost if either side restarts, failing the durability requirement.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
+    explanation: "A message broker (like RabbitMQ, Kafka, or NATS JetStream) provides durable, asynchronous communication between services. Messages are persisted in the broker, so if a consuming service is down, messages queue up and are delivered when it recovers. Synchronous REST calls fail when the target is down, even with retries. Shared database tables create tight coupling. gRPC in-memory buffers are lost if either side restarts.\n\nWhy other options are wrong:\n- B: Synchronous REST calls fail when the target is down; retry logic does not solve message persistence during outages.\n- C: Shared database tables create tight coupling between services and are an anti-pattern.\n- D: gRPC in-memory buffers are lost if either side restarts, failing the durability requirement.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
     verify: null
   },
   {
@@ -1577,7 +1577,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="160" height="50" rx="8" fill="#333" stroke="#326CE5" stroke-width="2"/><text x="100" y="50" text-anchor="middle" fill="white" font-size="12">Pod</text><rect x="220" y="20" width="160" height="50" rx="8" fill="#326CE5" stroke="#fff" stroke-width="2"/><text x="300" y="50" text-anchor="middle" fill="white" font-size="12">API Server</text><rect x="20" y="120" width="160" height="50" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="1.5"/><text x="100" y="148" text-anchor="middle" fill="white" font-size="11">Auth Mechanism ?</text><line x1="100" y1="70" x2="100" y2="120" stroke="#aaa" stroke-width="1.5"/><line x1="180" y1="45" x2="220" y2="45" stroke="#4CAF50" stroke-width="2"/><text x="200" y="38" fill="#4CAF50" font-size="10">auth</text></svg>',
     options: [
       "The `kube-proxy` generates and distributes authentication tokens to all Pods in the cluster",
-      "The `ServiceAccount` mechanism, which mounts a projected token volume into each Pod",
+      "The `ServiceAccount` resource, which mounts a projected token volume into each Pod",
       "The kubelet generates a unique API key for each Pod and stores it in an environment variable",
       "The container runtime creates a certificate for each container signed by the cluster CA"
     ],

@@ -297,7 +297,7 @@ var questions = [
     diagram: null,
     options: [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
-      "Flannel — a CNCF project providing overlay networking with a basic dataplane",
+      "Flannel — a CNI plugin providing overlay networking with a basic dataplane",
       "kube-router — a networking project using BGP with NetworkPolicy via iptables",
       "Multus — a CNCF sandbox project that attaches multiple network interfaces to pods"
     ],
@@ -362,7 +362,7 @@ var questions = [
     options: [
       "Distributed tracing with propagated `trace-context` headers across services",
       "Increasing the log level to `DEBUG` on all pods and reading aggregated output",
-      "Adding `livenessProbe` checks with a 2-second timeout to every container in the distributed system",
+      "Adding `livenessProbe` checks with a 2-second timeout to every container",
       "Creating a `NetworkPolicy` that logs all denied connections between services"
     ],
     answer: 0,
@@ -537,7 +537,7 @@ var questions = [
     diagram: null,
     options: [
       "The DNS record for `api.example.com` does not resolve to the Ingress controller's external IP address",
-      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, conflicting with `api.example.com` routing",
+      "The `api-svc` Service is of type `LoadBalancer` instead of `ClusterIP`, conflicting with routing",
       "The Ingress controller in use does not support host-based routing, only path-based routing rules",
       "A `NetworkPolicy` is blocking traffic from the Ingress controller namespace to the `api-svc` pods"
     ],
@@ -617,7 +617,7 @@ var questions = [
     diagram: null,
     options: [
       "kube-proxy configured with dual-stack support for multiple network interfaces",
-      "Multus CNI, a meta-plugin that delegates to multiple CNI backends",
+      "Multus CNI, a meta-plugin that delegates to multiple CNI backends per pod",
       "CoreDNS with a custom zone file for VLAN-specific DNS name resolution",
       "A dedicated `NetworkPolicy` using a VLAN selector for interface isolation"
     ],
@@ -746,11 +746,11 @@ var questions = [
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
       "`kube_endpoint_ready_count` with a configured threshold of zero ready endpoints",
-      "`kube_endpoint_address_available` equal to zero for the Service to detect missing healthy endpoints",
+      "`kube_endpoint_address{ready=\"true\"}` equal to zero for the Service to detect missing healthy endpoints",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
-    explanation: "kube-state-metrics exposes endpoint address metrics with a `ready` label (`true` or `false`). Alerting when the count of ready endpoint addresses equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_ready_count` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_ready_count` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
+    explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label (`true` or `false`). Alerting when `kube_endpoint_address{ready=\"true\"}` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_ready_count` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_ready_count` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
     verify: null
   },
   {
@@ -830,7 +830,7 @@ var questions = [
       "500 endpoints per slice"
     ],
     answer: 1,
-    explanation: "The default maximum number of endpoints per EndpointSlice is 100. When a Service has more endpoints, the EndpointSlice controller creates additional slices. This design improves scalability by allowing incremental updates to smaller objects. 1000, 250, and 500 are not the default limits.\n\nWhy other options are wrong:\n- A: 1000 endpoints per slice is not the default; it is the configurable maximum upper bound.\n- C: 250 is not the default maximum endpoints per EndpointSlice.\n- D: 500 is not the default maximum endpoints per EndpointSlice.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+    explanation: "The default maximum number of endpoints per EndpointSlice is 100. When a Service has more endpoints, the EndpointSlice controller creates additional slices. This design improves scalability by allowing incremental updates to smaller objects. 1000, 250, and 500 are not the default limits.\n\nWhy other options are wrong:\n- A: 1000 endpoints per slice is not the default; it is the upper bound of the `--max-endpoints-per-slice` flag.\n- C: 250 is not the default maximum endpoints per EndpointSlice.\n- D: 500 is not the default maximum endpoints per EndpointSlice.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
     verify: "kubectl get endpointslices -l kubernetes.io/service-name=<service>"
   },
   {
@@ -840,10 +840,10 @@ var questions = [
     text: "A cluster administrator wants to restrict which external IPs can reach a `LoadBalancer` Service. Which Service field provides this capability?",
     diagram: null,
     options: [
-      "`spec.loadBalancerSourceRanges` set to allowed CIDR blocks",
+      "`spec.loadBalancerSourceRanges` set to a list of allowed CIDR blocks for access",
       "`spec.externalTrafficPolicy: Restricted` to limit loadBalancer source IPs",
       "`metadata.annotations.allowed-ips` to define allowed clients",
-      "`spec.selector.sourceIP` matching allowed client IP ranges"
+      "`spec.selector.sourceIP` matching allowed client IP address ranges"
     ],
     answer: 0,
     explanation: "`spec.loadBalancerSourceRanges` accepts a list of CIDR blocks and instructs the cloud load balancer (or kube-proxy on bare metal) to only allow traffic from those ranges. There is no `Restricted` value for `externalTrafficPolicy`. `allowed-ips` is not a standard annotation. Selectors match pod labels, not source IPs.\n\nWhy other options are wrong:\n- B: There is no `externalTrafficPolicy: Restricted` value; valid values are `Cluster` and `Local`.\n- C: `metadata.annotations.allowed-ips` is not a standard Kubernetes annotation for source IP restriction.\n- D: `spec.selector` matches pod labels for backend selection, not client source IP ranges.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#restricting-traffic-to-specific-clients",
@@ -955,7 +955,7 @@ var questions = [
       "The custom search domain replaces all default cluster search domains in the pod's `resolv.conf`",
       "The custom search domain is appended to the default cluster search domains in `resolv.conf`",
       "The `dnsConfig` entries are overridden because `ClusterFirst` takes full precedence",
-      "The pod enters an error state because `dnsConfig` overrides conflict with the `ClusterFirst` policy setting"
+      "The pod enters an error state because `dnsConfig` conflicts with `ClusterFirst` policy"
     ],
     answer: 1,
     explanation: "`dnsConfig` fields are merged with the settings generated by the `dnsPolicy`. When using `ClusterFirst`, the default search domains are preserved, and custom entries from `dnsConfig` (such as additional search domains or nameservers) are appended. They are not replaced or ignored. `dnsConfig` and `dnsPolicy` are designed to work together.\n\nWhy other options are wrong:\n- A: Custom search domains are appended, not replaced; the default cluster domains are preserved.\n- C: `dnsConfig` is not ignored; it is designed to work with any `dnsPolicy` to add custom DNS settings.\n- D: `dnsConfig` and `dnsPolicy` are designed to be used together; the pod does not enter an error state.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config",
@@ -1064,9 +1064,9 @@ var questions = [
     text: "A `NetworkPolicy` allows egress only to a specific CIDR block `10.0.5.0/24` on port 5432. A pod selected by this policy tries to connect to a database at `10.0.5.10:5432` and to an external API at `203.0.113.50:443`. What happens?",
     diagram: null,
     options: [
-      "Both connections succeed because the CIDR allow rule implicitly permits all destinations",
+      "Both connections succeed because the CIDR rule implicitly permits all traffic",
       "The database connection is blocked; the external API connection succeeds",
-      "Both connections are blocked because the CIDR is a private range",
+      "Both connections are blocked because the CIDR is a private IP address range",
       "The database connection succeeds; the external API connection is blocked"
     ],
     answer: 3,
@@ -1098,8 +1098,8 @@ var questions = [
     options: [
       "Infrastructure as Code for declarative health-endpoint configuration management",
       "Observability and health signaling for self-healing systems with automatic recovery",
-      "Immutable infrastructure for reproducible deployment patterns",
-      "Event-driven architecture for asynchronous message handling"
+      "Immutable infrastructure ensuring reproducible deployment patterns across envs",
+      "Event-driven architecture for asynchronous message handling between services"
     ],
     answer: 1,
     explanation: "Exposing health endpoints and using them for traffic routing exemplifies observability and health signaling, which enables self-healing behavior — unhealthy instances are automatically removed from the load balancing pool. Infrastructure as Code concerns declarative provisioning. Immutable infrastructure means not modifying running instances. Event-driven architecture is about asynchronous message passing.\n\nWhy other options are wrong:\n- A: Infrastructure as Code concerns declarative provisioning and configuration management, not health signaling.\n- C: Immutable infrastructure means not modifying running instances; it is not about health endpoints.\n- D: Event-driven architecture is about asynchronous message passing, not health-based routing.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes",

@@ -152,9 +152,9 @@ var questions = [
     text: "A cloud-native e-commerce platform has decomposed its monolith into 15 microservices. The team notices that a failure in the payment service causes cascading timeouts across the order, inventory, and notification services. Which pattern best addresses this problem?",
     diagram: null,
     options: [
-      "Adding a circuit breaker pattern to fail fast when a downstream service is unavailable and prevent cascading failures",
+      "Adding a circuit breaker pattern to fail fast when a downstream service is unavailable or unresponsive",
       "Merging the payment and order services back into a single monolith to reduce inter-service network hops",
-      "Implementing synchronous retries with exponential backoff and jitter across all dependent services",
+      "Implementing synchronous retries with exponential backoff and jitter across all dependent upstream services",
       "Deploying most services onto a shared node to reduce network latency between microservice containers"
     ],
     answer: 0,
@@ -393,8 +393,8 @@ var questions = [
     diagram: null,
     options: [
       "Add a <code>nodeSelector</code> matching the new node's hostname label to target that specific node for scheduling",
-      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> to the DaemonSet's Pod template spec so it can be scheduled on the tainted node",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to trigger rescheduling on the tainted node",
+      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> so the DaemonSet Pod is permitted onto the tainted node",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force a rescheduling pass on the tainted node",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -558,7 +558,7 @@ var questions = [
       "The Job pauses all execution and waits for manual administrative intervention before continuing"
     ],
     answer: 2,
-    explanation: "With `completions: 10` and `parallelism: 3`, the Job controller ensures that failed Pods are replaced to reach the target number of successful completions. A single Pod failure does not fail the entire Job unless the `backoffLimit` is exceeded. The controller creates a new Pod to replace the failed one, maintaining up to 3 concurrent Pods.\n\nWhy other options are wrong:\n- A: A single Pod failure does not fail the entire Job unless backoffLimit is exceeded\n- B: The kubelet may restart the container in-place only with restartPolicy: OnFailure, but the Job controller also creates replacement Pods to track completions\n- D: Jobs do not pause for manual intervention; the controller automatically handles failures and replacements\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs",
+    explanation: "With `completions: 10` and `parallelism: 3`, the Job controller ensures that failed Pods are replaced to reach the target number of successful completions. A single Pod failure does not fail the entire Job unless the `backoffLimit` is exceeded. The controller creates a new Pod to replace the failed one, maintaining up to 3 concurrent Pods.\n\nWhy other options are wrong:\n- A: A single Pod failure does not fail the entire Job unless backoffLimit is exceeded\n- B: With restartPolicy: Never (the default), the kubelet does not restart in-place; the Job controller creates a new Pod. With restartPolicy: OnFailure, the kubelet restarts in-place but the Job controller still tracks completions\n- D: Jobs do not pause for manual intervention; the controller automatically handles failures and replacements\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs",
     verify: "kubectl describe job <job-name> | grep -E 'Completions|Parallelism|Failed'"
   },
   {
@@ -569,8 +569,8 @@ var questions = [
     diagram: null,
     options: [
       "runc, because it uses Linux namespaces and cgroups that provide complete VM-equivalent workload isolation",
-      "gVisor (runsc), which interposes a user-space kernel to intercept system calls for application-level sandboxing",
-      "Kata Containers, which runs each container inside a lightweight VM while implementing the CRI via containerd shims",
+      "gVisor (runsc), which interposes a user-space kernel to intercept all system calls for application-level sandboxing",
+      "Kata Containers, which runs each container inside a lightweight VM while remaining compatible with the CRI",
       "Docker-in-Docker, which nests Docker engines inside containers to provide process-level workload isolation"
     ],
     answer: 2,
@@ -1176,10 +1176,10 @@ var questions = [
     text: "A team uses an init container to pre-populate a shared volume with configuration data before the main application container starts. The init container exits with code 0, but the main container fails to find the expected files. What is the most likely issue?",
     diagram: null,
     options: [
-      "Init containers write data to a temporary staging area that is not directly accessible by the main container without explicit volume binding configuration",
+      "Init containers write data to a temporary staging area that is not accessible by the main container without explicit binding",
       "The init and main containers mount different volumes or <code>mountPath</code> values, so files are written to one path and read from another",
       "Init container data is automatically cleared from the <code>emptyDir</code> volume when the main container starts to ensure a clean state",
-      "The init container exited before its filesystem writes were flushed to the volume, so the data was lost during the handoff to the main container"
+      "The init container exited before its filesystem writes were flushed to the volume, so the data was lost during container handoff"
     ],
     answer: 1,
     explanation: "Init containers and main containers can share volumes, but they must reference the same volume name and the paths must align. If the init container writes to a volume mounted at `/data` but the main container mounts a different volume (or the same volume at a different path), the files will not be found. Verifying that both containers reference the same `volumeMounts` entry is key.\n\nWhy other options are wrong:\n- A: Init containers share volumes directly with the main container through standard volumeMounts; there is no separate staging area requiring special binding\n- C: The kubelet does not clear emptyDir or other volume data between init and main containers; volumes persist across container transitions\n- D: Filesystem writes are flushed before the container process exits; exit code 0 confirms the init container completed successfully\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
@@ -1256,8 +1256,8 @@ var questions = [
     text: "A platform team wants to implement structured logging across all microservices in their Kubernetes cluster. Currently, some services log in JSON format while others use unstructured plain text. They use Fluentd to collect and parse logs. What is the primary benefit of standardizing on JSON-formatted structured logs?",
     diagram: null,
     options: [
-      "Structured JSON logs consume significantly less storage space than plain text logs due to their compact and compressed format",
-      "Fluentd requires custom Lua scripts to parse plain text, making it impractical for large clusters",
+      "Structured JSON logs consume less storage space than plain text logs due to their compact format",
+      "Fluentd requires custom Lua scripts to parse plain text log formats, making it impractical for large clusters",
       "Structured JSON logs enable consistent parsing and querying in log aggregation systems without custom regex",
       "Elasticsearch indexes JSON logs natively but requires additional ingest pipelines for non-JSON formats"
     ],
@@ -1514,8 +1514,8 @@ var questions = [
     options: [
       "Yes, annotations and labels are interchangeable for scheduling purposes in all Kubernetes versions",
       "Yes, but only if the annotation key follows the DNS naming convention required for node selectors",
-      "No, annotations are restricted to cluster-scoped objects and cannot be applied to Pods",
-      "No, annotations are non-identifying metadata not used by selectors or scheduling; only labels support selection"
+      "No, annotations are restricted to cluster-scoped objects and cannot be applied to namespace-scoped resources like Pods",
+      "No, annotations are non-identifying metadata not used by selectors or scheduling; labels are required for selection"
     ],
     answer: 3,
     explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.\n\nWhy other options are wrong:\n- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods, not just namespaces\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
@@ -1561,7 +1561,7 @@ var questions = [
     diagram: null,
     options: [
       "The <code>failurePolicy</code> field determines whether the API server rejects or allows requests when unreachable",
-      "The API server retries the webhook call indefinitely until the endpoint becomes reachable and responds",
+      "The API server retries the webhook call with exponential backoff until the endpoint becomes reachable and responds",
       "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
       "Pod creation proceeds normally because <code>ValidatingWebhookConfiguration</code> resources are advisory and do not block requests"
     ],

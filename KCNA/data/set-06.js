@@ -24,12 +24,12 @@ var questions = [
     text: "You apply a taint <code>kubectl taint nodes node1 dedicated=ml:NoSchedule</code>. A data-processing Pod without any tolerations is pending. What happens when the scheduler evaluates node1?",
     diagram: null,
     options: [
-      "C. The scheduler skips node1 because the Pod lacks a matching toleration",
-      "B. The Pod is scheduled on node1 with a taint-mismatch warning event recorded",
       "A. The Pod is scheduled on node1 but immediately enters `CrashLoopBackOff` status",
+      "B. The Pod is scheduled on node1 with a taint-mismatch warning event recorded",
+      "C. The scheduler skips node1 because the Pod lacks a matching toleration",
       "D. The taint is ignored when the Pod has a `nodeSelector` matching node1 labels"
     ],
-    answer: 0,
+    answer: 2,
     explanation: "A `NoSchedule` taint prevents any Pod without a matching toleration from being scheduled on that node. The scheduler filters out node1 during the filtering phase. Even if `nodeSelector` matches node1, the taint still blocks scheduling, leaving the Pod pending.\n\nWhy other options are wrong:\n- B: NoSchedule prevents scheduling entirely; it does not allow scheduling with a warning\n- A: CrashLoopBackOff is a runtime error, not a scheduling outcome; the Pod never starts on the node\n- D: nodeSelector does not override taints; both must be satisfied independently\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node node1 | grep -i taint"
   },
@@ -40,12 +40,12 @@ var questions = [
     text: "After upgrading the control plane, a cluster administrator notices that several Pods are stuck in <code>Pending</code>. The nodes show status <code>Ready,SchedulingDisabled</code>. What is the most likely cause?",
     diagram: null,
     options: [
-      "B. The kubelet process on each worker node has crashed during the upgrade",
       "A. The nodes were cordoned during the upgrade and were never uncordoned",
+      "B. The kubelet process on each worker node has crashed during the upgrade",
       "C. The kube-scheduler Pod failed to restart properly after the upgrade",
       "D. The Pods exceed the configured cluster-wide resource quota settings"
     ],
-    answer: 1,
+    answer: 0,
     explanation: "The `Ready,SchedulingDisabled` status indicates the nodes were cordoned with `kubectl cordon`. This prevents new Pods from being scheduled on them. After a rolling upgrade, administrators must run `kubectl uncordon` on each node to re-enable scheduling.\n\nWhy other options are wrong:\n- B: Kubelet crashes would show NotReady, not SchedulingDisabled; the nodes show Ready\n- C: A failed kube-scheduler would affect all scheduling, not just these nodes\n- D: Resource quota violations produce different error events, not SchedulingDisabled status\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get nodes"
   },
@@ -88,12 +88,12 @@ var questions = [
     text: "You need a Pod to ideally land on nodes in availability zone <code>us-east-1a</code> but still schedule elsewhere if those nodes are full. Which scheduling construct should you use?",
     diagram: null,
     options: [
-      "C. `preferredDuringSchedulingIgnoredDuringExecution` node affinity",
-      "B. `requiredDuringSchedulingIgnoredDuringExecution` node affinity rule",
       "A. `nodeSelector` with `topology.kubernetes.io/zone: us-east-1a` label",
+      "B. `requiredDuringSchedulingIgnoredDuringExecution` node affinity rule",
+      "C. `preferredDuringSchedulingIgnoredDuringExecution` node affinity",
       "D. A taint on all non-`us-east-1a` nodes with a `NoSchedule` effect"
     ],
-    answer: 0,
+    answer: 2,
     explanation: "`preferredDuringSchedulingIgnoredDuringExecution` is a soft requirement that tells the scheduler to try to place the Pod on matching nodes but allows scheduling elsewhere if no matching nodes are available. `nodeSelector` and `required` affinity are hard constraints that would leave the Pod pending.\n\nWhy other options are wrong:\n- B: requiredDuringScheduling is a hard constraint that would leave the Pod pending if no matching nodes are available\n- A: nodeSelector is also a hard constraint; the Pod would be stuck pending if matching nodes are full\n- D: Tainting all non-matching nodes is operationally heavy and prevents other workloads from scheduling there\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
     verify: "kubectl explain pod.spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution"
   },
@@ -137,11 +137,11 @@ var questions = [
     diagram: null,
     options: [
       "A. `kubectl top node <node-name>` to check resource usage after the eviction",
-      "D. `kubectl get pods --all-namespaces --field-selector spec.nodeName=<n>`",
+      "B. `kubectl get events --field-selector involvedObject.name=<node-name>` list",
       "C. `kubectl describe node <node-name>` and then check the Conditions section",
-      "B. `kubectl get events --field-selector involvedObject.name=<node-name>` list"
+      "D. `kubectl get pods --all-namespaces --field-selector spec.nodeName=<n>`"
     ],
-    answer: 1,
+    answer: 3,
     explanation: "Filtering Pods by `spec.nodeName` shows exactly which Pods remain on the drained node. DaemonSet Pods with appropriate tolerations may still appear. `kubectl top` shows resource usage but not Pod presence, and node conditions do not reflect individual Pod status.\n\nWhy other options are wrong:\n- A: kubectl top shows resource usage but does not list which Pods remain on the node\n- C: Node Conditions section shows node health status, not individual Pod presence\n- B: Events may not capture every eviction detail and are not a complete Pod inventory\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
     verify: "kubectl get pods --all-namespaces --field-selector spec.nodeName=<node-name>"
   },
@@ -217,11 +217,11 @@ var questions = [
     diagram: null,
     options: [
       "A. The drain command will automatically migrate the local volume data to a different node in turn",
-      "D. Local volumes are automatically replicated across all nodes, so there is no data loss",
+      "B. The Pod is evicted but its data on the local volume is inaccessible from the new node",
       "C. The drain command will fail unless the `--force` flag is used for Pods with local volumes here",
-      "B. The Pod is evicted but its data on the local volume is inaccessible from the new node"
+      "D. Local volumes are automatically replicated across all nodes, so there is no data loss"
     ],
-    answer: 3,
+    answer: 1,
     explanation: "Local PersistentVolumes are bound to a specific node. When a Pod using a local PV is evicted during drain, the rescheduled Pod cannot access the data unless it lands on the same node. This is a critical consideration for stateful workloads using local storage during maintenance.\n\nWhy other options are wrong:\n- A: Kubernetes does not automatically migrate local volume data; local PVs are node-bound\n- D: Local volumes are not replicated; they exist only on the specific node they are provisioned on\n- C: The drain command does not specifically fail for local PV Pods; --force is for standalone unmanaged Pods\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#local",
     verify: "kubectl get pv -o wide"
   },
@@ -360,12 +360,12 @@ var questions = [
     text: "In a highly available cluster with 3 etcd members, one member goes down. What is the impact on cluster operations?",
     diagram: null,
     options: [
-      "D. The cluster continues normally because 2 of 3 members form a quorum",
+      "A. The cluster becomes read-only until the failed etcd member fully recovers",
       "B. All write operations fail but reads still succeed from the other members",
       "C. The kube-apiserver switches to an in-memory store as its fallback mode",
-      "A. The cluster becomes read-only until the failed etcd member fully recovers"
+      "D. The cluster continues normally because 2 of 3 members form a quorum"
     ],
-    answer: 0,
+    answer: 3,
     explanation: "etcd uses the Raft consensus algorithm requiring a majority (quorum) of members to agree on writes. With 3 members, a quorum is 2, so losing 1 member still allows normal read and write operations. Losing a second member would make the cluster unable to reach consensus.\n\nWhy other options are wrong:\n- A: The cluster does not become read-only; with quorum intact, both reads and writes succeed\n- B: Writes do not fail with quorum maintained; 2 of 3 members is sufficient for consensus\n- C: The API server has no in-memory fallback store; it always requires etcd to be available\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
     verify: "ETCDCTL_API=3 etcdctl endpoint status --cluster"
   },
@@ -761,11 +761,11 @@ var questions = [
     diagram: null,
     options: [
       "A. Manual SSH into each control-plane node to run `etcdctl` backup scripts on a weekly basis",
-      "C. Relying on the cloud provider to handle full VM backups including the etcd data volume",
       "B. Automated CronJobs that run `etcdctl snapshot save` and store backups in object store",
+      "C. Relying on the cloud provider to handle full VM backups including the etcd data volume",
       "D. Taking etcd backups only before planned maintenance windows and major upgrade events"
     ],
-    answer: 2,
+    answer: 1,
     explanation: "Automating etcd backups via CronJobs with remote storage follows cloud-native principles of automation, reproducibility, and resilience. Regular automated backups ensure consistent recovery points. VM-level backups may not capture a consistent etcd state.\n\nWhy other options are wrong:\n- A: Manual SSH-based backups are error-prone, not automated, and do not follow cloud-native automation principles\n- C: VM-level backups may not capture a consistent etcd snapshot state during writes\n- D: Backing up only before maintenance windows risks losing data from the interval between backups\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "kubectl get cronjobs -n kube-system"
   },
@@ -840,12 +840,12 @@ var questions = [
     text: "A Pod has both a `nodeSelector` for <code>env=production</code> and a toleration for the taint <code>team=backend:NoSchedule</code>. Which nodes can this Pod be scheduled on?",
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="210" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">nodeSelector + Toleration Evaluation</text><rect x="20" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="105" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node A</text><text x="105" y="78" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="105" y="94" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="210" y="45" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="295" y="62" text-anchor="middle" fill="#ccc" font-size="10">Node B</text><text x="295" y="78" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="295" y="94" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="20" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="105" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node C</text><text x="105" y="158" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="105" y="174" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text><rect x="210" y="125" width="170" height="65" rx="6" fill="#0d2137" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/><text x="295" y="142" text-anchor="middle" fill="#ccc" font-size="10">Node D</text><text x="295" y="158" text-anchor="middle" fill="#aaa" font-size="9">label: ???</text><text x="295" y="174" text-anchor="middle" fill="#aaa" font-size="9">taint: ???</text></svg>',
     options: [
-      "D. Any node with label `env=production`, regardless of the backend taint key",
+      "A. Only nodes with label `env=production` and taint `team=backend:NoSchedule`",
       "B. Any node with the taint `team=backend:NoSchedule` regardless of its labels",
       "C. Only nodes without any taints at all that have the label `env=production`",
-      "A. Only nodes with label `env=production` and taint `team=backend:NoSchedule`"
+      "D. Any node with label `env=production`, regardless of the backend taint key"
     ],
-    answer: 0,
+    answer: 3,
     explanation: "The `nodeSelector` requires `env=production`, filtering out nodes without that label. The toleration allows (but does not require) scheduling on nodes with the `team=backend:NoSchedule` taint. So the Pod can schedule on any `env=production` node, whether or not it has the taint.\n\nWhy other options are wrong:\n- B: Tolerations allow scheduling on tainted nodes but do not restrict to only tainted nodes; nodeSelector controls which nodes are eligible\n- C: Tolerations allow (not require) scheduling on tainted nodes; nodes without taints with the matching label are also eligible\n- A: The Pod is not restricted to only tainted+labeled nodes; untainted nodes with the label are also eligible\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe pod <pod-name> | grep 'Node-Selectors\\|Tolerations'"
   },
@@ -1000,12 +1000,12 @@ var questions = [
     text: "During a cluster upgrade, you need to rotate the etcd encryption key used for encrypting Secrets at rest. What is the correct procedure?",
     diagram: null,
     options: [
-      "B. Delete and recreate all Secrets with the new key by reapplying each manifest individually",
       "A. Add the new key as first entry in encryption config, restart API server, re-encrypt all",
+      "B. Delete and recreate all Secrets with the new key by reapplying each manifest individually",
       "C. Stop etcd completely, replace the encryption key file, then restart all etcd member nodes",
       "D. Run `kubeadm certs renew` to rotate all encryption keys and certificates automatically"
     ],
-    answer: 1,
+    answer: 0,
     explanation: "To rotate encryption keys, add the new key as the first provider in the EncryptionConfiguration, restart the API server to use it for new writes, then re-encrypt existing Secrets with `kubectl get secrets --all-namespaces -o json | kubectl replace -f -`. The old key must remain for reading existing data until re-encryption completes.\n\nWhy other options are wrong:\n- B: Deleting and recreating Secrets is unnecessary and risky; the re-encryption approach preserves existing Secrets\n- C: Stopping etcd entirely causes cluster downtime and is not the correct procedure\n- D: kubeadm certs renew handles TLS certificates, not encryption-at-rest keys; these are different systems\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
     verify: null
   },
@@ -1192,12 +1192,12 @@ var questions = [
     text: "A Pod uses <code>spec.schedulerName: custom-scheduler</code>. The custom scheduler is not deployed. What happens to the Pod?",
     diagram: null,
     options: [
-      "C. The Pod remains in `Pending` state indefinitely, unscheduled",
-      "B. The API server rejects the Pod creation with a `ValidationError`",
       "A. The default `kube-scheduler` picks up the Pod after a timeout period",
+      "B. The API server rejects the Pod creation with a `ValidationError`",
+      "C. The Pod remains in `Pending` state indefinitely, unscheduled",
       "D. The Pod is assigned to a random node directly by the `kubelet`"
     ],
-    answer: 0,
+    answer: 2,
     explanation: "When a Pod specifies a `schedulerName`, only that scheduler will process it. If the named scheduler is not running, no scheduler watches for or binds the Pod, leaving it in `Pending` state. The default scheduler ignores Pods assigned to other schedulers.\n\nWhy other options are wrong:\n- A: The default scheduler does not fall back to handling Pods assigned to other schedulers\n- B: The API server accepts any schedulerName; it does not validate that the scheduler exists\n- D: Kubelets do not assign Pods to nodes; they only run Pods already assigned by a scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
     verify: "kubectl get pod <pod-name> -o yaml | grep schedulerName"
   },
@@ -1256,12 +1256,12 @@ var questions = [
     text: "A team runs a multi-region Kubernetes federation. They want to ensure that each region's API gateway has local database Pods. Which scheduling concept addresses this requirement?",
     diagram: null,
     options: [
-      "C. Cross-cluster PersistentVolume replication and sync",
-      "B. Global load balancing via a service mesh component",
       "A. Pod affinity with a zone or region topology key",
+      "B. Global load balancing via a service mesh component",
+      "C. Cross-cluster PersistentVolume replication and sync",
       "D. DNS-based geographic routing to the nearest region"
     ],
-    answer: 2,
+    answer: 0,
     explanation: "Pod affinity with a region-level topology key ensures database Pods are co-located in the same region as API gateway Pods. This reduces cross-region latency and keeps data access local. Other options address traffic routing or storage but not Pod placement.\n\nWhy other options are wrong:\n- B: Global load balancing routes traffic but does not control Pod placement in specific regions\n- C: PersistentVolume replication handles data sync but does not ensure Pod co-location\n- D: DNS-based routing directs user traffic to regions but does not control database Pod placement\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
     verify: "kubectl get nodes --show-labels | grep topology.kubernetes.io/region"
   },
@@ -1304,12 +1304,12 @@ var questions = [
     text: "A cluster upgrade requires updating RBAC rules. The existing ClusterRole for the scheduler includes custom permissions. What risk does upgrading with <code>kubeadm upgrade apply</code> pose to this ClusterRole?",
     diagram: null,
     options: [
-      "D. kubeadm deletes most RBAC objects then recreates them from default templates during the upgrade",
+      "A. kubeadm may overwrite the system ClusterRoles it manages during upgrades, removing custom rules",
       "B. kubeadm preserves system ClusterRoles but removes any custom ClusterRoleBindings during the upgrade",
       "C. Custom ClusterRoles are typically preserved since kubeadm avoids modifying user-created RBAC",
-      "A. kubeadm may overwrite the system ClusterRoles it manages during upgrades, removing custom rules"
+      "D. kubeadm deletes most RBAC objects then recreates them from default templates during the upgrade"
     ],
-    answer: 3,
+    answer: 0,
     explanation: "kubeadm manages specific system ClusterRoles and may overwrite them during upgrades. Custom permissions added to these managed roles can be lost. Best practice is to create separate ClusterRoles for custom permissions and bind them independently.\n\nWhy other options are wrong:\n- B: kubeadm does not remove custom ClusterRoleBindings; it updates its managed system roles but leaves user-created bindings intact\n- C: kubeadm does modify its managed RBAC objects; custom additions to those objects may be lost\n- D: kubeadm does not delete all RBAC objects; it updates only the ones it manages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubectl get clusterrole system:kube-scheduler -o yaml"
   },
@@ -1432,12 +1432,12 @@ var questions = [
     text: "A cluster administrator wants to prevent namespaces from consuming more than their allocated share of CPU and memory. Which Kubernetes resource enforces namespace-level aggregate resource limits?",
     diagram: null,
     options: [
-      "C. ResourceQuota for namespace totals",
-      "B. PodDisruptionBudget for uptime",
       "A. LimitRange for per-Pod resource defaults",
+      "B. PodDisruptionBudget for uptime",
+      "C. ResourceQuota for namespace totals",
       "D. PriorityClass for scheduling"
     ],
-    answer: 0,
+    answer: 2,
     explanation: "ResourceQuota sets aggregate resource limits per namespace, controlling the total CPU, memory, storage, and object counts that can be consumed. LimitRange sets per-Pod or per-container defaults and constraints, not namespace-wide totals.\n\nWhy other options are wrong:\n- A: LimitRange sets per-Pod/container defaults, not namespace-level aggregate limits\n- B: PodDisruptionBudget manages availability during disruptions, not resource consumption\n- D: PriorityClass controls scheduling priority, not resource consumption limits\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
     verify: "kubectl get resourcequota -n <namespace>"
   },
@@ -1561,11 +1561,11 @@ var questions = [
     diagram: null,
     options: [
       "A. The Helm upgrade proceeds anyway and the hook failure is logged as a warning",
-      "C. Helm automatically rolls back to the previous release version on hook failure",
       "B. The upgrade fails and the release is marked FAILED, keeping previous resources",
+      "C. Helm automatically rolls back to the previous release version on hook failure",
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
-    answer: 2,
+    answer: 1,
     explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.\n\nWhy other options are wrong:\n- A: Helm does not proceed when a pre-upgrade hook fails; the upgrade is aborted\n- C: Helm does not automatically roll back on hook failure; the release is marked FAILED. Without the `--atomic` flag, Helm does not automatically roll back; the release is simply marked FAILED. The `--atomic` flag would enable automatic rollback, but it is not the default behavior\n- D: Helm does not retry failed hooks; the hook must succeed on the first attempt\n\nReference: https://helm.sh/docs/topics/charts_hooks/",
     verify: "helm history <release-name>"
   },

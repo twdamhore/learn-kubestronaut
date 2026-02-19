@@ -45,3 +45,69 @@
 ### s06-q098 (explanation minor)
 - **Problem:** Option C about Helm auto-rollback did not mention the `--atomic` flag nuance.
 - **Fix:** Added to the C explanation: "Without the `--atomic` flag, Helm does not automatically roll back; the release is simply marked FAILED. The `--atomic` flag would enable automatic rollback, but it is not the default behavior."
+
+---
+
+# Round 37 Review - set-06.js
+
+**Date:** 2026-02-19
+**Issues found:** 14
+**Issues fixed:** 14
+
+## Fixes
+
+### s06-q002 (label-ordering)
+- **Problem:** Options array had labels in order C, B, A, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 2 (correct answer: C).
+
+### s06-q003 (label-ordering)
+- **Problem:** Options array had labels in order B, A, C, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 1 to 0 (correct answer: A).
+
+### s06-q006 (label-ordering)
+- **Problem:** Options array had labels in order C, B, A, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 2 (correct answer: C).
+
+### s06-q009 (label-ordering)
+- **Problem:** Options array had labels in order A, D, C, B instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 1 to 3 (correct answer: D).
+
+### s06-q014 (label-ordering)
+- **Problem:** Options array had labels in order A, D, C, B instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 3 to 1 (correct answer: B).
+
+### s06-q023 (label-ordering)
+- **Problem:** Options array had labels in order D, B, C, A instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 3 (correct answer: D).
+
+### s06-q048 (label-ordering)
+- **Problem:** Options array had labels in order A, C, B, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 2 to 1 (correct answer: B).
+
+### s06-q053 (label-ordering)
+- **Problem:** Options array had labels in order D, B, C, A instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 3 (correct answer: D).
+
+### s06-q063 (label-ordering)
+- **Problem:** Options array had labels in order B, A, C, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 1 to 0 (correct answer: A).
+
+### s06-q075 (label-ordering)
+- **Problem:** Options array had labels in order C, B, A, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 2 (correct answer: C).
+
+### s06-q079 (label-ordering)
+- **Problem:** Options array had labels in order C, B, A, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 2 to 0 (correct answer: A).
+
+### s06-q082 (label-ordering)
+- **Problem:** Options array had labels in order D, B, C, A instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 3 to 0 (correct answer: A).
+
+### s06-q090 (label-ordering)
+- **Problem:** Options array had labels in order C, B, A, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 0 to 2 (correct answer: C).
+
+### s06-q098 (label-ordering)
+- **Problem:** Options array had labels in order A, C, B, D instead of A, B, C, D.
+- **Fix:** Reordered options to A, B, C, D; updated answer index from 2 to 1 (correct answer: B).

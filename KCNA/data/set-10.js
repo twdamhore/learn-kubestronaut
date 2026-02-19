@@ -14,7 +14,7 @@ var questions = [
       "D. The PVCs remain intact and must be manually deleted; underlying PVs are reclaimed only after PVC deletion"
     ],
     answer: 3,
-    explanation: "When a StatefulSet is scaled down, Kubernetes does **not** automatically delete the PVCs created by `volumeClaimTemplates`. This is by design to prevent accidental data loss. The PVCs for the removed replicas persist and must be manually deleted by an administrator. Only after a PVC is explicitly deleted does the StorageClass `reclaimPolicy` determine what happens to the underlying PV.\n\nWhy other options are wrong:\n- A: StatefulSet controller does NOT auto-delete PVCs on scale-down; PVCs are retained by design to prevent data loss\n- B: PVCs are not orphaned in the traditional sense; they remain owned but unused, and the reclaim policy only triggers after PVC deletion, not immediately\n- C: PVCs are not marked with a deletionTimestamp; they persist fully intact without any deletion marker until explicitly removed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    explanation: "When a StatefulSet is scaled down, Kubernetes does **not** automatically delete the PVCs created by `volumeClaimTemplates`. This is by design to prevent accidental data loss. The PVCs for the removed replicas persist and must be manually deleted by an administrator. Only after a PVC is explicitly deleted does the StorageClass `reclaimPolicy` determine what happens to the underlying PV. Note: since Kubernetes 1.27+, the `persistentVolumeClaimRetentionPolicy` field in the StatefulSet spec can change this default behavior, but the default policy (`Retain`) preserves PVCs on scale-down.\n\nWhy other options are wrong:\n- A: StatefulSet controller does NOT auto-delete PVCs on scale-down; PVCs are retained by design to prevent data loss\n- B: PVCs are not orphaned in the traditional sense; they remain owned but unused, and the reclaim policy only triggers after PVC deletion, not immediately\n- C: PVCs are not marked with a deletionTimestamp; they persist fully intact without any deletion marker until explicitly removed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get pvc -l app=postgresql --sort-by=.metadata.name"
   },
   {
@@ -312,10 +312,10 @@ var questions = [
     text: "A cluster uses CoreDNS for service discovery. A pod in namespace `team-a` tries to resolve `api-service.team-b.svc.cluster.local` but resolving the FQDN is significantly slower than expected, with DNS debug logs showing unnecessary search-domain lookups. The service exists and has endpoints. Running `nslookup api-service.team-b` from the same pod succeeds quickly. What is the most likely cause of the slow FQDN resolution?",
     diagram: null,
     options: [
-      "A. The pod's `ndots:5` setting causes the resolver to try search-domain expansion for the FQDN because it has only 4 dots, which is less than ndots",
+      "A. The pod's `ndots:5` setting causes search-domain expansion for the FQDN because the name has fewer than 5 dots",
       "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from the `team-a` namespace pods",
-      "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed zone list",
-      "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
+      "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed namespace zone list",
+      "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin's catch-all upstream rule"
     ],
     answer: 0,
     explanation: "In Kubernetes, the default `ndots` value is 5. The resolver counts dots in the queried name: if fewer than 5, it first tries appending each search domain before falling back to the literal name. The short name `api-service.team-b` has 1 dot (< 5), so search domains are appended, and one combination — `api-service.team-b.svc.cluster.local` — resolves quickly. However, the seemingly-qualified name `api-service.team-b.svc.cluster.local` has only 4 dots (still < 5), so the resolver first tries search-domain expansions like `api-service.team-b.svc.cluster.local.team-a.svc.cluster.local`, each returning NXDOMAIN, before eventually falling back to the literal name which does resolve. This causes significantly slower resolution due to multiple unnecessary DNS round-trips. Appending a trailing dot (`api-service.team-b.svc.cluster.local.`) marks the name as an absolute FQDN, bypassing all search-domain expansion regardless of `ndots` and resolving immediately.\n\nWhy other options are wrong:\n- B: CoreDNS network policies would block all queries equally, not just those with the full suffix; the issue is DNS search domain expansion\n- C: CoreDNS does not have per-namespace zone allowlists; the cluster.local zone serves all namespaces uniformly\n- D: The FQDN query is not forwarded upstream; it eventually resolves locally after unnecessary search domain attempts\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#ndots",
@@ -344,8 +344,8 @@ var questions = [
     text: "An application pod requires access to the Kubernetes API to list pods in its own namespace. The pod uses a ServiceAccount with a bound Role and RoleBinding. The security team mandates that the automatically mounted service account token must have a 1-hour expiration and be bound to the pod's identity. Which approach satisfies these requirements?",
     diagram: null,
     options: [
-      "A. Disable `automountServiceAccountToken` and use a projected volume with `serviceAccountToken` source, `expirationSeconds: 3600`, and the API audience",
-      "B. Use a TokenRequest API call from an init container to generate a short-lived token, store it in a shared `emptyDir`, and read it from the app container",
+      "A. Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration",
+      "B. Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read it from the main app container",
       "C. Configure the ServiceAccount annotation `kubernetes.io/enforce-mountable-secrets` and set the token `exp` claim via a custom admission webhook",
       "D. Enable the `BoundServiceAccountTokenVolume` feature gate (disabled by default) and set `--service-account-max-token-expiration` to 1 hour on the API server"
     ],
@@ -430,7 +430,7 @@ var questions = [
       "D. Both containers share a network namespace, and the `app` container's liveness probe on port 8080 creates a conflict"
     ],
     answer: 2,
-    explanation: "The `EADDRINUSE` error means port 8080 is already in use. Since containers in a pod share the same network namespace, port conflicts can occur between containers. However, if the sidecar is on 9090, the conflict is elsewhere. With `hostNetwork: true`, the pod uses the host's network namespace, meaning another pod or process on the same node using port 8080 would conflict. This is a common issue with `hostNetwork` pods. Liveness probes do not create listeners — they connect to existing ones.\n\nWhy other options are wrong:\n- A: A sidecar secondary listener is possible but unlikely given the explicit config on port 9090; the question points to hostNetwork as the cause\n- B: TCP TIME_WAIT between restarts of the same container is unlikely because the container network namespace is recreated\n- D: Liveness probes do not create listeners; they connect to existing ports and cannot cause EADDRINUSE conflicts\n\nReference: https://kubernetes.io/docs/concepts/configuration/overview/#services",
+    explanation: "The `EADDRINUSE` error means port 8080 is already in use. Since containers in a pod share the same network namespace, port conflicts can occur between containers. However, if the sidecar is on 9090, the conflict is elsewhere. With `hostNetwork: true`, the pod uses the host's network namespace, meaning another pod or process on the same node using port 8080 would conflict. This is a common issue with `hostNetwork` pods. Liveness probes do not create listeners — they connect to existing ones.\n\nWhy other options are wrong:\n- A: A sidecar secondary listener is possible but unlikely given the explicit config on port 9090; the question points to hostNetwork as the cause\n- B: TCP TIME_WAIT on hostNetwork is possible but resolves within seconds; persistent EADDRINUSE on every restart points to a different process or pod occupying the port\n- D: Liveness probes do not create listeners; they connect to existing ports and cannot cause EADDRINUSE conflicts\n\nReference: https://kubernetes.io/docs/concepts/configuration/overview/#services",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.hostNetwork}' && kubectl describe pod <pod-name> | grep -A3 'State:'"
   },
   {
@@ -680,8 +680,8 @@ var questions = [
     text: "A cluster uses kube-proxy in IPVS mode. A Service with `sessionAffinity: None` has 3 backend pods. The IPVS scheduler is set to `rr` (round-robin). One pod consistently handles 70% of the traffic instead of the expected 33%. Network captures show the traffic comes from a small number of source IPs behind a corporate NAT gateway. What explains this distribution?",
     diagram: null,
     options: [
-      "A. IPVS round-robin is per-connection, not per-packet; the NAT gateway reuses connections, skewing pod distribution",
-      "B. IPVS in `rr` mode has a warmup period favoring the first registered backend until all backends receive at least one connection",
+      "A. IPVS round-robin distributes per-connection; the NAT gateway's persistent connections concentrate traffic on a subset of pods",
+      "B. IPVS in `rr` mode has a warmup period that favors the first registered backend endpoint until all backends receive at least one initial connection",
       "C. The overloaded pod has the lowest IP address and IPVS round-robin starts from the lowest IP for each new connection cycle",
       "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for same source IPs"
     ],
@@ -744,10 +744,10 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.29. A CRD is created with two stored versions: `v1alpha1` and `v1beta1`, with `v1beta1` as the served and storage version. A conversion webhook is configured. An existing `v1alpha1` resource is stored in etcd. A client requests the resource via the `v1beta1` API. What happens?",
     diagram: null,
     options: [
-      "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly since both versions are listed in the CRD spec",
+      "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly as-is",
       "B. The conversion webhook pre-converted the resource when the storage version was updated, so the API server serves the cached `v1beta1` version",
       "C. The conversion webhook requires a completed storage migration job before it is able to convert `v1alpha1` resources to `v1beta1`",
-      "D. The API server reads the `v1alpha1` object from etcd, calls the conversion webhook to convert it, and returns `v1beta1`"
+      "D. The API server reads the `v1alpha1` object from etcd, invokes the conversion webhook to transform it to the requested version, and returns `v1beta1`"
     ],
     answer: 3,
     explanation: "When a client requests a CRD resource at a version different from its stored version in etcd, the API server uses the configured conversion webhook to transform the object between versions on the fly. The resource remains stored in etcd in its original version (`v1alpha1`) until a storage migration is explicitly run. The conversion webhook handles bidirectional conversion, allowing resources stored in any version to be served at any other served version. This is the core mechanism for CRD version evolution.\n\nWhy other options are wrong:\n- A: The API server does not return the raw stored version directly; it converts to the requested version using the conversion webhook\n- B: The API server does not pre-convert and cache resources; conversion happens on-demand when a different version is requested\n- C: A storage migration job is not required; the conversion webhook converts on-demand and can serve resources in any served version regardless of stored version\n\nReference: https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#webhook-conversion",
@@ -986,8 +986,8 @@ var questions = [
     options: [
       "A. Implement cluster autoscaler with aggressive scale-down settings and use VPA in `UpdateMode: Auto` for all namespaces to right-size pods automatically",
       "B. Apply `LimitRange` in dev namespaces to enforce lower defaults, use VPA in recommendation-only mode for dev, and keep production resource settings unchanged",
-      "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods",
-      "D. Move dev workloads to spot/preemptible nodes using `taints` and tolerations, and right-size resource requests based on VPA recommendations for each workload"
+      "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on all pod containers",
+      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size requests using VPA recommendations"
     ],
     answer: 3,
     explanation: "The optimal approach combines cost savings with appropriate risk tolerance. Development workloads can tolerate interruptions, making spot/preemptible nodes ideal (60-80% cost savings). Using VPA recommendations to right-size resource requests ensures that requested resources match actual usage (closing the 15% utilization vs 60% request gap). Taints and tolerations ensure only dev workloads land on spot nodes, protecting production. Option B only addresses defaults for new pods. Option C aggressively cuts quota without understanding actual needs.\n\nWhy other options are wrong:\n- A: VPA in UpdateMode: Auto for all namespaces could disrupt production by restarting pods; aggressive autoscaler scale-down may evict production workloads\n- B: LimitRange with lower defaults only affects new pods; existing pods keep their current resource settings unchanged\n- C: Cutting quota to 30% of current levels may be too aggressive without understanding actual usage patterns; it could break legitimate workloads\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
@@ -1176,10 +1176,10 @@ var questions = [
     text: "A KEDA (Kubernetes Event-Driven Autoscaler) `ScaledObject` is configured to scale a Deployment based on an Azure Service Bus queue length. The `ScaledObject` specifies `minReplicaCount: 0` and `maxReplicaCount: 20`. The queue currently has 500 messages and the trigger threshold is 10 messages per replica. How does KEDA determine the target replica count?",
     diagram: null,
     options: [
-      "A. KEDA calculates 50 replicas (500 messages / 10 per replica), but the `maxReplicaCount` caps the result at 20",
+      "A. KEDA calculates 50 desired replicas, but the `maxReplicaCount` caps the actual target at 20",
       "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds `maxReplicaCount`",
       "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
-      "D. KEDA computes 50 replicas but scales to 20 in a single step, then pauses scaling until the next evaluation run"
+      "D. KEDA computes 50 replicas (500 / 10 threshold), scales to 20 in a single step, then pauses until the next evaluation run"
     ],
     answer: 0,
     explanation: "KEDA calculates the desired replica count by dividing the metric value (queue length of 500) by the trigger threshold (10 messages per replica), yielding 50. Since this exceeds `maxReplicaCount: 20`, the target is capped at 20 replicas. KEDA then patches the HPA target or directly scales the Deployment to 20. KEDA uses the Kubernetes HPA external metrics mechanism — it does not implement its own gradual scaling logic. The HPA's built-in scaling behavior (stabilization windows, scaling policies) may further control the actual scaling speed.\n\nWhy other options are wrong:\n- B: KEDA does not blindly set to maxReplicaCount; it calculates the actual desired count first and then caps at max\n- C: KEDA does not scale linearly or double; it calculates the target directly from the metric value divided by the threshold\n- D: KEDA does not pause scaling after reaching max; it continues evaluating metrics on each interval and adjusts as queue drains\n\nReference: https://keda.sh/docs/latest/concepts/scaling-deployments/",
@@ -1336,7 +1336,7 @@ var questions = [
     text: "A Kubernetes cluster uses RBAC. A user has a `ClusterRole` with `get`, `list`, and `watch` permissions on `secrets` in all namespaces via a `ClusterRoleBinding`. The security team argues this is equivalent to cluster-admin access for secrets. Are they correct, and why?",
     diagram: null,
     options: [
-      "A. No, `get`/`list`/`watch` only provide read access; the user cannot modify or delete secrets, so it is significantly less privileged than cluster-admin",
+      "A. No, `get`/`list`/`watch` only provide read access to secret metadata; the user cannot modify, delete, or escalate privileges via secrets",
       "B. No, secret values are redacted in `list` and `watch` responses by the API server; only a `get` on a specific secret returns actual encoded data",
       "C. Yes, `list` and `watch` return full secret data, giving the user access to all secrets including service account tokens across namespaces",
       "D. Yes, but only if the user also has `get` on the `secrets/data` subresource, which is required for accessing the base64-encoded values"

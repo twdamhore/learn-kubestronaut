@@ -40,3 +40,53 @@
 - **Type:** Missing clarity on alpha feature status
 - **Problem:** The `maxUnavailable` feature for StatefulSets is alpha and gated behind `MaxUnavailableStatefulSet`, but this was not clearly stated upfront.
 - **Fix:** Added a prominent note at the beginning of the explanation: "Note: `maxUnavailable` for StatefulSets is an alpha feature (as of Kubernetes 1.32) gated behind the `MaxUnavailableStatefulSet` feature gate, which is disabled by default."
+
+---
+
+# Round 37 Review - set-04.js
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 8
+
+## Changes
+
+### 1. s04-q018 (giveaway)
+- **Type:** Correct answer lists 3 debugging sources, wrong options list 1 each
+- **Problem:** Option B ("Check only the Elasticsearch application logs inside the container for `IOException` stack trace details") was too obviously wrong with the word "only" and a single source.
+- **Fix:** Changed option B to: "Check Elasticsearch application logs, JVM heap dumps, and container restart counts for storage errors". Updated B explanation to: "Application-level diagnostics like logs and heap dumps do not reveal infrastructure storage failures at the CSI or kubelet layer."
+
+### 2. s04-q042 (giveaway)
+- **Type:** Wrong options are absurdly implausible
+- **Problem:** Option B ("It reduces storage costs by compressing and deduplicating all events into a single compacted record") was obviously wrong.
+- **Fix:** Changed option B to: "It simplifies rollback by letting any service independently revert to a prior state without coordination". Updated B explanation to: "Event Sourcing does not enable independent uncoordinated rollback; reversing state requires compensating events that must be applied in sequence."
+
+### 3. s04-q045 (accuracy)
+- **Type:** Dimensionally nonsensical Prometheus expression
+- **Problem:** Option C had `node_filesystem_size_bytes - node_filesystem_free_bytes > 0.9` which compares bytes to a fraction (0.9), making no dimensional sense.
+- **Fix:** Changed option C to: "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9` (per node)". Updated C explanation to: "This ratio measures node-level filesystem utilization, not per-PV disk usage; PV monitoring requires kubelet_volume_stats metrics."
+
+### 4. s04-q055 (length-balance)
+- **Type:** Option A (142 chars) significantly longer than others (104-113 chars)
+- **Problem:** Option A was too long compared to the other options.
+- **Fix:** Shortened option A from "Managed database services are typically more cost-effective than self-hosted databases, making cost the primary factor favoring managed options" to: "Managed services are always cheaper than self-hosted databases, making cost the deciding factor."
+
+### 5. s04-q065 (giveaway)
+- **Type:** Correct answer is the only nuanced option; wrong options are simplistic
+- **Problem:** Option A ("Prioritize the cheapest storage option to minimize infrastructure costs even if performance differs") was too obviously wrong.
+- **Fix:** Changed option A to: "Balance cost against performance by defaulting to the cheapest storage tier that meets baseline SLAs". Updated A explanation to: "Defaulting to the cheapest tier ignores I/O patterns and durability requirements that vary significantly across workloads."
+
+### 6. s04-q079 (giveaway)
+- **Type:** Wrong options use extreme/absolute language
+- **Problem:** Option A ("Saga eliminates the need for any form of data consistency guarantees across distributed service boundaries") used absolute language making it an obvious throwaway.
+- **Fix:** Changed option A to: "Saga provides strong consistency by coordinating writes across services through a central transaction broker". Updated A explanation to: "Saga provides eventual consistency, not strong consistency; there is no central broker coordinating writes across services."
+
+### 7. s04-q036 (explanation)
+- **Type:** Explanation does not explicitly state that B reverses the relationship
+- **Problem:** Option B explanation ("Longhorn primarily provides ReadWriteOnce block volumes; RWX support is secondary via NFS") did not call out that option B reverses the primary/secondary relationship.
+- **Fix:** Changed B explanation to: "Option B reverses the relationship; Longhorn primarily provides ReadWriteOnce block storage, with ReadWriteMany as a secondary capability exposed through an NFS layer."
+
+### 8. s04-q082 (giveaway)
+- **Type:** Correct answer has 3 precise K8s terms; wrong options have weak setups
+- **Problem:** Option A ("A Deployment with 1 replica running the migration container that restarts if the script fails on error") lacked specific Kubernetes terminology.
+- **Fix:** Changed option A to: "A Deployment with `replicas: 1` and `restartPolicy: Always` that retries the migration on container failure."

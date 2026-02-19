@@ -559,10 +559,10 @@ var questions = [
     text: "A cluster has etcd encryption at rest enabled using the `aescbc` provider. An administrator needs to rotate the encryption key. What is the correct procedure?",
     diagram: null,
     options: [
-      "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all Secrets with a replace command",
+      "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all existing Secrets",
       "Delete all existing Secrets and recreate them from scratch — Kubernetes will re-encrypt on creation using the new key automatically",
       "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically without any manual steps",
-      "Replace the old key with the new one in the `EncryptionConfiguration` and restart the API server; data re-encrypts on the next read"
+      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, then wait for data to re-encrypt on the next read"
     ],
     answer: 0,
     explanation: "Key rotation for etcd encryption requires adding the new key as the first (active) entry while keeping the old key for decrypting existing data. After restarting the API server, all existing Secrets must be rewritten so they are re-encrypted with the new key. A common method is to read and replace all Secrets. There is no `kubectl rotate-keys` command. Simply replacing the key without rewriting data would leave existing Secrets unreadable. Data is not re-encrypted on read.\n\nWhy other options are wrong:\n- B: Deleting and recreating all Secrets is destructive and unnecessary when key rotation can preserve them\n- C: There is no kubectl rotate-keys command in Kubernetes\n- D: Simply replacing the key without rewriting data leaves existing Secrets encrypted with the old key, not re-encrypted on read\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
@@ -725,7 +725,7 @@ var questions = [
     options: [
       "Vault stores secrets in its own encrypted backend but uses etcd as a fallback for Kubernetes-native integration",
       "Vault replaces Kubernetes RBAC with its own policy engine for cluster-wide access control and authorization",
-      "Vault provides dynamic secret generation, fine-grained access control, audit logging, and automatic rotation",
+      "Vault provides dynamic secret generation, fine-grained access control, and automatic secret rotation",
       "Vault is a CNCF-graduated project providing encrypted storage, audit logging, and certified rotation APIs"
     ],
     answer: 2,
@@ -789,7 +789,7 @@ var questions = [
     text: "A team wants to monitor the actual memory consumption of containers versus their configured limits to identify pods at risk of OOM killing. Which Prometheus metric pair is most relevant?",
     diagram: null,
     options: [
-      "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for memory data",
+      "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for per-container memory usage and limit data",
       "`node_memory_MemTotal_bytes` and `kube_node_status_allocatable` for node-level memory limits and availability data",
       "`kube_pod_status_phase` and `kube_pod_container_status_restarts_total` for pod lifecycle monitoring",
       "`container_cpu_usage_seconds_total` and `container_cpu_cfs_throttled_seconds_total` for CPU metrics"
@@ -1042,7 +1042,7 @@ var questions = [
     diagram: null,
     options: [
       "Set `runAsUser: 0` in the securityContext so the container runs as root and matches file ownership",
-      "Use `defaultMode: 0444` on the Secret volume to make files world-readable, or set `fsGroup` in securityContext",
+      "Set `defaultMode: 0444` on the Secret volume definition to make the mounted files readable by all users",
       "Secrets mounted in non-root containers require a ServiceAccount with elevated RBAC permissions to read",
       "Add `privileged: true` to the container securityContext to inherit the host filesystem permission model"
     ],
@@ -1407,7 +1407,7 @@ var questions = [
     text: "A namespace has both a LimitRange (setting default memory request to 128Mi) and a ResourceQuota (total memory requests limited to 1Gi). A developer creates a pod without specifying memory. What is the sequence of events?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Admission Control Sequence</text><rect x="20" y="55" width="100" height="45" rx="5" fill="#2d6a4f"/><text x="70" y="73" text-anchor="middle" fill="white" font-size="10">Step 1</text><text x="70" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="120" y1="77" x2="155" y2="77" stroke="#4caf50" stroke-width="2" marker-end="url(#a)"/><rect x="155" y="55" width="100" height="45" rx="5" fill="#e6a817"/><text x="205" y="73" text-anchor="middle" fill="white" font-size="10">Step 2</text><text x="205" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="255" y1="77" x2="290" y2="77" stroke="#e6a817" stroke-width="2"/><rect x="290" y="55" width="80" height="45" rx="5" fill="#326CE5"/><text x="330" y="73" text-anchor="middle" fill="white" font-size="10">Persist</text><text x="330" y="88" text-anchor="middle" fill="#ccc" font-size="9">to etcd</text><text x="200" y="145" text-anchor="middle" fill="#e0e0e0" font-size="11">What is the sequence of admission control?</text></svg>',
     options: [
-      "The ResourceQuota rejects the pod because it has no memory specification such as 128Mi, and the LimitRange rarely runs its admission logic beforehand",
+      "The ResourceQuota rejects the pod because it has no memory specification, since the LimitRange injects defaults only after the quota check completes",
       "The pod is created with no memory request and does not count against the ResourceQuota since no memory was requested",
       "Both admission controllers run simultaneously and the LimitRange default conflicts with the ResourceQuota check logic",
       "The LimitRanger first injects the 128Mi default, then the ResourceQuota controller checks if the total fits in 1Gi"
@@ -1572,7 +1572,7 @@ var questions = [
     diagram: null,
     options: [
       "ConfigMaps are stored in etcd which automatically versions all changes, enabling `kubectl rollback configmap` to restore prior versions",
-      "ConfigMaps in Git provide version history, diff capability, and rollback through Git ops, while Deployment rollbacks restore config versions",
+      "ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations",
       "Kubernetes automatically creates ConfigMap snapshots before every change, stored in a dedicated backup volume attached to the cluster",
       "There is no advantage over database-stored configuration — it provides the same versioning and rollback capabilities as ConfigMaps do"
     ],

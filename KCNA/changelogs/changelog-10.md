@@ -88,3 +88,47 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q091
 - **Before:** B, A, C, D (answer: 0 -> "B."). **After:** A, B, C, D (answer: 1 -> "B.").
+
+---
+
+# Round 37 Review - Set 10
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 9 across 9 questions
+
+## Fixes
+
+### s10-q022 (length-balance/giveaway)
+- **Option A (correct):** Shortened from recipe-like detail to concise form. Changed from "Disable `automountServiceAccountToken` and use a projected volume with `serviceAccountToken` source, `expirationSeconds: 3600`, and the API audience" to "Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration".
+- **Option B:** Expanded to balance lengths. Changed from "Use a TokenRequest API call from an init container to generate a short-lived token, store it in a shared `emptyDir`, and read it from the app container" to "Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read it from the main app container".
+
+### s10-q047 (length-balance/giveaway)
+- **Option D (correct):** Expanded from shortest option. Changed from "The API server reads the `v1alpha1` object from etcd, calls the conversion webhook to convert it, and returns `v1beta1`" to "The API server reads the `v1alpha1` object from etcd, invokes the conversion webhook to transform it to the requested version, and returns `v1beta1`".
+- **Option A:** Trimmed. Changed from "The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly since both versions are listed in the CRD spec" to "The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly as-is".
+
+### s10-q062 (length-balance/giveaway)
+- **Option D (correct):** Trimmed from longest with two strategies mentioned. Changed from "Move dev workloads to spot/preemptible nodes using `taints` and tolerations, and right-size resource requests based on VPA recommendations for each workload" to "Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size requests using VPA recommendations".
+- **Option C:** Expanded. Changed from "Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods" to "Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on all pod containers".
+
+### s10-q020 (length-balance/giveaway)
+- **Option A (correct):** Shortened from longest with embedded rationale. Changed from "The pod's `ndots:5` setting causes the resolver to try search-domain expansion for the FQDN because it has only 4 dots, which is less than ndots" to "The pod's `ndots:5` setting causes search-domain expansion for the FQDN because the name has fewer than 5 dots".
+- **Option C:** Expanded. Changed from "...does not include `team-b` in its allowed zone list" to "...does not include `team-b` in its allowed namespace zone list".
+- **Option D:** Expanded. Changed from "...matches the forward plugin catch-all rule" to "...matches the forward plugin's catch-all upstream rule".
+
+### s10-q074 (giveaway)
+- **Option A (correct):** Removed explicit calculation that acted as giveaway. Changed from "KEDA calculates 50 replicas (500 messages / 10 per replica), but the `maxReplicaCount` caps the result at 20" to "KEDA calculates 50 desired replicas, but the `maxReplicaCount` caps the actual target at 20".
+- **Option D:** Added calculation detail to balance. Changed from "KEDA computes 50 replicas but scales to 20 in a single step, then pauses scaling until the next evaluation run" to "KEDA computes 50 replicas (500 / 10 threshold), scales to 20 in a single step, then pauses until the next evaluation run".
+
+### s10-q027 (explanation accuracy)
+- **Option B explanation:** Corrected inaccurate claim about container network namespace. Changed from "TCP TIME_WAIT between restarts of the same container is unlikely because the container network namespace is recreated" to "TCP TIME_WAIT on hostNetwork is possible but resolves within seconds; persistent EADDRINUSE on every restart points to a different process or pod occupying the port".
+
+### s10-q001 (accuracy)
+- **Explanation:** Added caveat about StatefulSetAutoDeletePVC feature. Appended after the sentence about StorageClass reclaimPolicy: "Note: since Kubernetes 1.27+, the `persistentVolumeClaimRetentionPolicy` field in the StatefulSet spec can change this default behavior, but the default policy (`Retain`) preserves PVCs on scale-down."
+
+### s10-q043 (giveaway)
+- **Option A (correct):** Restructured to remove embedded reasoning. Changed from "IPVS round-robin is per-connection, not per-packet; the NAT gateway reuses connections, skewing pod distribution" to "IPVS round-robin distributes per-connection; the NAT gateway's persistent connections concentrate traffic on a subset of pods".
+- **Option B:** Added detail. Changed from "IPVS in `rr` mode has a warmup period favoring the first registered backend until all backends receive at least one connection" to "IPVS in `rr` mode has a warmup period that favors the first registered backend endpoint until all backends receive at least one initial connection".
+
+### s10-q084 (giveaway)
+- **Option A:** Added comparable security detail to match correct answer's specificity. Changed from "No, `get`/`list`/`watch` only provide read access; the user cannot modify or delete secrets, so it is significantly less privileged than cluster-admin" to "No, `get`/`list`/`watch` only provide read access to secret metadata; the user cannot modify, delete, or escalate privileges via secrets".

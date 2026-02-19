@@ -281,12 +281,12 @@ var questions = [
     diagram: null,
     options: [
       "Examine kubelet logs, CSI driver logs, and `kubectl describe pv/pvc` events for storage errors",
-      "Check only the Elasticsearch application logs inside the container for `IOException` stack trace details",
+      "Check Elasticsearch application logs, JVM heap dumps, and container restart counts for storage errors",
       "Review the kube-scheduler logs for scheduling decisions related to pod placement on specific nodes",
       "Check the kube-apiserver audit logs for PVC creation timestamps and API request latencies"
     ],
     answer: 0,
-    explanation: "Storage I/O issues require a multi-layer debugging approach. The kubelet logs contain volume mount/unmount operations and errors. CSI driver logs show low-level storage operations. The events on PV and PVC objects (visible via `kubectl describe`) reveal binding issues, provisioning failures, and attachment errors. Application logs alone miss infrastructure-level problems.\n\nWhy other options are wrong:\n- B: Application logs alone miss infrastructure-level storage issues like CSI driver failures\n- C: Scheduler logs show pod placement decisions, not storage I/O errors or data corruption details\n- D: API server audit logs show API request timing, not storage-level I/O or corruption diagnostics\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
+    explanation: "Storage I/O issues require a multi-layer debugging approach. The kubelet logs contain volume mount/unmount operations and errors. CSI driver logs show low-level storage operations. The events on PV and PVC objects (visible via `kubectl describe`) reveal binding issues, provisioning failures, and attachment errors. Application logs alone miss infrastructure-level problems.\n\nWhy other options are wrong:\n- B: Application-level diagnostics like logs and heap dumps do not reveal infrastructure storage failures at the CSI or kubelet layer\n- C: Scheduler logs show pod placement decisions, not storage I/O errors or data corruption details\n- D: API server audit logs show API request timing, not storage-level I/O or corruption diagnostics\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
     verify: "kubectl describe pvc <pvc-name> && kubectl logs -n kube-system <csi-driver-pod>"
   },
   {
@@ -574,7 +574,7 @@ var questions = [
       "Longhorn creates replicated block volumes using local disks and manages them via a CSI driver per node"
     ],
     answer: 3,
-    explanation: "Longhorn is a CNCF incubating project that creates distributed block storage using local disks on Kubernetes nodes. Each volume has an engine process and configurable replicas spread across different nodes. It implements a CSI driver for seamless Kubernetes integration and provides features like snapshots, backups, and disaster recovery.\n\nWhy other options are wrong:\n- A: Longhorn uses local node disks directly; it does not require an external Ceph cluster as backend\n- B: Longhorn primarily provides ReadWriteOnce block volumes; RWX support is secondary via NFS\n- C: Longhorn does not replace the kubelet; it integrates via a CSI driver alongside the kubelet\n\nReference: https://longhorn.io/docs/",
+    explanation: "Longhorn is a CNCF incubating project that creates distributed block storage using local disks on Kubernetes nodes. Each volume has an engine process and configurable replicas spread across different nodes. It implements a CSI driver for seamless Kubernetes integration and provides features like snapshots, backups, and disaster recovery.\n\nWhy other options are wrong:\n- A: Longhorn uses local node disks directly; it does not require an external Ceph cluster as backend\n- B: Option B reverses the relationship; Longhorn primarily provides ReadWriteOnce block storage, with ReadWriteMany as a secondary capability exposed through an NFS layer\n- C: Longhorn does not replace the kubelet; it integrates via a CSI driver alongside the kubelet\n\nReference: https://longhorn.io/docs/",
     verify: null
   },
   {
@@ -665,12 +665,12 @@ var questions = [
     diagram: null,
     options: [
       "It reduces latency by caching frequently accessed events in memory rather than querying the event store for each read",
-      "It reduces storage costs by compressing and deduplicating all events into a single compacted record",
+      "It simplifies rollback by letting any service independently revert to a prior state without coordination",
       "It ensures that all microservices share the same database schema for consistent cross-service queries",
       "It provides a full audit trail and enables state reconstruction from the event history at any point"
     ],
     answer: 3,
-    explanation: "Event Sourcing stores every state change as an immutable event. This provides a complete audit trail, enables temporal queries (state at any point in time), and supports event replay for debugging or rebuilding state. It is commonly used with CQRS (Command Query Responsibility Segregation) in microservices that require reliable state management.\n\nWhy other options are wrong:\n- A: Caching is a read optimization, not the primary benefit of Event Sourcing; the pattern's core value is the immutable event log itself\n- B: Events are stored individually; they are not compressed or deduplicated into a single record\n- C: Event Sourcing gives each service its own event store; services do not share database schemas\n\nReference: https://microservices.io/patterns/data/event-sourcing.html",
+    explanation: "Event Sourcing stores every state change as an immutable event. This provides a complete audit trail, enables temporal queries (state at any point in time), and supports event replay for debugging or rebuilding state. It is commonly used with CQRS (Command Query Responsibility Segregation) in microservices that require reliable state management.\n\nWhy other options are wrong:\n- A: Caching is a read optimization, not the primary benefit of Event Sourcing; the pattern's core value is the immutable event log itself\n- B: Event Sourcing does not enable independent uncoordinated rollback; reversing state requires compensating events that must be applied in sequence\n- C: Event Sourcing gives each service its own event store; services do not share database schemas\n\nReference: https://microservices.io/patterns/data/event-sourcing.html",
     verify: null
   },
   {
@@ -714,11 +714,11 @@ var questions = [
     options: [
       "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9`",
       "`kube_pod_container_resource_limits / kube_pod_resource_requests > 0.9`",
-      "`node_filesystem_size_bytes - node_filesystem_free_bytes > 0.9` (per node)",
+      "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9` (per node)",
       "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9` (per pod)"
     ],
     answer: 0,
-    explanation: "The ratio `kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes` gives the volume utilization as a fraction. When this exceeds 0.9 (90%), the alert fires. The other expressions monitor container resources or node-level filesystems, not PersistentVolume usage specifically.\n\nWhy other options are wrong:\n- B: kube_pod_container_resource_limits / kube_pod_resource_requests compares pod resource specs, not PV usage\n- C: node_filesystem_size_bytes - node_filesystem_free_bytes measures node filesystem usage, not specific PV volumes\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The ratio `kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes` gives the volume utilization as a fraction. When this exceeds 0.9 (90%), the alert fires. The other expressions monitor container resources or node-level filesystems, not PersistentVolume usage specifically.\n\nWhy other options are wrong:\n- B: kube_pod_container_resource_limits / kube_pod_resource_requests compares pod resource specs, not PV usage\n- C: This ratio measures node-level filesystem utilization, not per-PV disk usage; PV monitoring requires kubelet_volume_stats metrics\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: null
   },
   {
@@ -872,7 +872,7 @@ var questions = [
     text: "A cloud-native application team is deciding between using a managed database service (e.g., AWS RDS) and running a database as a StatefulSet in Kubernetes. Which factor most strongly favors using a managed service?",
     diagram: null,
     options: [
-      "Managed database services are typically more cost-effective than self-hosted databases, making cost the primary factor favoring managed options",
+      "Managed services are always cheaper than self-hosted databases, making cost the deciding factor",
       "Managed services handle backups, patching, replication, and failover, reducing the team's operations work",
       "StatefulSets are designed for stateless workloads and require additional operators for database persistent storage",
       "Managed services run inside the Kubernetes cluster alongside application pods for better network latency"
@@ -1032,13 +1032,13 @@ var questions = [
     text: "A team is designing a stateful microservice for Kubernetes and must decide on a data persistence strategy. Which principle should guide their choice between local volumes, network-attached storage, and object storage?",
     diagram: null,
     options: [
-      "Prioritize the cheapest storage option to minimize infrastructure costs even if performance differs",
+      "Balance cost against performance by defaulting to the cheapest storage tier that meets baseline SLAs",
       "Match the storage type to the workload's I/O pattern, durability needs, and horizontal scaling goals",
       "Prefer local volumes for their performance advantages and accept the trade-off in availability",
       "Prefer object storage as the default choice given its broad API support and portability across cloud providers"
     ],
     answer: 1,
-    explanation: "Cloud-native storage decisions should be driven by workload requirements. Local volumes offer lowest latency but lack replication. Network-attached block storage provides durability with moderate latency. Object storage scales infinitely but has higher latency. The correct choice depends on I/O patterns (random vs. sequential), durability needs, and horizontal scaling requirements.\n\nWhy other options are wrong:\n- A: Cheapest storage may not meet performance or durability requirements for the workload\n- C: Local volumes provide maximum performance but lack availability if the node fails\n- D: Object storage has higher latency and may not suit all workloads that need block-level I/O patterns\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/",
+    explanation: "Cloud-native storage decisions should be driven by workload requirements. Local volumes offer lowest latency but lack replication. Network-attached block storage provides durability with moderate latency. Object storage scales infinitely but has higher latency. The correct choice depends on I/O patterns (random vs. sequential), durability needs, and horizontal scaling requirements.\n\nWhy other options are wrong:\n- A: Defaulting to the cheapest tier ignores I/O patterns and durability requirements that vary significantly across workloads\n- C: Local volumes provide maximum performance but lack availability if the node fails\n- D: Object storage has higher latency and may not suit all workloads that need block-level I/O patterns\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/",
     verify: null
   },
   {
@@ -1256,13 +1256,13 @@ var questions = [
     text: "A microservices application uses the Saga pattern for distributed transactions across services that each have their own database. Why is the Saga pattern preferred over traditional two-phase commit (2PC) for cloud-native applications?",
     diagram: null,
     options: [
-      "Saga eliminates the need for any form of data consistency guarantees across distributed service boundaries",
+      "Saga provides strong consistency by coordinating writes across services through a central transaction broker",
       "Saga avoids distributed locks, maintaining service autonomy while requiring compensating transactions",
       "Saga is faster because it skips all validation and integrity checking steps in the transaction workflow",
       "Two-phase commit does not work with any database technology used in modern cloud-native applications"
     ],
     answer: 1,
-    explanation: "The Saga pattern breaks a distributed transaction into a sequence of local transactions, each within a single service's database. If a step fails, compensating transactions undo previous steps. Unlike 2PC, which requires distributed locks and blocks services, Sagas maintain service autonomy and availability, aligning with cloud-native principles of loose coupling.\n\nWhy other options are wrong:\n- A: Saga provides eventual consistency via compensating transactions; it does not eliminate consistency guarantees\n- C: Saga does not skip validation; each local transaction includes its own validation and integrity checks\n- D: 2PC works with modern databases but is less suitable for cloud-native due to distributed lock overhead\n\nReference: https://microservices.io/patterns/data/saga.html",
+    explanation: "The Saga pattern breaks a distributed transaction into a sequence of local transactions, each within a single service's database. If a step fails, compensating transactions undo previous steps. Unlike 2PC, which requires distributed locks and blocks services, Sagas maintain service autonomy and availability, aligning with cloud-native principles of loose coupling.\n\nWhy other options are wrong:\n- A: Saga provides eventual consistency, not strong consistency; there is no central broker coordinating writes across services\n- C: Saga does not skip validation; each local transaction includes its own validation and integrity checks\n- D: 2PC works with modern databases but is less suitable for cloud-native due to distributed lock overhead\n\nReference: https://microservices.io/patterns/data/saga.html",
     verify: null
   },
   {
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A CI pipeline needs to run database migration scripts against a PostgreSQL StatefulSet before deploying new application pods. Which Kubernetes resource is best suited to run this one-time migration task?",
     diagram: null,
     options: [
-      "A Deployment with 1 replica running the migration container that restarts if the script fails on error",
+      "A Deployment with `replicas: 1` and `restartPolicy: Always` that retries the migration on container failure",
       "A `CronJob` scheduled to run every minute until the database migration script succeeds on the cluster",
       "A Job running the migration, configured as an `initContainer` dependency or Helm pre-upgrade hook",
       "A DaemonSet that runs the migration on every node in the cluster regardless of database pod placement"

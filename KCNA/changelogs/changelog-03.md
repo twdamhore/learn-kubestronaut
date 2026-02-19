@@ -34,3 +34,41 @@
 - 3 giveaway/ambiguity fixes (option similarity, longest-is-correct patterns)
 - 11 length-balance fixes (normalizing option character counts)
 - No answer indices were changed
+
+---
+
+# Round 37 Review - Set 03
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 10 (11 identified, 1 skipped)
+
+## Accuracy Fixes
+
+1. **s03-q047** (accuracy - HIGH PRIORITY): Metric `kube_endpoint_address_available` was removed from kube-state-metrics (Oct 2024). Changed option C from `kube_endpoint_address_available` to `kube_endpoint_address{ready="true"}`. Updated explanation to reference the correct metric name with label syntax.
+2. **s03-q019** (accuracy): Flannel is not a CNCF project. Changed option B from "a CNCF project providing overlay networking" to "a CNI plugin providing overlay networking".
+
+## Explanation Fixes
+
+3. **s03-q052** (explanation): Clarified wrong-option-A explanation from "it is the configurable maximum upper bound" to "it is the upper bound of the `--max-endpoints-per-slice` flag."
+
+## Length-Balance Fixes
+
+4. **s03-q023**: Trimmed option C from "to every container in the distributed system" to "to every container" (removed 31% length gap with correct option A).
+5. **s03-q053**: Padded correct option A from 58 to 75 chars ("set to a list of allowed CIDR blocks for access") and padded option D from 58 to 65 chars ("IP address ranges").
+6. **s03-q060**: Trimmed option D from 107 to 87 chars, removing redundant words ("overrides", "setting").
+7. **s03-q067**: Trimmed option A from 88 to 76 chars and padded option C from 64 to 75 chars, balancing the spread.
+8. **s03-q069**: Padded option C from 61 to 78 chars ("across envs") and option D from 59 to 76 chars ("between services"), closing gap with correct option B (83 chars).
+9. **s03-q034**: Trimmed option B from 114 to 95 chars, removing "`api.example.com`" from the tail.
+10. **s03-q039**: Padded correct option B from 65 to 73 chars ("per pod"), closing gap with other options.
+
+## Skipped
+
+- **s03-q016**: Structural DNS name length issue, low priority. Deferred.
+
+## Summary
+
+- 2 accuracy fixes (deprecated metric, incorrect CNCF attribution)
+- 1 explanation fix (EndpointSlice flag name)
+- 7 length-balance fixes (normalizing option character counts)
+- No answer indices were changed

@@ -73,9 +73,9 @@ var questions = [
     text: "A development team is decomposing a monolithic application into microservices. They need each service to be independently deployable, own its data, and communicate over well-defined APIs. Which design principle is MOST critical for ensuring services can evolve independently?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1e293b" stroke="#334155"/><rect x="30" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="80" y="70" text-anchor="middle" fill="white" font-size="11">Service A</text><rect x="150" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="200" y="70" text-anchor="middle" fill="white" font-size="11">Service B</text><rect x="270" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="320" y="70" text-anchor="middle" fill="white" font-size="11">Service C</text><rect x="30" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="80" y="145" text-anchor="middle" fill="white" font-size="10">DB-A</text><rect x="150" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="200" y="145" text-anchor="middle" fill="white" font-size="10">DB-B</text><rect x="270" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="320" y="145" text-anchor="middle" fill="white" font-size="10">DB-C</text><line x1="80" y1="90" x2="80" y2="120" stroke="#14b8a6" stroke-width="2"/><line x1="200" y1="90" x2="200" y2="120" stroke="#14b8a6" stroke-width="2"/><line x1="320" y1="90" x2="320" y2="120" stroke="#14b8a6" stroke-width="2"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Service Decomposition Layout</text></svg>',
     options: [
-      "Loose coupling — each service exposes a stable API and hides internal implementation",
+      "Loose coupling — each service exposes a stable API contract and hides internal implementation details",
       "Shared database — all services access a single relational database for consistency",
-      "Synchronous RPC — inter-service calls should use blocking HTTP requests to ensure reliable data delivery",
+      "Synchronous RPC — inter-service calls should always use blocking HTTP requests for data delivery",
       "Monolithic deployment — services are packaged together to reduce network overhead cost"
     ],
     answer: 0,
@@ -137,8 +137,8 @@ var questions = [
     text: "A site reliability engineer needs to collect time-series metrics from all microservices running in a Kubernetes cluster. The monitoring system should use a pull-based model, scraping HTTP endpoints exposed by each service. Which CNCF graduated project fits this requirement?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Pull-Based Monitoring Architecture</text><rect x="140" y="40" width="120" height="45" rx="6" fill="#b45309" stroke="#f59e0b" stroke-width="2"/><text x="200" y="67" text-anchor="middle" fill="white" font-size="10">Monitoring Server</text><rect x="20" y="130" width="80" height="35" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="60" y="148" text-anchor="middle" fill="white" font-size="9">Svc A /data</text><rect x="160" y="130" width="80" height="35" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="200" y="148" text-anchor="middle" fill="white" font-size="9">Svc B /data</text><rect x="300" y="130" width="80" height="35" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="340" y="148" text-anchor="middle" fill="white" font-size="9">Svc C /data</text><line x1="170" y1="85" x2="60" y2="130" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrMon)"/><line x1="200" y1="85" x2="200" y2="130" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrMon)"/><line x1="230" y1="85" x2="340" y2="130" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrMon)"/><text x="100" y="110" text-anchor="middle" fill="#fcd34d" font-size="8">poll</text><text x="225" y="110" text-anchor="middle" fill="#fcd34d" font-size="8">poll</text><text x="300" y="110" text-anchor="middle" fill="#fcd34d" font-size="8">poll</text><defs><marker id="arrMon" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker></defs></svg>',
     options: [
-      "Datadog — a SaaS platform that deploys agents to scrape and forward cluster metrics to a hosted backend",
-      "Jaeger — a distributed tracing platform for monitoring microservice request flows",
+      "Datadog — a SaaS platform deploying agents to scrape and forward cluster metrics to a hosted backend",
+      "Jaeger — a distributed tracing platform for monitoring and analyzing microservice request flows",
       "Prometheus — a monitoring system that scrapes metrics from targets via HTTP endpoints",
       "Thanos — a long-term storage solution extending Prometheus with global query capability"
     ],
@@ -362,9 +362,9 @@ var questions = [
     diagram: null,
     options: [
       "Add a label `gpu=true` and use `nodeSelector` on ML Pods — but this alone does not repel non-ML Pods from GPU nodes",
-      "Set `priorityClassName: high` on ML Pods so they preempt lower-priority workloads; combine with `NoSchedule` taint for full isolation",
+      "Set `priorityClassName: high` on ML Pods so they preempt lower-priority workloads on the reserved GPU nodes",
       "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
-      "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration only to ML workload Pod specs"
+      "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a corresponding matching toleration only to ML workload Pod specs"
     ],
     answer: 3,
     explanation: "Taints and tolerations are the correct mechanism for node reservation. A taint with `NoSchedule` effect prevents any Pod that lacks a matching toleration from being scheduled on the node. Only ML Pods with the corresponding toleration can be placed on GPU nodes. `nodeSelector` attracts ML Pods but does not repel others. Priority classes affect preemption, not initial scheduling restrictions.\n\nWhy other options are wrong:\n- A: nodeSelector attracts ML Pods to GPU nodes but does not repel non-ML Pods from them\n- B: priorityClassName affects preemption order, not initial scheduling restrictions on specific nodes\n- C: podAntiAffinity on all non-ML Pods requires modifying every non-ML workload, which is impractical\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -572,7 +572,7 @@ var questions = [
     options: [
       "Argo Workflows — uses Workflow and WorkflowTemplate CRDs to define multi-step container-native DAG pipelines",
       "Argo CD — a GitOps continuous delivery tool that syncs `Application` state from Git to Kubernetes clusters",
-      "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task` and `Run`",
+      "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task`, `Pipeline`, and `PipelineRun`",
       "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from `GitRepository` sources continuously"
     ],
     answer: 2,
@@ -602,10 +602,10 @@ var questions = [
     text: "A machine learning team deploys a model training Job that occasionally fails due to transient GPU errors. They want the Job to retry up to 4 times before being marked as failed. Which Job spec field controls this behavior?",
     diagram: null,
     options: [
-      "`activeDeadlineSeconds: 240` — limits the total Job runtime to exactly 4 minutes",
-      "`completions: 4` — requires 4 successful completions before the Job is finished",
-      "`parallelism: 4` — runs 4 Pods simultaneously to increase success probability",
-      "`backoffLimit: 4` — specifies the number of failed Pod attempts before the Job is marked as failed"
+      "`activeDeadlineSeconds: 240` — limits the total Job runtime duration to exactly 4 minutes total",
+      "`completions: 4` — requires exactly 4 successful Pod completions before the Job is finished",
+      "`parallelism: 4` — runs up to 4 Pods simultaneously to increase overall success probability",
+      "`backoffLimit: 4` — allows up to 4 failed Pod attempts before the Job is marked failed"
     ],
     answer: 3,
     explanation: "The `backoffLimit` field specifies the number of failed Pod attempts before a Job is considered failed. Setting `backoffLimit: 4` means Kubernetes allows up to 4 Pod failures with exponential backoff before marking the Job as failed. `activeDeadlineSeconds` limits total runtime, `completions` sets the required number of successful completions, and `parallelism` controls concurrent Pod execution.\n\nWhy other options are wrong:\n- A: activeDeadlineSeconds limits total Job runtime duration, not the number of allowed failures\n- B: completions sets the number of successful completions needed, not the failure tolerance\n- C: parallelism controls concurrent Pod count, not failure handling behavior\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy",
@@ -650,7 +650,7 @@ var questions = [
     text: "A team is refactoring their application to follow the twelve-factor app methodology. Factor VI states that the app should execute as one or more stateless processes. Which practice violates this factor?",
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="170" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Factor VI: Stateless Processes</text><rect x="30" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="75" y="68" text-anchor="middle" fill="white" font-size="9">Instance 1</text><rect x="155" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="200" y="68" text-anchor="middle" fill="white" font-size="9">Instance 2</text><rect x="280" y="45" width="90" height="40" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="325" y="68" text-anchor="middle" fill="white" font-size="9">Instance 3</text><rect x="120" y="110" width="160" height="35" rx="6" fill="#1e40af" stroke="#3b82f6"/><text x="200" y="132" text-anchor="middle" fill="white" font-size="9">External Store (?)</text></svg>',
     options: [
-      "Storing session data in a Redis cluster shared by all running application instances in the environment",
+      "Storing session data in an external Redis cluster shared by all running application instances across the environment",
       "Keeping user session data in local process memory and routing returning users to the same instance via sticky sessions",
       "Using environment variables defined in the deployment manifest to inject config values into the process at startup",
       "Writing application logs as an unbuffered event stream to stdout so external logging infrastructure can capture them"
@@ -730,7 +730,7 @@ var questions = [
     text: "After a network partition isolates a worker node from the control plane, the node appears as `NotReady` in `kubectl get nodes` output (Ready condition becomes `Unknown`) and the node controller applies a `node.kubernetes.io/unreachable:NoExecute` taint. What happens to the Pods on that node once their `tolerationSeconds` (default 300 seconds) expires?",
     diagram: null,
     options: [
-      "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",
+      "The node controller evicts the Pods by setting their status to `Terminating` and the owning ReplicaSet creates replacements on healthy nodes",
       "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
       "The Pods continue running indefinitely on the isolated node and are never automatically rescheduled to other healthy nodes",
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
@@ -860,7 +860,7 @@ var questions = [
     diagram: null,
     options: [
       "Deployment — provides declarative updates for stateless workloads without stable identities or ordered scaling",
-      "StatefulSet — provides stable Pod identities, ordered deployment, and persistent storage",
+      "StatefulSet — provides stable Pod identities, ordered deployment, and per-replica persistent storage for stateful apps",
       "DaemonSet — ensures one Pod per node for infrastructure agents and system-level daemon processes",
       "ReplicaSet — maintains Pod replicas with stable selectors but no ordered deployment or persistent storage"
     ],
@@ -892,8 +892,8 @@ var questions = [
     diagram: null,
     options: [
       "The Gateway API delegates all routing decisions to kube-proxy, which handles L7 path-based routing on each node",
-      "The Gateway API replaces Services and Endpoints with a single resource combining routing, load balancing, and backend selection",
-      "It encrypts cluster network traffic at the transport layer using built-in TLS certificate management",
+      "The Gateway API replaces Services and Endpoints with a single resource combining routing and backend selection",
+      "It encrypts all cluster network traffic at the transport layer using built-in automatic TLS certificate management",
       "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
     ],
     answer: 3,
@@ -910,7 +910,7 @@ var questions = [
       "OpenTelemetry focuses primarily on distributed tracing and delegates metrics collection to Prometheus client libraries",
       "OpenTelemetry is a CNCF sandbox project that standardises trace export formats but requires Jaeger SDKs for instrumentation",
       "OpenTelemetry provides unified instrumentation for traces and metrics but has deprecated its log signal in favour of Fluentd",
-      "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs and SDKs for traces, metrics, and logs"
+      "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs, SDKs, and collectors for traces, metrics, and logs"
     ],
     answer: 3,
     explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.\n\nWhy other options are wrong:\n- A: OTel provides its own metrics APIs and SDKs; it does not delegate metrics collection to Prometheus client libraries\n- B: OTel is CNCF graduated (not sandbox) and provides its own instrumentation SDKs; it does not require Jaeger SDKs\n- C: OTel actively supports the log signal alongside traces and metrics; it has not deprecated logs in favour of Fluentd\n\nReference: https://opentelemetry.io/docs/",
@@ -926,7 +926,7 @@ var questions = [
       "Grafana Loki — a horizontally scalable log aggregation system that stores chunks in object storage for cost efficiency",
       "Cortex — ingests metrics via remote-write into a shared multi-tenant TSDB with its own query layer for federation",
       "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
-      "Thanos — extends Prometheus with a sidecar that ships blocks to object storage and a global query layer"
+      "Thanos — extends Prometheus with a sidecar that ships TSDB blocks to object storage and provides a global query layer"
     ],
     answer: 3,
     explanation: "Thanos is a CNCF incubating project that extends Prometheus for long-term metric storage and global querying. It adds components like Thanos Sidecar (ships blocks to object storage), Thanos Query (federates queries across Prometheus instances), and Thanos Compactor (downsamples old data). Cortex uses a different approach: it ingests metrics via Prometheus remote-write into its own distributed TSDB, rather than extending existing Prometheus instances with sidecars.\n\nWhy other options are wrong:\n- A: Grafana Loki stores log chunks in object storage but is a log aggregation system, not a Prometheus metrics solution\n- B: Cortex has its own query layer but ingests via remote-write into a separate TSDB rather than using a sidecar-based approach\n- C: VictoriaMetrics is not a CNCF project; it is an independent open-source TSDB\n\nReference: https://www.cncf.io/projects/thanos/",
@@ -1036,7 +1036,7 @@ var questions = [
     diagram: null,
     options: [
       "The total cumulative count of HTTP 5xx errors since the application started",
-      "The per-second rate of HTTP 5xx errors averaged over a 5-minute window",
+      "The per-second rate of HTTP 5xx errors averaged over a sliding 5-minute window",
       "The maximum number of HTTP 5xx errors observed in any single 5-minute interval",
       "The percentage of HTTP requests that returned 5xx errors out of all requests"
     ],
@@ -1148,7 +1148,7 @@ var questions = [
     diagram: null,
     options: [
       "No — etcd requires full membership agreement through a two-phase commit before processing any client read or write requests",
-      "Yes — etcd uses Raft consensus requiring a majority quorum; with 2 of 3 members the quorum is maintained",
+      "Yes — etcd uses Raft consensus requiring a majority quorum; with 2 of 3 members available the quorum is still maintained",
       "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles data afterward",
       "No — etcd immediately promotes one of the remaining members to operate as a standalone single-node instance"
     ],
@@ -1214,8 +1214,8 @@ var questions = [
     options: [
       "The Pod is created successfully because the CPU limit of 3 is still under the namespace quota limit of 8",
       "The Pod is created but throttled to use only 1 CPU request since that is all the remaining quota allows",
-      "The ResourceQuota is ignored because it primarily targets Deployments and ReplicaSets rather than individual Pod resources",
-      "Pod creation is rejected because total CPU requests would be 5 (3 + 2), exceeding the quota of 4 total"
+      "The ResourceQuota is ignored because it primarily targets Deployments and ReplicaSets, not individual Pods",
+      "Pod creation is rejected because total CPU requests would be 5 (3 existing + 2 new), exceeding the quota of 4"
     ],
     answer: 3,
     explanation: "ResourceQuotas enforce aggregate resource constraints across all resources in a namespace. With 3 CPU requests already consumed and the new Pod requesting 2, the total would be 5, exceeding the `requests.cpu: 4` quota. The API server rejects the Pod creation at admission time. ResourceQuotas apply to all resource types (Pods, Deployments, Services, etc.) within the namespace.\n\nWhy other options are wrong:\n- A: ResourceQuota checks both requests AND limits; even though limit is under 8, requests exceed 4\n- B: ResourceQuota does not throttle; it either admits or rejects the resource creation entirely\n- C: ResourceQuota applies to all resource types in the namespace, including individual Pods\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
@@ -1326,8 +1326,8 @@ var questions = [
     options: [
       "A single `from` entry with both `podSelector` and `namespaceSelector`, requiring both conditions true simultaneously for every match",
       "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
-      "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from `monitoring` namespace Pods for egress controls",
-      "Two separate `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, and another with `namespaceSelector` for `monitoring`"
+      "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from all `monitoring` namespace Pods for egress traffic controls",
+      "Two separate `from` entries: one with `podSelector` matching `role: frontend`, and another with `namespaceSelector` for `monitoring`"
     ],
     answer: 3,
     explanation: "NetworkPolicy `from` rules use an array of entries. When `podSelector` and `namespaceSelector` are in the same entry, they form an AND condition. To express OR logic (from `frontend` Pods in the same namespace OR from any Pod in `monitoring`), they must be separate entries in the `from` array. The `to` field is for egress rules. Ingress policies require `from` entries.\n\nWhy other options are wrong:\n- A: A single from entry with both selectors creates an AND condition, requiring both to match simultaneously\n- B: The to field is for egress rules, not ingress; and the requirement is about incoming traffic\n- C: Egress rules control outbound traffic from Pods; the requirement is about inbound (ingress) traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -1405,8 +1405,8 @@ var questions = [
     diagram: null,
     options: [
       "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace",
-      "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent writes",
-      "Setting `readOnlyRootFilesystem: true` in each container's `securityContext` to make the root filesystem read-only",
+      "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent all write operations",
+      "Setting `readOnlyRootFilesystem: true` in the container's `securityContext` for a read-only root filesystem",
       "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
     ],
     answer: 2,

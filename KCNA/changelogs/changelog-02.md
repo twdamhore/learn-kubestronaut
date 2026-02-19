@@ -83,3 +83,68 @@
 **Problem:** The explanation did not mention that API validation for duplicate keys in projected volumes may differ in newer Kubernetes versions.
 
 **Change:** Added a note to the explanation: `"Note: behavior may vary with API validation settings in newer Kubernetes versions."` appended after the existing explanation text about last-source-wins behavior.
+
+---
+---
+
+# Round 37 Review - set-02.js
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 7
+
+---
+
+## s02-q048 (length-balance)
+
+**Problem:** Correct answer A was noticeably shorter (~83 chars) than option B (~100 chars), creating a length imbalance that could signal the answer.
+
+**Change:** Padded option A from `"container_memory_working_set_bytes and kube_pod_container_resource_limits for memory data"` to `"container_memory_working_set_bytes and kube_pod_container_resource_limits for per-container memory usage and limit data"`.
+
+---
+
+## s02-q063 (giveaway)
+
+**Problem:** Correct answer B offered TWO solutions joined by "or" (defaultMode or fsGroup), while wrong options each described a single action. This created a classic giveaway pattern.
+
+**Change:** Reduced option B to a single solution. Changed from `"Use defaultMode: 0444 on the Secret volume to make files world-readable, or set fsGroup in securityContext"` to `"Set defaultMode: 0444 on the Secret volume definition to make the mounted files readable by all users"`. The fsGroup alternative is still mentioned in the explanation.
+
+---
+
+## s02-q044 (giveaway residual)
+
+**Problem:** Correct answer C still listed FOUR capabilities (dynamic secret generation, fine-grained access control, audit logging, and automatic rotation) while other options listed fewer, creating a residual giveaway from the Round 36 fix.
+
+**Change:** Reduced to three capabilities. Changed from `"Vault provides dynamic secret generation, fine-grained access control, audit logging, and automatic rotation"` to `"Vault provides dynamic secret generation, fine-grained access control, and automatic secret rotation"`.
+
+---
+
+## s02-q095 (length-balance/giveaway)
+
+**Problem:** Correct answer B was the longest option with a dual-benefit "while" structure that made it structurally distinct from the other options.
+
+**Change:** Removed the second clause. Changed from `"ConfigMaps in Git provide version history, diff capability, and rollback through Git ops, while Deployment rollbacks restore config versions"` to `"ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations"`.
+
+---
+
+## s02-q085 (giveaway)
+
+**Problem:** Correct answer D described a precise two-step process, while wrong options described single actions. Option A needed to also present a two-step process to reduce the structural giveaway.
+
+**Change:** Rewrote option A to describe a two-step (incorrect) sequence. Changed from `"The ResourceQuota rejects the pod because it has no memory specification such as 128Mi, and the LimitRange rarely runs its admission logic beforehand"` to `"The ResourceQuota rejects the pod because it has no memory specification, since the LimitRange injects defaults only after the quota check completes"`.
+
+---
+
+## s02-q034 (giveaway)
+
+**Problem:** Correct answer A had a 3-step structure while wrong options had 1-2 steps. Option D needed step structure added to reduce the structural giveaway.
+
+**Change:** Reformatted option D to use a 3-step structure. Changed from `"Replace the old key with the new one in the EncryptionConfiguration and restart the API server; data re-encrypts on the next read"` to `"Replace the old key with the new one in EncryptionConfiguration, restart the API server, then wait for data to re-encrypt on the next read"`.
+
+---
+
+## s02-q034 (length-balance on correct answer)
+
+**Problem:** Correct answer A was the longest option with a verbose trailing clause.
+
+**Change:** Trimmed option A. Changed from `"Add the new key first in EncryptionConfiguration, restart the API server, then re-encrypt all Secrets with a replace command"` to `"Add the new key first in EncryptionConfiguration, restart the API server, then re-encrypt all existing Secrets"`.

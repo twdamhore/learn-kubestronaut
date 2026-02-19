@@ -250,7 +250,7 @@ var questions = [
     options: [
       "A nodeSelector matching the GPU node's labels to override the taint and direct scheduling there",
       "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"` in metadata",
-      "A toleration for the taint `gpu=true:NoSchedule` to allow pod placement",
+      "A toleration for the taint `gpu=true:NoSchedule` so the scheduler allows pod placement on that node",
       "A resource request for `nvidia.com/gpu: 1` under the container resources spec"
     ],
     answer: 2,
@@ -501,7 +501,7 @@ var questions = [
     id: "s07-q032",
     domain: "Cloud Native Architecture",
     subsection: "Cloud Native Principles",
-    text: "A 12-factor application running in Kubernetes fails because an environment variable `DATABASE_URL` is empty. The pod spec references a ConfigMap that exists but does not contain the key `DATABASE_URL`. What is the pod's expected behavior?",
+    text: "A 12-factor application's pod spec references a ConfigMap that exists but does not contain the key `DATABASE_URL`. The team expects the environment variable to be injected from this ConfigMap. What is the pod's expected behavior?",
     diagram: null,
     options: [
       "The pod starts normally but the environment variable is set to an empty string, causing application errors at runtime when the database URL is used",
@@ -1050,8 +1050,8 @@ var questions = [
     options: [
       "The Job continues retrying with increasing `backoffLimit` delay intervals beyond the third failure",
       "The Job is marked as Failed and no more pods are created by the Job controller for this resource",
-      "Kubernetes sends an alert to the cluster administrator via the event system",
-      "The Job controller deletes the Job resource and all associated pods"
+      "Kubernetes sends an alert to the cluster administrator via the event system and pauses the Job for review",
+      "The Job controller automatically deletes the Job resource and all of its associated completed and failed pods"
     ],
     answer: 1,
     explanation: "The `backoffLimit` field specifies the number of retries before considering a Job as failed. After 3 failed pod attempts, the Job controller marks the Job's condition as `Failed` and stops creating new pods. The failed pods remain for log inspection unless `ttlSecondsAfterFinished` is configured to clean them up automatically.\n\nWhy other options are wrong:\n- A: The Job stops retrying at backoffLimit; it does not continue beyond the specified limit\n- C: Kubernetes does not send alerts via the event system for Job failures; it marks the Job as Failed\n- D: The Job controller does not auto-delete the Job resource; it remains for inspection\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy",
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A developer pushes a change to the Git repository, but ArgoCD shows the application as `Synced` with the old version. The Git webhook is configured correctly. What is a common cause?",
     diagram: null,
     options: [
-      "The change was pushed to a branch ArgoCD is not tracking—verify `targetRevision` in the Application spec",
+      "The change was pushed to a different branch that ArgoCD is not tracking—verify the `targetRevision` field in the Application spec",
       "ArgoCD caches the last-known Git state and requires a manual `argocd app refresh` to pick up any new commits",
       "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
       "ArgoCD detected the change but its reconciliation loop is paused due to a configured sync window restriction on this application"
@@ -1438,7 +1438,7 @@ var questions = [
       "The pod's NoExecute toleration expired because the PodDisruptionBudget overrides tolerationSeconds after a 300-second window"
     ],
     answer: 1,
-    explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node's `Ready` condition becomes `False`), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.\n\nWhy other options are wrong:\n- A: OOMKill shows exit code 137 with OOMKilled reason, not an eviction after exactly 5 minutes\n- C: Kubernetes does not perform live pod migration; pods are terminated and recreated\n- D: PDB does not have a minimum uptime threshold; it protects against voluntary disruptions\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
+    explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node's `Ready` condition becomes `False`), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.\n\nWhy other options are wrong:\n- A: Kubelet eviction occurs due to node-level resource pressure (e.g., memory.available below threshold), not because an individual pod exceeds its own limits. A pod exceeding its memory limit is OOMKilled by the cgroup, not evicted by the eviction-manager\n- C: Kubernetes does not perform live pod migration; pods are terminated and recreated\n- D: PDB does not have a minimum uptime threshold; it protects against voluntary disruptions\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
     verify: "kubectl get events --field-selector reason=TaintManagerEviction"
   },
   {
@@ -1486,7 +1486,7 @@ var questions = [
       "The kubelet sent SIGTERM (signal 15) because the container exceeded its terminationGracePeriodSeconds, producing exit code 143 (128+15)"
     ],
     answer: 1,
-    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: While an application could call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external signal, not an application-chosen exit code\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: Exit code 143 indicates SIGTERM (128+15), not SIGKILL; the question states exit code 137 which is SIGKILL (128+9)\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
+    explanation: "Exit code 137 = 128 + 9, meaning the process received SIGKILL (signal 9). While `OOMKilled` is the most common cause, SIGKILL can also come from a manual `kill -9` command or the kernel OOM killer acting on system-level memory pressure. If OOMKilled is not listed, check container events and system logs (`dmesg`) for clues.\n\nWhy other options are wrong:\n- A: An application calling exit(137) is technically possible but extremely unusual; the Reason: Error status set by the container runtime combined with exit code 137 specifically indicates the process was killed by signal 9 (SIGKILL), not a voluntary exit\n- C: CPU limit exceeded causes throttling (reduced CPU cycles), not SIGKILL; the kernel never kills processes for exceeding CPU limits\n- D: Exit code 143 indicates SIGTERM (128+15), not SIGKILL; the question states exit code 137 which is SIGKILL (128+9)\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Last State'"
   },
   {

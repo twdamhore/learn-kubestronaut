@@ -51,3 +51,59 @@
 **Problem:** The correct answer (B) included a parenthetical calculation `"(2 per node at 500m each)"` that made it stand out as more educational/explanatory compared to the other options.
 
 **Change:** Moved the parenthetical style to option A and removed it from option B. Option A changed from `"All 5 replicas start successfully because Kubernetes overcommits, fitting 3 per node at 500m each"` to `"All 5 replicas start successfully because Kubernetes overcommits CPU (fitting 3 per node at 500m each)"`. Option B changed from `"Only 4 replicas can be scheduled (2 per node at 500m each); the 5th Pod remains Pending"` to `"Only 4 replicas can be scheduled; the 5th Pod remains in Pending state without sufficient resources"`.
+
+---
+
+# Round 37 Review - set-01.js
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 6
+
+---
+
+## s01-q048 (length-balance + giveaway)
+
+**Problem:** The correct answer (A) was noticeably longer (~105 chars) than option B (~83 chars), creating a length-based giveaway pattern where the most detailed option is correct.
+
+**Change:** Shortened option A from `"An init container that performs the migration and terminates with exit code 0 before app containers start"` to `"An init container that runs the migration to completion before the app containers start"`. Expanded option B from `"A Job resource that runs the migration before the Deployment is created by the team"` to `"A Job resource that runs the migration as a separate workload before the Deployment is created"`.
+
+---
+
+## s01-q048 (explanation)
+
+**Problem:** The explanation incorrectly stated that `postStart` hooks "run after the container starts and do not block other containers." In reality, `postStart` runs concurrently with the container's ENTRYPOINT, and it does block the kubelet from reporting the container as ready.
+
+**Change:** Updated the main explanation sentence to: "`postStart` hooks run concurrently with the container's ENTRYPOINT, so there is no guarantee the migration finishes before the app process begins." Updated the C wrong-answer bullet to: "A postStart hook runs concurrently with the container's ENTRYPOINT, so it cannot guarantee the migration completes before the app starts."
+
+---
+
+## s01-q070 (accuracy)
+
+**Problem:** The question asks for a "cluster-wide" policy but the correct answer (B) said "enforced at the namespace level," creating a contradiction that could confuse test-takers.
+
+**Change:** Changed option B from `"Use Pod Security Admission (PSA) with the 'restricted' profile enforced at the namespace level"` to `"Use Pod Security Admission (PSA) with the 'restricted' profile enforced across all namespaces"`. Updated the explanation from "at the namespace level" to "per namespace, or configured cluster-wide via admission defaults."
+
+---
+
+## s01-q087 (accuracy)
+
+**Problem:** NATS core does not persist messages; only NATS JetStream provides message persistence. Listing plain "NATS" alongside RabbitMQ in a context about message persistence is inaccurate.
+
+**Change:** Changed option A from `"Asynchronous messaging through a broker like NATS or RabbitMQ that persists messages"` to `"Asynchronous messaging through a broker like RabbitMQ or Kafka that persists messages"`. Updated the explanation from `"A message broker (like NATS, RabbitMQ, or Kafka)"` to `"A message broker (like RabbitMQ, Kafka, or NATS JetStream)"`.
+
+---
+
+## s01-q024 (giveaway - formatting asymmetry)
+
+**Problem:** Options A and D used backtick formatting for Kubernetes terms, but options B and C did not, creating a visual asymmetry that could signal which answers are correct or wrong.
+
+**Change:** Added backtick formatting to options B and C. Option B changed from `"Use a StatefulSet instead of a Deployment because StatefulSets support ordered rolling updates"` to `"Use a \`StatefulSet\` instead of a \`Deployment\` because \`StatefulSets\` support ordered rolling updates"`. Option C changed from `"Create a new Deployment alongside the old one and shift traffic using a Service selector change"` to `"Create a new \`Deployment\` alongside the old one and shift traffic using a \`Service\` selector change"`.
+
+---
+
+## s01-q099 (giveaway - keyword echo with diagram)
+
+**Problem:** The diagram contains the label "Auth Mechanism ?" and the correct answer (B) was the only option using the word "mechanism," creating a keyword echo that gives away the answer.
+
+**Change:** Changed option B from `"The \`ServiceAccount\` mechanism, which mounts a projected token volume into each Pod"` to `"The \`ServiceAccount\` resource, which mounts a projected token volume into each Pod"`.
