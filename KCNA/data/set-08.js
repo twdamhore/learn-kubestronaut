@@ -390,7 +390,7 @@ var questions = [
     id: "s08-q025",
     domain: "Cloud Native Architecture",
     subsection: "Serverless",
-    text: "A team wants to deploy workloads on Kubernetes that automatically adjust capacity to match demand — including dropping to zero replicas when idle. Which CNCF graduated project provides this serverless capability natively on Kubernetes?",
+    text: "A team wants to deploy HTTP request-driven serverless workloads on Kubernetes with built-in scale-to-zero — scaling replicas automatically based on incoming HTTP traffic and dropping to zero when idle. Which CNCF graduated project provides this capability natively on Kubernetes?",
     diagram: null,
     options: [
       "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero",
@@ -570,7 +570,7 @@ var questions = [
     text: "A team is building a CI/CD pipeline that must run inside the Kubernetes cluster as a series of steps, each in its own container. They want a Kubernetes-native pipeline engine. Which project provides custom resources like `Task`, `Pipeline`, and `PipelineRun`?",
     diagram: null,
     options: [
-      "Argo Workflows — uses Task and Workflow CRDs to define multi-step container-native CI/CD pipelines",
+      "Argo Workflows — uses Workflow and WorkflowTemplate CRDs to define multi-step container-native DAG pipelines",
       "Argo CD — a GitOps continuous delivery tool that syncs `Application` state from Git to Kubernetes clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task` and `Run`",
       "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from `GitRepository` sources continuously"
@@ -732,7 +732,7 @@ var questions = [
     options: [
       "The node controller evicts Pods by setting status to `Terminating` and the ReplicaSet creates replacements",
       "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
-      "The Pods continue running indefinitely on the isolated node and are not rescheduled automatically",
+      "The Pods continue running indefinitely on the isolated node and are never automatically rescheduled to other healthy nodes",
       "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
     ],
     answer: 0,
@@ -778,13 +778,13 @@ var questions = [
     text: "A platform team is evaluating NATS for inter-service communication. Which statement correctly describes NATS in the CNCF ecosystem?",
     diagram: null,
     options: [
-      "NATS is a CNCF incubating messaging system supporting pub/sub, request/reply, and streaming for cloud apps",
+      "NATS is a CNCF graduated messaging system supporting pub/sub, request/reply, and streaming for cloud apps",
       "NATS is a CNCF graduated distributed tracing system that collects spans from microservices across the cluster",
       "NATS is a CNCF graduated container runtime that competes with containerd for CRI compliance on Kubernetes nodes",
       "NATS is a CNCF sandbox secret management tool that stores and distributes encrypted credentials for workloads"
     ],
     answer: 0,
-    explanation: "NATS is a CNCF incubating project that provides a high-performance, lightweight messaging system. It supports multiple communication patterns including publish/subscribe, request/reply, and persistent streaming (via JetStream). NATS is designed for cloud native environments where low-latency, high-throughput messaging is needed between microservices.\n\nWhy other options are wrong:\n- B: NATS is incubating (not graduated) and is a messaging system, not a tracing system\n- C: NATS is incubating (not graduated) and is not a container runtime; it is a messaging system\n- D: NATS is incubating (not sandbox) and is a messaging system, not a secret management tool\n\nReference: https://www.cncf.io/projects/nats/",
+    explanation: "NATS is a CNCF graduated project that provides a high-performance, lightweight messaging system. It supports multiple communication patterns including publish/subscribe, request/reply, and persistent streaming (via JetStream). NATS is designed for cloud native environments where low-latency, high-throughput messaging is needed between microservices.\n\nWhy other options are wrong:\n- B: NATS is a graduated messaging system, not a tracing system\n- C: NATS is not a container runtime; it is a graduated messaging system\n- D: NATS is a graduated project (not sandbox) and is a messaging system, not a secret management tool\n\nReference: https://www.cncf.io/projects/nats/",
     verify: null
   },
   {
@@ -1327,7 +1327,7 @@ var questions = [
       "A single `from` entry with both `podSelector` and `namespaceSelector`, requiring both conditions true simultaneously for every match",
       "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
       "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from `monitoring` namespace Pods for egress controls",
-      "Two `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, another with `namespaceSelector` for `monitoring`"
+      "Two separate `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, and another with `namespaceSelector` for `monitoring`"
     ],
     answer: 3,
     explanation: "NetworkPolicy `from` rules use an array of entries. When `podSelector` and `namespaceSelector` are in the same entry, they form an AND condition. To express OR logic (from `frontend` Pods in the same namespace OR from any Pod in `monitoring`), they must be separate entries in the `from` array. The `to` field is for egress rules. Ingress policies require `from` entries.\n\nWhy other options are wrong:\n- A: A single from entry with both selectors creates an AND condition, requiring both to match simultaneously\n- B: The to field is for egress rules, not ingress; and the requirement is about incoming traffic\n- C: Egress rules control outbound traffic from Pods; the requirement is about inbound (ingress) traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -1503,7 +1503,7 @@ var questions = [
       "Rewriting the entire monolith from scratch in a new language and framework then deploying it all at once",
       "Incrementally replacing monolith features with microservices, routing via a facade until fully replaced",
       "Running the monolith and microservices on separate clusters with no shared traffic or communication",
-      "Splitting the monolithic database into shards while keeping the existing application code unchanged"
+      "Splitting the monolithic database into horizontal shards while keeping all existing application code unchanged"
     ],
     answer: 1,
     explanation: "The strangler fig pattern (named after the strangler fig tree) involves gradually replacing parts of a monolithic application with microservices. A facade or API gateway routes requests to either the monolith or the new microservice based on the functionality being requested. Over time, as more features are migrated, the monolith shrinks until it can be decommissioned entirely. This approach reduces risk compared to a full rewrite.\n\nWhy other options are wrong:\n- A: Rewriting from scratch is a big-bang approach with high risk, not the incremental strangler fig pattern\n- C: Running on separate clusters with no shared traffic does not incrementally replace monolith functionality\n- D: Database sharding is a data partitioning technique, not a monolith-to-microservices migration pattern\n\nReference: https://microservices.io/patterns/refactoring/strangler-application.html",
@@ -1532,7 +1532,7 @@ var questions = [
     text: "A team uses the CNCF Cloud Native Landscape to evaluate projects for their platform. Which statement accurately describes the CNCF landscape?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Technology Map Structure</text><rect x="20" y="40" width="170" height="30" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="105" y="60" text-anchor="middle" fill="white" font-size="9">Category A</text><rect x="210" y="40" width="170" height="30" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="295" y="60" text-anchor="middle" fill="white" font-size="9">Category B</text><rect x="20" y="80" width="170" height="30" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="105" y="100" text-anchor="middle" fill="white" font-size="9">Category C</text><rect x="210" y="80" width="170" height="30" rx="4" fill="#b45309" stroke="#f59e0b"/><text x="295" y="100" text-anchor="middle" fill="white" font-size="9">Category D</text><rect x="20" y="120" width="170" height="30" rx="4" fill="#be123c" stroke="#f43f5e"/><text x="105" y="140" text-anchor="middle" fill="white" font-size="9">Category E</text><rect x="210" y="120" width="170" height="30" rx="4" fill="#374151" stroke="#6b7280"/><text x="295" y="140" text-anchor="middle" fill="white" font-size="9">Category F</text><rect x="20" y="160" width="360" height="30" rx="4" fill="#064e3b" stroke="#10b981"/><text x="200" y="180" text-anchor="middle" fill="white" font-size="9">Category G | Category H | Category I | Category J</text><text x="200" y="220" text-anchor="middle" fill="#64748b" font-size="9">landscape.cncf.io</text></svg>',
     options: [
-      "It catalogs officially hosted CNCF projects and filters out commercial products from the listing",
+      "It catalogs only officially hosted CNCF projects and strictly filters out all commercial products from the listing entirely",
       "The CNCF landscape categorizes cloud native technologies across runtime, orchestration, observability, and the wider ecosystem",
       "The CNCF landscape is a certification program that validates vendor products for Kubernetes compatibility and conformance testing",
       "The CNCF landscape is a dependency graph showing which CNCF projects depend on each other for build and runtime dependencies"

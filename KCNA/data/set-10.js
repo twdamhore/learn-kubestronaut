@@ -72,12 +72,12 @@ var questions = [
     text: "A microservices application uses OpenTelemetry for distributed tracing with a Jaeger backend. Service A (Go) calls Service B (Python) via gRPC. Traces show that spans from Service B are appearing as separate root traces instead of being children of Service A's spans. What is the most likely cause?",
     diagram: null,
     options: [
-      "D. Service B's OpenTelemetry SDK is not extracting trace context headers from the incoming gRPC metadata",
+      "A. The Jaeger collector is dropping spans because of sampling rate limits configured at the agent collection level",
       "B. Service A and B use different OpenTelemetry SDK versions, causing incompatible span ID format encodings",
       "C. The gRPC protocol does not support W3C Trace Context propagation natively and requires a custom carrier",
-      "A. The Jaeger collector is dropping spans because of sampling rate limits configured at the agent collection level"
+      "D. Service B's OpenTelemetry SDK is not extracting trace context headers from the incoming gRPC metadata"
     ],
-    answer: 0,
+    answer: 3,
     explanation: "When spans appear as disconnected root traces, the most common cause is that the downstream service is not properly extracting context propagation headers from the incoming request. In gRPC, trace context (such as W3C `traceparent`) is propagated via metadata. If Service B's SDK is not configured with the correct propagator or is missing context extraction middleware, it will start new traces. gRPC fully supports standard trace context propagation, and SDK version mismatches do not typically cause this specific symptom.\n\nWhy other options are wrong:\n- B: Different SDK versions do not typically cause disconnected root traces; they use standardized propagation formats like W3C TraceContext\n- C: gRPC fully supports W3C Trace Context propagation via metadata; no custom carrier is needed\n- A: Jaeger sampling drops entire traces, not individual spans; dropped spans would not appear as separate root traces\n\nReference: https://opentelemetry.io/docs/concepts/context-propagation/",
     verify: null
   },
@@ -110,7 +110,7 @@ var questions = [
       "D. The container is OOM-killed because memory-backed `emptyDir` usage counts against the container memory cgroup"
     ],
     answer: 1,
-    explanation: "Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, alpha since 1.20, beta since 1.22, and GA since 1.32), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted — the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to node allocatable memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.\n\nWhy other options are wrong:\n- A: The pod is not evicted by kubelet; with SizeMemoryBackedVolumes GA, the tmpfs is sized to the limit and the kernel returns ENOSPC at the boundary\n- C: sizeLimit on memory-backed emptyDir is NOT advisory; since K8s 1.22 (beta, enabled by default), the kernel enforces the limit via tmpfs sizing\n- D: The container is not OOM-killed because memory-backed emptyDir usage counts against the pod's ephemeral storage, not the container memory cgroup directly (the tmpfs is sized to sizeLimit)\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    explanation: "Since Kubernetes 1.22+ (with the SizeMemoryBackedVolumes feature gate, alpha since 1.20, beta (enabled by default) in 1.22, and GA in 1.28), the kubelet mounts memory-backed emptyDir volumes with an explicit tmpfs size matching the sizeLimit. This means the kernel enforces the 256Mi cap at the filesystem level. When the container attempts to write beyond 256Mi, the write syscall fails with ENOSPC (no space left on device), identical to how a full disk-backed filesystem would behave. The pod itself is not evicted — the application receives an I/O error and must handle it. In older Kubernetes versions (without SizeMemoryBackedVolumes), the tmpfs defaulted to node allocatable memory and the kubelet eviction manager enforced sizeLimit asynchronously, but this is no longer the behavior.\n\nWhy other options are wrong:\n- A: The pod is not evicted by kubelet; with SizeMemoryBackedVolumes GA, the tmpfs is sized to the limit and the kernel returns ENOSPC at the boundary\n- C: sizeLimit on memory-backed emptyDir is NOT advisory; since K8s 1.22 (beta, enabled by default), the kernel enforces the limit via tmpfs sizing\n- D: The container is not OOM-killed because memory-backed emptyDir usage counts against the pod's ephemeral storage, not the container memory cgroup directly (the tmpfs is sized to sizeLimit)\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Volumes' && kubectl get events --field-selector involvedObject.name=<pod-name>"
   },
   {
@@ -137,11 +137,11 @@ var questions = [
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='10' y='10' width='180' height='75' rx='6' fill='#1a1a2e' stroke='#326CE5' stroke-width='1.5'/><text x='100' y='30' text-anchor='middle' fill='#326CE5' font-size='10'>ResourceQuota</text><text x='100' y='48' text-anchor='middle' fill='#aaa' font-size='9'>requests.cpu: 2</text><text x='100' y='63' text-anchor='middle' fill='#aaa' font-size='9'>limits.cpu: 4</text><rect x='210' y='10' width='180' height='55' rx='6' fill='#1a1a2e' stroke='#4CAF50' stroke-width='1.5'/><text x='300' y='30' text-anchor='middle' fill='#4CAF50' font-size='10'>LimitRange Defaults</text><text x='300' y='48' text-anchor='middle' fill='#aaa' font-size='9'>default / defaultRequest</text><rect x='10' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='37' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 1</text><rect x='75' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='102' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 2</text><rect x='140' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='167' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 3</text></svg>",
     options: [
       "A. All 3 replicas are created because LimitRange defaults are injected and the total resource usage stays within quota",
-      "D. Only 2 replicas are created; the third is blocked because total CPU requests would exceed the ResourceQuota limit",
+      "B. All 3 replicas are created because defaults injected by the LimitRange are completely exempt from ResourceQuota checks",
       "C. The Deployment is rejected entirely because quota availability must be validated for all 3 replicas simultaneously",
-      "B. All 3 replicas are created because defaults injected by the LimitRange are completely exempt from ResourceQuota checks"
+      "D. Only 2 replicas are created; the third is blocked because total CPU requests would exceed the ResourceQuota limit"
     ],
-    answer: 1,
+    answer: 3,
     explanation: "The existing 6 pods consume `6 * 250m = 1500m` in requests and `6 * 500m = 3000m` in limits. The LimitRange injects `requests.cpu: 250m` and `limits.cpu: 500m` into each new pod. Adding 3 pods would require `750m` more requests (total `2250m`, exceeding the `2` core quota) and `1500m` more limits (total `4500m`, exceeding the `4` core quota). Two pods can be created (bringing totals to `2000m` requests and `4000m` limits), but the third is blocked by the quota.\n\nWhy other options are wrong:\n- A: All 3 replicas cannot be created because the third pod's resource request would exceed the ResourceQuota limits for both CPU requests and limits\n- C: The Deployment is not rejected entirely; pods are created individually by the ReplicaSet controller and quota is checked per-pod at admission time\n- B: LimitRange defaults are NOT exempt from ResourceQuota; injected defaults count toward quota consumption like any explicit resource specification\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
     verify: "kubectl describe resourcequota -n <namespace> && kubectl get pods -n <namespace>"
   },
@@ -249,9 +249,9 @@ var questions = [
     diagram: null,
     options: [
       "A. Two scheduled runs are missed during the 12-minute window; after the job finishes, only the most recent missed schedule triggers a new job",
-      "D. All missed runs are queued and execute sequentially after the long-running job completes because `startingDeadlineSeconds` is long enough",
+      "B. Two runs are skipped silently due to `Forbid`; after the job finishes, the next run occurs at the next scheduled interval with no catch-up",
       "C. The CronJob controller counts 2 missed starts, which is below the 100-miss threshold, so it schedules a catch-up run immediately after the long job finishes",
-      "B. Two runs are skipped silently due to `Forbid`; after the job finishes, the next run occurs at the next scheduled interval with no catch-up"
+      "D. All missed runs are queued and execute sequentially after the long-running job completes because `startingDeadlineSeconds` is long enough"
     ],
     answer: 0,
     explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller will not create a new Job while a previous one is still running. During the 12-minute execution, two 5-minute scheduled intervals are missed. When the long-running job finishes, the controller checks for missed schedules within the `startingDeadlineSeconds: 200` window. The most recent missed schedule falls within that 200-second deadline, so the controller triggers exactly one catch-up run for it. The CronJob controller never creates multiple catch-up jobs — it only creates one for the most recently missed schedule if it is still within the deadline window.\n\nWhy other options are wrong:\n- D: Missed runs are never queued for sequential execution; the CronJob controller creates at most one catch-up job for the most recent missed schedule\n- C: The 100-miss threshold causes the CronJob to stop scheduling entirely; it does not trigger catch-up runs\n- B: Missed runs are not silently skipped; the controller checks startingDeadlineSeconds and triggers one catch-up for the most recent missed schedule\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#cron-job-limitations",
@@ -264,12 +264,12 @@ var questions = [
     text: "A Kubernetes node uses containerd as its container runtime with a default `RuntimeClass`. The security team requires that certain sensitive workloads run in gVisor sandboxes. A pod is created with `runtimeClassName: gvisor`, but it fails with `RuntimeClass \"gvisor\" not found`. What must be configured?",
     diagram: null,
     options: [
-      "D. Add gVisor as a plugin in the kubelet configuration file and restart the kubelet service; the `RuntimeClass` is auto-generated from plugin registration",
+      "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` with `handler: runsc`",
       "B. Create a `RuntimeClass` object with `handler: gvisor` and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable the sandbox runtime",
       "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd runtime handler on detection",
-      "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` with `handler: runsc`"
+      "D. Add gVisor as a plugin in the kubelet configuration file and restart the kubelet service; the `RuntimeClass` is auto-generated from plugin registration"
     ],
-    answer: 3,
+    answer: 0,
     explanation: "Using gVisor with Kubernetes requires three steps: (1) install the `runsc` binary on each node that will run sandboxed workloads, (2) configure containerd with a runtime handler that uses `runsc` (typically named `runsc` in the containerd config), and (3) create a cluster-level `RuntimeClass` resource whose `handler` field matches the containerd handler name. The `RuntimeClass` object is a cluster-scoped resource that maps the `runtimeClassName` in a pod spec to a specific CRI handler on the node.\n\nWhy other options are wrong:\n- D: gVisor is not a kubelet plugin; it is a container runtime shim that must be configured in containerd and mapped via a RuntimeClass object\n- B: RuntimeClass does not require a node annotation; it maps a handler name to a CRI runtime handler configured in the container runtime\n- C: There is no gVisor admission webhook that auto-creates RuntimeClass resources; both containerd config and RuntimeClass must be created manually\n\nReference: https://kubernetes.io/docs/concepts/containers/runtime-class/",
     verify: "kubectl get runtimeclass && cat /etc/containerd/config.toml | grep -A5 runsc"
   },
@@ -328,12 +328,12 @@ var questions = [
     text: "A Helm chart uses a `pre-install` hook to create a database schema migration Job. The hook has `helm.sh/hook-delete-policy: before-hook-creation`. After a failed `helm install`, the team runs `helm install` again with the same release name. The migration Job from the first attempt still exists in a `Failed` state. What happens?",
     diagram: null,
     options: [
-      "B. Helm fails because the release name already exists in `failed` state and must be removed with `helm uninstall` first",
       "A. Helm deletes the failed Job before creating a new one, as `before-hook-creation` removes previous hook resources",
+      "B. Helm fails because the release name already exists in `failed` state and must be removed with `helm uninstall` first",
       "C. The existing failed Job blocks new hook Job creation, causing a naming conflict and a `helm install` error message",
       "D. Helm ignores the existing Job and creates a new Job with a randomly generated suffix appended to the resource name"
     ],
-    answer: 1,
+    answer: 0,
     explanation: "The `before-hook-creation` delete policy instructs Helm to delete the existing hook resource before creating a new one during the next install or upgrade. Even though the first install failed, running `helm install` with the same release name (which Helm allows if the previous release is in `failed` state) will trigger this policy. Helm detects the existing Failed Job from the previous hook execution, deletes it, and then creates a fresh migration Job. This is specifically why `before-hook-creation` is the recommended delete policy for idempotent operations.\n\nWhy other options are wrong:\n- B: Helm allows re-install with the same release name if the previous release is in failed state; uninstall is not strictly required\n- C: The before-hook-creation policy specifically handles naming conflicts by deleting the old resource before creating a new one\n- D: Helm does not create Jobs with random suffixes; hook resources are created with deterministic names from the chart templates\n\nReference: https://helm.sh/docs/topics/charts_hooks/#hook-deletion-policies",
     verify: "helm list -a && helm history <release-name>"
   },
@@ -392,12 +392,12 @@ var questions = [
     text: "A team deploys a Knative Serving application that handles webhook events. The application experiences cold start latency of 8 seconds when scaling from zero. The SLA requires responses within 3 seconds. The team wants to minimize resource usage while meeting the SLA. What is the optimal Knative configuration?",
     diagram: null,
     options: [
-      "D. Use `minScale: 0` with `target-burst-capacity: -1` to disable activator buffering and let the autoscaler handle scaling",
+      "A. Set `minScale: 1` in the revision template to keep at least one warm instance running at all times for the service",
       "B. Configure `scale-to-zero-grace-period` to 30 minutes globally in the Knative `config-autoscaler` ConfigMap settings",
       "C. Set `initialScale` to 3 and enable `allow-zero-initial-scale` to handle burst traffic after the first cold start event",
-      "A. Set `minScale: 1` in the revision template to keep at least one warm instance running at all times for the service"
+      "D. Use `minScale: 0` with `target-burst-capacity: -1` to disable activator buffering and let the autoscaler handle scaling"
     ],
-    answer: 3,
+    answer: 0,
     explanation: "Setting `minScale: 1` ensures that at least one instance of the application is always running, eliminating cold start latency for at least the first request. While this consumes resources for the idle instance, it is the most straightforward way to meet a strict response time SLA. Option B only delays scale-to-zero, wasting resources during idle periods without guaranteeing warm instances. Option C controls initial scale at deployment time, not ongoing behavior. Option D would actually worsen latency by bypassing the activator's request buffering.\n\nWhy other options are wrong:\n- D: target-burst-capacity: -1 disables activator buffering, which worsens cold start latency by not queueing requests during scale-up\n- B: A 30-minute scale-to-zero-grace-period wastes resources during idle periods and does not guarantee a warm instance at request time\n- C: initialScale controls replicas at deploy time; it does not maintain a minimum during ongoing operation after scale-to-zero occurs\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-bounds/",
     verify: "kubectl get ksvc <service-name> -o jsonpath='{.spec.template.metadata.annotations}'"
   },
@@ -440,12 +440,12 @@ var questions = [
     text: "A microservices platform uses the Saga pattern for distributed transactions. An order service starts a saga that involves payment, inventory, and shipping services. The payment succeeds, the inventory reservation succeeds, but the shipping service fails. How should the saga orchestrator handle this failure?",
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='80' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='102' text-anchor='middle' fill='#fff' font-size='9'>Order Svc</text><rect x='105' y='80' width='75' height='35' rx='5' fill='#4CAF50' stroke='#fff'/><text x='142' y='98' text-anchor='middle' fill='#fff' font-size='8'>Payment</text><text x='142' y='109' text-anchor='middle' fill='#0f0' font-size='7'>SUCCESS</text><rect x='210' y='80' width='75' height='35' rx='5' fill='#4CAF50' stroke='#fff'/><text x='247' y='98' text-anchor='middle' fill='#fff' font-size='8'>Inventory</text><text x='247' y='109' text-anchor='middle' fill='#0f0' font-size='7'>SUCCESS</text><rect x='315' y='80' width='75' height='35' rx='5' fill='#f44336' stroke='#fff'/><text x='352' y='98' text-anchor='middle' fill='#fff' font-size='8'>Shipping</text><text x='352' y='109' text-anchor='middle' fill='#f44' font-size='7'>FAILED</text><line x1='80' y1='97' x2='100' y2='97' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a2)'/><line x1='180' y1='97' x2='205' y2='97' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a2)'/><line x1='285' y1='97' x2='310' y2='97' stroke='#f44' stroke-width='1.5' marker-end='url(#a2)'/><path d='M352,120 L352,155 L142,155 L142,120' stroke='#FF9800' stroke-width='1.5' fill='none' stroke-dasharray='4' marker-end='url(#a2)'/><text x='247' y='170' text-anchor='middle' fill='#FF9800' font-size='9'>How to handle?</text><defs><marker id='a2' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "B. Execute compensating transactions in reverse: release the inventory reservation, then refund the payment",
       "A. Retry the shipping service call with exponential backoff until it succeeds, keeping the saga open indefinitely",
+      "B. Execute compensating transactions in reverse: release the inventory reservation, then refund the payment",
       "C. Mark the saga as partially complete and let eventual consistency reconcile service state asynchronously",
       "D. Roll back using a two-phase commit protocol across all three services to ensure an atomic reversal"
     ],
-    answer: 0,
+    answer: 1,
     explanation: "The Saga pattern handles distributed transaction failures through compensating transactions executed in reverse order. When the shipping service fails, the orchestrator must undo the previously completed steps: first release the inventory reservation (compensate inventory), then issue a payment refund (compensate payment). This maintains eventual consistency. Unlike two-phase commit, sagas do not provide atomicity — they rely on compensating actions. Keeping the saga open indefinitely (option A) would leave resources locked.\n\nWhy other options are wrong:\n- A: Retrying indefinitely keeps resources locked and does not address the failure; it can cause resource starvation and timeout cascading\n- C: Marking as partially complete leaves the system in an inconsistent state; compensating transactions are needed to restore consistency\n- D: Two-phase commit is a different pattern than saga; sagas deliberately avoid 2PC because it requires distributed locks and has availability issues\n\nReference: https://microservices.io/patterns/data/saga.html",
     verify: null
   },
@@ -472,12 +472,12 @@ var questions = [
     text: "A StatefulSet uses a PVC with `accessModes: [ReadWriteOnce]` backed by an AWS EBS volume. The pod is rescheduled to a node in a different availability zone. The pod is stuck in `Pending`. What is the root cause and correct resolution?",
     diagram: null,
     options: [
-      "D. The StorageClass must have `allowedTopologies` set to all availability zones for the volume to be mountable across zones",
+      "A. EBS volumes are zone-scoped; add `nodeAffinity` matching the volume's AZ or use `volumeBindingMode: WaitForFirstConsumer`",
       "B. EBS volumes require `ReadWriteMany` access mode for cross-zone mounting; change the access mode in the PVC specification",
       "C. The PV is still attached to the old node; manually detach it with `kubectl patch pv` removing the volumeattachments finalizer",
-      "A. EBS volumes are zone-scoped; add `nodeAffinity` matching the volume's AZ or use `volumeBindingMode: WaitForFirstConsumer`"
+      "D. The StorageClass must have `allowedTopologies` set to all availability zones for the volume to be mountable across zones"
     ],
-    answer: 3,
+    answer: 0,
     explanation: "AWS EBS volumes are bound to a specific availability zone and cannot be attached to instances in a different zone. When a pod is rescheduled to a node in a different AZ, the volume cannot be mounted, causing the pod to remain Pending. The correct approaches are: (1) use `nodeAffinity` or pod topology constraints to ensure pods stay in the same AZ as their volumes, or (2) use `volumeBindingMode: WaitForFirstConsumer` in the StorageClass to delay volume creation until a pod is scheduled, ensuring the volume is created in the correct AZ.\n\nWhy other options are wrong:\n- D: allowedTopologies restricts which zones can create volumes, but it does not make existing zone-scoped EBS volumes cross-zone mountable\n- B: EBS does not support ReadWriteMany at all; changing access mode would not enable cross-zone mounting\n- C: The issue is zone topology mismatch, not stale attachment; manually detaching the PV does not help if the volume is in a different AZ\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
     verify: "kubectl describe pod <pod-name> | grep -A5 Events && kubectl get pv <pv-name> -o jsonpath='{.spec.nodeAffinity}'"
   },
@@ -568,12 +568,12 @@ var questions = [
     text: "An OPA Gatekeeper `ConstraintTemplate` enforces that all containers must have resource limits set. A pod with an init container specifying resource limits and a main container without limits is submitted. What is the result?",
     diagram: null,
     options: [
-      "C. The result depends on the Rego policy — if it only iterates `input.review.object.spec.containers`, init containers are skipped",
-      "B. The pod is rejected because Gatekeeper evaluates all containers including init, ephemeral, and regular containers in the spec",
       "A. The pod is admitted because Gatekeeper only validates the primary container specifications, not init containers in the pod spec",
+      "B. The pod is rejected because Gatekeeper evaluates all containers including init, ephemeral, and regular containers in the spec",
+      "C. The result depends on the Rego policy — if it only iterates `input.review.object.spec.containers`, init containers are skipped",
       "D. The pod is admitted but flagged with a warning annotation because Gatekeeper uses `warn` enforcement for partial compliance"
     ],
-    answer: 0,
+    answer: 2,
     explanation: "OPA Gatekeeper's behavior depends entirely on the Rego code written in the `ConstraintTemplate`. If the Rego policy only iterates over `input.review.object.spec.containers`, it will not inspect init containers (which are at `input.review.object.spec.initContainers`). The ConstraintTemplate author must explicitly include checks for `initContainers` and `ephemeralContainers` to enforce policies across all container types. This is a common oversight in policy authoring that can lead to security gaps.\n\nWhy other options are wrong:\n- B: Gatekeeper does not automatically evaluate all container types; the Rego policy must explicitly iterate initContainers and ephemeralContainers\n- A: Gatekeeper does not silently skip containers; its behavior depends entirely on what the Rego policy iterates\n- D: Gatekeeper does not use warn enforcement for partial compliance unless explicitly configured with enforcementAction: warn\n\nReference: https://open-policy-agent.github.io/gatekeeper/website/docs/howto/",
     verify: "kubectl get constrainttemplate <name> -o jsonpath='{.spec.targets[0].rego}'"
   },
@@ -601,11 +601,11 @@ var questions = [
     diagram: null,
     options: [
       "A. Synchronous REST calls for both B and C with retry middleware and circuit breakers to approximate guaranteed delivery",
-      "D. Service mesh sidecars handling automatic retries for both B and C with configurable retry budgets per destination",
+      "B. Async messaging with a persistent queue for A-to-B for guaranteed delivery, and fire-and-forget events for A-to-C",
       "C. gRPC streaming for A-to-B with server-side retry interceptors, and webhook-based notifications for A-to-C events",
-      "B. Async messaging with a persistent queue for A-to-B for guaranteed delivery, and fire-and-forget events for A-to-C"
+      "D. Service mesh sidecars handling automatic retries for both B and C with configurable retry budgets per destination"
     ],
-    answer: 3,
+    answer: 1,
     explanation: "The requirement for guaranteed delivery to Service B (payment) even during outages necessitates a persistent message queue (such as Kafka or RabbitMQ with durable queues) that retains messages until the consumer acknowledges processing. For Service C (notifications) where loss is acceptable, fire-and-forget async events provide decoupling without the overhead of guaranteed delivery. Synchronous calls (option A) cannot guarantee delivery during outages. Service mesh retries (option D) help with transient failures but do not persist messages across extended outages.\n\nWhy other options are wrong:\n- A: Synchronous REST calls cannot guarantee delivery during B's unavailability; retries have limits and circuit breakers eventually open\n- D: Service mesh retries handle transient failures but do not persist messages across extended outages lasting minutes or hours\n- C: gRPC streaming with server-side retries still fails during extended outages; webhooks for notifications add unnecessary complexity\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
     verify: null
   },
@@ -632,12 +632,12 @@ var questions = [
     text: "A container image built with a multi-stage Dockerfile uses `FROM scratch` as the final stage. The image runs a statically compiled Go binary. When deployed to Kubernetes, `kubectl exec` into the container fails with `OCI runtime exec failed: exec failed: unable to start container process: exec: \"/bin/sh\": stat /bin/sh: no such file or directory`. How should the team enable debugging for this pod?",
     diagram: null,
     options: [
-      "B. Use `kubectl debug` to attach an ephemeral debug container with a shell sharing the pod's process namespace",
       "A. Add a `distroless/debug` base image as the final stage instead of `scratch` to include a busybox shell for debugging",
+      "B. Use `kubectl debug` to attach an ephemeral debug container with a shell sharing the pod's process namespace",
       "C. Mount a ConfigMap containing a statically compiled shell binary at `/bin/sh` in the container volume mount paths",
       "D. Rebuild the image with `FROM alpine` as the final stage and include `RUN apk add --no-cache bash` for shell access"
     ],
-    answer: 0,
+    answer: 1,
     explanation: "Ephemeral containers (via `kubectl debug`) are the Kubernetes-native solution for debugging minimal containers. By creating a debug container with `--target=<container>` and an image that includes debugging tools (like `busybox` or `ubuntu`), you get a shell that can share the process namespace of the target container. This allows inspecting processes, filesystem, and network without modifying the original image. Options A and D require rebuilding the image, which changes the production artifact. Option C is impractical.\n\nWhy other options are wrong:\n- A: Adding distroless/debug as the base image requires rebuilding the production image, which changes the production artifact\n- C: Mounting a ConfigMap with a shell binary is impractical; shell binaries have dependencies and ConfigMaps have size limits\n- D: Rebuilding with FROM alpine also requires modifying the production image and includes unnecessary packages in the final artifact\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container",
     verify: "kubectl debug -it <pod-name> --image=busybox --target=<container-name> -- /bin/sh"
   },
@@ -666,7 +666,7 @@ var questions = [
     options: [
       "A. 5 seconds — the first probe failure immediately marks the pod as not ready and removes it from service endpoints",
       "B. 20 seconds — four consecutive failures at 5-second intervals are required to trigger the not-ready transition state",
-      "C. 10 seconds — three failures occur but the first probe runs at time 0, so it only takes 2 additional intervals total",
+      "C. 10 seconds -- three consecutive failed probes at 5-second intervals complete the failureThreshold at time T=10",
       "D. 10 seconds — the second failure at time 10s triggers endpoint removal because the threshold counts from initial success"
     ],
     answer: 2,
@@ -698,10 +698,10 @@ var questions = [
     options: [
       "A. OPA/Gatekeeper — it handles validation and mutation through ConstraintTemplates and can generate resources via its audit controller",
       "B. Falco — it provides runtime security policies that can detect, alert on, and remediate policy violations including resource generation",
-      "D. Open Policy Agent standalone — it provides mutation and validation via Rego policies and generates resources through its decision log integration",
-      "C. Kyverno — it provides validate, mutate, and generate policy rules within a single policy definition using Kubernetes-native declarative syntax"
+      "C. Kyverno — it provides validate, mutate, and generate policy rules within a single policy definition using Kubernetes-native declarative syntax",
+      "D. Open Policy Agent standalone — it provides mutation and validation via Rego policies and generates resources through its decision log integration"
     ],
-    answer: 3,
+    answer: 2,
     explanation: "Kyverno is a CNCF Incubating project that provides all three capabilities natively: `validate` rules for admission control, `mutate` rules for modifying resources (e.g., injecting labels, setting defaults), and `generate` rules for creating new resources when triggers are matched (e.g., creating a NetworkPolicy whenever a new namespace is created). OPA/Gatekeeper primarily handles validation (and mutation was added later) but does not generate resources. Falco is a runtime security tool, not an admission controller.\n\nWhy other options are wrong:\n- A: OPA/Gatekeeper primarily handles validation; mutation support was added later and it cannot generate resources from triggers\n- B: Falco is a runtime security/threat detection tool, not an admission controller; it cannot mutate, validate, or generate Kubernetes resources\n- D: OPA standalone provides policy decisions but does not have built-in resource generation capability through decision logs\n\nReference: https://kyverno.io/docs/writing-policies/",
     verify: "kubectl get clusterpolicy -o wide && kubectl get policyreport -A"
   },
@@ -712,13 +712,13 @@ var questions = [
     text: "A pod has `resources.requests.cpu: 4` and `resources.limits.cpu: 4` with `resources.requests.memory: 8Gi` and `resources.limits.memory: 8Gi`. What QoS class is assigned, and what is the eviction priority during node memory pressure?",
     diagram: null,
     options: [
-      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods if actual memory consumption exceeds `limits.memory`",
-      "B. `Burstable` QoS — the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
       "A. `Guaranteed` QoS — this pod is last to be evicted during memory pressure because requests equal limits for all resources",
+      "B. `Burstable` QoS — the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
+      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods if actual memory consumption exceeds `limits.memory`",
       "D. `Guaranteed` QoS — it is evicted after `Burstable` pods but before `BestEffort` pods during node memory pressure events"
     ],
-    answer: 2,
-    explanation: "When all containers in a pod have matching requests and limits for both CPU and memory, the pod receives the `Guaranteed` QoS class. During node memory pressure, the kubelet evicts pods in order: `BestEffort` first (no requests or limits), then `Burstable` (requests < limits or partially specified), and finally `Guaranteed` as a last resort. A `Guaranteed` pod is the most protected class during eviction. Option C is incorrect because a pod exceeding its memory limit is OOM-killed, not evicted through the standard eviction process.\n\nWhy other options are wrong:\n- C: A Guaranteed pod exceeding memory limits is OOM-killed, not evicted; OOM kill is different from the kubelet eviction process\n- B: CPU value of 4 does not affect QoS classification; QoS depends only on whether requests equal limits, not on absolute values\n- D: BestEffort pods are evicted first during memory pressure, then Burstable, then Guaranteed; the order in option D is reversed\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
+    answer: 0,
+    explanation: "When all containers in a pod have matching requests and limits for both CPU and memory, the pod receives the `Guaranteed` QoS class. During node memory pressure, the kubelet evicts pods in order: `BestEffort` first (no requests or limits), then `Burstable` (requests < limits or partially specified), and finally `Guaranteed` as a last resort. A `Guaranteed` pod is the most protected class during eviction. Option C is incorrect because a pod exceeding its memory limit is OOM-killed, not evicted through the standard eviction process.\n\nWhy other options are wrong:\n- C: A Guaranteed pod exceeding memory limits is OOM-killed, not evicted; OOM kill is different from the kubelet eviction process\n- B: CPU value of 4 does not affect QoS classification; QoS depends only on whether requests equal limits, not on absolute values\n- D: The eviction order is BestEffort first, then Burstable, then Guaranteed last; option D reverses the positions of BestEffort and Guaranteed\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.qosClass}'"
   },
   {
@@ -730,10 +730,10 @@ var questions = [
     options: [
       "A. Use `PipelineResources` of type `git` and `image` to automatically wire inputs and outputs between the sequential tasks",
       "B. Mount a shared `PersistentVolumeClaim` across all tasks and write data to agreed paths; use env vars for the image tag",
-      "D. Use Tekton `Conditions` to evaluate each task output and dynamically inject the parameters into the subsequent task run",
-      "C. Use `Workspaces` for sharing cloned source and `Task Results` to pass the image tag from `build-image` to `deploy`"
+      "C. Use `Workspaces` for sharing cloned source and `Task Results` to pass the image tag from `build-image` to `deploy`",
+      "D. Use Tekton `Conditions` to evaluate each task output and dynamically inject the parameters into the subsequent task run"
     ],
-    answer: 3,
+    answer: 2,
     explanation: "Tekton's recommended approach for inter-task data sharing combines `Workspaces` and `Results`. Workspaces (backed by PVCs or other volume types) provide shared filesystem access for large data like source code. Task Results are small string outputs (limited to 4096 bytes) stored by a task and consumable as parameters by downstream tasks — perfect for passing an image tag. `PipelineResources` (option A) have been deprecated. Option B works but is less idiomatic because it relies on convention-based file paths rather than Tekton's native Workspace and Result abstractions.\n\nWhy other options are wrong:\n- A: PipelineResources are deprecated in Tekton and should not be used for new pipelines; they lack flexibility and are being removed\n- B: Shared PVC with agreed paths works but is less idiomatic than Workspaces; using env vars for image tags is fragile compared to Results\n- D: Tekton Conditions are deprecated (replaced by WhenExpressions); they were for conditional execution, not for passing parameters\n\nReference: https://tekton.dev/docs/pipelines/pipelines/#using-results",
     verify: "kubectl get pipeline <name> -o yaml | grep -A10 'results\\|workspaces'"
   },
@@ -840,12 +840,12 @@ var questions = [
     text: "A microservices system uses the API Gateway pattern. The gateway handles authentication, rate limiting, and request routing. During peak traffic, the gateway becomes a bottleneck with p99 latency exceeding 2 seconds. Adding more gateway replicas improves throughput but not latency. What is the most likely architectural issue?",
     diagram: null,
     options: [
-      "B. The gateway replicas share a single database connection pool for rate-limiting state, causing lock contention overhead",
       "A. The gateway performs synchronous JWT validation against an external identity provider on each request, adding latency",
+      "B. The gateway replicas share a single database connection pool for rate-limiting state, causing lock contention overhead",
       "C. Adding replicas increases total connections to backend services, causing backend connection pool exhaustion issues",
       "D. The gateway load balancer uses layer-4 TCP routing, causing uneven connection distribution among gateway replicas"
     ],
-    answer: 1,
+    answer: 0,
     explanation: "When adding replicas improves throughput but not per-request latency, the bottleneck is in the serial processing of each request rather than overall capacity. Synchronous JWT validation against an external identity provider adds a network round-trip to every request's critical path, creating a latency floor that cannot be reduced by horizontal scaling. The solution is to cache validated tokens locally (with appropriate TTL) or use offline JWT validation with a locally cached public key. Options B and D would affect throughput, not per-request latency uniformly.\n\nWhy other options are wrong:\n- B: A shared database connection pool could cause contention but would affect throughput, not uniform per-request latency across all replicas\n- C: Backend connection exhaustion would cause errors, not uniform latency increase; and it would worsen with more replicas\n- D: Layer-4 routing causes uneven distribution which affects some requests but not uniform latency increase for every request\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: null
   },
@@ -889,11 +889,11 @@ var questions = [
     diagram: null,
     options: [
       "A. Both quotas reject the Deployment immediately because it references resources tracked by quota-compute",
-      "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
       "B. Both quotas are checked simultaneously — `quota-objects` for Deployment count and `quota-compute` for the resulting pods",
+      "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
       "D. Neither quota is checked at Deployment creation — all resource quota enforcement is deferred to pod scheduling time"
     ],
-    answer: 1,
+    answer: 2,
     explanation: "ResourceQuota enforcement happens at admission time for the specific resource being created. When a Deployment is created, only `quota-objects` is checked (for `count/deployments.apps`). The Deployment itself is not a compute resource — it is a controller object. The compute quota (`requests.cpu`, `limits.cpu`) is enforced later when the ReplicaSet controller creates pods. This two-phase enforcement means a Deployment can be created even if compute quota would prevent all its pods from running.\n\nWhy other options are wrong:\n- A: Both quotas do not reject the Deployment; quota-compute is only checked when pods are created, not when the Deployment object is created\n- B: Both quotas are not checked simultaneously at Deployment creation; only the object count quota applies to the Deployment resource\n- D: Quota enforcement is not deferred to scheduling; it happens at admission time when the specific resource (pod) is created\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#requests-vs-limits",
     verify: "kubectl describe resourcequota -n <namespace>"
   },
@@ -921,11 +921,11 @@ var questions = [
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='80' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 1</text><text x='80' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='80' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='150' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='200' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 2</text><text x='200' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='200' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='270' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='320' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 3</text><text x='320' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='320' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='100' y='120' width='200' height='40' rx='6' fill='#1a1a2e' stroke='#FF9800' stroke-width='1.5'/><text x='200' y='145' text-anchor='middle' fill='#FF9800' font-size='10'>???</text><line x1='80' y1='90' x2='180' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='90' x2='200' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='320' y1='90' x2='220' y2='118' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
       "A. All three instances process work simultaneously using distributed locking on individual resources stored in `etcd`",
-      "D. They use leader election via Lease objects in `kube-system`; only the leader reconciles while others stand by",
+      "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy",
       "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
-      "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy"
+      "D. They use leader election via Lease objects in `kube-system`; only the leader reconciles while others stand by"
     ],
-    answer: 1,
+    answer: 3,
     explanation: "The `kube-controller-manager` and `kube-scheduler` use leader election to ensure only one active instance at a time. They create and renew `Lease` objects (in the `kube-system` namespace) to claim leadership. The leader performs all reconciliation work, while standby instances continuously attempt to acquire the lease. If the leader fails to renew its lease (due to crash or network partition), a standby instance acquires it and becomes the new leader. This is configured via the `--leader-elect=true` flag (enabled by default in HA setups).\n\nWhy other options are wrong:\n- A: All three instances do NOT process work simultaneously; only the leader performs reconciliation to prevent duplicate work\n- C: The API server does not round-robin controller requests; the controller-manager and scheduler have their own leader election\n- B: Instances do not partition namespaces; a single leader handles all reconciliation across the entire cluster\n\nReference: https://kubernetes.io/docs/concepts/architecture/leases/#leader-election",
     verify: "kubectl get lease -n kube-system && kubectl describe lease kube-controller-manager -n kube-system"
   },
@@ -1066,10 +1066,10 @@ var questions = [
     options: [
       "A. Flux CD — it provides GitOps reconciliation with multi-cluster support, a Helm controller, and a built-in web dashboard",
       "B. Jenkins X — it provides cloud native CI/CD with GitOps capabilities, Helm deployments, and a pipeline visualization UI",
-      "D. Keptn — it provides cloud native lifecycle management with GitOps support, multi-cluster control, and quality gate views",
-      "C. Argo CD — a CNCF graduated project providing GitOps with drift detection, multi-cluster, Helm support, and a web UI"
+      "C. Argo CD — a CNCF graduated project providing GitOps with drift detection, multi-cluster, Helm support, and a web UI",
+      "D. Keptn — it provides cloud native lifecycle management with GitOps support, multi-cluster control, and quality gate views"
     ],
-    answer: 3,
+    answer: 2,
     explanation: "Argo CD is a CNCF graduated project that provides all the requested features: GitOps-based continuous delivery with automated drift detection (sync status monitoring), multi-cluster support (managing applications across multiple clusters from a single Argo CD instance), support for Kubernetes manifests, Helm charts, Kustomize, and other templating tools, and a comprehensive web UI for visualizing application state, sync status, and resource health. Flux CD (option A) provides similar GitOps capabilities but does not include a built-in web UI — it requires a separate project (Weave GitOps) for that.\n\nWhy other options are wrong:\n- A: Flux CD does not include a built-in web UI; it requires a separate project like Weave GitOps for visualization\n- B: Jenkins X is not a CNCF project focused on GitOps drift detection; it is a CI/CD platform with limited GitOps capabilities\n- D: Keptn is focused on application lifecycle management and quality gates, not comprehensive GitOps with multi-cluster and Helm support\n\nReference: https://argo-cd.readthedocs.io/en/stable/",
     verify: "argocd app list && argocd cluster list"
   },
@@ -1086,7 +1086,7 @@ var questions = [
       "D. It evicts pods only if the anti-affinity preference score would measurably improve after the rebalancing run"
     ],
     answer: 0,
-    explanation: "The descheduler's `RemoveDuplicates` strategy identifies nodes running multiple pods from the same owner (ReplicaSet, StatefulSet, etc.) and evicts the extras to enable better distribution. In this scenario, the node with 2 replicas has duplicates from the same ReplicaSet. The descheduler evicts one, and the scheduler then places it, considering the anti-affinity preference, likely choosing the empty new node. The strategy works at the node level — it targets nodes with more than one replica of the same workload.\n\nWhy other options are wrong:\n- B: RemoveDuplicates does not evict all pods; it only evicts the minimum necessary to remove duplicates on overloaded nodes\n- C: RemoveDuplicates handles pods from the same ReplicaSet on the same node, which is exactly this scenario; it does apply here\n- D: RemoveDuplicates does not evaluate anti-affinity scores; it simply identifies and evicts duplicate pods from the same owner on the same node\n\nReference: https://github.com/kubernetes-sigs/descheduler#removeduplicates",
+    explanation: "The descheduler's `RemoveDuplicates` strategy identifies nodes running multiple pods from the same owner (ReplicaSet, StatefulSet, etc.) and evicts the extras to enable better distribution. In this scenario, the node with 2 replicas has duplicates from the same ReplicaSet. The descheduler evicts one, and the scheduler then places it, considering the anti-affinity preference, likely choosing the empty new node. The strategy works at the node level — it targets nodes with more than one replica of the same workload.\n\nWhy other options are wrong:\n- B: RemoveDuplicates does not evict all pods; it only evicts the minimum necessary to remove duplicates on overloaded nodes\n- C: RemoveDuplicates does handle pods from the same ReplicaSet on the same node -- and in this scenario there ARE 2 replicas on one node, so it does take action; option C incorrectly concludes it does nothing\n- D: RemoveDuplicates does not evaluate anti-affinity scores; it simply identifies and evicts duplicate pods from the same owner on the same node\n\nReference: https://github.com/kubernetes-sigs/descheduler#removeduplicates",
     verify: "kubectl get pods -o wide -l app=<name> && kubectl describe configmap descheduler-policy -n kube-system"
   },
   {
@@ -1096,12 +1096,12 @@ var questions = [
     text: "A container image is signed using `cosign` and pushed to a registry. A Kyverno `ClusterPolicy` with `verifyImages` rule enforces signature verification. A deployment references the image by tag (`:latest`). The image is re-pushed with a different digest but the same tag. Does the existing running pod get affected, and does a new pod creation succeed?",
     diagram: null,
     options: [
-      "D. The existing pod continues running; new creation fails because Kyverno detects the digest changed and flags a supply chain risk",
+      "A. The existing pod is unaffected; new pod creation succeeds only if the re-pushed image has a valid cosign signature",
       "B. The existing pod is terminated because its image digest no longer matches the tag; new pod creation is blocked by Kyverno",
       "C. Both existing and new pods are unaffected because Kyverno only checks signatures at policy creation, not pod admission",
-      "A. The existing pod is unaffected; new pod creation succeeds only if the re-pushed image has a valid cosign signature"
+      "D. The existing pod continues running; new creation fails because Kyverno detects the digest changed and flags a supply chain risk"
     ],
-    answer: 3,
+    answer: 0,
     explanation: "Running pods are not affected by image tag changes — Kubernetes resolves the image tag to a digest at pull time and records it in the pod status. The container continues running with its original image. For new pod creation, Kyverno's `verifyImages` policy checks the image signature at admission time. If the re-pushed image has a valid cosign signature matching the policy's key or keyless configuration, the pod is admitted. If the new image is unsigned or signed with a different key, it is rejected. The policy does not track tag-to-digest mapping changes.\n\nWhy other options are wrong:\n- D: Kyverno does not detect digest changes as a supply chain risk per se; it verifies the signature of the current image at admission time\n- B: Running pods are not terminated by image tag changes; Kubernetes resolves tags to digests at pull time and does not re-check\n- C: Kyverno checks signatures at pod admission time, not at policy creation time; every new pod creation triggers verification\n\nReference: https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[0].imageID}' && cosign verify --key <key> <image>"
   },
@@ -1160,12 +1160,12 @@ var questions = [
     text: "The kubelet on a worker node loses connectivity to the API server. The node's lease in the `kube-node-lease` namespace expires. After `node-monitor-grace-period` (default 40s) passes, what sequence of actions does the control plane take?",
     diagram: null,
     options: [
-      "B. The node controller marks the node `Unknown`; after taint-based eviction delay, pods are evicted unless they tolerate `unreachable`",
       "A. The node controller marks the node `NotReady` immediately; after `pod-eviction-timeout` the controller starts evicting pods via deletion entries",
+      "B. The node controller marks the node `Unknown`; after taint-based eviction delay, pods are evicted unless they tolerate `unreachable`",
       "C. The node controller deletes the node object after a timeout; the scheduler then reschedules most of the affected pods to other nodes",
       "D. The node controller adds a `node.kubernetes.io/not-ready` taint; pods without matching tolerations are evicted after `tolerationSeconds`"
     ],
-    answer: 0,
+    answer: 1,
     explanation: "When the node lease expires and the node controller detects no heartbeat within the `node-monitor-grace-period`, it marks the node condition as `Unknown` (not `NotReady`, which is for specific condition failures). The node controller then adds the `node.kubernetes.io/unreachable:NoExecute` taint. Pods without a toleration for this taint are evicted after a default `tolerationSeconds` of 300 seconds (5 minutes). DaemonSet pods automatically tolerate this taint. The `pod-eviction-timeout` flag was deprecated in favor of taint-based eviction.\n\nWhy other options are wrong:\n- A: The node is marked Unknown (not NotReady) when heartbeat is lost; NotReady is for specific condition failures like kubelet health check failures\n- C: The node controller does not delete the node object; it marks conditions as Unknown and adds the unreachable taint\n- D: The taint added is node.kubernetes.io/unreachable (not not-ready) because the condition is Unknown (connectivity loss), not False\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#condition",
     verify: "kubectl describe node <node-name> | grep -A5 'Conditions:' && kubectl describe node <node-name> | grep -A5 'Taints:'"
   },
@@ -1448,12 +1448,12 @@ var questions = [
     text: "An admission controller chain processes a pod creation request in this order: MutatingAdmission -> ValidatingAdmission. A mutating webhook adds a sidecar container. A validating webhook checks that all containers have resource limits. The sidecar injected by the mutating webhook does not have resource limits. What is the outcome?",
     diagram: "<svg viewBox='0 0 400 160' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='30' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='52' text-anchor='middle' fill='#fff' font-size='8'>API Request</text><text x='42' y='62' text-anchor='middle' fill='#fff' font-size='7'>Pod (1 ctr)</text><rect x='105' y='30' width='90' height='35' rx='5' fill='#FF9800' stroke='#fff'/><text x='150' y='48' text-anchor='middle' fill='#fff' font-size='8'>Mutating WH</text><text x='150' y='60' text-anchor='middle' fill='#fff' font-size='7'>+sidecar</text><rect x='220' y='30' width='90' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='265' y='48' text-anchor='middle' fill='#fff' font-size='8'>Validating WH</text><text x='265' y='60' text-anchor='middle' fill='#aaa' font-size='7'>policy check</text><rect x='335' y='30' width='55' height='35' rx='5' fill='#666' stroke='#fff' stroke-dasharray='3'/><text x='362' y='52' text-anchor='middle' fill='#aaa' font-size='8'>etcd</text><line x1='80' y1='47' x2='100' y2='47' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a4)'/><line x1='195' y1='47' x2='215' y2='47' stroke='#FF9800' stroke-width='1.5' marker-end='url(#a4)'/><line x1='310' y1='47' x2='330' y2='47' stroke='#aaa' stroke-width='1.5' stroke-dasharray='3'/><text x='320' y='40' fill='#aaa' font-size='7'>?</text><defs><marker id='a4' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which has a sidecar without limits",
       "A. The pod is created with the sidecar but without limits, because validating webhooks evaluate the original request before mutations are applied",
+      "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which has a sidecar without limits",
       "C. The pod is created because Kubernetes auto-injects default limits from the namespace LimitRange for webhook-injected containers",
       "D. The mutating webhook changes are rolled back when the validating webhook rejects, and the pod is then created without the sidecar"
     ],
-    answer: 0,
+    answer: 1,
     explanation: "The admission controller chain processes mutations first, then validations. The validating webhook receives the final mutated object — including the sidecar container added by the mutating webhook. Since the sidecar lacks resource limits, the validating webhook rejects the request. The entire pod creation fails; there is no partial rollback. This is a common operational issue with sidecar injection: the injecting webhook must ensure injected containers comply with all validation policies. The fix is to configure the mutating webhook to include resource limits on injected sidecars.\n\nWhy other options are wrong:\n- A: Validating webhooks evaluate the final mutated object, not the original request; the admission chain processes mutations first, then validations\n- C: Kubernetes does not auto-inject LimitRange defaults for webhook-injected containers in the mutation phase; LimitRange applies at the pod-level admission\n- D: There is no partial rollback mechanism; if validation fails, the entire admission request is rejected and no resource is created\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks",
     verify: "kubectl get events --field-selector reason=FailedCreate && kubectl get mutatingwebhookconfiguration,validatingwebhookconfiguration"
   },
@@ -1592,10 +1592,10 @@ var questions = [
     text: "A platform team defines their cloud native maturity model. They categorize workloads into levels: Level 1 (containerized), Level 2 (orchestrated), Level 3 (observable), Level 4 (declaratively managed), Level 5 (auto-remediated). An application has automated scaling, health checks, structured logging with Loki, Prometheus metrics, distributed tracing with Jaeger, GitOps deployment with Argo CD, and self-healing via liveness probes. Which level does this application achieve?",
     diagram: null,
     options: [
-      "A. Level 3 — strong observability stack is in place but the application lacks the declarative management required for Level 4",
+      "A. Level 3 — observability with logging, metrics, and tracing is strong but declarative management via GitOps is not recognized at this level",
       "B. Level 4 — GitOps provides declarative management, but liveness probes alone do not constitute platform-level auto-remediation",
       "C. Level 5 — the application has all required capabilities including auto-remediation through liveness probes and pod autoscaling",
-      "D. Level 4 — has observability and declarative management, but auto-remediation needs observability-driven response like Keptn"
+      "D. Level 4 — meets observability and declarative management, but Level 5 requires closed-loop remediation"
     ],
     answer: 3,
     explanation: "The application clearly achieves Level 3 (observable: logging, metrics, tracing) and Level 4 (declaratively managed: GitOps with Argo CD). However, Level 5 auto-remediation requires a closed loop between observability signals and automated corrective actions — for example, automatically rolling back a deployment when error rates spike, scaling based on custom business metrics, or triggering runbook automation. Liveness probes provide basic container-level self-healing, but Level 5 implies platform-level auto-remediation that integrates observability with orchestrated responses, such as through Keptn or custom operators.\n\nWhy other options are wrong:\n- A: The application has observability AND declarative management via GitOps, so it exceeds Level 3\n- B: While liveness probes provide basic self-healing, Level 5 requires observability-driven automated remediation which is not present\n- C: Liveness probes and HPA are not sufficient for Level 5; Level 5 requires closed-loop auto-remediation integrating observability signals with corrective actions\n\nReference: https://www.cncf.io/blog/2024/03/01/cloud-native-maturity-model/",

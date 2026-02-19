@@ -190,7 +190,7 @@ var questions = [
     id: "s02-q012",
     domain: "Container Orchestration",
     subsection: "Storage",
-    text: "A stateful application requires a configuration file to be available at `/app/config/settings.yaml` inside the container, but the file must be read-only. The configuration is stored in a ConfigMap. What is the most straightforward Kubernetes-native approach?",
+    text: "A stateful application requires a configuration file to be available at `/app/config/settings.yaml` inside the container, but the file must be read-only. Other files already exist at `/app/config` that must be preserved. The configuration is stored in a ConfigMap. What is the most straightforward Kubernetes-native approach?",
     diagram: null,
     options: [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
@@ -323,7 +323,7 @@ var questions = [
     text: "An organization wants to manage Secrets securely across multiple Kubernetes clusters without storing them in Git as plaintext. Which CNCF ecosystem tool is purpose-built for external secret management integration?",
     diagram: null,
     options: [
-      "External Secrets Operator syncs secrets from stores like AWS Secrets Manager into clusters",
+      "External Secrets Operator syncs secrets from external stores like AWS Secrets Manager into Kubernetes clusters automatically",
       "Argo CD integrates with external vaults to encrypt Secrets during GitOps synchronization when deploying to target clusters",
       "Fluentd collects Secret data from application logs and injects them into destination pods",
       "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments"
@@ -342,7 +342,7 @@ var questions = [
       "SSH into each running pod and manually update the configuration files in place on the filesystem",
       "Use `kubectl edit` to modify the running Deployment and let pods pick up the changes dynamically",
       "Build a new container image with the updated configuration baked in for every environment",
-      "Create a new versioned ConfigMap, then trigger a Deployment rollout by updating the pod template reference"
+      "Create a versioned ConfigMap and update the Deployment pod template reference to trigger a rollout"
     ],
     answer: 3,
     explanation: "Immutable infrastructure means not modifying running instances. While option C (rebuilding the image) follows immutable principles for application code, for configuration changes, creating a new ConfigMap and updating the Deployment reference (e.g., changing a ConfigMap name hash annotation) triggers a rollout that replaces pods with new ones using the updated configuration. This avoids SSH access and in-place edits. Using `kubectl edit` to modify running resources can work but modifying only the ConfigMap without triggering a rollout may leave pods with stale configuration.\n\nWhy other options are wrong:\n- A: SSH into pods violates immutable infrastructure principles and is a security anti-pattern\n- B: kubectl edit modifies the running resource but may not trigger a pod rollout for ConfigMap changes\n- C: Rebuilding the image for every config change is wasteful when ConfigMaps separate config from code\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -628,7 +628,7 @@ var questions = [
       "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
       "Secret volume file permissions default to 0644 and are controlled by the container runtime configuration settings",
       "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
-      "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control permissions"
+      "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control file permissions at mount time"
     ],
     answer: 3,
     explanation: "When defining a Secret (or ConfigMap) volume, you can set `defaultMode` to control the file permissions of the mounted files. Setting `defaultMode: 0400` ensures files are created with owner read-only permissions. There is no `securityContext.filePermissions` field. While a postStart hook could change permissions, it is a less clean approach and may have race conditions. Secret volume file permissions are configurable and default to `0644`, but this can be overridden.\n\nWhy other options are wrong:\n- A: A postStart hook could work but has race conditions and is less clean than defaultMode\n- B: Secret volume file permissions default to 0644 but are configurable via defaultMode\n- C: There is no securityContext.filePermissions field in the Kubernetes API\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#secret",
@@ -723,13 +723,13 @@ var questions = [
     text: "A team evaluating secret management solutions for Kubernetes compares HashiCorp Vault with native Kubernetes Secrets. Which statement accurately describes a key advantage of Vault?",
     diagram: null,
     options: [
-      "Vault stores secrets in etcd alongside Kubernetes Secrets so there is no real architectural difference between them",
-      "Vault replaces Kubernetes RBAC for access control policies across the cluster",
+      "Vault stores secrets in its own encrypted backend but uses etcd as a fallback for Kubernetes-native integration",
+      "Vault replaces Kubernetes RBAC with its own policy engine for cluster-wide access control and authorization",
       "Vault provides dynamic secret generation, fine-grained access control, audit logging, and automatic rotation",
-      "Vault is a CNCF-graduated project for secret management and is recommended for CKS certification preparation"
+      "Vault is a CNCF-graduated project providing encrypted storage, audit logging, and certified rotation APIs"
     ],
     answer: 2,
-    explanation: "HashiCorp Vault provides capabilities that go far beyond Kubernetes native Secrets: dynamic secret generation (e.g., temporary database credentials), detailed audit logging, automatic rotation, multiple authentication backends, and fine-grained policies. Vault uses its own storage backend, not etcd. It complements RBAC rather than replacing it. Vault is not a CNCF project (it is a HashiCorp product) and is not required for any certification.\n\nWhy other options are wrong:\n- A: Vault uses its own storage backend, not etcd; it has a fundamentally different architecture\n- B: Vault complements Kubernetes RBAC; it does not replace cluster-level access control\n- D: Vault is a HashiCorp product, not a CNCF project, and is not required for any Kubernetes certification\n\nReference: https://www.vaultproject.io/docs/what-is-vault",
+    explanation: "HashiCorp Vault provides capabilities that go far beyond Kubernetes native Secrets: dynamic secret generation (e.g., temporary database credentials), detailed audit logging, automatic rotation, multiple authentication backends, and fine-grained policies. Vault uses its own storage backend, not etcd. It complements RBAC rather than replacing it. Vault is not a CNCF project (it is a HashiCorp product) and is not required for any certification.\n\nWhy other options are wrong:\n- A: Vault uses its own storage backend and does not fall back to etcd for Kubernetes-native integration\n- B: Vault complements Kubernetes RBAC with its own policies; it does not replace cluster-level access control\n- D: Vault is a HashiCorp product, not a CNCF-graduated project, and its rotation APIs are not externally certified\n\nReference: https://www.vaultproject.io/docs/what-is-vault",
     verify: null
   },
   {
@@ -1095,7 +1095,7 @@ var questions = [
       "Kubernetes automatically merges the contents of both `config.yaml` files into a single combined file"
     ],
     answer: 2,
-    explanation: "When multiple sources in a projected volume define the same key (filename), the last source listed in the `sources` array takes precedence. The file at `/etc/combined/config.yaml` will contain the data from whichever source is listed last. Kubernetes does not fail, add suffixes, or merge file contents. This behavior is documented and is important to be aware of when combining multiple sources.\n\nWhy other options are wrong:\n- A: Duplicate keys in projected volumes do not cause pod startup failure\n- B: Kubernetes does not add automatic suffixes like .configmap or .secret to filenames\n- D: Kubernetes does not merge file contents from multiple sources into a single file\n\nReference: https://kubernetes.io/docs/concepts/storage/projected-volumes/",
+    explanation: "When multiple sources in a projected volume define the same key (filename), the last source listed in the `sources` array takes precedence. The file at `/etc/combined/config.yaml` will contain the data from whichever source is listed last. Kubernetes does not fail, add suffixes, or merge file contents. This behavior is documented and is important to be aware of when combining multiple sources. Note: behavior may vary with API validation settings in newer Kubernetes versions.\n\nWhy other options are wrong:\n- A: Duplicate keys in projected volumes do not cause pod startup failure\n- B: Kubernetes does not add automatic suffixes like .configmap or .secret to filenames\n- D: Kubernetes does not merge file contents from multiple sources into a single file\n\nReference: https://kubernetes.io/docs/concepts/storage/projected-volumes/",
     verify: null
   },
   {
@@ -1222,7 +1222,7 @@ var questions = [
     diagram: null,
     options: [
       "`kube_pod_container_status_restarts_total` with `kube_pod_container_status_last_terminated_reason` for OOMKilled, plus `kube_pod_container_resource_limits` for memory",
-      "`node_memory_MemAvailable_bytes` and `node_cpu_seconds_total` to track overall node health including OOM pressure, capacity, and saturation levels",
+      "`node_memory_MemAvailable_bytes`, `node_cpu_seconds_total`, and `node_memory_Buffers_bytes` to track overall node health including OOM pressure and capacity",
       "`container_network_receive_bytes_total` and `container_network_transmit_bytes_total` for pod-level network throughput analysis and bandwidth consumption tracking",
       "`kube_deployment_spec_replicas` and `kube_deployment_status_replicas_available` for deployment-level replica availability and desired state reconciliation tracking"
     ],
@@ -1489,7 +1489,7 @@ var questions = [
     text: "A security team discovers that developers can view Secret data using `kubectl get secret -o yaml`. They want to restrict this without removing the ability to create and reference Secrets in pod specs. Which RBAC configuration achieves this?",
     diagram: null,
     options: [
-      "Remove `get` and `list` verbs for Secrets from the Role, but keep `create` and pod creation that references Secrets",
+      "Remove `get` and `list` verbs for Secrets from the Role, keeping `create` and pod reference permissions",
       "Set `readOnly: true` on the namespace metadata to prevent reading any resource data including Secret contents",
       "Enable Secret encryption at rest on the cluster — this prevents `kubectl get` from displaying decoded values",
       "Remove all Secret permissions from the Role — pods can still mount Secrets without RBAC user authorization"
@@ -1561,7 +1561,7 @@ var questions = [
       "Store the Redis configuration in an annotation on the namespace object and read it via the Downward API in each pod"
     ],
     answer: 2,
-    explanation: "Using Helm library charts or Kustomize overlays allows defining the Redis configuration once (single source of truth) while generating separate per-service ConfigMaps at deployment time. This maintains loose coupling (each service has its own ConfigMap) while eliminating manual duplication. A shared ConfigMap creates tight coupling. Pure duplication risks drift. Namespace annotations cannot be consumed as pod configuration.\n\nWhy other options are wrong:\n- A: A single shared ConfigMap creates tight coupling; changes affect all 15 services simultaneously\n- B: Per-service duplication risks configuration drift when shared values need to be updated\n- D: Namespace annotations cannot be consumed as pod configuration via the Downward API\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
+    explanation: "Using Helm library charts or Kustomize overlays allows defining the Redis configuration once (single source of truth) while generating separate per-service ConfigMaps at deployment time. This maintains loose coupling (each service has its own ConfigMap) while eliminating manual duplication. A shared ConfigMap creates tight coupling. Pure duplication risks drift. Namespace annotations cannot be consumed as pod configuration.\n\nWhy other options are wrong:\n- A: A single shared ConfigMap creates tight coupling; changes affect all 15 services simultaneously\n- B: Per-service duplication risks configuration drift when shared values need to be updated\n- D: The Downward API can expose pod-level labels and annotations, but cannot access namespace-level annotations or metadata from other objects\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
     verify: null
   },
   {
@@ -1589,7 +1589,7 @@ var questions = [
     text: "A platform team uses Fluentd to collect logs from all pods. They want to enrich log entries with the pod's resource limits to correlate application errors with resource constraints. Where can Fluentd obtain this information?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Log Enrichment Pipeline</text><rect x="20" y="55" width="90" height="40" rx="5" fill="#2d6a4f"/><text x="65" y="80" text-anchor="middle" fill="white" font-size="11">Pod Logs</text><line x1="110" y1="75" x2="140" y2="75" stroke="#555" stroke-width="2"/><rect x="140" y="55" width="110" height="40" rx="5" fill="#e6a817"/><text x="195" y="80" text-anchor="middle" fill="white" font-size="11">Fluentd DaemonSet</text><line x1="250" y1="75" x2="280" y2="75" stroke="#555" stroke-width="2"/><rect x="280" y="55" width="100" height="40" rx="5" fill="#326CE5"/><text x="330" y="80" text-anchor="middle" fill="white" font-size="11">Enriched Logs</text><rect x="140" y="115" width="110" height="35" rx="5" fill="#16213e" stroke="#e6a817" stroke-width="1"/><text x="195" y="137" text-anchor="middle" fill="#e0e0e0" font-size="10">?</text><line x1="195" y1="95" x2="195" y2="115" stroke="#e6a817" stroke-width="1" stroke-dasharray="3,3"/></svg>',
     options: [
-      "Fluentd reads resource limits directly from the container's `/proc/cgroups` file on the node filesystem for enrichment",
+      "Fluentd reads resource limits directly from the container's `/proc/cgroups` file using the cgroup parser plugin on the node",
       "The Fluentd Kubernetes metadata filter plugin queries the API to enrich logs with pod metadata and resource specs",
       "Resource limits are automatically included in every log line by the container runtime without extra configuration",
       "Fluentd reads the node's kubelet configuration file to determine pod resource limits for log enrichment purposes"

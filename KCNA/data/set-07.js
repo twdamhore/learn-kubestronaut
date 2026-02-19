@@ -142,7 +142,7 @@ var questions = [
       "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
     ],
     answer: 2,
-    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. Note: in Kubernetes versions before 1.24, omitting `-c` in a multi-container pod returns an error requiring you to specify the container name. In Kubernetes 1.24+, omitting `-c` defaults to the first container in the pod spec (beta in 1.28, GA in 1.29), but using `-c` explicitly is the recommended practice for clarity and correctness.\n\nWhy other options are wrong:\n- A: Without -c in multi-container pods, older versions error out; newer versions default to first container, not necessarily the desired one\n- B: kubectl describe does not show container logs; it shows events and resource metadata\n- D: kubectl exec cat reads files inside the container, but the app may not write to that path and this is not the kubectl logs mechanism\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
+    explanation: "In a multi-container pod, the `-c` flag lets you specify which container's logs to view. The `-c app` flag targets only the `app` container's stdout/stderr stream. In older Kubernetes versions, omitting -c in a multi-container pod returns an error. Starting in Kubernetes 1.28 (beta) and 1.29 (GA), omitting -c defaults to the first container in the pod spec, but using -c explicitly is the recommended practice.\n\nWhy other options are wrong:\n- A: Without -c in multi-container pods, older versions error out; newer versions default to first container, not necessarily the desired one\n- B: kubectl describe does not show container logs; it shows events and resource metadata\n- D: kubectl exec cat reads files inside the container, but the app may not write to that path and this is not the kubectl logs mechanism\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
     verify: "kubectl logs <pod-name> -c app --tail=20"
   },
   {
@@ -568,7 +568,7 @@ var questions = [
     text: "A DaemonSet pod on a specific node keeps getting `OOMKilled`. Other DaemonSet pods on different nodes are running fine. The pod's memory limit is 256Mi. What should you investigate on that specific node?",
     diagram: null,
     options: [
-      "Whether additional workloads on that node compete for memory, causing the DaemonSet pod to hit its limit under pressure",
+      "Whether additional workloads on that node cause the DaemonSet pod to process more data, pushing its own memory usage past its 256Mi limit",
       "Whether the DaemonSet's update strategy is set to `OnDelete` instead of `RollingUpdate` for pod replacement policy",
       "Whether the node has a different container runtime version than other nodes which may cause memory allocation issues",
       "Whether the `kube-proxy` instance running on that specific node is consuming excessive memory from the system resources"
@@ -1049,7 +1049,7 @@ var questions = [
     diagram: null,
     options: [
       "The Job continues retrying with increasing `backoffLimit` delay intervals beyond the third failure",
-      "The Job is marked as `Failed` and no more pods are created for it",
+      "The Job is marked as Failed and no more pods are created by the Job controller for this resource",
       "Kubernetes sends an alert to the cluster administrator via the event system",
       "The Job controller deletes the Job resource and all associated pods"
     ],
@@ -1358,7 +1358,7 @@ var questions = [
       "The kubelet waits indefinitely for the `/tmp/healthy` file to be recreated before taking any corrective restart action"
     ],
     answer: 1,
-    explanation: "When `cat /tmp/healthy` fails (because the file no longer exists), the command returns exit code 1 (non-zero). The kubelet counts consecutive failures. Once `failureThreshold` is reached (default 3), the kubelet kills the container and restarts it according to `restartPolicy`. This is a common pattern for applications to signal the need for a restart.\n\nWhy other options are wrong:\n- A: SIGTERM is sent during pod termination, not by liveness probes; liveness triggers SIGKILL after threshold\n- C: This describes readiness probe behavior, not liveness; liveness failures cause container restart, not endpoint removal\n- D: The kubelet does not wait indefinitely; it checks at each periodSeconds and counts failures toward the threshold\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command",
+    explanation: "When `cat /tmp/healthy` fails (because the file no longer exists), the command returns exit code 1 (non-zero). The kubelet counts consecutive failures. Once `failureThreshold` is reached (default 3), the kubelet kills the container and restarts it according to `restartPolicy`. This is a common pattern for applications to signal the need for a restart.\n\nWhy other options are wrong:\n- A: SIGTERM is part of the container kill process, but liveness probe failures cause a full container restart, not just a graceful signal. The key behavior is restart, not just signaling\n- C: This describes readiness probe behavior, not liveness; liveness failures cause container restart, not endpoint removal\n- D: The kubelet does not wait indefinitely; it checks at each periodSeconds and counts failures toward the threshold\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command",
     verify: "kubectl describe pod <pod-name> | grep -A5 'Liveness'"
   },
   {
@@ -1384,14 +1384,14 @@ var questions = [
     text: "You need to stream logs from all pods matching the label `app=payment` in the `payments` namespace simultaneously. Which approach is most efficient?",
     diagram: null,
     options: [
-      "Run `kubectl logs -l app=payment -n payments --prefix` to stream from all matching pods with name prefixes",
+      "Run `kubectl logs -f -l app=payment -n payments --prefix` to stream from all matching pods with name prefixes",
       "Open individual `kubectl logs` commands for each pod in separate terminal windows and monitor them independently",
       "Use `kubectl get pods -l app=payment` and pipe the output to a custom script matching pod names for log aggregation",
       "Deploy a new DaemonSet that captures logs from pods with the `payment` label and forwards them to a collector"
     ],
     answer: 0,
-    explanation: "`kubectl logs -l app=payment -n payments --prefix` uses the label selector to target all matching pods in the `payments` namespace and the `--prefix` flag prepends each log line with the pod name for identification. Note that `kubectl logs` does not support `--all-namespaces`; you must specify a single namespace with `-n`. This is the most direct way to stream multiple pod logs simultaneously. For persistent log collection, a dedicated aggregation system is better, but for ad-hoc debugging this is efficient.\n\nWhy other options are wrong:\n- B: Opening individual terminal windows is manual, tedious, and does not scale well\n- C: Piping kubectl get pods output to a script adds unnecessary complexity vs the built-in -l selector\n- D: Deploying a new DaemonSet is heavy-weight for ad-hoc debugging and takes time to set up\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
-    verify: "kubectl logs -l app=payment -n payments --prefix --tail=10"
+    explanation: "`kubectl logs -f -l app=payment -n payments --prefix` uses the label selector to target all matching pods in the `payments` namespace, the `-f` flag enables streaming (follow mode), and the `--prefix` flag prepends each log line with the pod name for identification. Note that `kubectl logs` does not support `--all-namespaces`; you must specify a single namespace with `-n`. This is the most direct way to stream multiple pod logs simultaneously. For persistent log collection, a dedicated aggregation system is better, but for ad-hoc debugging this is efficient.\n\nWhy other options are wrong:\n- B: Opening individual terminal windows is manual, tedious, and does not scale well\n- C: Piping kubectl get pods output to a script adds unnecessary complexity vs the built-in -l selector\n- D: Deploying a new DaemonSet is heavy-weight for ad-hoc debugging and takes time to set up\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/",
+    verify: "kubectl logs -f -l app=payment -n payments --prefix --tail=10"
   },
   {
     id: "s07-q088",

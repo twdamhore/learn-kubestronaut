@@ -1,0 +1,36 @@
+# Round 36 Review - Set 03
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 15
+
+## Accuracy Fixes
+
+1. **s03-q047** (accuracy): Updated option C metric name from `kube_endpoint_address` with label `ready="true"` to `kube_endpoint_address_available` for more standard naming.
+
+## Giveaway / Ambiguity Fixes
+
+2. **s03-q080** (giveaway/ambiguity): Rewrote option A from a description too similar to option D (both described caching behavior) to a clearly wrong claim that NodeLocal DNS Cache replaces CoreDNS entirely.
+3. **s03-q093** (giveaway): Expanded short wrong options A, C, D to match correct answer B length, removing the longest-is-correct signal.
+4. **s03-q098** (giveaway): Trimmed correct option C from 104 to ~88 chars, removing qualifying detail that signaled it as the correct answer.
+
+## Length-Balance Fixes
+
+5. **s03-q010**: Padded wrong options A, B, C from ~60 chars to ~100 chars each, closing the 36.8% gap with correct answer D.
+6. **s03-q054**: Trimmed options A and B from 115/109 chars to ~82/82 chars, closing the 23.5% gap with correct answer D (88 chars).
+7. **s03-q069**: Expanded correct option B from 59 to 82 chars, closing the 25.3% gap with option A (79 chars).
+8. **s03-q086**: Normalized all options to ~90-96 chars by trimming A and D and expanding C, closing the 35.2% spread.
+9. **s03-q017**: Expanded correct option D from 64 to 79 chars ("resolving to each pod IP"), closing the gap with option A (76 chars).
+10. **s03-q031**: Trimmed option A from 72 to 63 chars and expanded correct option C from 58 to 71 chars, reducing the 19.4% gap.
+11. **s03-q038**: Expanded correct option C from 59 to 76 chars ("fronting CoreDNS"), closing the 22.4% gap with option D (76 chars).
+12. **s03-q058**: Trimmed option A from 103 to 86 chars, closing the gap with correct option C (85 chars).
+13. **s03-q060**: Trimmed option C from 111 to 83 chars, closing the gap with correct option B (89 chars).
+14. **s03-q081**: Trimmed option C from 117 to 83 chars, closing the gap with correct option D (87 chars).
+15. **s03-q085**: Trimmed option A from 104 to 76 chars, closing the gap with correct option D (84 chars).
+
+## Summary
+
+- 1 accuracy fix (metric name correction)
+- 3 giveaway/ambiguity fixes (option similarity, longest-is-correct patterns)
+- 11 length-balance fixes (normalizing option character counts)
+- No answer indices were changed

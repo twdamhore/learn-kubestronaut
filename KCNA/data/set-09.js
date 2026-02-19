@@ -72,10 +72,10 @@ var questions = [
     text: "A platform team configures Prometheus to scrape metrics from application Pods. They add the annotation <code>prometheus.io/scrape: \"true\"</code> to their Pod spec, but Prometheus is not collecting metrics. The Prometheus configuration uses <code>kubernetes_sd_configs</code> with role <code>pod</code>. What should they check first?",
     diagram: null,
     options: [
-      "Whether the Prometheus server has enough CPU and memory resources allocated to scrape all targets annotated with <code>prometheus.io/scrape</code>",
+      "Whether the Prometheus server has enough CPU and memory allocated to scrape all annotated targets",
       "Whether the application Pods have a readiness probe defined that gates the scraping of metrics endpoints",
       "Whether the Prometheus Operator CRDs are correctly installed and reconciled within the current cluster",
-      "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct port"
+      "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct metrics port"
     ],
     answer: 3,
     explanation: "Prometheus service discovery with `kubernetes_sd_configs` discovers targets but requires relabeling rules to filter based on annotations like `prometheus.io/scrape`. Additionally, the `prometheus.io/port` annotation must match the port where the application exposes its `/metrics` endpoint. Without proper relabeling, discovered targets are dropped.\n\nWhy other options are wrong:\n- A: Insufficient Prometheus resources would cause scrape timeouts or dropped scrapes, not total absence of target discovery\n- B: Readiness probes do not gate Prometheus scraping; scraping depends on SD config and relabeling\n- C: Prometheus Operator CRDs are not required when using raw kubernetes_sd_configs in a ConfigMap\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config",
@@ -90,8 +90,8 @@ var questions = [
     options: [
       "Argo CD requires Flux to be installed as a co-controller for enabling automatic sync operations on the cluster",
       "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
-      "Git webhooks must be configured through a separate third-party integration because Argo CD relies on periodic polling for repository change detection",
-      "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source"
+      "Git webhooks must be configured through a third-party integration because Argo CD relies solely on polling",
+      "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source specification"
     ],
     answer: 1,
     explanation: "By default, Argo CD applications use a manual sync policy, meaning it detects drift (showing `OutOfSync`) but waits for an operator to trigger the sync. Setting the sync policy to `automated` enables Argo CD to automatically apply changes when the Git repository state diverges from the live cluster state.\n\nWhy other options are wrong:\n- A: Argo CD operates independently of Flux; they are separate GitOps tools that do not require each other\n- C: Argo CD does support Git webhooks for faster detection; webhooks supplement but are not required for sync\n- D: If repoURL were missing, the application would fail to create, not show OutOfSync status\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
@@ -393,8 +393,8 @@ var questions = [
     diagram: null,
     options: [
       "Add a <code>nodeSelector</code> matching the new node's hostname label to target that specific node for scheduling",
-      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> to the DaemonSet's Pod template spec",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to trigger rescheduling on the node tainted with <code>dedicated=monitoring:NoSchedule</code>",
+      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> to the DaemonSet's Pod template spec so it can be scheduled on the tainted node",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to trigger rescheduling on the tainted node",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -744,10 +744,10 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record for the Service name that load-balances across all Pod IPs using <code>kube-proxy</code> rules in round-robin fashion",
-      "SRV records are created for headless Services, while A records require additional DNS configuration not enabled by default",
-      "No DNS records are created because headless Services do not participate in the Kubernetes DNS resolution system",
-      "Individual A records for each Pod (e.g., <code>cassandra-0.cassandra.database.svc.cluster.local</code>) plus a Service-level A record returning all Pod IPs"
+      "A single A record (e.g., <code>cassandra.database.svc.cluster.local</code>) that load-balances across Pod IPs via <code>kube-proxy</code> round-robin rules",
+      "Only SRV records are created for headless Services; A records require extra DNS configuration not enabled by default in CoreDNS",
+      "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the Kubernetes DNS system entirely",
+      "Individual A records for each Pod plus a Service-level A record that returns all Pod IPs in the response"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.\n\nWhy other options are wrong:\n- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -766,7 +766,7 @@ var questions = [
       "Pod creation fails because both requests and limits must be explicitly specified under a quota"
     ],
     answer: 2,
-    explanation: "A LimitRange injects default values for any resource field not specified by the user. Since the developer specified a CPU request but not a CPU limit, the LimitRange fills in the default limit of `500m`. If neither request nor limit were specified, the LimitRange would inject both defaults. The LimitRange also enforces min/max constraints if configured.\n\nWhy other options are wrong:\n- A: A LimitRange does inject defaults; without it the Pod would be rejected by the ResourceQuota\n- B: The limit is not set to the request value; the LimitRange default limit is used independently\n- D: Pod creation does not fail because the LimitRange provides the missing limit value automatically\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
+    explanation: "A LimitRange injects default values for any resource field not specified by the user. Since the developer specified a CPU request but not a CPU limit, the LimitRange fills in the default limit of `500m`. If neither request nor limit were specified, the LimitRange would inject both defaults. The LimitRange also enforces min/max constraints if configured.\n\nWhy other options are wrong:\n- A: A LimitRange does inject defaults when they are not specified; the Pod would not run without a CPU limit only if a ResourceQuota were also present\n- B: The limit is not set to the request value; the LimitRange default limit is used independently\n- D: Pod creation does not fail because the LimitRange provides the missing limit value automatically\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
     verify: "kubectl describe limitrange -n <namespace>"
   },
   {
@@ -921,7 +921,7 @@ var questions = [
     diagram: null,
     options: [
       "Pod affinity rules to spread replicas using <code>topologyKey: topology.kubernetes.io/zone</code> for co-location in each zone",
-      "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code>",
+      "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code> in the Pod spec",
       "Node affinity rules that prefer nodes in each availability zone equally using weighted preferences",
       "Setting <code>replicas: 2</code> in three separate Deployments, with one Deployment targeted to each zone"
     ],
@@ -986,7 +986,7 @@ var questions = [
     options: [
       "Create or update an <code>imagePullSecret</code> in the namespace and reference it in the Pod spec or ServiceAccount",
       "Recreate the Pod with <code>hostNetwork: true</code> to allow direct network access to the private registry endpoint",
-      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries primarily cache the latest tag and may not retain older tags reliably",
+      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries may not retain older tags",
       "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for private registry lookups"
     ],
     answer: 0,
@@ -1163,7 +1163,7 @@ var questions = [
       "The PVC is bound to a 10Gi EBS volume that supports <code>ReadWriteMany</code> access mode across multiple nodes",
       "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume to support <code>ReadWriteMany</code> access",
       "The PVC is created with <code>ReadWriteOnce</code> mode, silently ignoring the requested access mode",
-      "The PVC stays <code>Pending</code> because AWS EBS only supports <code>ReadWriteOnce</code>, not <code>ReadWriteMany</code>"
+      "The PVC stays <code>Pending</code> because AWS EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
     ],
     answer: 3,
     explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.\n\nWhy other options are wrong:\n- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -1272,10 +1272,10 @@ var questions = [
     text: "A cluster administrator wants to understand the flow of a Pod creation request. They submit a Deployment manifest via <code>kubectl apply</code>. In which order do the control plane components process this request?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="110" height="35" rx="6" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="65" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold">kubectl apply</text><rect x="145" y="10" width="110" height="35" rx="6" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="200" y="32" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Component A</text><rect x="145" y="80" width="110" height="35" rx="6" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component B</text><rect x="280" y="10" width="110" height="35" rx="6" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="335" y="32" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component C</text><rect x="280" y="80" width="110" height="35" rx="6" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="335" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component D</text><rect x="145" y="155" width="110" height="35" rx="6" fill="#00695C" stroke="#004D40" stroke-width="2"/><text x="200" y="177" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component E</text><line x1="120" y1="93" x2="145" y2="93" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="45" x2="200" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="27" x2="280" y2="27" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="97" x2="280" y2="97" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="115" x2="200" y2="155" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="335" y1="45" x2="335" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><text x="200" y="145" text-anchor="middle" fill="#333" font-size="8" font-style="italic">order: ???</text></svg>',
     options: [
-      "kubectl sends the manifest to the scheduler, which forwards it to the API server for validation and storage in etcd",
+      "kubectl sends the manifest to the scheduler, which validates it, forwards it to the API server, and the API server persists it in etcd",
       "API server stores the Deployment in etcd; controllers create ReplicaSet and Pods; scheduler assigns nodes; kubelet starts containers",
-      "The kubelet directly receives the manifest from kubectl, creates the Pods locally, and reports status back to the API server",
-      "etcd receives the manifest first, triggers the controller manager to process it, which then notifies the API server of changes"
+      "The kubelet directly receives the manifest from kubectl, creates the Pods locally, starts containers, and reports status to the API server",
+      "etcd receives the manifest first, triggers the controller manager to create Pods, which then notifies the API server of state changes"
     ],
     answer: 1,
     explanation: "The request flow is: (1) `kubectl` sends the manifest to the API server, which authenticates, authorizes, and validates it. (2) The API server persists the Deployment to etcd. (3) The Deployment controller (in kube-controller-manager) detects the new Deployment and creates a ReplicaSet, which in turn creates Pod objects. (4) The scheduler detects unassigned Pods and binds them to nodes. (5) The kubelet on each node starts the containers.\n\nWhy other options are wrong:\n- A: kubectl sends requests to the API server, not the scheduler; the scheduler watches the API server\n- C: The kubelet does not receive manifests from kubectl; it watches the API server for Pod assignments\n- D: etcd does not receive manifests first; the API server is the sole gateway to etcd\n\nReference: https://kubernetes.io/docs/concepts/overview/components/",
@@ -1291,7 +1291,7 @@ var questions = [
       "Immediately, because Flux receives a Git webhook notification for every push event to the repository branch",
       "Up to 5 minutes matching the reconciliation interval, unless a webhook or manual trigger is configured",
       "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later",
-      "The fix requires manual approval in Flux before being applied to the cluster"
+      "The fix requires manual approval in the Flux dashboard before it can be applied to the cluster"
     ],
     answer: 1,
     explanation: "Flux reconciles on a configurable interval (5 minutes in this case). Without a Git webhook configured, Flux polls the repository at each interval. The fix will be applied at the next reconciliation cycle, which could be up to 5 minutes after the push. Configuring a webhook notification from Git to Flux triggers immediate reconciliation upon push, reducing the delay.\n\nWhy other options are wrong:\n- A: Webhook notifications supplement the reconciliation interval; they are not configured in this scenario\n- C: The timing is based on when the fix is pushed relative to the next reconciliation, not the broken push\n- D: Flux does not require manual approval after failures; it reconciles automatically on each interval\n\nReference: https://fluxcd.io/flux/concepts/",
@@ -1480,13 +1480,13 @@ var questions = [
     text: "A team evaluates KEDA (Kubernetes Event-Driven Autoscaling) for their event-processing workload that consumes messages from an Apache Kafka topic. How does KEDA differ from the standard Horizontal Pod Autoscaler?",
     diagram: null,
     options: [
-      "KEDA manages its own scaling loop independently of the HPA for Kafka and other sources, so they should not be configured for the same workload",
+      "KEDA manages its own scaling loop independently of the HPA, so both should not target the same workload",
       "KEDA scales on external event sources (Kafka lag, queue depth) and supports scaling to zero replicas",
       "KEDA is primarily designed for batch workloads and provides limited support for long-running Deployments",
       "KEDA provides faster scaling by bypassing the Kubernetes API server and directly managing Pod counts"
     ],
     answer: 1,
-    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.\n\nWhy other options are wrong:\n- A: KEDA actually creates and manages HPA objects under the hood, so it does not run an independent scaling loop separate from HPA\n- C: KEDA fully supports Deployments, StatefulSets, Jobs, and custom resources; it is not limited to batch workloads\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them\n\nReference: https://keda.sh/docs/latest/concepts/",
+    explanation: "KEDA extends Kubernetes autoscaling by providing scalers for external event sources like Kafka, RabbitMQ, Azure Queue, AWS SQS, and many others. Unlike the standard HPA (which scales based on CPU/memory or custom metrics with a minimum of 1 replica), KEDA can scale workloads to and from zero based on event-driven triggers. KEDA actually creates and manages HPA objects under the hood.\n\nWhy other options are wrong:\n- A: KEDA creates and manages HPA objects under the hood for 1-to-N scaling. While KEDA does handle 0-to-1 scaling independently, its primary scaling mechanism uses HPA, so calling it fully independent is inaccurate\n- C: KEDA fully supports Deployments, StatefulSets, Jobs, and custom resources; it is not limited to batch workloads\n- D: KEDA works through the Kubernetes API server and Metrics API; it does not bypass them\n\nReference: https://keda.sh/docs/latest/concepts/",
     verify: null
   },
   {
@@ -1514,8 +1514,8 @@ var questions = [
     options: [
       "Yes, annotations and labels are interchangeable for scheduling purposes in all Kubernetes versions",
       "Yes, but only if the annotation key follows the DNS naming convention required for node selectors",
-      "No, annotations are restricted to cluster-scoped objects and are not available on namespace-scoped resources like individual Pods",
-      "No, annotations are metadata not used by selectors or scheduling; only labels support selection"
+      "No, annotations are restricted to cluster-scoped objects and cannot be applied to Pods",
+      "No, annotations are non-identifying metadata not used by selectors or scheduling; only labels support selection"
     ],
     answer: 3,
     explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.\n\nWhy other options are wrong:\n- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods, not just namespaces\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",

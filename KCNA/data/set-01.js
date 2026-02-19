@@ -936,13 +936,13 @@ var questions = [
     text: "A team is designing an API gateway for their microservices architecture on Kubernetes. The gateway should handle cross-cutting concerns like authentication, rate limiting, and request routing. Which Kubernetes resource type is commonly used as the entry point for external HTTP/HTTPS traffic to microservices?",
     diagram: null,
     options: [
-      "A `ClusterIP` Service with external traffic policy set to `Local` for ingress routing control",
+      "A `ClusterIP` Service with annotation-based routing rules to handle external HTTP traffic directly",
       "An `Ingress` resource with an Ingress controller that handles routing and TLS termination",
       "A `DaemonSet` running an HTTP proxy on every node with `hostNetwork: true` for direct access",
       "A `ConfigMap` that defines routing rules consumed by `kube-proxy` for HTTP load balancing"
     ],
     answer: 1,
-    explanation: "An Ingress resource, backed by an Ingress controller (like NGINX or Traefik), is the standard Kubernetes mechanism for managing external HTTP/HTTPS access. Ingress controllers can handle TLS termination, path-based routing, rate limiting, and integrate with authentication plugins. `ClusterIP` is internal-only. A DaemonSet-based proxy bypasses Kubernetes networking abstractions. `kube-proxy` does not handle HTTP-level routing or load balancing.\n\nWhy other options are wrong:\n- A: A ClusterIP Service with externalTrafficPolicy Local is internal-only; it cannot serve as an external entry point.\n- C: A DaemonSet-based proxy with hostNetwork bypasses Kubernetes networking abstractions and is not the standard pattern.\n- D: kube-proxy does not handle HTTP-level routing or load balancing; ConfigMaps cannot configure it for this purpose.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
+    explanation: "An Ingress resource, backed by an Ingress controller (like NGINX or Traefik), is the standard Kubernetes mechanism for managing external HTTP/HTTPS access. Ingress controllers can handle TLS termination, path-based routing, rate limiting, and integrate with authentication plugins. `ClusterIP` is internal-only. A DaemonSet-based proxy bypasses Kubernetes networking abstractions. `kube-proxy` does not handle HTTP-level routing or load balancing.\n\nWhy other options are wrong:\n- A: A ClusterIP Service is internal-only and does not support annotation-based HTTP routing; it cannot serve as an external entry point.\n- C: A DaemonSet-based proxy with hostNetwork bypasses Kubernetes networking abstractions and is not the standard pattern.\n- D: kube-proxy does not handle HTTP-level routing or load balancing; ConfigMaps cannot configure it for this purpose.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
     verify: null
   },
   {
@@ -1097,9 +1097,9 @@ var questions = [
     diagram: null,
     options: [
       "Kubernetes rejects the command because the Deployment already exists and requires `edit` to modify",
-      "Kubernetes deletes the existing Deployment and creates a new one from the updated YAML manifest file",
+      "Kubernetes deletes the existing Deployment entirely and recreates a fresh one from the updated YAML manifest definitions",
       "Kubernetes performs a three-way merge comparing the last applied config, live state, and new file",
-      "Kubernetes creates a duplicate Deployment with an auto-generated suffix to avoid name conflicts"
+      "Kubernetes creates a duplicate Deployment with an auto-generated suffix appended to the name to prevent conflicts"
     ],
     answer: 2,
     explanation: "`kubectl apply` uses a declarative approach with a three-way merge strategy. It compares the new configuration, the last-applied-configuration annotation (stored on the object), and the current live state to determine what changes to make. This allows it to update only the fields that changed. It does not reject existing resources, create duplicates, or delete and recreate the resource.\n\nWhy other options are wrong:\n- A: `kubectl apply` is designed to update existing resources; it does not reject them.\n- B: `kubectl apply` does not delete and recreate resources; it performs an in-place merge.\n- D: Kubernetes does not create duplicate resources with auto-generated suffixes from `kubectl apply`.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
@@ -1160,10 +1160,10 @@ var questions = [
     text: "A team needs to understand how the various control plane components interact. When a user runs `kubectl create deployment nginx --image=nginx`, which sequence of events correctly describes what happens in the control plane?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="white" font-size="11">etcd</text><rect x="280" y="100" width="110" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="335" y="122" text-anchor="middle" fill="white" font-size="10">Scheduler</text><rect x="230" y="200" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="290" y="222" text-anchor="middle" fill="white" font-size="10">Kubelet</text><rect x="50" y="200" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="110" y="222" text-anchor="middle" fill="white" font-size="10">Controller Mgr</text><rect x="10" y="100" width="110" height="35" rx="6" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="65" y="122" text-anchor="middle" fill="white" font-size="11">API Server</text><text x="200" y="135" text-anchor="middle" fill="#FFD700" font-size="13" font-weight="bold">? What is the order ?</text></svg>',
     options: [
-      "API server creates the Deployment in etcd, scheduler assigns it to a node, then kubelet creates Pods and starts containers",
+      "API server creates the Deployment in etcd, scheduler evaluates nodes and assigns it, kubelet creates the Pod, and containers start via the runtime",
       "Scheduler receives the request first, assigns nodes, then API server creates the Deployment and Pods, kubelet starts containers",
       "API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers",
-      "API server creates Pods directly in etcd, scheduler assigns them to available nodes, then controller manager monitors health"
+      "API server creates Pods directly in etcd, scheduler evaluates and assigns them to available nodes, kubelet starts containers, then controller manager monitors health"
     ],
     answer: 2,
     explanation: "The correct sequence is: the API server receives the request and stores the Deployment object in `etcd`. The Deployment controller (in `kube-controller-manager`) detects the new Deployment and creates a ReplicaSet. The ReplicaSet controller then creates the specified number of Pod objects. The scheduler detects unscheduled Pods and assigns them to nodes. Finally, the kubelet on each assigned node starts the containers via the container runtime. Each component watches for changes through the API server.\n\nWhy other options are wrong:\n- A: Incorrectly skips the controller-manager step — the scheduler does not directly receive the Deployment.\n- B: The scheduler does not receive requests first; all requests go through the API server.\n- D: The API server does not create Pods directly — the controller-manager creates ReplicaSets which create Pods.\n\nReference: https://kubernetes.io/docs/concepts/overview/components/",
@@ -1305,8 +1305,8 @@ var questions = [
     diagram: null,
     options: [
       "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final stage",
-      "Use a full Ubuntu base image and remove unnecessary packages with `apt-get remove` in the final layer",
-      "Build the application on the host machine and copy the binary into a `latest` tagged base image",
+      "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in the final Dockerfile layer",
+      "Build the application on the host machine with native compilers and copy the binary into a `latest` tagged base image",
       "Use the `--squash` flag to compress all layers into one, which removes most unused files from the image"
     ],
     answer: 0,
@@ -1464,13 +1464,13 @@ var questions = [
     text: "A team wants to ensure their container images do not contain known security vulnerabilities before deploying to production. At which stage of the CI/CD pipeline should vulnerability scanning occur?",
     diagram: null,
     options: [
-      "During the build stage, since runtime scanning introduces unacceptable latency to the delivery pipeline",
+      "During the build and testing stages, where scanning blocks the pipeline if critical vulnerabilities are found",
       "After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities",
       "At multiple stages: during the build, before deployment via admission control, and in the registry",
       "When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"
     ],
     answer: 2,
-    explanation: "A defense-in-depth approach scans at multiple stages. During the build, the CI pipeline scans the newly built image. Before deployment, an admission controller (like OPA Gatekeeper or Kyverno) can reject images with critical vulnerabilities. Registries can continuously scan stored images for newly discovered CVEs. Scanning only at build misses new vulnerabilities discovered later. Scanning only in production is too late. Manual scanning is unreliable.\n\nWhy other options are wrong:\n- A: Scanning only at build misses new vulnerabilities discovered after the image is built.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual scanning is unreliable and does not scale with automated deployment pipelines.\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "A defense-in-depth approach scans at multiple stages. During the build, the CI pipeline scans the newly built image. Before deployment, an admission controller (like OPA Gatekeeper or Kyverno) can reject images with critical vulnerabilities. Registries can continuously scan stored images for newly discovered CVEs. Scanning only at build misses new vulnerabilities discovered later. Scanning only in production is too late. Manual scanning is unreliable.\n\nWhy other options are wrong:\n- A: Scanning only at build and testing stages misses new vulnerabilities discovered after the image is built and stored in a registry.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual scanning is unreliable and does not scale with automated deployment pipelines.\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {
@@ -1528,8 +1528,8 @@ var questions = [
     text: "A team has a Deployment with `replicas: 3` and a resource request of 500m CPU per Pod. The cluster has 2 nodes, each with 1 CPU allocatable. The team tries to scale to 5 replicas. What happens?",
     diagram: null,
     options: [
-      "All 5 replicas start successfully because Kubernetes overcommits, fitting 3 per node at 500m each",
-      "Only 4 replicas can be scheduled (2 per node at 500m each); the 5th Pod remains Pending",
+      "All 5 replicas start successfully because Kubernetes overcommits CPU (fitting 3 per node at 500m each)",
+      "Only 4 replicas can be scheduled; the 5th Pod remains in Pending state without sufficient resources",
       "Kubernetes automatically provisions a new node to handle the additional requested replicas",
       "The scale operation is rejected by the API server because it exceeds the cluster capacity"
     ],

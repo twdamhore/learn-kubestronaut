@@ -90,7 +90,7 @@ var questions = [
     options: [
       "Create a Secret of type `kubernetes.io/service-account-token` annotated with the SA name",
       "Set `automountServiceAccountToken: true` in the Pod spec to get a long-lived token",
-      "Projected tokens mounted via `automountServiceAccountToken` are long-lived and do not require separate Secret creation",
+      "Projected tokens from `automountServiceAccountToken` are already long-lived by default",
       "Run `kubectl token create deployer` to generate an OIDC-based token for the account"
     ],
     answer: 0,
@@ -1083,10 +1083,10 @@ var questions = [
       "Yes, because DaemonSets are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
-      "No, and the `baseline` profile also restricts hostPath volumes to read-only access"
+      "No, the `baseline` profile also restricts `hostPath` volumes"
     ],
     answer: 1,
-    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile also prohibits hostPath volumes; hostPath is forbidden at both baseline and restricted levels. Only the privileged profile allows hostPath volumes. For log collectors requiring host access, the namespace must use the privileged profile, or the Pods must be exempted.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: While the baseline profile does prohibit hostPath volumes, it does not merely restrict them to read-only access — it forbids them outright\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile does not restrict hostPath volumes at all. Only the restricted and privileged profiles differ on hostPath: restricted forbids it while privileged allows it. For log collectors requiring host access, the namespace must use the privileged profile, or the Pods must be exempted.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile does not restrict hostPath volumes at all; only the restricted profile prohibits hostPath volumes entirely, so the claim about baseline is incorrect\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl label ns logging pod-security.kubernetes.io/enforce=restricted --dry-run=server"
   },
   {

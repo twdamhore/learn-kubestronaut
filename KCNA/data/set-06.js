@@ -251,7 +251,7 @@ var questions = [
       "A. DaemonSet Pods have a higher scheduling priority than other Pods",
       "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain operations",
       "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
-      "D. `kubectl drain` skips DaemonSet-managed Pods by default"
+      "D. `kubectl drain` refuses to proceed when DaemonSet-managed Pods exist unless `--ignore-daemonsets` is passed"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but they do not prevent eviction during drain; drain skips them because they are DaemonSet-managed\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -533,7 +533,7 @@ var questions = [
     id: "s06-q034",
     domain: "Container Orchestration",
     subsection: "Container Runtimes",
-    text: "During a node upgrade, the container runtime is upgraded from one version to another. What happens to running containers on that node during the runtime upgrade?",
+    text: "During a node upgrade, the container runtime needs to be upgraded. What is the recommended practice for handling running containers on that node?",
     diagram: null,
     options: [
       "A. Containers continue running because the runtime upgrade preserves running process state",
@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
-      "B. `kubeadm certs check-expiration` — prints a tabular summary of certificate validity and remaining time",
+      "B. `kubeadm certs check-expiration` -- lists all managed certificates and their expiry dates",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
       "D. `kubeadm certs renew` — regenerates expiring certificates but does not list their expiration dates"
     ],
@@ -616,10 +616,10 @@ var questions = [
     text: "Which CNCF project provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes?",
     diagram: null,
     options: [
-      "A. etcd-operator from the CoreOS project",
-      "B. Longhorn, a distributed storage tool",
-      "C. Velero, a disaster-recovery and cluster-portability project",
-      "D. Stash, a backup and restore toolkit"
+      "A. etcd-operator, an etcd lifecycle management tool",
+      "B. Longhorn, a cloud-native distributed storage system",
+      "C. Velero, a backup and disaster-recovery project",
+      "D. Stash, a third-party backup and restore toolkit"
     ],
     answer: 2,
     explanation: "Velero is a CNCF project that provides backup and restore capabilities for Kubernetes cluster resources and persistent volumes via the Kubernetes API. It enables disaster recovery, data migration, and cluster portability. Velero does not manage etcd directly but works at the Kubernetes resource level.\n\nWhy other options are wrong:\n- A: etcd-operator manages etcd clusters, not Kubernetes resource backup and restore\n- B: Longhorn is a distributed block storage system, not a backup and restore tool\n- D: Stash is a third-party tool by AppsCode, not a CNCF project\n\nReference: https://velero.io/",
@@ -894,7 +894,7 @@ var questions = [
       "D. The CNI plugin handling Pod network configuration"
     ],
     answer: 3,
-    explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: Container runtime issues can also cause NotReady, but the question asks about the most likely cause when kubelet is running\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
+    explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: The question states the container runtime is healthy; additionally, the NetworkUnavailable condition specifically indicates a network plugin issue, not a runtime issue\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
     verify: "kubectl describe node <node-name> | grep -A5 Conditions"
   },
   {
@@ -1067,7 +1067,7 @@ var questions = [
       "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
       "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. The `globalDefault` field applies retroactively — existing Pods inherit the new value during the next sync cycle"
+      "D. `globalDefault` applies retroactively -- existing Pods inherit the new value automatically"
     ],
     answer: 0,
     explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault does not apply retroactively; Pod priority is set at creation time by the admission controller and is never updated by a sync cycle\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -1354,7 +1354,7 @@ var questions = [
     options: [
       "A. Only taints with key `special-taint` and an empty string value",
       "B. All taints on the node regardless of their key, value, or effect",
-      "C. Only taints with key `special-taint` and an empty string value, because Exists matches empty values by default",
+      "C. Only taints with key `special-taint` and an empty string value by default",
       "D. All taints with key `special-taint` regardless of their value"
     ],
     answer: 3,
@@ -1486,7 +1486,7 @@ var questions = [
       "D. The GitOps controller enters a conflict-resolution mode and waits for operator input"
     ],
     answer: 2,
-    explanation: "GitOps controllers like Flux and Argo CD continuously reconcile cluster state to match the Git repository. After a restore from backup, any drift (resources present in Git but different or missing in the cluster) triggers the controller to reapply the desired state from Git.\n\nWhy other options are wrong:\n- A: Deletion of resources not in Git depends on the pruning configuration, not a guaranteed default behavior after restore\n- B: In GitOps, Git is the source of truth; cluster state never takes precedence over Git\n- D: GitOps controllers do not pause; they continuously reconcile automatically\n\nReference: https://fluxcd.io/flux/concepts/",
+    explanation: "GitOps controllers like Flux and Argo CD continuously reconcile cluster state to match the Git repository. After a restore from backup, any drift (resources present in Git but different or missing in the cluster) triggers the controller to reapply the desired state from Git.\n\nWhy other options are wrong:\n- A: Option A focuses narrowly on deletion of resources, which is only one aspect of reconciliation and depends on pruning configuration. Option C correctly describes the broader reconciliation behavior: applying resources from Git, updating drifted resources, and potentially pruning -- making it the most complete and accurate description\n- B: In GitOps, Git is the source of truth; cluster state never takes precedence over Git\n- D: GitOps controllers do not pause; they continuously reconcile automatically\n\nReference: https://fluxcd.io/flux/concepts/",
     verify: null
   },
   {
@@ -1518,7 +1518,7 @@ var questions = [
       "D. Upgrade sequentially: v1.27 -> v1.28 -> v1.29 -> v1.30, one at a time"
     ],
     answer: 3,
-    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: While upgrading to v1.28 first is correct, the suggestion to pause for stability before continuing is not part of the Kubernetes recommendation; sequential upgrade without pausing is the standard approach\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
+    explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: While upgrading to v1.28 first is correct, this option implies pausing only after v1.28 and then proceeding to v1.29 and v1.30 together, which is ambiguous. Option D explicitly shows the full sequential path through every minor version\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
     verify: "kubeadm upgrade plan"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "D. The hook Job is retried three times before the upgrade is marked as a failure"
     ],
     answer: 2,
-    explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.\n\nWhy other options are wrong:\n- A: Helm does not proceed when a pre-upgrade hook fails; the upgrade is aborted\n- C: Helm does not automatically roll back on hook failure; the release is marked FAILED\n- D: Helm does not retry failed hooks; the hook must succeed on the first attempt\n\nReference: https://helm.sh/docs/topics/charts_hooks/",
+    explanation: "When a pre-upgrade hook fails, Helm marks the upgrade as FAILED and the previously deployed release remains the active one. The hook must succeed for the upgrade to proceed. This safety mechanism ensures prerequisites (like backups) complete before changes are applied.\n\nWhy other options are wrong:\n- A: Helm does not proceed when a pre-upgrade hook fails; the upgrade is aborted\n- C: Helm does not automatically roll back on hook failure; the release is marked FAILED. Without the `--atomic` flag, Helm does not automatically roll back; the release is simply marked FAILED. The `--atomic` flag would enable automatic rollback, but it is not the default behavior\n- D: Helm does not retry failed hooks; the hook must succeed on the first attempt\n\nReference: https://helm.sh/docs/topics/charts_hooks/",
     verify: "helm history <release-name>"
   },
   {

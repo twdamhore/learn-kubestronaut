@@ -152,9 +152,9 @@ var questions = [
     text: "You need to expose a legacy application that requires clients to connect to the same pod for the duration of their session. Which Service field enables this?",
     diagram: null,
     options: [
-      "`spec.selector.sticky: true` to pin each session to a single pod",
-      "`spec.externalTrafficPolicy: Local` to route only to local pods",
-      "`spec.type: StatefulSet` to enable persistent session handling",
+      "`spec.selector.sticky: true` to pin each client session to a single pod backend for the session duration",
+      "`spec.externalTrafficPolicy: Local` to route only to local pods and maintain client session stickiness",
+      "`spec.type: StatefulSet` to enable persistent session handling with stable network identity for pods",
       "`spec.sessionAffinity: ClientIP` to route repeat requests from the same source to a fixed backend"
     ],
     answer: 3,
@@ -267,7 +267,7 @@ var questions = [
       "SRV records only, with no A records created for the individual pod endpoints",
       "CNAME records that map `cache-0` through `cache-2` to the node's IP address",
       "A single A record for `cache` that resolves to all three pod IPs at one time",
-      "A records like `cache-0.cache.<ns>.svc.cluster.local` for each pod"
+      "A records like `cache-0.cache.<ns>.svc.cluster.local` resolving to each pod IP"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates individual A records for each pod following the pattern `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. This gives each pod a stable DNS identity. CNAME records to node IPs are not created. While a DNS query on the Service name returns all pod IPs, individual pod A records are the distinguishing feature. SRV records exist too, but A records are also created.\n\nWhy other options are wrong:\n- A: Both SRV and A records are created for StatefulSet pods behind a headless Service; A records are not omitted.\n- B: CNAME records mapping to node IPs are not created; the A records point to individual pod IPs.\n- C: While the Service-level DNS query returns all pod IPs, the distinguishing feature is individual per-pod A records.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -488,9 +488,9 @@ var questions = [
     text: "A `NodePort` Service is created without specifying a port number. Which range does Kubernetes use to auto-assign the node port?",
     diagram: null,
     options: [
-      "80–443 reserved for standard HTTP and HTTPS traffic, not NodePort ranges",
+      "80–443 reserved for standard HTTP and HTTPS traffic on the host",
       "1024–65535 which covers the entire non-privileged port range",
-      "30000–32767 which is the default NodePort allocation range",
+      "30000–32767 which is the default NodePort allocation range for Services",
       "49152–65535 which is the IANA dynamic and private port range"
     ],
     answer: 2,
@@ -602,7 +602,7 @@ var questions = [
     options: [
       "The IP of the node's local `DNS cache daemon` running on each worker",
       "The `kube-apiserver`'s `ClusterIP` used for cluster management traffic",
-      "The ClusterIP of the `kube-dns` Service in the `kube-system` ns",
+      "The ClusterIP of the `kube-dns` Service fronting CoreDNS in the `kube-system` ns",
       "A hardcoded Google Public DNS address (`8.8.8.8`) configured in the base image"
     ],
     answer: 2,
@@ -746,7 +746,7 @@ var questions = [
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
       "`kube_endpoint_ready_count` with a configured threshold of zero ready endpoints",
-      "`kube_endpoint_address` with label `ready=\"true\"` equal to zero for the Service",
+      "`kube_endpoint_address_available` equal to zero for the Service to detect missing healthy endpoints",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
@@ -856,8 +856,8 @@ var questions = [
     text: "A `NetworkPolicy` allows ingress from pods labeled `role: frontend` to pods labeled `app: backend` on port 443. A pod labeled both `role: frontend` and `app: backend` sends traffic to another `app: backend` pod on port 443. Is this traffic allowed?",
     diagram: null,
     options: [
-      "No, because the policy excludes pods that match both source and destination selectors from the allowed traffic flow",
-      "Yes, but only if an explicit egress rule on the `role: frontend` pod is also defined allowing port 443 outbound",
+      "No, because the policy excludes pods matching both source and destination selectors",
+      "Yes, but only if an explicit egress rule allowing port 443 outbound is also defined",
       "No, because the policy only allows traffic from pods that lack the `app: backend` label value",
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"
     ],
@@ -920,7 +920,7 @@ var questions = [
     text: "A pod specification includes `dnsPolicy: ClusterFirst`. The pod needs to resolve both cluster-internal service names and external hostnames like `example.com`. Which behavior results from this policy?",
     diagram: null,
     options: [
-      "Cluster-internal names are resolved but external names may time out depending on upstream configuration",
+      "Cluster-internal names are resolved but external names may time out without forwarding",
       "The pod uses the node DNS settings by default, querying CoreDNS for cluster-local names",
       "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
       "The pod queries CoreDNS and the node resolver in round-robin order based on the search domain list"
@@ -954,7 +954,7 @@ var questions = [
     options: [
       "The custom search domain replaces all default cluster search domains in the pod's `resolv.conf`",
       "The custom search domain is appended to the default cluster search domains in `resolv.conf`",
-      "The `dnsConfig` entries are overridden because `ClusterFirst` takes precedence and uses the default cluster domains",
+      "The `dnsConfig` entries are overridden because `ClusterFirst` takes full precedence",
       "The pod enters an error state because `dnsConfig` overrides conflict with the `ClusterFirst` policy setting"
     ],
     answer: 1,
@@ -1097,7 +1097,7 @@ var questions = [
     diagram: null,
     options: [
       "Infrastructure as Code for declarative health-endpoint configuration management",
-      "Observability and health signaling for self-healing systems",
+      "Observability and health signaling for self-healing systems with automatic recovery",
       "Immutable infrastructure for reproducible deployment patterns",
       "Event-driven architecture for asynchronous message handling"
     ],
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A NodeLocal DNS Cache DaemonSet is deployed to improve DNS performance. How does it reduce load on CoreDNS?",
     diagram: null,
     options: [
-      "It acts as a node-level DNS server, intercepting queries so CoreDNS receives minimal traffic from pods",
+      "It replaces CoreDNS entirely, serving all DNS records from a local database on each node",
       "It pre-populates all DNS records from etcd into node memory at startup to avoid CoreDNS queries",
       "It bypasses the `kube-dns` Service and sends queries directly to the CoreDNS pod IP on the node",
       "It runs a local caching agent on each node that serves cached responses and falls back to CoreDNS"
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "To the cloud load balancer, which then forwards the traffic back into the cluster for routing",
       "To the kube-apiserver, which acts as a proxy and forwards the request to the correct backend",
-      "The request is routed to the cloud load balancer, which drops it because the pod source IP is not in the allowed CIDR",
+      "To the cloud load balancer, which drops it because the pod source IP is not allowed",
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
     ],
     answer: 3,
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A developer sets `spec.ports[0].appProtocol: kubernetes.io/h2c` on a Service. What does this indicate to consuming infrastructure?",
     diagram: null,
     options: [
-      "The Service enables TLS 1.2 encryption for connections between the proxy and the backend pods by default",
+      "The Service enables TLS 1.2 encryption for proxy-to-backend pod connections",
       "kube-proxy will use HTTP/2 to communicate with the API server for this Service endpoint",
       "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2 via protocol negotiation",
       "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
@@ -1368,10 +1368,10 @@ var questions = [
     text: "A cluster operator wants to implement dual-stack networking so pods receive both IPv4 and IPv6 addresses. Which configuration is required?",
     diagram: null,
     options: [
-      "The CNI plugin is the primary component that needs dual-stack configuration; other components auto-detect address families",
+      "Only the CNI plugin needs dual-stack configuration; other components auto-detect address families",
       "The apiserver, controller-manager, kube-proxy, and CNI must all be configured with dual CIDRs",
-      "Dual-stack performs best with IPVS mode; iptables mode has limited IPv6 support",
-      "Each pod requests an IPv6 address in its spec alongside the IPv4 address to participate in dual-stack networking"
+      "Dual-stack performs best with IPVS mode because iptables mode has limited IPv6 forwarding support",
+      "Each pod explicitly requests an IPv6 address in its spec alongside the default IPv4 address"
     ],
     answer: 1,
     explanation: "Dual-stack requires coordinated configuration across multiple components: the API server needs dual-stack service CIDRs, the controller-manager needs dual pod CIDRs, kube-proxy needs to handle both address families, and the CNI plugin must assign both IPv4 and IPv6 addresses. Configuring only the CNI is insufficient. iptables supports IPv6 via ip6tables. Pods receive both addresses automatically when dual-stack is enabled.\n\nWhy other options are wrong:\n- A: Configuring only the CNI plugin is insufficient; multiple control-plane components also need dual-stack configuration.\n- C: iptables supports IPv6 via ip6tables; dual-stack is not limited to IPVS mode.\n- D: Pods receive both addresses automatically when dual-stack is enabled cluster-wide; no per-pod spec is needed.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dual-stack/",
@@ -1480,10 +1480,10 @@ var questions = [
     text: "A cluster uses Prometheus to monitor networking. The metric `kubelet_http_requests_duration_seconds_bucket` shows increasing p99 latency for health checks. Which component is most likely under pressure?",
     diagram: null,
     options: [
-      "The kube-scheduler dispatching pods to nodes in the cluster",
+      "The kube-scheduler dispatching pods to nodes in the cluster, overloaded by scheduling decisions",
       "The kubelet's HTTP server on the affected node, responding slowly due to high pod count",
-      "CoreDNS handling DNS resolution queries forwarded by the kubelet",
-      "The Ingress controller proxying external requests to backends"
+      "CoreDNS handling DNS resolution queries forwarded by the kubelet for health check lookups",
+      "The Ingress controller proxying external requests to backend pods under heavy traffic load"
     ],
     answer: 1,
     explanation: "The `kubelet_http_requests_duration_seconds_bucket` metric is exposed by the kubelet. Increasing latency for health check requests indicates the kubelet's HTTP server on that node is overloaded, possibly due to high pod count, disk I/O, or resource contention. The scheduler, CoreDNS, and Ingress controller have their own separate metrics.\n\nWhy other options are wrong:\n- A: The kube-scheduler has its own metrics; `kubelet_http_requests_duration_seconds_bucket` is a kubelet metric.\n- C: CoreDNS has its own DNS-specific metrics, not kubelet HTTP metrics.\n- D: The Ingress controller has its own latency metrics; this metric is specifically from the kubelet's HTTP server.\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
@@ -1562,7 +1562,7 @@ var questions = [
     options: [
       "An IPv4 ClusterIP is assigned as the primary, with IPv6 available via a separate Service",
       "An IPv6 ClusterIP is assigned as primary because dual-stack clusters prioritize IPv6 addressing",
-      "An IPv4 and IPv6 ClusterIP are assigned, with the primary family determined by the cluster configuration",
+      "An IPv4 and IPv6 ClusterIP are assigned, with the primary family set by cluster defaults",
       "No ClusterIP is assigned — PreferDualStack turns it into a headless Service automatically"
     ],
     answer: 2,
