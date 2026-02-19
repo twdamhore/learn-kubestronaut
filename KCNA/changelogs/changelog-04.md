@@ -90,3 +90,40 @@
 - **Type:** Correct answer has 3 precise K8s terms; wrong options have weak setups
 - **Problem:** Option A ("A Deployment with 1 replica running the migration container that restarts if the script fails on error") lacked specific Kubernetes terminology.
 - **Fix:** Changed option A to: "A Deployment with `replicas: 1` and `restartPolicy: Always` that retries the migration on container failure."
+
+---
+
+# Round 38 Review - Set 04
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 9 across 9 questions
+
+## Changes
+
+### s04-q045 (length-balance)
+- **Option B:** Expanded metric name to full `kube_pod_container_resource_requests`. **Option C:** Removed `(per node)` suffix.
+
+### s04-q044 (length-balance)
+- **Option D:** Shortened from ~118 to ~85 chars.
+
+### s04-q013 (accuracy)
+- **Explanation:** Updated OpenEBS from "CNCF sandbox" to "CNCF incubating" (promoted Aug 2024).
+
+### s04-q056 (length-balance)
+- **Option B:** Shortened from ~123 to ~100 chars.
+
+### s04-q046 (length-balance)
+- **Option A:** Expanded from ~80 to ~108 chars.
+
+### s04-q069 (explanation)
+- **Option C explanation:** Added reasoning about node-level image caching.
+
+### s04-q098 (accuracy)
+- **Explanation:** Updated maxUnavailable from "alpha (disabled by default)" to "beta (enabled by default) since K8s 1.31".
+
+### s04-q041 (length-balance)
+- **Option D:** Shortened from ~128 to ~96 chars.
+
+### s04-q011 (length-balance)
+- **Option B:** Shortened from ~128 to ~107 chars.

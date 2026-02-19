@@ -72,3 +72,40 @@
 - 1 explanation fix (EndpointSlice flag name)
 - 7 length-balance fixes (normalizing option character counts)
 - No answer indices were changed
+
+---
+
+# Round 38 Review - Set 03
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 9 across 9 questions
+
+## Changes
+
+### s03-q019 (accuracy)
+- **Option D:** Removed incorrect "CNCF sandbox project" claim. Changed to "Multus — a meta-CNI plugin that attaches multiple network interfaces to pods".
+
+### s03-q047 (length-balance)
+- **Option B:** Expanded. **Option C (correct):** Trimmed tail to reduce 14.4% gap.
+
+### s03-q053 (length-balance)
+- **Options C, D:** Padded to close 24.1% spread.
+
+### s03-q031 (length-balance)
+- **Options A, B, D:** Padded to close gap with correct answer C.
+
+### s03-q038 (length-balance)
+- **Option C (correct):** Trimmed from ~80 to ~74 chars to reduce 15% spread.
+
+### s03-q085 (length-balance)
+- **Option A:** Padded with "by default" to close 16.7% gap.
+
+### s03-q058 (length-balance)
+- **Option D:** Trimmed from ~98 to ~85 chars.
+
+### s03-q088 (length-balance)
+- **Options A, D:** Trimmed to reduce 13.2% spread.
+
+### s03-q046 (accuracy)
+- **Option B:** Updated "Ambassador" to "Emissary-Ingress" (rebranded in 2021).

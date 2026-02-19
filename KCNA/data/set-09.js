@@ -169,9 +169,9 @@ var questions = [
     diagram: null,
     options: [
       "The scheduler assigns it to one of the V100 nodes since both are NVIDIA GPUs with compatible compute capabilities",
-      "The Pod remains in <code>Pending</code> state because no node matches the label <code>accelerator: nvidia-tesla-a100</code>",
+      "The Pod remains in <code>Pending</code> state with a FailedScheduling event because no node matches <code>accelerator: nvidia-tesla-a100</code>",
       "The Pod is scheduled on a V100 node but the container fails to start due to incompatible GPU driver versions",
-      "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with available GPU resources"
+      "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with GPU resources"
     ],
     answer: 1,
     explanation: "A `nodeSelector` enforces an exact label match. Since the cluster nodes have `accelerator=nvidia-tesla-v100` but the Pod requests `accelerator=nvidia-tesla-a100`, no node satisfies the constraint. The Pod remains `Pending` with a `FailedScheduling` event until a matching node becomes available.\n\nWhy other options are wrong:\n- A: nodeSelector requires exact label match; v100 and a100 are different values regardless of GPU family\n- C: The Pod never gets scheduled, so there is no container start or driver compatibility issue\n- D: The scheduler never creates labels; it only evaluates existing node labels against Pod constraints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -202,8 +202,8 @@ var questions = [
     options: [
       "Service 2 is not propagating trace context headers in its outgoing requests to Service 3, so the trace is broken",
       "Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits",
-      "The Jaeger collector has run out of available storage space and is dropping newly received span data",
-      "OpenTelemetry focuses primarily on tracing gRPC-based services and has limited support for HTTP-based endpoint instrumentation"
+      "The Jaeger collector has run out of available storage space and is selectively dropping newly received span data from traces",
+      "OpenTelemetry focuses primarily on tracing gRPC-based services and provides limited HTTP endpoint instrumentation"
     ],
     answer: 0,
     explanation: "Distributed tracing requires that trace context (such as the W3C `traceparent` header) is propagated between services. Since spans appear for Services 1 and 2 but not 3 and 4, the break point is between Services 2 and 3 — Service 2 is not forwarding trace context headers in its outgoing requests. Without those headers, Services 3 and 4 create new independent traces instead of joining the original one. This is the most common cause of incomplete traces.\n\nWhy other options are wrong:\n- B: Jaeger has no such 2-span limit; traces can contain thousands of spans\n- C: Storage issues would cause random span loss across all traces, not a clean break at a specific service\n- D: OpenTelemetry supports both gRPC and HTTP instrumentation, plus many other protocols\n\nReference: https://opentelemetry.io/docs/concepts/context-propagation/",
@@ -248,9 +248,9 @@ var questions = [
     text: "A CronJob is configured with <code>concurrencyPolicy: Forbid</code> and a schedule of <code>*/5 * * * *</code>. A Job triggered at 10:00 takes 7 minutes to complete. What happens at 10:05 when the next scheduled run is due?",
     diagram: null,
     options: [
-      "A second Job is created and runs concurrently alongside the still-active first Job instance",
+      "A second Job is created and runs concurrently alongside the still-active first Job from the 10:00 run",
       "The CronJob controller terminates the running 10:00 Job and immediately starts the 10:05 Job",
-      "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job finishes running",
+      "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job completes",
       "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
     ],
     answer: 3,
@@ -312,8 +312,8 @@ var questions = [
     text: "A team manages their application using a Helm chart. After running <code>helm upgrade my-release ./my-chart</code>, they discover a critical bug in the new version. They need to immediately revert to the previous working state. What is the fastest correct action?",
     diagram: null,
     options: [
-      "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy",
-      "Run <code>helm rollback my-release 1</code> to roll back to the first revision, which is the original install before any upgrades",
+      "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy the release",
+      "Run <code>helm rollback my-release 1</code> to roll back to the first revision, which is the original install state",
       "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 means \"previous release\")",
       "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
     ],
@@ -363,7 +363,7 @@ var questions = [
       "The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
       "CoreDNS maps ClusterIP addresses to IP ranges and does not support hostname-based Service lookups",
-      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to CoreDNS"
+      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> specifying a nameserver pointing to CoreDNS"
     ],
     answer: 3,
     explanation: "When a Pod's `dnsPolicy` is set to `None`, Kubernetes does not configure any default DNS servers for the Pod. Without a `dnsConfig` that includes the CoreDNS ClusterIP as a nameserver, the Pod cannot resolve cluster-internal DNS names. This results in `NXDOMAIN` even though the Service exists.\n\nWhy other options are wrong:\n- A: DNS records are created for all Service types including ClusterIP; LoadBalancer is not required\n- B: CoreDNS fully supports the svc.cluster.local suffix; it is the standard cluster DNS domain\n- C: DNS resolution works with Service names; name-based lookups are the primary use case for CoreDNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -426,7 +426,7 @@ var questions = [
     options: [
       "Taints applied on all cluster nodes with tolerations granted to only one application at any given time",
       "Node affinity with <code>preferredDuringSchedulingIgnoredDuringExecution</code> targeting different node labels",
-      "A PriorityClass that assigns higher scheduling priority to <code>app-a</code> Pods over <code>app-b</code> Pods",
+      "A PriorityClass that assigns higher scheduling priority to <code>app-a</code> Pods over <code>app-b</code> Pods during contention",
       "Pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code> and the hostname topology key"
     ],
     answer: 3,
@@ -440,9 +440,9 @@ var questions = [
     text: "A Kubernetes cluster stores TLS certificates for mutual TLS between microservices. The team currently uses Kubernetes Secrets of type <code>kubernetes.io/tls</code>. A security review finds that etcd is not encrypted at rest. What is the recommended remediation?",
     diagram: null,
     options: [
-      "Enable encryption at rest by configuring an <code>EncryptionConfiguration</code> with an appropriate provider",
+      "Enable encryption at rest by configuring an <code>EncryptionConfiguration</code> with an appropriate encryption provider on the API server",
       "Switch to using environment variables instead of mounted Secrets to avoid storing credentials in etcd",
-      "Move all TLS certificates to <code>ConfigMap</code> resources, which are automatically encrypted at rest by default in Kubernetes",
+      "Move all TLS certificates to <code>ConfigMap</code> resources, which are automatically encrypted at rest by default",
       "Deploy a separate dedicated etcd cluster exclusively for Secret storage with its own encryption enabled"
     ],
     answer: 0,
@@ -744,10 +744,10 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record (e.g., <code>cassandra.database.svc.cluster.local</code>) that load-balances across Pod IPs via <code>kube-proxy</code> round-robin rules",
-      "Only SRV records are created for headless Services; A records require extra DNS configuration not enabled by default in CoreDNS",
+      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> round-robin routing rules",
+      "Only SRV records are created for headless Services; A records require extra DNS configuration in CoreDNS",
       "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the Kubernetes DNS system entirely",
-      "Individual A records for each Pod plus a Service-level A record that returns all Pod IPs in the response"
+      "Individual A records for each Pod (by ordinal) plus a Service-level A record that returns all Pod IPs in the response"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.\n\nWhy other options are wrong:\n- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -842,7 +842,7 @@ var questions = [
     options: [
       "It doubles the current count (<code>2 * currentReplicas = 2 * 4 = 8</code>) to bring utilization below the target threshold",
       "It adds 1 replica at a time in successive reconciliation cycles until utilization drops below the 70% target",
-      "It immediately scales to <code>maxReplicas</code> (10) because current utilization exceeds the configured target",
+      "It scales to <code>maxReplicas</code> (10) because 90% > 70% triggers a full scale-up to the configured ceiling",
       "It computes <code>ceil(currentReplicas * (currentUtilization / targetUtilization))</code> = <code>ceil(4 * 90/70) = 6</code>"
     ],
     answer: 3,
@@ -920,10 +920,10 @@ var questions = [
     text: "A cluster has nodes in three availability zones: <code>zone-a</code>, <code>zone-b</code>, and <code>zone-c</code>. A Deployment with 6 replicas needs Pods spread evenly across zones. Which Kubernetes feature achieves this?",
     diagram: null,
     options: [
-      "Pod affinity rules to spread replicas using <code>topologyKey: topology.kubernetes.io/zone</code> for co-location in each zone",
+      "Pod affinity rules to co-locate replicas using <code>topologyKey: topology.kubernetes.io/zone</code> within each zone",
       "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code> in the Pod spec",
       "Node affinity rules that prefer nodes in each availability zone equally using weighted preferences",
-      "Setting <code>replicas: 2</code> in three separate Deployments, with one Deployment targeted to each zone"
+      "Setting <code>replicas: 2</code> in three separate Deployments, with one Deployment targeted to each availability zone"
     ],
     answer: 1,
     explanation: "Topology spread constraints allow you to control how Pods are distributed across topology domains (like zones or nodes). Setting `maxSkew: 1` with `topologyKey: topology.kubernetes.io/zone` ensures that the difference in Pod count between any two zones is at most 1, resulting in 2 Pods per zone for 6 replicas across 3 zones.\n\nWhy other options are wrong:\n- A: Pod affinity co-locates Pods together, which is the opposite of spreading them across zones\n- C: Node affinity with preferred weights is a soft constraint and does not guarantee even distribution\n- D: Three separate Deployments add management overhead and break the single-Deployment abstraction\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -937,12 +937,12 @@ var questions = [
     diagram: null,
     options: [
       "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer will terminate the container",
-      "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately by the node allocatable budget",
+      "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately, and the node eviction manager reclaims them",
       "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
-    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.\n\nWhy other options are wrong:\n- B: tmpfs-backed emptyDir memory is charged to the same cgroup as the container process, not tracked separately by the node allocatable budget\n- C: tmpfs memory is charged to the container's cgroup memory limit, not to the node's system-reserved allocation\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
+    explanation: "When `emptyDir` uses `medium: Memory`, data is stored in a `tmpfs` filesystem that consumes RAM. This memory usage is charged to the Pod's cgroup and counts toward the Pod's overall memory budget (which, for a single-container Pod, equals the container's memory limit). Even though the application process itself uses only 500MB, if the tmpfs-backed emptyDir consumes enough data to push the combined total past 2GB, the kernel's OOM killer terminates the container.\n\nWhy other options are wrong:\n- B: tmpfs-backed emptyDir memory is charged to the same cgroup as the container process, not tracked separately; the node eviction manager does not handle them independently\n- C: tmpfs memory is charged to the container's cgroup memory limit, not to the node's system-reserved allocation\n- D: tmpfs memory counts against the container's cgroup limit, not a separate Pod-level overhead\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
     verify: "kubectl describe pod <pod-name> | grep -A3 'Last State'"
   },
   {
@@ -968,10 +968,10 @@ var questions = [
     text: "A Prometheus instance is configured with a <code>scrape_interval</code> of 15 seconds and a <code>scrape_timeout</code> of 10 seconds. One target consistently takes 12 seconds to respond to scrape requests. What is the impact on Prometheus metrics collection for this target?",
     diagram: null,
     options: [
-      "Prometheus waits the full 12 seconds and successfully collects the metrics since it is within the <code>scrape_interval</code>",
+      "Prometheus waits the full 12 seconds and collects the metrics since the response is within <code>scrape_interval</code>",
       "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
       "The scrape fails because the 12-second response exceeds the 10-second <code>scrape_timeout</code> and <code>up</code> reads 0",
-      "The target is dropped from the scrape configuration after three consecutive timeout failures"
+      "The target is permanently dropped from the scrape configuration after three consecutive timeout failures"
     ],
     answer: 2,
     explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.\n\nWhy other options are wrong:\n- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus does not drop targets from config after timeouts; they remain and are retried each interval\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
@@ -1000,9 +1000,9 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.28. A developer creates a Pod using the <code>apps/v1</code> API group for a Deployment and the <code>v1</code> API group for a ConfigMap. What determines which API group and version is used for a particular resource?",
     diagram: null,
     options: [
-      "The developer can select from multiple compatible API groups for each resource type during manifest creation in the cluster",
+      "The developer can select from multiple compatible API groups for each resource type during manifest creation",
       "The API group used for each resource is determined by the namespace in which the resource is being created",
-      "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent versions",
+      "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent Kubernetes versions",
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
     ],
     answer: 3,
@@ -1032,9 +1032,9 @@ var questions = [
     text: "A team has a Deployment with <code>revisionHistoryLimit: 3</code>. After performing 7 rolling updates, how many old ReplicaSets are retained in the cluster?",
     diagram: null,
     options: [
-      "3 old ReplicaSets as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
+      "3 old ReplicaSets are retained as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
       "0 old ReplicaSets, because Kubernetes automatically cleans up all inactive ReplicaSets after updates",
-      "7 old ReplicaSets are retained in the cluster because <code>revisionHistoryLimit</code> caps ReplicaSets older than 30 days",
+      "7 old ReplicaSets are retained because <code>revisionHistoryLimit</code> caps ReplicaSets older than 30 days",
       "1 old ReplicaSet is retained, representing only the immediately previous version of the Deployment"
     ],
     answer: 0,
@@ -1161,8 +1161,8 @@ var questions = [
     diagram: null,
     options: [
       "The PVC is bound to a 10Gi EBS volume that supports <code>ReadWriteMany</code> access mode across multiple nodes",
-      "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume to support <code>ReadWriteMany</code> access",
-      "The PVC is created with <code>ReadWriteOnce</code> mode, silently ignoring the requested access mode",
+      "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume for <code>ReadWriteMany</code> access",
+      "The PVC is created with <code>ReadWriteOnce</code> mode, silently downgrading from the requested access mode",
       "The PVC stays <code>Pending</code> because AWS EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
     ],
     answer: 3,
@@ -1418,8 +1418,8 @@ var questions = [
     options: [
       "Edit the <code>values.yaml</code> file in the chart source and change <code>replicaCount</code> to 1 directly in the repository",
       "Use <code>helm install --set replicaCount=1</code> or provide a separate <code>-f staging-values.yaml</code> to override",
-      "Create a Kustomize overlay that patches the Helm template output after rendering to change the replica count",
-      "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for staging"
+      "Create a Kustomize overlay that patches the Helm template output to change the replica count",
+      "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for the staging environment"
     ],
     answer: 1,
     explanation: "Helm allows overriding default values at install or upgrade time using `--set` flags or `-f` with a custom values file. The `--set replicaCount=1` flag overrides the chart's `values.yaml` without modifying it. Using a separate `staging-values.yaml` file is preferred for complex overrides, as it is version-controllable and easier to maintain than inline `--set` flags.\n\nWhy other options are wrong:\n- A: Editing values.yaml in the chart source modifies the chart itself, which the question wants to avoid\n- C: Kustomize overlays can post-process Helm output but add unnecessary complexity for simple overrides\n- D: Helm does not read environment variables for value injection; --set or -f flags are the correct mechanism\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",
@@ -1512,9 +1512,9 @@ var questions = [
     text: "An operator uses <code>kubectl annotate pod my-pod description=\"web server\"</code> to add an annotation. Another team member tries to use this annotation in a <code>nodeSelector</code> to influence scheduling. Does this work?",
     diagram: null,
     options: [
-      "Yes, annotations and labels are interchangeable for scheduling purposes in all Kubernetes versions",
-      "Yes, but only if the annotation key follows the DNS naming convention required for node selectors",
-      "No, annotations are restricted to cluster-scoped objects and cannot be applied to namespace-scoped resources like Pods",
+      "Yes, annotations and labels are interchangeable and usable for scheduling purposes in all Kubernetes versions",
+      "Yes, but only if the annotation key strictly follows the DNS subdomain naming convention for node selectors",
+      "No, annotations are restricted to cluster-scoped objects and cannot be applied to namespace-scoped resources",
       "No, annotations are non-identifying metadata not used by selectors or scheduling; labels are required for selection"
     ],
     answer: 3,

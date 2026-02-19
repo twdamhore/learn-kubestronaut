@@ -299,10 +299,10 @@ var questions = [
       "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
       "Flannel — a CNI plugin providing overlay networking with a basic dataplane",
       "kube-router — a networking project using BGP with NetworkPolicy via iptables",
-      "Multus — a CNCF sandbox project that attaches multiple network interfaces to pods"
+      "Multus — a meta-CNI plugin that attaches multiple network interfaces to pods"
     ],
     answer: 0,
-    explanation: "Cilium is a CNCF graduated project that uses eBPF for high-performance networking and has full `NetworkPolicy` support plus extended policy features. Flannel is a simple overlay CNI that does not enforce `NetworkPolicy`. kube-router supports policies via iptables but does not use eBPF. Multus is a meta-CNI plugin that attaches multiple interfaces to pods but delegates actual networking to other plugins.\n\nWhy other options are wrong:\n- B: Flannel is a simple overlay CNI focused on basic connectivity; it does not enforce NetworkPolicy.\n- C: kube-router supports NetworkPolicy via iptables but does not use an eBPF dataplane.\n- D: Multus is a meta-plugin that attaches multiple network interfaces to pods but delegates actual networking to other CNI plugins.\n\nReference: https://www.cncf.io/projects/cilium/",
+    explanation: "Cilium is a CNCF graduated project that uses eBPF for high-performance networking and has full `NetworkPolicy` support plus extended policy features. Flannel is a simple overlay CNI that does not enforce `NetworkPolicy`. kube-router supports policies via iptables but does not use eBPF. Multus is not a CNCF project; it is a meta-CNI plugin that attaches multiple interfaces to pods but delegates actual networking to other plugins.\n\nWhy other options are wrong:\n- B: Flannel is a simple overlay CNI focused on basic connectivity; it does not enforce NetworkPolicy.\n- C: kube-router supports NetworkPolicy via iptables but does not use an eBPF dataplane.\n- D: Multus is a meta-CNI plugin (not a CNCF project) that attaches multiple network interfaces to pods but delegates actual networking to other CNI plugins.\n\nReference: https://www.cncf.io/projects/cilium/",
     verify: null
   },
   {
@@ -488,10 +488,10 @@ var questions = [
     text: "A `NodePort` Service is created without specifying a port number. Which range does Kubernetes use to auto-assign the node port?",
     diagram: null,
     options: [
-      "80–443 reserved for standard HTTP and HTTPS traffic on the host",
-      "1024–65535 which covers the entire non-privileged port range",
+      "80–443 reserved for standard HTTP and HTTPS traffic on the host machines",
+      "1024–65535 which covers the entire non-privileged port range on nodes",
       "30000–32767 which is the default NodePort allocation range for Services",
-      "49152–65535 which is the IANA dynamic and private port range"
+      "49152–65535 which is the IANA dynamic and private port range on hosts"
     ],
     answer: 2,
     explanation: "The default `NodePort` range is 30000–32767, as defined by the kube-apiserver's `--service-node-port-range` flag. Ports 80–443 are well-known ports typically reserved for web servers. The range 1024–65535 covers unprivileged ports but is too broad. The ephemeral port range 49152–65535 is used by the OS for outbound connections, not by Kubernetes for NodePort Services.\n\nWhy other options are wrong:\n- A: Ports 80-443 are well-known ports for HTTP/HTTPS, not the NodePort allocation range.\n- B: 1024-65535 covers the entire non-privileged port range, which is far broader than the NodePort range.\n- D: 49152-65535 is the IANA dynamic/private port range used by the OS for outbound connections, not by Kubernetes.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -602,7 +602,7 @@ var questions = [
     options: [
       "The IP of the node's local `DNS cache daemon` running on each worker",
       "The `kube-apiserver`'s `ClusterIP` used for cluster management traffic",
-      "The ClusterIP of the `kube-dns` Service fronting CoreDNS in the `kube-system` ns",
+      "The ClusterIP of the `kube-dns` Service fronting CoreDNS in `kube-system`",
       "A hardcoded Google Public DNS address (`8.8.8.8`) configured in the base image"
     ],
     answer: 2,
@@ -729,12 +729,12 @@ var questions = [
     diagram: null,
     options: [
       "Envoy Gateway — an Envoy-based API ingress project",
-      "Ambassador — a developer-focused API gateway solution",
+      "Emissary-Ingress — a developer-focused API gateway solution",
       "Contour — an Envoy-powered Ingress routing controller",
       "Gateway API — the standards-based routing project"
     ],
     answer: 3,
-    explanation: "Gateway API is the CNCF/Kubernetes SIG-Network project that provides a role-oriented, expressive API for routing as the evolution of the Ingress resource. It supports advanced features like traffic splitting, header-based routing, and cross-namespace references. Envoy Gateway is an implementation of Gateway API, not the specification itself. Contour and Ambassador are Ingress controllers/implementations, not the standard API.\n\nWhy other options are wrong:\n- A: Envoy Gateway is an implementation of Gateway API, not the specification/standard itself.\n- B: Ambassador is an Ingress controller/API gateway product, not the standards-based routing API.\n- C: Contour is an Envoy-powered Ingress controller implementation, not the successor standard to the Ingress API.\n\nReference: https://gateway-api.sigs.k8s.io/",
+    explanation: "Gateway API is the CNCF/Kubernetes SIG-Network project that provides a role-oriented, expressive API for routing as the evolution of the Ingress resource. It supports advanced features like traffic splitting, header-based routing, and cross-namespace references. Envoy Gateway is an implementation of Gateway API, not the specification itself. Contour and Emissary-Ingress are Ingress controllers/implementations, not the standard API.\n\nWhy other options are wrong:\n- A: Envoy Gateway is an implementation of Gateway API, not the specification/standard itself.\n- B: Emissary-Ingress is an Ingress controller/API gateway product, not the standards-based routing API.\n- C: Contour is an Envoy-powered Ingress controller implementation, not the successor standard to the Ingress API.\n\nReference: https://gateway-api.sigs.k8s.io/",
     verify: null
   },
   {
@@ -745,8 +745,8 @@ var questions = [
     diagram: null,
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
-      "`kube_endpoint_ready_count` with a configured threshold of zero ready endpoints",
-      "`kube_endpoint_address{ready=\"true\"}` equal to zero for the Service to detect missing healthy endpoints",
+      "`kube_endpoint_ready_count` with a configured alert threshold of zero ready endpoints set",
+      "`kube_endpoint_address{ready=\"true\"}` equal to zero for the target Service",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
@@ -842,8 +842,8 @@ var questions = [
     options: [
       "`spec.loadBalancerSourceRanges` set to a list of allowed CIDR blocks for access",
       "`spec.externalTrafficPolicy: Restricted` to limit loadBalancer source IPs",
-      "`metadata.annotations.allowed-ips` to define allowed clients",
-      "`spec.selector.sourceIP` matching allowed client IP address ranges"
+      "`metadata.annotations.allowed-ips` to define allowed client IP ranges for load balancers",
+      "`spec.selector.sourceIP` matching allowed external client IP address ranges"
     ],
     answer: 0,
     explanation: "`spec.loadBalancerSourceRanges` accepts a list of CIDR blocks and instructs the cloud load balancer (or kube-proxy on bare metal) to only allow traffic from those ranges. There is no `Restricted` value for `externalTrafficPolicy`. `allowed-ips` is not a standard annotation. Selectors match pod labels, not source IPs.\n\nWhy other options are wrong:\n- B: There is no `externalTrafficPolicy: Restricted` value; valid values are `Cluster` and `Local`.\n- C: `metadata.annotations.allowed-ips` is not a standard Kubernetes annotation for source IP restriction.\n- D: `spec.selector` matches pod labels for backend selection, not client source IP ranges.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#restricting-traffic-to-specific-clients",
@@ -923,7 +923,7 @@ var questions = [
       "Cluster-internal names are resolved but external names may time out without forwarding",
       "The pod uses the node DNS settings by default, querying CoreDNS for cluster-local names",
       "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
-      "The pod queries CoreDNS and the node resolver in round-robin order based on the search domain list"
+      "The pod queries CoreDNS and the node resolver in round-robin order for each DNS lookup"
     ],
     answer: 2,
     explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.\n\nWhy other options are wrong:\n- A: External names are not merely dependent on upstream configuration; CoreDNS actively forwards unresolved queries to upstream DNS servers.\n- B: `ClusterFirst` sends queries to CoreDNS first, not to the node DNS by default; the `Default` policy uses node DNS settings.\n- D: There is no round-robin order between CoreDNS and the node resolver; `ClusterFirst` always queries CoreDNS first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A developer sets `spec.ports[0].appProtocol: kubernetes.io/h2c` on a Service. What does this indicate to consuming infrastructure?",
     diagram: null,
     options: [
-      "The Service enables TLS 1.2 encryption for proxy-to-backend pod connections",
+      "The Service enables TLS 1.2 encryption for proxy-to-backend pod connections by default",
       "kube-proxy will use HTTP/2 to communicate with the API server for this Service endpoint",
       "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2 via protocol negotiation",
       "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
@@ -1400,10 +1400,10 @@ var questions = [
     text: "A pod uses `dnsPolicy: None` and provides custom `dnsConfig` with `nameservers: [\"8.8.8.8\"]`. Can this pod resolve cluster-internal Service names?",
     diagram: null,
     options: [
-      "Yes, because kube-proxy intercepts cluster-internal DNS queries regardless of the configured nameserver",
+      "Yes, because kube-proxy intercepts cluster-internal DNS queries regardless of nameserver",
       "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
       "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
-      "No, because `dnsPolicy: None` disables all kubelet-injected DNS settings, leaving the pod with no resolver"
+      "No, because `dnsPolicy: None` disables all kubelet-injected DNS settings for the pod entirely"
     ],
     answer: 2,
     explanation: "With `dnsPolicy: None`, the pod uses only the nameservers specified in `dnsConfig`. Since `8.8.8.8` (Google Public DNS) has no knowledge of `*.svc.cluster.local` names, cluster-internal Service names will fail to resolve. kube-proxy does not intercept DNS. Not all queries go through CoreDNS when `None` is set. `dnsPolicy: None` does not disable DNS — it requires explicit configuration via `dnsConfig`.\n\nWhy other options are wrong:\n- A: kube-proxy does not intercept DNS queries; it manages Service-level iptables/IPVS forwarding rules.\n- B: With `dnsPolicy: None`, queries are NOT routed through CoreDNS; they go only to the specified nameservers.\n- D: `dnsPolicy: None` does not disable DNS; it requires the user to provide explicit DNS configuration via `dnsConfig`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",

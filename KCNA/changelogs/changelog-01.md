@@ -107,3 +107,35 @@
 **Problem:** The diagram contains the label "Auth Mechanism ?" and the correct answer (B) was the only option using the word "mechanism," creating a keyword echo that gives away the answer.
 
 **Change:** Changed option B from `"The \`ServiceAccount\` mechanism, which mounts a projected token volume into each Pod"` to `"The \`ServiceAccount\` resource, which mounts a projected token volume into each Pod"`.
+
+---
+
+# Round 38 Review - Set 01
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s01-q004 (giveaway)
+- **Option A:** Added "and its socket interface" to match the technical specificity of the correct answer C.
+
+### s01-q043 (giveaway)
+- **Option B (correct):** Removed "CNCF graduated" authority signal. Changed to "Linkerd, a lightweight service mesh designed specifically for Kubernetes clusters".
+
+### s01-q066 (explanation quality)
+- **Option A explanation:** Updated to acknowledge priority influences eviction order within the same QoS class, rather than implying it is irrelevant.
+
+### s01-q083 (explanation quality)
+- **Option A:** Reworded to clarify ClusterRoleBinding misconception.
+- **Option A explanation:** Now states ClusterRoleBinding is always cluster-wide and cannot be namespace-scoped.
+
+### s01-q088 (option style)
+- **Option B (correct):** Changed "exports telemetry neutrally" to "exports telemetry data in a vendor-neutral way" for natural phrasing.
+
+### s01-q034 (giveaway)
+- **Option C (correct):** Expanded from "across service boundaries" to "across service boundaries in a request chain" to reduce named-concept giveaway.
+
+### s01-q067 (giveaway)
+- **Option A (correct):** Rephrased from hierarchical teaching structure to "LoadBalancer includes NodePort and ClusterIP functionality, so a LoadBalancer Service exposes all three access methods".

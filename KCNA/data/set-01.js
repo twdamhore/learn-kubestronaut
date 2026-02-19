@@ -56,7 +56,7 @@ var questions = [
     text: "A DevOps engineer is setting up a new Kubernetes cluster and needs to choose a container runtime. The cluster must comply with the Kubernetes Container Runtime Interface (CRI). Which of the following is a valid CRI-compliant runtime that Kubernetes can use natively since v1.24?",
     diagram: null,
     options: [
-      "`dockerd` bypassing the CRI layer entirely via the built-in dockershim adapter",
+      "`dockerd` bypassing the CRI layer entirely via the built-in dockershim adapter and its socket interface",
       "`rkt` (Rocket) with a pre-CRI container format based on the appc specification",
       "`containerd` with the CRI plugin enabled, communicating via the standard gRPC interface",
       "`LXC` with a custom Kubernetes bridge module for container lifecycle management"
@@ -538,7 +538,7 @@ var questions = [
     options: [
       "Centralized logging with correlated timestamps across all services in the system",
       "Health check endpoints on each service that report response times back to callers",
-      "Distributed tracing, which propagates trace context across service boundaries",
+      "Distributed tracing, which propagates trace context headers across service boundaries in a request chain",
       "Metric dashboards showing average latency per service over the last hour of data"
     ],
     answer: 2,
@@ -681,7 +681,7 @@ var questions = [
     diagram: null,
     options: [
       "Envoy, which provides a complete service mesh with a built-in control plane",
-      "Linkerd, a CNCF graduated lightweight service mesh designed for Kubernetes",
+      "Linkerd, a lightweight service mesh designed specifically for Kubernetes clusters",
       "Calico, which provides service mesh capabilities through its CNI plugin",
       "CoreDNS, which handles service-to-service routing and mTLS for Kubernetes"
     ],
@@ -1054,7 +1054,7 @@ var questions = [
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
     ],
     answer: 1,
-    explanation: "Kubernetes assigns a Quality of Service (QoS) class based on resource requests and limits. When `requests` equals `limits` for all containers, the Pod receives the `Guaranteed` QoS class, making it the last to be evicted during resource pressure. Pods with `Burstable` or `BestEffort` QoS are evicted first. While Pod priority can influence eviction order within the same QoS class, the QoS class itself is the primary factor the kubelet considers during eviction, making Guaranteed QoS the strongest protection. `terminationGracePeriodSeconds` only affects the shutdown process. The mentioned annotation does not exist.\n\nWhy other options are wrong:\n- A: High priority can influence preemption but does not make a Pod immune to kubelet eviction during node pressure.\n- C: terminationGracePeriodSeconds only affects the shutdown process after eviction is decided, not eviction order.\n- D: The annotation `eviction.kubernetes.io/protected: true` does not exist in Kubernetes.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/",
+    explanation: "Kubernetes assigns a Quality of Service (QoS) class based on resource requests and limits. When `requests` equals `limits` for all containers, the Pod receives the `Guaranteed` QoS class, making it the last to be evicted during resource pressure. Pods with `Burstable` or `BestEffort` QoS are evicted first. While Pod priority can influence eviction order within the same QoS class, the QoS class itself is the primary factor the kubelet considers during eviction, making Guaranteed QoS the strongest protection. `terminationGracePeriodSeconds` only affects the shutdown process. The mentioned annotation does not exist.\n\nWhy other options are wrong:\n- A: High priority influences eviction order within the same QoS class, but does not override QoS class -- a high-priority BestEffort Pod is still evicted before a low-priority Guaranteed Pod.\n- C: terminationGracePeriodSeconds only affects the shutdown process after eviction is decided, not eviction order.\n- D: The annotation `eviction.kubernetes.io/protected: true` does not exist in Kubernetes.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/",
     verify: "microk8s kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}{\"\\t\"}{.status.qosClass}{\"\\n\"}{end}' --all-namespaces 2>/dev/null"
   },
   {
@@ -1064,7 +1064,7 @@ var questions = [
     text: "A team deploys a LoadBalancer Service in a cloud-managed Kubernetes cluster. They notice that the Service has both a ClusterIP and an external IP. A new engineer is confused about how the LoadBalancer type relates to other Service types. Which statement is correct?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="120" y="5" width="160" height="60" rx="8" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="200" y="25" text-anchor="middle" fill="white" font-size="12">Service (type: ?)</text><text x="200" y="42" text-anchor="middle" fill="#adf" font-size="10">IP: ?</text><text x="200" y="56" text-anchor="middle" fill="#fda" font-size="10">Behavior: ?</text><text x="200" y="85" text-anchor="middle" fill="#ccc" font-size="12">? How do these relate ?</text><rect x="50" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="95" y="185" text-anchor="middle" fill="white" font-size="11">Pod A</text><rect x="155" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="200" y="185" text-anchor="middle" fill="white" font-size="11">Pod B</text><rect x="260" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="305" y="185" text-anchor="middle" fill="white" font-size="11">Pod C</text><line x1="200" y1="65" x2="95" y2="160" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="65" x2="200" y2="160" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="65" x2="305" y2="160" stroke="#aaa" stroke-width="1.5"/></svg>',
     options: [
-      "LoadBalancer builds on NodePort, which builds on ClusterIP, so a LoadBalancer Service has all three",
+      "LoadBalancer includes NodePort and ClusterIP functionality, so a LoadBalancer Service exposes all three access methods",
       "LoadBalancer is independent of ClusterIP and NodePort; it creates a completely separate traffic path",
       "LoadBalancer replaces ClusterIP with an external IP, so the Service is no longer internally accessible",
       "LoadBalancer requires a headless Service with no ClusterIP, as the external IP replaces the virtual cluster IP"
@@ -1320,13 +1320,13 @@ var questions = [
     text: "A cluster administrator needs to create a service account that can list and get Pods in the `development` namespace but cannot delete or create them. Which RBAC resources should they create?",
     diagram: null,
     options: [
-      "A `ClusterRole` with `get` and `list` verbs on Pods, and a `ClusterRoleBinding` scoped to `development`",
+      "A `ClusterRole` with `get` and `list` verbs on Pods, bound via a `ClusterRoleBinding` for the `development` namespace",
       "A `Role` in `development` with `get` and `list` on Pods, and a `RoleBinding` to the service account",
       "A `Role` with all verbs on Pods, then create a `NetworkPolicy` to restrict any write operations from it",
       "A `ServiceAccount` annotated with `rbac.authorization.kubernetes.io/verbs: get,list` for automatic binding"
     ],
     answer: 1,
-    explanation: "For namespace-scoped permissions, you create a `Role` (which defines verbs like `get` and `list` on resources like `pods`) and a `RoleBinding` (which binds the Role to a subject like a ServiceAccount) in the target namespace. A `ClusterRole` with a `ClusterRoleBinding` would grant access across all namespaces. NetworkPolicies control network traffic, not API permissions. ServiceAccount annotations do not control RBAC permissions.\n\nWhy other options are wrong:\n- A: A ClusterRole with ClusterRoleBinding grants access across ALL namespaces, not just development.\n- C: NetworkPolicies control network traffic, not API permissions; a Role with all verbs would be overly permissive.\n- D: The annotation `rbac.authorization.kubernetes.io/verbs` does not exist for automatic RBAC binding.\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    explanation: "For namespace-scoped permissions, you create a `Role` (which defines verbs like `get` and `list` on resources like `pods`) and a `RoleBinding` (which binds the Role to a subject like a ServiceAccount) in the target namespace. A `ClusterRole` with a `ClusterRoleBinding` would grant access across all namespaces. NetworkPolicies control network traffic, not API permissions. ServiceAccount annotations do not control RBAC permissions.\n\nWhy other options are wrong:\n- A: A ClusterRoleBinding is always cluster-wide and cannot be scoped to a single namespace; this would grant Pod read access across ALL namespaces.\n- C: NetworkPolicies control network traffic, not API permissions; a Role with all verbs would be overly permissive.\n- D: The annotation `rbac.authorization.kubernetes.io/verbs` does not exist for automatic RBAC binding.\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
     verify: "microk8s kubectl get roles,rolebindings -n default"
   },
   {
@@ -1401,7 +1401,7 @@ var questions = [
     diagram: null,
     options: [
       "Prometheus, which offers vendor-neutral collection of traces, metrics, and logs in one pipeline",
-      "OpenTelemetry Collector, which receives, processes, and exports telemetry neutrally",
+      "OpenTelemetry Collector, which receives, processes, and exports telemetry data in a vendor-neutral way",
       "Grafana Loki, which provides unified collection of all three telemetry signal types",
       "Fluentd, which has been extended to export traces and metrics alongside log streams"
     ],

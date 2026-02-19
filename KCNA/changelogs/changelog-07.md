@@ -59,3 +59,25 @@
 ### s07-q093 (explanation quality)
 - **Problem:** Option A explanation conceded that A is technically possible, weakening the question.
 - **Fix:** Replaced A explanation from "While an application could call exit(137), this exit code conventionally indicates SIGKILL (128+9); the question context points to an external signal, not an application-chosen exit code" to "An application calling exit(137) is technically possible but extremely unusual; the Reason: Error status set by the container runtime combined with exit code 137 specifically indicates the process was killed by signal 9 (SIGKILL), not a voluntary exit".
+
+---
+
+# Round 38 Review - Set 07
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 4 across 4 questions
+
+## Changes
+
+### s07-q018 (accuracy)
+- **Option A:** Fixed invalid field path `--sort-by=restartCount` to `--sort-by='.status.containerStatuses[0].restartCount'`.
+
+### s07-q055 (length-balance/giveaway)
+- **Option A (correct):** Expanded from ~125 to ~163 chars to match distractors B, C, D (~139-143 chars).
+
+### s07-q056 (option text accuracy)
+- **Option C:** Changed confusing "not failed" to "by the controller".
+
+### s07-q092 (explanation quality)
+- **Option D explanation:** Now addresses the actual comparative claim about node-level vs pod-level metrics.

@@ -307,9 +307,9 @@ var questions = [
     text: "A microservices platform has 30 services, each requiring slightly different configurations per environment. The team is spending significant time managing ConfigMaps manually. Which cloud-native pattern would best address this at scale?",
     diagram: null,
     options: [
-      "Merge all 30 services into a monolith to reduce the total number of ConfigMaps needed in the cluster",
+      "Merge all 30 services into a single monolith managed by Helm to reduce the total number of ConfigMaps needed",
       "Use a centralized config tool like Spring Cloud Config or Consul, integrated with Kubernetes APIs",
-      "Store all configurations in a single large ConfigMap shared across every service in the namespace",
+      "Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service in the namespace",
       "Reduce ConfigMap usage significantly by hardcoding most configuration values in each service's Dockerfile"
     ],
     answer: 1,
@@ -755,13 +755,13 @@ var questions = [
     text: "A cloud-native application needs to handle configuration changes without downtime. The current approach requires a pod restart for every ConfigMap update. Which pattern enables dynamic configuration reloading?",
     diagram: null,
     options: [
-      "Enable the `DynamicConfigReload` feature gate on the kubelet to allow automatic config propagation to pods",
-      "Set `restartPolicy: OnConfigChange` on the pod spec to make Kubernetes restart it automatically on updates",
-      "Use `kubectl apply --live-reload` to push ConfigMap changes directly into running container processes",
+      "Configure the kubelet `--sync-frequency` to a lower interval so volume-mounted ConfigMaps propagate to pods instantly",
+      "Set `immutable: false` on the ConfigMap and enable watch-based kubelet propagation to refresh env vars in the pod",
+      "Use `kubectl rollout restart` after each ConfigMap update to replace pods with ones reading the new values",
       "Use a sidecar that watches the mounted ConfigMap volume and signals (e.g., `SIGHUP`) the main process"
     ],
     answer: 3,
-    explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. There is no `restartPolicy: OnConfigChange`, no `kubectl apply --live-reload` flag, and no `DynamicConfigReload` feature gate in Kubernetes.\n\nWhy other options are wrong:\n- A: There is no DynamicConfigReload feature gate in Kubernetes\n- B: There is no restartPolicy: OnConfigChange in the Kubernetes pod spec\n- C: There is no kubectl apply --live-reload flag\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
+    explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. Adjusting kubelet sync frequency does not guarantee instant propagation, setting immutable: false is not a real field, and rollout restart replaces pods entirely rather than enabling dynamic reloading.\n\nWhy other options are wrong:\n- A: --sync-frequency controls kubelet sync interval but volume updates still have cache TTL delay; it cannot force instant propagation and does not reload the application process\n- B: ConfigMaps are mutable by default; immutable: false is not a real field, and kubelet volume syncing does not refresh env vars -- only volume-mounted files are updated\n- C: rollout restart replaces pods entirely rather than enabling dynamic reloading without downtime as the question requires\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
     verify: null
   },
 
@@ -1059,8 +1059,8 @@ var questions = [
     options: [
       "No — `args` does not support variable substitution; the `command` field is the supported location in pod specs",
       "No — variable substitution in `args` is limited to ConfigMap-sourced values and does not resolve Secret references",
-      "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` using env vars",
-      "Yes — but `enableServiceLinks` should be set to `true` on the pod specification for it to work"
+      "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` fields using defined env vars",
+      "Yes — but `enableServiceLinks` must be set to `true` on the pod specification for variable resolution to work"
     ],
     answer: 2,
     explanation: "Kubernetes supports `$(VAR_NAME)` variable substitution in both the `command` and `args` fields of a container spec. The substitution uses environment variables defined for that container, regardless of whether they come from ConfigMaps, Secrets, or literal values. This is a Kubernetes-level substitution performed before the container starts, not a shell expansion. `enableServiceLinks` controls service-related environment variables and is unrelated to this feature.\n\nWhy other options are wrong:\n- A: Both command and args support $(VAR_NAME) substitution, not just command\n- B: Variable substitution works with env vars from any source including Secrets, not just ConfigMaps\n- D: enableServiceLinks controls service-related env vars and is unrelated to $(VAR_NAME) substitution\n\nReference: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#use-environment-variables-to-define-arguments",
@@ -1260,7 +1260,7 @@ var questions = [
     id: "s02-q076",
     domain: "Kubernetes Fundamentals",
     subsection: "Core Concepts",
-    text: "A team wants to use a single ConfigMap to provide different configuration files to different containers in the same pod. Container A needs `app-a.conf` and container B needs `app-b.conf`. Both files are keys in the same ConfigMap. How should the volumes and mounts be configured?",
+    text: "A team wants to use a single ConfigMap to provide different configuration files to different containers in the same pod. Container A needs only `app-a.conf` at its mount path and container B needs only `app-b.conf` at its mount path. Neither container should see the other's configuration file. Both files are keys in the same ConfigMap. How should the volumes and mounts be configured?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Selective ConfigMap Mounting</text><rect x="130" y="50" width="140" height="40" rx="5" fill="#326CE5"/><text x="200" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap: app-config</text><line x1="160" y1="90" x2="90" y2="130" stroke="#555" stroke-width="1"/><line x1="240" y1="90" x2="310" y2="130" stroke="#555" stroke-width="1"/><rect x="30" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="95" y="150" text-anchor="middle" fill="white" font-size="11">Container A</text><text x="95" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-a.conf</text><rect x="240" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="305" y="150" text-anchor="middle" fill="white" font-size="11">Container B</text><text x="305" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-b.conf</text><text x="200" y="215" text-anchor="middle" fill="#aaa" font-size="10">How can each container receive only its own config file?</text></svg>',
     options: [
       "Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory",
@@ -1523,9 +1523,9 @@ var questions = [
     text: "A company's cloud-native strategy document states that \"configuration must be treated as a first-class artifact.\" In practical Kubernetes terms, what does this mean?",
     diagram: null,
     options: [
-      "Configuration files should be compiled into the application binary for maximum runtime performance and efficiency",
+      "Configuration files should be compiled into the application binary, validated at build time, and cached for runtime performance",
       "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires additional tooling",
-      "Configuration is best managed by a dedicated operations team applying changes through `kubectl` commands",
+      "Configuration is best managed by a dedicated operations team who apply, validate, and monitor changes through `kubectl` commands",
       "ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"
     ],
     answer: 3,

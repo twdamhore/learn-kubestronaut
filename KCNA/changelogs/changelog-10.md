@@ -132,3 +132,34 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q084 (giveaway)
 - **Option A:** Added comparable security detail to match correct answer's specificity. Changed from "No, `get`/`list`/`watch` only provide read access; the user cannot modify or delete secrets, so it is significantly less privileged than cluster-admin" to "No, `get`/`list`/`watch` only provide read access to secret metadata; the user cannot modify, delete, or escalate privileges via secrets".
+
+---
+
+# Round 38 Review - Set 10
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s10-q004 (clarity)
+- **Question text:** Added "but the existing pod on that node has not yet been evicted" to remove ambiguity about topology calculations.
+
+### s10-q037 (giveaway/length-balance)
+- **Option A:** Added comparable detail ("without delay", "to 2 of 6"). **Option D (correct):** Slightly trimmed.
+
+### s10-q039 (explanation quality)
+- **Option A explanation:** Now addresses the incorrect claim about deletions being unaffected.
+
+### s10-q042 (formatting)
+- **Option C:** Changed double dash `--` to em dash `—` for consistency.
+
+### s10-q066 (explanation quality)
+- **Option A explanation:** Now acknowledges page cache in cgroup memory and explains why worker processes point to child process memory.
+
+### s10-q088 (accuracy)
+- **Question text:** Added Cilium `io.cilium/global-service: "true"` annotation to justify global sharing behavior.
+
+### s10-q097 (explanation quality)
+- **Option A explanation:** Clarified that default-deny only applies to explicitly listed policyTypes, not all directions.

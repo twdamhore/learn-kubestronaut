@@ -148,3 +148,28 @@
 **Problem:** Correct answer A was the longest option with a verbose trailing clause.
 
 **Change:** Trimmed option A. Changed from `"Add the new key first in EncryptionConfiguration, restart the API server, then re-encrypt all Secrets with a replace command"` to `"Add the new key first in EncryptionConfiguration, restart the API server, then re-encrypt all existing Secrets"`.
+
+---
+
+# Round 38 Review - Set 02
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 5 across 5 questions
+
+## Changes
+
+### s02-q046 (giveaway)
+- **Options A, B, C:** Replaced fictitious Kubernetes features with real but misapplied concepts. Updated explanations accordingly.
+
+### s02-q076 (accuracy/ambiguity)
+- **Question text:** Added file-isolation requirement ("neither container should see the other's configuration file") to make option A clearly wrong.
+
+### s02-q092 (giveaway)
+- **Options A, C:** Added multi-step detail to match the correct answer's multi-activity structure.
+
+### s02-q019 (giveaway)
+- **Options A, C:** Added specific tool names (Helm, Kustomize) to match the correct answer's specificity.
+
+### s02-q064 (length-balance)
+- **Options C, D:** Expanded "Yes" options to reduce structural clustering between "Yes" (shorter) and "No" (longer) options.

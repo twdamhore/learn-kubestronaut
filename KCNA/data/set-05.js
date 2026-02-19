@@ -185,9 +185,9 @@ var questions = [
     diagram: null,
     options: [
       "Verify every request regardless of its source network location or trust level",
-      "Authenticate external traffic at the perimeter and trust internal service-to-service calls",
-      "Encrypt only external-facing traffic at the ingress gateway layer",
-      "Combine perimeter firewalls with namespace isolation to secure the cluster network"
+      "Authenticate external traffic at the perimeter and trust all internal calls",
+      "Encrypt only external-facing traffic at the ingress gateway layer for security",
+      "Combine perimeter firewalls with namespace isolation to secure the cluster"
     ],
     answer: 0,
     explanation: "Zero-trust security requires that every request is authenticated, authorized, and encrypted regardless of whether it originates from inside or outside the network perimeter. This contrasts with perimeter-based models that implicitly trust internal traffic.\n\nWhy other options are wrong:\n- B: Zero-trust requires verifying every call, including internal service-to-service traffic, not just external requests\n- C: Zero-trust requires encryption of all traffic, not just external-facing traffic\n- D: Zero-trust requires per-request verification and does not rely on perimeter firewalls or namespace boundaries alone\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
@@ -680,10 +680,10 @@ var questions = [
     text: "In a microservices architecture, each service has its own database. How does this design pattern enhance security compared to a shared database?",
     diagram: null,
     options: [
-      "Individual databases use inherently stronger encryption algorithms",
+      "Individual databases inherently use stronger encryption algorithms by design",
       "Shared databases are harder to secure because every service needs broad access",
       "A breach in one service's database does not expose other services' data",
-      "Individual databases reduce the number of network connections that must be monitored"
+      "Per-service databases reduce the total network connections that need monitoring"
     ],
     answer: 2,
     explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies and access controls; the concern is blast radius, not securability\n- D: Per-service databases actually increase the total number of connections to monitor; the security benefit is blast-radius reduction, not fewer connections\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
@@ -760,9 +760,9 @@ var questions = [
     text: "You need to allow a user read-only access to resources across all namespaces without any modification rights. Which built-in ClusterRole is appropriate?",
     diagram: null,
     options: [
-      "`admin` — grants full read and write access within a namespace",
+      "`admin` — grants full read and write access in a namespace",
       "`edit` — grants read-write access without role management",
-      "`view` — grants read-only access to most resources",
+      "`view` — grants read-only access to most namespace resources",
       "`cluster-admin` — grants unrestricted cluster-wide access"
     ],
     answer: 2,
@@ -840,7 +840,7 @@ var questions = [
     text: "A Pod runs with `securityContext.runAsUser: 1000` at the pod level, but one of its containers specifies `securityContext.runAsUser: 2000`. Which UID does that container use?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="10" width="340" height="180" rx="10" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#4cc9f0" font-size="12">Pod securityContext</text><text x="200" y="55" text-anchor="middle" fill="#f8f8f2" font-size="11">runAsUser: 1000</text><rect x="50" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#50fa7b" stroke-width="1.5"/><text x="115" y="100" text-anchor="middle" fill="#50fa7b" font-size="11">Container A</text><text x="115" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">container-level override</text><text x="115" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text><rect x="220" y="75" width="130" height="100" rx="6" fill="#16213e" stroke="#ff79c6" stroke-width="1.5"/><text x="285" y="100" text-anchor="middle" fill="#ff79c6" font-size="11">Container B</text><text x="285" y="120" text-anchor="middle" fill="#f8f8f2" font-size="10">(no override)</text><text x="285" y="155" text-anchor="middle" fill="#f1fa8c" font-size="11">UID = ?</text></svg>',
     options: [
-      "UID 1000, because pod-level settings take precedence over container-level settings",
+      "UID 1000, because pod-level security settings override container-level",
       "UID 2000, because container-level settings override pod-level settings",
       "An error occurs due to conflicting UID specifications in the Pod spec",
       "The container runtime selects the UID based on what the image specifies"
@@ -1369,9 +1369,9 @@ var questions = [
     diagram: null,
     options: [
       "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
-      "A custom label `app.kubernetes.io/managed-by: networkpolicy` on the source namespace",
-      "The custom label `team: app` matching the policy's `namespaceSelector`",
-      "No label is needed; `namespaceSelector` resolves namespace names to IPs automatically"
+      "A custom label `app.kubernetes.io/managed-by: networkpolicy` on the namespace",
+      "The label `team: app` must be applied to match the policy's `namespaceSelector`",
+      "No label is needed; `namespaceSelector` resolves namespace names automatically"
     ],
     answer: 2,
     explanation: "NetworkPolicy `namespaceSelector` matches namespaces by labels, not by name. The policy specifies `matchLabels: {team: app}`, so the `app` namespace must carry the label `team: app` for the selector to match and allow ingress traffic. While Kubernetes 1.22+ auto-assigns the `kubernetes.io/metadata.name` label to every namespace, the policy here uses a custom label that must be applied manually.\n\nWhy other options are wrong:\n- A: kubernetes.io/name is not a standard auto-label; the auto-label is kubernetes.io/metadata.name, and neither matches the custom `team: app` selector\n- B: app.kubernetes.io/managed-by: networkpolicy is not a standard label and does not match the policy's `team: app` selector\n- D: namespaceSelector works via labels, not by resolving names to IP ranges; the namespace must carry the matching label\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Completed Pods are immediately removed from the cluster after job finishes",
       "Completed Pods have their mounted volumes automatically encrypted at rest",
-      "Completed Pods have their environment variables redacted from describe output for security",
+      "Completed Pods have their environment variables redacted from describe output",
       "Env vars and volume mounts with sensitive data remain accessible via kubectl"
     ],
     answer: 3,
@@ -1560,7 +1560,7 @@ var questions = [
     text: "A container image is stored in a registry with content trust enabled (Docker Content Trust / Notary). What does content trust verify?",
     diagram: null,
     options: [
-      "That the container image has no known vulnerabilities in its trusted base layers",
+      "That the container image has no known vulnerabilities in its layers",
       "That the image meets size and format requirements for the registry",
       "That the container image uses a non-root user in its configuration",
       "That the image was signed by a trusted publisher and is untampered"

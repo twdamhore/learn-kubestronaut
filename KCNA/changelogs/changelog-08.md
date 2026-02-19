@@ -105,3 +105,43 @@
 ### s08-q083 (giveaway residual from R36)
 - **Problem:** Correct D became the longest option after R36 extension; C was too short.
 - **Fix:** Trimmed D from "Two separate `from` entries: one with `podSelector: {matchLabels: {role: frontend}}`, and another with `namespaceSelector` for `monitoring`" to "Two separate `from` entries: one with `podSelector` matching `role: frontend`, and another with `namespaceSelector` for `monitoring`". Extended C from "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from `monitoring` namespace Pods for egress controls" to "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from all `monitoring` namespace Pods for egress traffic controls".
+
+---
+
+# Round 38 Review - Set 08
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 10 across 10 questions
+
+## Changes
+
+### s08-q046 (length-balance/giveaway)
+- **Option A (correct):** Trimmed from ~140 to ~120 chars. **Option D:** Extended from ~112 to ~120 chars.
+
+### s08-q054 (length-balance/giveaway)
+- **Option B (correct):** Trimmed from ~118 to ~110 chars. **Option C:** Extended from ~96 to ~107 chars.
+
+### s08-q005 (length-balance)
+- **Option A (correct):** Trimmed from ~101 to ~91 chars. **Option B:** Extended from ~82 to ~93 chars.
+
+### s08-q011 (length-balance)
+- **Options C, D:** Extended to close gap with A and B.
+
+### s08-q009 (length-balance)
+- **Option C (correct):** Extended from ~85 to ~98 chars with "pull-based".
+
+### s08-q067 (length-balance)
+- **Option A:** Trimmed from ~119 to ~106 chars.
+
+### s08-q044 (length-balance)
+- **Option D:** Extended from ~86 to ~96 chars.
+
+### s08-q064 (length-balance)
+- **Option A:** Trimmed from ~134 to ~123 chars.
+
+### s08-q078 (accuracy)
+- **Explanation:** Removed "as of 2025" from gRPC maturity reference.
+
+### s08-q084 (length-balance)
+- **Option C (correct):** Extended from ~95 to ~103 chars.

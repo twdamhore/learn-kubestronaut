@@ -48,3 +48,34 @@
 ### s05-q064 (accuracy)
 - **Problem:** Explanation incorrectly cited "Kubernetes 1.14" for the view ClusterRole excluding Secrets; this version reference is not accurate.
 - **Fix:** Changed "Since Kubernetes 1.14, the built-in view ClusterRole excludes Secrets." to "The built-in view ClusterRole excludes Secrets by design."
+
+---
+
+# Round 38 Review - Set 05
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s05-q012 (length-balance)
+- **Options B, C, D:** Rebalanced. Shortened B and D, lengthened C to close 38.5% gap.
+
+### s05-q043 (length-balance)
+- **Option A:** Expanded. **Option D:** Shortened. Reduced 27.3% gap to ~11%.
+
+### s05-q048 (length-balance)
+- **Option C (correct):** Expanded "most resources" to "most namespace resources". **Option A:** Shortened "within" to "in".
+
+### s05-q053 (length-balance)
+- **Option A:** Shortened from ~82 to ~71 chars.
+
+### s05-q089 (length-balance)
+- **Option C:** Shortened from ~90 to ~77 chars.
+
+### s05-q098 (length-balance)
+- **Option A:** Shortened from ~80 to ~67 chars.
+
+### s05-q086 (length-balance)
+- **Options B, C, D:** Rebalanced. Shortened B and D, expanded C.

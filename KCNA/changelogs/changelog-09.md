@@ -93,3 +93,64 @@
 
 ### s09-q098 (giveaway)
 - **Option B:** Added "with exponential backoff" to make B also conditional/nuanced, reducing the giveaway that A was the only non-absolute option.
+
+---
+
+# Round 38 Review - Set 09
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 18 across 16 questions
+
+## Changes
+
+### s09-q011 (length-balance)
+- **Option B (answer):** Expanded ~97→~108 chars. **Option D:** Trimmed ~120→~108 chars.
+
+### s09-q013 (length-balance)
+- **Option C:** Expanded ~100→~112 chars. **Option D:** Trimmed ~126→~114 chars.
+
+### s09-q016 (length-balance)
+- **Option A:** Expanded ~91→~100 chars. **Option C:** Trimmed ~111→~100 chars.
+
+### s09-q020 (length-balance)
+- **Option A:** Expanded ~92→~102 chars. **Option B:** Trimmed ~116→~105 chars.
+
+### s09-q023 (length-balance)
+- **Option D (answer):** Expanded ~81→~92 chars.
+
+### s09-q027 (length-balance)
+- **Option C:** Expanded ~85→~97 chars.
+
+### s09-q028 (length-balance)
+- **Option A (answer):** Expanded ~96→~105 chars. **Option C:** Trimmed ~116→~105 chars.
+
+### s09-q047 (length-balance, residual)
+- **Options A, B:** Trimmed. **Option D (answer):** Expanded.
+
+### s09-q058 (length-balance, residual)
+- **Option A:** Trimmed. **Option D:** Expanded.
+
+### s09-q061 (length-balance)
+- **Option A:** Trimmed. **Option D:** Expanded.
+
+### s09-q063 (length-balance)
+- **Option A:** Trimmed. **Option C:** Expanded.
+
+### s09-q065 (length-balance)
+- **Option A (answer):** Expanded. **Option C:** Trimmed.
+
+### s09-q073 (length-balance, residual)
+- **Option C:** Expanded. **Option B:** Trimmed.
+
+### s09-q089 (length-balance)
+- **Option D:** Expanded. **Option C:** Trimmed.
+
+### s09-q095 (length-balance, residual)
+- **Options A, B:** Expanded. **Option C:** Trimmed.
+
+### s09-q059 (giveaway)
+- **Option B:** Added concrete mechanism name (node eviction manager).
+
+### s09-q053 (giveaway)
+- **Option C:** Added percentage comparison to match correct answer's formula.

@@ -111,3 +111,22 @@
 ### s06-q098 (label-ordering)
 - **Problem:** Options array had labels in order A, C, B, D instead of A, B, C, D.
 - **Fix:** Reordered options to A, B, C, D; updated answer index from 2 to 1 (correct answer: B).
+
+---
+
+# Round 38 Review - Set 06
+
+**Date:** 2026-02-19
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 3 across 3 questions
+
+## Changes
+
+### s06-q016 (length-balance/giveaway)
+- **Option A:** Expanded from ~67 to ~78 chars. **Option D (correct):** Shortened from ~111 to ~88 chars.
+
+### s06-q072 (explanation quality)
+- **Option B explanation:** Now addresses the actual claim about eviction order rather than just stating "evicted normally".
+
+### s06-q061 (accuracy)
+- **Option B explanation:** Changed "PodSecurityPolicy is deprecated" to "was removed in Kubernetes 1.25".

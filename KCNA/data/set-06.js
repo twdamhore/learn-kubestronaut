@@ -248,10 +248,10 @@ var questions = [
     text: "A DaemonSet Pod runs a log collector on every node. During a drain operation, you notice the DaemonSet Pod is not evicted. Why?",
     diagram: null,
     options: [
-      "A. DaemonSet Pods have a higher scheduling priority than other Pods",
+      "A. DaemonSet Pods have a higher scheduling priority than regular workload Pods",
       "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain operations",
       "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
-      "D. `kubectl drain` refuses to proceed when DaemonSet-managed Pods exist unless `--ignore-daemonsets` is passed"
+      "D. `kubectl drain` errors on DaemonSet-managed Pods unless `--ignore-daemonsets` is used"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but they do not prevent eviction during drain; drain skips them because they are DaemonSet-managed\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -974,7 +974,7 @@ var questions = [
       "D. NetworkPolicy for traffic controls"
     ],
     answer: 2,
-    explanation: "A LimitRange in a namespace can set default resource requests and limits that are automatically applied to containers that do not specify their own. ResourceQuota limits total resource consumption per namespace but does not set per-Pod defaults.\n\nWhy other options are wrong:\n- A: ResourceQuota limits total namespace consumption but does not set per-Pod defaults\n- B: PodSecurityPolicy is deprecated and enforces security constraints, not resource defaults\n- D: NetworkPolicy controls network traffic between Pods, not resource defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
+    explanation: "A LimitRange in a namespace can set default resource requests and limits that are automatically applied to containers that do not specify their own. ResourceQuota limits total resource consumption per namespace but does not set per-Pod defaults.\n\nWhy other options are wrong:\n- A: ResourceQuota limits total namespace consumption but does not set per-Pod defaults\n- B: PodSecurityPolicy was removed in Kubernetes 1.25 and enforced security constraints, not resource defaults\n- D: NetworkPolicy controls network traffic between Pods, not resource defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
     verify: "kubectl get limitrange -n <namespace>"
   },
   {
@@ -1150,7 +1150,7 @@ var questions = [
       "D. The policy primarily influences creation order, with minimal impact on eviction behavior"
     ],
     answer: 2,
-    explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.\n\nWhy other options are wrong:\n- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: Parallel policy does not prevent eviction during drain; Pods are still evicted normally\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
+    explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.\n\nWhy other options are wrong:\n- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: The podManagementPolicy does not change drain eviction order; drain evicts Pods based on PDB and controller logic, not the StatefulSet management policy\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",
     verify: "kubectl get statefulset <name> -o yaml | grep podManagementPolicy"
   },
   {

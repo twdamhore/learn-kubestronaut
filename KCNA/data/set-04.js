@@ -169,7 +169,7 @@ var questions = [
     diagram: null,
     options: [
       "PVCs from `volumeClaimTemplates` are retained by default and must be deleted manually by the admin",
-      "All PVCs created by `volumeClaimTemplates` are automatically deleted along with every other resource managed by the Helm release",
+      "All PVCs created by `volumeClaimTemplates` are automatically deleted along with every Helm-managed resource",
       "Helm converts existing PVCs to `emptyDir` volumes as part of the pre-uninstall cleanup hook process",
       "The PVCs are archived and stored in a Helm backup secret in the release namespace for later recovery"
     ],
@@ -206,7 +206,7 @@ var questions = [
       "OpenEBS — a container-attached storage solution providing per-pod block volumes"
     ],
     answer: 2,
-    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF sandbox project, not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF sandbox project, not graduated\n\nReference: https://www.cncf.io/projects/rook/",
+    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF incubating project, not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF incubating project, not graduated\n\nReference: https://www.cncf.io/projects/rook/",
     verify: null
   },
   {
@@ -651,7 +651,7 @@ var questions = [
       "In a random zone outside `us-east-1a` since the `StorageClass` does not consider pod topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
       "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the same zone where the pod is scheduled",
-      "The PV is provisioned immediately when the `PVC` is created because `WaitForFirstConsumer` only delays binding, not provisioning"
+      "The PV is provisioned when the PVC is created because `WaitForFirstConsumer` only delays binding"
     ],
     answer: 2,
     explanation: "`WaitForFirstConsumer` delays PV provisioning until the pod is scheduled to a node. The scheduler considers the pod's node constraints (like `nodeSelector`) and provisions the PV in the same topology (zone) as the chosen node. This prevents the PV from being created in a zone where the pod cannot run, which would cause a scheduling deadlock.\n\nWhy other options are wrong:\n- A: WaitForFirstConsumer explicitly considers pod topology constraints when provisioning the PV\n- B: PVs are not provisioned in all zones; they are created in the specific zone where the pod is scheduled\n- D: WaitForFirstConsumer delays provisioning until the pod is scheduled; it does not provision immediately\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
@@ -699,7 +699,7 @@ var questions = [
       "In the container image layer, directly modifying the original image stored in the registry cache",
       "In the overlay's upper writable layer on the node's filesystem, consuming node disk space",
       "In a dedicated PersistentVolume that is automatically created for the container by the kubelet",
-      "In memory (RAM) since `/tmp` inside containers is typically backed by a tmpfs mount rather than the overlay filesystem"
+      "In memory (RAM) since `/tmp` inside containers is backed by a tmpfs mount by default"
     ],
     answer: 1,
     explanation: "OverlayFS uses a layered approach with read-only lower layers (image layers) and a writable upper layer. Any writes to the container filesystem, including `/tmp`, go to the upper layer stored on the node's disk. This consumes node-level storage and can lead to disk pressure. For predictable temporary storage, an `emptyDir` volume is recommended.\n\nWhy other options are wrong:\n- A: Container image layers are read-only; writes go to the overlay upper layer, not the image itself\n- C: No PVC is automatically created for container filesystem writes; PVCs must be explicitly defined\n- D: /tmp inside containers is not backed by tmpfs by default; it uses the overlay writable layer on disk\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -713,12 +713,12 @@ var questions = [
     diagram: null,
     options: [
       "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9`",
-      "`kube_pod_container_resource_limits / kube_pod_resource_requests > 0.9`",
-      "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9` (per node)",
+      "`kube_pod_container_resource_limits / kube_pod_container_resource_requests > 0.9`",
+      "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9`",
       "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9` (per pod)"
     ],
     answer: 0,
-    explanation: "The ratio `kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes` gives the volume utilization as a fraction. When this exceeds 0.9 (90%), the alert fires. The other expressions monitor container resources or node-level filesystems, not PersistentVolume usage specifically.\n\nWhy other options are wrong:\n- B: kube_pod_container_resource_limits / kube_pod_resource_requests compares pod resource specs, not PV usage\n- C: This ratio measures node-level filesystem utilization, not per-PV disk usage; PV monitoring requires kubelet_volume_stats metrics\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The ratio `kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes` gives the volume utilization as a fraction. When this exceeds 0.9 (90%), the alert fires. The other expressions monitor container resources or node-level filesystems, not PersistentVolume usage specifically.\n\nWhy other options are wrong:\n- B: kube_pod_container_resource_limits / kube_pod_container_resource_requests compares pod resource specs, not PV usage\n- C: This ratio measures node-level filesystem utilization, not per-PV disk usage; PV monitoring requires kubelet_volume_stats metrics\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: null
   },
   {
@@ -728,7 +728,7 @@ var questions = [
     text: "A PV is created with `persistentVolumeReclaimPolicy: Recycle`. What does the `Recycle` policy do when the bound PVC is deleted?",
     diagram: null,
     options: [
-      "The PV and its underlying storage are deleted from the backend by the controller",
+      "The PV and its underlying storage resource are permanently deleted from the backend by the volume controller",
       "The PV is archived to a designated backup location in the cluster before its data is deleted permanently",
       "The PV runs a basic `rm -rf` on the volume contents and returns to `Available` state for new claims",
       "The PV is retained indefinitely in `Released` state until an administrator performs a manual cleanup step"
@@ -889,7 +889,7 @@ var questions = [
     diagram: null,
     options: [
       "The control plane becomes non-functional since all cluster state is stored in the etcd data store",
-      "Only new pod creation is affected; the API server falls back to a read-only cache mode and continues serving existing state",
+      "Only new pod creation is affected; the API server falls back to a read-only cache for existing state",
       "The cluster continues operating normally by falling back to locally cached data on each component",
       "The kube-apiserver automatically switches to an in-memory backup store when etcd is unavailable"
     ],
@@ -1102,7 +1102,7 @@ var questions = [
       "The RAM allocation for tmpfs-backed `emptyDir` volumes mounted inside the container's filesystem"
     ],
     answer: 1,
-    explanation: "Ephemeral storage requests and limits control the node's local storage consumed by a container's writable layer, logs, and non-memory-backed `emptyDir` volumes. If the container exceeds the limit, it is evicted. The request is used by the scheduler to ensure the node has enough local disk space. This does not apply to PVs or RAM-backed tmpfs volumes.\n\nWhy other options are wrong:\n- A: Ephemeral storage limits control local node disk usage, not PersistentVolume claim sizes\n- C: Ephemeral storage limits do not constrain container image pull sizes\n- D: Ephemeral storage limits do not apply to tmpfs-backed emptyDir volumes; those count against memory\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage",
+    explanation: "Ephemeral storage requests and limits control the node's local storage consumed by a container's writable layer, logs, and non-memory-backed `emptyDir` volumes. If the container exceeds the limit, it is evicted. The request is used by the scheduler to ensure the node has enough local disk space. This does not apply to PVs or RAM-backed tmpfs volumes.\n\nWhy other options are wrong:\n- A: Ephemeral storage limits control local node disk usage, not PersistentVolume claim sizes\n- C: Ephemeral storage limits do not constrain image pull sizes; image layers are cached at the node level by the container runtime and are not charged against a container's ephemeral storage\n- D: Ephemeral storage limits do not apply to tmpfs-backed emptyDir volumes; those count against memory\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage",
     verify: "kubectl describe pod <pod-name> | grep ephemeral-storage"
   },
   {
@@ -1566,7 +1566,7 @@ var questions = [
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
     answer: 1,
-    explanation: "Note: `maxUnavailable` for StatefulSets is an alpha feature (as of Kubernetes 1.32) gated behind the `MaxUnavailableStatefulSet` feature gate, which is disabled by default.\n\nThe `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate. Because it is feature-gated, the cluster administrator must explicitly enable it for the field to take effect. While the default rolling update strategy updates one pod at a time, `maxUnavailable` is the only parameter that lets you explicitly control update parallelism in a StatefulSet spec. Setting `maxUnavailable: 2` allows two pods to be updated simultaneously, speeding up rollouts at the cost of reduced availability during the update window. On clusters where the feature gate is not enabled, this field is silently ignored.\n\nWhy other options are wrong:\n- A: minReadySeconds controls how long a pod must be ready before proceeding, not the maximum unavailable count\n- C: The replica count defines how many pods should run, not how many can be unavailable during updates\n- D: revisionHistoryLimit controls retained ControllerRevision objects, not update parallelism\n\nReference: https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/",
+    explanation: "The `maxUnavailable` field for StatefulSet rolling updates was introduced as an alpha feature in Kubernetes 1.24, gated behind the `MaxUnavailableStatefulSet` feature gate, and was promoted to beta (enabled by default) in Kubernetes 1.31. While the default rolling update strategy updates one pod at a time, `maxUnavailable` is the only parameter that lets you explicitly control update parallelism in a StatefulSet spec. Setting `maxUnavailable: 2` allows two pods to be updated simultaneously, speeding up rollouts at the cost of reduced availability during the update window.\n\nWhy other options are wrong:\n- A: minReadySeconds controls how long a pod must be ready before proceeding, not the maximum unavailable count\n- C: The replica count defines how many pods should run, not how many can be unavailable during updates\n- D: revisionHistoryLimit controls retained ControllerRevision objects, not update parallelism\n\nReference: https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {

@@ -280,7 +280,7 @@ var questions = [
     text: "You want to monitor pod restarts in real-time across all namespaces to identify unstable workloads. Which command provides a continuously updating view?",
     diagram: null,
     options: [
-      "`kubectl get pods -A --sort-by=restartCount`",
+      "`kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'`",
       "`kubectl get pods --all-namespaces --watch`",
       "`kubectl top pods --all-namespaces --containers`",
       "`kubectl get events -A --field-selector reason=Killing`"
@@ -872,7 +872,7 @@ var questions = [
     text: "After deploying a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only defines an `ingress` rule allowing traffic from `app=frontend` but has no `egress` rules. What caused the complete communication breakdown?",
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
-      "Listing `Egress` in `policyTypes` without defining egress rules blocks all outbound traffic from the selected pods, including DNS",
+      "Listing `Egress` in `policyTypes` without defining any egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS resolution",
       "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods",
       "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
@@ -890,7 +890,7 @@ var questions = [
     options: [
       "`spec.template.spec.terminationGracePeriodSeconds` — defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process",
       "`spec.strategy.rollingUpdate.maxSurge` — defines the maximum number of pods created above the desired count during a rolling update rollout",
-      "`spec.minReadySeconds` — defines the minimum number of seconds a newly created pod must be ready without crashing before it is considered available, not failed",
+      "`spec.minReadySeconds` — defines the minimum number of seconds a newly created pod must be ready without crashing before it is considered available by the controller",
       "`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before marking it as failed"
     ],
     answer: 3,
@@ -1470,7 +1470,7 @@ var questions = [
       "Node-level metrics provide limited value for cost optimization compared to pod-level metrics for workload planning"
     ],
     answer: 2,
-    explanation: "Low node utilization (15-20% CPU, 30% memory) combined with high costs strongly suggests over-provisioning. Common causes include overly generous resource requests, the cluster autoscaler not scaling down, or right-sizing not being performed. Tools like the Kubernetes Vertical Pod Autoscaler (VPA) can recommend better resource requests, and the cluster autoscaler can remove underutilized nodes.\n\nWhy other options are wrong:\n- A: 15-20% utilization at 3x expected cost is not optimal; it indicates significant waste\n- B: Low utilization from kubectl top is from the Metrics Server, which is reliable when installed\n- D: Node-level metrics are highly relevant; they show overall cluster utilization and capacity waste\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    explanation: "Low node utilization (15-20% CPU, 30% memory) combined with high costs strongly suggests over-provisioning. Common causes include overly generous resource requests, the cluster autoscaler not scaling down, or right-sizing not being performed. Tools like the Kubernetes Vertical Pod Autoscaler (VPA) can recommend better resource requests, and the cluster autoscaler can remove underutilized nodes.\n\nWhy other options are wrong:\n- A: 15-20% utilization at 3x expected cost is not optimal; it indicates significant waste\n- B: Low utilization from kubectl top is from the Metrics Server, which is reliable when installed\n- D: While pod-level metrics are useful for right-sizing individual workloads, the question specifically shows node-level utilization at 15-20%, which directly reveals cluster-wide over-provisioning and excess nodes\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: "kubectl top nodes"
   },
   {

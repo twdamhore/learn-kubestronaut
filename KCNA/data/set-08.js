@@ -73,8 +73,8 @@ var questions = [
     text: "A development team is decomposing a monolithic application into microservices. They need each service to be independently deployable, own its data, and communicate over well-defined APIs. Which design principle is MOST critical for ensuring services can evolve independently?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1e293b" stroke="#334155"/><rect x="30" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="80" y="70" text-anchor="middle" fill="white" font-size="11">Service A</text><rect x="150" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="200" y="70" text-anchor="middle" fill="white" font-size="11">Service B</text><rect x="270" y="40" width="100" height="50" rx="6" fill="#0f766e" stroke="#14b8a6"/><text x="320" y="70" text-anchor="middle" fill="white" font-size="11">Service C</text><rect x="30" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="80" y="145" text-anchor="middle" fill="white" font-size="10">DB-A</text><rect x="150" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="200" y="145" text-anchor="middle" fill="white" font-size="10">DB-B</text><rect x="270" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="320" y="145" text-anchor="middle" fill="white" font-size="10">DB-C</text><line x1="80" y1="90" x2="80" y2="120" stroke="#14b8a6" stroke-width="2"/><line x1="200" y1="90" x2="200" y2="120" stroke="#14b8a6" stroke-width="2"/><line x1="320" y1="90" x2="320" y2="120" stroke="#14b8a6" stroke-width="2"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Service Decomposition Layout</text></svg>',
     options: [
-      "Loose coupling — each service exposes a stable API contract and hides internal implementation details",
-      "Shared database — all services access a single relational database for consistency",
+      "Loose coupling — each service exposes a stable API contract and hides internal implementation",
+      "Shared database — all services access a single shared relational database for data consistency",
       "Synchronous RPC — inter-service calls should always use blocking HTTP requests for data delivery",
       "Monolithic deployment — services are packaged together to reduce network overhead cost"
     ],
@@ -139,7 +139,7 @@ var questions = [
     options: [
       "Datadog — a SaaS platform deploying agents to scrape and forward cluster metrics to a hosted backend",
       "Jaeger — a distributed tracing platform for monitoring and analyzing microservice request flows",
-      "Prometheus — a monitoring system that scrapes metrics from targets via HTTP endpoints",
+      "Prometheus — a pull-based monitoring system that scrapes metrics from targets via HTTP endpoints",
       "Thanos — a long-term storage solution extending Prometheus with global query capability"
     ],
     answer: 2,
@@ -171,8 +171,8 @@ var questions = [
     options: [
       "`podAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` to co-locate Pods on the same node",
       "`nodeAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` specifying a list of node names",
-      "`topologySpreadConstraints` with `whenUnsatisfiable: DoNotSchedule` and `maxSkew: 100`",
-      "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` matching Pod labels"
+      "`topologySpreadConstraints` with `whenUnsatisfiable: DoNotSchedule` and a `maxSkew: 100` setting",
+      "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` matching Pod labels by name"
     ],
     answer: 3,
     explanation: "Pod anti-affinity with `requiredDuringSchedulingIgnoredDuringExecution` is a hard constraint that prevents Pods matching certain labels from being co-located on the same node. This guarantees the two Pods land on different nodes. Pod affinity co-locates Pods. Node affinity targets specific nodes. A `maxSkew` of 100 would not meaningfully spread Pods.\n\nWhy other options are wrong:\n- A: podAffinity co-locates Pods on the same node, which is the opposite of the requirement\n- B: nodeAffinity targets specific nodes by label, but does not guarantee Pods land on different nodes\n- C: maxSkew:100 is far too large to enforce meaningful distribution across nodes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
@@ -701,7 +701,7 @@ var questions = [
       "PVCs are automatically deleted when the corresponding StatefulSet Pod is removed during scale-down",
       "PVCs are archived to a backup StorageClass and can be restored with a `kubectl restore` command",
       "PVCs are retained by default when Pods are removed, preserving data for future scale-up operations",
-      "PVCs are orphaned and become unbound PersistentVolumes that must be manually reclaimed"
+      "PVCs are orphaned and become unbound PersistentVolumes that must be manually reclaimed by the admin"
     ],
     answer: 2,
     explanation: "By default, Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplates` when Pods are deleted or the StatefulSet is scaled down. This preserves data so that when the StatefulSet scales back up, the new Pods reattach to their original PVCs. Kubernetes 1.27+ introduced `persistentVolumeClaimRetentionPolicy` to allow configuring automatic PVC deletion on scale-down or StatefulSet deletion.\n\nWhy other options are wrong:\n- A: PVCs are NOT automatically deleted on scale-down; they are retained by default\n- B: There is no backup StorageClass or kubectl restore command for automatic PVC archival\n- D: PVCs remain bound to the PVs; they are not orphaned or made unbound on scale-down\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -730,10 +730,10 @@ var questions = [
     text: "After a network partition isolates a worker node from the control plane, the node appears as `NotReady` in `kubectl get nodes` output (Ready condition becomes `Unknown`) and the node controller applies a `node.kubernetes.io/unreachable:NoExecute` taint. What happens to the Pods on that node once their `tolerationSeconds` (default 300 seconds) expires?",
     diagram: null,
     options: [
-      "The node controller evicts the Pods by setting their status to `Terminating` and the owning ReplicaSet creates replacements on healthy nodes",
+      "The node controller evicts Pods by marking them `Terminating` and the owning ReplicaSet creates replacements on healthy nodes",
       "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
       "The Pods continue running indefinitely on the isolated node and are never automatically rescheduled to other healthy nodes",
-      "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all running Pods"
+      "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all locally running Pods"
     ],
     answer: 0,
     explanation: "When a node becomes `NotReady` after the node-monitor-grace-period (default 40s), the node controller almost immediately applies the `node.kubernetes.io/unreachable:NoExecute` taint. Once the taint is applied, each Pod's `tolerationSeconds` (default 300s) countdown begins. When that timer expires, the Pod is evicted — marked as `Terminating` — and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.\n\nWhy other options are wrong:\n- B: The scheduler does not immediately reschedule; it waits for tolerationSeconds (default 300s) to expire\n- C: Pods are eventually evicted after tolerationSeconds expires; they do not run indefinitely\n- D: The kubelet on the isolated node cannot detect the partition itself; the control plane manages eviction\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
@@ -860,8 +860,8 @@ var questions = [
     diagram: null,
     options: [
       "Deployment — provides declarative updates for stateless workloads without stable identities or ordered scaling",
-      "StatefulSet — provides stable Pod identities, ordered deployment, and per-replica persistent storage for stateful apps",
-      "DaemonSet — ensures one Pod per node for infrastructure agents and system-level daemon processes",
+      "StatefulSet — provides stable Pod identities, ordered deployment, and per-replica persistent storage for apps",
+      "DaemonSet — ensures exactly one Pod per node for infrastructure agents and system-level daemon processes",
       "ReplicaSet — maintains Pod replicas with stable selectors but no ordered deployment or persistent storage"
     ],
     answer: 1,
@@ -1019,7 +1019,7 @@ var questions = [
     text: "An architect is reviewing Factor X (Dev/prod parity) of the twelve-factor app methodology. The team runs PostgreSQL 14 in production but uses SQLite in development. Which statement correctly identifies the violation?",
     diagram: null,
     options: [
-      "There is no violation — using lighter-weight databases in development is an accepted trade-off that accelerates local iteration cycles",
+      "There is no violation — using lighter-weight databases in development is an accepted trade-off that accelerates iteration",
       "Factor X requires minimizing gaps between dev and prod including backing services; different databases cause subtle bugs",
       "Factor X primarily addresses the application codebase and deployment pipeline rather than the choice of backing services",
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
@@ -1067,7 +1067,7 @@ var questions = [
     text: "A DevSecOps team needs a single open-source tool that can detect known CVEs in container image packages and also flag misconfigurations in Kubernetes YAML manifests. Which tool provides both capabilities?",
     diagram: null,
     options: [
-      "Falco — detects runtime anomalies by monitoring kernel-level syscalls but does not scan manifests for misconfigurations",
+      "Falco — detects runtime anomalies by monitoring kernel-level syscalls but does not scan IaC manifests",
       "Trivy — an all-in-one scanner detecting vulnerabilities in images and misconfigurations in K8s manifests",
       "kube-bench — checks Kubernetes cluster node configuration against CIS security benchmark requirements",
       "OPA Gatekeeper — enforces custom admission policies on Kubernetes API requests via constraint templates"
@@ -1250,7 +1250,7 @@ var questions = [
       "gRPC is a CNCF sandbox project providing a durable messaging queue for asynchronous communication use"
     ],
     answer: 0,
-    explanation: "gRPC is a CNCF incubating project originally developed at Google. Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level as of 2025, which is a commonly tested fact. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing.\n\nWhy other options are wrong:\n- B: gRPC is incubating (not graduated) and uses Protocol Buffers over HTTP/2, not XML over HTTP/1.1\n- C: gRPC is part of the CNCF as an incubating project; it is not proprietary Google-only technology\n- D: gRPC is incubating (not sandbox) and is an RPC framework, not a messaging queue\n\nReference: https://www.cncf.io/projects/grpc/",
+    explanation: "gRPC is a CNCF incubating project originally developed at Google. Despite being one of the most widely adopted CNCF projects, gRPC remains at the incubating maturity level, which is a commonly tested fact. It is a high-performance RPC framework that uses Protocol Buffers (protobuf) for efficient binary serialization and HTTP/2 for transport, enabling features like bidirectional streaming, flow control, and multiplexing.\n\nWhy other options are wrong:\n- B: gRPC is incubating (not graduated) and uses Protocol Buffers over HTTP/2, not XML over HTTP/1.1\n- C: gRPC is part of the CNCF as an incubating project; it is not proprietary Google-only technology\n- D: gRPC is incubating (not sandbox) and is an RPC framework, not a messaging queue\n\nReference: https://www.cncf.io/projects/grpc/",
     verify: null
   },
   {
@@ -1342,7 +1342,7 @@ var questions = [
     options: [
       "It creates a headless Service that does not forward any traffic to any backend Pod endpoints at all",
       "It creates a Service that load-balances traffic across all Pods in the cluster regardless of labels",
-      "It allows the Service to proxy traffic to external endpoints not running as Pods in the cluster",
+      "It allows the Service to proxy traffic to external endpoints outside the cluster not running as Pods",
       "It causes the Service to automatically discover Pods matching all labels in the namespace as its backends"
     ],
     answer: 2,
