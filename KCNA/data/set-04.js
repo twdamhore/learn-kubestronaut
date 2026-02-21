@@ -90,8 +90,8 @@ var questions = [
     options: [
       "Store all data in local container filesystems for optimal read and write performance at runtime",
       "Embed database drivers directly into the application binary to avoid any external service dependencies",
-      "Treat backing services like databases as attached resources swapped without code changes",
-      "Treat in-memory caching as the primary data management strategy, avoiding external backing services for simplicity"
+      "Treat backing services like databases as attached resources, accessed via configuration and swapped without code changes",
+      "Treat in-memory caching as the primary data strategy, avoiding external backing services entirely"
     ],
     answer: 2,
     explanation: "The Twelve-Factor App methodology treats backing services (databases, caches, message queues) as attached resources, accessed via configuration. This means a MySQL database should be consumable via a URL and swappable without any code changes. This decouples the application from specific storage implementations.\n\nWhy other options are wrong:\n- A: Storing data in local container filesystems violates factor VI (processes should be stateless) and factor IV (backing services as attached resources)\n- B: Embedding drivers violates the principle of treating backing services as swappable attached resources\n- D: Relying on in-memory caching as the primary strategy avoids external backing services, which directly contradicts factor IV (backing services as attached resources)\n\nReference: https://12factor.net/backing-services",
@@ -393,9 +393,9 @@ var questions = [
     diagram: null,
     options: [
       "`redis-svc.default.svc.cluster.local` — the Service routes traffic to `redis-1` automatically",
-      "`redis-1.default.svc.cluster.local` — each pod gets a direct cluster-level DNS entry without a headless Service",
+      "`redis-1.default.svc.cluster.local` — each pod gets a cluster-level DNS entry without a headless Service",
       "`redis-svc-1.default.svc.cluster.local` — replicas are indexed by the Service name and ordinal",
-      "`redis-1.redis-svc.default.svc.cluster.local` — the headless Service creates per-pod DNS"
+      "`redis-1.redis-svc.default.svc.cluster.local` — the headless Service creates per-pod DNS A records"
     ],
     answer: 3,
     explanation: "A headless Service (`clusterIP: None`) creates DNS A records for each pod in a StatefulSet. The format is `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. Since StatefulSet pods have stable names (`redis-0`, `redis-1`, `redis-2`), clients can address specific replicas directly via their predictable DNS entries.\n\nWhy other options are wrong:\n- A: The Service DNS resolves to all pods; it does not automatically route to a specific replica\n- B: Pods do not get direct cluster-level DNS entries by name alone; they need the headless Service domain\n- C: The naming format uses pod-name.service-name, not service-name-ordinal\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
@@ -490,7 +490,7 @@ var questions = [
     options: [
       "The PV must support `ReadWriteMany` access, or the team should use an external object store like S3 instead",
       "The application must switch to using `emptyDir` volumes because horizontal scaling requires ephemeral storage",
-      "Horizontal scaling requires each pod to mount a separate copy of the same ReadWriteOnce PV, which the scheduler handles transparently",
+      "Each pod mounts a separate copy of the same ReadWriteOnce PV, which the scheduler creates transparently",
       "Each pod replica must write to a separate directory on the same `ReadWriteOnce` volume to avoid conflicts"
     ],
     answer: 0,
@@ -569,7 +569,7 @@ var questions = [
     diagram: null,
     options: [
       "Longhorn requires an external Ceph cluster to serve as the backend storage for all provisioned volumes",
-      "Longhorn primarily targets `ReadWriteMany` access mode and delegates `ReadWriteOnce` provisioning to a secondary NFS layer",
+      "Longhorn primarily targets `ReadWriteMany` access mode and delegates `ReadWriteOnce` to a secondary NFS layer",
       "Longhorn replaces the kubelet's volume management entirely with its own node-level storage controller",
       "Longhorn creates replicated block volumes using local disks and manages them via a CSI driver per node"
     ],
@@ -664,10 +664,10 @@ var questions = [
     text: "A microservices application uses the Event Sourcing pattern to store state changes. Each microservice writes events to an append-only event store. What is the primary benefit of this pattern for stateful microservices?",
     diagram: null,
     options: [
-      "It reduces latency by caching frequently accessed events in memory rather than querying the event store for each read",
+      "It reduces latency by caching frequently accessed events in memory rather than querying the event store",
       "It simplifies rollback by letting any service independently revert to a prior state without coordination",
       "It ensures that all microservices share the same database schema for consistent cross-service queries",
-      "It provides a full audit trail and enables state reconstruction from the event history at any point"
+      "It provides a complete audit trail and enables full state reconstruction from the event history at any point"
     ],
     answer: 3,
     explanation: "Event Sourcing stores every state change as an immutable event. This provides a complete audit trail, enables temporal queries (state at any point in time), and supports event replay for debugging or rebuilding state. It is commonly used with CQRS (Command Query Responsibility Segregation) in microservices that require reliable state management.\n\nWhy other options are wrong:\n- A: Caching is a read optimization, not the primary benefit of Event Sourcing; the pattern's core value is the immutable event log itself\n- B: Event Sourcing does not enable independent uncoordinated rollback; reversing state requires compensating events that must be applied in sequence\n- C: Event Sourcing gives each service its own event store; services do not share database schemas\n\nReference: https://microservices.io/patterns/data/event-sourcing.html",
@@ -712,7 +712,7 @@ var questions = [
     text: "A Grafana dashboard shows that a PersistentVolume is at 95% capacity. The operations team needs to be alerted before the volume reaches 100%. Using Prometheus alerting, which alert rule expression correctly fires when PV usage exceeds 90%?",
     diagram: null,
     options: [
-      "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9`",
+      "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9` (per PV)",
       "`kube_pod_container_resource_limits / kube_pod_container_resource_requests > 0.9`",
       "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9`",
       "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9` (per pod)"
@@ -872,7 +872,7 @@ var questions = [
     text: "A cloud-native application team is deciding between using a managed database service (e.g., AWS RDS) and running a database as a StatefulSet in Kubernetes. Which factor most strongly favors using a managed service?",
     diagram: null,
     options: [
-      "Managed services are always cheaper than self-hosted databases, making cost the deciding factor",
+      "Managed services are always cheaper for compute, storage, and networking, making cost the deciding factor",
       "Managed services handle backups, patching, replication, and failover, reducing the team's operations work",
       "StatefulSets are designed for stateless workloads and require additional operators for database persistent storage",
       "Managed services run inside the Kubernetes cluster alongside application pods for better network latency"
@@ -1083,7 +1083,7 @@ var questions = [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
       "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster",
       "The PV is still attached to the old node because the `VolumeAttachment` object was not cleaned up",
-      "The PV detach from the rebooted node was delayed because the `CSI` driver requires a graceful unmount before reattachment"
+      "The CSI driver requires a graceful unmount from the rebooted node before it allows reattachment to a new node"
     ],
     answer: 2,
     explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: The Multi-Attach error is caused by a stale VolumeAttachment object, not a CSI driver design requirement for graceful unmount; the old node was rebooting and could not perform a graceful detach\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -1192,8 +1192,8 @@ var questions = [
     text: "A StatefulSet has `spec.persistentVolumeClaimRetentionPolicy.whenDeleted: Delete` and `whenScaled: Retain`. What behavior does this configure?",
     diagram: null,
     options: [
-      "PVCs are deleted when the StatefulSet is deleted, but retained when pods are scaled down by count",
-      "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted, preserving data independently",
+      "PVCs are deleted when the entire StatefulSet is deleted, but retained when individual pods are scaled down",
+      "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted from the cluster",
       "PVCs are deleted when the StatefulSet is deleted, and also deleted when individual pods are scaled down",
       "This field is not valid in the StatefulSet spec and is rejected by the API server upon submission"
     ],
@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "The PVC access mode is set to `ReadOnlyMany` which prevents write operations from the mounted container",
-      "NFS export volumes default to read-only mounts in Kubernetes unless the PVC explicitly requests ReadWriteMany permissions",
+      "NFS volumes default to read-only mounts in Kubernetes unless the PVC explicitly requests ReadWriteMany access",
       "The container runs as a non-root UID that lacks write permissions on the NFS export's file ownership",
       "The kubelet does not support write operations on NFS volumes mounted via the in-tree volume plugin"
     ],

@@ -81,3 +81,68 @@
 
 ### s07-q092 (explanation quality)
 - **Option D explanation:** Now addresses the actual comparative claim about node-level vs pod-level metrics.
+
+---
+
+# Round 39 Review - Set 07
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 17 across 15 questions
+
+## Changes
+
+### s07-q016 (length-balance residual)
+- **Option B:** Expanded from "in metadata" to "in the pod's metadata section" (78->96).
+- **Option D:** Expanded from "under the container resources spec" to "under the container resources specification section" (77->94). Ratio reduced from 1.286 to 1.053.
+
+### s07-q018 (length-balance)
+- **All options:** Added descriptive suffixes to all command options to reduce ratio from 1.744 to 1.054. Previously correct B (43 chars) was drastically shorter than A (75 chars). Now A=97, B=92, C=95, D=93.
+
+### s07-q023 (length-balance)
+- **Option D (correct):** Expanded from "the node uses its cached" to "the node uses its locally cached" to reduce ratio from 1.159 to 1.127 (D: 107->121).
+
+### s07-q029 (length-balance)
+- **Option B:** Expanded from "Kubernetes will delete the failed pod and then schedule" to "Kubernetes will delete the failed pod automatically and schedule" (101->110).
+- **Option C (correct):** Trimmed from "prevents any automatic restarts by the kubelet" to "prevents any restarts by the kubelet" to avoid over-expansion (kept at ~113).
+- **Option D:** Trimmed from "clear its resource allocation from the node" to "clear its resource allocation" (122->108). Ratio reduced from 1.245 to 1.056.
+
+### s07-q031 (length-balance)
+- **Option D (correct):** Expanded from "relaying an OCI runtime error from `runc`" to "relaying an OCI runtime error from the low-level `runc` runtime" (96->118). Ratio reduced from 1.167 to 1.093.
+
+### s07-q036 (length-balance)
+- **Option A (correct):** Trimmed from "pushing its own memory usage past its 256Mi limit" to "pushing memory usage past 256Mi" (137->119).
+- **Option C:** Expanded from "than other nodes which" to "than the other nodes which" (116->118). Ratio reduced from 1.202 to 1.044.
+
+### s07-q044 (length-balance)
+- **Option B (correct):** Expanded from "means it restarts regardless of exit code" to "means it restarts regardless of the exit code value" (107->117). Ratio reduced from 1.159 to 1.060.
+
+### s07-q055 (length-balance residual)
+- **Option A (correct):** Trimmed from "without defining any egress rules" to "without defining egress rules" and "including DNS resolution" to "including DNS" (164->149).
+- **Option B:** Expanded with "entirely" suffix (139->148). Ratio reduced from 1.180 to 1.049.
+
+### s07-q056 (length-balance)
+- **Option C:** Trimmed "number of" to save chars (165->155).
+- **Option D (correct):** Expanded from "marking it as failed" to "reporting the condition as failed" (138->151). Ratio reduced from 1.196 to 1.129.
+
+### s07-q065 (length-balance)
+- **Option C (correct):** Trimmed from "Create the `db-credentials` Secret in the `staging` namespace" to "Create `db-credentials` in the `staging` namespace" and adjusted operator wording (108->115).
+- **Option D:** Expanded from "for Secret access" to "to access the Secret" (129->116). Ratio reduced from 1.194 to 1.018.
+
+### s07-q068 (length-balance)
+- **Option A:** Trimmed from "which differs from eviction because it targets a single container" to "which targets a single container" (144->111).
+- **Option B:** Expanded with "a" article (112->114). Ratio reduced from 1.286 to 1.072.
+
+### s07-q080 (length-balance)
+- **Option C:** Trimmed from "these controller loops have higher reconciliation frequency than ReplicaSet controllers" to "these controller loops reconcile more frequently than ReplicaSet controllers" (136->125).
+- **Option D:** Expanded with "automatically" (106->120). Ratio reduced from 1.283 to 1.136.
+
+### s07-q082 (length-balance residual)
+- **Option A (correct):** Trimmed from "verify the `targetRevision` field in" to "verify `targetRevision` in" (129->119).
+- **Option B:** Expanded from "requires a manual" to "caches...indefinitely and requires a manual" (108->120). Ratio reduced from 1.194 to 1.103.
+
+### s07-q086 (length-balance)
+- **Option A:** Expanded from "permits it for trusted workloads" to "permits host networking for trusted workloads" (101->114). Ratio reduced from 1.158 to 1.035.
+
+### s07-q099 (length-balance)
+- **Option D:** Trimmed from "and allow transparent IP resolution for clients" to "and resolve IPs transparently" (143->125). Ratio reduced from 1.192 to 1.042.

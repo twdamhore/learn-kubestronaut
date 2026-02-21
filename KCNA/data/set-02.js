@@ -325,8 +325,8 @@ var questions = [
     options: [
       "External Secrets Operator syncs secrets from external stores like AWS Secrets Manager into Kubernetes clusters automatically",
       "Argo CD integrates with external vaults to encrypt Secrets during GitOps synchronization when deploying to target clusters",
-      "Fluentd collects Secret data from application logs and injects them into destination pods",
-      "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments"
+      "Fluentd collects Secret data from application logs and injects them into destination pods for configuration management",
+      "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments using built-in rotation policies"
     ],
     answer: 0,
     explanation: "The External Secrets Operator is a Kubernetes operator that integrates with external secret management systems (AWS Secrets Manager, HashiCorp Vault, Google Secret Manager, Azure Key Vault, etc.) and automatically creates Kubernetes Secrets from externally stored data. Prometheus is for monitoring, Fluentd is for logging, and while Argo CD handles GitOps deployment, it does not natively encrypt or manage Secrets.\n\nWhy other options are wrong:\n- B: Argo CD is a GitOps deployment tool and does not natively encrypt or manage Secrets\n- C: Fluentd is a log aggregation tool and does not handle Secret injection\n- D: Prometheus is a monitoring system and cannot rotate or manage Secrets\n\nReference: https://external-secrets.io/",
@@ -673,10 +673,10 @@ var questions = [
     text: "A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
     diagram: null,
     options: [
-      "An `emptyDir` volume with an init container that copies data from each of the ConfigMaps and the Secret source",
+      "An `emptyDir` volume with an init container that copies data from ConfigMaps, Secrets, and other sources into a shared directory",
       "A `persistentVolumeClaim` that aggregates data from multiple ConfigMap and Secret sources together",
       "A `hostPath` volume that maps to a pre-populated directory on the node's local disk filesystem path",
-      "A `projected` volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount"
+      "A `projected` volume combining multiple ConfigMap, Secret, and Downward API sources into a single mount point"
     ],
     answer: 3,
     explanation: "The `projected` volume type allows combining multiple volume sources — ConfigMaps, Secrets, Downward API fields, and ServiceAccountToken — into a single directory. This avoids the conflict of mounting multiple volumes at the same path. An emptyDir with init containers works but is more complex. hostPath introduces node dependency. PersistentVolumeClaims provide persistent storage, not configuration aggregation.\n\nWhy other options are wrong:\n- A: emptyDir with init containers works but adds unnecessary complexity compared to projected volumes\n- B: PVCs provide persistent storage, not configuration source aggregation\n- C: hostPath creates node dependency and is not for combining multiple config sources\n\nReference: https://kubernetes.io/docs/concepts/storage/projected-volumes/",
@@ -707,8 +707,8 @@ var questions = [
     text: "In a microservices architecture, each service has its own ConfigMap for configuration. Service A needs to know the database port that Service B uses. A developer proposes sharing Service B's ConfigMap with Service A. What is the architectural concern?",
     diagram: null,
     options: [
-      "ConfigMaps are generally scoped to a single Deployment and are not designed to be shared across different Deployments within a namespace",
-      "Sharing ConfigMaps creates tight coupling; changes to Service B's config could break Service A",
+      "ConfigMaps are scoped to a single Deployment and are not designed to be shared across different Deployments",
+      "Sharing ConfigMaps between services creates tight coupling; changes to Service B's config could unexpectedly break Service A",
       "Kubernetes rate-limits ConfigMap read operations so sharing would cause pod performance degradation",
       "Shared ConfigMaps are automatically replicated across namespaces causing eventual data inconsistency"
     ],
@@ -1155,8 +1155,8 @@ var questions = [
     text: "A microservices platform uses a service mesh (Istio). Configuration for sidecar proxies is managed automatically by the mesh control plane. A developer asks if they still need Kubernetes ConfigMaps for their application configuration. What is the correct answer?",
     diagram: null,
     options: [
-      "Yes — the mesh handles network config (routing, mTLS, retries) but app config (DB URLs, flags) still needs ConfigMaps",
-      "No — the service mesh manages all configuration including application-specific settings like database URLs and feature flags",
+      "Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps",
+      "No — the service mesh manages all configuration including application-specific settings (database URLs, feature flags, and logging levels)",
       "No — Istio's VirtualService resources replace ConfigMaps for all configuration needs across every service in the mesh",
       "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
     ],
@@ -1407,7 +1407,7 @@ var questions = [
     text: "A namespace has both a LimitRange (setting default memory request to 128Mi) and a ResourceQuota (total memory requests limited to 1Gi). A developer creates a pod without specifying memory. What is the sequence of events?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Admission Control Sequence</text><rect x="20" y="55" width="100" height="45" rx="5" fill="#2d6a4f"/><text x="70" y="73" text-anchor="middle" fill="white" font-size="10">Step 1</text><text x="70" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="120" y1="77" x2="155" y2="77" stroke="#4caf50" stroke-width="2" marker-end="url(#a)"/><rect x="155" y="55" width="100" height="45" rx="5" fill="#e6a817"/><text x="205" y="73" text-anchor="middle" fill="white" font-size="10">Step 2</text><text x="205" y="88" text-anchor="middle" fill="#ccc" font-size="9">???</text><line x1="255" y1="77" x2="290" y2="77" stroke="#e6a817" stroke-width="2"/><rect x="290" y="55" width="80" height="45" rx="5" fill="#326CE5"/><text x="330" y="73" text-anchor="middle" fill="white" font-size="10">Persist</text><text x="330" y="88" text-anchor="middle" fill="#ccc" font-size="9">to etcd</text><text x="200" y="145" text-anchor="middle" fill="#e0e0e0" font-size="11">What is the sequence of admission control?</text></svg>',
     options: [
-      "The ResourceQuota rejects the pod because it has no memory specification, since the LimitRange injects defaults only after the quota check completes",
+      "The ResourceQuota rejects the pod because the LimitRange injects defaults only after the quota check completes",
       "The pod is created with no memory request and does not count against the ResourceQuota since no memory was requested",
       "Both admission controllers run simultaneously and the LimitRange default conflicts with the ResourceQuota check logic",
       "The LimitRanger first injects the 128Mi default, then the ResourceQuota controller checks if the total fits in 1Gi"
@@ -1524,9 +1524,9 @@ var questions = [
     diagram: null,
     options: [
       "Configuration files should be compiled into the application binary, validated at build time, and cached for runtime performance",
-      "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires additional tooling",
+      "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires tooling",
       "Configuration is best managed by a dedicated operations team who apply, validate, and monitor changes through `kubectl` commands",
-      "ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"
+      "ConfigMaps and Secrets should be version-controlled, peer-reviewed, tested in staging, and deployed through a CI/CD pipeline"
     ],
     answer: 3,
     explanation: "Treating configuration as a first-class artifact means applying the same engineering rigor to configuration as to code: storing it in version control, requiring peer review for changes, testing it, and deploying it through automated pipelines. This ensures auditability, reproducibility, and reduces configuration drift. Manual management is error-prone. Both environment variables and file-based configuration are valid cloud-native approaches.\n\nWhy other options are wrong:\n- A: Compiling configuration into the binary makes it impossible to change without rebuilding\n- B: File-based configuration is a valid cloud-native approach; env vars are not the only option\n- C: Manual kubectl management is error-prone and does not follow engineering best practices\n\nReference: https://12factor.net/config",
@@ -1571,8 +1571,8 @@ var questions = [
     text: "A stateful application stores its configuration in a database table rather than using Kubernetes ConfigMaps. The operations team finds it difficult to track configuration changes and perform rollbacks. How would adopting Kubernetes-native configuration management improve this?",
     diagram: null,
     options: [
-      "ConfigMaps are stored in etcd which automatically versions all changes, enabling `kubectl rollback configmap` to restore prior versions",
-      "ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations",
+      "ConfigMaps are stored in etcd which automatically versions all changes, enabling `kubectl rollback configmap` to restore versions",
+      "ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations and code review workflows",
       "Kubernetes automatically creates ConfigMap snapshots before every change, stored in a dedicated backup volume attached to the cluster",
       "There is no advantage over database-stored configuration — it provides the same versioning and rollback capabilities as ConfigMaps do"
     ],

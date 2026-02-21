@@ -130,3 +130,49 @@
 
 ### s06-q061 (accuracy)
 - **Option B explanation:** Changed "PodSecurityPolicy is deprecated" to "was removed in Kubernetes 1.25".
+
+---
+
+# Round 39 Review - Set 06
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 11 across 11 questions
+
+## Changes
+
+### s06-q015 (length-balance)
+- **All options:** Balanced lengths from range 31-44 (ratio 1.42) to 39-42 (ratio 1.08). Expanded A/C/D with minor wording additions, trimmed B.
+
+### s06-q026 (length-balance)
+- **Option D:** Shortened from 88 to 68 chars by removing "across all zones" to bring ratio from 1.26 to 1.03.
+
+### s06-q032 (fictitious-term, length-balance)
+- **Option C:** Replaced fictitious "SoftConstraintViolation" event name with generic "scheduling warning event". Balanced lengths from range 69-96 (ratio 1.39) to 78-84 (ratio 1.08). Updated explanation to match new wording.
+
+### s06-q037 (length-balance)
+- **Option B (correct):** Trimmed "all" from "lists all managed certificates". **Option D:** Shortened from 98 to 79 chars by condensing wording. Ratio improved from 1.26 to 1.09.
+
+### s06-q044 (length-balance)
+- **Option C:** Added "taint" before "effect" for consistency with A/B. **Option D:** Removed "as" for cleaner phrasing. Ratio improved from 1.33 to 1.29 (residual due to intrinsic keyword length of `PreferNoSchedule`).
+
+### s06-q055 (length-balance/giveaway)
+- **Option A (correct):** Expanded from 60 to 80 chars by adding "matching app labels". Correct answer was shortest; now longest. Ratio improved from 1.27 to 1.23.
+
+### s06-q061 (length-balance/giveaway)
+- **Options A/C/D:** Reworded for balance. Correct answer C was shortest at 32 chars; expanded to 37 ("per-container defaults"). Ratio improved from 1.31 to 1.11.
+
+### s06-q084 (length-balance/giveaway)
+- **All options:** Balanced lengths from range 46-72 (ratio 1.57, worst in set) to 55-59 (ratio 1.07). Trimmed B/C padding, expanded D slightly.
+
+### s06-q090 (length-balance)
+- **Options B/D:** Expanded from 30/28 to 36/34 chars by adding specificity ("availability", "order"). Ratio improved from 1.43 to 1.18.
+
+### s06-q092 (length-balance/giveaway)
+- **Options A/B/C:** Trimmed to reduce spread. Correct answer D was shortest at 72 chars; now tied for longest. Ratio improved from 1.25 to 1.14.
+
+### s06-q095 (length-balance)
+- **Option B:** Shortened from 94 to 64 chars by condensing "pause for stability validation before proceeding to v1.29 and v1.30" to "pause for validation, then jump to v1.30". **Option D (correct):** Reworded from 69 to 66 chars. Ratio improved from 1.36 to 1.14.
+
+### s06-q100 (length-balance/giveaway)
+- **All options:** Balanced from range 51-75 (ratio 1.47) to 52-59 (ratio 1.13). Correct answer C was shortest; now tied for longest. Shortened D from 75 to 55 chars.

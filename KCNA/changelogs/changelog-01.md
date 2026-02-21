@@ -139,3 +139,37 @@
 
 ### s01-q067 (giveaway)
 - **Option A (correct):** Rephrased from hierarchical teaching structure to "LoadBalancer includes NodePort and ClusterIP functionality, so a LoadBalancer Service exposes all three access methods".
+
+---
+
+# Round 39 Review - Set 01
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s01-q034 (length-balance - MEDIUM)
+- **Option A:** Added "and request IDs" to expand from ~79ch to ~92ch.
+- **Option C (correct):** Shortened from "trace context headers" to "context headers" to reduce from ~104ch to ~93ch.
+- **Option D:** Expanded from "average latency per service over the last hour of data" to "per-service average latency aggregated over the last hour of observations".
+
+### s01-q088 (length-balance - MEDIUM)
+- **Option C:** Added "and indexing" to expand length closer to correct answer B.
+- **Option D:** Added "collect and" before "export" to expand length closer to correct answer B.
+
+### s01-q067 (length-balance - LOW-MEDIUM)
+- **Option A (correct):** Trimmed "a LoadBalancer Service" to "the Service" to reduce from 118ch to ~99ch.
+
+### s01-q082 (length-balance - LOW-MEDIUM)
+- **Option A (correct):** Added "production" before "stage" to expand from ~87ch to ~98ch, closer to option B (122ch).
+
+### s01-q032 (accuracy - LOW)
+- **Explanation:** Updated opening from "Knative is a Kubernetes-based platform" to "Knative is a CNCF graduated project and Kubernetes-based platform" to reflect Oct 2025 graduation.
+
+### s01-q086 (structural giveaway - LOW)
+- **Option C:** Added "rollback on errors, and converge" to give option C a multi-item list structure, matching the 3-item list in correct answer B.
+
+### s01-q100 (structural giveaway - LOW-MEDIUM)
+- **Option D:** Changed from "requires YAML input" / "primarily uses" to "only accepts YAML file input" / "primarily uses" with semicolon separator, giving it a dual-contrast structure similar to correct answer B.

@@ -106,7 +106,7 @@ var questions = [
     diagram: null,
     options: [
       "OPA (Open Policy Agent) — a general-purpose policy engine for Kubernetes admission control decisions",
-      "Falco — a cloud native runtime security tool detecting anomalous behavior via kernel events",
+      "Falco — a cloud native runtime security tool detecting anomalous container behavior via kernel events",
       "Notary — a project for cryptographic signing and verification of container image artifacts integrity",
       "Trivy — a vulnerability scanner for container images, filesystem content, and IaC configuration files"
     ],
@@ -249,10 +249,10 @@ var questions = [
     text: "A team has a CronJob that runs every hour to process batch data. Occasionally, the previous run has not completed when the next one is scheduled. They want to skip the new run if the previous one is still active. Which `concurrencyPolicy` setting achieves this?",
     diagram: null,
     options: [
-      "`Allow` — permits concurrent Job runs without any scheduling restriction",
-      "`Replace` — terminates the currently running Job and starts the new one",
-      "`Forbid` — prevents new Job creation while an existing run has not yet finished",
-      "`Queue` — enqueues the new Job to run after the current one completes it"
+      "`Allow` — permits concurrent Job runs without any scheduling restriction on overlap",
+      "`Replace` — terminates the currently running Job and starts a new one in its place",
+      "`Forbid` — skips new Job creation entirely while an existing run has not yet finished",
+      "`Queue` — enqueues the new Job to run sequentially after the current one completes"
     ],
     answer: 2,
     explanation: "Setting `concurrencyPolicy: Forbid` on a CronJob causes the scheduler to skip creating a new Job if the previous run is still active. `Allow` lets multiple runs overlap, `Replace` kills the current run, and `Queue` is not a valid concurrencyPolicy value in Kubernetes.\n\nWhy other options are wrong:\n- A: Allow permits concurrent Jobs to overlap without restriction\n- B: Replace terminates the currently running Job and starts the new one immediately\n- D: Queue is not a valid concurrencyPolicy value in Kubernetes CronJob spec\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
@@ -347,7 +347,7 @@ var questions = [
     options: [
       "Edit the `Chart.yaml` file inside the chart archive to change the default version and image tag settings",
       "Modify the chart's `templates/` directory directly and repackage the chart archive before installing it",
-      "Pass a custom values file via `helm install -f custom-values.yaml` or use `--set` for overrides",
+      "Pass a custom values file via `helm install -f custom-values.yaml` or use inline `--set` for overrides",
       "Use `kubectl patch` on the deployed resources after `helm install` completes to override the values"
     ],
     answer: 2,
@@ -393,8 +393,8 @@ var questions = [
     text: "A team wants to deploy HTTP request-driven serverless workloads on Kubernetes with built-in scale-to-zero — scaling replicas automatically based on incoming HTTP traffic and dropping to zero when idle. Which CNCF graduated project provides this capability natively on Kubernetes?",
     diagram: null,
     options: [
-      "Knative — a CNCF graduated project providing serverless Serving and Eventing with scale-to-zero",
-      "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows on Kubernetes pods",
+      "Knative — a CNCF graduated project providing serverless Serving and Eventing on Kubernetes",
+      "Argo Workflows — orchestrates multi-step DAG-based CI/CD workflows as containers on Kubernetes",
       "KEDA — a CNCF graduated event-driven autoscaler triggering Pod scaling from external sources",
       "OpenFaaS — an open-source serverless framework deploying functions as containers on K8s"
     ],
@@ -410,10 +410,10 @@ var questions = [
     text: "A platform engineer examines the Kubernetes API server's RESTful interface. They need to list all Pods across every namespace using a single API call. Which `kubectl` flag achieves this, and what API path does it correspond to?",
     diagram: null,
     options: [
-      "`kubectl get pods --all-namespaces` which corresponds to `GET /api/v1/pods`",
+      "`kubectl get pods --all-namespaces` maps to the API path `GET /api/v1/pods` for all namespaces",
       "`kubectl get pods --namespace=*` which corresponds to `GET /api/v1/namespaces/*/pods`",
-      "`kubectl get pods --global` which corresponds to `GET /apis/global/v1/pods`",
-      "`kubectl get pods --cluster-scope` which corresponds to `GET /api/v1/cluster/pods`"
+      "`kubectl get pods --global` which corresponds to the API path `GET /apis/global/v1/pods`",
+      "`kubectl get pods --cluster-scope` which corresponds to the API path `GET /api/v1/cluster/pods`"
     ],
     answer: 0,
     explanation: "The `--all-namespaces` (or `-A`) flag instructs kubectl to list resources across all namespaces. Under the hood, this maps to the API path `GET /api/v1/pods` without a namespace qualifier, which returns Pods from every namespace. The other flags (`--namespace=*`, `--global`, `--cluster-scope`) do not exist in kubectl.\n\nWhy other options are wrong:\n- B: --namespace=* is not a valid kubectl flag; wildcard namespace syntax is not supported\n- C: --global is not a valid kubectl flag; no such API path exists\n- D: --cluster-scope is not a valid kubectl flag; Pods are namespace-scoped resources\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
@@ -955,10 +955,10 @@ var questions = [
     text: "A security-conscious organization wants to run containers with stronger isolation than standard Linux namespaces provide. They are considering gVisor (`runsc`) as an OCI runtime. How does gVisor improve container isolation?",
     diagram: null,
     options: [
-      "gVisor interposes a user-space kernel (Sentry) intercepting system calls, reducing host attack surface",
+      "gVisor interposes a user-space kernel (Sentry) intercepting container syscalls, reducing host attack surface",
       "gVisor encrypts all container filesystem data at rest using hardware-backed encryption on the host storage",
       "gVisor runs each container inside a full virtual machine using QEMU for complete hardware-level isolation",
-      "gVisor restricts Linux capabilities and applies strict seccomp profiles to reduce the container privilege surface"
+      "gVisor restricts Linux capabilities and applies strict seccomp profiles to reduce the container privilege set"
     ],
     answer: 0,
     explanation: "gVisor provides an additional layer of isolation by running a user-space kernel (called Sentry) that intercepts container system calls. Instead of allowing containers to make direct syscalls to the host kernel, gVisor implements a subset of the Linux system call interface in user space. This significantly reduces the host kernel's attack surface. Kata Containers use full VMs, while gVisor uses a user-space kernel approach.\n\nWhy other options are wrong:\n- B: gVisor does not encrypt filesystem data; it interposes syscalls for isolation\n- C: gVisor does not use full VMs/QEMU; that describes Kata Containers which use lightweight VMs\n- D: gVisor does more than restrict capabilities or seccomp profiles; it interposes a user-space kernel to intercept syscalls\n\nReference: https://gvisor.dev/docs/",
@@ -1372,8 +1372,8 @@ var questions = [
     text: "A multi-cluster setup uses the `cloud-controller-manager` to integrate with AWS. Which responsibilities does this component handle?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Cloud Controller Manager</text><rect x="140" y="40" width="120" height="40" rx="6" fill="#4a1d96" stroke="#a78bfa"/><text x="200" y="65" text-anchor="middle" fill="white" font-size="10">cloud-controller-mgr</text><rect x="20" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="70" y="145" text-anchor="middle" fill="white" font-size="9">Controller 1</text><rect x="150" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="200" y="145" text-anchor="middle" fill="white" font-size="9">Controller 2</text><rect x="280" y="120" width="100" height="40" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="330" y="145" text-anchor="middle" fill="white" font-size="9">Controller 3</text><line x1="170" y1="80" x2="70" y2="120" stroke="#a78bfa" stroke-width="1.5"/><line x1="200" y1="80" x2="200" y2="120" stroke="#a78bfa" stroke-width="1.5"/><line x1="230" y1="80" x2="330" y2="120" stroke="#a78bfa" stroke-width="1.5"/></svg>',
     options: [
-      "Scheduling Pods to nodes, managing CronJobs, running admission webhooks, and handling resource quota enforcement in all namespaces",
-      "Managing cloud controllers: Node controller for instance checks, Route controller for routes, Service controller for LBs",
+      "Scheduling Pods to nodes, managing CronJobs, running admission webhooks, and handling resource quota enforcement across namespaces",
+      "Managing cloud-specific controllers: Node controller for instance checks, Route controller for routes, Service controller for LBs",
       "Running etcd backups to cloud object storage, encrypting Secrets with cloud KMS, and managing cloud-based certificate issuance",
       "Building container images using cloud-native build services and pushing finished images to cloud container registry endpoints"
     ],
@@ -1550,7 +1550,7 @@ var questions = [
     options: [
       "Pods, Services, and ConfigMaps — these are all namespace-scoped and isolated per namespace boundary",
       "Deployments and DaemonSets — these exist at the cluster level and reference namespaces via labels",
-      "Nodes, PersistentVolumes, ClusterRoles, and Namespaces themselves — these are cluster-scoped",
+      "Nodes, PersistentVolumes, ClusterRoles, and Namespaces themselves — all of these are cluster-scoped",
       "Secrets and ServiceAccounts — these are cluster-scoped to allow easy cross-namespace access paths"
     ],
     answer: 2,
@@ -1599,7 +1599,7 @@ var questions = [
       "Argo CD uses a push-based model while Flux uses a pull-based model representing fundamentally different approaches",
       "Argo CD focuses primarily on Helm chart releases while Flux specializes in deploying plain Kubernetes manifests from Git",
       "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers",
-      "Argo CD has a built-in web UI for app state visualization; Flux uses a CLI-first controller-based architecture"
+      "Argo CD has a built-in web UI for application state visualization; Flux uses a CLI-first controller-based architecture"
     ],
     answer: 3,
     explanation: "Both Argo CD and Flux are pull-based GitOps tools. A key difference is that Argo CD includes a rich web UI for application visualization, sync management, and RBAC, making it popular for teams that value visual management. Flux is modular and CLI-first, composed of separate controllers (Source, Kustomize, Helm, Notification, Image Automation), which some teams prefer for its composability and infrastructure-as-code approach. Both support Helm, Kustomize, and plain manifests.\n\nWhy other options are wrong:\n- A: Both Argo CD and Flux use pull-based (not push-based) GitOps models; they are architecturally similar\n- B: Both Argo CD and Flux support Helm, Kustomize, and plain manifests; neither is limited to one\n- C: Neither requires a separate Git server; both connect to external Git providers like GitHub, GitLab\n\nReference: https://www.cncf.io/projects/argo/",

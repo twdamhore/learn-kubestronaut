@@ -173,3 +173,49 @@
 
 ### s02-q064 (length-balance)
 - **Options C, D:** Expanded "Yes" options to reduce structural clustering between "Yes" (shorter) and "No" (longer) options.
+
+---
+
+# Round 39 Review - set-02.js
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 7 (5 MEDIUM, 2 LOW)
+
+---
+
+## Changes
+
+### s02-q041 (giveaway - MEDIUM)
+- **Problem:** Correct option D listed 4 source types while wrong options listed 0-1, creating a giveaway.
+- **Option A:** Added a list of sources. Changed from `"An emptyDir volume with an init container that copies data from each of the ConfigMaps and the Secret source"` to `"An emptyDir volume with an init container that copies data from ConfigMaps, Secrets, and other sources into a shared directory"`.
+- **Option D (correct):** Trimmed the source list. Changed from `"A projected volume combining ConfigMaps, Secrets, Downward API, and token sources in one mount"` to `"A projected volume combining multiple ConfigMap, Secret, and Downward API sources into a single mount point"`.
+
+### s02-q043 (length-balance - MEDIUM)
+- **Problem:** Correct option B was the shortest at 94 characters while option A was 136 characters.
+- **Option A:** Trimmed. Changed from `"ConfigMaps are generally scoped to a single Deployment and are not designed to be shared across different Deployments within a namespace"` to `"ConfigMaps are scoped to a single Deployment and are not designed to be shared across different Deployments"`.
+- **Option B (correct):** Expanded. Changed from `"Sharing ConfigMaps creates tight coupling; changes to Service B's config could break Service A"` to `"Sharing ConfigMaps between services creates tight coupling; changes to Service B's config could unexpectedly break Service A"`.
+
+### s02-q070 (giveaway - MEDIUM)
+- **Problem:** Correct option A had unique parenthetical enumerations not present in other options.
+- **Option A (correct):** Simplified parentheticals. Changed from `"Yes — the mesh handles network config (routing, mTLS, retries) but app config (DB URLs, flags) still needs ConfigMaps"` to `"Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps"`.
+- **Option B:** Added parenthetical list to match structure. Changed from `"No — the service mesh manages all configuration including application-specific settings like database URLs and feature flags"` to `"No — the service mesh manages all configuration including application-specific settings (database URLs, feature flags, and logging levels)"`.
+
+### s02-q092 (length-balance - MEDIUM)
+- **Problem:** Correct option D was the shortest at 106 characters while others averaged 130 characters.
+- **Option D (correct):** Expanded. Changed from `"ConfigMaps and Secrets should be version-controlled, reviewed, tested, and deployed via the CI/CD pipeline"` to `"ConfigMaps and Secrets should be version-controlled, peer-reviewed, tested in staging, and deployed through a CI/CD pipeline"`.
+- **Option B:** Trimmed. Changed from `"Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires additional tooling"` to `"Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires tooling"`.
+
+### s02-q095 (length-balance - MEDIUM)
+- **Problem:** Correct option B was the shortest at 104 characters while others were 133-135 characters.
+- **Option B (correct):** Expanded. Changed from `"ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations"` to `"ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations and code review workflows"`.
+- **Option A:** Trimmed. Changed from `"ConfigMaps are stored in etcd which automatically versions all changes, enabling kubectl rollback configmap to restore prior versions"` to `"ConfigMaps are stored in etcd which automatically versions all changes, enabling kubectl rollback configmap to restore versions"`.
+
+### s02-q020 (length-balance - LOW)
+- **Problem:** Correct option A was the longest while options C and D were approximately 30% shorter.
+- **Option C:** Expanded. Changed from `"Fluentd collects Secret data from application logs and injects them into destination pods"` to `"Fluentd collects Secret data from application logs and injects them into destination pods for configuration management"`.
+- **Option D:** Expanded. Changed from `"Prometheus can monitor and rotate Secrets automatically across multiple cluster environments"` to `"Prometheus can monitor and rotate Secrets automatically across multiple cluster environments using built-in rotation policies"`.
+
+### s02-q085 (length-balance - LOW)
+- **Problem:** Option A was a 148-character outlier compared to other options.
+- **Option A:** Trimmed. Changed from `"The ResourceQuota rejects the pod because it has no memory specification, since the LimitRange injects defaults only after the quota check completes"` to `"The ResourceQuota rejects the pod because the LimitRange injects defaults only after the quota check completes"`.

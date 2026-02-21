@@ -249,9 +249,9 @@ var questions = [
     diagram: null,
     options: [
       "A nodeSelector matching the GPU node's labels to override the taint and direct scheduling there",
-      "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"` in metadata",
+      "An annotation `scheduler.alpha.kubernetes.io/gpu-required: \"true\"` in the pod's metadata section",
       "A toleration for the taint `gpu=true:NoSchedule` so the scheduler allows pod placement on that node",
-      "A resource request for `nvidia.com/gpu: 1` under the container resources spec"
+      "A resource request for `nvidia.com/gpu: 1` under the container resources specification section"
     ],
     answer: 2,
     explanation: "The scheduler message shows the GPU node has a `NoSchedule` taint. For the pod to be scheduled there, it must include a matching toleration in its spec. While a `nodeSelector` or resource request might help target the GPU node, the taint is the blocking factor here. Without the toleration, the scheduler will not place the pod on that node regardless of other settings.\n\nWhy other options are wrong:\n- A: nodeSelector targets a node but cannot override the NoSchedule taint blocking placement\n- B: This annotation is not a valid Kubernetes scheduling mechanism\n- D: GPU resource request helps with device allocation but does not overcome the taint\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -280,10 +280,10 @@ var questions = [
     text: "You want to monitor pod restarts in real-time across all namespaces to identify unstable workloads. Which command provides a continuously updating view?",
     diagram: null,
     options: [
-      "`kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'`",
-      "`kubectl get pods --all-namespaces --watch`",
-      "`kubectl top pods --all-namespaces --containers`",
-      "`kubectl get events -A --field-selector reason=Killing`"
+      "`kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'` for a sorted snapshot",
+      "`kubectl get pods --all-namespaces --watch` to stream live pod status changes as they happen",
+      "`kubectl top pods --all-namespaces --containers` to display current CPU and memory usage totals",
+      "`kubectl get events -A --field-selector reason=Killing` to list historical termination events"
     ],
     answer: 1,
     explanation: "`kubectl get pods -A --watch` streams real-time updates for all pods across all namespaces. Whenever a pod's status changes (including restarts), a new line is printed. The `-A` flag is shorthand for `--all-namespaces`. While sorting by restart count shows a snapshot, it does not provide live updates.\n\nWhy other options are wrong:\n- A: sort-by gives a one-time snapshot, not a continuously updating view\n- C: kubectl top --containers shows CPU/memory metrics, not restart counts or status changes\n- D: field-selector on events shows historical events, not live pod status updates\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
@@ -363,7 +363,7 @@ var questions = [
       "The Kubernetes API server cached the old image tag and needs to be restarted to clear the internal cache entry",
       "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
       "The container runtime installed on the nodes does not support pulling images using the mutable `latest` tag name",
-      "With `imagePullPolicy: IfNotPresent`, the node uses its cached `myapp:latest` instead of pulling the update"
+      "With `imagePullPolicy: IfNotPresent`, the node uses its locally cached `myapp:latest` image instead of pulling the update"
     ],
     answer: 3,
     explanation: "With `imagePullPolicy: IfNotPresent`, the kubelet only pulls an image if it is not already present on the node. Since the tag `latest` did not change in the Deployment spec, no rollout is triggered, and the cached image is reused. Using unique image tags (e.g., commit SHA) or setting `imagePullPolicy: Always` prevents this stale-image problem.\n\nWhy other options are wrong:\n- A: The API server does not cache container images; image caching happens at the node level\n- B: The deployment controller does detect spec changes, but the tag string did not change here\n- C: All container runtimes support the latest tag; this is not a runtime limitation\n\nReference: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
@@ -457,9 +457,9 @@ var questions = [
     diagram: null,
     options: [
       "The kubelet restarts the container after a back-off delay because exit code 1 indicates a transient failure",
-      "Kubernetes will delete the failed pod and then schedule a replacement pod on a different cluster node",
-      "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts",
-      "The `restartPolicy: Never` causes the kubelet to mark the pod as succeeded and clear its resource allocation from the node"
+      "Kubernetes will delete the failed pod automatically and schedule a replacement pod on a different cluster node",
+      "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts by the kubelet",
+      "The `restartPolicy: Never` causes the kubelet to mark the pod as succeeded and clear its resource allocation"
     ],
     answer: 2,
     explanation: "With `restartPolicy: Never`, Kubernetes does not restart failed containers. The pod stays in `Error` (or `Failed`) phase with its logs and status preserved for debugging. This policy is typically used for Jobs or one-shot tasks where you want to inspect failures rather than retry automatically.\n\nWhy other options are wrong:\n- A: Exit code 1 does not cause the kubelet to treat the failure as transient; restartPolicy: Never is honoured and no restart occurs\n- B: Kubernetes does not delete and reschedule the pod; it remains in Failed state for inspection\n- D: A failed container (exit code 1) is not marked as succeeded; restartPolicy: Never keeps the pod in Failed state, it does not change the pod phase to Succeeded\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy",
@@ -491,7 +491,7 @@ var questions = [
       "The `kube-scheduler`, which could not find a valid node placement for the pod sandbox container creation request",
       "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
       "The CNI plugin, which failed to assign a valid network namespace to the new pod sandbox container on the node",
-      "The CRI (e.g., containerd) relaying an OCI runtime error from `runc` during pod sandbox creation"
+      "The CRI (e.g., containerd) relaying an OCI runtime error from the low-level `runc` runtime during pod sandbox creation"
     ],
     answer: 3,
     explanation: "The error message `OCI runtime create failed` indicates the low-level OCI-compliant runtime (typically `runc`) failed to create the container process. This is reported through the CRI layer (containerd or CRI-O) back to the kubelet. Common causes include invalid security context settings, missing kernel capabilities, or corrupted container filesystem bundles.\n\nWhy other options are wrong:\n- A: kube-scheduler operates at the API level and does not interact with OCI runtimes\n- B: kube-apiserver admission happens before scheduling; OCI errors occur during container creation on nodes\n- C: CNI errors produce different messages about network setup, not OCI runtime create failures\n\nReference: https://kubernetes.io/docs/concepts/architecture/cri/",
@@ -568,10 +568,10 @@ var questions = [
     text: "A DaemonSet pod on a specific node keeps getting `OOMKilled`. Other DaemonSet pods on different nodes are running fine. The pod's memory limit is 256Mi. What should you investigate on that specific node?",
     diagram: null,
     options: [
-      "Whether additional workloads on that node cause the DaemonSet pod to process more data, pushing its own memory usage past its 256Mi limit",
+      "Whether additional workloads on that node cause the DaemonSet pod to process more data, pushing memory usage past 256Mi",
       "Whether the DaemonSet's update strategy is set to `OnDelete` instead of `RollingUpdate` for pod replacement policy",
-      "Whether the node has a different container runtime version than other nodes which may cause memory allocation issues",
-      "Whether the `kube-proxy` instance running on that specific node is consuming excessive memory from the system resources"
+      "Whether the node has a different container runtime version than the other nodes which may cause memory overhead issues",
+      "Whether the `kube-proxy` instance running on that specific node is consuming excessive memory from system resources"
     ],
     answer: 0,
     explanation: "If the same DaemonSet pod works on other nodes but gets `OOMKilled` on one, the issue is likely node-specific. Other workloads on that node may cause the DaemonSet pod to handle more work (e.g., more network traffic, logging, or monitoring data), pushing its own memory usage past the 256Mi cgroup limit. Note that `OOMKilled` means the container exceeded its own cgroup memory limit (set by `limits.memory`), which is distinct from kubelet eviction due to overall node memory pressure. Checking `kubectl top pods` on that node and comparing workload patterns is the right approach.\n\nWhy other options are wrong:\n- B: DaemonSet update strategy affects how updates roll out, not memory usage on a specific node\n- C: Different container runtime versions do not typically cause significant memory overhead differences\n- D: kube-proxy uses minimal memory and is unlikely to cause OOMKill of other pods\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -697,7 +697,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy",
-      "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of exit code",
+      "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of the exit code value",
       "The pod is deleted and a new replacement pod is created by the ReplicaSet controller on a potentially different cluster node",
       "The kubelet marks the pod as `Failed` because containers should not exit with code 0 under the Always restart policy rules"
     ],
@@ -872,8 +872,8 @@ var questions = [
     text: "After deploying a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that selects pods with label `app=api`, those pods can no longer communicate with any other pods. The NetworkPolicy only defines an `ingress` rule allowing traffic from `app=frontend` but has no `egress` rules. What caused the complete communication breakdown?",
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
-      "Listing `Egress` in `policyTypes` without defining any egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS resolution",
-      "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods",
+      "Listing `Egress` in `policyTypes` without defining egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS",
+      "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods entirely",
       "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
     ],
@@ -890,8 +890,8 @@ var questions = [
     options: [
       "`spec.template.spec.terminationGracePeriodSeconds` — defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process",
       "`spec.strategy.rollingUpdate.maxSurge` — defines the maximum number of pods created above the desired count during a rolling update rollout",
-      "`spec.minReadySeconds` — defines the minimum number of seconds a newly created pod must be ready without crashing before it is considered available by the controller",
-      "`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before marking it as failed"
+      "`spec.minReadySeconds` — defines the minimum seconds a newly created pod must be ready without crashing before it is considered available by the controller",
+      "`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before reporting the condition as failed"
     ],
     answer: 3,
     explanation: "`spec.progressDeadlineSeconds` (default 600 seconds) defines how long the Deployment controller waits for progress before reporting the Deployment as `Failed` in its conditions. If no new pods become ready within this period, the condition `Progressing` is set to `False` with reason `ProgressDeadlineExceeded`. Note that Kubernetes does not automatically roll back—it just reports the failure.\n\nWhy other options are wrong:\n- A: terminationGracePeriodSeconds controls shutdown time, not rollout timeout detection\n- B: maxSurge controls how many extra pods are created during update, not the failure timeout\n- C: minReadySeconds controls when a pod is considered available, not when a rollout is marked failed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#progress-deadline-seconds",
@@ -1034,8 +1034,8 @@ var questions = [
     options: [
       "Move the pod to the `production` namespace using `kubectl move` to place it alongside the existing Secret resource",
       "Add a cross-namespace reference in the pod spec using `secretRef.namespace: production` to access the remote Secret",
-      "Create `db-credentials` in the `staging` namespace, or use ExternalSecrets to sync secrets across namespaces",
-      "Grant the `staging` pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding for cross-namespace Secret access"
+      "Create `db-credentials` in the `staging` namespace, or use an ExternalSecrets operator to sync it across namespaces",
+      "Grant the `staging` pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding to access the Secret"
     ],
     answer: 2,
     explanation: "Secrets, like ConfigMaps and PVCs, are namespace-scoped. A pod can only reference Secrets in its own namespace. There is no `secretRef.namespace` field in the pod spec. The solution is to create the Secret in the pod's namespace. Tools like ExternalSecrets Operator or Sealed Secrets can automate cross-namespace secret distribution.\n\nWhy other options are wrong:\n- A: kubectl move is not a valid command; pods cannot be moved between namespaces\n- B: secretRef.namespace does not exist in the pod spec; Secrets are namespace-scoped\n- D: ClusterRoleBinding grants API access but pods can only mount Secrets from their own namespace\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -1080,8 +1080,8 @@ var questions = [
     text: "You need to check why a pod named `worker-7` was terminated. `kubectl describe pod worker-7` shows `Reason: Evicted` and `Message: The node was low on resource: memory`. What triggered this eviction?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Pod Termination Flow</text><rect x="30" y="55" width="110" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="85" y="77" text-anchor="middle" fill="#e0e0e0" font-size="10">Node Memory</text><line x1="140" y1="72" x2="165" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a68)"/><rect x="165" y="55" width="110" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="220" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">???</text><text x="220" y="83" text-anchor="middle" fill="#e0e0e0" font-size="9"></text><line x1="275" y1="72" x2="295" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a68)"/><rect x="295" y="55" width="80" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="335" y="77" text-anchor="middle" fill="#e0e0e0" font-size="10">???</text><text x="200" y="120" text-anchor="middle" fill="#aaa" font-size="10">Termination priority: ???</text><text x="200" y="140" text-anchor="middle" fill="#aaa" font-size="10">Selection criteria: ???</text><text x="200" y="165" text-anchor="middle" fill="#e76f51" font-size="10">What mechanism triggered this termination?</text><defs><marker id="a68" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer, which differs from eviction because it targets a single container",
-      "The HorizontalPodAutoscaler scaled down the deployment and selected this specific pod for controlled termination",
+      "The pod exceeded its own memory limit and was killed by the cgroup OOM killer, which targets a single container",
+      "The HorizontalPodAutoscaler scaled down the deployment and selected this specific pod for a controlled termination",
       "A PodDisruptionBudget was violated and the pod was preempted by a higher-priority workload scheduled on the node",
       "The kubelet's eviction manager detected node memory fell below the eviction threshold and evicted the pod to reclaim it"
     ],
@@ -1274,8 +1274,8 @@ var questions = [
     options: [
       "Existing pods run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
       "All pods in the cluster immediately stop because the controller manager manages the container runtime directly",
-      "DaemonSet and Job pods are most affected because these controller loops have higher reconciliation frequency than ReplicaSet controllers",
-      "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario"
+      "DaemonSet and Job pods are most affected because these controller loops reconcile more frequently than ReplicaSet controllers",
+      "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario automatically"
     ],
     answer: 0,
     explanation: "The `kube-controller-manager` runs all built-in controllers (ReplicaSet, Deployment, Job, Node, etc.). When it is down, existing pods continue to run (the kubelet manages running containers), but no reconciliation occurs. Dead pods are not replaced, scaling does not happen, and new Deployment rollouts stall. The scheduler and controller manager are separate components with distinct responsibilities.\n\nWhy other options are wrong:\n- B: Existing containers keep running under kubelet management; kube-controller-manager does not control the runtime\n- C: All controllers are equally affected; there is no difference in reconciliation frequency between DaemonSet, Job, and ReplicaSet controllers\n- D: The scheduler handles pod placement only; it does not take over controller responsibilities\n\nReference: https://kubernetes.io/docs/concepts/architecture/controller/",
@@ -1304,8 +1304,8 @@ var questions = [
     text: "A developer pushes a change to the Git repository, but ArgoCD shows the application as `Synced` with the old version. The Git webhook is configured correctly. What is a common cause?",
     diagram: null,
     options: [
-      "The change was pushed to a different branch that ArgoCD is not tracking—verify the `targetRevision` field in the Application spec",
-      "ArgoCD caches the last-known Git state and requires a manual `argocd app refresh` to pick up any new commits",
+      "The change was pushed to a different branch that ArgoCD is not tracking—verify `targetRevision` in the Application spec",
+      "ArgoCD caches the last-known Git state indefinitely and requires a manual `argocd app refresh` to detect any new commits",
       "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
       "ArgoCD detected the change but its reconciliation loop is paused due to a configured sync window restriction on this application"
     ],
@@ -1368,7 +1368,7 @@ var questions = [
     text: "A pod fails admission with: `Error from server (Forbidden): pods \"test\" is forbidden: violates PodSecurity \"restricted:latest\"`. The pod spec has `runAsNonRoot: true` and `allowPrivilegeEscalation: false`. What else might the `restricted` policy require?",
     diagram: null,
     options: [
-      "The pod should set `hostNetwork: true` because the restricted policy permits it for trusted workloads",
+      "The pod should set `hostNetwork: true` because the restricted policy permits host networking for trusted workloads",
       "The pod must have resource limits set to zero to meet the restricted policy's compute allocation constraints spec",
       "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and set a `seccompProfile` (e.g., `RuntimeDefault`)",
       "The pod must use the `default` ServiceAccount and not a custom one to satisfy the restricted policy identity checks"
@@ -1579,7 +1579,7 @@ var questions = [
       "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes",
       "The pods need to be restarted for the new iptables rules to take effect because they cache network state at startup time",
       "The Service got a new ClusterIP. Clients should use DNS names instead of hardcoded IPs, since DNS resolves to the new IP",
-      "Switching the Service to `type: ExternalName` would decouple the Service from a fixed ClusterIP and allow transparent IP resolution for clients"
+      "Switching the Service to `type: ExternalName` would decouple the Service from a fixed ClusterIP and resolve IPs transparently"
     ],
     answer: 2,
     explanation: "When a Service is deleted and recreated, it typically gets a new ClusterIP (unless explicitly specified). Clients that cached the old IP will fail. Using DNS names ensures clients always resolve to the current Service IP. DNS records are updated by CoreDNS automatically when Services are created or modified.\n\nWhy other options are wrong:\n- A: kube-proxy does update iptables for new Services; the issue is client-side IP caching, not kube-proxy\n- B: Pods do not need restarts for iptables; DNS resolution happens per-request and adapts to new IPs\n- D: ExternalName maps a Service to an external DNS name via CNAME; it is not a solution for internal ClusterIP changes\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",

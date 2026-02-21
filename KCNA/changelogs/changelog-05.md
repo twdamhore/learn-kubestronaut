@@ -79,3 +79,41 @@
 
 ### s05-q086 (length-balance)
 - **Options B, C, D:** Rebalanced. Shortened B and D, expanded C.
+
+---
+
+# Round 39 Review - Set 05
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s05-q004 (length-balance - MEDIUM)
+- **Problem:** Correct option C (52 chars) was shortest; A was 66 chars.
+- **Fix:** Shortened A from "During scheduling, after the PodSecurity admission phase completes" to "During scheduling, after the PodSecurity admission phase". Expanded C (correct) from "During admission by the PodSecurity admission plugin" to "During the admission phase by the PodSecurity admission plugin".
+
+### s05-q082 (structural giveaway - MEDIUM)
+- **Problem:** Correct option D had a unique 3-item enum plus semicolon structure, making it stand out.
+- **Fix:** Added enum structure to C: "Environment variables are injected once at startup, never refreshed, and become stale on rotation". Simplified D (correct): "Env vars leak through process listings and crash dumps while volume-mounted files do not".
+
+### s05-q097 (length-balance - MEDIUM)
+- **Problem:** Correct option B (60 chars) was shortest; A was 73 chars.
+- **Fix:** Shortened A from "Only `app-config` is returned because `resourceNames` filters the listing" to "Only `app-config` is returned because `resourceNames` filters the list". Expanded B (correct) from "The request returns 403 Forbidden because `list` is required" to "The request returns 403 Forbidden because the `list` verb is required".
+
+### s05-q022 (structural giveaway - LOW)
+- **Problem:** Correct option B had a unique 3-comma structure.
+- **Fix:** Simplified B (correct) from "A policy with `podSelector: {}`, `policyTypes: [Ingress]`, and no `ingress` field" to "A policy with `podSelector: {}` and `policyTypes: [Ingress]` but no ingress rules".
+
+### s05-q033 (length-balance - LOW)
+- **Problem:** Wrong option B was 78 chars; others were 63-65 chars.
+- **Fix:** Shortened B from "`apiserver_audit_event_total` filtered with the stage label `ResponseComplete`" to "`apiserver_audit_event_total` filtered by stage `ResponseComplete`".
+
+### s05-q007 (length-balance - LOW)
+- **Problem:** Wrong option C was 78 chars; others were 63-71 chars.
+- **Fix:** Shortened C from "Nothing, because ClusterRoles are only valid when bound by ClusterRoleBindings" to "Nothing, because a ClusterRole needs a ClusterRoleBinding to work".
+
+### s05-q052 (length-balance - LOW)
+- **Problem:** Wrong option D was 77 chars; others were 63-67 chars.
+- **Fix:** Shortened D from "Each authenticator is assigned to specific API groups and evaluated per-group" to "Each authenticator is assigned to specific API groups for evaluation".

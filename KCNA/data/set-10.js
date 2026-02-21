@@ -344,8 +344,8 @@ var questions = [
     text: "An application pod requires access to the Kubernetes API to list pods in its own namespace. The pod uses a ServiceAccount with a bound Role and RoleBinding. The security team mandates that the automatically mounted service account token must have a 1-hour expiration and be bound to the pod's identity. Which approach satisfies these requirements?",
     diagram: null,
     options: [
-      "A. Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration",
-      "B. Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read it from the main app container",
+      "A. Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration and the pod's API audience",
+      "B. Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read it from the app container",
       "C. Configure the ServiceAccount annotation `kubernetes.io/enforce-mountable-secrets` and set the token `exp` claim via a custom admission webhook",
       "D. Enable the `BoundServiceAccountTokenVolume` feature gate (disabled by default) and set `--service-account-max-token-expiration` to 1 hour on the API server"
     ],
@@ -457,8 +457,8 @@ var questions = [
     diagram: null,
     options: [
       "A. Priority 0, because only one `globalDefault` PriorityClass can exist and the system ignores user-created default values",
-      "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault PriorityClass is configured by users",
-      "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to pods without an explicit assignment",
+      "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault PriorityClass is configured",
+      "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to all pods without an explicit priority assignment",
       "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class"
     ],
     answer: 2,
@@ -744,10 +744,10 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.29. A CRD is created with two stored versions: `v1alpha1` and `v1beta1`, with `v1beta1` as the served and storage version. A conversion webhook is configured. An existing `v1alpha1` resource is stored in etcd. A client requests the resource via the `v1beta1` API. What happens?",
     diagram: null,
     options: [
-      "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly as-is",
-      "B. The conversion webhook pre-converted the resource when the storage version was updated, so the API server serves the cached `v1beta1` version",
+      "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly without version conversion",
+      "B. The conversion webhook pre-converted the resource when the storage version was changed, so the API server serves the cached `v1beta1` version",
       "C. The conversion webhook requires a completed storage migration job before it is able to convert `v1alpha1` resources to `v1beta1`",
-      "D. The API server reads the `v1alpha1` object from etcd, invokes the conversion webhook to transform it to the requested version, and returns `v1beta1`"
+      "D. The API server reads the `v1alpha1` object from etcd, invokes the conversion webhook to transform it to `v1beta1`, and returns the result"
     ],
     answer: 3,
     explanation: "When a client requests a CRD resource at a version different from its stored version in etcd, the API server uses the configured conversion webhook to transform the object between versions on the fly. The resource remains stored in etcd in its original version (`v1alpha1`) until a storage migration is explicitly run. The conversion webhook handles bidirectional conversion, allowing resources stored in any version to be served at any other served version. This is the core mechanism for CRD version evolution.\n\nWhy other options are wrong:\n- A: The API server does not return the raw stored version directly; it converts to the requested version using the conversion webhook\n- B: The API server does not pre-convert and cache resources; conversion happens on-demand when a different version is requested\n- C: A storage migration job is not required; the conversion webhook converts on-demand and can serve resources in any served version regardless of stored version\n\nReference: https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#webhook-conversion",
@@ -857,9 +857,9 @@ var questions = [
     diagram: null,
     options: [
       "A. All 4 replicas are scheduled — anti-affinity is per-replica and does not prevent co-location within the same Deployment",
-      "B. 3 replicas schedule (one per node) and the 4th remains Pending because no node satisfies the anti-affinity constraint",
+      "B. 3 replicas schedule (one per node) and the 4th remains Pending because no available node satisfies the anti-affinity rule",
       "C. The scheduler ignores anti-affinity for the 4th replica and co-locates it with an existing replica on the least-loaded node",
-      "D. All 4 replicas remain Pending because requiredDuringScheduling anti-affinity is evaluated before any pods are placed, blocking all scheduling"
+      "D. All 4 replicas remain Pending because requiredDuringScheduling anti-affinity is evaluated before any pods are placed"
     ],
     answer: 1,
     explanation: "Required pod anti-affinity with `topologyKey: kubernetes.io/hostname` ensures that no two pods matching the label selector are placed on the same node. With 3 nodes, only 3 replicas can be scheduled (one per node). The 4th replica cannot find a node without a matching pod, so it remains Pending indefinitely. The `required` level is a hard constraint — the scheduler will not violate it. Using `preferred` anti-affinity would allow the 4th pod to be co-located as a soft preference.\n\nWhy other options are wrong:\n- A: Anti-affinity is not per-replica in a special way; it prevents co-location of any matching pods, including within the same Deployment\n- C: The scheduler does not ignore required anti-affinity; required constraints are hard rules that cannot be violated\n- D: Pods do not all remain Pending; the first three can be scheduled one per node without violating anti-affinity\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
@@ -986,8 +986,8 @@ var questions = [
     options: [
       "A. Implement cluster autoscaler with aggressive scale-down settings and use VPA in `UpdateMode: Auto` for all namespaces to right-size pods automatically",
       "B. Apply `LimitRange` in dev namespaces to enforce lower defaults, use VPA in recommendation-only mode for dev, and keep production resource settings unchanged",
-      "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on all pod containers",
-      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size requests using VPA recommendations"
+      "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods",
+      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size resource requests based on VPA recommendation data for each workload"
     ],
     answer: 3,
     explanation: "The optimal approach combines cost savings with appropriate risk tolerance. Development workloads can tolerate interruptions, making spot/preemptible nodes ideal (60-80% cost savings). Using VPA recommendations to right-size resource requests ensures that requested resources match actual usage (closing the 15% utilization vs 60% request gap). Taints and tolerations ensure only dev workloads land on spot nodes, protecting production. Option B only addresses defaults for new pods. Option C aggressively cuts quota without understanding actual needs.\n\nWhy other options are wrong:\n- A: VPA in UpdateMode: Auto for all namespaces could disrupt production by restarting pods; aggressive autoscaler scale-down may evict production workloads\n- B: LimitRange with lower defaults only affects new pods; existing pods keep their current resource settings unchanged\n- C: Cutting quota to 30% of current levels may be too aggressive without understanding actual usage patterns; it could break legitimate workloads\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
@@ -1176,10 +1176,10 @@ var questions = [
     text: "A KEDA (Kubernetes Event-Driven Autoscaler) `ScaledObject` is configured to scale a Deployment based on an Azure Service Bus queue length. The `ScaledObject` specifies `minReplicaCount: 0` and `maxReplicaCount: 20`. The queue currently has 500 messages and the trigger threshold is 10 messages per replica. How does KEDA determine the target replica count?",
     diagram: null,
     options: [
-      "A. KEDA calculates 50 desired replicas, but the `maxReplicaCount` caps the actual target at 20",
-      "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds `maxReplicaCount`",
+      "A. KEDA calculates 50 desired replicas from the metric, but the `maxReplicaCount` caps the actual scaling target at 20",
+      "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds the `maxReplicaCount` limit",
       "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
-      "D. KEDA computes 50 replicas (500 / 10 threshold), scales to 20 in a single step, then pauses until the next evaluation run"
+      "D. KEDA computes 50 replicas, scales to 20 in a single step, then pauses scaling until the next evaluation run"
     ],
     answer: 0,
     explanation: "KEDA calculates the desired replica count by dividing the metric value (queue length of 500) by the trigger threshold (10 messages per replica), yielding 50. Since this exceeds `maxReplicaCount: 20`, the target is capped at 20 replicas. KEDA then patches the HPA target or directly scales the Deployment to 20. KEDA uses the Kubernetes HPA external metrics mechanism — it does not implement its own gradual scaling logic. The HPA's built-in scaling behavior (stabilization windows, scaling policies) may further control the actual scaling speed.\n\nWhy other options are wrong:\n- B: KEDA does not blindly set to maxReplicaCount; it calculates the actual desired count first and then caps at max\n- C: KEDA does not scale linearly or double; it calculates the target directly from the metric value divided by the threshold\n- D: KEDA does not pause scaling after reaching max; it continues evaluating metrics on each interval and adjusts as queue drains\n\nReference: https://keda.sh/docs/latest/concepts/scaling-deployments/",
@@ -1272,9 +1272,9 @@ var questions = [
     text: "A CSI driver supports volume snapshots. A `VolumeSnapshot` is created from a PVC that is actively being written to by a running pod. The snapshot `readyToUse` becomes `true`. Is the snapshot data guaranteed to be consistent?",
     diagram: null,
     options: [
-      "A. Yes, the CSI driver quiesces all I/O to the volume before taking the snapshot, ensuring full application consistency",
-      "B. No, the snapshot is crash-consistent; data in flight or in application buffers at snapshot time may not be captured",
-      "C. Yes, Kubernetes freezes the filesystem using `fsfreeze` before the CSI snapshot call to ensure data consistency",
+      "A. The CSI driver quiesces all I/O to the volume before taking the snapshot, guaranteeing full application-level consistency",
+      "B. The snapshot is only crash-consistent; data in flight or in application buffers at snapshot time may not be captured",
+      "C. Kubernetes freezes the filesystem via `fsfreeze` before the CSI snapshot call, ensuring write-order data consistency",
       "D. Consistency depends on the `snapshotClass` parameter `consistency: application` which must be set explicitly"
     ],
     answer: 1,
@@ -1384,10 +1384,10 @@ var questions = [
     text: "A pod with `restartPolicy: OnFailure` runs a Job. The container exits with exit code 0 (success). The kubelet observes the exit. What happens next, and what is the final pod phase?",
     diagram: null,
     options: [
-      "A. The container is restarted because the kubelet interprets OnFailure as restarting containers on any exit, including successful completion with exit code 0",
+      "A. The container is restarted because the kubelet interprets OnFailure as restarting on any exit, including successful completion with exit code 0",
       "B. The Job controller creates a new pod because it interprets the completed pod as needing replacement to meet its completions target",
       "C. The container is not restarted, but the pod phase stays `Running` with a `Terminated` container until the Job controller cleans up",
-      "D. The container is not restarted (exit 0 = success); the pod transitions to `Succeeded` and remains until Job TTL or deletion"
+      "D. The container is not restarted (exit 0 = success); the pod transitions to `Succeeded` phase and remains until Job TTL or manual deletion"
     ],
     answer: 3,
     explanation: "With `restartPolicy: OnFailure`, containers are only restarted if they exit with a non-zero exit code. An exit code of 0 indicates success, so the kubelet does not restart the container. The pod's phase transitions to `Succeeded`. The pod remains on the node (visible via `kubectl get pods`) until it is cleaned up by the Job controller's TTL mechanism (`ttlSecondsAfterFinished`), the Job is deleted, or the pod is manually deleted. The Job controller recognizes the successful completion and counts it toward the `completions` requirement.\n\nWhy other options are wrong:\n- A: restartPolicy: OnFailure only restarts on non-zero exit; exit code 0 (success) does not trigger a restart\n- B: The Job controller does not create a new pod for a successfully completed pod; it counts it toward completions\n- C: The pod phase transitions to Succeeded, not Running with a Terminated container; the pod lifecycle is complete\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#handling-pod-and-container-failures",
@@ -1592,10 +1592,10 @@ var questions = [
     text: "A platform team defines their cloud native maturity model. They categorize workloads into levels: Level 1 (containerized), Level 2 (orchestrated), Level 3 (observable), Level 4 (declaratively managed), Level 5 (auto-remediated). An application has automated scaling, health checks, structured logging with Loki, Prometheus metrics, distributed tracing with Jaeger, GitOps deployment with Argo CD, and self-healing via liveness probes. Which level does this application achieve?",
     diagram: null,
     options: [
-      "A. Level 3 — observability with logging, metrics, and tracing is strong but declarative management via GitOps is not recognized at this level",
+      "A. Level 3 — observability with logging, metrics, and tracing is strong but declarative management via GitOps is not counted at this level",
       "B. Level 4 — GitOps provides declarative management, but liveness probes alone do not constitute platform-level auto-remediation",
       "C. Level 5 — the application has all required capabilities including auto-remediation through liveness probes and pod autoscaling",
-      "D. Level 4 — meets observability and declarative management, but Level 5 requires closed-loop remediation"
+      "D. Level 4 — meets observability and declarative management criteria, but Level 5 requires closed-loop observability-driven remediation"
     ],
     answer: 3,
     explanation: "The application clearly achieves Level 3 (observable: logging, metrics, tracing) and Level 4 (declaratively managed: GitOps with Argo CD). However, Level 5 auto-remediation requires a closed loop between observability signals and automated corrective actions — for example, automatically rolling back a deployment when error rates spike, scaling based on custom business metrics, or triggering runbook automation. Liveness probes provide basic container-level self-healing, but Level 5 implies platform-level auto-remediation that integrates observability with orchestrated responses, such as through Keptn or custom operators.\n\nWhy other options are wrong:\n- A: The application has observability AND declarative management via GitOps, so it exceeds Level 3\n- B: While liveness probes provide basic self-healing, Level 5 requires observability-driven automated remediation which is not present\n- C: Liveness probes and HPA are not sufficient for Level 5; Level 5 requires closed-loop auto-remediation integrating observability signals with corrective actions\n\nReference: https://www.cncf.io/blog/2024/03/01/cloud-native-maturity-model/",

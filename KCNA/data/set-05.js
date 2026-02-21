@@ -56,9 +56,9 @@ var questions = [
     text: "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
     diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(???)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
-      "During scheduling, after the PodSecurity admission phase completes",
+      "During scheduling, after the PodSecurity admission phase",
       "During the image pull phase on the assigned worker node",
-      "During admission by the PodSecurity admission plugin",
+      "During the admission phase by the PodSecurity admission plugin",
       "At runtime enforcement by the container runtime on the node"
     ],
     answer: 2,
@@ -106,7 +106,7 @@ var questions = [
     options: [
       "Create and delete Deployments across all namespaces in the cluster",
       "Create and delete Deployments only in the `dev` namespace scope",
-      "Nothing, because ClusterRoles are only valid when bound by ClusterRoleBindings",
+      "Nothing, because a ClusterRole needs a ClusterRoleBinding to work",
       "Create Deployments in `dev` but delete them across all other namespaces"
     ],
     answer: 1,
@@ -345,7 +345,7 @@ var questions = [
     diagram: null,
     options: [
       "A policy with `podSelector: {}` and `ingress: [{}]` allowing traffic from all sources",
-      "A policy with `podSelector: {}`, `policyTypes: [Ingress]`, and no `ingress` field",
+      "A policy with `podSelector: {}` and `policyTypes: [Ingress]` but no ingress rules",
       "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rule list",
       "A policy with `podSelector: {}` and `ingress: [{from: []}]` allowing empty source"
     ],
@@ -521,7 +521,7 @@ var questions = [
     diagram: null,
     options: [
       "`apiserver_request_total` filtered with the HTTP code label `401`",
-      "`apiserver_audit_event_total` filtered with the stage label `ResponseComplete`",
+      "`apiserver_audit_event_total` filtered by stage `ResponseComplete`",
       "`etcd_request_failed_total` tracking failed etcd store operations",
       "`scheduler_binding_errors_total` tracking Pod scheduling errors"
     ],
@@ -827,7 +827,7 @@ var questions = [
       "In a fixed order: certificates first, then bearer tokens, then OIDC",
       "The evaluation order is randomized differently for each request",
       "All configured authenticators are tried; the first success is used",
-      "Each authenticator is assigned to specific API groups and evaluated per-group"
+      "Each authenticator is assigned to specific API groups for evaluation"
     ],
     answer: 2,
     explanation: "The Kubernetes API server evaluates all configured authentication plugins for each request. The first authenticator that successfully validates the credentials determines the identity. If none succeed, the request is rejected with 401. Multiple authenticators can coexist to support different client types.\n\nWhy other options are wrong:\n- A: While authenticators are evaluated in a deterministic order based on configuration, there is no single canonical sequence; the key behavior is that all are tried and the first success wins\n- B: The order is not randomized; authenticators are tried in a deterministic, configuration-dependent order\n- D: Authenticators are not scoped to API groups; they operate cluster-wide on every request\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/",
@@ -1306,8 +1306,8 @@ var questions = [
     options: [
       "Environment variables are not encrypted by Kubernetes while in transit between components",
       "Volume mounts automatically encrypt Secret data before writing it to the container disk",
-      "Environment variables are injected only once and are stale if the Secret is rotated",
-      "Env vars are visible in process listings, crash dumps, and logs; volume files are not"
+      "Environment variables are injected once at startup, never refreshed, and become stale on rotation",
+      "Env vars leak through process listings and crash dumps while volume-mounted files do not"
     ],
     answer: 3,
     explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.\n\nWhy other options are wrong:\n- A: Neither env vars nor volume mounts are encrypted in transit between components by default\n- B: Volume mounts do not automatically encrypt Secret data; they use tmpfs with file permissions\n- C: While env vars are indeed injected at start and do not auto-update, the primary security concern is exposure in process listings and logs\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
@@ -1544,8 +1544,8 @@ var questions = [
     text: "A Role grants `get` on `configmaps` with `resourceNames: [\"app-config\"]`. A user bound to this Role runs `kubectl get configmaps`. What happens?",
     diagram: null,
     options: [
-      "Only `app-config` is returned because `resourceNames` filters the listing",
-      "The request returns 403 Forbidden because `list` is required",
+      "Only `app-config` is returned because `resourceNames` filters the list",
+      "The request returns 403 Forbidden because the `list` verb is required",
       "All ConfigMaps in the namespace are returned ignoring `resourceNames`",
       "An empty list with zero items is returned to the requesting user"
     ],

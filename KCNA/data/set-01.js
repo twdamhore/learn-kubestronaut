@@ -510,7 +510,7 @@ var questions = [
       "Knative, which provides serving and eventing for serverless workloads on Kubernetes"
     ],
     answer: 3,
-    explanation: "Knative is a Kubernetes-based platform that provides components for deploying, running, and managing serverless workloads. Knative Serving handles request-driven auto-scaling including scale-to-zero, while Knative Eventing provides event-driven architecture. Istio is a service mesh, not a serverless platform. Prometheus collects metrics but does not manage serverless workloads. Helm is a package manager, not a serverless runtime.\n\nWhy other options are wrong:\n- A: Istio is a service mesh for traffic management and mTLS, not a serverless platform.\n- B: Helm is a package manager for Kubernetes charts; it does not provide serverless runtime or auto-scaling.\n- C: Prometheus collects and stores metrics; it does not manage or auto-scale serverless workloads.\n\nReference: https://knative.dev/docs/",
+    explanation: "Knative is a CNCF graduated project and Kubernetes-based platform that provides components for deploying, running, and managing serverless workloads. Knative Serving handles request-driven auto-scaling including scale-to-zero, while Knative Eventing provides event-driven architecture. Istio is a service mesh, not a serverless platform. Prometheus collects metrics but does not manage serverless workloads. Helm is a package manager, not a serverless runtime.\n\nWhy other options are wrong:\n- A: Istio is a service mesh for traffic management and mTLS, not a serverless platform.\n- B: Helm is a package manager for Kubernetes charts; it does not provide serverless runtime or auto-scaling.\n- C: Prometheus collects and stores metrics; it does not manage or auto-scale serverless workloads.\n\nReference: https://knative.dev/docs/",
     verify: null
   },
   {
@@ -536,10 +536,10 @@ var questions = [
     text: "A microservices team is troubleshooting high latency in a request that flows through 5 services. They need to identify which service is causing the bottleneck. Which observability technique allows them to track a single request as it traverses multiple services?",
     diagram: null,
     options: [
-      "Centralized logging with correlated timestamps across all services in the system",
+      "Centralized logging with correlated timestamps and request IDs across all services in the system",
       "Health check endpoints on each service that report response times back to callers",
-      "Distributed tracing, which propagates trace context headers across service boundaries in a request chain",
-      "Metric dashboards showing average latency per service over the last hour of data"
+      "Distributed tracing, which propagates context headers across service boundaries in a request chain",
+      "Metric dashboards showing per-service average latency aggregated over the last hour of observations"
     ],
     answer: 2,
     explanation: "Distributed tracing (implemented by tools like Jaeger or Zipkin) propagates a trace context (trace ID and span IDs) across service boundaries. This allows engineers to visualize the entire request path and identify exactly where latency is introduced. Centralized logging can correlate events but lacks built-in request flow visualization. Health checks show service status, not per-request latency. Metric dashboards show aggregates, not individual request paths.\n\nWhy other options are wrong:\n- A: Centralized logging with correlated timestamps can correlate events but lacks built-in request flow visualization.\n- B: Health check endpoints report general service status, not per-request latency across a chain.\n- D: Metric dashboards show aggregate latency over time, not individual request paths through services.\n\nReference: https://www.jaegertracing.io/docs/",
@@ -1064,7 +1064,7 @@ var questions = [
     text: "A team deploys a LoadBalancer Service in a cloud-managed Kubernetes cluster. They notice that the Service has both a ClusterIP and an external IP. A new engineer is confused about how the LoadBalancer type relates to other Service types. Which statement is correct?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="120" y="5" width="160" height="60" rx="8" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="200" y="25" text-anchor="middle" fill="white" font-size="12">Service (type: ?)</text><text x="200" y="42" text-anchor="middle" fill="#adf" font-size="10">IP: ?</text><text x="200" y="56" text-anchor="middle" fill="#fda" font-size="10">Behavior: ?</text><text x="200" y="85" text-anchor="middle" fill="#ccc" font-size="12">? How do these relate ?</text><rect x="50" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="95" y="185" text-anchor="middle" fill="white" font-size="11">Pod A</text><rect x="155" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="200" y="185" text-anchor="middle" fill="white" font-size="11">Pod B</text><rect x="260" y="160" width="90" height="40" rx="4" fill="#0db7ed" stroke="#fff" stroke-width="1"/><text x="305" y="185" text-anchor="middle" fill="white" font-size="11">Pod C</text><line x1="200" y1="65" x2="95" y2="160" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="65" x2="200" y2="160" stroke="#aaa" stroke-width="1.5"/><line x1="200" y1="65" x2="305" y2="160" stroke="#aaa" stroke-width="1.5"/></svg>',
     options: [
-      "LoadBalancer includes NodePort and ClusterIP functionality, so a LoadBalancer Service exposes all three access methods",
+      "LoadBalancer includes NodePort and ClusterIP functionality, so the Service exposes all three access methods",
       "LoadBalancer is independent of ClusterIP and NodePort; it creates a completely separate traffic path",
       "LoadBalancer replaces ClusterIP with an external IP, so the Service is no longer internally accessible",
       "LoadBalancer requires a headless Service with no ClusterIP, as the external IP replaces the virtual cluster IP"
@@ -1304,7 +1304,7 @@ var questions = [
     text: "A team is building container images and wants to ensure they follow best practices for minimal image size and security. Which approach produces the smallest and most secure container image?",
     diagram: null,
     options: [
-      "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final stage",
+      "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final production stage",
       "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in the final Dockerfile layer",
       "Build the application on the host machine with native compilers and copy the binary into a `latest` tagged base image",
       "Use the `--squash` flag to compress all layers into one, which removes most unused files from the image"
@@ -1370,7 +1370,7 @@ var questions = [
     options: [
       "Declarative commands execute faster because they bypass most of the validation checks performed by the API server",
       "Declarative config describes the desired end state, enabling version control, audit trails, and reproducibility",
-      "Declarative manifests automatically retry failed operations until the desired state is fully achieved",
+      "Declarative manifests automatically retry failed operations, rollback on errors, and converge until the desired state is achieved",
       "Declarative management infers the desired state from command-line flags instead of requiring manifest files"
     ],
     answer: 1,
@@ -1402,8 +1402,8 @@ var questions = [
     options: [
       "Prometheus, which offers vendor-neutral collection of traces, metrics, and logs in one pipeline",
       "OpenTelemetry Collector, which receives, processes, and exports telemetry data in a vendor-neutral way",
-      "Grafana Loki, which provides unified collection of all three telemetry signal types",
-      "Fluentd, which has been extended to export traces and metrics alongside log streams"
+      "Grafana Loki, which provides unified collection and indexing of all three telemetry signal types",
+      "Fluentd, which has been extended to collect and export traces and metrics alongside log streams"
     ],
     answer: 1,
     explanation: "The OpenTelemetry Collector is a vendor-neutral agent that can receive, process, and export traces, metrics, and logs. It supports multiple input formats and can export to various backends (Jaeger, Prometheus, Zipkin, commercial vendors). Prometheus primarily handles metrics, not traces or logs. Grafana Loki handles logs, not all three signals. Fluentd handles logs primarily and does not natively process traces and metrics.\n\nWhy other options are wrong:\n- A: Prometheus primarily handles metrics; it does not natively support traces or logs.\n- C: Grafana Loki handles logs only, not all three telemetry signal types.\n- D: Fluentd handles log aggregation primarily; it does not natively process distributed traces or metrics.\n\nReference: https://opentelemetry.io/docs/collector/",
@@ -1595,7 +1595,7 @@ var questions = [
       "They are identical in behavior; `create` is simply an alias for `apply` with the same semantics and output",
       "`kubectl create` is imperative and fails if the resource exists; `kubectl apply` is declarative and updates",
       "`kubectl create` handles initial resource creation while `kubectl apply` handles subsequent updates, each optimized for its stage",
-      "`kubectl apply` requires YAML input while `kubectl create` primarily uses command-line generators for resources"
+      "`kubectl apply` only accepts YAML file input; `kubectl create` primarily uses command-line generators for resources"
     ],
     answer: 1,
     explanation: "`kubectl create` is an imperative command that creates a resource and returns an error if it already exists. `kubectl apply` is declarative — it creates the resource if it does not exist, or updates it if it does, by comparing the desired state with the current state. They are not interchangeable. Both can accept YAML input. `kubectl create` can also work with generators (like `kubectl create deployment`), and `kubectl apply` always requires a manifest file or stdin.\n\nWhy other options are wrong:\n- A: They are not identical; `create` is imperative and `apply` is declarative with different behaviors.\n- C: Both can create resources; `kubectl apply` creates if absent and updates if present.\n- D: Both `kubectl create` and `kubectl apply` can accept YAML input; `create` also supports generators.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/",

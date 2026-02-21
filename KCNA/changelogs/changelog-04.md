@@ -127,3 +127,47 @@
 
 ### s04-q011 (length-balance)
 - **Option B:** Shortened from ~128 to ~107 chars.
+
+---
+
+# Round 39 Review - Set 04
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 10 across 10 questions
+
+## Changes
+
+### s04-q006 (length-balance - MEDIUM)
+- **Option C (correct):** Expanded from ~88 to ~102 chars by adding ", accessed via configuration and".
+- **Option D:** Shortened from ~114 to ~79 chars by trimming to "primary data strategy" and "entirely".
+
+### s04-q025 (length-balance - MEDIUM)
+- **Option D (correct):** Expanded by adding "A records" suffix to match other option lengths.
+- **Option B:** Trimmed from ~111 to ~104 chars by removing "direct" from "each pod gets a direct cluster-level DNS entry".
+
+### s04-q055 (giveaway - MEDIUM)
+- **Option A:** Added comma list "for compute, storage, and networking" to match the comma-list pattern in correct option B.
+
+### s04-q068 (length-balance - MEDIUM)
+- **Option D:** Shortened from ~121 to ~99 chars by restructuring the sentence to lead with "The CSI driver".
+
+### s04-q075 (length-balance - MEDIUM)
+- **Option A (correct):** Expanded from ~88 to ~97 chars by adding "entire" and "individual".
+- **Option B:** Shortened from ~111 to ~96 chars by trimming "preserving data independently" to "from the cluster".
+
+### s04-q031 (length-balance - LOW-MEDIUM)
+- **Option C:** Shortened from ~133 to ~96 chars by removing "Horizontal scaling requires" prefix.
+
+### s04-q086 (length-balance - LOW-MEDIUM)
+- **Option B:** Shortened from ~121 to ~104 chars by replacing "NFS export volumes" with "NFS volumes" and "permissions" with "access".
+
+### s04-q045 (length-balance - LOW-MEDIUM)
+- **Option A (correct):** Added "(per PV)" suffix to balance against other options that have parenthetical suffixes.
+
+### s04-q036 (length-balance - LOW-MEDIUM)
+- **Option B:** Shortened from ~122 to ~108 chars by removing "provisioning" from the sentence.
+
+### s04-q042 (length-balance - LOW-MEDIUM)
+- **Option A:** Trimmed from ~117 to ~99 chars by removing "for each read" suffix.
+- **Option D (correct):** Expanded from ~99 to ~107 chars by changing "full" to "complete" and adding "full" before "state reconstruction".

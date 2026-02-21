@@ -154,3 +154,44 @@
 
 ### s09-q053 (giveaway)
 - **Option C:** Added percentage comparison to match correct answer's formula.
+
+---
+
+# Round 39 Review - Set 09
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 8 across 8 questions
+
+## Changes
+
+### s09-q023 (length-balance)
+- **Option A:** Expanded ~85->96 chars. Reworded to "for CoreDNS to generate DNS records for the Service".
+- **Option D (answer):** Trimmed ~105->96 chars. Shortened "without a custom dnsConfig specifying a nameserver pointing to CoreDNS" to remove "specifying a nameserver".
+
+### s09-q028 (length-balance)
+- **Option A (answer):** Trimmed ~125->101 chars. Changed "with an appropriate encryption provider" to "with a provider".
+- **Option B:** Restored to original 101 chars (removed "sensitive" added during over-expansion).
+
+### s09-q029 (accuracy)
+- **Question text:** Changed "a CNCF project" to "a Kubernetes-native project" since Tekton is a CDF (Continuous Delivery Foundation) project, not CNCF.
+- **Explanation:** Changed "Tekton is a CNCF project" to "Tekton is a Continuous Delivery Foundation (CDF) project" and added clarifying note.
+
+### s09-q034 (explanation)
+- **Option A explanation:** Changed inaccurate "it still progressively replaces Pods" to "maxSurge: 100% creates all new Pods at once, but old Pods are still removed progressively and there is no explicit traffic-switch step, so it is not blue-green".
+
+### s09-q070 (length-balance)
+- **Option A:** Trimmed ~115->107 chars. Changed "the cluster's current amd64" to "the cluster's amd64".
+- **Option C (answer):** Expanded ~99->104 chars. Changed "than available" to "than is available" and "blocks" to "prevents".
+
+### s09-q071 (length-balance)
+- **Option A:** Trimmed ~102->93 chars. Removed "endpoint" at end.
+- **Option B:** Trimmed ~107->96 chars. Changed "the CoreDNS server" to "CoreDNS".
+- **Option C (answer):** Expanded ~91->99 chars. Changed "which the client then resolves" to "which the client resolver then follows".
+
+### s09-q086 (accuracy)
+- **Explanation:** Changed "OpenCost (a CNCF sandbox project)" to "OpenCost (a CNCF Incubating project)" to reflect current maturity level as of Feb 2026.
+
+### s09-q098 (length-balance)
+- **Option A (answer):** Trimmed ~101->97 chars. Changed "The failurePolicy field" to "The webhook's failurePolicy field" and simplified end clause.
+- **Option D:** Trimmed ~118->102 chars. Replaced "ValidatingWebhookConfiguration resources are advisory and do not block requests" with "validating webhook configurations are advisory and non-blocking".

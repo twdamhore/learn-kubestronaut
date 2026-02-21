@@ -232,10 +232,10 @@ var questions = [
     text: "During a cluster upgrade, the platform team uses a strategy where they create a new node pool with the upgraded version, migrate workloads, then decommission the old pool. Which pattern does this follow?",
     diagram: null,
     options: [
-      "A. Blue-green node pool replacement",
-      "B. In-place rolling update on the existing pool",
-      "C. Canary deployment of new version",
-      "D. Recreate strategy replacing all"
+      "A. Blue-green node pool replacement strategy",
+      "B. In-place rolling update on the same pool",
+      "C. Canary deployment of the new version first",
+      "D. Recreate strategy with full replacement"
     ],
     answer: 0,
     explanation: "This is a blue-green node replacement strategy where a new set of nodes (green) is provisioned alongside existing nodes (blue). Workloads are migrated by cordoning and draining old nodes. Once verified, old nodes are decommissioned, enabling quick rollback by keeping them temporarily.\n\nWhy other options are wrong:\n- B: In-place rolling update upgrades nodes one at a time within the existing pool, not by creating a parallel pool\n- C: Canary deployment upgrades a single node first to validate, not a full parallel pool\n- D: Recreate strategy would take everything down at once, not run parallel pools\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
@@ -411,7 +411,7 @@ var questions = [
       "A. No, placing in zone A would make the skew 3 which exceeds `maxSkew: 1`",
       "B. Yes, `maxSkew` only applies to scaling down, not during new scheduling",
       "C. Yes, but only when zone A has significantly more allocatable resources",
-      "D. No, topologySpreadConstraints requires an exactly balanced distribution across all zones"
+      "D. No, topologySpreadConstraints requires exactly balanced distribution"
     ],
     answer: 0,
     explanation: "With zone A at 3 Pods and zone B at 1 Pod, the current skew is 2 (3-1). Adding another Pod to zone A would increase it to 3 (4-1), violating `maxSkew: 1`. The scheduler must place the Pod in zone B to keep the skew within bounds. The `whenUnsatisfiable` field controls behavior when constraints cannot be met.\n\nWhy other options are wrong:\n- B: maxSkew applies during scheduling, not only during scaling down\n- C: Available resources do not override maxSkew constraints in topology spread\n- D: topologySpreadConstraints use maxSkew to control allowed imbalance, not strict equality\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -505,12 +505,12 @@ var questions = [
     diagram: null,
     options: [
       "A. The Pod is not scheduled on this node because the taint blocks all untolerated Pods",
-      "B. The Pod is scheduled on this node but receives a warning annotation on it",
-      "C. The Pod is scheduled on this node but the scheduler logs a SoftConstraintViolation warning event",
-      "D. The Pod can be scheduled on this node if no other nodes are available"
+      "B. The Pod is scheduled on this node but receives a taint-mismatch warning annotation",
+      "C. The Pod is scheduled on this node but the scheduler emits a scheduling warning event",
+      "D. The Pod can be scheduled on this node if no other suitable nodes are available"
     ],
     answer: 3,
-    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.\n\nWhy other options are wrong:\n- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule does not generate any SoftConstraintViolation event; when the Pod is placed there it is a normal scheduling decision, not a warning\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+    explanation: "`PreferNoSchedule` is a soft version of `NoSchedule`. The scheduler tries to avoid placing Pods without matching tolerations on this node, but it will do so if no better options exist. Unlike `NoSchedule`, it does not hard-block scheduling.\n\nWhy other options are wrong:\n- A: PreferNoSchedule is a soft constraint, not a hard block; the Pod can still be scheduled if needed\n- B: PreferNoSchedule does not add warning annotations; it silently allows scheduling when necessary\n- C: PreferNoSchedule does not generate any scheduling warning event; when the Pod is placed there it is a normal scheduling decision\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
     verify: "kubectl describe node <node-name> | grep Taints"
   },
   {
@@ -585,9 +585,9 @@ var questions = [
     diagram: null,
     options: [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
-      "B. `kubeadm certs check-expiration` -- lists all managed certificates and their expiry dates",
+      "B. `kubeadm certs check-expiration` -- lists managed certificates and their expiry dates",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
-      "D. `kubeadm certs renew` — regenerates expiring certificates but does not list their expiration dates"
+      "D. `kubeadm certs renew` — regenerates expiring certificates without listing dates"
     ],
     answer: 1,
     explanation: "`kubeadm certs check-expiration` is the purpose-built command that lists every PKI certificate managed by kubeadm (API server, etcd, front-proxy, etc.) along with its expiration date and remaining validity period, all in a single summary table.\n\nWhy other options are wrong:\n- A: There is no `kubectl certificate list` command in standard kubectl\n- C: There is no `etcdctl cert status` command; etcdctl does not include a certificate inspection subcommand\n- D: `kubeadm certs renew` regenerates certificates approaching expiration but does not display a summary of certificate expiration dates\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/",
@@ -698,8 +698,8 @@ var questions = [
     options: [
       "A. `NoSchedule` taint effect",
       "B. `NoExecute` taint effect",
-      "C. `PreferNoSchedule` effect",
-      "D. `PreemptLowerPriority` as effect"
+      "C. `PreferNoSchedule` taint effect",
+      "D. `PreemptLowerPriority` effect"
     ],
     answer: 0,
     explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `PreemptLowerPriority` is a preemption policy value, not a valid taint effect.\n\nWhy other options are wrong:\n- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: PreemptLowerPriority is a Pod preemption policy value, not a taint effect\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -872,9 +872,9 @@ var questions = [
     text: "A distributed tracing system requires its collector Pods to run in the same availability zone as the application Pods they collect from. Which approach ensures zone-local collection?",
     diagram: null,
     options: [
-      "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone`",
-      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across all nodes",
-      "C. Set `hostNetwork: true` on collector Pods for direct node access",
+      "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone` matching app labels",
+      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across nodes",
+      "C. Set `hostNetwork: true` on collector Pods for direct node network access",
       "D. Configure a headless Service for the collector Pod endpoint group"
     ],
     answer: 0,
@@ -968,10 +968,10 @@ var questions = [
     text: "A platform team implements resource requests and limits for all namespaces. Which Kubernetes object enforces default resource requests for Pods that do not specify them?",
     diagram: null,
     options: [
-      "A. ResourceQuota for namespace default limits",
+      "A. ResourceQuota for namespace total limits",
       "B. PodSecurityPolicy for security rules",
-      "C. LimitRange for default resources",
-      "D. NetworkPolicy for traffic controls"
+      "C. LimitRange for per-container defaults",
+      "D. NetworkPolicy for traffic flow controls"
     ],
     answer: 2,
     explanation: "A LimitRange in a namespace can set default resource requests and limits that are automatically applied to containers that do not specify their own. ResourceQuota limits total resource consumption per namespace but does not set per-Pod defaults.\n\nWhy other options are wrong:\n- A: ResourceQuota limits total namespace consumption but does not set per-Pod defaults\n- B: PodSecurityPolicy was removed in Kubernetes 1.25 and enforced security constraints, not resource defaults\n- D: NetworkPolicy controls network traffic between Pods, not resource defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
@@ -1336,10 +1336,10 @@ var questions = [
     text: "A team uses Knative to run event-driven workloads. During cluster maintenance, Knative Pods scale to zero. After maintenance, traffic arrives but Pods take 30 seconds to start. Which scheduling optimization could reduce this cold-start time?",
     diagram: null,
     options: [
-      "A. Setting `minScale: 1` to keep at least one Pod warm",
-      "B. Using `PreferNoSchedule` taints to scale workloads off maintenance nodes",
+      "A. Setting Knative `minScale: 1` to keep at least one Pod warm",
+      "B. Using `PreferNoSchedule` taints on the maintenance nodes",
       "C. Configuring pod anti-affinity across availability zones",
-      "D. Increasing the `terminationGracePeriodSeconds`"
+      "D. Increasing the Pod `terminationGracePeriodSeconds` value"
     ],
     answer: 0,
     explanation: "Setting `minScale: 1` in Knative prevents the revision from scaling to zero, keeping at least one Pod running at all times. This eliminates cold-start latency at the cost of maintaining a warm instance. This is a common trade-off for latency-sensitive serverless workloads.\n\nWhy other options are wrong:\n- B: PreferNoSchedule taints affect scheduling preference but do not reduce cold-start time\n- C: Pod anti-affinity spreads Pods across zones but does not address cold-start latency\n- D: terminationGracePeriodSeconds controls shutdown duration, not startup time\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-bounds/",
@@ -1433,9 +1433,9 @@ var questions = [
     diagram: null,
     options: [
       "A. LimitRange for per-Pod resource defaults",
-      "B. PodDisruptionBudget for uptime",
-      "C. ResourceQuota for namespace totals",
-      "D. PriorityClass for scheduling"
+      "B. PodDisruptionBudget for availability",
+      "C. ResourceQuota for namespace-level totals",
+      "D. PriorityClass for scheduling order"
     ],
     answer: 2,
     explanation: "ResourceQuota sets aggregate resource limits per namespace, controlling the total CPU, memory, storage, and object counts that can be consumed. LimitRange sets per-Pod or per-container defaults and constraints, not namespace-wide totals.\n\nWhy other options are wrong:\n- A: LimitRange sets per-Pod/container defaults, not namespace-level aggregate limits\n- B: PodDisruptionBudget manages availability during disruptions, not resource consumption\n- D: PriorityClass controls scheduling priority, not resource consumption limits\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
@@ -1464,10 +1464,10 @@ var questions = [
     text: "A cloud-native platform team automates node lifecycle management. When a node is cordoned via <code>kubectl cordon</code>, which field on the Node object is modified to signal the scheduler?",
     diagram: null,
     options: [
-      "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` label for the scheduler",
-      "B. `status.conditions` adds a `Schedulable: False` condition to signal unavailability",
-      "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled: true`",
-      "D. `spec.unschedulable` is set to `true` signaling the scheduler to skip it"
+      "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` label",
+      "B. `status.conditions` adds a `Schedulable: False` condition entry",
+      "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled`",
+      "D. `spec.unschedulable` is set to `true` to signal the scheduler to skip it"
     ],
     answer: 3,
     explanation: "`kubectl cordon` sets `spec.unschedulable: true` on the Node object. The scheduler checks this field during the filtering phase and excludes unschedulable nodes from consideration. This declarative approach to node lifecycle aligns with cloud-native infrastructure-as-code principles.\n\nWhy other options are wrong:\n- A: Cordoning modifies spec.unschedulable, not metadata.labels; no label is added\n- B: There is no Schedulable condition in node status; cordon uses the spec field\n- C: No annotation is added; the mechanism uses the spec.unschedulable field\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
@@ -1513,9 +1513,9 @@ var questions = [
     diagram: null,
     options: [
       "A. Skip directly to v1.30 to reduce the total number of maintenance windows",
-      "B. Upgrade to v1.28 first and pause for stability validation before proceeding to v1.29 and v1.30",
+      "B. Upgrade to v1.28 first, pause for validation, then jump to v1.30",
       "C. Build a new v1.30 cluster from scratch and migrate all existing workloads",
-      "D. Upgrade sequentially: v1.27 -> v1.28 -> v1.29 -> v1.30, one at a time"
+      "D. Upgrade sequentially through v1.28, v1.29, and v1.30 one at a time"
     ],
     answer: 3,
     explanation: "Kubernetes supports upgrading one minor version at a time. Skipping minor versions is not supported because each upgrade may include migration steps, API deprecations, and data format changes that must be applied sequentially. The kubeadm upgrade tool enforces this constraint.\n\nWhy other options are wrong:\n- A: Skipping versions is not supported; kubeadm enforces sequential minor version upgrades\n- B: While upgrading to v1.28 first is correct, this option implies pausing only after v1.28 and then proceeding to v1.29 and v1.30 together, which is ambiguous. Option D explicitly shows the full sequential path through every minor version\n- C: Building a new cluster from scratch is operationally complex and not the recommended approach\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
@@ -1592,10 +1592,10 @@ var questions = [
     text: "A Pod has the toleration <code>operator: Exists</code> with no key, value, or effect specified. What does this toleration match?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Toleration Configuration</text><rect x="30" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="80" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: gpu=true</text><text x="80" y="88" text-anchor="middle" fill="#888" font-size="8">NoSchedule</text><rect x="150" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="200" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: team=ops</text><text x="200" y="88" text-anchor="middle" fill="#888" font-size="8">NoExecute</text><rect x="270" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="320" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: any=any</text><text x="320" y="88" text-anchor="middle" fill="#888" font-size="8">PreferNoSchedule</text><rect x="100" y="125" width="200" height="40" rx="6" fill="#1a2a1a" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="149" text-anchor="middle" fill="#4caf50" font-size="11">Which taints are matched?</text><line x1="80" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="130" y="108" fill="#999" font-size="8">match?</text><line x1="200" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="210" y="112" fill="#999" font-size="8">match?</text><line x1="320" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="270" y="108" fill="#999" font-size="8">match?</text><text x="200" y="185" text-anchor="middle" fill="#888" font-size="9">???</text></svg>',
     options: [
-      "A. Only taints with the `NoSchedule` effect are matched",
-      "B. Only taints that have no value set are matched by it",
-      "C. All taints are matched, it is a wildcard toleration",
-      "D. No taints are matched because omitting the key makes the toleration invalid"
+      "A. Only taints with the `NoSchedule` effect are matched by it",
+      "B. Only taints that have no value field set are matched",
+      "C. All taints on the node are matched as a wildcard toleration",
+      "D. No taints are matched because the key field is required"
     ],
     answer: 2,
     explanation: "A toleration with `operator: Exists` and no key specified acts as a wildcard that matches every possible taint. This means the Pod can be scheduled on any node regardless of its taints. This is sometimes used for infrastructure Pods that must run everywhere.\n\nWhy other options are wrong:\n- A: Without a key, the Exists operator matches all taints regardless of effect, not just NoSchedule\n- B: Without a key, it matches all taints regardless of their value, not just valueless taints\n- D: A key is not required with operator: Exists; omitting the key creates a wildcard toleration\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",

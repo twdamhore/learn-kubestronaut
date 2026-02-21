@@ -163,3 +163,50 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q097 (explanation quality)
 - **Option A explanation:** Clarified that default-deny only applies to explicitly listed policyTypes, not all directions.
+
+---
+
+# Round 39 Review - Set 10
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 9 across 9 questions
+
+## Changes
+
+### s10-q022 (length-balance)
+- **Option A (correct):** Expanded from 112 to 139 chars. Added "and the pod's API audience" for technical accuracy and length.
+- **Option B:** Trimmed from 158 to 153 chars. Changed "main app container" to "app container".
+
+### s10-q047 (length-balance)
+- **Option A:** Expanded from 117 to 138 chars. Changed "returning it directly as-is" to "returning it directly without version conversion".
+- **Option B:** Trimmed from 141 to 141 chars (minor wording). Changed "was updated" to "was changed".
+- **Option D (correct):** Expanded from 121 to 137 chars (was R37 overcorrection). Changed to "invokes the conversion webhook to transform it to `v1beta1`, and returns the result".
+
+### s10-q062 (length-balance)
+- **Option C:** Trimmed from 168 to 154 chars. Changed "on all pod containers" to "on pods".
+- **Option D (correct):** Expanded from 124 to 158 chars. Changed to "right-size resource requests based on VPA recommendation data for each workload".
+
+### s10-q074 (length-balance)
+- **Option A (correct):** Expanded from 91 to 115 chars. Added "from the metric" for context.
+- **Option B:** Expanded from 107 to 117 chars. Added "the" and "limit" for naturalness.
+- **Option D:** Trimmed from 120 to 107 chars. Removed "(500 / 10 threshold)" calculation detail.
+
+### s10-q100 (length-balance)
+- **Option A:** Trimmed from 138 to 135 chars. Changed "is not recognized" to "is not counted".
+- **Option D (correct):** Expanded from 102 to 132 chars. Added "criteria" and changed to "closed-loop observability-driven remediation".
+
+### s10-q087 (length-balance)
+- **Option A:** Trimmed from 154 to 143 chars. Removed "containers" for conciseness.
+- **Option D (correct):** Expanded from 123 to 136 chars. Added "phase" and changed "deletion" to "manual deletion".
+
+### s10-q054 (length-balance)
+- **Option B (correct):** Expanded from 117 to 121 chars. Added "available" for clarity.
+- **Option D:** Trimmed from 141 to 116 chars. Removed ", blocking all scheduling" clause.
+
+### s10-q080 (polarity giveaway)
+- **All options:** Removed leading "Yes"/"No" polarity pattern that made the lone "No" answer (B) stand out. Options A and C reworded from "Yes, ..." to declarative statements. Option B reworded from "No, ..." to "The snapshot is only crash-consistent".
+
+### s10-q029 (length-balance)
+- **Option B:** Trimmed from 138 to 129 chars. Removed "by users" at end.
+- **Option C (correct):** Expanded from 115 to 128 chars. Added "all" and "priority" for completeness.

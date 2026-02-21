@@ -109,3 +109,40 @@
 
 ### s03-q046 (accuracy)
 - **Option B:** Updated "Ambassador" to "Emissary-Ingress" (rebranded in 2021).
+
+---
+
+# Round 39 Review - Set 03
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 12 across 12 questions
+
+## Length-Balance Fixes
+
+### MEDIUM priority
+
+1. **s03-q046** (length-balance): Expanded all four options with "Kubernetes" descriptors to balance correct D (was 49ch shortest).
+2. **s03-q047** (length-balance): Expanded correct C by adding "over time"; trimmed B by removing "configured" to close gap (C was 74ch, D was 90ch).
+3. **s03-q053** (length-balance): Trimmed C from "load balancers" to "LBs"; trimmed B from "loadBalancer source IPs" to "source IP addresses for LB" to close gap (C=88, B=73).
+4. **s03-q009** (length-balance): Expanded correct B by adding "unique"; trimmed C by shortening "between pod networks" to "for pods" (B was 90ch, C=105).
+
+### LOW-MEDIUM priority
+
+5. **s03-q027** (length-balance): Trimmed A ("its entry in the Endpoints object" to "its Endpoints entry"); expanded correct B ("stops receiving" to "no longer receives") to close gap (B=87, A=100).
+6. **s03-q041** (length-balance): Expanded correct A by adding "the" before "selected pods" (was 66ch, D=74ch).
+7. **s03-q091** (length-balance): Expanded correct D by adding "providing" and "network" ("for eBPF-based flow logs" to "providing eBPF-based network flow logs") (was 69ch, A=78).
+8. **s03-q059** (length-balance): Trimmed D by removing "by default" to close gap with correct C (B=81, D was 94ch).
+
+### LOW priority
+
+9. **s03-q042** (length-balance): Expanded correct A by adding "lookup" ("hash-based structures" to "hash-based lookup structures") (was 83ch, B=92).
+10. **s03-q061** (length-balance): Expanded correct B by adding "watched and" ("independently updated" to "watched and updated independently") (was 85ch, A=95).
+11. **s03-q011** (length-balance): Expanded correct A by adding "directly"; trimmed C ("external host and port" to "host and port pair") (A was 43ch, C=50).
+12. **s03-q092** (length-balance): Expanded correct D by adding "resource" ("On the Ingress" to "On the Ingress resource") (was 74ch, C=82).
+
+## Summary
+
+- 12 length-balance fixes (normalizing option character counts across 12 questions)
+- No answer indices were changed
+- No accuracy or explanation changes

@@ -360,10 +360,10 @@ var questions = [
     text: "A Kubernetes cluster runs CoreDNS for service discovery. An application Pod attempts to resolve the DNS name <code>my-svc.my-ns.svc.cluster.local</code> but receives <code>NXDOMAIN</code>. The Service <code>my-svc</code> exists in namespace <code>my-ns</code>. Which of the following could cause this?",
     diagram: null,
     options: [
-      "The Service type must be set to LoadBalancer for DNS records to be created by CoreDNS",
+      "The Service type must be set to LoadBalancer for CoreDNS to generate DNS records for the Service",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
       "CoreDNS maps ClusterIP addresses to IP ranges and does not support hostname-based Service lookups",
-      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> specifying a nameserver pointing to CoreDNS"
+      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to the CoreDNS nameserver"
     ],
     answer: 3,
     explanation: "When a Pod's `dnsPolicy` is set to `None`, Kubernetes does not configure any default DNS servers for the Pod. Without a `dnsConfig` that includes the CoreDNS ClusterIP as a nameserver, the Pod cannot resolve cluster-internal DNS names. This results in `NXDOMAIN` even though the Service exists.\n\nWhy other options are wrong:\n- A: DNS records are created for all Service types including ClusterIP; LoadBalancer is not required\n- B: CoreDNS fully supports the svc.cluster.local suffix; it is the standard cluster DNS domain\n- C: DNS resolution works with Service names; name-based lookups are the primary use case for CoreDNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -440,7 +440,7 @@ var questions = [
     text: "A Kubernetes cluster stores TLS certificates for mutual TLS between microservices. The team currently uses Kubernetes Secrets of type <code>kubernetes.io/tls</code>. A security review finds that etcd is not encrypted at rest. What is the recommended remediation?",
     diagram: null,
     options: [
-      "Enable encryption at rest by configuring an <code>EncryptionConfiguration</code> with an appropriate encryption provider on the API server",
+      "Enable encryption at rest by configuring an <code>EncryptionConfiguration</code> with a provider on the API server",
       "Switch to using environment variables instead of mounted Secrets to avoid storing credentials in etcd",
       "Move all TLS certificates to <code>ConfigMap</code> resources, which are automatically encrypted at rest by default",
       "Deploy a separate dedicated etcd cluster exclusively for Secret storage with its own encryption enabled"
@@ -453,7 +453,7 @@ var questions = [
     id: "s09-q029",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A platform engineering team is building an internal developer platform and wants to use a CNCF project that provides a declarative, GitOps-compatible way to define CI/CD pipelines as Kubernetes custom resources. Which project should they evaluate?",
+    text: "A platform engineering team is building an internal developer platform and wants to use a Kubernetes-native project that provides a declarative, GitOps-compatible way to define CI/CD pipelines as custom resources. Which project should they evaluate?",
     diagram: null,
     options: [
       "Tekton, which defines CI/CD components (Tasks, Pipelines, PipelineRuns) as Kubernetes CRDs",
@@ -462,7 +462,7 @@ var questions = [
       "Harbor, which stores pipeline definitions alongside container images in its artifact registry"
     ],
     answer: 0,
-    explanation: "Tekton is a CNCF project that provides Kubernetes-native CI/CD building blocks. It uses Custom Resource Definitions (CRDs) such as Task, Pipeline, and PipelineRun to define and execute CI/CD workflows declaratively. Being Kubernetes-native, Tekton pipelines can be stored in Git and managed with GitOps workflows.\n\nWhy other options are wrong:\n- B: Prometheus is a monitoring system for metrics, not a CI/CD pipeline tool\n- C: Envoy is a service proxy for traffic management, not a CI/CD pipeline orchestrator\n- D: Harbor is a container registry for storing images, not a CI/CD pipeline definition tool\n\nReference: https://tekton.dev/docs/",
+    explanation: "Tekton is a Continuous Delivery Foundation (CDF) project that provides Kubernetes-native CI/CD building blocks. It uses Custom Resource Definitions (CRDs) such as Task, Pipeline, and PipelineRun to define and execute CI/CD workflows declaratively. Being Kubernetes-native, Tekton pipelines can be stored in Git and managed with GitOps workflows. Note: Tekton is governed by the CDF, not the CNCF.\n\nWhy other options are wrong:\n- B: Prometheus is a monitoring system for metrics, not a CI/CD pipeline tool\n- C: Envoy is a service proxy for traffic management, not a CI/CD pipeline orchestrator\n- D: Harbor is a container registry for storing images, not a CI/CD pipeline definition tool\n\nReference: https://tekton.dev/docs/",
     verify: null
   },
   {
@@ -542,7 +542,7 @@ var questions = [
       "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect all incoming traffic"
     ],
     answer: 1,
-    explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.\n\nWhy other options are wrong:\n- A: maxSurge: 100% with rolling update is not blue-green; it still progressively replaces Pods\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
+    explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.\n\nWhy other options are wrong:\n- A: maxSurge: 100% creates all new Pods at once, but old Pods are still removed progressively and there is no explicit traffic-switch step, so it is not blue-green\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.selector}'"
   },
   {
@@ -1112,9 +1112,9 @@ var questions = [
     text: "After upgrading a Deployment's container image, all new Pods are stuck in <code>Pending</code> state. Running <code>kubectl describe pod</code> shows: <code>0/3 nodes are available: 3 Insufficient cpu</code>. The existing Pods from the old ReplicaSet are still running. What is happening?",
     diagram: null,
     options: [
-      "The new container image requires a different CPU architecture than the cluster's current <code>amd64</code> worker nodes support",
+      "The new container image requires a different CPU architecture than the cluster's <code>amd64</code> worker nodes support",
       "The cluster has run out of available IP addresses in the Pod CIDR range configured for the cluster network",
-      "The new Pod spec requests more CPU than available, and <code>maxUnavailable: 0</code> blocks old Pod termination",
+      "The new Pod spec requests more CPU than is available, and <code>maxUnavailable: 0</code> prevents old Pod termination",
       "The kube-scheduler is not running and therefore cannot assign any new Pods to the available cluster nodes"
     ],
     answer: 2,
@@ -1128,9 +1128,9 @@ var questions = [
     text: "An application team creates an <code>ExternalName</code> Service pointing to <code>db.legacy-datacenter.example.com</code>. A Pod resolves this Service name and attempts to connect. What does Kubernetes return for a DNS lookup of this Service?",
     diagram: null,
     options: [
-      "The <code>ClusterIP</code> address of the Service, which kube-proxy then forwards to the external hostname endpoint",
-      "An A record containing the pre-resolved IP address of the external hostname as cached by the CoreDNS server",
-      "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client then resolves",
+      "The <code>ClusterIP</code> address of the Service, which kube-proxy then forwards to the external hostname",
+      "An A record containing the pre-resolved IP address of the external hostname as cached by CoreDNS",
+      "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client resolver then follows",
       "ExternalName Services add latency to external hostname resolution by routing through kube-proxy"
     ],
     answer: 2,
@@ -1374,7 +1374,7 @@ var questions = [
       "Monitoring only the number of Pods per team since all Pods are assumed to consume equal resources"
     ],
     answer: 1,
-    explanation: "Accurate cost allocation requires tracking actual resource usage (CPU and memory) per team. Using labels and namespaces to organize workloads, combined with tools like Kubecost or OpenCost (a CNCF sandbox project), enables granular cost reporting. These tools correlate resource usage with cloud billing data to provide per-team, per-application cost breakdowns.\n\nWhy other options are wrong:\n- A: Equal cost division is inaccurate and does not reflect actual resource consumption differences\n- C: Dedicated node pools waste resources and do not account for variable utilization within nodes\n- D: Pod count alone is meaningless for cost; Pods vary widely in resource consumption\n\nReference: https://www.opencost.io/",
+    explanation: "Accurate cost allocation requires tracking actual resource usage (CPU and memory) per team. Using labels and namespaces to organize workloads, combined with tools like Kubecost or OpenCost (a CNCF Incubating project), enables granular cost reporting. These tools correlate resource usage with cloud billing data to provide per-team, per-application cost breakdowns.\n\nWhy other options are wrong:\n- A: Equal cost division is inaccurate and does not reflect actual resource consumption differences\n- C: Dedicated node pools waste resources and do not account for variable utilization within nodes\n- D: Pod count alone is meaningless for cost; Pods vary widely in resource consumption\n\nReference: https://www.opencost.io/",
     verify: null
   },
   {
@@ -1560,10 +1560,10 @@ var questions = [
     text: "A Kubernetes cluster uses the <code>admission webhook</code> mechanism. A ValidatingWebhookConfiguration is configured to validate all Pod creation requests. If the webhook endpoint is unreachable, what happens to Pod creation attempts by default?",
     diagram: null,
     options: [
-      "The <code>failurePolicy</code> field determines whether the API server rejects or allows requests when unreachable",
-      "The API server retries the webhook call with exponential backoff until the endpoint becomes reachable and responds",
+      "The webhook's <code>failurePolicy</code> field determines whether the API server rejects or allows the request",
+      "The API server retries the webhook call with exponential backoff until the endpoint becomes reachable",
       "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
-      "Pod creation proceeds normally because <code>ValidatingWebhookConfiguration</code> resources are advisory and do not block requests"
+      "Pod creation proceeds normally because validating webhook configurations are advisory and non-blocking"
     ],
     answer: 0,
     explanation: "The `failurePolicy` field in a webhook configuration determines behavior when the webhook endpoint is unreachable. The default is `Fail`, which rejects the API request to ensure that validation cannot be bypassed. Setting it to `Ignore` allows the request to proceed, which is less secure but prevents webhook outages from blocking cluster operations.\n\nWhy other options are wrong:\n- B: The API server does not retry webhooks indefinitely; it respects the failurePolicy setting\n- C: Other webhooks are not affected; each webhook's failurePolicy is evaluated independently\n- D: Validating webhooks can block requests with Fail policy; they are not advisory-only by default\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy",

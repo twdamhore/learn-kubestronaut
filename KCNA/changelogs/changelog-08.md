@@ -145,3 +145,40 @@
 
 ### s08-q084 (length-balance)
 - **Option C (correct):** Extended from ~95 to ~103 chars.
+
+---
+
+# Round 39 Review - Set 08
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 9 across 9 questions
+
+## Changes
+
+### s08-q007 (length-balance)
+- **Option B (correct):** Extended from 91 to 101 chars by adding "container" before "behavior" to close gap with A/C/D (~100-101 chars). Ratio improved from 1.110 to 1.010.
+
+### s08-q016 (length-balance/giveaway)
+- **Options A, B, D:** Extended by 10-11 chars each to close gap with correct C (79 chars, previously longest at ratio 1.113). A: added "on overlap"; B: reworded to "starts a new one in its place"; C: reworded to "skips new Job creation entirely"; D: reworded to "run sequentially after". Ratio improved from 1.113 to 1.037.
+
+### s08-q022 (length-balance)
+- **Option C (correct):** Extended from 95 to 102 chars by adding "inline" before `--set`. Closes gap with A (104) and B (103). Ratio improved from 1.095 to 1.051.
+
+### s08-q025 (length-balance/giveaway)
+- **Option A (correct):** Trimmed from 95 to 90 chars by removing "with scale-to-zero" (redundant with question stem). **Option B:** Extended from 85 to 94 chars by adding "as containers on Kubernetes". Correct answer no longer longest; ratio improved from 1.118 to 1.080.
+
+### s08-q026 (length-balance)
+- **Option A (correct):** Reworded from "which corresponds to" to "maps to" for conciseness. **Option C:** Extended from 75 to 88 chars by adding "the API path" phrasing. **Option D:** Extended from 82 to 95 chars by adding "the API path". Correct answer no longer shortest; ratio improved from 1.133 to 1.118 with correct in middle.
+
+### s08-q060 (length-balance)
+- **Option A (correct):** Reworded from "system calls" to "container syscalls" (108 chars). **Option D:** Trimmed from 113 to 109 chars by removing "the" before "container privilege" and adding "set". Correct answer no longer shortest; ratio improved from 1.108 to 1.038.
+
+### s08-q086 (length-balance)
+- **Option A:** Trimmed from 130 to 130 chars (minor rewording "in all" to "across"). **Option B (correct):** Extended from 120 to 129 chars by adding "cloud-specific" before "controllers". Ratio improved from 1.083 to 1.040.
+
+### s08-q097 (length-balance)
+- **Option C (correct):** Extended from 92 to 99 chars by adding "all of" before "these are cluster-scoped". Now tied with A (99), no longer shortest. Ratio improved from 1.076 to 1.021.
+
+### s08-q100 (length-balance)
+- **Option D (correct):** Extended from 110 to 118 chars by expanding "app" to "application" in "app state visualization". No longer shortest; ratio improved from 1.091 to 1.081.

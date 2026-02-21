@@ -137,8 +137,8 @@ var questions = [
     diagram: null,
     options: [
       "No — pods on different nodes traverse kube-proxy which performs source NAT on cross-node packets",
-      "Yes — the Kubernetes networking model requires every pod to have a routable IP without NAT",
-      "Cross-node communication requires a `LoadBalancer` Service to bridge node boundaries between pod networks",
+      "Yes — the Kubernetes networking model requires every pod to have a unique routable IP without NAT",
+      "Cross-node communication requires a `LoadBalancer` Service to bridge node boundaries for pods",
       "Cross-node communication requires both pods to share the same namespace and network policy selector"
     ],
     answer: 1,
@@ -168,9 +168,9 @@ var questions = [
     text: "An `ExternalName` Service is defined with `externalName: db.legacy.corp`. When a pod resolves this Service's DNS name, what does CoreDNS return?",
     diagram: null,
     options: [
-      "A CNAME record pointing to `db.legacy.corp`",
+      "A CNAME record pointing to `db.legacy.corp` directly",
       "An A record with the `ClusterIP` of the Service",
-      "An `SRV` record listing the external host and port",
+      "An `SRV` record listing the host and port pair",
       "A `TXT` record containing the connection string"
     ],
     answer: 0,
@@ -424,8 +424,8 @@ var questions = [
     text: "A pod defines `readinessProbe` on port 8080. When the probe fails, what happens to the pod's IP in the Service's Endpoints object?",
     diagram: null,
     options: [
-      "The pod is terminated and its entry in the Endpoints object is permanently deleted by the controller",
-      "The pod's IP is removed from the Endpoints object so it stops receiving Service traffic",
+      "The pod is terminated and its Endpoints entry is permanently deleted by the controller",
+      "The pod's IP is removed from the Endpoints object so it no longer receives Service traffic",
       "The Service switches to a different port automatically to reach a healthy pod on the node",
       "kube-proxy doubles the health check frequency for that endpoint until the probe succeeds"
     ],
@@ -648,7 +648,7 @@ var questions = [
     text: "A `NetworkPolicy` with `spec.policyTypes: [\"Ingress\", \"Egress\"]` is applied to `app: web` pods but defines no `ingress` or `egress` rules. What is the effect?",
     diagram: '<svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg"><rect x="130" y="50" width="140" height="50" rx="4" fill="#f44336"/><text x="200" y="72" text-anchor="middle" fill="#fff" font-size="11">app: web</text><text x="200" y="88" text-anchor="middle" fill="#fff" font-size="9">NetworkPolicy applied</text><line x1="50" y1="75" x2="130" y2="75" stroke="#999" stroke-width="2"/><text x="90" y="65" text-anchor="middle" fill="#ccc" font-size="14">?</text><text x="50" y="110" fill="#ccc" font-size="9">Ingress</text><line x1="270" y1="75" x2="360" y2="75" stroke="#999" stroke-width="2"/><text x="315" y="65" text-anchor="middle" fill="#ccc" font-size="14">?</text><text x="340" y="110" fill="#ccc" font-size="9">Egress</text><text x="200" y="140" text-anchor="middle" fill="#ff9800" font-size="10">policyTypes: [Ingress, Egress]</text></svg>',
     options: [
-      "All ingress and egress traffic to and from selected pods is denied",
+      "All ingress and egress traffic to and from the selected pods is denied",
       "All ingress and egress is allowed because no explicit deny rules exist",
       "Only egress is denied while ingress defaults to allow with no rules set",
       "The policy has no effect because it has no rules and is treated as a no-op"
@@ -664,7 +664,7 @@ var questions = [
     text: "In IPVS mode, kube-proxy creates a virtual server for each Service ClusterIP. What advantage does IPVS mode have over iptables mode for large clusters?",
     diagram: null,
     options: [
-      "IPVS uses hash-based structures providing O(1) routing regardless of endpoint count",
+      "IPVS uses hash-based lookup structures providing O(1) routing regardless of endpoint count",
       "IPVS supports TLS termination at the kernel level for improved security on each cluster node",
       "IPVS automatically encrypts inter-node traffic using kernel-level IPsec tunnels by default",
       "IPVS eliminates the need for a CNI plugin by handling all pod networking within the kernel"
@@ -728,10 +728,10 @@ var questions = [
     text: "Which CNCF project provides a role-oriented API for configuring advanced traffic routing in Kubernetes, designed as the successor to the Ingress resource?",
     diagram: null,
     options: [
-      "Envoy Gateway — an Envoy-based API ingress project",
-      "Emissary-Ingress — a developer-focused API gateway solution",
-      "Contour — an Envoy-powered Ingress routing controller",
-      "Gateway API — the standards-based routing project"
+      "Envoy Gateway — an Envoy-based API gateway and ingress project",
+      "Emissary-Ingress — a developer-focused Kubernetes API gateway",
+      "Contour — an Envoy-powered Kubernetes Ingress routing controller",
+      "Gateway API — the standards-based Kubernetes routing API project"
     ],
     answer: 3,
     explanation: "Gateway API is the CNCF/Kubernetes SIG-Network project that provides a role-oriented, expressive API for routing as the evolution of the Ingress resource. It supports advanced features like traffic splitting, header-based routing, and cross-namespace references. Envoy Gateway is an implementation of Gateway API, not the specification itself. Contour and Emissary-Ingress are Ingress controllers/implementations, not the standard API.\n\nWhy other options are wrong:\n- A: Envoy Gateway is an implementation of Gateway API, not the specification/standard itself.\n- B: Emissary-Ingress is an Ingress controller/API gateway product, not the standards-based routing API.\n- C: Contour is an Envoy-powered Ingress controller implementation, not the successor standard to the Ingress API.\n\nReference: https://gateway-api.sigs.k8s.io/",
@@ -745,8 +745,8 @@ var questions = [
     diagram: null,
     options: [
       "`kube_service_info` filtered by service name and namespace labels in the dashboard",
-      "`kube_endpoint_ready_count` with a configured alert threshold of zero ready endpoints set",
-      "`kube_endpoint_address{ready=\"true\"}` equal to zero for the target Service",
+      "`kube_endpoint_ready_count` with an alert threshold of zero ready endpoints set",
+      "`kube_endpoint_address{ready=\"true\"}` equal to zero for the target Service over time",
       "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
     ],
     answer: 2,
@@ -841,8 +841,8 @@ var questions = [
     diagram: null,
     options: [
       "`spec.loadBalancerSourceRanges` set to a list of allowed CIDR blocks for access",
-      "`spec.externalTrafficPolicy: Restricted` to limit loadBalancer source IPs",
-      "`metadata.annotations.allowed-ips` to define allowed client IP ranges for load balancers",
+      "`spec.externalTrafficPolicy: Restricted` to limit source IP addresses for LB",
+      "`metadata.annotations.allowed-ips` to define allowed client IP ranges for LBs",
       "`spec.selector.sourceIP` matching allowed external client IP address ranges"
     ],
     answer: 0,
@@ -939,7 +939,7 @@ var questions = [
       "Only `Policy A` takes effect because it was created first and has priority in the namespace",
       "Policy B overrides Policy A because it was created more recently in the namespace",
       "Both policies merge additively — ingress from `web` on 80 AND from `api` on 443 is allowed",
-      "The policies conflict with each other and therefore all `ingress` traffic is denied by default"
+      "The policies conflict with each other and therefore all `ingress` traffic is denied"
     ],
     answer: 2,
     explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on creation time; multiple NetworkPolicies are always unioned regardless of when they were created.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -969,7 +969,7 @@ var questions = [
     diagram: null,
     options: [
       "They allow Services to span multiple clusters for cross-region federation and service discovery",
-      "They split large endpoint lists into smaller slices that can be independently updated",
+      "They split large endpoint lists into smaller slices that can be watched and updated independently",
       "They cache endpoint data on each node to reduce the number of direct API server watch queries",
       "They replace kube-proxy by routing traffic directly to pods using kernel-level eBPF forwarding"
     ],
@@ -1451,7 +1451,7 @@ var questions = [
       "Prometheus — a metrics collection and alerting toolkit for Kubernetes clusters",
       "Thanos — a long-term storage and global querying layer for Prometheus data",
       "Fluentd — a unified logging layer for collecting and routing log data feeds",
-      "Hubble — a Cilium component for eBPF-based flow logs and service maps"
+      "Hubble — a Cilium component providing eBPF-based network flow logs and maps"
     ],
     answer: 3,
     explanation: "Hubble is the observability component of Cilium that uses eBPF to provide flow visibility, DNS monitoring, and service dependency maps without sidecar injection. Prometheus collects metrics but does not capture network flows. Fluentd aggregates logs. Thanos extends Prometheus for long-term storage and multi-cluster queries.\n\nWhy other options are wrong:\n- A: Prometheus collects and stores metrics but does not generate network flow logs or service dependency maps.\n- B: Thanos provides long-term storage and global querying for Prometheus data, not network flow visibility.\n- C: Fluentd is a log aggregation tool that collects and routes log data, not network flow data.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
@@ -1467,7 +1467,7 @@ var questions = [
       "In the CoreDNS configuration by adding per-path TTL values for the route entries",
       "In the `terminationGracePeriodSeconds` of each backend Deployment for each path",
       "On the `ClusterIP` Services backing each path using a timeout annotation field set",
-      "On the Ingress using controller-specific annotations for per-path timeouts"
+      "On the Ingress resource using controller-specific annotations for per-path timeouts"
     ],
     answer: 3,
     explanation: "Ingress controllers like NGINX support annotations (e.g., `nginx.ingress.kubernetes.io/proxy-read-timeout`) or per-path configuration snippets that allow different timeout values. ClusterIP Services do not have timeout settings. `terminationGracePeriodSeconds` controls pod shutdown, not request timeouts. CoreDNS handles DNS, not HTTP timeouts.\n\nWhy other options are wrong:\n- A: CoreDNS handles DNS resolution; it has no per-path TTL configuration for HTTP timeouts.\n- B: `terminationGracePeriodSeconds` controls pod shutdown duration, not HTTP request timeouts.\n- C: ClusterIP Services do not have timeout settings; timeouts are configured at the proxy/ingress layer.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
