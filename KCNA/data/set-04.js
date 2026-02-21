@@ -137,12 +137,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="25" width="80" height="35" rx="5" fill="#A8D08D" stroke="#6AA84F" /><text x="45" y="47" text-anchor="middle" font-size="11" fill="#333">Phase 1</text><text x="105" y="47" text-anchor="middle" font-size="16" fill="#666">\u2192</text><rect x="120" y="25" width="70" height="35" rx="5" fill="#6FA8DC" stroke="#3D85C6" /><text x="155" y="47" text-anchor="middle" font-size="11" fill="white">Phase 2</text><text x="210" y="47" text-anchor="middle" font-size="16" fill="#666">\u2192</text><rect x="225" y="25" width="75" height="35" rx="5" fill="#FFD966" stroke="#F1C232" /><text x="262" y="47" text-anchor="middle" font-size="11" fill="#333">Phase 3</text><text x="320" y="47" text-anchor="middle" font-size="16" fill="#666">\u2192</text><rect x="335" y="25" width="60" height="35" rx="5" fill="#E06666" stroke="#CC0000" /><text x="365" y="47" text-anchor="middle" font-size="11" fill="white">Phase 4</text></svg>',
     options: [
       "`Pending` \u2192 `Bound` \u2192 `Released` \u2192 `Terminated`",
-      "`Created` \u2192 `Bound` \u2192 `Unbound` \u2192 `Deleted`",
-      "`Available` \u2192 `Claimed` \u2192 `Recycled` \u2192 `Available`",
+      "`Created` \u2192 `Bound` \u2192 `Unbound` \u2192 `Archived`",
+      "`Available` \u2192 `Claimed` \u2192 `Recycled` \u2192 `Ready`",
       "`Available` \u2192 `Bound` \u2192 `Released` \u2192 `Failed`"
     ],
     answer: 3,
-    explanation: "PersistentVolumes follow a defined lifecycle: `Available` (not yet bound to a claim), `Bound` (bound to a PVC), `Released` (PVC deleted but resource not yet reclaimed), and `Failed` (automatic reclamation failed). These are the actual phase values reported by `kubectl get pv`.\n\nWhy other options are wrong:\n- A: Pending and Terminated are not valid PV phases; PVs start in Available, not Pending\n- B: Created, Unbound, and Deleted are not valid PV phase names in Kubernetes\n- C: Claimed and Recycled are not valid PV phase names; the correct terms are Bound and Released\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#phase",
+    explanation: "PersistentVolumes follow a defined lifecycle: `Available` (not yet bound to a claim), `Bound` (bound to a PVC), `Released` (PVC deleted but resource not yet reclaimed), and `Failed` (automatic reclamation failed). These are the actual phase values reported by `kubectl get pv`.\n\nWhy other options are wrong:\n- A: Pending and Terminated are not valid PV phases; PVs start in Available, not Pending\n- B: Created, Unbound, and Archived are not valid PV phase names in Kubernetes\n- C: Claimed, Recycled, and Ready are not valid PV phase names; the correct terms are Bound, Released, and Failed\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#phase",
     verify: "kubectl get pv -o jsonpath='{.items[*].status.phase}'"
   },
   {
@@ -475,7 +475,7 @@ var questions = [
       "A headless Service (`clusterIP: None`) providing DNS SRV records for each pod in the set",
       "A `ClusterIP` Service with session affinity enabled to route traffic to consistent replicas",
       "An Ingress resource configured with path-based routing rules to direct traffic to each pod",
-      "A `NodePort` Service that exposes each Cassandra replica on a unique port on every cluster node"
+      "A `NodePort` Service (one port per pod) exposing each Cassandra replica on every cluster node"
     ],
     answer: 0,
     explanation: "A headless Service creates DNS records for each pod in the StatefulSet, enabling peer discovery. Cassandra nodes can use DNS lookups against the headless Service to discover all cluster members. SRV records provide both the hostname and port for each pod. A regular `ClusterIP` Service would load-balance and hide individual pod identities.\n\nWhy other options are wrong:\n- B: A ClusterIP Service with session affinity hides individual pod identities behind a virtual IP\n- C: An Ingress handles external HTTP traffic and does not provide internal pod-to-pod discovery\n- D: A NodePort Service exposes pods externally on node ports; it does not provide DNS-based peer discovery\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
@@ -840,9 +840,9 @@ var questions = [
     text: "A StatefulSet performs a rolling update with `updateStrategy.type: RollingUpdate` and `partition: 3`. The StatefulSet has 5 replicas (ordinals 0-4). Which pods are updated?",
     diagram: null,
     options: [
-      "All pods from `pod-0` through `pod-4` are updated to the new revision simultaneously",
+      "All five pods from `pod-0` through `pod-4` are updated to the new revision simultaneously",
       "Only `pod-3` and `pod-4` are updated; pods with ordinal below 3 keep the old revision",
-      "Only `pod-0`, `pod-1`, and `pod-2` are updated; pods at or above the partition keep the old revision",
+      "Only `pod-0` through `pod-2` are updated; pods at or above the partition keep the old revision",
       "No pods are updated at all until the partition value is removed from the update strategy"
     ],
     answer: 1,
@@ -939,10 +939,10 @@ var questions = [
       "Yes, because the PV supports multiple access modes so multiple PVCs can bind to it at the same time",
       "No, a PV can only be bound to one PVC at a time regardless of which access modes are configured",
       "Yes, if the second PVC also requests `ReadOnlyMany` access mode matching the PV's capabilities",
-      "It depends entirely on the StorageClass configuration and its provisioner's binding behavior rules"
+      "No, unless the StorageClass provisioner explicitly enables multi-PVC binding in its configuration"
     ],
     answer: 1,
-    explanation: "A PersistentVolume in Kubernetes can only be bound to a single PVC at a time. This is a one-to-one relationship regardless of the PV's listed access modes. The access modes on the PV describe what the underlying storage supports, but they do not enable multi-PVC binding. Multiple pods can use the same PVC, subject to the access mode of that PVC.\n\nWhy other options are wrong:\n- A: Multiple access modes on a PV describe capabilities; they do not enable multi-PVC binding\n- C: ReadOnlyMany allows multi-node read access for a single PVC, not multiple PVCs binding to one PV\n- D: StorageClass does not change the one-to-one PV-PVC binding rule; it only affects provisioning\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    explanation: "A PersistentVolume in Kubernetes can only be bound to a single PVC at a time. This is a one-to-one relationship regardless of the PV's listed access modes. The access modes on the PV describe what the underlying storage supports, but they do not enable multi-PVC binding. Multiple pods can use the same PVC, subject to the access mode of that PVC.\n\nWhy other options are wrong:\n- A: Multiple access modes on a PV describe capabilities; they do not enable multi-PVC binding\n- C: ReadOnlyMany allows multi-node read access for a single PVC, not multiple PVCs binding to one PV\n- D: No StorageClass provisioner can enable multi-PVC binding; the one-to-one PV-PVC binding rule is enforced at the API level\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
     verify: "kubectl get pv -o custom-columns=NAME:.metadata.name,CLAIM:.spec.claimRef.name"
   },
   {
@@ -1034,8 +1034,8 @@ var questions = [
     options: [
       "Balance cost against performance by defaulting to the cheapest storage tier that meets baseline SLAs",
       "Match the storage type to the workload's I/O pattern, durability needs, and horizontal scaling goals",
-      "Prefer local volumes for their performance advantages and accept the trade-off in availability",
-      "Prefer object storage as the default choice given its broad API support and portability across cloud providers"
+      "Prefer local volumes for their performance advantages and accept the reduced availability trade-off",
+      "Prefer object storage as the default choice for its broad API support and portability across providers"
     ],
     answer: 1,
     explanation: "Cloud-native storage decisions should be driven by workload requirements. Local volumes offer lowest latency but lack replication. Network-attached block storage provides durability with moderate latency. Object storage scales infinitely but has higher latency. The correct choice depends on I/O patterns (random vs. sequential), durability needs, and horizontal scaling requirements.\n\nWhy other options are wrong:\n- A: Defaulting to the cheapest tier ignores I/O patterns and durability requirements that vary significantly across workloads\n- C: Local volumes provide maximum performance but lack availability if the node fails\n- D: Object storage has higher latency and may not suit all workloads that need block-level I/O patterns\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/",
@@ -1096,10 +1096,10 @@ var questions = [
     text: "A developer specifies `resources.requests.ephemeral-storage: 2Gi` and `resources.limits.ephemeral-storage: 4Gi` on a container. What does this control?",
     diagram: null,
     options: [
-      "The size of PersistentVolumes that the container can claim from the cluster's available storage pool",
+      "The size of PersistentVolumes (per claim) that the container can request from the cluster's storage pool",
       "The temporary storage (writable layer + `emptyDir` without medium) the container can use on the node",
       "The maximum size of container images that can be pulled from the registry to the node's image cache",
-      "The RAM allocation for tmpfs-backed `emptyDir` volumes mounted inside the container's filesystem"
+      "The RAM allocation for tmpfs-backed `emptyDir` volumes (medium: Memory) mounted in the container"
     ],
     answer: 1,
     explanation: "Ephemeral storage requests and limits control the node's local storage consumed by a container's writable layer, logs, and non-memory-backed `emptyDir` volumes. If the container exceeds the limit, it is evicted. The request is used by the scheduler to ensure the node has enough local disk space. This does not apply to PVs or RAM-backed tmpfs volumes.\n\nWhy other options are wrong:\n- A: Ephemeral storage limits control local node disk usage, not PersistentVolume claim sizes\n- C: Ephemeral storage limits do not constrain image pull sizes; image layers are cached at the node level by the container runtime and are not charged against a container's ephemeral storage\n- D: Ephemeral storage limits do not apply to tmpfs-backed emptyDir volumes; those count against memory\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage",
@@ -1131,7 +1131,7 @@ var questions = [
       "Yes, the scheduler can mount volumes from both nodes into the pod using cross-node volume access",
       "No, a pod runs on a single node and cannot use local PVs from two different nodes simultaneously",
       "Yes, if both local PVs are configured with `ReadWriteMany` access mode for multi-node mounting",
-      "The scheduler splits the pod's containers across both nodes to satisfy the two volume requirements"
+      "No, the scheduler detects the conflict and splits the pod's containers across both nodes automatically"
     ],
     answer: 1,
     explanation: "A pod is always scheduled to a single node. Local PVs have `nodeAffinity` that ties them to specific nodes. If two local PVs are on different nodes, no single node can satisfy both constraints, making the pod unschedulable. To resolve this, use network-attached storage that is accessible from any node, or consolidate the local storage onto one node.\n\nWhy other options are wrong:\n- A: Local PVs are physically on one node; cross-node volume access is not possible with local volumes\n- C: ReadWriteMany does not help local PVs; local storage is inherently tied to a single node's disk\n- D: Kubernetes does not split a pod's containers across multiple nodes; a pod always runs on one node\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#local",
@@ -1157,7 +1157,7 @@ var questions = [
     id: "s04-q073",
     domain: "Cloud Native Architecture",
     subsection: "CNCF Ecosystem",
-    text: "A platform team uses Velero (a CNCF project) to back up Kubernetes resources. How does Velero handle PersistentVolume backups?",
+    text: "A platform team uses Velero (an open-source backup tool) to back up Kubernetes resources. How does Velero handle PersistentVolume backups?",
     diagram: null,
     options: [
       "Velero only backs up Kubernetes resource manifests (YAML) and does not handle actual PV data at all",
@@ -1178,11 +1178,11 @@ var questions = [
     options: [
       "The I/O throughput of each PVC measured in bytes per second from the `kubelet_volume_stats` endpoint",
       "The current phase (`Pending`, `Bound`, `Lost`) of each PVC exposed as a gauge metric with labels",
-      "The total number of PVCs created since cluster initialization (cumulative counter per namespace)",
-      "The actual storage capacity being consumed by each PVC as reported by the underlying CSI driver"
+      "The cumulative count of PVCs created since cluster initialization (per-namespace `counter` metric)",
+      "The actual storage consumed by each PVC as reported by the CSI driver's `volume_stats` endpoint"
     ],
     answer: 1,
-    explanation: "The `kube_persistentvolumeclaim_status_phase` metric from kube-state-metrics reports the current lifecycle phase of each PVC. It is a gauge metric with labels for the PVC name, namespace, and phase. This enables alerting on PVCs stuck in `Pending` or entering `Lost` state. It does not provide I/O metrics or capacity usage.\n\nWhy other options are wrong:\n- A: This metric reports phase status, not I/O throughput; throughput comes from kubelet_volume_stats metrics\n- C: This metric reports per-PVC phase, not the cumulative count of all PVCs ever created in the cluster\n- D: This metric reports lifecycle phase, not actual storage consumption; capacity usage comes from different metrics\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
+    explanation: "The `kube_persistentvolumeclaim_status_phase` metric from kube-state-metrics reports the current lifecycle phase of each PVC. It is a gauge metric with labels for the PVC name, namespace, and phase. This enables alerting on PVCs stuck in `Pending` or entering `Lost` state. It does not provide I/O metrics or capacity usage.\n\nWhy other options are wrong:\n- A: This metric reports phase status, not I/O throughput; throughput comes from kubelet_volume_stats metrics\n- C: This metric reports per-PVC phase, not a cumulative counter of all PVCs ever created in the cluster\n- D: This metric reports lifecycle phase, not actual storage consumption; volume_stats metrics come from the kubelet, not kube-state-metrics\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
     verify: "kubectl get --raw /api/v1/namespaces/monitoring/services/kube-state-metrics:http-metrics/proxy/metrics | grep persistentvolumeclaim_status"
   },
   {

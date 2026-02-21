@@ -200,3 +200,54 @@
 - 3 questions had both giveaway and length-balance fixes
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+# Round 41 Review - Set 03
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 12 across 10 questions
+
+## Changes
+
+### s03-q038 (length-balance)
+- **Options A, B, D:** Padded by 1-4 chars each ("worker node", "API traffic", "container image") to close 14.7% gap. Ratio reduced from 1.147 to 1.041.
+
+### s03-q039 (length-balance)
+- **Option C:** Padded by 5 chars ("resolution setup") to close 11.6% gap with A (77ch). Ratio reduced from 1.116 to 1.055.
+
+### s03-q047 (length-balance)
+- **Options A, B, D:** Rebalanced all four options to close gap where correct C (84ch) had become longest after prior round edits overshot. Ratio reduced from 1.139 to 1.089.
+
+### s03-q054 (length-balance)
+- **Options A, B, C:** Adjusted by 1-4 chars each to close 12% spread. Ratio reduced from 1.120 to 1.047.
+
+### s03-q059 (giveaway + length-balance)
+- **Options A, B, D:** Added em-dash structure to all options to match correct C's em-dash, removing unique structural signal. Also balanced lengths. Ratio reduced from 1.123 to 1.048.
+
+### s03-q060 (length-balance)
+- **Options A, C, D:** Adjusted by 1-4 chars to close 14.5% spread. Ratio reduced from 1.145 to 1.095.
+
+### s03-q064 (length-balance)
+- **Option C:** Trimmed by 3 chars ("via BGP" instead of "via BGP peers") to close 11.2% gap. Ratio reduced from 1.112 to 1.091.
+
+### s03-q080 (length-balance)
+- **Option A:** Padded by 8 chars ("each cluster node" instead of "each node") to close 10.2% gap where correct D (97ch) was longest. Ratio reduced from 1.102 to 1.021.
+
+### s03-q081 (length-balance)
+- **Options A, B:** Trimmed by 3-5 chars each to close 12% gap with shortest C (83ch). Ratio reduced from 1.120 to 1.060.
+
+### s03-q084 (length-balance)
+- **Option D:** Padded by 4 chars ("pod identity and API access") to close 11.4% gap. Ratio reduced from 1.114 to 1.043.
+
+### s03-q086 (giveaway)
+- **Option C:** Restructured with comma-list ("iptables, kube-proxy, and ip6tables") to match correct B's comma-list pattern, removing unique structural signal.
+
+## Summary
+
+- 10 length-balance fixes (normalizing option character counts)
+- 2 giveaway fixes (removing unique structural signals: em-dash, comma-list)
+- 1 question had both giveaway and length-balance fixes (s03-q059)
+- No answer indices were changed
+- No accuracy or explanation changes

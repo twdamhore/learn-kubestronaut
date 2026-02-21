@@ -75,7 +75,7 @@ var questions = [
       "The pods have no resource limits configured in their spec and are being CPU-throttled by cgroups",
       "The pods are running on nodes that have been cordoned by the cluster administrator recently",
       "DNS resolution for the Service name is intermittently failing across the cluster nodes in the mesh",
-      "The readiness probe is failing on those pods so they are removed from Service endpoints"
+      "The readiness probe is failing on those pods so they are removed from the Service endpoint list"
     ],
     answer: 3,
     explanation: "When a pod shows `0/1` in the READY column while in `Running` state, it means the readiness probe is failing. Kubernetes removes pods with failing readiness probes from the Service's Endpoints, so traffic is not routed to them. This causes 503 errors when not enough healthy pods remain to handle the load.\n\nWhy other options are wrong:\n- A: Missing resource limits causes throttling but does not make READY show 0/1 while Running\n- B: Cordoned nodes prevent new scheduling; existing Running pods remain and stay Ready\n- C: DNS resolution failures would cause application-level errors, not 0/1 READY status\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes",
@@ -730,7 +730,7 @@ var questions = [
     options: [
       "`kube_pod_status_phase` filtered to `Failed` to detect pods entering terminal failure states before OOM events occur",
       "`container_memory_working_set_bytes` tracked over time, showing continuous upward trend approaching the limit",
-      "`node_memory_MemAvailable_bytes` to monitor available memory on each node hosting the application pods",
+      "`node_memory_MemAvailable_bytes` to monitor available memory on each node that hosts the application pods",
       "`kube_pod_container_status_restarts_total` to count the number of container restarts and correlate with memory trends"
     ],
     answer: 1,
@@ -968,7 +968,7 @@ var questions = [
     text: "A node reports `DiskPressure: True` in its conditions. Pods on this node start getting evicted with `The node was low on resource: ephemeral-storage`. What type of storage is being exhausted?",
     diagram: null,
     options: [
-      "The `PersistentVolume` mounts that are attached to the pods running on that particular node in the cluster",
+      "The `PersistentVolume` mounts, block devices, network disks, and NFS shares attached to pods on that node",
       "The etcd data directory on the control plane node which stores the cluster's key-value state data",
       "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir`s",
       "The network-attached storage volumes used by the CSI driver to provision persistent volume claims"
@@ -1049,7 +1049,7 @@ var questions = [
     diagram: null,
     options: [
       "The Job continues retrying with increasing `backoffLimit` delay intervals beyond the third failure",
-      "The Job is marked as Failed and no more pods are created by the Job controller for this resource",
+      "The Job is marked as Failed and no more replacement pods are created by the Job controller for this resource",
       "Kubernetes sends an alert to the cluster administrator via the event system and pauses the Job for review",
       "The Job controller automatically deletes the Job resource and all of its associated completed and failed pods"
     ],
@@ -1064,8 +1064,8 @@ var questions = [
     text: "Your team uses Falco, a CNCF runtime security tool, and receives an alert: `Terminal shell in container (user=root, container=web-app)`. What event triggered this alert?",
     diagram: null,
     options: [
-      "A new container image was pulled from an untrusted or unapproved external container registry source",
-      "Someone executed a shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
+      "A new container image was pulled from an untrusted external container registry (e.g., a public Docker Hub repo)",
+      "Someone executed an interactive shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
       "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell at boot time",
       "The container's security context was modified at runtime to allow root access to the system process"
     ],
@@ -1192,9 +1192,9 @@ var questions = [
     text: "Running `kubectl get pod my-pod -o jsonpath='{.status.containerStatuses[0].state}'` returns `{\"waiting\":{\"reason\":\"CreateContainerConfigError\",\"message\":\"secret \\\"api-key\\\" not found\"}}`. The pod shows `STATUS: CreateContainerConfigError`. What is happening?",
     diagram: null,
     options: [
-      "The container image is missing the `api-key` binary that is required for the application startup sequence to complete",
+      "The container image is missing the `api-key` binary (used by the entrypoint script) that is required for the startup sequence",
       "The pod spec references a Secret named `api-key` (via `envFrom` or `env.valueFrom`) that is missing in the namespace",
-      "The node's container runtime cannot decrypt the `api-key` Secret due to missing cluster encryption provider keys",
+      "The node's container runtime cannot decrypt the `api-key` Secret due to missing `encryption-config` provider keys",
       "The API server rejected the pod because the Secret name `api-key` is a reserved identifier in the Kubernetes system"
     ],
     answer: 1,
@@ -1224,7 +1224,7 @@ var questions = [
     text: "After deploying a pod, `kubectl describe pod` shows `Warning  FailedScheduling  0/3 nodes are available: 3 node(s) didn't match pod topology spread constraints`. What are topology spread constraints?",
     diagram: null,
     options: [
-      "Constraints that prevent pods from being scheduled on nodes with specific CPU architectures or hardware configs",
+      "Constraints that prevent pods from being scheduled on nodes with specific CPU architectures (e.g., ARM vs x86)",
       "Limits on the total number of pods that can run on a single node regardless of available resources or capacity",
       "Security rules that restrict pod-to-pod network communication based on the physical node topology layout",
       "Constraints controlling how pods distribute across failure domains (nodes, zones) for high availability"
@@ -1272,8 +1272,8 @@ var questions = [
     text: "The `kube-controller-manager` pod is in `CrashLoopBackOff` on the control plane node. What impact does this have on the cluster?",
     diagram: null,
     options: [
-      "Existing pods run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
-      "All pods in the cluster immediately stop because the controller manager manages the container runtime directly",
+      "Existing pods continue to run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
+      "All pods in the cluster immediately stop because the controller manager manages the container runtime (e.g., containerd) directly",
       "DaemonSet and Job pods are most affected because these controller loops reconcile more frequently than ReplicaSet controllers",
       "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario automatically"
     ],
@@ -1368,10 +1368,10 @@ var questions = [
     text: "A pod fails admission with: `Error from server (Forbidden): pods \"test\" is forbidden: violates PodSecurity \"restricted:latest\"`. The pod spec has `runAsNonRoot: true` and `allowPrivilegeEscalation: false`. What else might the `restricted` policy require?",
     diagram: null,
     options: [
-      "The pod should set `hostNetwork: true` because the restricted policy permits host networking for trusted workloads",
-      "The pod must have resource limits set to zero to meet the restricted policy's compute allocation constraints spec",
+      "The pod should set `hostNetwork: true` because the restricted policy permits host networking (e.g., for trusted workloads)",
+      "The pod must have `resources.limits` set to zero to meet the restricted policy's compute allocation constraints",
       "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and set a `seccompProfile` (e.g., `RuntimeDefault`)",
-      "The pod must use the `default` ServiceAccount and not a custom one to satisfy the restricted policy identity checks"
+      "The pod must use the `default` ServiceAccount with `automountServiceAccountToken: false` to satisfy the restricted policy"
     ],
     answer: 2,
     explanation: "The Pod Security Standard `restricted` profile requires several security settings: `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, dropping all capabilities (`drop: [\"ALL\"]`), and setting a seccomp profile (e.g., `RuntimeDefault`). Missing any of these causes the admission controller to reject the pod. The `hostNetwork` must be `false`, not `true`.\n\nWhy other options are wrong:\n- A: hostNetwork: true violates the restricted profile; it must be false or unset\n- B: Resource limits set to zero is not a requirement; the restricted profile does not mandate specific limit values\n- D: The restricted profile does not require the default ServiceAccount; custom ServiceAccounts are allowed\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
@@ -1416,9 +1416,9 @@ var questions = [
     text: "A team runs `kubectl exec -it production-db-0 -- psql` to manually fix data in production. From a cloud native operations perspective, what is wrong with this approach?",
     diagram: null,
     options: [
-      "Nothing is wrong—interactive debugging of production databases is considered a standard cloud native practice today",
-      "The `kubectl exec` command does not support interactive database clients like `psql` due to TTY protocol limits",
-      "The pod's network policy automatically blocks interactive sessions in production namespaces as a security measure",
+      "Nothing is wrong—interactive debugging, data patching, and schema changes are standard cloud native practices",
+      "The `kubectl exec` command does not support interactive database clients like `psql` due to TTY protocol limitations",
+      "The pod's network policy blocks interactive sessions, database clients, shell access, and tunnels in production",
       "Manual changes via `kubectl exec` bypass version control, audit trails, and automation, violating declarative ops"
     ],
     answer: 3,
@@ -1432,10 +1432,10 @@ var questions = [
     text: "A pod is scheduled to a node and runs successfully for 5 minutes, but then is evicted. The pod had a toleration for `node.kubernetes.io/not-ready` with `tolerationSeconds: 300`. What happened?",
     diagram: null,
     options: [
-      "The pod exceeded its resource limits after 5 minutes, so the kubelet's `eviction-manager` terminated it to reclaim node resources",
+      "The pod exceeded its `limits.memory` after 5 minutes, so the kubelet's `eviction-manager` terminated it to reclaim node resources",
       "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction",
       "The scheduler detected a better node for the pod and performed a live migration after the 300-second warm-up period elapsed",
-      "The pod's NoExecute toleration expired because the PodDisruptionBudget overrides tolerationSeconds after a 300-second window"
+      "The pod's `NoExecute` toleration expired because the `PodDisruptionBudget` overrides `tolerationSeconds` after a 300-second window"
     ],
     answer: 1,
     explanation: "When a `NoExecute` taint is applied to a node (e.g., `node.kubernetes.io/not-ready` when the node's `Ready` condition becomes `False`), pods that tolerate the taint with a `tolerationSeconds` value will remain on the node only for that duration. After 300 seconds (5 minutes), the toleration expires and the pod is evicted. Without `tolerationSeconds`, a tolerating pod would stay indefinitely; without any toleration, the pod would be evicted immediately.\n\nWhy other options are wrong:\n- A: Kubelet eviction occurs due to node-level resource pressure (e.g., memory.available below threshold), not because an individual pod exceeds its own limits. A pod exceeding its memory limit is OOMKilled by the cgroup, not evicted by the eviction-manager\n- C: Kubernetes does not perform live pod migration; pods are terminated and recreated\n- D: PDB does not have a minimum uptime threshold; it protects against voluntary disruptions\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
@@ -1512,7 +1512,7 @@ var questions = [
     text: "You run `helm install myrelease ./mychart` and get: `Error: INSTALLATION FAILED: rendered manifests contain a resource that already exists. Unable to continue with install`. What happened?",
     diagram: null,
     options: [
-      "The Helm chart has a syntax error in one of its rendered templates that prevents the manifest from being applied correctly",
+      "The Helm chart has a syntax error in one of its templates (e.g., a missing closing bracket) that prevents rendering",
       "The Helm repository index is corrupted and needs to be rebuilt before the chart can be installed into the target namespace",
       "The Kubernetes version does not support the API version used in the chart manifests, causing an incompatibility validation error",
       "A resource in the chart (e.g., Service or ConfigMap) already exists in the namespace from a previous manual or Helm deployment"
@@ -1593,7 +1593,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">CI/CD Image Push Race Condition</text><rect x="30" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><line x1="130" y1="72" x2="155" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="155" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="205" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Push Image</text><line x1="255" y1="72" x2="275" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a100)"/><rect x="275" y="55" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="325" y="76" text-anchor="middle" fill="#e0e0e0" font-size="10">Deploy</text><rect x="30" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="136" text-anchor="middle" fill="#e0e0e0" font-size="10">Build Image</text><rect x="155" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="205" y="130" text-anchor="middle" fill="#e0e0e0" font-size="9">Push Image</text><text x="205" y="143" text-anchor="middle" fill="#e0e0e0" font-size="9">(still running)</text><rect x="200" y="115" width="100" height="35" rx="5" fill="#264653" stroke="#7a8a99" stroke-width="1.5" opacity="0.5"/><text x="250" y="136" text-anchor="middle" fill="#e0e0e0" font-size="9">Deploy (overlap)</text><text x="200" y="180" text-anchor="middle" fill="#aaa" font-size="10">Scenario 1: Sequential approach</text><text x="200" y="200" text-anchor="middle" fill="#aaa" font-size="10">Scenario 2: Deploy before push completes</text><text x="200" y="225" text-anchor="middle" fill="#aaa" font-size="10">Which scenario avoids the race condition?</text><defs><marker id="a100" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
       "Ensuring the pipeline verifies the image push is complete (e.g., by pulling the digest) before updating the Deployment",
-      "Using `imagePullPolicy: Always` in the pipeline so Kubernetes retries pulling until the image becomes available in the registry",
+      "Using `imagePullPolicy: Always` in the Deployment spec so Kubernetes retries pulling (e.g., with backoff) until the image appears",
       "Setting a long `initialDelaySeconds` on the readiness probe to give the registry time to propagate the image to all nodes",
       "Configuring the container runtime to cache all images locally before deploying any workload updates to the cluster nodes"
     ],

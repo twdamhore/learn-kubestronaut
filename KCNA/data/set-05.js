@@ -56,10 +56,10 @@ var questions = [
     text: "Your cluster runs the PodSecurity admission controller with the `restricted` profile enforced on the `production` namespace. A developer submits a Pod with `privileged: true`. At which stage is the Pod rejected?",
     diagram: '<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="50" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">kubectl</text><rect x="110" y="40" width="90" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="155" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">API Server</text><text x="155" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">AuthN/AuthZ</text><text x="155" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="220" y="40" width="80" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="260" y="58" text-anchor="middle" fill="#f8f8f2" font-size="9">Admission</text><text x="260" y="72" text-anchor="middle" fill="#f8f8f2" font-size="9">(???)</text><text x="260" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><rect x="320" y="40" width="70" height="40" rx="5" fill="#16213e" stroke="#4cc9f0" stroke-width="1.5"/><text x="355" y="65" text-anchor="middle" fill="#f8f8f2" font-size="10">etcd</text><text x="355" y="100" text-anchor="middle" fill="#f1fa8c" font-size="14">?</text><line x1="90" y1="60" x2="110" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="200" y1="60" x2="220" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><line x1="300" y1="60" x2="320" y2="60" stroke="#4cc9f0" stroke-width="1.5" marker-end="url(#a4)"/><defs><marker id="a4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4cc9f0"/></marker></defs></svg>',
     options: [
-      "During scheduling, after the PodSecurity admission phase",
+      "During scheduling, after the admission check completes",
       "During the image pull phase on the assigned worker node",
-      "During the admission phase by the PodSecurity admission plugin",
-      "At runtime enforcement by the container runtime on the node"
+      "During API admission by the PodSecurity admission plugin",
+      "At runtime enforcement by the container runtime sandbox"
     ],
     answer: 2,
     explanation: "The PodSecurity admission controller evaluates Pods during the admission phase of the API server request lifecycle. A Pod with `privileged: true` violates the `restricted` profile and is rejected before it is persisted to etcd. This happens before scheduling.\n\nWhy other options are wrong:\n- A: The scheduler is not involved; rejection happens before the Pod is persisted to etcd\n- B: The image pull phase occurs after admission; the Pod never reaches the node\n- D: Runtime enforcement is too late; PSA operates at the API server admission stage\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
@@ -105,9 +105,9 @@ var questions = [
     diagram: null,
     options: [
       "Create and delete Deployments across all namespaces in the cluster",
-      "Create and delete Deployments only in the `dev` namespace scope",
+      "Create and delete Deployments only within the `dev` namespace scope",
       "Nothing, because a ClusterRole needs a ClusterRoleBinding to work",
-      "Create Deployments in `dev` but delete them across all other namespaces"
+      "Create Deployments in `dev` but delete them in all other namespaces"
     ],
     answer: 1,
     explanation: "A RoleBinding can reference a ClusterRole, but the permissions are scoped to the RoleBinding's namespace. Alice can only create and delete Deployments in the `dev` namespace, not cluster-wide. This pattern is commonly used to reuse ClusterRoles across multiple namespaces.\n\nWhy other options are wrong:\n- A: A RoleBinding scopes permissions to its own namespace, not cluster-wide\n- C: ClusterRoles can be bound by RoleBindings; this is a common and valid pattern for reuse\n- D: RBAC does not split verbs across different scopes; all granted verbs apply to the same namespace\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
@@ -200,10 +200,10 @@ var questions = [
     text: "A container in a Pod attempts to use `CAP_NET_ADMIN` to modify network interfaces. The Pod spec does not include any `capabilities` configuration. What is the default behavior?",
     diagram: null,
     options: [
-      "`CAP_NET_ADMIN` is among the common capabilities in the default runtime set",
-      "The container inherits `CAP_NET_ADMIN` from the host kernel automatically at startup",
-      "The container runs with a default set that does not include `CAP_NET_ADMIN`",
-      "The kubelet adds all `NET_*` capabilities automatically to each new container"
+      "`CAP_NET_ADMIN` is included among the capabilities in the default runtime set",
+      "The container inherits `CAP_NET_ADMIN` from the host kernel at startup",
+      "The default capability set granted by the runtime excludes `CAP_NET_ADMIN`",
+      "The kubelet adds all `NET_*` capabilities automatically to new containers"
     ],
     answer: 2,
     explanation: "By default, containers run with a limited set of Linux capabilities defined by the container runtime (e.g., containerd). `CAP_NET_ADMIN` is not in this default set. To use it, you must explicitly add it via `securityContext.capabilities.add` in the container spec.\n\nWhy other options are wrong:\n- A: CAP_NET_ADMIN is not among the common capabilities granted by default; the default set is deliberately minimal\n- B: Containers do not inherit capabilities from the host kernel; they receive a defined set from the container runtime\n- D: The kubelet does not automatically add NET_* capabilities to containers\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-capabilities-for-a-container",
@@ -360,10 +360,10 @@ var questions = [
     text: "An attacker gains access to a container and tries to escalate privileges using `setuid` binaries. Which `securityContext` field prevents this?",
     diagram: null,
     options: [
-      "The `readOnlyRootFilesystem: true` setting",
-      "The `runAsNonRoot: true` security setting",
-      "The `privileged: false` container setting",
-      "The `allowPrivilegeEscalation: false` setting"
+      "The `readOnlyRootFilesystem` set to `true`",
+      "The `runAsNonRoot` set to `true` in the spec",
+      "The `privileged` field set to `false` value",
+      "The `allowPrivilegeEscalation` set to `false`"
     ],
     answer: 3,
     explanation: "Setting `allowPrivilegeEscalation: false` prevents a process from gaining more privileges than its parent, which blocks `setuid` and `setgid` binaries. `readOnlyRootFilesystem` prevents writes but not privilege escalation. `runAsNonRoot` ensures a non-root UID but does not block setuid.\n\nWhy other options are wrong:\n- A: readOnlyRootFilesystem prevents filesystem writes but does not block setuid privilege escalation\n- B: runAsNonRoot prevents running as root but does not block setuid binaries from escalating\n- C: privileged: false disables privileged mode but a non-privileged container can still use setuid\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
@@ -682,8 +682,8 @@ var questions = [
     options: [
       "Individual databases inherently use stronger encryption algorithms by design",
       "Shared databases are harder to secure because every service needs broad access",
-      "A breach in one service's database does not expose other services' data",
-      "Per-service databases reduce the total network connections that need monitoring"
+      "A breach in one service's database does not expose data from other services",
+      "Per-service databases reduce the total network connections needing monitoring"
     ],
     answer: 2,
     explanation: "The database-per-service pattern limits the blast radius of a security breach. If an attacker compromises one service, they only access that service's data. With a shared database, compromising any service could expose data from all services.\n\nWhy other options are wrong:\n- A: Database encryption strength is independent of whether the database is shared or per-service\n- B: Shared databases can be secured with network policies and access controls; the concern is blast radius, not securability\n- D: Per-service databases actually increase the total number of connections to monitor; the security benefit is blast-radius reduction, not fewer connections\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
@@ -826,7 +826,7 @@ var questions = [
     options: [
       "In a fixed order: certificates first, then bearer tokens, then OIDC",
       "The evaluation order is randomized differently for each request",
-      "All configured authenticators are tried; the first success is used",
+      "All configured authenticators are tried and the first success wins",
       "Each authenticator is assigned to specific API groups for evaluation"
     ],
     answer: 2,
@@ -875,7 +875,7 @@ var questions = [
       "It stores Secret data in a separate encrypted Git branch for secure access",
       "It replaces Kubernetes Secrets with references to an external vault service",
       "It base64-encodes Secret data twice for an additional layer of security",
-      "It encrypts data with a public key; only the in-cluster controller decrypts"
+      "It encrypts data with a public key and only the in-cluster controller decrypts"
     ],
     answer: 3,
     explanation: "Sealed Secrets uses asymmetric encryption. Developers encrypt Secrets using the public key (available to anyone), producing a SealedSecret custom resource safe to commit to Git. Only the Sealed Secrets controller running in the cluster holds the private key to decrypt and create the actual Secret.\n\nWhy other options are wrong:\n- A: Sealed Secrets does not use encrypted Git branches; it uses CRDs in the same branch\n- B: Sealed Secrets creates actual Kubernetes Secrets in-cluster, not external vault references\n- C: Double base64 encoding provides no security benefit; Sealed Secrets uses asymmetric encryption\n\nReference: https://github.com/bitnami-labs/sealed-secrets",
@@ -907,7 +907,7 @@ var questions = [
       "The mounted Secret files immediately disappear from the running container's filesystem",
       "The Pod is immediately terminated by the kubelet because the Secret reference is invalid",
       "The projected volume controller detects the deletion and recreates the Secret automatically",
-      "Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt"
+      "Existing mounted data remains temporarily and the kubelet logs errors on the next sync"
     ],
     answer: 3,
     explanation: "When a Secret referenced by a projected volume is deleted, the kubelet will fail to refresh the volume on its next sync cycle. The existing mounted data remains temporarily, but the kubelet eventually triggers an error and the Pod may fail or the volume becomes stale.\n\nWhy other options are wrong:\n- A: Mounted files do not immediately disappear; the kubelet uses cached data temporarily\n- B: The Pod is not immediately terminated; the kubelet logs errors but does not kill the Pod right away\n- C: There is no projected volume controller that recreates deleted Secrets\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -936,7 +936,7 @@ var questions = [
     text: "A security policy requires that all containers use image digests instead of tags. Why is this practice recommended?",
     diagram: null,
     options: [
-      "Tags are mutable and can be repointed to a different image; digests are immutable",
+      "Tags are mutable and can point to different images while digests are immutable",
       "Digests download significantly faster than tags when pulling from registries",
       "Digests enable automatic vulnerability scanning during the image pull phase",
       "Digests are required by default admission controllers and tags are being deprecated"
@@ -1051,7 +1051,7 @@ var questions = [
       "In the application container's stdout log stream for request data",
       "In the kube-apiserver audit logs for API-level request tracking",
       "In the CoreDNS query logs for service name resolution details",
-      "In the Istio proxy (Envoy) container's access logs for denials"
+      "In the sidecar proxy container's access logs for policy denials"
     ],
     answer: 3,
     explanation: "The Istio sidecar proxy (Envoy) handles all inbound and outbound traffic for the Pod. Authorization policy denials are logged in the Envoy access logs, which can be accessed via `kubectl logs <pod> -c istio-proxy`. The application container does not see denied requests.\n\nWhy other options are wrong:\n- A: The application container does not see requests denied by the sidecar proxy\n- B: API server audit logs track Kubernetes API calls, not service mesh traffic\n- C: CoreDNS logs track DNS queries, not authorization policy denials\n\nReference: https://istio.io/latest/docs/tasks/observability/logs/access-log/",
@@ -1144,10 +1144,10 @@ var questions = [
     text: "A NetworkPolicy allows egress from Pods labeled `app: worker` to an external CIDR `10.0.0.0/8` on port 5432. The cluster Pod CIDR is `192.168.0.0/16`. Can the worker Pods reach other Pods in the cluster?",
     diagram: null,
     options: [
-      "Yes, because intra-cluster Pod traffic is exempt from egress rules",
-      "No, because the egress rule only allows traffic to `10.0.0.0/8`",
+      "Yes, because intra-cluster Pod traffic is exempt from all egress rules",
+      "No, because the egress rule only permits traffic to `10.0.0.0/8` CIDR",
       "Yes, because NetworkPolicies do not affect traffic to `192.168.0.0/16`",
-      "No, unless UDP DNS port 53 is also explicitly allowed by a rule"
+      "No, unless UDP DNS port 53 is also explicitly allowed in the policy"
     ],
     answer: 1,
     explanation: "When an egress NetworkPolicy is applied, only the explicitly allowed destinations are permitted. Since the rule only allows `10.0.0.0/8`, traffic to the Pod CIDR `192.168.0.0/16` is blocked. NetworkPolicies affect both internal and external traffic. The worker Pods can only reach the specified CIDR on port 5432.\n\nWhy other options are wrong:\n- A: Intra-cluster Pod-to-Pod traffic is subject to egress NetworkPolicy rules just like external traffic\n- C: NetworkPolicies affect traffic to all CIDRs including `192.168.0.0/16`; there is no exemption for internal ranges\n- D: While DNS would also be blocked, the primary reason is the CIDR restriction blocking Pod CIDR traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1256,7 +1256,7 @@ var questions = [
     text: "A Pod fails to start with the error `Error: secret \"tls-cert\" not found`. The Secret exists in the `default` namespace, but the Pod runs in the `production` namespace. What is the issue?",
     diagram: null,
     options: [
-      "Secrets cannot be used across namespaces; it must exist in the Pod's namespace",
+      "Secrets cannot be used across namespaces and the Secret must exist in `production`",
       "The Secret name contains a typo preventing the kubelet from locating the resource",
       "TLS-type Secrets require a special RBAC role to access from within Pod containers",
       "The Pod's ServiceAccount lacks permission to read Secrets from another namespace"

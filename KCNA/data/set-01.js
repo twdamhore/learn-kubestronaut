@@ -56,8 +56,8 @@ var questions = [
     text: "A DevOps engineer is setting up a new Kubernetes cluster and needs to choose a container runtime. The cluster must comply with the Kubernetes Container Runtime Interface (CRI). Which of the following is a valid CRI-compliant runtime that Kubernetes can use natively since v1.24?",
     diagram: null,
     options: [
-      "`dockerd` bypassing the CRI layer via the built-in dockershim adapter and its socket interface",
-      "`rkt` (Rocket) with a pre-CRI container format based on the appc specification",
+      "`dockerd` bypassing the CRI layer via the built-in dockershim adapter on the node",
+      "`rkt` (Rocket) with a pre-CRI container format based on the appc image specification",
       "`containerd` with the CRI plugin enabled, communicating via the standard gRPC interface",
       "`LXC` with a custom Kubernetes bridge module for container lifecycle management"
     ],
@@ -90,7 +90,7 @@ var questions = [
     options: [
       "Cloud native applications reduce costs by favoring serverless infrastructure and pay-per-use billing models",
       "Cloud native applications benefit most from languages like Go or Rust due to their concurrency characteristics",
-      "Cloud native applications reduce the need for operational staff by relying on self-healing system behaviors",
+      "Cloud native applications are self-healing, automated, and observable, reducing the need for operational staff",
       "Cloud native applications are loosely coupled, resilient, and scalable, enabling reliable changes via automation"
     ],
     answer: 3,
@@ -187,7 +187,7 @@ var questions = [
       "Set `privileged: true` in the container's `securityContext` to enable user isolation",
       "Configure a `securityContext` with `runAsNonRoot: true` on the Pod or container spec",
       "Apply a `ResourceQuota` that limits the number of containers running as root per namespace",
-      "Create a `LimitRange` object that sets the default user ID to a non-root value"
+      "Create a `LimitRange` object that sets the default user ID to a non-root value for Pods"
     ],
     answer: 1,
     explanation: "The `securityContext` field in a Pod or container spec allows you to set `runAsNonRoot: true`, which tells the kubelet to reject any container that attempts to run as UID 0. Setting `privileged: true` actually grants more permissions, not less. `ResourceQuota` controls resource consumption like CPU and memory limits. `LimitRange` sets default resource requests and limits, not security settings.\n\nWhy other options are wrong:\n- A: Setting privileged: true grants MORE permissions, not less — this is the opposite of the requirement.\n- C: ResourceQuota controls resource consumption (CPU, memory, Pod count), not security settings.\n- D: LimitRange sets default resource requests and limits, not user IDs or security contexts.\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
@@ -218,7 +218,7 @@ var questions = [
     options: [
       "`ConfigMap` for storage configuration paired with `Secret` for the storage credentials",
       "`PersistentVolume` (PV) for actual storage and `PersistentVolumeClaim` (PVC) for requests",
-      "`StorageClass` for provisioning configuration and `VolumeSnapshot` for requesting the data",
+      "`StorageClass` (SC) for provisioning configuration and `VolumeSnapshot` for requesting data",
       "`emptyDir` volume for temporary storage combined with `hostPath` volume for persistent data"
     ],
     answer: 1,
@@ -682,8 +682,8 @@ var questions = [
     options: [
       "Envoy, which provides a complete service mesh with a built-in control plane",
       "Linkerd, a lightweight service mesh designed specifically for Kubernetes clusters",
-      "Calico, which provides service mesh capabilities through its CNI plugin",
-      "CoreDNS, which handles service-to-service routing and mTLS for Kubernetes"
+      "Calico, which provides service mesh capabilities through its network CNI plugin",
+      "CoreDNS, which handles service-to-service routing and mTLS within Kubernetes"
     ],
     answer: 1,
     explanation: "Linkerd is a CNCF graduated service mesh that provides mutual TLS, traffic management, observability, and reliability features specifically designed for Kubernetes. Envoy is a proxy used by several service meshes (including Istio) but is not itself a complete service mesh with a control plane. Calico is a CNI plugin for network policy, not a service mesh. CoreDNS provides DNS resolution, not service mesh features.\n\nWhy other options are wrong:\n- A: Envoy is a proxy used by service meshes (like Istio) but is not itself a complete service mesh with its own control plane.\n- C: Calico is a CNI plugin for network policy enforcement, not a service mesh.\n- D: CoreDNS provides cluster DNS resolution and service discovery, not mTLS or traffic management.\n\nReference: https://linkerd.io/",
@@ -842,7 +842,7 @@ var questions = [
     options: [
       "Delete the Deployment and recreate it with the `v1.0` image tag specified in the manifest",
       "Manually edit each Pod to change the image back to `v1.0` using `kubectl edit pod`",
-      "Use `kubectl rollout undo deployment/<name>` to revert to the previous revision",
+      "Use `kubectl rollout undo deployment/<name>` to revert to the previous known-good revision",
       "Scale the Deployment to 0 replicas, update the image to `v1.0`, then scale back to 3"
     ],
     answer: 2,
@@ -856,9 +856,9 @@ var questions = [
     text: "A cluster administrator needs to control which actions users and service accounts can perform within the cluster. They want to grant a developer read-only access to Pods in the `staging` namespace but no access to other namespaces. Which Kubernetes authorization mechanism should they use?",
     diagram: null,
     options: [
-      "Create a `NetworkPolicy` that restricts the developer's Pod access to the `staging` namespace",
+      "Create a `NetworkPolicy` that restricts the developer's Pod access to resources in the `staging` namespace",
       "Create a `ServiceAccount` in the `staging` namespace, which automatically limits all access to that namespace",
-      "Add the developer's credentials to the `kube-apiserver` configuration file with namespace restrictions",
+      "Add the developer's credentials to the API server (`kube-apiserver`) configuration with namespace restrictions",
       "Configure Role-Based Access Control (RBAC) with a `Role` and `RoleBinding` in the `staging` namespace"
     ],
     answer: 3,
@@ -1033,9 +1033,9 @@ var questions = [
     diagram: null,
     options: [
       "`kubectl get pods -l app=frontend,tier!=api` with comma-separated selectors",
-      "`kubectl get pods -l app=frontend OR tier!=api` with an OR keyword",
-      "`kubectl get pods --labels app=frontend --no tier` with a --no flag",
-      "`kubectl get pods -l app=frontend --exclude tier=api` with --exclude"
+      "`kubectl get pods -l app=frontend OR tier!=api` with an OR keyword operator",
+      "`kubectl get pods --labels app=frontend --no tier` with a --no exclusion flag",
+      "`kubectl get pods -l app=frontend --exclude tier=api` with an --exclude flag"
     ],
     answer: 0,
     explanation: "The `-l` flag supports both equality-based (`app=frontend`) and inequality-based (`tier!=api`) selectors, separated by commas for AND logic. The comma means both conditions must be true. There is no `OR` operator in label selectors. The `--labels` and `--exclude` flags do not exist in kubectl for label filtering.\n\nWhy other options are wrong:\n- B: There is no `OR` operator in kubectl label selectors; commas provide AND logic.\n- C: `--labels` and `--no` are not valid kubectl flags for label filtering.\n- D: `--exclude` is not a valid kubectl flag for label filtering.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/",
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which configuration provides the strongest protection against eviction?",
     diagram: null,
     options: [
-      "Set `spec.priority` to a high value; the scheduler avoids evicting high-priority Pods during resource pressure events",
+      "Set `spec.priority` to a high value; the kubelet avoids evicting high-priority Pods during pressure events",
       "Set resource `requests` equal to `limits` (Guaranteed QoS), making the Pod least likely to be evicted",
       "Set `spec.terminationGracePeriodSeconds` to a very high value to delay the eviction process entirely",
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
@@ -1256,13 +1256,13 @@ var questions = [
     text: "A team needs to scale their web application based on CPU utilization. When average CPU usage across all Pods exceeds 70%, they want Kubernetes to automatically add more replicas. Which resource automates this?",
     diagram: null,
     options: [
-      "A `VerticalPodAutoscaler` that increases the CPU requests of existing Pods automatically",
+      "A `VerticalPodAutoscaler` (VPA) that increases the CPU requests of existing Pods automatically",
       "A `CronJob` that periodically checks CPU utilization and runs `kubectl scale` commands to adjust",
-      "A `HorizontalPodAutoscaler` (HPA) targeting 70% average CPU utilization for Deployment",
+      "A `HorizontalPodAutoscaler` (HPA) targeting 70% average CPU utilization for the Deployment",
       "A `ResourceQuota` with a CPU threshold that triggers scaling events when it is exceeded"
     ],
     answer: 2,
-    explanation: "A `HorizontalPodAutoscaler` (HPA) automatically adjusts the number of Pod replicas based on observed metrics like CPU utilization. Setting the target average CPU utilization to 70% causes the HPA to scale out when usage exceeds this threshold and scale in when it drops below. A `VerticalPodAutoscaler` adjusts resource requests per Pod, not replica count. CronJobs are manual automation. ResourceQuotas do not trigger scaling.\n\nWhy other options are wrong:\n- A: VerticalPodAutoscaler adjusts resource requests per Pod (CPU/memory), not replica count.\n- B: A CronJob running kubectl scale is manual automation, not native Kubernetes auto-scaling.\n- D: ResourceQuotas cap resource consumption; they do not trigger scaling events.\n\nReference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+    explanation: "A `HorizontalPodAutoscaler` (HPA) automatically adjusts the number of Pod replicas based on observed metrics like CPU utilization. Setting the target average CPU utilization to 70% causes the HPA to scale out when usage exceeds this threshold and scale in when it drops below. A `VerticalPodAutoscaler` adjusts resource requests per Pod, not replica count. CronJobs are manual automation. ResourceQuotas do not trigger scaling.\n\nWhy other options are wrong:\n- A: VerticalPodAutoscaler (VPA) adjusts resource requests per Pod (CPU/memory), not replica count.\n- B: A CronJob running kubectl scale is manual automation, not native Kubernetes auto-scaling.\n- D: ResourceQuotas cap resource consumption; they do not trigger scaling events.\n\nReference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
     verify: "microk8s kubectl get hpa --all-namespaces"
   },
   {
@@ -1305,9 +1305,9 @@ var questions = [
     diagram: null,
     options: [
       "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final production stage",
-      "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in the final Dockerfile layer",
+      "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in a final layer",
       "Build the application on the host machine with native compilers and copy the binary into a `latest` tagged base image",
-      "Use the `--squash` flag to compress all layers into one, which removes most unused files from the image"
+      "Use the `--squash` flag to compress all image layers into one, which removes most unused files from the output"
     ],
     answer: 0,
     explanation: "Multi-stage builds allow you to use a full build environment in an early stage and copy only the compiled artifacts into a minimal final stage (like `distroless` or `alpine`). This produces small, secure images without build tools or unnecessary packages. Removing packages from a full image still leaves layer history. Building on the host introduces inconsistencies. The `--squash` flag is experimental and does not selectively remove files from earlier layers.\n\nWhy other options are wrong:\n- B: Removing packages from a full image still leaves layer history and produces a larger image.\n- C: Building on the host introduces environment inconsistencies and may include unnecessary dependencies.\n- D: The --squash flag is experimental and does not selectively remove files from earlier layers.\n\nReference: https://docs.docker.com/build/building/multi-stage/",
@@ -1466,7 +1466,7 @@ var questions = [
     options: [
       "During the build and testing stages, where scanning blocks the pipeline if critical vulnerabilities are found",
       "After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities",
-      "At multiple stages: during the build, before deployment via admission control, and in the registry",
+      "At multiple stages: during the build, before deployment via admission control, and in the image registry",
       "When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"
     ],
     answer: 2,
@@ -1499,7 +1499,7 @@ var questions = [
       "Use a single Deployment and update the image tag, which performs a blue-green switch automatically per rollout",
       "Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods",
       "Use an Ingress resource with weighted routing rules set to 0% blue traffic and 100% green traffic for cutover",
-      "Scale the blue Deployment to zero and the green Deployment to the desired count simultaneously for the switch"
+      "Scale the blue Deployment (v1) to zero and the green Deployment to the desired count simultaneously for the switch"
     ],
     answer: 1,
     explanation: "Blue-green deployment on Kubernetes involves running two separate Deployments. Both run simultaneously, with the Service selector pointing to the blue (current) Deployment. Once the green (new) Deployment is verified, you update the Service selector to point to the green Pods, switching all traffic instantly. Updating a Deployment's image performs a rolling update, not blue-green. Weighted routing is canary-style. Scaling down blue before green is ready causes downtime.\n\nWhy other options are wrong:\n- A: Updating the image on a single Deployment performs a rolling update, not a blue-green switch.\n- C: Weighted routing via Ingress is more characteristic of canary deployments, not blue-green.\n- D: Scaling down blue before green is verified causes downtime; blue-green requires both running simultaneously.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
@@ -1547,7 +1547,7 @@ var questions = [
       "The ClusterIP assigned to the Service, which proxies traffic to the external hostname",
       "A CNAME record resolving to `legacy-db.example.com`, with no ClusterIP or proxy used",
       "A direct TCP connection to the external hostname, handled by `kube-proxy` on the node",
-      "An error, because Services are generally limited to routing traffic within the cluster network"
+      "An error, because Services are limited to routing traffic within the cluster network"
     ],
     answer: 1,
     explanation: "An `ExternalName` Service creates a CNAME record in the cluster DNS that maps the Service name to the specified external hostname. No ClusterIP is allocated, and no proxying occurs through kube-proxy. The DNS resolution simply returns the CNAME, and the client connects directly to the external host. This is useful for integrating external services into the Kubernetes service discovery mechanism.\n\nWhy other options are wrong:\n- A: ExternalName Services do not get a ClusterIP and do not proxy traffic.\n- C: kube-proxy does not handle ExternalName resolution; it is purely a DNS CNAME response.\n- D: Services can reference external resources via ExternalName; it is a supported feature.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
@@ -1577,7 +1577,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="160" height="50" rx="8" fill="#333" stroke="#326CE5" stroke-width="2"/><text x="100" y="50" text-anchor="middle" fill="white" font-size="12">Pod</text><rect x="220" y="20" width="160" height="50" rx="8" fill="#326CE5" stroke="#fff" stroke-width="2"/><text x="300" y="50" text-anchor="middle" fill="white" font-size="12">API Server</text><rect x="20" y="120" width="160" height="50" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="1.5"/><text x="100" y="148" text-anchor="middle" fill="white" font-size="11">Auth Mechanism ?</text><line x1="100" y1="70" x2="100" y2="120" stroke="#aaa" stroke-width="1.5"/><line x1="180" y1="45" x2="220" y2="45" stroke="#4CAF50" stroke-width="2"/><text x="200" y="38" fill="#4CAF50" font-size="10">auth</text></svg>',
     options: [
       "The `kube-proxy` generates and distributes authentication tokens to all Pods in the cluster",
-      "The `ServiceAccount` resource, which mounts a projected token volume into each Pod",
+      "The `ServiceAccount` resource, which mounts a projected token volume into each Pod automatically",
       "The kubelet generates a unique API key for each Pod and stores it in an environment variable",
       "The container runtime creates a certificate for each container signed by the cluster CA"
     ],

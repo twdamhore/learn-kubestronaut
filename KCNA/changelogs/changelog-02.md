@@ -288,3 +288,84 @@
 ### s02-q035 (length-balance)
 - **Problem:** Ratio 1.191 due to option B being an outlier at 131 chars while correct A was 110 chars.
 - **Option B:** Trimmed. Changed from `"Split the dataset across approximately two ConfigMaps and merge them inside the container at startup using an init container script"` to `"Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container"`.
+
+---
+
+# Round 41 Review - Set 02
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 20 across 17 questions
+
+## Changes
+
+### s02-q001 (length-balance)
+- **Problem:** Correct option D was the shortest (78 chars) with ratio 1.167.
+- **Option A:** Trimmed. Changed `"for sensitive workloads"` to `"for workloads"`.
+- **Option D (correct):** Expanded. Changed `"in the pod"` to `"in the pod spec"`.
+
+### s02-q002 (giveaway)
+- **Problem:** Correct option B had a unique semicolon not present in other options.
+- **Option A:** Added semicolon. Changed `"by default so the update"` to `"by default; the update"`.
+
+### s02-q011 (length-balance)
+- **Problem:** Ratio 1.312 due to option A outlier at 101 chars.
+- **Option A:** Trimmed. Changed `"derived from the flag name by default"` to `"derived from the flag"`.
+- **Option B:** Expanded. Changed `"for uniqueness"` to `"for content uniqueness"`.
+
+### s02-q013 (length-balance)
+- **Problem:** Correct option A was the shortest (89 chars) with ratio 1.202 due to B outlier at 107 chars.
+- **Option B:** Trimmed. Removed `"with cluster-level keys"` from the end.
+
+### s02-q015 (giveaway/length-balance)
+- **Problem:** Correct option B had a unique semicolon. Option D was shortest at 73 chars (ratio 1.178).
+- **Option A:** Added semicolon. Changed `"should not matter — the issue"` to `"should not matter; the issue"`.
+- **Option D:** Expanded. Changed `"a \`secretNamespace\` field to"` to `"a \`secretNamespace\` field in the spec to"`.
+
+### s02-q017 (length-balance)
+- **Problem:** Option A was an outlier at 101 chars (ratio 1.247).
+- **Option A:** Trimmed. Changed `"not updated after pod creation"` to `"not updated after creation"`.
+
+### s02-q025 (giveaway)
+- **Problem:** Correct option B had a unique semicolon not present in other options.
+- **Option D:** Added semicolon. Changed `"Avoid storing Secrets in Git and instead create"` to `"Avoid storing Secrets in Git entirely; instead create"`.
+
+### s02-q026 (giveaway)
+- **Problem:** Correct option B had a unique semicolon not present in other options.
+- **Option D:** Added semicolon. Changed `"using \`SHA-256\`, so recovering"` to `"using \`SHA-256\`; recovering"`.
+
+### s02-q027 (giveaway)
+- **Problem:** Correct option D had a unique semicolon not present in other options.
+- **Option B:** Added semicolon. Changed `"as a Secret since Secrets support"` to `"as a Secret; Secrets support"`.
+
+### s02-q028 (giveaway)
+- **Problem:** Correct option D had a unique semicolon not present in other options.
+- **Option C:** Added semicolon. Changed `"1.5 cores because CPU limits are"` to `"1.5 cores; CPU limits are"`. Also expanded with `"by the runtime"`.
+
+### s02-q034 (length-balance)
+- **Problem:** Option D remained an outlier at 123 chars after R40 fix (ratio 1.255).
+- **Option D:** Trimmed. Changed `"then wait for re-encryption on read"` to `"and data re-encrypts on read"`.
+
+### s02-q041 (length-balance)
+- **Problem:** Option A was an outlier at 125 chars (ratio 1.316).
+- **Option A:** Trimmed. Removed `"and other sources"` from the middle of the sentence.
+
+### s02-q052 (length-balance)
+- **Problem:** Option D was an outlier at 115 chars (ratio 1.337).
+- **Option D:** Trimmed. Changed `"when limits are defined in the spec"` to `"when limits are set"`.
+
+### s02-q066 (giveaway)
+- **Problem:** Correct option C had a unique semicolon not present in other options.
+- **Option A:** Added semicolon. Changed `"The pod fails to start because duplicate"` to `"The pod fails to start; duplicate"`.
+
+### s02-q070 (length-balance)
+- **Problem:** Option B was an outlier at 135 chars (ratio 1.227).
+- **Option B:** Trimmed. Removed `"and logging levels"` from the parenthetical list.
+
+### s02-q081 (giveaway)
+- **Problem:** Correct option D had a unique semicolon not present in other options.
+- **Option B:** Added semicolon. Changed `"immutable after creation and can"` to `"immutable after creation; they can"`.
+
+### s02-q086 (giveaway)
+- **Problem:** Correct option D had a unique semicolon not present in other options.
+- **Option A:** Added semicolon. Changed `"as encrypted strings while \`data\`"` to `"as encrypted strings; \`data\`"`.

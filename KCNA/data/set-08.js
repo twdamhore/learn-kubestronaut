@@ -76,7 +76,7 @@ var questions = [
       "Loose coupling — each service exposes a stable API contract and hides internal implementation",
       "Shared database — all services access a single shared relational database for data consistency",
       "Synchronous RPC — inter-service calls should always use blocking HTTP requests for data delivery",
-      "Monolithic deployment — services are packaged together to reduce network overhead cost"
+      "Monolithic deployment — all services are packaged together in one unit to reduce network overhead"
     ],
     answer: 0,
     explanation: "Loose coupling is the foundational principle for microservices independence. Each service owns its data store (database-per-service pattern) and communicates through well-defined API contracts. Shared databases create tight coupling, synchronous-only communication reduces resilience, and monolithic deployment defeats the purpose of microservices.\n\nWhy other options are wrong:\n- B: Shared database creates tight coupling between services, the opposite of independent evolution\n- C: Synchronous-only RPC reduces resilience and creates temporal coupling between services\n- D: Monolithic deployment defeats the purpose of independently deployable microservices\n\nReference: https://kubernetes.io/docs/concepts/services-networking/",
@@ -89,8 +89,8 @@ var questions = [
     text: "A platform engineer is configuring a Kubernetes cluster that uses Cilium as the CNI plugin. They want to enforce network policies at Layer 7 (HTTP). Which statement about Cilium is accurate?",
     diagram: null,
     options: [
-      "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar proxy",
-      "Cilium is a CNCF incubating project that relies on Envoy sidecars for basic L3/L4 networking between Pods",
+      "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar",
+      "Cilium is a CNCF incubating project that relies on Envoy sidecars for basic L3/L4 networking between cluster Pods",
       "Cilium can replace kube-proxy for service routing but depends on Calico for Kubernetes NetworkPolicy enforcement",
       "Cilium leverages eBPF for high-performance networking, observability, and Layer 7 policy enforcement without sidecars"
     ],
@@ -185,7 +185,7 @@ var questions = [
     text: "An architect is designing inter-service communication for a microservices platform on Kubernetes. They need mutual TLS between services, traffic shifting for canary deployments, and per-route retry policies — all without modifying application code. Which approach best addresses these requirements?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Inter-Service Communication Pattern</text><rect x="30" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod A</text><rect x="40" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="70" y="79" text-anchor="middle" fill="white" font-size="9">App</text><rect x="110" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="140" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="220" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="295" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod B</text><rect x="230" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="260" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="300" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="330" y="79" text-anchor="middle" fill="white" font-size="9">App</text><line x1="140" y1="87" x2="260" y2="87" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)"/><text x="200" y="105" text-anchor="middle" fill="#a78bfa" font-size="9">encrypted</text><rect x="120" y="150" width="160" height="40" rx="6" fill="#4a1d96" stroke="#a78bfa"/><text x="200" y="175" text-anchor="middle" fill="white" font-size="10">???</text><line x1="140" y1="120" x2="180" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><line x1="260" y1="120" x2="220" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a78bfa"/></marker></defs></svg>',
     options: [
-      "Deploy an API gateway at the cluster ingress to handle all internal service-to-service communication traffic",
+      "Deploy an API gateway (e.g., Kong or Ambassador) at the cluster ingress to handle service-to-service traffic",
       "Add mTLS libraries to each microservice codebase and implement retry logic in application middleware code",
       "Implement a service mesh (e.g., Linkerd or Istio) with sidecar proxies handling mTLS, shifting, and retries",
       "Use Kubernetes NetworkPolicies to encrypt all traffic and configure retries via Pod annotation declarations"
@@ -314,7 +314,7 @@ var questions = [
     diagram: null,
     options: [
       "It serves as the front-end REST API for all cluster operations and authenticates every incoming request to the cluster",
-      "It assigns Pods to nodes by evaluating resource requests, taints, tolerations, and affinity rules for optimal placement",
+      "It assigns Pods to nodes by evaluating resource requests (CPU, memory), taints, tolerations, and affinity rules for placement",
       "It manages the lifecycle of container images by pulling them from registries, caching them on nodes, and garbage collecting",
       "It runs core control loops (ReplicaSet, Deployment, Node controllers) that reconcile actual state toward desired state"
     ],
@@ -411,8 +411,8 @@ var questions = [
     diagram: null,
     options: [
       "`kubectl get pods --all-namespaces` maps to the API path `GET /api/v1/pods` for all namespaces",
-      "`kubectl get pods --namespace=*` which corresponds to `GET /api/v1/namespaces/*/pods`",
-      "`kubectl get pods --global` which corresponds to the API path `GET /apis/global/v1/pods`",
+      "`kubectl get pods --namespace=*` which corresponds to the API path `GET /api/v1/namespaces/*/pods`",
+      "`kubectl get pods --global` which corresponds to the non-standard API path `GET /apis/global/v1/pods`",
       "`kubectl get pods --cluster-scope` which corresponds to the API path `GET /api/v1/cluster/pods`"
     ],
     answer: 0,
@@ -524,7 +524,7 @@ var questions = [
     options: [
       "A NetworkPolicy that allows inbound traffic on port 80 and 443 from external client source IPs",
       "An Ingress Controller (e.g., NGINX or Envoy-based) that reads Ingress rules and configures proxy",
-      "The `kube-proxy` component that implements Service routing via iptables or IPVS on each cluster node",
+      "The `kube-proxy` component that implements Service routing (e.g., via iptables or IPVS) on each node",
       "CoreDNS, which resolves `app.example.com` to the cluster's external IP address for traffic routing"
     ],
     answer: 1,
@@ -570,10 +570,10 @@ var questions = [
     text: "A team is building a CI/CD pipeline that must run inside the Kubernetes cluster as a series of steps, each in its own container. They want a Kubernetes-native pipeline engine. Which project provides custom resources like `Task`, `Pipeline`, and `PipelineRun`?",
     diagram: null,
     options: [
-      "Argo Workflows — uses Workflow and WorkflowTemplate CRDs to define multi-step container-native DAG pipelines",
+      "Argo Workflows — uses `Workflow` and `WorkflowTemplate` CRDs to define multi-step container-native DAG pipelines",
       "Argo CD — a GitOps continuous delivery tool that syncs `Application` state from Git to Kubernetes clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task`, `Pipeline`, and `PipelineRun`",
-      "Flux — a GitOps toolkit that reconciles Kubernetes cluster state from `GitRepository` sources continuously"
+      "Flux — a GitOps toolkit that reconciles cluster state from `GitRepository` and `Kustomization` sources continuously"
     ],
     answer: 2,
     explanation: "Tekton is a Kubernetes-native CI/CD framework (a CD Foundation project) that defines pipeline components as Custom Resources: `Task` (a sequence of steps), `Pipeline` (a graph of Tasks), `TaskRun` and `PipelineRun` (execution instances). Each step runs in its own container within a Pod. Argo CD and Flux are GitOps tools, not pipeline engines.\n\nWhy other options are wrong:\n- A: Argo Workflows uses Workflow CRDs (not Task/Pipeline/PipelineRun); Tekton defines these specific CRDs\n- B: Argo CD is a GitOps tool that syncs Git to clusters, not a CI/CD pipeline engine with Task CRDs\n- D: Flux is a GitOps reconciliation toolkit, not a pipeline engine with Task/PipelineRun resources\n\nReference: https://tekton.dev/docs/",
@@ -634,9 +634,9 @@ var questions = [
     text: "A cluster has nodes labeled `topology.kubernetes.io/zone=us-east-1a` and `topology.kubernetes.io/zone=us-east-1b`. A team wants to spread their 6-replica Deployment evenly across zones, tolerating at most 1 Pod imbalance. Which feature achieves this?",
     diagram: null,
     options: [
-      "`nodeAffinity` with preferred scheduling that weights zone labels equally across all available nodes in the cluster",
+      "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` weighting zone labels equally across all nodes",
       "`topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: topology.kubernetes.io/zone`, and `DoNotSchedule`",
-      "`podAntiAffinity` with required scheduling to prevent any two Pods from being placed in the same availability zone",
+      "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` to prevent any two Pods in the same zone",
       "`resourceQuota` per zone namespace to limit the maximum number of Pods allowed in each availability zone segment"
     ],
     answer: 1,
@@ -714,10 +714,10 @@ var questions = [
     text: "An engineer is investigating why a ConfigMap change is not reflected in a running Pod. The Pod mounts the ConfigMap as an environment variable. Which statement explains this behavior?",
     diagram: null,
     options: [
-      "ConfigMap updates are delayed until the kubelet's sync period expires, which can take several hours in large clusters",
-      "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before any updates will take effect in Pods",
+      "ConfigMap updates are delayed until the kubelet's sync period expires, which can take several hours in large production clusters",
+      "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before updates take effect in Pods",
       "Env vars from ConfigMaps are set at Pod creation and not updated without restart, while volume mounts are eventually refreshed",
-      "The kubelet polls ConfigMap changes every 5 seconds and automatically refreshes both environment variables and volume-mounted data"
+      "The kubelet polls ConfigMap changes every 5 seconds and refreshes both environment variables and volume-mounted data"
     ],
     answer: 2,
     explanation: "When a ConfigMap is consumed as an environment variable, the value is injected at Pod startup and remains static for the Pod's lifetime. A Pod restart is required to pick up changes. In contrast, ConfigMaps mounted as volumes are updated by the kubelet periodically (with a configurable sync period, defaulting to about 60 seconds). This is a key distinction for configuration management.\n\nWhy other options are wrong:\n- A: The kubelet sync period defaults to ~60s, not several hours; and env vars are still never auto-refreshed\n- B: ConfigMaps can be updated in place; deleting and recreating is not required\n- D: The kubelet sync period defaults to ~60s, not 5s; and env vars are never refreshed automatically\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -891,8 +891,8 @@ var questions = [
     text: "A platform team is configuring the Kubernetes Gateway API as a replacement for the Ingress resource. Which improvement does the Gateway API provide over the traditional Ingress?",
     diagram: null,
     options: [
-      "The Gateway API delegates all routing decisions to kube-proxy, which handles L7 path-based routing on each node",
-      "The Gateway API replaces Services and Endpoints with a single resource combining routing and backend selection",
+      "The Gateway API delegates all routing decisions to kube-proxy, which handles L7 path-based routing on each cluster node",
+      "The Gateway API replaces Services and Endpoints with a single resource combining routing and backend selection logic",
       "It encrypts all cluster network traffic at the transport layer using built-in automatic TLS certificate management",
       "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
     ],
@@ -925,7 +925,7 @@ var questions = [
     options: [
       "Grafana Loki — a horizontally scalable log aggregation system that stores chunks in object storage for cost efficiency",
       "Cortex — ingests metrics via remote-write into a shared multi-tenant TSDB with its own query layer for federation",
-      "VictoriaMetrics — a high-performance open-source time-series database with Prometheus query compatibility",
+      "VictoriaMetrics — a high-performance open-source time-series database with full Prometheus query compatibility",
       "Thanos — extends Prometheus with a sidecar that ships TSDB blocks to object storage and provides a global query layer"
     ],
     answer: 3,
@@ -1357,7 +1357,7 @@ var questions = [
     diagram: null,
     options: [
       "Treat backing services as attached resources swappable via config — e.g., swap local PostgreSQL for RDS by changing a URL",
-      "Embed the database driver and connection pool directly in the application binary to avoid any external runtime dependencies",
+      "Embed the database driver and connection pool (e.g., HikariCP) in the application binary to avoid external runtime dependencies",
       "Run all backing services inside the same container as the application process to achieve the lowest possible network latency",
       "Hard-code backing service connection strings in the application source code to ensure reliability and avoid config drift issues"
     ],
@@ -1404,10 +1404,10 @@ var questions = [
     text: "A team wants to enforce that all containers in their cluster use read-only root filesystems. Which Kubernetes security mechanism can enforce this at the container level?",
     diagram: null,
     options: [
-      "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace",
-      "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent all write operations",
+      "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace scope",
+      "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent write operations",
       "Setting `readOnlyRootFilesystem: true` in the container's `securityContext` for a read-only root filesystem",
-      "Using a `ConfigMap` mounted with `readOnly: true` to prevent any writes to the root filesystem path"
+      "Using a `ConfigMap` mounted with `readOnly: true` to prevent any write operations to the root filesystem"
     ],
     answer: 2,
     explanation: "The securityContext.readOnlyRootFilesystem: true setting makes the container root filesystem read-only at the kernel level via the OCI runtime. To enforce this across a namespace, teams can use policy engines like OPA Gatekeeper or Kyverno, since the built-in PSS restricted profile only recommends (but does not require) readOnlyRootFilesystem. Writable directories can still be provided via emptyDir volume mounts.\n\nWhy other options are wrong:\n- A: NetworkPolicies control network traffic, not filesystem write operations at the container level\n- B: PVC readOnly makes the volume read-only, not the root filesystem; root FS and PVC are separate\n- D: ConfigMap readOnly makes the ConfigMap mount read-only, not the container's root filesystem\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container",
@@ -1502,7 +1502,7 @@ var questions = [
     options: [
       "Rewriting the entire monolith from scratch in a new language and framework then deploying it all at once",
       "Incrementally replacing monolith features with microservices, routing via a facade until fully replaced",
-      "Running the monolith and microservices on separate clusters with no shared traffic or communication",
+      "Running the monolith and microservices on separate clusters with no shared traffic or communication path",
       "Splitting the monolithic database into horizontal shards while keeping all existing application code unchanged"
     ],
     answer: 1,

@@ -15,10 +15,10 @@ var questions = [
     text: "A development team wants to inject database connection strings into their pods without baking them into the container image. The values are non-sensitive and may change between environments. Which Kubernetes resource is the most appropriate choice?",
     diagram: null,
     options: [
-      "A Secret with `type: Opaque` storing base64-encoded connection strings for sensitive workloads",
+      "A Secret with `type: Opaque` storing base64-encoded connection strings for workloads",
       "An annotation on the Deployment manifest that holds the connection string as metadata",
       "A PersistentVolumeClaim that stores configuration data on a provisioned disk volume",
-      "A ConfigMap referenced as environment variables or mounted as a volume in the pod"
+      "A ConfigMap referenced as environment variables or mounted as a volume in the pod spec"
     ],
     answer: 3,
     explanation: "ConfigMaps are designed to hold non-confidential configuration data that can be consumed as environment variables, command-line arguments, or volume-mounted files. Secrets would work but are intended for sensitive data. PersistentVolumeClaims are for persistent storage, not configuration injection. Annotations are metadata and cannot be directly consumed by containers as environment variables.\n\nWhy other options are wrong:\n- A: Secrets are for sensitive data; the question specifies non-sensitive values\n- B: Annotations are metadata on resources and cannot be injected into containers as env vars or files\n- C: PVCs provision disk storage for persistent data, not lightweight configuration injection\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -31,7 +31,7 @@ var questions = [
     text: "An operator notices that a ConfigMap was updated, but the application pod still serves stale configuration. The ConfigMap is consumed as environment variables. What explains this behavior?",
     diagram: null,
     options: [
-      "ConfigMaps are immutable by default so the update was silently rejected by the API server",
+      "ConfigMaps are immutable by default; the update was silently rejected by the API server",
       "Env vars from a ConfigMap are set at pod creation; the pod must restart to see changes",
       "The kubelet refreshes env vars every 60 seconds so the operator just needs to wait longer",
       "The container runtime caches ConfigMap data and requires a full `kubectl rollout restart`"
@@ -175,8 +175,8 @@ var questions = [
     text: "An engineer creates a ConfigMap from a file using `kubectl create configmap nginx-conf --from-file=nginx.conf`. Later they mount this ConfigMap into a pod. What will be the key name in the ConfigMap's `data` field?",
     diagram: null,
     options: [
-      "The key will be `data` since `--from-file` uses a generic key name derived from the flag name by default",
-      "The key will be auto-generated as a SHA hash of the file contents for uniqueness",
+      "The key will be `data` since `--from-file` uses a generic key name derived from the flag",
+      "The key will be auto-generated as a SHA hash of the file contents for content uniqueness",
       "The key will be `nginx-conf`, matching the ConfigMap name that was specified on create",
       "The key will be `nginx.conf` because the filename becomes the key name by default"
     ],
@@ -210,7 +210,7 @@ var questions = [
     diagram: null,
     options: [
       "Enable etcd encryption at rest by configuring an `EncryptionConfiguration` on the API server",
-      "Run `kubectl encrypt secret <name>` to individually encrypt each Secret stored in etcd with cluster-level keys",
+      "Run `kubectl encrypt secret <name>` to individually encrypt each Secret stored in etcd",
       "Set `encoded: true` on each Secret manifest to enable automatic AES-256 encryption at storage",
       "Switch all Secrets to ConfigMaps since ConfigMaps provide built-in encryption at rest by default"
     ],
@@ -241,10 +241,10 @@ var questions = [
     text: "A pod enters `CrashLoopBackOff`. The logs show `Error: secret \"db-credentials\" not found`. The Secret exists in the `production` namespace but the pod runs in the `staging` namespace. What is the root cause?",
     diagram: null,
     options: [
-      "Secrets are cluster-scoped, so the namespace should not matter — the issue is likely RBAC",
+      "Secrets are cluster-scoped, so the namespace should not matter; the issue is likely RBAC",
       "Secrets are namespace-scoped; the pod can only reference Secrets in its own namespace",
       "The Secret name must be prefixed with the namespace, e.g., `production/db-credentials`",
-      "The pod needs a `secretNamespace` field to reference cross-namespace Secrets"
+      "The pod needs a `secretNamespace` field in the spec to reference cross-namespace Secrets"
     ],
     answer: 1,
     explanation: "Secrets (like ConfigMaps) are namespace-scoped resources. A pod can only reference Secrets that exist in the same namespace. The team must either create the Secret in the `staging` namespace or use a tool to sync Secrets across namespaces. There is no `secretNamespace` field or namespace prefix syntax for cross-namespace Secret references. Secrets are not cluster-scoped.\n\nWhy other options are wrong:\n- A: Secrets are namespace-scoped, not cluster-scoped; RBAC is not the issue here\n- C: There is no namespace/name prefix syntax for cross-namespace Secret references\n- D: There is no secretNamespace field in the pod spec for cross-namespace Secret access\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#restriction-names-data",
@@ -273,7 +273,7 @@ var questions = [
     text: "A developer mounts a ConfigMap as a volume using `subPath: app.conf` to place a single file at `/etc/myapp/app.conf`. After updating the ConfigMap, the file inside the pod does not change even after waiting several minutes. Why?",
     diagram: null,
     options: [
-      "ConfigMap volume mounts are typically not updated after creation; restarting the pod is the standard fix",
+      "ConfigMap volume mounts are not updated after creation; restarting the pod is the standard fix",
       "The kubelet update interval defaults to 10 minutes, so the developer needs to wait longer",
       "Volumes mounted with `subPath` do not receive automatic updates from ConfigMap changes",
       "A `subPath` mount requires `immutable: false` on the ConfigMap to allow live updates"
@@ -410,7 +410,7 @@ var questions = [
       "Commit Secrets as base64-encoded values since Git does not display binary data in plain diffs",
       "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts",
       "Store Secrets in a separate private Git repository with tightly restricted team access controls",
-      "Avoid storing Secrets in Git and instead create them manually via `kubectl create secret` each time"
+      "Avoid storing Secrets in Git entirely; instead create them manually via `kubectl create secret` each time"
     ],
     answer: 1,
     explanation: "Sealed Secrets encrypts Secret data with a public key so that the encrypted form can be safely stored in Git. Only the Sealed Secrets controller in the cluster holds the private key to decrypt them. Base64 encoding is not encryption and is trivially decoded. A separate private repo still stores plaintext. Manual creation via `kubectl` breaks the GitOps principle of Git as the single source of truth.\n\nWhy other options are wrong:\n- A: Base64 is trivially reversible encoding, not encryption; committing base64 Secrets is insecure\n- C: A separate private repo still stores plaintext credentials, which is a security risk\n- D: Manual kubectl create breaks GitOps principle of Git as the single source of truth\n\nReference: https://github.com/bitnami-labs/sealed-secrets",
@@ -434,7 +434,7 @@ var questions = [
       "Yes, Kubernetes encrypts Secret data with `AES-256` before storing it in the manifest output format",
       "No, the value is only base64-encoded, not encrypted; anyone can decode it with `base64 --decode`",
       "Yes, it is encrypted with the cluster `TLS` certificate and can only be decoded by the API server",
-      "No, but the data is hashed using `SHA-256`, so recovering the original value requires a reverse lookup table"
+      "No, but the data is hashed using `SHA-256`; recovering the original value requires a reverse lookup table"
     ],
     answer: 1,
     explanation: "Kubernetes Secrets store data as base64-encoded strings, not encrypted. Base64 is an encoding scheme, not encryption — it is trivially reversible. Running `echo 'c2tfbGl2ZV9hYmMxMjM=' | base64 --decode` returns the original value. To achieve actual encryption, administrators must configure etcd encryption at rest. The data is not hashed or encrypted with TLS certificates by default.\n\nWhy other options are wrong:\n- A: Kubernetes does not encrypt Secret data with AES-256 by default; base64 is encoding, not encryption\n- C: Secrets are not encrypted with TLS certificates; they are simply base64-encoded in the data field\n- D: Secret values are not hashed; they are base64-encoded and fully reversible\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#overview-of-secrets",
@@ -448,7 +448,7 @@ var questions = [
     diagram: null,
     options: [
       "Use `--from-literal` with the entire file content pasted as a single escaped string on the CLI",
-      "Convert the YAML to JSON and store it as a Secret since Secrets support larger data payloads",
+      "Convert the YAML to JSON and store it as a Secret; Secrets support larger data payloads",
       "Split the file into 50 individual keys, one per line, and reassemble them inside the container",
       "Use `--from-file=config.yaml` to create the ConfigMap; file content stored under that key"
     ],
@@ -465,7 +465,7 @@ var questions = [
     options: [
       "The container is OOM-killed because it exceeded its CPU limit beyond the allowed specification",
       "The pod is evicted from the node and rescheduled to a node with more available CPU capacity",
-      "The container freely uses 1.5 cores because CPU limits are advisory and not strictly enforced",
+      "The container freely uses 1.5 cores; CPU limits are advisory and not strictly enforced by the runtime",
       "The container is throttled to 1 CPU core; limits are enforced via CFS throttling, not killing"
     ],
     answer: 3,
@@ -562,7 +562,7 @@ var questions = [
       "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all existing Secrets",
       "Delete all existing Secrets and recreate them — Kubernetes will re-encrypt on creation using the new key",
       "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically",
-      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, then wait for re-encryption on read"
+      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, and data re-encrypts on read"
     ],
     answer: 0,
     explanation: "Key rotation for etcd encryption requires adding the new key as the first (active) entry while keeping the old key for decrypting existing data. After restarting the API server, all existing Secrets must be rewritten so they are re-encrypted with the new key. A common method is to read and replace all Secrets. There is no `kubectl rotate-keys` command. Simply replacing the key without rewriting data would leave existing Secrets unreadable. Data is not re-encrypted on read.\n\nWhy other options are wrong:\n- B: Deleting and recreating all Secrets is destructive and unnecessary when key rotation can preserve them\n- C: There is no kubectl rotate-keys command in Kubernetes\n- D: Simply replacing the key without rewriting data leaves existing Secrets encrypted with the old key, not re-encrypted on read\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
@@ -673,7 +673,7 @@ var questions = [
     text: "A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
     diagram: null,
     options: [
-      "An `emptyDir` volume with an init container that copies data from ConfigMaps, Secrets, and other sources into a shared directory",
+      "An `emptyDir` volume with an init container that copies data from ConfigMaps and Secrets into a shared directory",
       "A `persistentVolumeClaim` that aggregates data from multiple ConfigMap and Secret sources together",
       "A `hostPath` volume that maps to a pre-populated directory on the node's local disk filesystem path",
       "A `projected` volume combining multiple ConfigMap, Secret, and Downward API sources into a single mount point"
@@ -866,7 +866,7 @@ var questions = [
       "Zero is assigned as the request and the pod becomes `BestEffort` quality of service class",
       "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
       "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
-      "The pod creation fails because the admission controller requires explicit requests when limits are defined in the spec"
+      "The pod creation fails because the admission controller requires explicit requests when limits are set"
     ],
     answer: 1,
     explanation: "When a container specifies a limit but no request for a resource, Kubernetes automatically sets the request equal to the limit. This means the container effectively gets `requests.memory: 256Mi` and `limits.memory: 256Mi`. The pod does not become BestEffort (it has resource specifications) and creation does not fail. Kubernetes does not use a half-of-limit default.\n\nWhy other options are wrong:\n- A: The request is not zero; it is set equal to the limit, so the pod is not BestEffort\n- C: Kubernetes does not use a half-of-limit default for requests\n- D: Pod creation does not fail; Kubernetes auto-sets requests to match limits\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -1089,7 +1089,7 @@ var questions = [
     text: "A pod uses a projected volume to combine a ConfigMap and a Secret into the same directory at `/etc/combined`. Both the ConfigMap and Secret have a key called `config.yaml`. What happens?",
     diagram: null,
     options: [
-      "The pod fails to start because duplicate keys are not allowed in projected volume source definitions",
+      "The pod fails to start; duplicate keys are not allowed in projected volume source definitions",
       "Both files are created with automatic suffixes: `config.yaml.configmap` and `config.yaml.secret`",
       "The last source in the projected volume `sources` list wins; its `config.yaml` overwrites the other",
       "Kubernetes automatically merges the contents of both `config.yaml` files into a single combined file"
@@ -1156,7 +1156,7 @@ var questions = [
     diagram: null,
     options: [
       "Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps",
-      "No — the service mesh manages all configuration including application-specific settings (database URLs, feature flags, and logging levels)",
+      "No — the service mesh manages all configuration including application-specific settings (database URLs and feature flags)",
       "No — Istio's VirtualService resources replace ConfigMaps for all configuration needs across every service in the mesh",
       "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
     ],
@@ -1344,7 +1344,7 @@ var questions = [
     diagram: null,
     options: [
       "Yes — `kubectl patch` can target individual fields within a ConfigMap data value using JSON path expression syntax",
-      "No — ConfigMap data values are immutable after creation and can only be replaced by deleting and recreating them",
+      "No — ConfigMap data values are immutable after creation; they can only be replaced by deleting and recreating them",
       "Yes — provided the ConfigMap was originally created with the `--structured-data` flag to enable nested patching",
       "No — `kubectl patch` operates on Kubernetes fields, not data value contents; the entire value must be replaced"
     ],
@@ -1423,7 +1423,7 @@ var questions = [
     text: "A team uses `stringData` in a Secret manifest instead of `data`. What is the difference?",
     diagram: null,
     options: [
-      "`stringData` stores values as encrypted strings while `data` stores them as plaintext without any encoding applied",
+      "`stringData` stores values as encrypted strings; `data` stores them as plaintext without any encoding applied",
       "`stringData` supports larger values up to 10 MiB compared to `data` which has a 1 MiB limit per Secret resource",
       "`stringData` is only available in Secret version `v2` while `data` is the legacy `v1` field from earlier releases",
       "`stringData` accepts plaintext that Kubernetes auto-encodes to base64 before storage; `data` needs pre-encoded values"

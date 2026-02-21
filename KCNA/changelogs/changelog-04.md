@@ -244,3 +244,48 @@
 
 ### s04-q100 (giveaway)
 - **Option D:** Added semicolon by changing "indefinitely using exponential backoff until" to "with exponential backoff; it keeps retrying until" to break unique semicolon in correct answer B.
+
+---
+
+# Round 41 Review - Set 04
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 11 across 9 questions
+
+## Changes
+
+### s04-q009 (length-balance)
+- **Option B:** Changed "`Deleted`" to "`Archived`" (43->44 chars) to narrow gap with other options.
+- **Option C:** Changed "`Available`" (end) to "`Ready`" (50->46 chars) to bring ratio from 1.16 to 1.07.
+- **Explanation B/C:** Updated to reference new fake phase names ("Archived", "Ready") instead of old ones.
+
+### s04-q030 (giveaway)
+- **Option D:** Added parenthetical "(one port per pod)" to break unique parenthetical in correct answer A. Changed from "that exposes each Cassandra replica on a unique port on every cluster node" to "(one port per pod) exposing each Cassandra replica on every cluster node".
+
+### s04-q053 (length-balance)
+- **Option A:** Expanded from 84 to 89 chars by adding "five" before "pods".
+- **Option C:** Shortened from 100 to 94 chars by replacing "`pod-0`, `pod-1`, and `pod-2`" with "`pod-0` through `pod-2`". Ratio improved from 1.19 to 1.11.
+
+### s04-q059 (giveaway)
+- **Option D:** Changed from "It depends entirely on the StorageClass configuration and its provisioner's binding behavior rules" to "No, unless the StorageClass provisioner explicitly enables multi-PVC binding in its configuration" to break lone "No" polarity giveaway (was 2 Yes + 1 No + 1 neutral; now 2 Yes + 2 No).
+- **Explanation D:** Updated to match new option text about StorageClass provisioners.
+
+### s04-q065 (length-balance)
+- **Option C:** Expanded from 94 to 99 chars by changing "the trade-off in availability" to "the reduced availability trade-off".
+- **Option D:** Shortened from 110 to 102 chars by removing "given" and changing "cloud providers" to "providers". Ratio improved from 1.17 to 1.03.
+
+### s04-q069 (giveaway)
+- **Option A:** Added parenthetical "(per claim)" to break unique parenthetical in correct answer B. Changed from "The size of PersistentVolumes that the container can claim from the cluster's available storage pool" to "The size of PersistentVolumes (per claim) that the container can request from the cluster's storage pool".
+- **Option D:** Added parenthetical "(medium: Memory)" to further break uniqueness. Changed from "The RAM allocation for tmpfs-backed `emptyDir` volumes mounted inside the container's filesystem" to "The RAM allocation for tmpfs-backed `emptyDir` volumes (medium: Memory) mounted in the container".
+
+### s04-q071 (giveaway)
+- **Option D:** Changed from "The scheduler splits the pod's containers across both nodes to satisfy the two volume requirements" to "No, the scheduler detects the conflict and splits the pod's containers across both nodes automatically" to break lone "No" polarity giveaway (was 2 Yes + 1 No + 1 neutral; now 2 Yes + 2 No).
+
+### s04-q073 (accuracy)
+- **Question stem:** Changed "a CNCF project" to "an open-source backup tool" because Velero is not formally a CNCF sandbox/incubating/graduated project; it is listed in the CNCF landscape but is maintained by VMware/Broadcom.
+
+### s04-q074 (giveaway)
+- **Option C:** Added backtick-quoted term by changing "cumulative counter per namespace" to "per-namespace `counter` metric" to reduce backtick density gap with correct answer B (which has 3 backtick terms).
+- **Option D:** Added backtick-quoted term by changing "as reported by the underlying CSI driver" to "as reported by the CSI driver's `volume_stats` endpoint".
+- **Explanation C/D:** Updated to match revised option text.

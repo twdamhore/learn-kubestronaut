@@ -243,3 +243,65 @@
 
 ### s01-q100 (length-balance)
 - **Option C:** Trimmed "resource creation" to "creation" and "subsequent updates" to "updates" to reduce from 129ch to 109ch. Ratio improved from 1.217 to 1.085.
+
+---
+
+# Round 41 Review - Set 01
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 18 across 15 questions
+
+## Changes
+
+### s01-q004 (length-balance)
+- **Option A:** Trimmed "and its socket interface" to "on the node" to reduce from 94ch to 81ch.
+- **Option B:** Added "image" before "specification" to expand from 78ch to 84ch. Ratio improved from 1.205 to 1.101.
+
+### s01-q006 (giveaway - unique comma-list)
+- **Option C:** Changed from "reduce the need for operational staff by relying on self-healing system behaviors" to "are self-healing, automated, and observable, reducing the need for operational staff" to give it a 3-item comma-list matching correct answer D's structure.
+
+### s01-q012 (length-balance)
+- **Option D:** Added "for Pods" to expand from 78ch to 87ch. Ratio improved from 1.154 to 1.071.
+
+### s01-q014 (giveaway - unique parenthetical)
+- **Option C:** Changed "`StorageClass` for provisioning" to "`StorageClass` (SC) for provisioning" to add a parenthetical abbreviation, matching the (PV)/(PVC) style in correct answer B.
+
+### s01-q043 (length-balance)
+- **Option C:** Added "network" before "CNI plugin" to expand from 71ch to 79ch.
+- **Option D:** Changed "and mTLS for Kubernetes" to "and mTLS within Kubernetes" to expand from 73ch to 76ch. Ratio improved from 1.141 to 1.080.
+
+### s01-q053 (length-balance)
+- **Option C (correct):** Added "known-good" before "revision" to expand from 79ch to 90ch. Correct answer no longer shortest; ratio improved from 1.127 to 1.098.
+
+### s01-q054 (length-balance + giveaway)
+- **Option A:** Added "resources in" before "the `staging` namespace" to expand from 93ch to 106ch. Ratio improved from 1.172 to 1.079.
+- **Option C:** Changed "the `kube-apiserver` configuration file" to "the API server (`kube-apiserver`) configuration" to add a parenthetical, matching the (RBAC) parenthetical in correct answer D.
+
+### s01-q065 (length-balance)
+- **Option B:** Added "operator" after "OR keyword" to expand from 66ch to 75ch.
+- **Option C:** Changed "a --no flag" to "a --no exclusion flag" to expand from 67ch to 77ch.
+- **Option D:** Changed "with --exclude" to "with an --exclude flag" to expand from 68ch to 76ch. Ratio improved from 1.136 to 1.027.
+
+### s01-q066 (length-balance)
+- **Option A:** Changed "the scheduler avoids" to "the kubelet avoids" and "resource pressure events" to "pressure events" to reduce from 117ch to 108ch. Ratio improved from 1.170 to 1.080.
+
+### s01-q079 (length-balance + giveaway)
+- **Option A:** Changed "A `VerticalPodAutoscaler`" to "A `VerticalPodAutoscaler` (VPA)" to add a parenthetical matching the (HPA) in correct answer C.
+- **Option C (correct):** Added "the" before "Deployment" to expand from 86ch to 90ch. Updated explanation to match VPA abbreviation.
+
+### s01-q082 (length-balance)
+- **Option B:** Trimmed "in the final Dockerfile layer" to "in a final layer" to reduce from 122ch to 113ch.
+- **Option D:** Changed "from the image" to "from the output" and added "image" after "all" to expand from 103ch to 110ch. Ratio improved from 1.184 to 1.062.
+
+### s01-q092 (length-balance)
+- **Option C (correct):** Added "image" before "registry" to expand from 98ch to 104ch. Ratio improved from 1.112 to 1.048.
+
+### s01-q094 (giveaway - unique parenthetical)
+- **Option D:** Added "(v1)" after "blue Deployment" to add a parenthetical, matching the "(blue and green)" in correct answer B.
+
+### s01-q097 (length-balance)
+- **Option D:** Removed "generally" to reduce from 94ch to 84ch. Ratio improved from 1.119 to 1.012.
+
+### s01-q099 (length-balance)
+- **Option B (correct):** Added "automatically" at end to expand from 82ch to 96ch. Correct answer no longer shortest; ratio improved from 1.122 to 1.103.

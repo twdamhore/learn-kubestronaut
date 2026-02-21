@@ -240,3 +240,40 @@
 
 ### s06-q096 (length-balance/giveaway)
 - **Options C/D:** Expanded for balance. Correct C (shortest at 68) expanded to 78. D expanded from 71 to 77. Ratio improved from 1.16 to 1.03.
+
+---
+
+# Round 41 Review - Set 06
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 10 across 9 questions
+
+## Changes
+
+### s06-q005 (giveaway/length-balance)
+- **Options A/B/C:** Added commas to wrong options to match the comma-list pattern in correct answer D. Rebalanced lengths: A 72, B 68, C 71, D 70. Ratio improved from 1.14 to 1.06. Comma-list giveaway eliminated.
+
+### s06-q051 (length-balance)
+- **Option B:** Trimmed from 78 to 73 chars by removing "rule" ("the hard anti-affinity" instead of "the hard anti-affinity rule"). Ratio improved from 1.15 to 1.07.
+
+### s06-q054 (length-balance)
+- **Options A/B:** Trimmed "other" and "their full" to reduce correct answer A from 75 to 70, B from 74 to 69. Ratio improved from 1.14 to 1.07.
+
+### s06-q067 (length-balance)
+- **Option A (correct):** Minor rewording ("was defined" instead of "definition") for +1 char. **Option D:** Trimmed from 90 to 76 chars by removing "automatically". **Option C:** Trimmed from 84 to 82 chars. Ratio improved from 1.14 to 1.09.
+
+### s06-q068 (giveaway/length-balance)
+- **Option A (correct):** Removed parenthetical "(scheduling-plugins)" unique structural giveaway; rewording to "the custom scheduler extension project". **Options B/C/D:** Expanded with "and eviction"/"resource"/"workloads" to balance. Ratio improved from 1.22 to 1.10.
+
+### s06-q075 (length-balance)
+- **Option C (correct):** Expanded from 60 to 66 chars ("with no node bound" instead of ", unscheduled"). Ratio improved from 1.13 to 1.10.
+
+### s06-q086 (keyword-echo)
+- **Option B (correct):** Replaced "network-attached PV" with "underlying PV" to remove keyword echo from question stem ("network-attached storage"). Length preserved at 78 chars.
+
+### s06-q088 (length-balance)
+- **All options:** Rebalanced by trimming A/C/D and expanding B. A from 90 to 84, B from 78 to 82, C from 87 to 84, D from 89 to 86. Ratio improved from 1.15 to 1.05.
+
+### s06-q090 (length-balance/keyword-echo)
+- **Option C (correct):** Replaced "namespace-level totals" with "aggregate consumption" to remove keyword echo from question stem. **Options B/D:** Added "Pod" for balance. Ratio improved from 1.18 to 1.05.

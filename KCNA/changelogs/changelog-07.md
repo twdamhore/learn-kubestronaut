@@ -210,3 +210,59 @@
 - **Option C:** Expanded from 47 to 58 chars by adding "app=web:v2" to make it a plausible but incorrect full command.
 - **Option D:** Expanded from 45 to 53 chars by adding "--prune" flag. Ratio reduced from 1.178 to 1.094.
 - **Explanation:** Updated option D explanation to reference the added --prune flag.
+
+---
+
+# Round 41 Review - Set 07
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 19 across 13 questions
+
+## Changes
+
+### s07-q005 (length-balance)
+- **Option D (correct):** Expanded from "removed from Service endpoints" to "removed from the Service endpoint list" (87->95 chars). Correct answer was shortest with ratio 1.126.
+
+### s07-q046 (length-balance)
+- **Option C:** Expanded from "on each node hosting the application pods" to "on each node that hosts the application pods" (102->105 chars). Ratio reduced from 1.147 to 1.114.
+
+### s07-q061 (giveaway)
+- **Option A:** Added comma-list structure ("mounts, block devices, network disks, and NFS shares") to break unique comma-list pattern in correct answer C.
+
+### s07-q066 (length-balance)
+- **Option B (correct):** Expanded from "no more pods are created" to "no more replacement pods are created" (96->108 chars). Correct answer was shortest with ratio 1.135; now ratio 1.112.
+
+### s07-q067 (giveaway + length-balance)
+- **Option A:** Added parenthetical "(e.g., a public Docker Hub repo)" to break unique parenthetical+e.g. pattern in correct answer B.
+- **Option B (correct):** Expanded from "executed a shell command" to "executed an interactive shell command" (98->111 chars). Correct was shortest at 98 vs 111 longest.
+
+### s07-q075 (giveaway)
+- **Option A:** Added parenthetical "(used by the entrypoint script)" to break unique parenthetical pattern in correct answer B.
+- **Option C:** Added backticks to `encryption-config` to reduce backtick imbalance (correct B had 6 vs max wrong 2).
+
+### s07-q077 (giveaway)
+- **Option A:** Added parenthetical "(e.g., ARM vs x86)" to break unique parenthetical pattern in correct answer D.
+
+### s07-q080 (giveaway + length-balance)
+- **Option A (correct):** Expanded from "Existing pods run" to "Existing pods continue to run" (110->122 chars). Was shortest with ratio 1.136.
+- **Option B:** Added parenthetical "(e.g., containerd)" to break unique parenthetical pattern in correct answer A.
+
+### s07-q086 (giveaway)
+- **Option A:** Added parenthetical "(e.g., for trusted workloads)" to break unique e.g. pattern in correct answer C.
+- **Option B:** Added backticks to `resources.limits` to reduce backtick imbalance (correct C had 6 vs max wrong 2).
+- **Option D:** Added backticks to `automountServiceAccountToken: false` to further reduce backtick imbalance.
+
+### s07-q089 (giveaway + length-balance)
+- **Option A:** Rewrote with comma-list structure ("debugging, data patching, and schema changes") to break unique comma-list in correct D.
+- **Option C:** Rewrote with comma-list ("sessions, database clients, shell access, and tunnels") to further break pattern exclusivity.
+
+### s07-q090 (giveaway)
+- **Option A:** Added backticks to `limits.memory` and `eviction-manager` to reduce backtick imbalance (correct B had 6 vs max wrong 2).
+- **Option D:** Added backticks to `NoExecute`, `PodDisruptionBudget`, and `tolerationSeconds` to further reduce backtick imbalance.
+
+### s07-q095 (giveaway)
+- **Option A:** Added parenthetical "(e.g., a missing closing bracket)" to break unique parenthetical+e.g. pattern in correct answer D.
+
+### s07-q100 (giveaway)
+- **Option B:** Added parenthetical "(e.g., with backoff)" to break unique parenthetical+e.g. pattern in correct answer A.

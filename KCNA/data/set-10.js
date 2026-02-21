@@ -11,7 +11,7 @@ var questions = [
       "A. The PVCs for replicas 3 and 4 are automatically deleted along with the backing PersistentVolumes by the controller",
       "B. The PVCs are orphaned and the StorageClass reclaim policy immediately triggers deletion of the associated PVs",
       "C. The PVCs are marked with a `deletionTimestamp` but remain in the namespace until the StatefulSet is fully deleted",
-      "D. The PVCs remain intact and must be manually deleted; underlying PVs are reclaimed only after PVC deletion"
+      "D. The PVCs remain intact and must be manually deleted, and underlying PVs are reclaimed only after PVC deletion"
     ],
     answer: 3,
     explanation: "When a StatefulSet is scaled down, Kubernetes does **not** automatically delete the PVCs created by `volumeClaimTemplates`. This is by design to prevent accidental data loss. The PVCs for the removed replicas persist and must be manually deleted by an administrator. Only after a PVC is explicitly deleted does the StorageClass `reclaimPolicy` determine what happens to the underlying PV. Note: since Kubernetes 1.27+, the `persistentVolumeClaimRetentionPolicy` field in the StatefulSet spec can change this default behavior, but the default policy (`Retain`) preserves PVCs on scale-down.\n\nWhy other options are wrong:\n- A: StatefulSet controller does NOT auto-delete PVCs on scale-down; PVCs are retained by design to prevent data loss\n- B: PVCs are not orphaned in the traditional sense; they remain owned but unused, and the reclaim policy only triggers after PVC deletion, not immediately\n- C: PVCs are not marked with a deletionTimestamp; they persist fully intact without any deletion marker until explicitly removed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -90,7 +90,7 @@ var questions = [
     options: [
       "A. Session affinity is preserved because `kube-proxy` migrates the affinity mapping to the new replacement pod endpoint",
       "B. Requests fail with connection refused until the `timeoutSeconds` expires and the client IP affinity table is refreshed",
-      "C. The affinity is broken when the old endpoint is removed; the next request is balanced to a new pod with fresh affinity",
+      "C. The affinity is broken when the old endpoint is removed, and the next request is balanced to a new pod with fresh affinity",
       "D. The session affinity entry is migrated to the replacement pod automatically by the EndpointSlice controller on update"
     ],
     answer: 2,
@@ -136,10 +136,10 @@ var questions = [
     text: "A namespace has a `LimitRange` that sets `default.cpu: 500m` and `defaultRequest.cpu: 250m`. A ResourceQuota in the same namespace sets `limits.cpu: 4` and `requests.cpu: 2`. There are already 6 pods each using `requests.cpu: 250m` and `limits.cpu: 500m`. A new Deployment with 3 replicas is created without any resource specifications in the pod template. What happens?",
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='10' y='10' width='180' height='75' rx='6' fill='#1a1a2e' stroke='#326CE5' stroke-width='1.5'/><text x='100' y='30' text-anchor='middle' fill='#326CE5' font-size='10'>ResourceQuota</text><text x='100' y='48' text-anchor='middle' fill='#aaa' font-size='9'>requests.cpu: 2</text><text x='100' y='63' text-anchor='middle' fill='#aaa' font-size='9'>limits.cpu: 4</text><rect x='210' y='10' width='180' height='55' rx='6' fill='#1a1a2e' stroke='#4CAF50' stroke-width='1.5'/><text x='300' y='30' text-anchor='middle' fill='#4CAF50' font-size='10'>LimitRange Defaults</text><text x='300' y='48' text-anchor='middle' fill='#aaa' font-size='9'>default / defaultRequest</text><rect x='10' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='37' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 1</text><rect x='75' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='102' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 2</text><rect x='140' y='110' width='55' height='35' rx='4' fill='#326CE5' stroke='#fff'/><text x='167' y='132' text-anchor='middle' fill='#fff' font-size='8'>New Pod 3</text></svg>",
     options: [
-      "A. All 3 replicas are created because LimitRange defaults are injected and the total resource usage stays within quota",
+      "A. All 3 replicas are created because LimitRange defaults are injected and the total resource usage stays within the quota",
       "B. All 3 replicas are created because defaults injected by the LimitRange are completely exempt from ResourceQuota checks",
       "C. The Deployment is rejected entirely because quota availability must be validated for all 3 replicas simultaneously",
-      "D. Only 2 replicas are created; the third is blocked because total CPU requests would exceed the ResourceQuota limit"
+      "D. Only 2 replicas are created and the third is blocked because total CPU requests would exceed the ResourceQuota limit"
     ],
     answer: 3,
     explanation: "The existing 6 pods consume `6 * 250m = 1500m` in requests and `6 * 500m = 3000m` in limits. The LimitRange injects `requests.cpu: 250m` and `limits.cpu: 500m` into each new pod. Adding 3 pods would require `750m` more requests (total `2250m`, exceeding the `2` core quota) and `1500m` more limits (total `4500m`, exceeding the `4` core quota). Two pods can be created (bringing totals to `2000m` requests and `4000m` limits), but the third is blocked by the quota.\n\nWhy other options are wrong:\n- A: All 3 replicas cannot be created because the third pod's resource request would exceed the ResourceQuota limits for both CPU requests and limits\n- C: The Deployment is not rejected entirely; pods are created individually by the ReplicaSet controller and quota is checked per-pod at admission time\n- B: LimitRange defaults are NOT exempt from ResourceQuota; injected defaults count toward quota consumption like any explicit resource specification\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
@@ -360,7 +360,7 @@ var questions = [
     text: "A node has the following allocatable resources: 8 CPU, 32Gi memory. Currently running pods consume 6 CPU (requests) and 24Gi memory (requests). A new pod requesting 3 CPU and 6Gi memory has a `PriorityClass` with `value: 1000000` (the highest in the cluster). Existing pods have priority values ranging from 100 to 999999. What does the scheduler do?",
     diagram: null,
     options: [
-      "A. The scheduler preempts the lowest-priority pod(s) until enough resources are freed, with best-effort PDB enforcement",
+      "A. The scheduler preempts the lowest-priority pods until enough resources are freed, applying best-effort PDB enforcement",
       "B. The pod remains Pending because preemption only occurs when no node in the cluster can satisfy the request with evictions",
       "C. The scheduler preempts pods starting from lowest priority, ignoring PDBs entirely, until 3 CPU and 6Gi become available",
       "D. The scheduler places the pod by overcommitting resources since high-priority pods are exempt from resource request limits"
@@ -408,8 +408,8 @@ var questions = [
     text: "A Deployment with `strategy.type: RollingUpdate`, `maxSurge: 1`, and `maxUnavailable: 0` has 5 replicas. A new image version is rolled out, but the new pods fail readiness probes. What is the state of the rollout?",
     diagram: null,
     options: [
-      "A. One new pod (surge) is created but never becomes Ready; the 5 old pods keep running and the rollout stalls",
-      "B. The rollout creates new pods one at a time regardless of readiness since `maxUnavailable: 0` only prevents deletions",
+      "A. One new pod from the surge is created but never becomes Ready, so the 5 old pods keep running and the rollout stalls",
+      "B. The rollout creates new pods one at a time regardless of readiness; `maxUnavailable: 0` only prevents old pod deletions",
       "C. The rollout immediately rolls back to the previous version automatically after `progressDeadlineSeconds` is exceeded",
       "D. The rollout creates 6 pods total (5 old + 1 new) then begins terminating old pods because total exceeds desired count"
     ],
@@ -523,7 +523,7 @@ var questions = [
       "A. The custom controller must register with the `kube-controller-manager` via the controller registration API to avoid resource conflicts",
       "B. The `--controllers` flag must include the custom controller name prefixed with `+` to enable it alongside the disabled built-in controllers",
       "C. Built-in controllers have priority over custom controllers for the same resource type, potentially causing reconciliation conflicts on CRDs",
-      "D. The custom controller operates independently with its own informer cache; the `--controllers` flag only affects built-in controllers"
+      "D. The custom controller operates independently with its own informer cache, and the `--controllers` flag only affects built-in controllers"
     ],
     answer: 3,
     explanation: "The `--controllers` flag on `kube-controller-manager` only controls which built-in controllers run within that process. Custom controllers are separate Deployments that maintain their own informer caches and establish independent watch connections to the API server. They do not need to register with `kube-controller-manager`. The `*,-bootstrapsigner,-tokencleaner` syntax means \"run all built-in controllers except bootstrapsigner and tokencleaner.\" Custom controllers have no interaction with this flag.\n\nWhy other options are wrong:\n- A: There is no controller registration API; custom controllers operate independently without registering with kube-controller-manager\n- B: The --controllers flag only controls built-in controllers; the + prefix enables disabled built-in controllers, not custom ones\n- C: Built-in controllers do not have inherent priority over custom controllers; they operate on different resource types with independent reconciliation\n\nReference: https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/",
@@ -680,10 +680,10 @@ var questions = [
     text: "A cluster uses kube-proxy in IPVS mode. A Service with `sessionAffinity: None` has 3 backend pods. The IPVS scheduler is set to `rr` (round-robin). One pod consistently handles 70% of the traffic instead of the expected 33%. Network captures show the traffic comes from a small number of source IPs behind a corporate NAT gateway. What explains this distribution?",
     diagram: null,
     options: [
-      "A. IPVS round-robin distributes per-connection; the NAT gateway's persistent connections concentrate traffic on a subset of backend pods",
-      "B. IPVS in `rr` mode has a warmup period favoring the first registered backend until all backends receive at least one connection",
-      "C. The overloaded pod has the lowest IP address and IPVS round-robin starts from the lowest IP on each new connection cycle",
-      "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for same-source IPs"
+      "A. IPVS round-robin distributes per-connection, so the NAT gateway's persistent connections concentrate traffic on fewer pods",
+      "B. IPVS in `rr` mode has a warmup period that favors the first registered backend; all other backends wait for initial connections",
+      "C. The overloaded pod has the lowest IP address, and IPVS round-robin always starts from the lowest IP on each new connection cycle",
+      "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for the same-source IPs"
     ],
     answer: 0,
     explanation: "IPVS round-robin distributes connections sequentially across backends. However, the distribution is per-connection, not per-request. When clients behind a NAT gateway use HTTP/1.1 keep-alive or HTTP/2 with connection pooling, a small number of long-lived connections carry many requests. If these connections happen to land on the same backend (which is likely with few connections from few source IPs), that backend handles a disproportionate share of traffic. The solution is to use `lc` (least-connection) scheduler or application-level load balancing.\n\nWhy other options are wrong:\n- B: IPVS round-robin does not have a warmup period that favors the first backend; it distributes connections sequentially from the start\n- C: IPVS round-robin does not start from the lowest IP each cycle; it maintains a circular pointer across all connections\n- D: kube-proxy does not use consistent hashing internally when rr is configured; IPVS strictly follows the configured scheduling algorithm\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity",
@@ -824,7 +824,7 @@ var questions = [
     text: "A pod's container runs as UID 1000 and has `securityContext.readOnlyRootFilesystem: true`. The application needs to write temporary files to `/tmp` and log files to `/var/log/app`. Which volume configuration allows the application to function while maintaining the read-only filesystem security posture?",
     diagram: null,
     options: [
-      "A. Mount two `emptyDir` volumes at `/tmp` and `/var/log/app`; the read-only policy does not apply to mounts",
+      "A. Mount two `emptyDir` volumes at `/tmp` and `/var/log/app` because the read-only policy does not apply to mounts",
       "B. Add `allowedHostPaths` entries for `/tmp` and `/var/log/app` in PodSecurityPolicy to whitelist writable paths",
       "C. Set `readOnlyRootFilesystem: false` but use an OPA policy to restrict writes to only `/tmp` and `/var/log/app`",
       "D. Use `subPath` mounts from a single `emptyDir` volume to both paths, which bypasses the read-only constraint"
@@ -856,8 +856,8 @@ var questions = [
     text: "A pod specifies `affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution` with `topologyKey: kubernetes.io/hostname` and a `labelSelector` matching itself. The Deployment has 4 replicas and the cluster has 3 nodes. What happens?",
     diagram: null,
     options: [
-      "A. All 4 replicas are scheduled — anti-affinity is per-replica and does not prevent co-location within the same Deployment",
-      "B. 3 replicas schedule (one per node) and the 4th remains Pending because no available node satisfies the anti-affinity rule",
+      "A. All 4 replicas are scheduled because anti-affinity is per-replica and does not prevent co-location within the same Deployment",
+      "B. 3 replicas are scheduled across the 3 nodes and the 4th remains Pending because no node satisfies the anti-affinity rule",
       "C. The scheduler ignores anti-affinity for the 4th replica and co-locates it with an existing replica on the least-loaded node",
       "D. All 4 replicas remain Pending because requiredDuringScheduling anti-affinity is evaluated before any pods are placed"
     ],
@@ -923,7 +923,7 @@ var questions = [
       "A. All three instances process work simultaneously using distributed locking on individual resources stored in `etcd`",
       "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy",
       "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
-      "D. They use leader election via Lease objects in `kube-system`; only the leader reconciles while others stand by"
+      "D. They use leader election via Lease objects in `kube-system`, and only the leader reconciles while others stand by"
     ],
     answer: 3,
     explanation: "The `kube-controller-manager` and `kube-scheduler` use leader election to ensure only one active instance at a time. They create and renew `Lease` objects (in the `kube-system` namespace) to claim leadership. The leader performs all reconciliation work, while standby instances continuously attempt to acquire the lease. If the leader fails to renew its lease (due to crash or network partition), a standby instance acquires it and becomes the new leader. This is configured via the `--leader-elect=true` flag (enabled by default in HA setups).\n\nWhy other options are wrong:\n- A: All three instances do NOT process work simultaneously; only the leader performs reconciliation to prevent duplicate work\n- C: The API server does not round-robin controller requests; the controller-manager and scheduler have their own leader election\n- B: Instances do not partition namespaces; a single leader handles all reconciliation across the entire cluster\n\nReference: https://kubernetes.io/docs/concepts/architecture/leases/#leader-election",
@@ -1000,10 +1000,10 @@ var questions = [
     text: "A StatefulSet with `podManagementPolicy: OrderedReady` and 5 replicas is being updated with `updateStrategy.type: RollingUpdate` and `partition: 3`. What is the effect of the `partition` parameter?",
     diagram: null,
     options: [
-      "A. Only pods with ordinal >= 3 (pods 3 and 4) are updated; pods 0, 1, and 2 retain the previous spec",
-      "B. The update proceeds in batches of 3 pods at a time, starting from the pod with the highest ordinal",
-      "C. Pods 0, 1, and 2 are updated first, then pods 3 and 4 are updated once the first group is ready",
-      "D. The partition creates two independent groups that can be updated and rolled back completely separately"
+      "A. Only pods with ordinal >= 3 (that is, pods 3 and 4) are updated, while pods 0, 1, and 2 keep the previous spec",
+      "B. The update proceeds in batches of 3 pods at a time (one batch per cycle); it starts from the highest ordinal",
+      "C. Pods 0, 1, and 2 are updated first; then pods 3 and 4 are updated only once the first group is fully ready",
+      "D. The partition creates two independent groups (lower and upper) that can be rolled back completely separately"
     ],
     answer: 0,
     explanation: "The `partition` field in a StatefulSet's `RollingUpdate` strategy specifies a minimum ordinal. Only pods with an ordinal index greater than or equal to the partition value are updated when the StatefulSet's pod template is changed. Pods below the partition retain the previous version. This enables canary-style updates: set `partition: 3` to update only pods 3 and 4, verify the new version works, then lower the partition progressively (to 2, 1, 0) to roll out to all pods. This is StatefulSet-specific phased rollout control.\n\nWhy other options are wrong:\n- B: The partition value is not a batch size; it is a minimum ordinal threshold for which pods receive updates\n- C: Pods below the partition (0, 1, 2) are NOT updated first; only pods at or above the partition value are updated\n- D: The partition does not create fully independent groups; it controls a single rolling update boundary within one StatefulSet\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
@@ -1033,7 +1033,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Both updates succeed because they modify different fields and the API server merges the changes automatically",
-      "B. The first update succeeds; the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
+      "B. The first update succeeds, but the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
       "C. The API server queues both updates and applies them sequentially, incrementing resourceVersion for each one",
       "D. Both updates fail because only the resource owner identified by `metadata.ownerReferences` can update CRs"
     ],
@@ -1273,7 +1273,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The CSI driver quiesces all I/O to the volume before taking the snapshot, guaranteeing full application-level consistency",
-      "B. The snapshot is only crash-consistent; data in flight or in application buffers at snapshot time may not be captured",
+      "B. The snapshot is only crash-consistent, so data in flight or in application buffers at snapshot time may not be captured",
       "C. Kubernetes freezes the filesystem via `fsfreeze` before the CSI snapshot call, ensuring write-order data consistency",
       "D. Consistency depends on the `snapshotClass` parameter `consistency: application` which must be set explicitly"
     ],
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "A. 80% to Service A and 20% is dropped with 503 errors because Service B has no healthy ready endpoints available",
       "B. 100% to Service A because the Gateway controller automatically redistributes traffic away from unhealthy backends",
-      "C. The behavior depends on the Gateway controller implementation; the spec does not mandate handling for zero endpoints",
+      "C. The behavior depends on the Gateway controller implementation, as the spec does not mandate handling for zero endpoints",
       "D. The HTTPRoute becomes invalid and all traffic is rejected because the route references a backend with zero endpoints"
     ],
     answer: 2,
@@ -1304,10 +1304,10 @@ var questions = [
     text: "A centralized logging system uses Loki for log aggregation. Labels assigned to log streams include `namespace`, `pod`, `container`, and `request_path`. After deployment, Loki's ingester reports `too many active streams` errors and high memory usage. Which label is causing the issue and why?",
     diagram: null,
     options: [
-      "A. The `pod` label causes high cardinality because pod names include random suffixes; `request_path` is safe since URLs are normalized",
-      "B. The `container` label creates redundant streams when pods have sidecar containers, effectively doubling stream count per pod",
+      "A. The `pod` label causes high cardinality because pod names include random suffixes, but `request_path` is safe since URLs are normalized",
+      "B. The `container` label creates redundant streams when pods have sidecar containers, effectively doubling the stream count per pod",
       "C. The `namespace` label is unnecessary since Loki infers it from the log source path automatically, creating duplicate log streams",
-      "D. The `request_path` label has unbounded cardinality (unique URLs create unique values), causing stream explosion in the ingester"
+      "D. The `request_path` label has unbounded cardinality because unique URLs create unique label values, causing stream explosion in Loki"
     ],
     answer: 3,
     explanation: "Loki's architecture requires low-cardinality labels for efficient stream indexing. Each unique combination of label values creates a distinct stream. The `request_path` label has unbounded cardinality — every unique URL path (e.g., `/users/123`, `/users/456`) creates a new stream. This quickly exhausts Loki's stream limit and memory. Labels like `namespace`, `pod`, and `container` have bounded cardinality (finite number of pods/containers). High-cardinality data like request paths should be stored in the log line content and queried using Loki's log pipeline filters, not as labels.\n\nWhy other options are wrong:\n- A: Pod names have bounded cardinality (finite number of pods); request_path is NOT safe because URLs are not normalized and have unbounded unique values\n- B: Sidecar containers double the container count but this is bounded; it does not cause unbounded stream explosion\n- C: Loki does not infer namespace from log path automatically; namespace is a valid and useful label with bounded cardinality\n\nReference: https://grafana.com/docs/loki/latest/get-started/labels/bp-labels/",
@@ -1384,10 +1384,10 @@ var questions = [
     text: "A pod with `restartPolicy: OnFailure` runs a Job. The container exits with exit code 0 (success). The kubelet observes the exit. What happens next, and what is the final pod phase?",
     diagram: null,
     options: [
-      "A. The container is restarted because the kubelet interprets OnFailure as restarting on any exit, including successful completion with exit code 0",
-      "B. The Job controller creates a new pod because it interprets the completed pod as needing replacement to meet its completions target",
+      "A. The container is restarted because the kubelet interprets OnFailure as restarting on any exit (including exit code 0), not just non-zero codes",
+      "B. The Job controller creates a new pod because it interprets the completed pod as needing replacement; it must meet the completions target",
       "C. The container is not restarted, but the pod phase stays `Running` with a `Terminated` container until the Job controller cleans up",
-      "D. The container is not restarted (exit 0 = success); the pod transitions to `Succeeded` phase and remains until Job TTL or manual deletion"
+      "D. The container is not restarted (exit 0 means success); the pod transitions to `Succeeded` phase and remains until Job TTL or manual deletion"
     ],
     answer: 3,
     explanation: "With `restartPolicy: OnFailure`, containers are only restarted if they exit with a non-zero exit code. An exit code of 0 indicates success, so the kubelet does not restart the container. The pod's phase transitions to `Succeeded`. The pod remains on the node (visible via `kubectl get pods`) until it is cleaned up by the Job controller's TTL mechanism (`ttlSecondsAfterFinished`), the Job is deleted, or the pod is manually deleted. The Job controller recognizes the successful completion and counts it toward the `completions` requirement.\n\nWhy other options are wrong:\n- A: restartPolicy: OnFailure only restarts on non-zero exit; exit code 0 (success) does not trigger a restart\n- B: The Job controller does not create a new pod for a successfully completed pod; it counts it toward completions\n- C: The pod phase transitions to Succeeded, not Running with a Terminated container; the pod lifecycle is complete\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#handling-pod-and-container-failures",
@@ -1400,8 +1400,8 @@ var questions = [
     text: "A multi-cluster setup uses Cilium Cluster Mesh to connect two clusters. Cluster A has a Service `backend` in namespace `app`. Cluster B needs to access this service. Both clusters have their own `backend` Service in the `app` namespace with different backends. Both services are annotated with `io.cilium/global-service: \"true\"`. How does Cilium Cluster Mesh handle service discovery?",
     diagram: null,
     options: [
-      "A. Cluster B's local service takes precedence; Cluster Mesh prioritizes local endpoints over remote ones by default",
-      "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined backend endpoints",
+      "A. Cluster B's local service takes precedence because Cluster Mesh always prioritizes local endpoints over remote ones by default",
+      "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined backend pods",
       "C. Service names conflict and Cluster Mesh rejects the configuration, requiring globally unique service names across clusters",
       "D. Each cluster maintains its own namespace; cross-cluster access requires explicit `<service>.<cluster>` DNS entry mappings"
     ],
@@ -1448,10 +1448,10 @@ var questions = [
     text: "An admission controller chain processes a pod creation request in this order: MutatingAdmission -> ValidatingAdmission. A mutating webhook adds a sidecar container. A validating webhook checks that all containers have resource limits. The sidecar injected by the mutating webhook does not have resource limits. What is the outcome?",
     diagram: "<svg viewBox='0 0 400 160' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='30' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='52' text-anchor='middle' fill='#fff' font-size='8'>API Request</text><text x='42' y='62' text-anchor='middle' fill='#fff' font-size='7'>Pod (1 ctr)</text><rect x='105' y='30' width='90' height='35' rx='5' fill='#FF9800' stroke='#fff'/><text x='150' y='48' text-anchor='middle' fill='#fff' font-size='8'>Mutating WH</text><text x='150' y='60' text-anchor='middle' fill='#fff' font-size='7'>+sidecar</text><rect x='220' y='30' width='90' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='265' y='48' text-anchor='middle' fill='#fff' font-size='8'>Validating WH</text><text x='265' y='60' text-anchor='middle' fill='#aaa' font-size='7'>policy check</text><rect x='335' y='30' width='55' height='35' rx='5' fill='#666' stroke='#fff' stroke-dasharray='3'/><text x='362' y='52' text-anchor='middle' fill='#aaa' font-size='8'>etcd</text><line x1='80' y1='47' x2='100' y2='47' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a4)'/><line x1='195' y1='47' x2='215' y2='47' stroke='#FF9800' stroke-width='1.5' marker-end='url(#a4)'/><line x1='310' y1='47' x2='330' y2='47' stroke='#aaa' stroke-width='1.5' stroke-dasharray='3'/><text x='320' y='40' fill='#aaa' font-size='7'>?</text><defs><marker id='a4' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "A. The pod is created with the sidecar but without limits, because validating webhooks evaluate the original request before mutations are applied",
-      "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which has a sidecar without limits",
+      "A. The pod is created with the sidecar but without limits, because validating webhooks evaluate the original request before mutations",
+      "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which includes a sidecar without limits",
       "C. The pod is created because Kubernetes auto-injects default limits from the namespace LimitRange for webhook-injected containers",
-      "D. The mutating webhook changes are rolled back when the validating webhook rejects, and the pod is then created without the sidecar"
+      "D. The mutating webhook changes are rolled back when the validating webhook rejects, and the pod is created without the sidecar"
     ],
     answer: 1,
     explanation: "The admission controller chain processes mutations first, then validations. The validating webhook receives the final mutated object — including the sidecar container added by the mutating webhook. Since the sidecar lacks resource limits, the validating webhook rejects the request. The entire pod creation fails; there is no partial rollback. This is a common operational issue with sidecar injection: the injecting webhook must ensure injected containers comply with all validation policies. The fix is to configure the mutating webhook to include resource limits on injected sidecars.\n\nWhy other options are wrong:\n- A: Validating webhooks evaluate the final mutated object, not the original request; the admission chain processes mutations first, then validations\n- C: Kubernetes does not auto-inject LimitRange defaults for webhook-injected containers in the mutation phase; LimitRange applies at the pod-level admission\n- D: There is no partial rollback mechanism; if validation fails, the entire admission request is rejected and no resource is created\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks",
@@ -1529,7 +1529,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The pipeline uses mutable tags since commit SHAs can be rewritten during force pushes, risking deploying the wrong image version",
-      "B. The CI pipeline pushes to the GitOps repo, coupling CI and CD; compromised credentials allow deploying arbitrary images",
+      "B. The CI pipeline pushes to the GitOps repo, coupling CI and CD, so compromised credentials allow deploying arbitrary images",
       "C. The pipeline does not pin base images in the Dockerfile, risking supply chain attacks through uncontrolled base image updates",
       "D. The pipeline stores image tags in Kubernetes manifests instead of Helm values or Kustomize overlays, making rollbacks harder"
     ],

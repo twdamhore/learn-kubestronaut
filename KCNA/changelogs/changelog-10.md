@@ -312,3 +312,78 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 - **Option A:** Trimmed from 141 to 133 chars. Removed "implicitly".
 - **Option B (correct):** Expanded from 125 to 131 chars. Added "all" before "egress".
 - **Option D:** Expanded from 121 to 129 chars. Changed "cluster default policy" to "cluster-level default policy".
+
+---
+
+# Round 41 Review - Set 10
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 22 option adjustments across 18 questions
+
+## Changes
+
+### s10-q001 (giveaway — unique semicolon in correct)
+- **Option D (correct):** Replaced semicolon with ", and" to match structural pattern of other options. Changed "must be manually deleted; underlying PVs" to "must be manually deleted, and underlying PVs".
+
+### s10-q006 (giveaway — unique semicolon in correct)
+- **Option C (correct):** Replaced semicolon with ", and". Changed "is removed; the next request" to "is removed, and the next request".
+
+### s10-q009 (giveaway — unique semicolon in correct)
+- **Option A:** Added "the" before "quota" for minor expansion. **Option D (correct):** Replaced semicolon with "and". Changed "are created; the third" to "are created and the third".
+
+### s10-q023 (giveaway — unique parentheticals in correct)
+- **Option A (correct):** Removed parenthetical "(s)" from "pod(s)". Changed to "the lowest-priority pods" and "applying" instead of "with".
+
+### s10-q026 (giveaway — unique semicolon in correct + correct shortest)
+- **Option A (correct):** Expanded from 106 to 112 chars. Replaced semicolon with ", so". Changed to "One new pod from the surge is created but never becomes Ready, so the 5 old pods keep running".
+- **Option B:** Added semicolon to balance structural pattern. Changed to "`maxUnavailable: 0` only prevents old pod deletions".
+
+### s10-q033 (giveaway — unique semicolon in correct)
+- **Option D (correct):** Replaced semicolon with ", and". Changed "informer cache; the" to "informer cache, and the".
+
+### s10-q043 (giveaway — unique semicolon in correct + correct longest)
+- **Option A (correct):** Replaced semicolon with ", so" and trimmed. Reduced from 133 to ~130 chars.
+- **Option B:** Added semicolon to balance. Changed "until all backends receive at least one connection" to "; all other backends wait for initial connections".
+- **Option C:** Added ", and" for structural consistency.
+
+### s10-q052 (giveaway — unique semicolon in correct)
+- **Option A (correct):** Replaced semicolon with "because". Changed "at `/var/log/app`; the read-only" to "at `/var/log/app` because the read-only".
+
+### s10-q054 (giveaway — unique parentheticals in correct)
+- **Option A:** Changed em dash to "because" for structural balance. **Option B (correct):** Removed parenthetical "(one per node)". Changed to "3 replicas are scheduled across the 3 nodes and the 4th remains Pending".
+
+### s10-q058 (giveaway — unique semicolon in correct)
+- **Option D (correct):** Replaced semicolon with ", and". Changed "in `kube-system`; only" to "in `kube-system`, and only".
+
+### s10-q063 (giveaway — unique semicolon + unique parentheticals in correct)
+- **Option A (correct):** Replaced semicolon with ", while". Kept parentheticals but added matching parens to B and D.
+- **Option B:** Added parenthetical "(one batch per cycle)" and semicolon to structurally match correct answer.
+- **Option C:** Added semicolon to balance. Changed comma to "; then pods 3 and 4".
+- **Option D:** Added parenthetical "(lower and upper)" to balance correct answer's parens.
+
+### s10-q065 (giveaway — unique semicolon in correct)
+- **Option B (correct):** Replaced semicolon with ", but". Changed "succeeds; the second" to "succeeds, but the second".
+
+### s10-q080 (giveaway — unique semicolon in correct)
+- **Option B (correct):** Replaced semicolon with ", so". Changed "crash-consistent; data" to "crash-consistent, so data".
+
+### s10-q081 (giveaway — unique semicolon in correct)
+- **Option C (correct):** Replaced semicolon with ", as". Changed "implementation; the spec" to "implementation, as the spec".
+
+### s10-q082 (giveaway — unique parentheticals in correct)
+- **Option A:** Replaced semicolon with ", but" for consistency. **Option D (correct):** Removed parenthetical. Changed "(unique URLs create unique values)" to "because unique URLs create unique label values".
+
+### s10-q087 (giveaway — unique semicolon + unique parentheticals in correct)
+- **Option A:** Added parenthetical "(including exit code 0)" to balance D's parens. **Option B:** Added semicolon to balance D's semicolon. Changed "replacement to meet" to "replacement; it must meet".
+- **Option D (correct):** Changed "(exit 0 = success)" to "(exit 0 means success)" for naturalness. Semicolon no longer unique since B now has one.
+
+### s10-q088 (length-balance — correct longest)
+- **Option A:** Expanded from 112 to 120 chars. Added "always" and "because" for detail. **Option B (correct):** Trimmed from 125 to 121 chars. Changed "backend endpoints" to "backend pods".
+
+### s10-q091 (length-balance — correct shortest, ratio 1.118)
+- **Option A:** Trimmed from 142 to 136 chars. Removed "are applied" at end. **Option B (correct):** Expanded from 127 to 133 chars. Changed "which has a sidecar" to "which includes a sidecar".
+- **Option D:** Trimmed from 129 to 126 chars. Removed "then" before "the pod".
+
+### s10-q096 (giveaway — unique semicolon in correct)
+- **Option B (correct):** Replaced semicolon with ", so". Changed "CI and CD; compromised" to "CI and CD, so compromised".

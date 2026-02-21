@@ -600,10 +600,10 @@ var questions = [
     text: "A pod's `/etc/resolv.conf` shows `nameserver 10.96.0.10`. What does this IP address typically represent?",
     diagram: null,
     options: [
-      "The IP of the node's local `DNS cache daemon` running on each worker",
-      "The `kube-apiserver`'s `ClusterIP` used for cluster management traffic",
+      "The IP of the node's local `DNS cache daemon` running on each worker node",
+      "The `kube-apiserver`'s `ClusterIP` used for cluster management API traffic",
       "The ClusterIP of the `kube-dns` Service fronting CoreDNS in `kube-system`",
-      "A hardcoded Google Public DNS address (`8.8.8.8`) configured in the base image"
+      "A hardcoded Google Public DNS address (`8.8.8.8`) set in the container image"
     ],
     answer: 2,
     explanation: "The `nameserver` entry in a pod's `resolv.conf` points to the `ClusterIP` of the `kube-dns` Service (which fronts CoreDNS) in the `kube-system` namespace. This is typically `10.96.0.10` in default kubeadm clusters. It is not a node-local cache by default. The API server uses a different IP. Google DNS uses `8.8.8.8`, not `10.96.0.10`.\n\nWhy other options are wrong:\n- A: By default, Kubernetes does not run a node-local DNS cache daemon; the nameserver entry points to the cluster DNS Service.\n- B: The kube-apiserver has its own ClusterIP (often 10.96.0.1 in kubeadm), which is different from the DNS Service IP.\n- D: Google Public DNS uses 8.8.8.8 and 8.8.4.4, not addresses in the 10.96.x.x service CIDR range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
@@ -618,7 +618,7 @@ var questions = [
     options: [
       "kube-proxy configured with dual-stack support for multiple network interfaces",
       "Multus CNI, a meta-plugin that delegates to multiple CNI backends per pod",
-      "CoreDNS with a custom zone file for VLAN-specific DNS name resolution",
+      "CoreDNS with a custom zone file for VLAN-specific DNS name resolution setup",
       "A dedicated `NetworkPolicy` using a VLAN selector for interface isolation"
     ],
     answer: 1,
@@ -744,10 +744,10 @@ var questions = [
     text: "A cluster operator wants to alert when a Service has zero ready endpoints for more than 5 minutes. Which kube-state-metrics metric best serves this use case?",
     diagram: null,
     options: [
-      "`kube_service_info` filtered by service name and namespace labels in the dashboard",
-      "`kube_endpoint_ready_count` with an alert threshold of zero ready endpoints set",
+      "`kube_service_info` filtered by service name and namespace labels in a dashboard query",
+      "`kube_endpoint_ready_count` with an alert threshold set at zero ready endpoints",
       "`kube_endpoint_address{ready=\"true\"}` equal to zero for the target Service over time",
-      "`container_network_receive_bytes_total` dropping to zero on the target pods in the cluster"
+      "`container_network_receive_bytes_total` dropping to zero on target pods in Prometheus"
     ],
     answer: 2,
     explanation: "kube-state-metrics exposes `kube_endpoint_address` with a `ready` label (`true` or `false`). Alerting when `kube_endpoint_address{ready=\"true\"}` equals zero for a sustained period catches Services with no healthy backends. `kube_service_info` provides metadata but not endpoint readiness. `kube_endpoint_ready_count` is not a standard kube-state-metrics metric. `container_network_receive_bytes_total` measures container traffic, not endpoint availability.\n\nWhy other options are wrong:\n- A: `kube_service_info` provides metadata about Services (labels, annotations) but not endpoint readiness or count.\n- B: `kube_endpoint_ready_count` is not a standard kube-state-metrics metric name.\n- D: `container_network_receive_bytes_total` measures container network traffic volume, not endpoint availability.\n\nReference: https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/",
@@ -856,9 +856,9 @@ var questions = [
     text: "A `NetworkPolicy` allows ingress from pods labeled `role: frontend` to pods labeled `app: backend` on port 443. A pod labeled both `role: frontend` and `app: backend` sends traffic to another `app: backend` pod on port 443. Is this traffic allowed?",
     diagram: null,
     options: [
-      "No, because the policy excludes pods matching both source and destination selectors",
-      "Yes, but only if an explicit egress rule allowing port 443 outbound is also defined",
-      "No, because the policy only allows traffic from pods that lack the `app: backend` label value",
+      "No, because the policy excludes pods matching both the source and destination selectors",
+      "Yes, but only if an explicit egress rule also allows port 443 outbound from the sender",
+      "No, because the policy only allows traffic from pods that lack the `app: backend` label",
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"
     ],
     answer: 3,
@@ -936,10 +936,10 @@ var questions = [
     text: "Two `NetworkPolicy` objects exist in the same namespace: Policy A allows ingress from `app: web` on port 80, and Policy B allows ingress from `app: api` on port 443. Both select the same target pod `app: server`. What is the combined effect?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80 ?</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443 ?</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
-      "Only `Policy A` takes effect because it was created first and has priority in the namespace",
-      "Policy B overrides Policy A because it was created more recently in the namespace",
-      "Both policies merge additively — ingress from `web` on 80 AND from `api` on 443 is allowed",
-      "The policies conflict with each other and therefore all `ingress` traffic is denied"
+      "Only `Policy A` takes effect — it was created first and has priority in the namespace",
+      "Policy B overrides Policy A — it was created more recently and takes full precedence",
+      "Both policies merge additively — ingress from `web` on 80 AND `api` on 443 is allowed",
+      "The policies conflict with each other — the result is that all ingress traffic is denied"
     ],
     answer: 2,
     explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on creation time; multiple NetworkPolicies are always unioned regardless of when they were created.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -952,10 +952,10 @@ var questions = [
     text: "A pod uses `dnsConfig` to add a custom search domain `legacy.internal`. Combined with the default `ClusterFirst` DNS policy, what happens to DNS resolution?",
     diagram: null,
     options: [
-      "The custom search domain replaces all default cluster search domains in the pod's `resolv.conf`",
+      "The custom search domain replaces all default cluster search domains in the pod's resolver",
       "The custom search domain is appended to the default cluster search domains in `resolv.conf`",
-      "The `dnsConfig` entries are overridden because `ClusterFirst` takes full precedence",
-      "The pod enters an error state because `dnsConfig` conflicts with `ClusterFirst` policy"
+      "The `dnsConfig` entries are overridden entirely because `ClusterFirst` takes full precedence",
+      "The pod enters an error state because `dnsConfig` and `ClusterFirst` policy conflict"
     ],
     answer: 1,
     explanation: "`dnsConfig` fields are merged with the settings generated by the `dnsPolicy`. When using `ClusterFirst`, the default search domains are preserved, and custom entries from `dnsConfig` (such as additional search domains or nameservers) are appended. They are not replaced or ignored. `dnsConfig` and `dnsPolicy` are designed to work together.\n\nWhy other options are wrong:\n- A: Custom search domains are appended, not replaced; the default cluster domains are preserved.\n- C: `dnsConfig` is not ignored; it is designed to work with any `dnsPolicy` to add custom DNS settings.\n- D: `dnsConfig` and `dnsPolicy` are designed to be used together; the pod does not enter an error state.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config",
@@ -1018,7 +1018,7 @@ var questions = [
     options: [
       "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
       "BGP peering encrypts all inter-node traffic across the physical network using IPsec by default",
-      "BGP peering reduces reliance on kube-proxy by handling some service routing decisions via BGP peers",
+      "BGP peering reduces reliance on kube-proxy by handling service routing decisions via BGP",
       "BGP peering is primarily needed for IPv6 addressing, which VXLAN handles less efficiently"
     ],
     answer: 0,
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A NodeLocal DNS Cache DaemonSet is deployed to improve DNS performance. How does it reduce load on CoreDNS?",
     diagram: null,
     options: [
-      "It replaces CoreDNS entirely, serving all DNS records from a local database on each node",
+      "It replaces CoreDNS entirely, serving all DNS records from a local database on each cluster node",
       "It pre-populates all DNS records from etcd into node memory at startup to avoid CoreDNS queries",
       "It bypasses the `kube-dns` Service and sends queries directly to the CoreDNS pod IP on the node",
       "It runs a local caching agent on each node that serves cached responses and falls back to CoreDNS"
@@ -1288,8 +1288,8 @@ var questions = [
     text: "A `LoadBalancer` Service on GKE shows two IP addresses: one in `status.loadBalancer.ingress[0].ip` and the ClusterIP. A pod inside the cluster sends a request to the external load balancer IP. Where is the request routed?",
     diagram: null,
     options: [
-      "To the cloud load balancer, which then forwards the traffic back into the cluster for routing",
-      "To the kube-apiserver, which acts as a proxy and forwards the request to the correct backend",
+      "To the cloud load balancer, which forwards the traffic back into the cluster for routing",
+      "To the kube-apiserver, which acts as a proxy and forwards the request to the backend",
       "To the cloud load balancer, which drops it because the pod source IP is not allowed",
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
     ],
@@ -1339,7 +1339,7 @@ var questions = [
       "`ConfigMap` storing key-value configuration data",
       "`Secret` storing sensitive credential information",
       "`Endpoints` or `EndpointSlice` resource objects",
-      "`ServiceAccount` for pod identity management"
+      "`ServiceAccount` for pod identity and API access"
     ],
     answer: 2,
     explanation: "The `Endpoints` (and the newer `EndpointSlice`) resources store the IP addresses of pods that back a Service. kube-proxy watches these resources and updates iptables/IPVS rules accordingly. ConfigMaps store configuration data. Secrets store sensitive data. ServiceAccounts provide pod identity for API access.\n\nWhy other options are wrong:\n- A: ConfigMaps store generic key-value configuration data, not service-to-pod endpoint mappings.\n- B: Secrets store sensitive credential data, not service endpoint IP mappings.\n- D: ServiceAccounts provide pod identity for API access, not service endpoint routing information.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
@@ -1370,7 +1370,7 @@ var questions = [
     options: [
       "Only the CNI plugin needs dual-stack configuration; other components auto-detect address families",
       "The apiserver, controller-manager, kube-proxy, and CNI must all be configured with dual CIDRs",
-      "Dual-stack performs best with IPVS mode because iptables mode has limited IPv6 forwarding support",
+      "Dual-stack requires IPVS mode because iptables, kube-proxy, and ip6tables lack IPv6 support",
       "Each pod explicitly requests an IPv6 address in its spec alongside the default IPv4 address"
     ],
     answer: 1,

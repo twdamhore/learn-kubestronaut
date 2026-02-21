@@ -72,10 +72,10 @@ var questions = [
     text: "A platform team is designing their cluster upgrade strategy. They want zero-downtime deployments and the ability to roll back quickly. Which approach best aligns with cloud-native principles?",
     diagram: null,
     options: [
-      "A. In-place upgrade of all nodes simultaneously without any workload migration",
-      "B. Upgrading only the control plane and leaving workers on the old version",
-      "C. Creating a new cluster and migrating all workloads to it in one batch",
-      "D. Rolling upgrade with cordon, drain, upgrade, and uncordon per node"
+      "A. In-place upgrade of all nodes simultaneously, without workload migration",
+      "B. Upgrading the control plane only, leaving workers on the old version",
+      "C. Creating a parallel cluster, then migrating workloads in a single batch",
+      "D. Rolling upgrade with cordon, drain, upgrade, and uncordon on each node"
     ],
     answer: 3,
     explanation: "A rolling upgrade strategy processes one node at a time: cordon to prevent new scheduling, drain to evict existing Pods, upgrade the node, then uncordon. This ensures workload availability throughout the process and allows rollback by stopping the procedure.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade causes downtime for all workloads and provides no rollback path\n- B: Leaving workers on the old version indefinitely creates version skew issues and is not a complete upgrade\n- C: Batch migration to a new cluster is disruptive and does not enable incremental rollback\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
@@ -809,7 +809,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Both replicas run on the same node with a `Warning` scheduling event",
-      "B. The scheduler converts the hard anti-affinity rule to a `preferred` constraint",
+      "B. The scheduler converts the hard anti-affinity to a `preferred` constraint",
       "C. The second replica remains in `Pending` state until a new node joins",
       "D. The second replica is placed on the same node but marked as degraded"
     ],
@@ -856,8 +856,8 @@ var questions = [
     text: "What happens to Pods managed by a ReplicaSet when the node they are running on is drained?",
     diagram: null,
     options: [
-      "A. The ReplicaSet controller creates replacement Pods on other available nodes",
-      "B. The Pods are moved to another node with their full runtime state preserved",
+      "A. The ReplicaSet controller creates replacement Pods on available nodes",
+      "B. The Pods are moved to another node with their runtime state preserved",
       "C. The Pods are terminated and must be manually recreated by an admin",
       "D. The ReplicaSet is scaled to zero until the drained node returns back"
     ],
@@ -1064,10 +1064,10 @@ var questions = [
     text: "A PriorityClass with <code>value: 1000000</code> and <code>globalDefault: true</code> was created. Existing Pods without an explicit `priorityClassName` report priority 0 in their spec. Why?",
     diagram: null,
     options: [
-      "A. `globalDefault` only applies to Pods created after the PriorityClass definition",
+      "A. `globalDefault` only applies to Pods created after the PriorityClass was defined",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
-      "C. The PriorityClass value exceeds the maximum value allowed for any global default set",
-      "D. `globalDefault` applies retroactively -- existing Pods inherit the new value automatically"
+      "C. The PriorityClass value exceeds the maximum allowed for any global default setting",
+      "D. `globalDefault` applies retroactively -- existing Pods inherit the new value"
     ],
     answer: 0,
     explanation: "The `globalDefault: true` field on a PriorityClass sets it as the default for Pods created after the PriorityClass exists. It does not retroactively update existing Pods. Their priority was set at creation time by the admission controller and remains at the old default (0).\n\nWhy other options are wrong:\n- B: Restarting (deleting and recreating) Pods would give new Pods the updated default, but this does not explain WHY existing Pods show priority 0; option A gives the root cause\n- C: 1000000 does not exceed any maximum for globalDefault; values up to 1000000000 are allowed for non-system classes\n- D: globalDefault does not apply retroactively; Pod priority is set at creation time by the admission controller and is never updated by a sync cycle\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -1080,10 +1080,10 @@ var questions = [
     text: "Which Kubernetes SIG project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
     diagram: null,
     options: [
-      "A. Scheduler Plugins (scheduling-plugins) project",
-      "B. Descheduler, the Pod rebalancing framework",
-      "C. Kueue, the job queueing and admission tool",
-      "D. Volcano, the batch scheduling system for AI"
+      "A. Scheduler Plugins, the custom scheduler extension project",
+      "B. Descheduler, the Pod rebalancing and eviction framework",
+      "C. Kueue, the job queueing and resource admission tool",
+      "D. Volcano, the batch scheduling system for AI workloads"
     ],
     answer: 0,
     explanation: "The Kubernetes Scheduler Plugins project provides a framework for extending the default scheduler with custom filter, score, and other plugins. It uses the scheduler framework API, allowing teams to add domain-specific logic without replacing the entire scheduler.\n\nWhy other options are wrong:\n- B: Descheduler rebalances Pods after scheduling but does not extend the scheduler with custom plugins\n- C: Kueue manages job queuing and admission but does not add custom scheduling plugins\n- D: Volcano is a batch scheduling system primarily for HPC/AI workloads, not a general scheduler plugin framework\n\nReference: https://github.com/kubernetes-sigs/scheduler-plugins",
@@ -1194,7 +1194,7 @@ var questions = [
     options: [
       "A. The default `kube-scheduler` picks up the Pod after a timeout period",
       "B. The API server rejects the Pod creation with a `ValidationError`",
-      "C. The Pod remains in `Pending` state indefinitely, unscheduled",
+      "C. The Pod remains in `Pending` state indefinitely with no node bound",
       "D. The Pod is assigned to a random node directly by the `kubelet`"
     ],
     answer: 2,
@@ -1369,7 +1369,7 @@ var questions = [
     diagram: null,
     options: [
       "A. A new PVC is created for the rescheduled Pod and the old data is abandoned",
-      "B. The existing PVC is reused and the network-attached PV is moved to the new node",
+      "B. The existing PVC is reused and the underlying PV is reattached to the new node",
       "C. The PVC is deleted and the data stored on the PersistentVolume is then lost",
       "D. The Pod may remain pending until an admin rebinds the PVC to its original node"
     ],
@@ -1400,10 +1400,10 @@ var questions = [
     text: "A CI/CD pipeline must verify that node maintenance operations complete successfully before deploying new application versions. Which approach best integrates cluster readiness checks into the pipeline?",
     diagram: null,
     options: [
-      "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if issues arise",
-      "B. Deploy to a separate staging cluster that has a different maintenance schedule",
-      "C. Add a manual approval gate in the pipeline where an operator inspects cluster readiness",
-      "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploying"
+      "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if needed",
+      "B. Deploy to a separate staging cluster that has a different maintenance schedule set",
+      "C. Add a manual approval gate in the pipeline where an operator inspects cluster health",
+      "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploy"
     ],
     answer: 3,
     explanation: "Automated pre-deployment checks in CI/CD pipelines ensure the cluster is healthy before deploying. Asserting all nodes are `Ready` prevents deployments to clusters mid-maintenance where scheduling constraints might cause failures. This follows the principle of automated validation gates.\n\nWhy other options are wrong:\n- A: Skipping checks risks deploying to an unhealthy cluster with potential scheduling failures\n- B: A separate staging cluster does not validate the production cluster's readiness state\n- C: Manual approval gates are slow, error-prone, and do not follow automation best practices\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/cluster-upgrade/",
@@ -1433,9 +1433,9 @@ var questions = [
     diagram: null,
     options: [
       "A. LimitRange for per-Pod resource defaults",
-      "B. PodDisruptionBudget for availability",
-      "C. ResourceQuota for namespace-level totals",
-      "D. PriorityClass for scheduling order"
+      "B. PodDisruptionBudget for Pod availability",
+      "C. ResourceQuota for aggregate consumption",
+      "D. PriorityClass for Pod scheduling order"
     ],
     answer: 2,
     explanation: "ResourceQuota sets aggregate resource limits per namespace, controlling the total CPU, memory, storage, and object counts that can be consumed. LimitRange sets per-Pod or per-container defaults and constraints, not namespace-wide totals.\n\nWhy other options are wrong:\n- A: LimitRange sets per-Pod/container defaults, not namespace-level aggregate limits\n- B: PodDisruptionBudget manages availability during disruptions, not resource consumption\n- D: PriorityClass controls scheduling priority, not resource consumption limits\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",

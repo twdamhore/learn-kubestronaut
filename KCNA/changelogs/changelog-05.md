@@ -160,3 +160,49 @@
 
 ### s05-q087 (length-balance)
 - **Option A:** Expanded from "The update succeeds but triggers an automatic Pod restart cycle" (63) to "The update succeeds but triggers an automatic Pod restart cycle for consumers" (77). **Option C:** Shortened from "The `immutable` field is advisory only and does not enforce any restriction" (75) to "The `immutable` field is advisory and does not enforce any restriction" (70). Ratio was 1.190, now 1.132.
+
+---
+
+# Round 41 Review - Set 05
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 12 across 12 questions
+
+## Changes
+
+### s05-q004 (length-balance)
+- **Options A, B, C, D:** Rebalanced all four options. A from "During scheduling, after the PodSecurity admission phase" (56) to "During scheduling, after the admission check completes" (54). B from "During the image pull phase on the assigned worker node" (55, unchanged). C (correct) from "During the admission phase by the PodSecurity admission plugin" (62) to "During API admission by the PodSecurity admission plugin" (56). D unchanged at 55. Ratio was 1.127 with correct longest, now 1.037 with correct mid-range.
+
+### s05-q007 (length-balance)
+- **Option B (correct):** Expanded from "Create and delete Deployments only in the `dev` namespace scope" (63) to "Create and delete Deployments only within the `dev` namespace scope" (67). **Option D:** Shortened from "Create Deployments in `dev` but delete them across all other namespaces" (71) to "Create Deployments in `dev` but delete them in all other namespaces" (67). Ratio was 1.127 with correct shortest, now 1.031.
+
+### s05-q013 (length-balance)
+- **Options A, B, C, D:** Rebalanced. A from 75 to 67. B shortened from 84 to 70. C (correct) reworded to "The default capability set granted by the runtime excludes `CAP_NET_ADMIN`" (74). D shortened from 77 to 73. Ratio was 1.120 with correct shortest, now 1.100 with correct mid-range.
+
+### s05-q023 (length-balance)
+- **Options A, B, C, D:** Reformatted all options for consistent structure: "The `X` set to `Y`" pattern. Ratio was 1.098 with correct longest, now 1.071 with correct still longest but within threshold.
+
+### s05-q043 (length-balance)
+- **Option C (correct):** Reworded from "A breach in one service's database does not expose other services' data" (71) to "A breach in one service's database does not expose data from other services" (75). **Option D:** Shortened from "Per-service databases reduce the total network connections that need monitoring" (79) to "Per-service databases reduce the total network connections needing monitoring" (77). Ratio was 1.113 with correct shortest, now 1.040 with correct mid-range.
+
+### s05-q052 (structural-giveaway)
+- **Option C (correct):** Removed unique semicolon. Changed from "All configured authenticators are tried; the first success is used" to "All configured authenticators are tried and the first success wins".
+
+### s05-q055 (structural-giveaway)
+- **Option D (correct):** Removed unique semicolon. Changed from "It encrypts data with a public key; only the in-cluster controller decrypts" to "It encrypts data with a public key and only the in-cluster controller decrypts".
+
+### s05-q057 (structural-giveaway + length-balance)
+- **Option D (correct):** Removed unique semicolon and reduced from longest. Changed from "Existing mounted data remains temporarily; the kubelet logs errors on the next sync attempt" (91) to "Existing mounted data remains temporarily and the kubelet logs errors on the next sync" (86). Now mid-range rather than tied-longest.
+
+### s05-q059 (structural-giveaway + length-balance)
+- **Option A (correct):** Removed unique semicolon and shortened. Changed from "Tags are mutable and can be repointed to a different image; digests are immutable" to "Tags are mutable and can point to different images while digests are immutable" (78). Was longest at 84, now mid-range.
+
+### s05-q066 (structural-giveaway)
+- **Option D (correct):** Removed unique parenthetical. Changed from "In the Istio proxy (Envoy) container's access logs for denials" to "In the sidecar proxy container's access logs for policy denials". Explanation still correctly references Envoy/Istio.
+
+### s05-q072 (length-balance)
+- **Options A, B, C, D:** Rebalanced all four. B (correct) expanded from 63 to 69. A expanded from 66 to 70. D expanded from 63 to 67. Ratio was 1.111 with correct shortest, now 1.045 with correct mid-range.
+
+### s05-q079 (structural-giveaway)
+- **Option A (correct):** Removed unique semicolon. Changed from "Secrets cannot be used across namespaces; it must exist in the Pod's namespace" (78) to "Secrets cannot be used across namespaces and the Secret must exist in `production`" (82). Also improved specificity by referencing the namespace from the question.

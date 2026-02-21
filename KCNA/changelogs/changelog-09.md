@@ -245,3 +245,95 @@
 ### s09-q099 (length-balance + giveaway)
 - **Option B:** Added parenthetical "(liveness and readiness)" to match parenthetical in correct answer C. Expanded ~110->115 chars.
 - **Option C (answer):** Changed semicolon to "and" to reduce structural uniqueness. Expanded ~101->104 chars.
+
+---
+
+# Round 41 Review - Set 09
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 28 across 22 questions
+
+## Changes
+
+### s09-q004 (giveaway)
+- **Option A:** Added comma-list "traces, logs, and spans" to match the comma-heavy structure of correct answer C.
+- **Option D:** Added comma-list "collect, transform, and forward" to match comma pattern.
+
+### s09-q012 (length-balance)
+- **Option B:** Trimmed ~109->104 chars. Removed "then" before "hands them off".
+- **Option D (answer):** Expanded ~97->104 chars. Changed "does not list them" to "does not list any of them".
+
+### s09-q021 (length-balance)
+- **Option C:** Expanded ~94->103 chars. Added "suitable" before "LimitRange".
+- **Option D (answer):** Trimmed ~105->99 chars. Changed "containers must specify CPU requests and limits" to "CPU requests and limits must be specified".
+
+### s09-q029 (giveaway)
+- **Option B:** Added parenthetical "(Alertmanager rules)" to match answer A's parenthetical "(Tasks, Pipelines, PipelineRuns)".
+
+### s09-q030 (length-balance)
+- **Option A (answer):** Expanded ~95->102 chars. Added "plugin" after "tail input".
+- **Option C:** Trimmed ~107->99 chars. Restructured wording and removed "unique" before "_id".
+
+### s09-q031 (giveaway)
+- **Option B:** Added parenthetical "(X.509)" to match answer D's parenthetical "(iptables or IPVS)".
+
+### s09-q032 (giveaway)
+- **Option B:** Added parenthetical "(custom.metrics.k8s.io)" to match answer A's parenthetical "(metrics.k8s.io)".
+
+### s09-q034 (length-balance)
+- **Option B (answer):** Expanded ~94->100 chars. Added "a" before "version: v2" and "its" before "health".
+- **Option D:** Trimmed ~105->101 chars. Removed "all" before "incoming traffic".
+
+### s09-q037 (length-balance)
+- **Option C (answer):** Expanded ~84->91 chars. Changed "routes to" to "is routed to" and "matches" to "starts with".
+
+### s09-q042 (length-balance)
+- **Option C (answer):** Expanded ~81->89 chars. Changed "in that namespace" to "applied in that namespace".
+- **Option D:** Expanded ~83->90 chars. Added "labels" after "metadata".
+
+### s09-q047 (giveaway)
+- **Option A:** Added parenthetical "(round-robin)" to match answer D's parenthetical "(by ordinal)".
+
+### s09-q050 (giveaway)
+- **Option D:** Added parenthetical "(Prometheus and Elasticsearch)" to match answer C's parenthetical "(Prometheus, Elasticsearch)".
+
+### s09-q054 (giveaway)
+- **Option C:** Restructured to include parenthetical "(average and percentile)" to match answer B's "(Gantt chart)".
+
+### s09-q056 (length-balance)
+- **Option D (answer):** Expanded ~89->94 chars. Changed "are unaffected" to "continue unaffected".
+
+### s09-q057 (giveaway)
+- **Option A:** Added parenthetical "(or similar)" to match answer B's "(Argo CD or Flux)".
+
+### s09-q064 (giveaway)
+- **Option D:** Added parenthetical "(client and server)" to match answer B's "(NATS, Kafka, or RabbitMQ)".
+
+### s09-q069 (giveaway)
+- **Option A:** Added parenthetical "(symmetric encryption)" to match answer C's "(not encrypted)".
+
+### s09-q080 (length-balance)
+- **Option A:** Trimmed ~148->132 chars. Replaced "and the API server persists it in etcd" with "for persistence in etcd".
+
+### s09-q083 (giveaway)
+- **Option A:** Added parenthetical "(any origin)" to match answer D's "(OPA Gatekeeper or Kyverno)".
+
+### s09-q088 (length-balance)
+- **Option C:** Expanded ~80->87 chars. Added "strict" before "ordering".
+
+### s09-q091 (giveaway)
+- **Option B:** Added parenthetical "(KVM)" to match answer A's "(runsc)".
+
+### s09-q096 (length-balance)
+- **Option D:** Trimmed ~107->93 chars. Changed "communicates primarily with" to "communicates only with" and "has limited access to cluster-networked Pods" to "cannot reach cluster-networked Pods".
+
+### s09-q099 (length-balance)
+- **Option B:** Trimmed ~115->104 chars. Removed "completely" before "replaces".
+- **Option C (answer):** Expanded ~104->109 chars. Added "both" before "liveness and readiness".
+
+### s09-q020 (giveaway)
+- **Option B:** Added parenthetical "(the original install state)" to match answer C's parenthetical by restructuring "which is the original install state".
+
+### s09-q004 note
+- Comma-list giveaway: answer C had 5 commas while distractors had 1 each. Added comma-lists to options A and D to balance the structural pattern.

@@ -56,10 +56,10 @@ var questions = [
     text: "Your organization is evaluating CNCF projects for a new observability stack. The architect wants to use a single vendor-neutral telemetry collection framework that supports all three pillars of observability. Which CNCF project best fits this requirement?",
     diagram: null,
     options: [
-      "Prometheus, because it natively supports collecting traces and logs alongside its core metrics pipeline",
+      "Prometheus, because it natively supports collecting traces, logs, and spans alongside its metrics pipeline",
       "Jaeger, because it provides a unified collection pipeline for all telemetry types including metrics",
       "OpenTelemetry, because it provides unified APIs, SDKs, and collectors for traces, metrics, and logs",
-      "Fluentd, because it can collect and forward all three signal types with built-in trace correlation"
+      "Fluentd, because it can collect, transform, and forward all signal types with built-in trace correlation"
     ],
     answer: 2,
     explanation: "OpenTelemetry is the CNCF project specifically designed to provide a single, vendor-neutral framework for collecting traces, metrics, and logs. Prometheus focuses on metrics, Jaeger on distributed tracing, and Fluentd on log aggregation. OpenTelemetry merges the capabilities of OpenTracing and OpenCensus.\n\nWhy other options are wrong:\n- A: Prometheus focuses on metrics collection and does not natively support traces or logs\n- B: Jaeger is a distributed tracing system and does not collect metrics or logs\n- D: Fluentd is a log aggregator and does not provide built-in trace correlation or metrics collection\n\nReference: https://opentelemetry.io/docs/what-is-opentelemetry/",
@@ -185,9 +185,9 @@ var questions = [
     diagram: null,
     options: [
       "The Pods are using a virtual machine runtime like Kata Containers instead of Docker for workload isolation",
-      "The kubelet only creates containers during Pod initialization and then hands them off to the kernel scheduler",
+      "The kubelet only creates containers during Pod initialization and hands them off to the kernel scheduler",
       "Docker and containerd share the same container store but <code>docker ps</code> requires root-level privileges",
-      "Containerd manages containers independently of the Docker daemon, so <code>docker ps</code> does not list them"
+      "Containerd manages containers independently of the Docker daemon, so <code>docker ps</code> does not list any of them"
     ],
     answer: 3,
     explanation: "When Kubernetes uses containerd directly (via the CRI plugin), containers are managed by containerd without involving the Docker daemon. Therefore, `docker ps` which queries the Docker daemon shows no containers. The correct tool to inspect containers is `crictl ps` or `ctr`.\n\nWhy other options are wrong:\n- A: No evidence suggests Kata Containers is in use; the question states containerd is the runtime\n- B: The kubelet does not hand off containers to the kernel scheduler; it manages them through the CRI\n- C: Docker and containerd have separate container stores; docker ps does not require special privileges\n\nReference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd",
@@ -313,7 +313,7 @@ var questions = [
     diagram: null,
     options: [
       "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy the release",
-      "Run <code>helm rollback my-release 1</code> to roll back to the first revision, which is the original install state",
+      "Run <code>helm rollback my-release 1</code> to roll back to the first revision (the original install state)",
       "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 means \"previous release\")",
       "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
     ],
@@ -330,8 +330,8 @@ var questions = [
     options: [
       "The Pod is created successfully with default CPU values automatically assigned by the cluster scheduler",
       "The ResourceQuota configuration is automatically adjusted to accommodate the new Pod's requirements",
-      "The Pod is created but remains in <code>Pending</code> state until a LimitRange is defined in the namespace",
-      "The API server rejects Pod creation because containers must specify CPU requests and limits under a quota"
+      "The Pod is created but remains in <code>Pending</code> state until a suitable LimitRange is defined in the namespace",
+      "The API server rejects Pod creation because CPU requests and limits must be specified under a quota"
     ],
     answer: 3,
     explanation: "When a ResourceQuota specifying compute resources (CPU or memory) exists in a namespace, all Pods must explicitly declare requests and limits for those resources. If not specified, the API server rejects the Pod creation. A LimitRange can be configured to automatically inject defaults, preventing this rejection.\n\nWhy other options are wrong:\n- A: Default values are not assigned automatically by the scheduler; a LimitRange would be needed for that\n- B: ResourceQuota is not auto-adjusted; it is a fixed constraint that must be explicitly modified\n- C: The Pod is rejected immediately by the API server, not left in Pending state waiting for a LimitRange\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#compute-resource-quota",
@@ -457,7 +457,7 @@ var questions = [
     diagram: null,
     options: [
       "Tekton, which defines CI/CD components (Tasks, Pipelines, PipelineRuns) as Kubernetes CRDs",
-      "Prometheus, which provides pipeline monitoring through its configurable alerting rules engine",
+      "Prometheus, which provides pipeline monitoring through its alerting engine (Alertmanager rules)",
       "Envoy, which routes CI/CD pipeline traffic between build stages via its proxy configuration",
       "Harbor, which stores pipeline definitions alongside container images in its artifact registry"
     ],
@@ -472,9 +472,9 @@ var questions = [
     text: "A platform team deploys Fluent Bit as a DaemonSet to collect container logs from every node. They configure Fluent Bit to read from <code>/var/log/containers/*.log</code> and forward to Elasticsearch. After a node restart, Fluent Bit re-sends all existing logs, creating duplicates. How should they prevent this?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="120" height="50" rx="8" fill="#455A64" stroke="#263238" stroke-width="2"/><text x="70" y="40" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Node Logs</text><text x="70" y="52" text-anchor="middle" fill="#B0BEC5" font-size="9">/var/log/containers/</text><rect x="10" y="90" width="120" height="50" rx="8" fill="#0288D1" stroke="#01579B" stroke-width="2"/><text x="70" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Fluent Bit</text><rect x="250" y="90" width="140" height="50" rx="8" fill="#388E3C" stroke="#1B5E20" stroke-width="2"/><text x="320" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Elasticsearch</text><line x1="70" y1="60" x2="70" y2="88" stroke="#333" stroke-width="2" marker-end="url(#arrow9b)"/><line x1="130" y1="115" x2="248" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arrow9b)"/><text x="70" y="185" text-anchor="middle" fill="#F57F17" font-size="16" font-weight="bold">?</text><defs><marker id="arrow9b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
-      "Enable the <code>DB</code> parameter on Fluent Bit's tail input to persist file read offsets across restarts",
+      "Enable the <code>DB</code> parameter on Fluent Bit's tail input plugin to persist file read offsets across restarts",
       "Switch from Fluent Bit to Fluentd, which automatically handles log file offset tracking by default",
-      "Configure Elasticsearch to deduplicate log entries automatically using unique <code>_id</code> document fields per entry",
+      "Configure Elasticsearch to deduplicate incoming log entries automatically using <code>_id</code> document fields",
       "Reduce Fluent Bit's buffer size to minimize the volume of re-sent logs after each node restart event"
     ],
     answer: 0,
@@ -489,7 +489,7 @@ var questions = [
     diagram: null,
     options: [
       "It acts as a reverse proxy for the kube-apiserver, load-balancing API requests across control plane instances",
-      "It encrypts all Pod-to-Pod traffic using mutual TLS certificates that are managed by the cluster's CA",
+      "It encrypts all Pod-to-Pod traffic using mutual TLS certificates (X.509) managed by the cluster's CA",
       "It monitors node health and reports detailed status information back to the kube-controller-manager",
       "It maintains network rules on each node (iptables or IPVS) that enable Service-based routing to Pods"
     ],
@@ -505,7 +505,7 @@ var questions = [
     diagram: null,
     options: [
       "The Metrics Server, which implements the resource metrics API (<code>metrics.k8s.io</code>) for the cluster",
-      "The Prometheus server, which provides the Metrics API endpoint for resource usage data collection",
+      "The Prometheus server, which provides the Metrics API endpoint (custom.metrics.k8s.io) for resource data",
       "The kube-state-metrics exporter, which exposes Pod-level resource usage as Prometheus-format metrics",
       "The <code>cAdvisor</code> binary, which must be installed separately on each node to collect container-level stats"
     ],
@@ -537,9 +537,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="40" rx="8" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="200" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Service</text><rect x="20" y="80" width="150" height="55" rx="8" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="95" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Blue (v1) Deploy</text><text x="95" y="120" text-anchor="middle" fill="#90CAF9" font-size="10">version: v1</text><rect x="230" y="80" width="150" height="55" rx="8" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="305" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Green (v2) Deploy</text><text x="305" y="120" text-anchor="middle" fill="#A5D6A7" font-size="10">version: v2</text><line x1="175" y1="45" x2="95" y2="78" stroke="#1565C0" stroke-width="2" marker-end="url(#arrow9c)"/><line x1="225" y1="45" x2="305" y2="78" stroke="#999" stroke-width="2" stroke-dasharray="5,3"/><text x="200" y="170" text-anchor="middle" fill="#333" font-size="10">How to switch traffic?</text><rect x="100" y="185" width="200" height="25" rx="5" fill="#FFF3E0" stroke="#E65100" stroke-width="1"/><text x="200" y="202" text-anchor="middle" fill="#E65100" font-size="10">?</text><defs><marker id="arrow9c" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1565C0"/></marker></defs></svg>',
     options: [
       "Use a single Deployment and perform a rolling update with <code>maxSurge: 100%</code> to replace all Pods at once",
-      "Create a <code>v2</code> Deployment with <code>version: v2</code> label, verify health, then switch the Service selector",
+      "Create a <code>v2</code> Deployment with a <code>version: v2</code> label, verify its health, then switch the Service selector",
       "Use a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured time schedule",
-      "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect all incoming traffic"
+      "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect incoming traffic"
     ],
     answer: 1,
     explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.\n\nWhy other options are wrong:\n- A: maxSurge: 100% creates all new Pods at once, but old Pods are still removed progressively and there is no explicit traffic-switch step, so it is not blue-green\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -586,7 +586,7 @@ var questions = [
     options: [
       "Neither backend receives the request because <code>/api/v1/users</code> is not an exact match for <code>/api</code>",
       "The Ingress controller returns a 404 because the path <code>/api/v1/users</code> is not explicitly defined",
-      "The request routes to <code>api-service:8080</code> because <code>/api/v1/users</code> matches the <code>/api</code> prefix",
+      "The request is routed to <code>api-service:8080</code> because <code>/api/v1/users</code> starts with the <code>/api</code> prefix",
       "The request is load-balanced equally between both backends based on the round-robin algorithm"
     ],
     answer: 2,
@@ -666,8 +666,8 @@ var questions = [
     options: [
       "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke all network access",
       "A NetworkPolicy selecting all Pods with <code>policyTypes: [\"Egress\"]</code> and no egress rules defined",
-      "A <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> in that namespace",
-      "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace metadata"
+      "A <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> applied in that namespace",
+      "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace metadata labels"
     ],
     answer: 2,
     explanation: "A NetworkPolicy with `podSelector: {}` (matching all Pods) and `policyTypes: [\"Ingress\"]` creates a default-deny ingress rule for the entire namespace. Either omitting the `ingress` field entirely or setting it to an empty array (`ingress: []`) achieves the same default-deny effect — both result in no ingress being allowed. This blocks all incoming traffic to Pods in that namespace unless other NetworkPolicies explicitly allow specific traffic. Annotations alone have no effect on network isolation.\n\nWhy other options are wrong:\n- A: Deleting the default ServiceAccount does not affect network access; ServiceAccounts control API auth\n- B: A policy with policyTypes Egress and no egress rules denies egress, not ingress traffic\n- D: Annotations on namespaces do not enforce network isolation; only NetworkPolicy objects do\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-ingress-traffic",
@@ -744,7 +744,7 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> round-robin routing rules",
+      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin) routing rules",
       "Only SRV records are created for headless Services; A records require extra DNS configuration in CoreDNS",
       "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the Kubernetes DNS system entirely",
       "Individual A records for each Pod (by ordinal) plus a Service-level A record that returns all Pod IPs in the response"
@@ -795,7 +795,7 @@ var questions = [
       "Grafana Mimir, which converts all telemetry data into a single unified format before visualization",
       "Grafana Alertmanager integration, which unifies data from all sources into a single consolidated alert",
       "Grafana data sources, which allow querying multiple backends (Prometheus, Elasticsearch) in one dashboard",
-      "Grafana Agent, which replaces both Prometheus and Elasticsearch with a unified collection pipeline"
+      "Grafana Agent, which replaces both backends (Prometheus and Elasticsearch) with a unified pipeline"
     ],
     answer: 2,
     explanation: "Grafana supports multiple data sources, allowing a single dashboard to include panels that query different backends. You can have one panel querying Prometheus for metrics and another querying Elasticsearch for logs. Each panel specifies its data source, and Grafana handles the different query languages (PromQL, Lucene, etc.) natively.\n\nWhy other options are wrong:\n- A: Grafana Mimir is a long-term metrics storage backend, not a unified data format converter\n- B: Alertmanager integration handles alerts, not data unification across different backend sources\n- D: Grafana Agent collects telemetry but does not replace Prometheus or Elasticsearch as backends\n\nReference: https://grafana.com/docs/grafana/latest/datasources/",
@@ -858,7 +858,7 @@ var questions = [
     options: [
       "The Jaeger alerting system, which sends notifications to on-call engineers when latency exceeds a threshold",
       "The trace timeline view (Gantt chart), which shows span duration and nesting across services per request",
-      "The Jaeger metric aggregator, which computes average and percentile latency breakdowns for each service",
+      "The Jaeger metric aggregator, which computes latency breakdowns (average and percentile) for each service",
       "The Jaeger log correlator, which links structured log entries to specific trace spans for investigation"
     ],
     answer: 1,
@@ -891,7 +891,7 @@ var questions = [
       "Existing running Pods are immediately terminated because the scheduler manages their full lifecycle",
       "The <code>kube-apiserver</code> stops accepting new Pod creation requests until the scheduler recovers fully",
       "All Services lose their ClusterIP addresses because the scheduler is responsible for allocating them",
-      "New Pods remain <code>Pending</code> with no node assignment, but existing running Pods are unaffected"
+      "New Pods remain <code>Pending</code> with no node assignment, but existing running Pods continue unaffected"
     ],
     answer: 3,
     explanation: "The kube-scheduler is responsible only for assigning Pods to nodes. If it is unavailable, newly created Pods that do not specify a `nodeName` remain in `Pending` state. Existing Pods that are already running on nodes are managed by the kubelet and are not affected. The API server continues to accept requests normally.\n\nWhy other options are wrong:\n- A: Existing running Pods are managed by the kubelet and are not terminated when the scheduler is down\n- B: The API server continues accepting requests normally; scheduler unavailability does not block the API\n- C: ClusterIP addresses are allocated by the API server, not the scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
@@ -904,7 +904,7 @@ var questions = [
     text: "A platform team practices infrastructure as code (IaC) and stores all Kubernetes manifests in a Git repository. They want to ensure that any manual change made to the cluster (e.g., via <code>kubectl edit</code>) is detected and reverted automatically. Which approach achieves this?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="90" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="55" y="100" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Git Repo</text><rect x="155" y="70" width="90" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">???</text><rect x="300" y="70" width="90" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="345" y="100" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Cluster</text><line x1="100" y1="95" x2="153" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9d)"/><line x1="245" y1="85" x2="298" y2="85" stroke="#4CAF50" stroke-width="2" marker-end="url(#arrow9d)"/><line x1="298" y1="105" x2="245" y2="105" stroke="#F44336" stroke-width="2" marker-end="url(#arrow9e)"/><text x="270" y="75" fill="#4CAF50" font-size="9">?</text><text x="270" y="125" fill="#F44336" font-size="9">?</text><text x="200" y="160" text-anchor="middle" fill="#333" font-size="10" font-style="italic">How to detect and revert manual changes?</text><defs><marker id="arrow9d" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker><marker id="arrow9e" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F44336"/></marker></defs></svg>',
     options: [
-      "Use a CronJob that periodically runs <code>kubectl apply</code> against all manifests stored in the Git repository",
+      "Use a CronJob that periodically runs <code>kubectl apply</code> (or similar) against manifests in the Git repository",
       "Deploy a GitOps controller (Argo CD or Flux) with automated sync and self-healing to reconcile drift",
       "Configure RBAC to prevent all manual changes by removing edit permissions from every cluster user",
       "Set all Kubernetes resources to immutable using finalizers to block any modifications after creation"
@@ -1019,7 +1019,7 @@ var questions = [
       "Synchronous HTTP request-response between all services with retry logic built into each caller",
       "Event-driven architecture using a message broker (NATS, Kafka, or RabbitMQ) with publish-subscribe",
       "Shared database tables where each consumer service polls for new records on a scheduled interval",
-      "gRPC bidirectional streaming configured between each pair of producer and consumer services"
+      "gRPC bidirectional streaming (client and server) configured between each producer and consumer service"
     ],
     answer: 1,
     explanation: "The publish-subscribe pattern using a message broker decouples producers from consumers. A service publishes events to a topic, and multiple independent consumers subscribe to process those events asynchronously. This enables loose coupling, independent scaling, and fault isolation. NATS and Kafka are popular CNCF-adjacent choices for this pattern in cloud-native architectures.\n\nWhy other options are wrong:\n- A: Synchronous HTTP request-response creates tight coupling and does not support fan-out to multiple consumers\n- C: Shared database polling creates tight coupling, does not scale well, and introduces polling latency\n- D: gRPC bidirectional streaming requires point-to-point connections, not publish-subscribe fan-out\n\nReference: https://www.cncf.io/projects/nats/",
@@ -1096,7 +1096,7 @@ var questions = [
     text: "A team uses <code>kubectl create secret generic db-creds --from-literal=password=MyS3cret</code> to create a Secret. They later inspect the Secret with <code>kubectl get secret db-creds -o yaml</code> and see the value <code>TXlTM2NyZXQ=</code>. Is the password securely encrypted?",
     diagram: null,
     options: [
-      "Yes, Kubernetes automatically encrypts all Secret values using AES-256 before storing them in etcd",
+      "Yes, Kubernetes encrypts all Secret values using AES-256 (symmetric encryption) before storing them in etcd",
       "Yes, the Secret is encrypted using the cluster's built-in PKI infrastructure managed by the CA",
       "No, the value is only base64-encoded (not encrypted); encryption at rest must be configured separately",
       "No, the value is hashed with a one-way function; the original password cannot be recovered from it"
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A cluster administrator wants to understand the flow of a Pod creation request. They submit a Deployment manifest via <code>kubectl apply</code>. In which order do the control plane components process this request?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="110" height="35" rx="6" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="65" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold">kubectl apply</text><rect x="145" y="10" width="110" height="35" rx="6" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="200" y="32" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Component A</text><rect x="145" y="80" width="110" height="35" rx="6" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component B</text><rect x="280" y="10" width="110" height="35" rx="6" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="335" y="32" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component C</text><rect x="280" y="80" width="110" height="35" rx="6" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="335" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component D</text><rect x="145" y="155" width="110" height="35" rx="6" fill="#00695C" stroke="#004D40" stroke-width="2"/><text x="200" y="177" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component E</text><line x1="120" y1="93" x2="145" y2="93" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="45" x2="200" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="27" x2="280" y2="27" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="97" x2="280" y2="97" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="115" x2="200" y2="155" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="335" y1="45" x2="335" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><text x="200" y="145" text-anchor="middle" fill="#333" font-size="8" font-style="italic">order: ???</text></svg>',
     options: [
-      "kubectl sends the manifest to the scheduler, which validates it; the scheduler forwards it to the API server, and the API server persists it in etcd",
+      "kubectl sends the manifest to the scheduler, which validates it; the scheduler forwards it to the API server for persistence in etcd",
       "API server stores the Deployment in etcd; controllers create ReplicaSet and Pods; scheduler assigns nodes; kubelet starts containers",
       "The kubelet directly receives the manifest from kubectl, creates the Pods locally, starts containers, and reports status to the API server",
       "etcd receives the manifest first, triggers the controller manager to create Pods, which then notifies the API server of state changes"
@@ -1320,7 +1320,7 @@ var questions = [
     text: "A cluster administrator needs to restrict which container registries can be used for pulling images in the production namespace. They want to enforce that only images from <code>registry.company.com</code> are allowed. Which approach is most effective?",
     diagram: null,
     options: [
-      "Configure <code>imagePullPolicy: Never</code> on all Pods to completely prevent pulling from any external registries",
+      "Configure <code>imagePullPolicy: Never</code> on all Pods to prevent pulling from external registries (any origin)",
       "Set a NetworkPolicy that blocks outbound traffic to all registries except <code>registry.company.com</code>",
       "Create a ResourceQuota that limits the number of images pulled from external container registries",
       "Use an admission controller (OPA Gatekeeper or Kyverno) to validate the image repository on Pod creation"
@@ -1402,7 +1402,7 @@ var questions = [
     options: [
       "<code>redis-0</code> is updated at the same time as <code>redis-1</code> since both are in the same update batch",
       "<code>redis-0</code> is terminated preemptively to free resources for <code>redis-1</code> to complete its update",
-      "<code>redis-0</code> is updated regardless of <code>redis-1</code> status because ordering is not enforced",
+      "<code>redis-0</code> is updated regardless of <code>redis-1</code> status because strict ordering is not enforced",
       "<code>redis-0</code> is not updated because the controller processes Pods in reverse ordinal and waits"
     ],
     answer: 3,
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "The Pod's containers use gVisor (runsc) for user-space kernel sandboxing instead of the default runc runtime",
-      "The Pod is scheduled only on nodes that have gVisor hardware acceleration capabilities and kernel support",
+      "The Pod is scheduled only on nodes that have gVisor hardware acceleration (KVM) and kernel support",
       "The Pod uses gVisor's built-in container image format instead of OCI-compliant images for its containers",
       "The kubelet downloads and installs the gVisor runtime on the node automatically before starting the Pod"
     ],
@@ -1531,7 +1531,7 @@ var questions = [
       "The Pod receives a dedicated ClusterIP that routes traffic on port 80 through the kube-proxy rules",
       "The Pod creates a virtual network interface on the host that NATs all traffic to port 80 via iptables",
       "The Pod shares the host network namespace, binding to the node's IP on port 80, one Pod per node",
-      "The Pod communicates primarily with other hostNetwork Pods and has limited access to cluster-networked Pods"
+      "The Pod communicates only with other hostNetwork Pods and cannot reach cluster-networked Pods"
     ],
     answer: 2,
     explanation: "When `hostNetwork: true` is set, the Pod uses the node's network namespace directly instead of getting its own. The container binds to the node's IP address on port 80, making it accessible via `<node-ip>:80`. This also means only one Pod with this configuration can bind to port 80 per node, since the port is occupied at the host level.\n\nWhy other options are wrong:\n- A: hostNetwork Pods do not get a ClusterIP; they use the node's IP address directly\n- B: No virtual interface or NAT is created; the Pod directly uses the host network namespace\n- D: hostNetwork Pods can communicate with all Pods; they are not restricted to other hostNetwork Pods\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
@@ -1577,8 +1577,8 @@ var questions = [
     diagram: null,
     options: [
       "All three probes run simultaneously from the moment the container starts, checking the same endpoint concurrently",
-      "The startup probe completely replaces both probes (liveness and readiness) for the entire lifetime of the container",
-      "The startup probe runs first (up to 300s) and liveness and readiness probes begin only after it succeeds",
+      "The startup probe replaces both probes (liveness and readiness) for the entire lifetime of the container",
+      "The startup probe runs first (up to 300s) and both liveness and readiness probes begin only after it succeeds",
       "The startup probe only affects the readiness probe; the liveness probe runs independently from container start"
     ],
     answer: 2,

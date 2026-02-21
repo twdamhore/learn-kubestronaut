@@ -222,3 +222,55 @@
 
 ### s08-q100 (length-balance/giveaway)
 - **Option C:** Extended from 111 to 123 chars by adding "like GitHub". **Option D (correct):** Trimmed from 118 to 115 chars by replacing "controller-based" with "modular" and removing semicolon (replaced with ", while"). Correct answer no longer longest; ratio improved from 1.081 to 1.079.
+
+---
+
+# Round 41 Review - Set 08
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 14 across 14 questions
+
+## Changes
+
+### s08-q005 (length-balance)
+- **Option D:** Extended from 86 to 97 chars by changing "services are packaged together to reduce network overhead cost" to "all services are packaged together in one unit to reduce network overhead". Ratio improved from 1.116 to 1.043.
+
+### s08-q006 (length-balance)
+- **Option A:** Trimmed from 118 to 112 chars by removing "proxy" at end. **Option B:** Extended from 105 to 113 chars by adding "cluster" before "Pods". Ratio improved from 1.124 to 1.045.
+
+### s08-q012 (giveaway)
+- **Option A:** Added "(e.g., Kong or Ambassador)" to eliminate unique e.g./parenthetical pattern that was only present in correct option C. Structural giveaway removed.
+
+### s08-q020 (giveaway)
+- **Option B:** Added "(CPU, memory)" parenthetical to eliminate unique parenthetical enumeration pattern that was only present in correct option D "(ReplicaSet, Deployment, Node controllers)". Structural giveaway removed.
+
+### s08-q026 (length-balance)
+- **Option B:** Extended from 85 to 98 chars by adding "the API path" phrasing. **Option C:** Extended from 88 to 101 chars by adding "non-standard" before "API path". Ratio improved from 1.118 to 1.088.
+
+### s08-q033 (giveaway)
+- **Option C:** Changed to include "(e.g., via iptables or IPVS)" to eliminate unique e.g./parenthetical pattern that was only present in correct option B. Structural giveaway removed.
+
+### s08-q036 (giveaway)
+- **Option A:** Added backticks to `Workflow` and `WorkflowTemplate` (now 2 backtick items). **Option D:** Changed to reference `GitRepository` and `Kustomization` (now 2 backtick items). Reduces contrast with correct C which has 3 backtick items. Excess backtick density giveaway mitigated.
+
+### s08-q040 (giveaway)
+- **Option A:** Changed to include `preferredDuringSchedulingIgnoredDuringExecution` backtick field (now 2 backtick items). **Option C:** Changed to include `requiredDuringSchedulingIgnoredDuringExecution` backtick field (now 2 backtick items). Reduces excess backtick density contrast with correct B (4 items vs previous max of 1, now max of 2).
+
+### s08-q045 (length-balance)
+- **Option A:** Extended from 117 to 128 chars by adding "production". **Option B:** Trimmed and reworded from 129 to 120 chars. **Option D:** Trimmed from 130 to 116 chars by removing "automatically". Ratio improved from 1.111 to 1.103; correct C no longer near longest.
+
+### s08-q056 (length-balance/giveaway)
+- **Option A:** Extended from 111 to 119 chars by adding "cluster" at end. **Option B:** Extended from 110 to 116 chars by adding "logic" at end. Correct D (119) no longer sole longest; ratio improved from 1.082 to 1.044.
+
+### s08-q058 (length-balance)
+- **Option C:** Extended from 105 to 110 chars by adding "full" before "Prometheus query compatibility". Ratio improved from 1.124 to 1.073.
+
+### s08-q085 (giveaway)
+- **Option B:** Added "(e.g., HikariCP)" to eliminate unique e.g. pattern that was only present in correct option A. Structural giveaway removed.
+
+### s08-q088 (length-balance)
+- **Option A:** Extended from 102 to 108 chars by adding "scope". **Option B:** Trimmed from 111 to 107 chars by removing "all". **Option D:** Extended from 99 to 104 chars by changing "any writes to the root filesystem path" to "any write operations to the root filesystem". Ratio improved from 1.121 to 1.038.
+
+### s08-q094 (length-balance)
+- **Option C:** Extended from 99 to 104 chars by adding "path" at end. Ratio improved from 1.111 to 1.068.
