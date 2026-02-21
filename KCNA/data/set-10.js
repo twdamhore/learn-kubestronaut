@@ -25,8 +25,8 @@ var questions = [
     diagram: null,
     options: [
       "A. The Deployment is created but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
-      "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of `RuntimeDefault` or `Localhost`",
-      "C. The Deployment object is created, but the `ReplicaSet` fails to create pods because of the missing seccomp profile field",
+      "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of RuntimeDefault or Localhost",
+      "C. The Deployment object is created, but the `ReplicaSet` fails to create pods because of the missing seccomp profile field value",
       "D. The pods are created with a default `RuntimeDefault` seccomp profile automatically injected by the Pod Security Admission controller"
     ],
     answer: 2,
@@ -57,9 +57,9 @@ var questions = [
     diagram: null,
     options: [
       "A. 3 pods on `us-east-1a` and 3 on `us-east-1b`; the topology constraint is satisfied across the two available zones",
-      "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate the skew",
-      "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation entirely",
-      "D. 5 pods run across three zones and 1 remains Pending because `maxSkew: 1` includes the unavailable zone in its skew calculation"
+      "B. 2 pods on us-east-1a, 2 on us-east-1b, and 2 are Pending because scheduling on us-east-1c would violate skew",
+      "C. 3 pods on each available zone; the NotReady node us-east-1c is excluded from the topology skew calculation",
+      "D. 5 pods run across three zones and 1 remains Pending because `maxSkew: 1` includes the unavailable zone in skew"
     ],
     answer: 3,
     explanation: "With `nodeTaintsPolicy: Ignore`, the scheduler includes tainted (NotReady) nodes in the topology spread calculation even though pods cannot be scheduled there. The original 3 replicas were distributed 1 per zone. When us-east-1c goes NotReady, its pod still counts in the skew calculation. With `maxSkew: 1` and `DoNotSchedule`, the scheduler can place pods on zones a and b until each has 2 pods (skew of 2\u22121=1, within maxSkew). This yields 2+2+1=5 running pods. The 6th pod cannot be scheduled on any healthy zone without exceeding maxSkew (that would create a skew of 3\u22121=2), so 1 pod remains Pending. Note: since K8s 1.27, the default `nodeTaintsPolicy` is `Honor`, which would exclude the NotReady zone and allow 3+3 distribution across the two healthy zones.\n\nWhy other options are wrong:\n- A: With nodeTaintsPolicy: Ignore, the NotReady zone is included in skew calculation, preventing a 3-3 split; maxSkew:1 would be violated\n- B: Two pods are not Pending; the scheduler can still place pods on healthy zones up to the skew limit (2 per zone)\n- C: nodeTaintsPolicy: Ignore means the NotReady node is NOT excluded from calculation; it is still counted in the topology domain\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#node-taints-policy",
@@ -184,9 +184,9 @@ var questions = [
     text: "A platform team implements the Twelve-Factor App methodology for their Kubernetes-based microservices. They store database credentials in a ConfigMap referenced as environment variables. During a security audit, this is flagged. Which combination of Twelve-Factor principles and Kubernetes best practices should they apply?",
     diagram: null,
     options: [
-      "A. Move credentials to a Secret object with `type: Opaque`, mount as a volume, and enable encryption at rest in etcd",
+      "A. Move credentials to a Secret object with `type: Opaque`, mount as a volume, and enable etcd encryption at rest for secrets",
       "B. Store credentials in the container image's environment file following `Factor III` (Config) since it separates config from code",
-      "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory loaded at startup from a vault",
+      "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory loaded at startup from vault",
       "D. Apply Factor IV (Backing Services) by hardcoding the database URL as an attached resource reference in the Deployment spec"
     ],
     answer: 0,
@@ -200,9 +200,9 @@ var questions = [
     text: "A DaemonSet runs a log collector on every node. The pod template includes `tolerations` for `node-role.kubernetes.io/control-plane:NoSchedule`. After a cluster upgrade, the DaemonSet pods on control-plane nodes are evicted and not rescheduled. Investigation reveals the control-plane nodes now have a custom taint `maintenance=upgrade:NoExecute` applied by the upgrade tooling. What should be added to the DaemonSet?",
     diagram: null,
     options: [
-      "A. A toleration for `maintenance=upgrade` with `effect: NoExecute` and an appropriate `tolerationSeconds` value",
+      "A. A toleration for `maintenance=upgrade` with `effect: NoExecute` and an appropriate `tolerationSeconds` delay value",
       "B. A `nodeSelector` targeting control-plane nodes combined with a `PodDisruptionBudget` to prevent eviction during upgrades",
-      "C. A toleration for key `maintenance` with `effect: NoExecute` and `operator: Exists` to tolerate indefinitely",
+      "C. A toleration for key `maintenance` with `effect: NoExecute` and `operator: Exists` to tolerate the taint indefinitely",
       "D. An annotation `scheduler.alpha.kubernetes.io/tolerations` with a wildcard to tolerate all taints on control-plane nodes"
     ],
     answer: 2,
@@ -264,10 +264,10 @@ var questions = [
     text: "A Kubernetes node uses containerd as its container runtime with a default `RuntimeClass`. The security team requires that certain sensitive workloads run in gVisor sandboxes. A pod is created with `runtimeClassName: gvisor`, but it fails with `RuntimeClass \"gvisor\" not found`. What must be configured?",
     diagram: null,
     options: [
-      "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` with `handler: runsc`",
-      "B. Create a `RuntimeClass` object with `handler: gvisor` and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable the sandbox runtime",
-      "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd runtime handler on detection",
-      "D. Add gVisor as a plugin in the kubelet configuration file and restart the kubelet service; the `RuntimeClass` is auto-generated from plugin registration"
+      "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` resource with `handler: runsc`",
+      "B. Create a `RuntimeClass` object with `handler: gvisor` and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable sandbox mode",
+      "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd handler on detection",
+      "D. Add gVisor as a plugin in the kubelet configuration file and restart kubelet; the `RuntimeClass` is auto-generated from plugin registration"
     ],
     answer: 0,
     explanation: "Using gVisor with Kubernetes requires three steps: (1) install the `runsc` binary on each node that will run sandboxed workloads, (2) configure containerd with a runtime handler that uses `runsc` (typically named `runsc` in the containerd config), and (3) create a cluster-level `RuntimeClass` resource whose `handler` field matches the containerd handler name. The `RuntimeClass` object is a cluster-scoped resource that maps the `runtimeClassName` in a pod spec to a specific CRI handler on the node.\n\nWhy other options are wrong:\n- D: gVisor is not a kubelet plugin; it is a container runtime shim that must be configured in containerd and mapped via a RuntimeClass object\n- B: RuntimeClass does not require a node annotation; it maps a handler name to a CRI runtime handler configured in the container runtime\n- C: There is no gVisor admission webhook that auto-creates RuntimeClass resources; both containerd config and RuntimeClass must be created manually\n\nReference: https://kubernetes.io/docs/concepts/containers/runtime-class/",
@@ -312,10 +312,10 @@ var questions = [
     text: "A cluster uses CoreDNS for service discovery. A pod in namespace `team-a` tries to resolve `api-service.team-b.svc.cluster.local` but resolving the FQDN is significantly slower than expected, with DNS debug logs showing unnecessary search-domain lookups. The service exists and has endpoints. Running `nslookup api-service.team-b` from the same pod succeeds quickly. What is the most likely cause of the slow FQDN resolution?",
     diagram: null,
     options: [
-      "A. The pod's `ndots:5` setting causes search-domain expansion for the FQDN because the name has fewer than 5 dots",
-      "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from the `team-a` namespace pods",
-      "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not include `team-b` in its allowed namespace zone list",
-      "D. The FQDN query is forwarded to the upstream DNS resolver instead of CoreDNS because it matches the forward plugin's catch-all upstream rule"
+      "A. The pod's `ndots:5` setting causes search-domain expansion for the FQDN because the name contains fewer than 5 dots total",
+      "B. CoreDNS has a network policy blocking DNS queries that include the full `svc.cluster.local` suffix from `team-a` namespace pods",
+      "C. The CoreDNS `Corefile` has a custom zone override for `cluster.local` that does not list `team-b` in its allowed namespace zones",
+      "D. The FQDN query is forwarded to the upstream resolver instead of CoreDNS because it matches the forward plugin catch-all rule"
     ],
     answer: 0,
     explanation: "In Kubernetes, the default `ndots` value is 5. The resolver counts dots in the queried name: if fewer than 5, it first tries appending each search domain before falling back to the literal name. The short name `api-service.team-b` has 1 dot (< 5), so search domains are appended, and one combination — `api-service.team-b.svc.cluster.local` — resolves quickly. However, the seemingly-qualified name `api-service.team-b.svc.cluster.local` has only 4 dots (still < 5), so the resolver first tries search-domain expansions like `api-service.team-b.svc.cluster.local.team-a.svc.cluster.local`, each returning NXDOMAIN, before eventually falling back to the literal name which does resolve. This causes significantly slower resolution due to multiple unnecessary DNS round-trips. Appending a trailing dot (`api-service.team-b.svc.cluster.local.`) marks the name as an absolute FQDN, bypassing all search-domain expansion regardless of `ndots` and resolving immediately.\n\nWhy other options are wrong:\n- B: CoreDNS network policies would block all queries equally, not just those with the full suffix; the issue is DNS search domain expansion\n- C: CoreDNS does not have per-namespace zone allowlists; the cluster.local zone serves all namespaces uniformly\n- D: The FQDN query is not forwarded upstream; it eventually resolves locally after unnecessary search domain attempts\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#ndots",
@@ -344,10 +344,10 @@ var questions = [
     text: "An application pod requires access to the Kubernetes API to list pods in its own namespace. The pod uses a ServiceAccount with a bound Role and RoleBinding. The security team mandates that the automatically mounted service account token must have a 1-hour expiration and be bound to the pod's identity. Which approach satisfies these requirements?",
     diagram: null,
     options: [
-      "A. Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration and the pod's API audience",
-      "B. Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read it from the app container",
+      "A. Disable automount and use a projected volume with `serviceAccountToken` source specifying 3600-second expiration, API audience, and pod binding",
+      "B. Use a TokenRequest API call from an init container to generate a 1-hour token, store it in a shared `emptyDir` volume, and read from the app container",
       "C. Configure the ServiceAccount annotation `kubernetes.io/enforce-mountable-secrets` and set the token `exp` claim via a custom admission webhook",
-      "D. Enable the `BoundServiceAccountTokenVolume` feature gate (disabled by default) and set `--service-account-max-token-expiration` to 1 hour on the API server"
+      "D. Enable the `BoundServiceAccountTokenVolume` feature gate (disabled by default) and set `--service-account-max-token-expiration` to 1h on the API server"
     ],
     answer: 0,
     explanation: "Projected volumes with `serviceAccountToken` sources allow fine-grained control over token properties including `expirationSeconds` and `audience`. By setting `automountServiceAccountToken: false` and adding a projected volume, you get a token that is bound to the specific pod (included in the token claims), has a defined expiration (3600 seconds = 1 hour), and targets a specific audience. The `BoundServiceAccountTokenVolume` feature has been GA since Kubernetes 1.22 and is enabled by default, making option D incorrect.\n\nWhy other options are wrong:\n- B: Using an init container with TokenRequest and emptyDir is functional but less clean; it requires custom logic and the token is not auto-rotated by the kubelet\n- C: The annotation kubernetes.io/enforce-mountable-secrets does not control token expiration; it restricts which secrets a ServiceAccount can mount\n- D: BoundServiceAccountTokenVolume has been GA since K8s 1.22 and is enabled by default; the option describes it as disabled by default, which is incorrect\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#serviceaccount-token-volume-projection",
@@ -360,10 +360,10 @@ var questions = [
     text: "A node has the following allocatable resources: 8 CPU, 32Gi memory. Currently running pods consume 6 CPU (requests) and 24Gi memory (requests). A new pod requesting 3 CPU and 6Gi memory has a `PriorityClass` with `value: 1000000` (the highest in the cluster). Existing pods have priority values ranging from 100 to 999999. What does the scheduler do?",
     diagram: null,
     options: [
-      "A. The scheduler preempts the lowest-priority pod(s) until enough resources are freed for the new pod, with best-effort respect for PodDisruptionBudgets",
-      "B. The pod remains Pending because preemption only occurs when no node in the cluster can satisfy the request, even with evictions",
-      "C. The scheduler preempts pods starting from the lowest priority, ignoring PodDisruptionBudgets, until at least 3 CPU and 6Gi are available",
-      "D. The scheduler places the pod on the node by overcommitting resources since high-priority pods are exempt from resource request enforcement"
+      "A. The scheduler preempts the lowest-priority pod(s) until enough resources are freed, with best-effort PDB enforcement",
+      "B. The pod remains Pending because preemption only occurs when no node in the cluster can satisfy the request with evictions",
+      "C. The scheduler preempts pods starting from lowest priority, ignoring PDBs entirely, until 3 CPU and 6Gi become available",
+      "D. The scheduler places the pod by overcommitting resources since high-priority pods are exempt from resource request limits"
     ],
     answer: 0,
     explanation: "When a pod cannot be scheduled on any node, the scheduler evaluates preemption. It identifies the lowest-priority pods on candidate nodes that, if removed, would free sufficient resources for the new high-priority pod. The scheduler applies best-effort PDB enforcement during preemption — it prefers victims whose PDBs would not be violated, but will still preempt if no non-violating option exists. In this scenario, the scheduler would preempt enough low-priority pods to free at least 3 CPU and 6Gi, as long as PDBs allow it.\n\nWhy other options are wrong:\n- B: Preemption does occur on a per-node basis; the scheduler evaluates nodes individually, not globally\n- C: Preemption does consider PDBs (best effort), but does not ignore them; the scheduler tries to avoid PDB violations when possible\n- D: High-priority pods are not exempt from resource requests; preemption frees resources by evicting lower-priority pods, not by overcommitting\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",
@@ -552,10 +552,10 @@ var questions = [
     text: "A pod spec includes both a `nodeSelector: {gpu: nvidia}` and a `nodeAffinity` with a `requiredDuringSchedulingIgnoredDuringExecution` rule matching nodes with label `zone: us-west-2a`. Node A has labels `gpu: nvidia` and `zone: us-west-2b`. Node B has labels `gpu: nvidia` and `zone: us-west-2a`. Node C has label `zone: us-west-2a` but no `gpu` label. Where is the pod scheduled?",
     diagram: null,
     options: [
-      "A. Node A, because `nodeSelector` takes precedence over `nodeAffinity` and Node A satisfies the GPU requirement",
-      "B. Node B, because it is the only node satisfying both the `nodeSelector` AND the `nodeAffinity` rule simultaneously",
-      "C. Node C, because `nodeAffinity` with `required` rules overrides `nodeSelector` when both are specified",
-      "D. The pod remains Pending because nodeSelector is deprecated when nodeAffinity is present, causing the scheduler to skip it"
+      "A. Node A, because `nodeSelector` takes precedence over `nodeAffinity` and Node A fully satisfies the GPU label requirement",
+      "B. Node B, because it is the only node satisfying both the `nodeSelector` AND the `nodeAffinity` required rule together",
+      "C. Node C, because `nodeAffinity` with `required` rules overrides `nodeSelector` when both constraints are specified",
+      "D. The pod remains Pending because nodeSelector is deprecated when nodeAffinity is present, causing the scheduler to skip"
     ],
     answer: 1,
     explanation: "When both `nodeSelector` and `nodeAffinity` are specified, a node must satisfy ALL constraints. The `nodeSelector` requires `gpu: nvidia`, and the `nodeAffinity` requires `zone: us-west-2a`. Only Node B has both labels, making it the sole valid scheduling target. Node A fails the zone affinity, Node C fails the GPU selector. Both mechanisms are valid when used together and form an AND relationship — the pod is only scheduled on nodes matching all criteria.\n\nWhy other options are wrong:\n- A: nodeSelector does not take precedence over nodeAffinity; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not override nodeSelector; a node must satisfy both simultaneously\n- D: nodeSelector is not deprecated when nodeAffinity is present; both can be used together and both constraints are enforced\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -584,10 +584,10 @@ var questions = [
     text: "A Job with `parallelism: 4`, `completions: 10`, and `backoffLimit: 6` is running. Three pods have completed successfully. Two currently running pods fail simultaneously. How does the Job controller respond?",
     diagram: null,
     options: [
-      "A. The controller creates 2 replacement pods immediately without delay, maintaining parallelism of 4, incrementing the failure count to 2 of 6",
-      "B. The controller waits for all running pods to complete before creating new pods, as simultaneous failures trigger a serial execution mode",
-      "C. The controller creates only 1 replacement pod because the combined running + completed count must not exceed `completions`",
-      "D. The controller creates 2 replacement pods with exponential backoff delay, incrementing the total failure count to 2 of 6"
+      "A. The controller creates 2 replacement pods immediately without delay, maintaining parallelism at 4 and incrementing failures to 2 of 6",
+      "B. The controller waits for all running pods to finish before creating replacements, as simultaneous failures trigger serial execution",
+      "C. The controller creates only 1 replacement pod because the combined running plus completed count must not exceed `completions`",
+      "D. The controller creates 2 replacement pods with exponential backoff delay, incrementing the total failure count to 2 out of 6"
     ],
     answer: 3,
     explanation: "When pods fail, the Job controller tracks the total number of failures against `backoffLimit`. With 3 completions and 4 running pods (full parallelism), 2 of the running pods fail simultaneously. This leaves 3 completed, 2 still running, and 2 failed (total failure count now 2 of 6 limit). The controller creates 2 replacement pods with exponential backoff delay to restore parallelism to 4, since 7 more completions are still needed. The backoff starts at 10 seconds and doubles up to 6 minutes.\n\nWhy other options are wrong:\n- A: The controller does not create replacements immediately without backoff; exponential backoff delay is applied to failed pod replacements\n- B: The controller does not switch to serial execution mode on simultaneous failures; it continues managing parallelism normally\n- C: The constraint is that running + pending should not exceed parallelism, not that running + completed should not exceed completions; replacements restore parallelism\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#handling-pod-and-container-failures",
@@ -680,10 +680,10 @@ var questions = [
     text: "A cluster uses kube-proxy in IPVS mode. A Service with `sessionAffinity: None` has 3 backend pods. The IPVS scheduler is set to `rr` (round-robin). One pod consistently handles 70% of the traffic instead of the expected 33%. Network captures show the traffic comes from a small number of source IPs behind a corporate NAT gateway. What explains this distribution?",
     diagram: null,
     options: [
-      "A. IPVS round-robin distributes per-connection; the NAT gateway's persistent connections concentrate traffic on a subset of pods",
-      "B. IPVS in `rr` mode has a warmup period that favors the first registered backend endpoint until all backends receive at least one initial connection",
-      "C. The overloaded pod has the lowest IP address and IPVS round-robin starts from the lowest IP for each new connection cycle",
-      "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for same source IPs"
+      "A. IPVS round-robin distributes per-connection; the NAT gateway's persistent connections concentrate traffic on a subset of backend pods",
+      "B. IPVS in `rr` mode has a warmup period favoring the first registered backend until all backends receive at least one connection",
+      "C. The overloaded pod has the lowest IP address and IPVS round-robin starts from the lowest IP on each new connection cycle",
+      "D. kube-proxy IPVS uses consistent hashing internally even with `rr` configured, causing sticky routing for same-source IPs"
     ],
     answer: 0,
     explanation: "IPVS round-robin distributes connections sequentially across backends. However, the distribution is per-connection, not per-request. When clients behind a NAT gateway use HTTP/1.1 keep-alive or HTTP/2 with connection pooling, a small number of long-lived connections carry many requests. If these connections happen to land on the same backend (which is likely with few connections from few source IPs), that backend handles a disproportionate share of traffic. The solution is to use `lc` (least-connection) scheduler or application-level load balancing.\n\nWhy other options are wrong:\n- B: IPVS round-robin does not have a warmup period that favors the first backend; it distributes connections sequentially from the start\n- C: IPVS round-robin does not start from the lowest IP each cycle; it maintains a circular pointer across all connections\n- D: kube-proxy does not use consistent hashing internally when rr is configured; IPVS strictly follows the configured scheduling algorithm\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity",
@@ -888,10 +888,10 @@ var questions = [
     text: "A namespace has two ResourceQuotas:\n- `quota-compute`: `requests.cpu: 4, limits.cpu: 8`\n- `quota-objects`: `count/deployments.apps: 10, count/services: 5`\n\nWhen a new Deployment is created, which quotas must have available capacity?",
     diagram: null,
     options: [
-      "A. Both quotas reject the Deployment immediately because it references resources tracked by quota-compute",
-      "B. Both quotas are checked simultaneously — `quota-objects` for Deployment count and `quota-compute` for the resulting pods",
+      "A. Both quotas reject the Deployment immediately because it references resources tracked by the quota-compute definition",
+      "B. Both quotas are checked simultaneously — `quota-objects` for Deployment count and `quota-compute` for resulting pods",
       "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
-      "D. Neither quota is checked at Deployment creation — all resource quota enforcement is deferred to pod scheduling time"
+      "D. Neither quota is checked at Deployment creation; all resource quota enforcement is deferred to pod scheduling time"
     ],
     answer: 2,
     explanation: "ResourceQuota enforcement happens at admission time for the specific resource being created. When a Deployment is created, only `quota-objects` is checked (for `count/deployments.apps`). The Deployment itself is not a compute resource — it is a controller object. The compute quota (`requests.cpu`, `limits.cpu`) is enforced later when the ReplicaSet controller creates pods. This two-phase enforcement means a Deployment can be created even if compute quota would prevent all its pods from running.\n\nWhy other options are wrong:\n- A: Both quotas do not reject the Deployment; quota-compute is only checked when pods are created, not when the Deployment object is created\n- B: Both quotas are not checked simultaneously at Deployment creation; only the object count quota applies to the Deployment resource\n- D: Quota enforcement is not deferred to scheduling; it happens at admission time when the specific resource (pod) is created\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#requests-vs-limits",
@@ -968,10 +968,10 @@ var questions = [
     text: "An Ingress resource specifies two rules:\n1. `host: api.example.com`, path `/v1` -> Service `api-v1:80`\n2. `host: api.example.com`, path `/v2` -> Service `api-v2:80`\n\nThe Ingress controller is nginx. A request to `https://api.example.com/v2/users` returns a 404 from the `api-v2` service. The same request directly to the `api-v2` Service ClusterIP works. What is the likely issue?",
     diagram: null,
     options: [
-      "A. The Ingress forwards the original path `/v2/users`, but `api-v2` expects requests at `/users` without the prefix",
-      "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` path rule",
-      "C. The nginx Ingress strips TLS before forwarding and the `api-v2` service rejects non-HTTPS backend connections",
-      "D. The Ingress controller merges overlapping path rules into a single backend, so /v2/users is routed to api-v1 instead of api-v2"
+      "A. The Ingress forwards the original path `/v2/users`, but `api-v2` expects requests at `/users` without the path prefix",
+      "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` rule",
+      "C. The nginx Ingress controller strips TLS before forwarding and `api-v2` rejects non-HTTPS backend connections",
+      "D. The Ingress controller merges overlapping path rules into a single backend, routing /v2/users to api-v1 instead"
     ],
     answer: 0,
     explanation: "By default, the nginx Ingress controller forwards the request with the original path intact. When `/v2/users` matches the `/v2` prefix rule, the full path `/v2/users` is sent to the `api-v2` backend. If the application only handles routes starting at `/` (e.g., `/users`), it returns 404 for `/v2/users`. The fix is to add the `nginx.ingress.kubernetes.io/rewrite-target` annotation to strip the path prefix. Option B is relevant but `pathType: Prefix` is typically already set for this use case.\n\nWhy other options are wrong:\n- B: pathType: Prefix is relevant but is typically already set; the core issue is that the full path including prefix is forwarded to the backend\n- C: TLS termination at the ingress is standard behavior; backends typically receive HTTP, and api-v2 would be configured to accept HTTP on its backend port\n- D: The ingress controller can route to multiple services under the same host with different path prefixes; this is a core ingress feature\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource",
@@ -1016,10 +1016,10 @@ var questions = [
     text: "A node runs containerd with the default `overlayfs` snapshotter. A pod with 3 containers sharing the same base image (`ubuntu:22.04`) is scheduled to this node. How does containerd handle the image layers for these 3 containers?",
     diagram: null,
     options: [
-      "A. Each container gets its own full copy of all image layers, consuming 3x the storage of a single container instance",
-      "B. Base image layers are shared read-only via overlayfs, with each container getting its own thin read-write upper layer",
-      "C. The first container pulls the image and subsequent containers use a copy-on-write clone of the first container's filesystem",
-      "D. Containerd deduplicates layers via content-addressable storage but overlayfs extracts separate snapshots per container for isolation"
+      "A. Each container gets its own full copy of all image layers, consuming 3x the storage of a single container",
+      "B. Base image layers are shared read-only via overlayfs, with each container getting its own thin writable upper layer",
+      "C. The first container pulls the image and subsequent containers use a copy-on-write clone of that container's filesystem",
+      "D. Containerd deduplicates layers via content-addressable storage but overlayfs creates separate snapshots per container"
     ],
     answer: 1,
     explanation: "Containerd with the overlayfs snapshotter leverages the union filesystem's layer-sharing capability. Image layers are stored once in the content store and shared as read-only lower layers across all containers using that image. Each container receives its own read-write upper directory where writes are captured. This means 3 containers sharing `ubuntu:22.04` consume the storage of one base image plus three thin upper layers. Option D describes the content store correctly but mischaracterizes the snapshot behavior — snapshots do share underlying layers.\n\nWhy other options are wrong:\n- A: Each container does NOT get a full copy; overlayfs shares read-only image layers across all containers using that image\n- C: The second container does not clone the first; all containers independently reference the same shared lower layers with their own upper layer\n- D: Content-addressable storage and snapshots do share underlying layers; the characterization that separate snapshots prevent sharing is incorrect\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
@@ -1144,10 +1144,10 @@ var questions = [
     text: "A cluster uses Kubernetes Service of type `NodePort` with `nodePort: 30080`. The cluster has 10 nodes but only 2 nodes run the backend pods. A client external to the cluster sends a request to Node 5 (which has no backend pod) at port 30080. What is the network path of the request?",
     diagram: null,
     options: [
-      "A. Node 5 drops the request because there is no local backend pod and the default `externalTrafficPolicy` is `Local`",
-      "B. Node 5's kube-proxy forwards the request to a node with a backend pod via DNAT, adding SNAT for the return path",
-      "C. Node 5 responds with a TCP RST because kube-proxy removes NodePort iptables rules for services without local endpoints on that node",
-      "D. The request is forwarded to the ClusterIP which distributes it to a backend pod without performing any NAT at all"
+      "A. Node 5 drops the request because there is no local backend pod and the default `externalTrafficPolicy` is set to `Local`",
+      "B. Node 5's kube-proxy forwards the request to a backend pod on another node via DNAT, adding SNAT for the return path",
+      "C. Node 5 responds with a TCP RST because kube-proxy removes NodePort iptables rules for services without local endpoints",
+      "D. The request is forwarded to the ClusterIP which distributes it to a backend pod without performing any NAT operations"
     ],
     answer: 1,
     explanation: "With the default `externalTrafficPolicy: Cluster`, kube-proxy on every node programs iptables/IPVS rules for all NodePort services. When a request arrives at Node 5 on port 30080, kube-proxy performs DNAT to translate the destination to a backend pod IP (on one of the 2 nodes with pods). It also performs SNAT (source NAT) to replace the client's source IP with Node 5's IP, ensuring the response returns through Node 5. This extra hop and SNAT is why `externalTrafficPolicy: Local` exists — to eliminate the hop and preserve the source IP, at the cost of only working on nodes with local pods.\n\nWhy other options are wrong:\n- A: The default externalTrafficPolicy is Cluster, not Local; with Cluster policy, all nodes handle NodePort traffic regardless of local pods\n- C: NodePort services listen on all nodes; kube-proxy programs rules on every node, not just nodes with backend pods\n- D: The request is not forwarded to ClusterIP without NAT; DNAT translates the destination to a pod IP, and SNAT is applied for the return path\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -1256,10 +1256,10 @@ var questions = [
     text: "A cluster administrator applies a `MutatingWebhookConfiguration` that injects a sidecar container into every pod. The webhook has `reinvocationPolicy: IfNeeded`. Another mutating webhook modifies the pod's annotations after the sidecar injection. Under what condition does the sidecar injection webhook run again?",
     diagram: null,
     options: [
-      "A. It runs again on every subsequent mutating webhook modification, regardless of whether the changes affect the sidecar logic at all",
-      "B. It runs again only if the annotation changes from the second webhook would cause the sidecar webhook to produce a different mutation",
+      "A. It runs again on every subsequent mutating webhook modification, regardless of whether those changes affect sidecar logic at all",
+      "B. It runs again only if the annotation changes from the second webhook would cause the sidecar webhook to produce a different result",
       "C. It runs again if any other webhook modifies the pod object after its initial invocation, allowing it to react to those changes",
-      "D. It runs at most once because `IfNeeded` reinvocation applies when the pod spec changes between admission requests, not within the same request"
+      "D. It runs at most once because `IfNeeded` reinvocation applies when the spec changes between admission requests, not within one"
     ],
     answer: 2,
     explanation: "The `reinvocationPolicy: IfNeeded` setting causes a mutating webhook to be re-invoked if any other mutating webhook modifies the object after the initial invocation. The API server tracks whether the object was modified by subsequent webhooks and, if so, re-invokes earlier webhooks that have `IfNeeded` policy. This ensures that the sidecar injection webhook can inspect the final state of the object after all other mutations. The webhook must be idempotent because it may be called multiple times. With the default `Never` policy, webhooks are invoked only once.\n\nWhy other options are wrong:\n- A: It does not run on every modification; it runs again only if a subsequent webhook modified the object after its initial invocation\n- B: The API server does not evaluate whether changes would produce different mutations; it re-invokes whenever the object was modified by another webhook\n- D: With reinvocationPolicy: IfNeeded, the webhook can be invoked more than once; only the default Never policy limits to one invocation\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#reinvocation-policy",
@@ -1320,10 +1320,10 @@ var questions = [
     text: "A cluster has the `PodTopologySpread` feature enabled. A Deployment with 6 replicas specifies:\n```yaml\ntopologySpreadConstraints:\n- maxSkew: 1\n  topologyKey: topology.kubernetes.io/zone\n  whenUnsatisfiable: ScheduleAnyway\n  labelSelector:\n    matchLabels:\n      app: web\n```\nThe cluster has 3 zones: zone-a (5 nodes), zone-b (2 nodes), zone-c (1 node). All nodes have available capacity. How does `ScheduleAnyway` affect pod distribution?",
     diagram: null,
     options: [
-      "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` still honors `maxSkew: 1` as a soft preference",
+      "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` still honors `maxSkew: 1` as a soft scoring preference",
       "B. Pods are distributed based solely on available node capacity: 4 in zone-a, 1 in zone-b, and 1 in zone-c nodes",
-      "C. Pods are distributed 3-2-1 across zones proportional to node count, identical to DoNotSchedule behavior when skew can be relaxed",
-      "D. Pods are distributed unevenly because `ScheduleAnyway` makes the constraint purely informational with no effect"
+      "C. Pods are distributed 3-2-1 across zones proportional to node count, identical to DoNotSchedule when skew is met",
+      "D. Pods are distributed unevenly because `ScheduleAnyway` makes the topology constraint purely informational only"
     ],
     answer: 0,
     explanation: "With `whenUnsatisfiable: ScheduleAnyway`, the topology spread constraint acts as a soft preference. The scheduler scores nodes and prefers those that minimize skew, but will not block scheduling if the skew cannot be achieved. Since 6 replicas across 3 zones allows a perfect 2-2-2 distribution with `maxSkew: 1`, the scheduler achieves it as the optimal placement. The difference from `DoNotSchedule` becomes apparent when perfect distribution is impossible — `ScheduleAnyway` would still schedule pods (with reduced score), while `DoNotSchedule` would leave them Pending.\n\nWhy other options are wrong:\n- B: ScheduleAnyway does not distribute solely by capacity; topology spread is still considered as a scoring preference\n- C: The result may appear identical to DoNotSchedule when perfect distribution is possible, but the mechanism differs; ScheduleAnyway uses scoring, not hard constraints\n- D: ScheduleAnyway is not purely informational; it actively influences scheduling through the scoring phase of the scheduler\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -1400,8 +1400,8 @@ var questions = [
     text: "A multi-cluster setup uses Cilium Cluster Mesh to connect two clusters. Cluster A has a Service `backend` in namespace `app`. Cluster B needs to access this service. Both clusters have their own `backend` Service in the `app` namespace with different backends. Both services are annotated with `io.cilium/global-service: \"true\"`. How does Cilium Cluster Mesh handle service discovery?",
     diagram: null,
     options: [
-      "A. Cluster B's local service takes precedence; Cluster Mesh prioritizes local endpoints over remote endpoints by default in merged services",
-      "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined endpoints",
+      "A. Cluster B's local service takes precedence; Cluster Mesh prioritizes local endpoints over remote ones by default",
+      "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined backend endpoints",
       "C. Service names conflict and Cluster Mesh rejects the configuration, requiring globally unique service names across clusters",
       "D. Each cluster maintains its own namespace; cross-cluster access requires explicit `<service>.<cluster>` DNS entry mappings"
     ],
@@ -1512,10 +1512,10 @@ var questions = [
     text: "A distributed system uses the Outbox Pattern to ensure reliable event publishing from a microservice that writes to a database. The service writes business data and an event record to the outbox table in the same database transaction. A separate process reads the outbox and publishes events to a message broker. What problem does this pattern solve compared to directly publishing events from the service?",
     diagram: null,
     options: [
-      "A. It eliminates the need for a message broker by using the database as the event store, reducing overall infrastructure complexity",
-      "B. It solves the dual-write problem — ensuring the database write and event publication both happen or neither does",
-      "C. It improves event publishing throughput by batching multiple events from the outbox table into a single broker publish call",
-      "D. It provides exactly-once delivery by using the database transaction ACID properties to guarantee each event publishes once"
+      "A. It eliminates the need for a message broker by using the database as the event store, reducing infrastructure complexity",
+      "B. It solves the dual-write problem by ensuring the database write and event publication both happen atomically or neither does",
+      "C. It improves event publishing throughput by batching multiple events from the outbox table into a single broker publish",
+      "D. It provides exactly-once delivery by using database transaction ACID properties to guarantee each event publishes once"
     ],
     answer: 1,
     explanation: "The Outbox Pattern addresses the dual-write problem in microservices. When a service needs to both update its database and publish an event, these are two separate operations that can fail independently. If the database write succeeds but the event publish fails (or vice versa), the system becomes inconsistent. By writing both the business data and the event to the same database in a single transaction, atomicity is guaranteed. The separate outbox reader then reliably publishes events, retrying on failure. This ensures at-least-once delivery (not exactly-once — option D), with consumer-side idempotency handling duplicates.\n\nWhy other options are wrong:\n- A: The outbox pattern still requires a message broker; the database is used as an intermediate reliable store, not as a replacement for the broker\n- C: Batching is a potential optimization but not the core problem the pattern solves; the fundamental issue is atomicity of write + publish\n- D: The outbox provides at-least-once delivery, not exactly-once; consumers must handle duplicates via idempotency\n\nReference: https://microservices.io/patterns/data/transactional-outbox.html",
@@ -1544,10 +1544,10 @@ var questions = [
     text: "A cluster administrator creates a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that allows ingress to pods labeled `app: db` only from pods labeled `app: api` on port 5432. Only an ingress rule is defined. After applying the policy, the `api` pods can connect to `db` pods. However, the `db` pods cannot initiate connections to any other pod. No other NetworkPolicies exist in the namespace. Why are outbound connections from `db` pods blocked?",
     diagram: "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='50' width='80' height='40' rx='5' fill='#4CAF50' stroke='#fff'/><text x='70' y='75' text-anchor='middle' fill='#fff' font-size='10'>api pods</text><rect x='170' y='50' width='80' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='210' y='75' text-anchor='middle' fill='#fff' font-size='10'>db pods</text><rect x='310' y='50' width='80' height='40' rx='5' fill='#666' stroke='#fff'/><text x='350' y='75' text-anchor='middle' fill='#fff' font-size='10'>other pods</text><line x1='110' y1='65' x2='165' y2='65' stroke='#4CAF50' stroke-width='2' marker-end='url(#a5)'/><text x='137' y='58' text-anchor='middle' fill='#4CAF50' font-size='8'>:5432 OK</text><line x1='250' y1='70' x2='305' y2='70' stroke='#f44' stroke-width='2' stroke-dasharray='4' marker-end='url(#a5)'/><text x='277' y='62' text-anchor='middle' fill='#f44' font-size='8'>BLOCKED</text><defs><marker id='a5' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "A. The NetworkPolicy with `policyTypes: [Ingress, Egress]` implicitly blocks egress because any selected pod has default-deny for all directions",
-      "B. The NetworkPolicy has `policyTypes: [Ingress, Egress]` but only defines ingress rules; the empty egress section denies egress",
+      "A. The NetworkPolicy with `policyTypes: [Ingress, Egress]` blocks egress because any selected pod has default-deny for all directions",
+      "B. The NetworkPolicy has `policyTypes: [Ingress, Egress]` but only defines ingress rules; the empty egress section denies all egress",
       "C. The CNI plugin applies a default-deny-all policy to any pod targeted by at least one NetworkPolicy, affecting both directions",
-      "D. The NetworkPolicy has `policyTypes: [Ingress]` only; the `db` pods egress is blocked by a separate cluster default policy"
+      "D. The NetworkPolicy has `policyTypes: [Ingress]` only; the `db` pods egress is blocked by a separate cluster-level default policy"
     ],
     answer: 1,
     explanation: "The key detail is the `policyTypes` field. If the NetworkPolicy includes `Egress` in its `policyTypes` but defines no egress rules, the result is a default-deny for all egress traffic from the selected pods. This is a common misconfiguration: administrators include both `Ingress` and `Egress` in `policyTypes` for completeness, but only define ingress rules. The implicit behavior is that an empty rule list for a declared policy type means \"deny all\" for that direction. If `policyTypes` only listed `[Ingress]`, egress would be unaffected.\n\nWhy other options are wrong:\n- A: The phrasing 'default-deny for all directions' is misleading; the default-deny only applies to directions explicitly listed in policyTypes that lack corresponding rules, not all directions unconditionally\n- C: The CNI plugin does not apply default-deny-all to targeted pods; it only enforces the policy types explicitly declared in the NetworkPolicy\n- D: The question states no other NetworkPolicies exist; the egress block is caused by the current policy's policyTypes including Egress with no rules\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#default-deny-all-egress-traffic",

@@ -248,10 +248,10 @@ var questions = [
     text: "A DaemonSet Pod runs a log collector on every node. During a drain operation, you notice the DaemonSet Pod is not evicted. Why?",
     diagram: null,
     options: [
-      "A. DaemonSet Pods have a higher scheduling priority than regular workload Pods",
-      "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain operations",
+      "A. DaemonSet Pods have a higher scheduling priority than regular workload Pods do",
+      "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain",
       "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
-      "D. `kubectl drain` errors on DaemonSet-managed Pods unless `--ignore-daemonsets` is used"
+      "D. `kubectl drain` errors on DaemonSet Pods unless `--ignore-daemonsets` is passed"
     ],
     answer: 3,
     explanation: "`kubectl drain` skips DaemonSet-managed Pods by default because they are expected to run on every node. The `--ignore-daemonsets` flag must be passed to acknowledge this behavior. Without it, the drain command will report an error about DaemonSet Pods.\n\nWhy other options are wrong:\n- A: DaemonSet Pods do not inherently have higher scheduling priority; they use normal priority mechanisms\n- B: DaemonSets add some automatic tolerations but they do not prevent eviction during drain; drain skips them because they are DaemonSet-managed\n- C: drain can evict kube-system Pods; the restriction is specific to DaemonSet-managed Pods, not the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -330,7 +330,7 @@ var questions = [
     options: [
       "A. Resource quotas applied at the namespace level",
       "B. Pod affinity rules targeting monitoring nodes",
-      "C. PriorityClasses with preemption enabled",
+      "C. PriorityClasses with preemption policy enabled",
       "D. LimitRanges applied to batch workload Pods"
     ],
     answer: 2,
@@ -539,7 +539,7 @@ var questions = [
       "A. Containers continue running because the runtime upgrade preserves running process state",
       "B. All containers are stopped and must be restarted individually by the kubelet process",
       "C. The node must be drained first because runtime upgrades need no running containers",
-      "D. Pods with `restartPolicy: Always` are restarted by kubelet after the upgrade; others remain stopped"
+      "D. Pods with `restartPolicy: Always` are restarted automatically; others remain stopped"
     ],
     answer: 2,
     explanation: "Upgrading the container runtime typically requires stopping the runtime service, which stops all containers. Best practice is to drain the node first, upgrade the runtime, then uncordon the node. This prevents unexpected container termination and data loss.\n\nWhy other options are wrong:\n- A: Runtime upgrades typically require stopping the runtime service, which stops containers; process state is not preserved\n- B: Containers are stopped but the kubelet will automatically restart them if the runtime comes back; manual restart per container is not required\n- D: restartPolicy does not affect whether containers survive a runtime service stop; all containers stop\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
@@ -552,10 +552,10 @@ var questions = [
     text: "You want to monitor the scheduling latency of Pods in your cluster. Which metric exposed by the kube-scheduler is most relevant?",
     diagram: null,
     options: [
-      "A. `scheduler_scheduling_attempt_duration_seconds`",
-      "B. `kubelet_pod_start_duration_seconds` from the kubelet",
-      "C. `apiserver_request_duration_seconds` from the API server",
-      "D. `etcd_request_duration_seconds` from the etcd cluster"
+      "A. `scheduler_scheduling_attempt_duration_seconds` metric",
+      "B. `kubelet_pod_start_duration_seconds` from kubelet",
+      "C. `apiserver_request_duration_seconds` from API server",
+      "D. `etcd_request_duration_seconds` from the etcd store"
     ],
     answer: 0,
     explanation: "`scheduler_scheduling_attempt_duration_seconds` measures the end-to-end scheduling latency for a Pod, from arrival in the scheduling queue to a node being selected. This directly reflects scheduling latency. The kubelet metric measures Pod startup time after scheduling, which is a different phase. Note: the older `scheduler_e2e_scheduling_duration_seconds` metric was deprecated in Kubernetes 1.19 and removed in 1.23.\n\nWhy other options are wrong:\n- B: kubelet_pod_start_duration_seconds measures Pod startup time after scheduling, a different phase\n- C: apiserver_request_duration_seconds measures API server request latency, not scheduling latency\n- D: etcd_request_duration_seconds measures etcd request latency, not scheduling-specific latency\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
@@ -696,10 +696,10 @@ var questions = [
     text: "Which taint effect allows already-running Pods to remain but prevents new Pods without a matching toleration from being scheduled?",
     diagram: null,
     options: [
-      "A. `NoSchedule` taint effect",
-      "B. `NoExecute` taint effect",
-      "C. `PreferNoSchedule` taint effect",
-      "D. `PreemptLowerPriority` effect"
+      "A. The `NoSchedule` taint effect on the target node",
+      "B. The `NoExecute` taint effect on the target node",
+      "C. The `PreferNoSchedule` taint effect on node",
+      "D. `PreemptLowerPriority` applied as a taint effect"
     ],
     answer: 0,
     explanation: "`NoSchedule` prevents new Pods without a matching toleration from being scheduled on the node, but existing Pods remain unaffected. `NoExecute` would additionally evict running Pods. `PreferNoSchedule` is a soft constraint. `PreemptLowerPriority` is a preemption policy value, not a valid taint effect.\n\nWhy other options are wrong:\n- B: NoExecute also evicts existing Pods without matching tolerations, not just blocking new ones\n- C: PreferNoSchedule is a soft constraint that tries to avoid scheduling but does not hard-block\n- D: PreemptLowerPriority is a Pod preemption policy value, not a taint effect\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -744,10 +744,10 @@ var questions = [
     text: "A critical system Pod uses the built-in PriorityClass <code>system-node-critical</code>. What scheduling priority does this grant?",
     diagram: null,
     options: [
-      "A. Priority value of 1000, lower than other built-in classes",
+      "A. Priority value of 1000, lower than the other built-in classes",
       "B. Priority value of 2000001000, the highest built-in priority class",
       "C. Same as default priority but with guaranteed resource allocation",
-      "D. Priority value of 100000000, ranked above the cluster-critical one"
+      "D. Priority value of 100000000, ranked above cluster-critical one"
     ],
     answer: 1,
     explanation: "`system-node-critical` has a priority value of 2000001000, making it one of the highest built-in priority classes. It is intended for Pods essential to node operation such as kube-proxy. `system-cluster-critical` has a slightly lower value of 2000000000.\n\nWhy other options are wrong:\n- A: Priority value 1000 is far lower than system-node-critical; it is a typical user-defined priority, not a built-in class value\n- C: system-node-critical is not same as default priority; it has a specific very high value\n- D: 100000000 is not the value; system-node-critical is 2000001000, higher than system-cluster-critical at 2000000000\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -856,10 +856,10 @@ var questions = [
     text: "What happens to Pods managed by a ReplicaSet when the node they are running on is drained?",
     diagram: null,
     options: [
-      "A. The ReplicaSet controller creates replacement Pods on other nodes",
-      "B. The Pods are moved to another node with their full state preserved",
-      "C. The Pods are terminated and may need to be manually recreated by an admin",
-      "D. The ReplicaSet is scaled to zero until the drained node returns"
+      "A. The ReplicaSet controller creates replacement Pods on other available nodes",
+      "B. The Pods are moved to another node with their full runtime state preserved",
+      "C. The Pods are terminated and must be manually recreated by an admin",
+      "D. The ReplicaSet is scaled to zero until the drained node returns back"
     ],
     answer: 0,
     explanation: "When Pods are evicted during drain, the ReplicaSet controller detects that the desired replica count is not met and creates new Pods. The scheduler places these new Pods on other available nodes. Pod state is not preserved; the replacement Pods start fresh.\n\nWhy other options are wrong:\n- B: Pods are not moved with state; they are terminated and new Pods start fresh on other nodes\n- C: ReplicaSet-managed Pods are automatically recreated by the controller; manual recreation is not needed\n- D: The ReplicaSet maintains desired replica count; it does not scale to zero during drain\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
@@ -872,10 +872,10 @@ var questions = [
     text: "A distributed tracing system requires its collector Pods to run in the same availability zone as the application Pods they collect from. Which approach ensures zone-local collection?",
     diagram: null,
     options: [
-      "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone` matching app labels",
-      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across nodes",
-      "C. Set `hostNetwork: true` on collector Pods for direct node network access",
-      "D. Configure a headless Service for the collector Pod endpoint group"
+      "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone` and app selectors",
+      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across the nodes",
+      "C. Set `hostNetwork: true` on collector Pods for direct node-level network access",
+      "D. Configure a headless Service for the collector Pods in each availability zone"
     ],
     answer: 0,
     explanation: "Pod affinity with `topologyKey: topology.kubernetes.io/zone` ensures collector Pods are scheduled in the same zone as the Pods they target via the label selector. A DaemonSet places one Pod per node regardless of zone locality, which is a different distribution pattern.\n\nWhy other options are wrong:\n- B: DaemonSet places one Pod per node regardless of zone; it does not ensure zone-level co-location with specific app Pods\n- C: hostNetwork shares the node network namespace but does not control zone-level placement\n- D: A headless Service provides DNS records for Pods but does not influence scheduling placement\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity",
@@ -889,9 +889,9 @@ var questions = [
     diagram: null,
     options: [
       "A. kube-proxy, the component managing Service routing rules",
-      "B. The container runtime interface such as containerd",
-      "C. CoreDNS, the cluster-level DNS resolver for Pods",
-      "D. The CNI plugin handling Pod network configuration"
+      "B. The container runtime interface such as containerd daemon",
+      "C. CoreDNS, the cluster-level DNS resolver for all Pods",
+      "D. The CNI plugin handling Pod network configuration setup"
     ],
     answer: 3,
     explanation: "The kubelet reports a node as `NotReady` when the container runtime or network plugin is not functioning. A missing or misconfigured CNI plugin is a common cause because the kubelet checks that the network is ready. CoreDNS runs as a cluster add-on, not a node-level component.\n\nWhy other options are wrong:\n- A: kube-proxy manages network rules; its misconfiguration would cause networking issues, not NotReady status\n- B: The question states the container runtime is healthy; additionally, the NetworkUnavailable condition specifically indicates a network plugin issue, not a runtime issue\n- C: CoreDNS runs as a cluster-level Deployment, not a node-level component; its absence does not cause NotReady\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/#node-status",
@@ -920,10 +920,10 @@ var questions = [
     text: "A cluster has nodes of varying sizes. Some workloads waste resources because they request far more than they use. Which Kubernetes feature helps right-size Pod resource requests?",
     diagram: null,
     options: [
-      "A. Horizontal Pod Autoscaler (HPA) for scaling",
-      "B. Cluster Autoscaler for node provisioning",
-      "C. LimitRange for default resource boundaries",
-      "D. Vertical Pod Autoscaler (VPA) for resource tuning"
+      "A. Horizontal Pod Autoscaler (HPA) for replica scaling",
+      "B. Cluster Autoscaler for node-level provisioning",
+      "C. LimitRange for setting default resource boundaries",
+      "D. Vertical Pod Autoscaler (VPA) for request tuning"
     ],
     answer: 3,
     explanation: "The Vertical Pod Autoscaler analyzes actual resource usage and recommends or automatically adjusts Pod resource requests and limits. This right-sizing reduces waste and improves scheduling efficiency. HPA scales replica count, not individual Pod resources.\n\nWhy other options are wrong:\n- A: HPA scales the number of replicas horizontally, not individual Pod resource requests\n- B: Cluster Autoscaler adds or removes nodes, not Pod resource requests\n- C: LimitRange sets default and maximum resource values but does not dynamically adjust based on usage\n\nReference: https://kubernetes.io/docs/concepts/workloads/autoscaling/vertical-pod-autoscale/",
@@ -952,10 +952,10 @@ var questions = [
     text: "After upgrading containerd on a node, the kubelet fails to start Pods with the error <code>failed to create containerd task</code>. What should you check first?",
     diagram: null,
     options: [
-      "A. The kubelet config for the correct CRI socket path to containerd",
+      "A. The kubelet config for the correct CRI socket path to the containerd daemon",
       "B. Whether the node has sufficient disk space for kubelet container operations",
-      "C. The container image registry network connectivity and pull access",
-      "D. The kernel version compatibility with the new containerd version"
+      "C. The container image registry network connectivity and image pull access",
+      "D. The kernel version compatibility with the upgraded containerd release"
     ],
     answer: 0,
     explanation: "After upgrading containerd, the CRI socket path may have changed or the containerd configuration may require updates. The kubelet must be configured with the correct `--container-runtime-endpoint` pointing to the containerd socket, typically `unix:///run/containerd/containerd.sock`.\n\nWhy other options are wrong:\n- B: Disk space issues would produce different error messages, not containerd task creation failures\n- C: Registry connectivity issues cause image pull errors, not containerd task creation failures\n- D: Kernel compatibility issues are rare and would typically cause containerd itself to fail to start\n\nReference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/",
@@ -985,8 +985,8 @@ var questions = [
     diagram: null,
     options: [
       "A. `NodeResourcesBalancedAllocation` — favors balanced CPU/memory ratio",
-      "B. `InterPodAffinity` — favors nodes with matching Pod affinities",
-      "C. `NodeResourcesFit` — favors nodes with sufficient resources",
+      "B. `InterPodAffinity` — favors nodes with matching Pod affinity rules",
+      "C. `NodeResourcesFit` — favors nodes with sufficient available resources",
       "D. `ImageLocality` — favors nodes that already have the container image"
     ],
     answer: 3,
@@ -1080,10 +1080,10 @@ var questions = [
     text: "Which Kubernetes SIG project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
     diagram: null,
     options: [
-      "A. Scheduler Plugins (scheduling-plugins)",
-      "B. Descheduler, the Pod rebalancing tool",
-      "C. Kueue, the job queueing orchestrator",
-      "D. Volcano, the batch scheduling plugins system"
+      "A. Scheduler Plugins (scheduling-plugins) project",
+      "B. Descheduler, the Pod rebalancing framework",
+      "C. Kueue, the job queueing and admission tool",
+      "D. Volcano, the batch scheduling system for AI"
     ],
     answer: 0,
     explanation: "The Kubernetes Scheduler Plugins project provides a framework for extending the default scheduler with custom filter, score, and other plugins. It uses the scheduler framework API, allowing teams to add domain-specific logic without replacing the entire scheduler.\n\nWhy other options are wrong:\n- B: Descheduler rebalances Pods after scheduling but does not extend the scheduler with custom plugins\n- C: Kueue manages job queuing and admission but does not add custom scheduling plugins\n- D: Volcano is a batch scheduling system primarily for HPC/AI workloads, not a general scheduler plugin framework\n\nReference: https://github.com/kubernetes-sigs/scheduler-plugins",
@@ -1242,7 +1242,7 @@ var questions = [
     options: [
       "A. The weight=100 rule must be fully satisfied; the weight=1 rule is treated as optional",
       "B. The highest-weight rule dominates scoring; lower-weight rules have minimal influence",
-      "C. Weights are percentages, so weight=100 means the rule is fully mandatory",
+      "C. Weights are percentages, so weight=100 means the rule is a fully mandatory constraint",
       "D. Nodes matching weight=100 score 100x higher for that term than weight=1 matches"
     ],
     answer: 3,
@@ -1272,10 +1272,10 @@ var questions = [
     text: "In a kubeadm cluster, where are the static Pod manifests for control-plane components stored by default?",
     diagram: null,
     options: [
-      "A. `/var/lib/kubelet/manifests/` directory",
-      "B. `/opt/cni/bin/` plugin directory",
-      "C. `/etc/kubernetes/manifests/` path",
-      "D. `/etc/containerd/config.toml` file"
+      "A. `/var/lib/kubelet/manifests/` directory path",
+      "B. `/opt/cni/bin/` CNI plugin binary directory",
+      "C. `/etc/kubernetes/manifests/` directory path",
+      "D. `/etc/containerd/config.toml` config file"
     ],
     answer: 2,
     explanation: "kubeadm places static Pod manifests for kube-apiserver, kube-controller-manager, kube-scheduler, and etcd in `/etc/kubernetes/manifests/`. The kubelet watches this directory and automatically creates or updates Pods when manifests change.\n\nWhy other options are wrong:\n- A: /var/lib/kubelet/manifests/ is not the default path; kubeadm uses /etc/kubernetes/manifests/\n- B: /opt/cni/bin/ stores CNI plugin binaries, not Pod manifests\n- D: /etc/containerd/config.toml is the containerd runtime configuration, not Pod manifests\n\nReference: https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/#constants-and-well-known-values-and-paths",
@@ -1352,10 +1352,10 @@ var questions = [
     text: "A Pod's toleration uses <code>operator: Exists</code> with <code>key: special-taint</code> and no <code>value</code> field. Which taints does this toleration match?",
     diagram: null,
     options: [
-      "A. Only taints with key `special-taint` and an empty string value",
+      "A. Only taints with key `special-taint` and an empty string value set",
       "B. All taints on the node regardless of their key, value, or effect",
-      "C. Only taints with key `special-taint` and an empty string value by default",
-      "D. All taints with key `special-taint` regardless of their value"
+      "C. Only taints keyed `special-taint` with an empty string value by default",
+      "D. All taints with key `special-taint` regardless of their assigned value"
     ],
     answer: 3,
     explanation: "The `Exists` operator matches all taints with the specified key, regardless of their value. If no key is specified with `Exists`, it matches all taints. This is useful when you want to tolerate a taint key without caring about the specific value assigned.\n\nWhy other options are wrong:\n- A: Exists with a key matches any value for that key, not just empty string values\n- B: Exists with a specific key matches only that key's taints; matching all taints requires omitting the key\n- C: Exists with a key matches all values for that key, not just empty strings; the value field is ignored entirely\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -1369,9 +1369,9 @@ var questions = [
     diagram: null,
     options: [
       "A. A new PVC is created for the rescheduled Pod and the old data is abandoned",
-      "B. The existing PVC is reused and the PV is attached to the new node",
+      "B. The existing PVC is reused and the network-attached PV is moved to the new node",
       "C. The PVC is deleted and the data stored on the PersistentVolume is then lost",
-      "D. The Pod may remain pending until an admin rebinds the PVC to the original node"
+      "D. The Pod may remain pending until an admin rebinds the PVC to its original node"
     ],
     answer: 1,
     explanation: "StatefulSet PVCs persist across Pod rescheduling. The existing PVC maintains its binding to the PV. Since the storage is network-attached, the PV can be detached from the old node and attached to the new node where the Pod is rescheduled, preserving data.\n\nWhy other options are wrong:\n- A: StatefulSet PVCs persist and are reused; new PVCs are not created for rescheduled Pods\n- C: PVCs are not deleted when StatefulSet Pods are rescheduled; they maintain their binding\n- D: Network-attached storage can be detached and reattached to the new node automatically; rebinding to the original node is not required\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -1530,8 +1530,8 @@ var questions = [
     options: [
       "A. Pod age is the primary factor, with the oldest Pods selected for eviction first",
       "B. Pod resource usage takes priority and Pods consuming the most are evicted first",
-      "C. Pod priority value is the main factor, lowest-priority Pods go first",
-      "D. Pod namespace takes priority and Pods in non-system namespaces go first"
+      "C. Pod priority value is the main factor, with lowest-priority Pods evicted first",
+      "D. Pod namespace takes priority and non-system namespace Pods are evicted first"
     ],
     answer: 2,
     explanation: "The scheduler prefers to evict the lowest-priority Pods first. Among candidate nodes, it chooses the one where the fewest evictions or the lowest-priority evictions are needed. PDB violations are also minimized. Pod age and namespace are not primary factors.\n\nWhy other options are wrong:\n- A: Pod age is not a primary factor in preemption victim selection\n- B: Actual resource usage is not the selection criterion; priority value determines victim selection\n- D: Pod namespace does not influence preemption victim selection; priority value is the main factor\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#preemption",

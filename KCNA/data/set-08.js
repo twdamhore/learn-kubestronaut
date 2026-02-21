@@ -140,7 +140,7 @@ var questions = [
       "Datadog — a SaaS platform deploying agents to scrape and forward cluster metrics to a hosted backend",
       "Jaeger — a distributed tracing platform for monitoring and analyzing microservice request flows",
       "Prometheus — a pull-based monitoring system that scrapes metrics from targets via HTTP endpoints",
-      "Thanos — a long-term storage solution extending Prometheus with global query capability"
+      "Thanos — a long-term storage solution extending Prometheus with a global query capability layer"
     ],
     answer: 2,
     explanation: "Prometheus is a CNCF graduated monitoring project that uses a pull-based model to scrape metrics from HTTP endpoints (typically `/metrics`). It stores time-series data and provides PromQL for querying. Fluentd handles logs, Jaeger handles tracing, and Thanos extends Prometheus for long-term storage but does not replace its scraping function.\n\nWhy other options are wrong:\n- A: Datadog is a commercial SaaS platform, not a CNCF graduated project\n- B: Jaeger is a distributed tracing platform for request flow analysis, not metrics scraping\n- D: Thanos extends Prometheus with long-term storage but does not replace its scraping function\n\nReference: https://prometheus.io/docs/introduction/overview/",
@@ -362,9 +362,9 @@ var questions = [
     diagram: null,
     options: [
       "Add a label `gpu=true` and use `nodeSelector` on ML Pods — but this alone does not repel non-ML Pods from GPU nodes",
-      "Set `priorityClassName: high` on ML Pods so they preempt lower-priority workloads on the reserved GPU nodes",
+      "Set `priorityClassName: high` on ML Pods so they preempt lower-priority workloads on the reserved GPU node pool",
       "Use `podAntiAffinity` on all non-ML Pods to repel them from GPU nodes, requiring changes to every non-ML workload",
-      "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a corresponding matching toleration only to ML workload Pod specs"
+      "Apply a taint `gpu=true:NoSchedule` to GPU nodes and add a matching toleration to only the ML workload Pod specs"
     ],
     answer: 3,
     explanation: "Taints and tolerations are the correct mechanism for node reservation. A taint with `NoSchedule` effect prevents any Pod that lacks a matching toleration from being scheduled on the node. Only ML Pods with the corresponding toleration can be placed on GPU nodes. `nodeSelector` attracts ML Pods but does not repel others. Priority classes affect preemption, not initial scheduling restrictions.\n\nWhy other options are wrong:\n- A: nodeSelector attracts ML Pods to GPU nodes but does not repel non-ML Pods from them\n- B: priorityClassName affects preemption order, not initial scheduling restrictions on specific nodes\n- C: podAntiAffinity on all non-ML Pods requires modifying every non-ML workload, which is impractical\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -605,7 +605,7 @@ var questions = [
       "`activeDeadlineSeconds: 240` — limits the total Job runtime duration to exactly 4 minutes total",
       "`completions: 4` — requires exactly 4 successful Pod completions before the Job is finished",
       "`parallelism: 4` — runs up to 4 Pods simultaneously to increase overall success probability",
-      "`backoffLimit: 4` — allows up to 4 failed Pod attempts before the Job is marked failed"
+      "`backoffLimit: 4` — allows up to 4 failed Pod attempts before the Job is marked as failed"
     ],
     answer: 3,
     explanation: "The `backoffLimit` field specifies the number of failed Pod attempts before a Job is considered failed. Setting `backoffLimit: 4` means Kubernetes allows up to 4 Pod failures with exponential backoff before marking the Job as failed. `activeDeadlineSeconds` limits total runtime, `completions` sets the required number of successful completions, and `parallelism` controls concurrent Pod execution.\n\nWhy other options are wrong:\n- A: activeDeadlineSeconds limits total Job runtime duration, not the number of allowed failures\n- B: completions sets the number of successful completions needed, not the failure tolerance\n- C: parallelism controls concurrent Pod count, not failure handling behavior\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy",
@@ -716,7 +716,7 @@ var questions = [
     options: [
       "ConfigMap updates are delayed until the kubelet's sync period expires, which can take several hours in large clusters",
       "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before any updates will take effect in Pods",
-      "Env vars from ConfigMaps are set at Pod creation and not updated without restart; volume mounts are eventually refreshed",
+      "Env vars from ConfigMaps are set at Pod creation and not updated without restart, while volume mounts are eventually refreshed",
       "The kubelet polls ConfigMap changes every 5 seconds and automatically refreshes both environment variables and volume-mounted data"
     ],
     answer: 2,
@@ -987,9 +987,9 @@ var questions = [
     text: "A team deploys a gRPC-based microservice behind a Kubernetes Service. They notice that all traffic is going to a single Pod despite having 3 replicas. What is the most likely cause?",
     diagram: null,
     options: [
-      "gRPC traffic requires a dedicated external load balancer because Kubernetes Services do not support HTTP/2 multiplexed streams",
-      "The Pods have different resource limits configured, causing the kube-scheduler to prefer one Pod over the others",
-      "gRPC uses HTTP/2 persistent connections; `kube-proxy` does L4 balancing per connection so one connection routes to one Pod",
+      "gRPC traffic requires a dedicated external load balancer because Kubernetes Services cannot handle HTTP/2 multiplexed streams",
+      "The Pods have different resource limits configured, causing the kube-scheduler to prefer routing to one Pod over others",
+      "gRPC uses HTTP/2 persistent connections and `kube-proxy` balances at L4 per connection, so one connection goes to one Pod",
       "The Service `sessionAffinity` is set to `ClientIP` by default, which pins all traffic from one client to a single Pod"
     ],
     answer: 2,
@@ -1020,7 +1020,7 @@ var questions = [
     diagram: null,
     options: [
       "There is no violation — using lighter-weight databases in development is an accepted trade-off that accelerates iteration",
-      "Factor X requires minimizing gaps between dev and prod including backing services; different databases cause subtle bugs",
+      "Factor X requires minimizing gaps between dev and prod including backing services, and different databases cause subtle bugs",
       "Factor X primarily addresses the application codebase and deployment pipeline rather than the choice of backing services",
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
     ],
@@ -1083,10 +1083,10 @@ var questions = [
     text: "A developer sets `resources.limits.cpu: \"2\"` and `resources.requests.cpu: \"500m\"` on a container. What happens if the container attempts to use 3 CPU cores?",
     diagram: null,
     options: [
-      "The container is throttled by the CFS scheduler; it cannot exceed 2 CPU cores but is not killed",
+      "The container is throttled by the CFS scheduler so it cannot exceed 2 CPU cores, but it is not killed",
       "The container is immediately terminated (OOMKilled) for exceeding its configured CPU limit value",
-      "The kubelet evicts the Pod because it has exceeded the CPU allocation available on the node",
-      "CPU limits are treated as soft targets and the kernel allows brief bursts above the configured threshold"
+      "The kubelet evicts the Pod from the node because it has exceeded the CPU allocation available on it",
+      "CPU limits are treated as soft targets and the kernel allows brief bursts above the configured limit"
     ],
     answer: 0,
     explanation: "CPU limits in Kubernetes are enforced by the Linux kernel's Completely Fair Scheduler (CFS) via cgroup bandwidth controls. When a container tries to exceed its CPU limit, it is throttled (its CPU time is restricted) but not killed. This differs from memory, where exceeding the limit triggers an OOMKill. CPU requests are used for scheduling decisions, while limits cap actual usage.\n\nWhy other options are wrong:\n- B: OOMKilled is for memory limit violations, not CPU; CPU is throttled, not killed\n- C: CPU limit violations are handled by CFS throttling; the kubelet does not evict for CPU limit exceeded\n- D: CPU limits are hard caps enforced via CFS bandwidth controls in cgroups; the kernel does not allow bursts above the limit\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -1148,9 +1148,9 @@ var questions = [
     diagram: null,
     options: [
       "No — etcd requires full membership agreement through a two-phase commit before processing any client read or write requests",
-      "Yes — etcd uses Raft consensus requiring a majority quorum; with 2 of 3 members available the quorum is still maintained",
-      "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles data afterward",
-      "No — etcd immediately promotes one of the remaining members to operate as a standalone single-node instance"
+      "Yes — etcd uses Raft consensus requiring a majority quorum, and with 2 of 3 members available the quorum is maintained",
+      "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles all data afterward on recovery",
+      "No — etcd immediately promotes one of the remaining members to operate as a fully standalone single-node cluster instance"
     ],
     answer: 1,
     explanation: "etcd uses the Raft consensus algorithm, which requires a majority (quorum) of members to process writes. For a 3-member cluster, quorum is 2 (majority of 3). With 2 members still connected, the cluster can continue accepting reads and writes. The isolated member cannot process requests on its own since it lacks quorum. This is why 3 or 5 member clusters are recommended (tolerating 1 or 2 failures respectively).\n\nWhy other options are wrong:\n- A: etcd does not require all members; it requires only a majority quorum for reads and writes\n- C: etcd uses strong consistency via Raft, not eventual consistency; there is no 'eventual consistency mode'\n- D: etcd does not promote a member to standalone; isolated members cannot serve requests without quorum\n\nReference: https://etcd.io/docs/v3.5/faq/#what-is-failure-tolerance",
@@ -1197,7 +1197,7 @@ var questions = [
     options: [
       "AWS EBS — block storage attached to a single EC2 instance, designed for individual workload attachment",
       "NFS (Network File System) — a network filesystem supporting concurrent read/write from multiple nodes",
-      "Local PV — uses disks on a specific node, inherently bound to that node for storage access",
+      "Local PV — uses disks on a specific node, inherently bound to that single node for storage access",
       "Azure Managed Disks — premium block storage providing high IOPS for single-node database workloads"
     ],
     answer: 1,
@@ -1598,8 +1598,8 @@ var questions = [
     options: [
       "Argo CD uses a push-based model while Flux uses a pull-based model representing fundamentally different approaches",
       "Argo CD focuses primarily on Helm chart releases while Flux specializes in deploying plain Kubernetes manifests from Git",
-      "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers",
-      "Argo CD has a built-in web UI for application state visualization; Flux uses a CLI-first controller-based architecture"
+      "Argo CD requires a separate Git server component while Flux connects directly to external Git hosting providers like GitHub",
+      "Argo CD has a built-in web UI for application state visualization, while Flux uses a CLI-first modular architecture"
     ],
     answer: 3,
     explanation: "Both Argo CD and Flux are pull-based GitOps tools. A key difference is that Argo CD includes a rich web UI for application visualization, sync management, and RBAC, making it popular for teams that value visual management. Flux is modular and CLI-first, composed of separate controllers (Source, Kustomize, Helm, Notification, Image Automation), which some teams prefer for its composability and infrastructure-as-code approach. Both support Helm, Kustomize, and plain manifests.\n\nWhy other options are wrong:\n- A: Both Argo CD and Flux use pull-based (not push-based) GitOps models; they are architecturally similar\n- B: Both Argo CD and Flux support Helm, Kustomize, and plain manifests; neither is limited to one\n- C: Neither requires a separate Git server; both connect to external Git providers like GitHub, GitLab\n\nReference: https://www.cncf.io/projects/argo/",

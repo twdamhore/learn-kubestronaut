@@ -309,7 +309,7 @@ var questions = [
     options: [
       "Merge all 30 services into a single monolith managed by Helm to reduce the total number of ConfigMaps needed",
       "Use a centralized config tool like Spring Cloud Config or Consul, integrated with Kubernetes APIs",
-      "Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service in the namespace",
+      "Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service",
       "Reduce ConfigMap usage significantly by hardcoding most configuration values in each service's Dockerfile"
     ],
     answer: 1,
@@ -391,10 +391,10 @@ var questions = [
     text: "A team uses Helm to deploy their application. Configuration values like replica count, image tag, and resource limits vary per environment. Where should these environment-specific values be stored?",
     diagram: null,
     options: [
-      "In the `Chart.yaml` file, which supports per-environment overrides natively within Helm's schema",
+      "In the `Chart.yaml` file (e.g., `chart-dev.yaml`, `chart-prod.yaml`) using per-environment overrides",
       "In a ConfigMap that Helm reads at install time using the `--config-from` flag for each release",
       "Directly in manifests inside `templates/` with `if/else` blocks to handle each environment path",
-      "In separate values files (e.g., `values-dev.yaml`, `values-prod.yaml`) passed with `-f` flag"
+      "In separate values files like `values-dev.yaml` and `values-prod.yaml` passed with the `-f` flag"
     ],
     answer: 3,
     explanation: "Helm supports multiple values files that can be passed during install or upgrade with the `-f` flag. This allows maintaining separate files per environment (dev, staging, prod) while sharing the same chart templates. `Chart.yaml` contains chart metadata, not deployable values. Hardcoding conditions in templates defeats the purpose of Helm's templating. There is no `--config-from` flag in Helm.\n\nWhy other options are wrong:\n- A: Chart.yaml contains chart metadata (name, version, dependencies), not deployable configuration values\n- B: There is no --config-from flag in Helm\n- C: Hardcoding if/else in templates defeats Helm's values-based templating purpose\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",
@@ -560,9 +560,9 @@ var questions = [
     diagram: null,
     options: [
       "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all existing Secrets",
-      "Delete all existing Secrets and recreate them from scratch — Kubernetes will re-encrypt on creation using the new key automatically",
-      "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically without any manual steps",
-      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, then wait for data to re-encrypt on the next read"
+      "Delete all existing Secrets and recreate them — Kubernetes will re-encrypt on creation using the new key",
+      "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically",
+      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, then wait for re-encryption on read"
     ],
     answer: 0,
     explanation: "Key rotation for etcd encryption requires adding the new key as the first (active) entry while keeping the old key for decrypting existing data. After restarting the API server, all existing Secrets must be rewritten so they are re-encrypted with the new key. A common method is to read and replace all Secrets. There is no `kubectl rotate-keys` command. Simply replacing the key without rewriting data would leave existing Secrets unreadable. Data is not re-encrypted on read.\n\nWhy other options are wrong:\n- B: Deleting and recreating all Secrets is destructive and unnecessary when key rotation can preserve them\n- C: There is no kubectl rotate-keys command in Kubernetes\n- D: Simply replacing the key without rewriting data leaves existing Secrets encrypted with the old key, not re-encrypted on read\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
@@ -576,7 +576,7 @@ var questions = [
     diagram: null,
     options: [
       "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB of data",
-      "Split the dataset across approximately two ConfigMaps and merge them inside the container at startup using an init container script",
+      "Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container",
       "Increase the ConfigMap size limit by modifying the API server's `--max-configmap-size` startup configuration flag",
       "Use a Secret instead of a ConfigMap, which supports up to 10 MiB of data storage for larger configuration files"
     ],
@@ -625,9 +625,9 @@ var questions = [
     text: "A container needs to read a TLS private key from a Secret mounted as a file. The security team requires that the file permissions inside the container are set to `0400` (owner read-only). How can this be achieved?",
     diagram: null,
     options: [
-      "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in place",
+      "Run `chmod 0400` in a postStart lifecycle hook after the Secret volume has been mounted in the container",
       "Secret volume file permissions default to 0644 and are controlled by the container runtime configuration settings",
-      "Add a `securityContext.filePermissions: 0400` field to the container spec to override mount mode",
+      "Add a `securityContext.filePermissions: 0400` field to the container spec to override the default mount mode",
       "Set `defaultMode: 0400` on the Secret volume definition in the pod spec to control file permissions at mount time"
     ],
     answer: 3,
@@ -708,9 +708,9 @@ var questions = [
     diagram: null,
     options: [
       "ConfigMaps are scoped to a single Deployment and are not designed to be shared across different Deployments",
-      "Sharing ConfigMaps between services creates tight coupling; changes to Service B's config could unexpectedly break Service A",
-      "Kubernetes rate-limits ConfigMap read operations so sharing would cause pod performance degradation",
-      "Shared ConfigMaps are automatically replicated across namespaces causing eventual data inconsistency"
+      "Sharing ConfigMaps between services creates tight coupling, so changes to Service B's config could break Service A",
+      "Kubernetes rate-limits ConfigMap read operations per namespace; sharing would cause pod performance degradation",
+      "Shared ConfigMaps are automatically replicated across namespaces by the controller, causing eventual data inconsistency"
     ],
     answer: 1,
     explanation: "Sharing configuration directly between services creates coupling, which violates the microservices principle of loose coupling. If Service B changes its ConfigMap, Service A might break. A better approach is to use service discovery, APIs, or dedicated shared configuration that both services explicitly depend on. ConfigMaps can be shared between pods in the same namespace. There is no rate limiting on ConfigMap reads, and ConfigMaps are not automatically replicated.\n\nWhy other options are wrong:\n- A: ConfigMaps can be shared between any pods in the same namespace regardless of Deployment ownership\n- C: Kubernetes does not rate-limit ConfigMap read operations\n- D: ConfigMaps are not automatically replicated across namespaces\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -755,10 +755,10 @@ var questions = [
     text: "A cloud-native application needs to handle configuration changes without downtime. The current approach requires a pod restart for every ConfigMap update. Which pattern enables dynamic configuration reloading?",
     diagram: null,
     options: [
-      "Configure the kubelet `--sync-frequency` to a lower interval so volume-mounted ConfigMaps propagate to pods instantly",
+      "Configure the kubelet `--sync-frequency` (e.g., `5s`) so volume-mounted ConfigMaps propagate to pods instantly",
       "Set `immutable: false` on the ConfigMap and enable watch-based kubelet propagation to refresh env vars in the pod",
       "Use `kubectl rollout restart` after each ConfigMap update to replace pods with ones reading the new values",
-      "Use a sidecar that watches the mounted ConfigMap volume and signals (e.g., `SIGHUP`) the main process"
+      "Use a sidecar that watches the mounted ConfigMap volume for changes and signals the main process to reload"
     ],
     answer: 3,
     explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. Adjusting kubelet sync frequency does not guarantee instant propagation, setting immutable: false is not a real field, and rollout restart replaces pods entirely rather than enabling dynamic reloading.\n\nWhy other options are wrong:\n- A: --sync-frequency controls kubelet sync interval but volume updates still have cache TTL delay; it cannot force instant propagation and does not reload the application process\n- B: ConfigMaps are mutable by default; immutable: false is not a real field, and kubelet volume syncing does not refresh env vars -- only volume-mounted files are updated\n- C: rollout restart replaces pods entirely rather than enabling dynamic reloading without downtime as the question requires\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",
@@ -789,10 +789,10 @@ var questions = [
     text: "A team wants to monitor the actual memory consumption of containers versus their configured limits to identify pods at risk of OOM killing. Which Prometheus metric pair is most relevant?",
     diagram: null,
     options: [
-      "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for per-container memory usage and limit data",
+      "`container_memory_working_set_bytes` and `kube_pod_container_resource_limits` for per-container memory and limit data",
       "`node_memory_MemTotal_bytes` and `kube_node_status_allocatable` for node-level memory limits and availability data",
-      "`kube_pod_status_phase` and `kube_pod_container_status_restarts_total` for pod lifecycle monitoring",
-      "`container_cpu_usage_seconds_total` and `container_cpu_cfs_throttled_seconds_total` for CPU metrics"
+      "`kube_pod_status_phase` and `kube_pod_container_status_restarts_total` for pod lifecycle event monitoring",
+      "`container_cpu_usage_seconds_total` and `container_cpu_cfs_throttled_seconds_total` for CPU throttle metrics"
     ],
     answer: 0,
     explanation: "`container_memory_working_set_bytes` shows the actual memory being used by a container (the metric Kubernetes uses for OOM kill decisions), while `kube_pod_container_resource_limits` with the memory resource label shows the configured limit. Comparing these identifies pods approaching their limits. Node-level metrics do not show per-container data. Pod status metrics show restarts after the fact, not risk prediction. CPU metrics are irrelevant for memory monitoring.\n\nWhy other options are wrong:\n- B: Node-level memory metrics do not show per-container usage or identify which container is at risk\n- C: Pod lifecycle metrics show restarts after the fact, not predictive risk of OOM killing\n- D: CPU metrics are irrelevant for monitoring memory usage and OOM kill risk\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -978,10 +978,10 @@ var questions = [
       "Pods are evicted alphabetically by name to ensure deterministic and repeatable behavior on every node",
       "Pods are evicted randomly — there is no guaranteed or deterministic order during node pressure events",
       "`BestEffort` pods are evicted first, then `Burstable` exceeding requests, then `Guaranteed` pods",
-      "`Guaranteed` pods are evicted first because they consume the most predictable and reserved resources"
+      "`Guaranteed` pods are evicted first, then `Burstable`, then `BestEffort` as reserved resources are reclaimed"
     ],
     answer: 2,
-    explanation: "The kubelet's eviction manager uses QoS class as a primary factor. `BestEffort` pods (no requests or limits) are evicted first. Then `Burstable` pods that are using more than their requests. `Guaranteed` pods are evicted last and only if system daemons need more resources. Within the same QoS class, pods using more resources relative to their requests are evicted first. Eviction is not random or alphabetical.\n\nWhy other options are wrong:\n- A: Pod eviction is not alphabetical; QoS class and resource usage determine the order\n- B: Eviction follows a deterministic priority based on QoS class, not random selection\n- D: Guaranteed pods are evicted last, not first; they consume the most reserved resources\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
+    explanation: "The kubelet's eviction manager uses QoS class as a primary factor. `BestEffort` pods (no requests or limits) are evicted first. Then `Burstable` pods that are using more than their requests. `Guaranteed` pods are evicted last and only if system daemons need more resources. Within the same QoS class, pods using more resources relative to their requests are evicted first. Eviction is not random or alphabetical.\n\nWhy other options are wrong:\n- A: Pod eviction is not alphabetical; QoS class and resource usage determine the order\n- B: Eviction follows a deterministic priority based on QoS class, not random selection\n- D: The order is reversed; Guaranteed pods are evicted last, not first, because they have the strongest resource guarantees\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
     verify: null
   },
   {
@@ -992,8 +992,8 @@ var questions = [
     diagram: null,
     options: [
       "There is no difference — both flags produce the same ConfigMap structure with identical keys and values in output",
-      "`--from-env-file` creates one key per line (e.g., `DB_HOST`); `--from-file` stores the whole file as one key",
-      "`--from-env-file` only supports `.env` file extensions while `--from-file` supports any arbitrary file extension",
+      "`--from-env-file` creates one key per line like `DB_HOST`, while `--from-file` stores the whole file as one key",
+      "`--from-env-file` only supports `.env` file extensions; `--from-file` supports any arbitrary file extension format",
       "`--from-env-file` encrypts the values before storing them while `--from-file` stores them in plaintext as given"
     ],
     answer: 1,
@@ -1171,10 +1171,10 @@ var questions = [
     text: "A team needs to replicate Kubernetes Secrets from one cluster to another for a multi-cluster deployment. Which approach aligns with the CNCF ecosystem?",
     diagram: null,
     options: [
-      "Use an external secrets operator that syncs from a shared store (e.g., Vault) into each cluster independently",
+      "Use an external secrets operator that syncs from a shared external store into each cluster independently",
       "Manually export Secrets with `kubectl get secret -o yaml` and apply them to the other target cluster",
       "Configure etcd replication between clusters so Secrets are automatically shared across all nodes",
-      "Store Secrets in a shared NFS volume that is mounted by both clusters for synchronized access"
+      "Store Secrets in a shared NFS volume (e.g., EFS) that is mounted by both clusters for synchronized access"
     ],
     answer: 0,
     explanation: "Using an external secrets operator with a shared external store (like HashiCorp Vault or a cloud provider's secret manager) is the CNCF-aligned approach. Each cluster's operator independently syncs secrets from the central store, ensuring consistency without direct cluster-to-cluster coupling. Manual export is error-prone and not scalable. etcd replication between clusters is not a supported pattern. NFS for secrets is insecure and impractical.\n\nWhy other options are wrong:\n- B: Manual kubectl export/apply is error-prone, not scalable, and risks Secret exposure\n- C: etcd replication between clusters is not a supported or recommended Kubernetes pattern\n- D: NFS for Secrets is insecure and introduces a single point of failure\n\nReference: https://external-secrets.io/",
@@ -1263,7 +1263,7 @@ var questions = [
     text: "A team wants to use a single ConfigMap to provide different configuration files to different containers in the same pod. Container A needs only `app-a.conf` at its mount path and container B needs only `app-b.conf` at its mount path. Neither container should see the other's configuration file. Both files are keys in the same ConfigMap. How should the volumes and mounts be configured?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Selective ConfigMap Mounting</text><rect x="130" y="50" width="140" height="40" rx="5" fill="#326CE5"/><text x="200" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap: app-config</text><line x1="160" y1="90" x2="90" y2="130" stroke="#555" stroke-width="1"/><line x1="240" y1="90" x2="310" y2="130" stroke="#555" stroke-width="1"/><rect x="30" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="95" y="150" text-anchor="middle" fill="white" font-size="11">Container A</text><text x="95" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-a.conf</text><rect x="240" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="305" y="150" text-anchor="middle" fill="white" font-size="11">Container B</text><text x="305" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-b.conf</text><text x="200" y="215" text-anchor="middle" fill="#aaa" font-size="10">How can each container receive only its own config file?</text></svg>',
     options: [
-      "Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory",
+      "Define one volume with the full ConfigMap, mount it in both containers, and let each read only its own file",
       "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name",
       "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
       "Create two separate ConfigMaps because a single ConfigMap does not support per-container key selection"

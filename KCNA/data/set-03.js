@@ -104,7 +104,7 @@ var questions = [
     text: "A developer creates a `NetworkPolicy` that specifies only `ingress` rules with a `podSelector` matching `app: db`. No `egress` rules are defined in the policy. What happens to outbound traffic from the `app: db` pods?",
     diagram: null,
     options: [
-      "All egress is still allowed because the policy only lists `ingress` in `policyTypes`",
+      "All egress is still allowed because the policy only lists `Ingress` in its `policyTypes` field",
       "All egress is blocked because any `NetworkPolicy` implicitly denies all traffic directions",
       "Egress to the internet is blocked but egress within the cluster namespace is still permitted",
       "The policy is rejected by the API server because it must define both ingress and egress rules"
@@ -169,9 +169,9 @@ var questions = [
     diagram: null,
     options: [
       "A CNAME record pointing to `db.legacy.corp` directly",
-      "An A record with the `ClusterIP` of the Service",
-      "An `SRV` record listing the host and port pair",
-      "A `TXT` record containing the connection string"
+      "An A record containing the `ClusterIP` of the Service",
+      "An `SRV` record listing the host and port pair for it",
+      "A `TXT` record containing the full connection string"
     ],
     answer: 0,
     explanation: "`ExternalName` Services work exclusively at the DNS level — CoreDNS returns a CNAME record that maps the Service's cluster DNS name to the value in `spec.externalName`. No ClusterIP is allocated for `ExternalName` Services, so there is no A record with a virtual IP. SRV and TXT records are not used for this purpose.\n\nWhy other options are wrong:\n- B: ExternalName Services do not get a ClusterIP allocation, so there is no A record with a virtual IP.\n- C: SRV records are not returned for ExternalName Services; only a CNAME is provided.\n- D: TXT records are not used by Kubernetes DNS for Service resolution.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
@@ -312,7 +312,7 @@ var questions = [
     text: "A microservices application has 20 services communicating over mTLS. The team struggles with managing certificates, retries, and circuit breaking at the application level. Which infrastructure pattern offloads these cross-cutting concerns from application code?",
     diagram: null,
     options: [
-      "Adding a `NetworkPolicy` for each service pair to enforce encrypted communication channels",
+      "Adding a `NetworkPolicy` for each service pair to enforce encryption, authentication, and access",
       "Configuring `readinessProbe` on each pod to handle retries and circuit breaking automatically",
       "Using a `CronJob` to rotate certificates and restart affected pods on a periodic schedule run",
       "Deploying a `service mesh` that handles mTLS, retries, and circuit breaking via sidecar proxies"
@@ -474,7 +474,7 @@ var questions = [
     options: [
       "It applies to all pods across every namespace in the entire cluster",
       "It applies only to pods that have no labels in the `production` namespace",
-      "It applies to every pod running in the `production` namespace only",
+      "It applies to every pod currently running in the `production` namespace",
       "The policy is invalid and will be rejected by the Kubernetes API server"
     ],
     answer: 2,
@@ -793,7 +793,7 @@ var questions = [
     diagram: null,
     options: [
       "Delete the `Deployment` and recreate it with the new image tag specified in the pod template spec",
-      "Use `kubectl set image` on the Deployment with a `RollingUpdate` strategy to replace pods incrementally",
+      "Use `kubectl set image` with a `RollingUpdate` strategy to replace pods incrementally in place",
       "Scale the `Deployment` to zero replicas, update the image tag, then scale back up to the count",
       "Edit the `Ingress` to point to a new Service while the old Deployment is still running and ready"
     ],
@@ -875,7 +875,7 @@ var questions = [
       "It serves as a health check endpoint for the `Ingress` controller to verify backend pod availability",
       "It redirects all HTTPS traffic to HTTP on port 80 for unencrypted `backend` service communications",
       "It makes `fallback-svc` the primary backend that takes higher priority over all other Ingress rules",
-      "It routes requests not matching any defined host or path rule to the `fallback-svc` backend"
+      "It routes requests not matching any defined host or path rule to the `fallback-svc` Service backend"
     ],
     answer: 3,
     explanation: "The `defaultBackend` in an Ingress resource acts as a catch-all, handling any request that does not match a specific host or path rule defined in the Ingress rules. It is not a health check endpoint. It does not perform protocol redirects. It has the lowest priority, not the highest — specific rules are evaluated first.\n\nWhy other options are wrong:\n- A: The defaultBackend is not a health check endpoint; it is a catch-all routing target.\n- B: It does not redirect HTTPS to HTTP; it routes unmatched requests to the specified backend.\n- C: The defaultBackend has the lowest priority, not the highest; specific host/path rules are evaluated first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#default-backend",
@@ -1035,7 +1035,7 @@ var questions = [
       "Increase the pod's `memory` limit to allow DNS caching and larger response buffer allocation",
       "Delete and recreate the pod's `Service` to force re-registration of the DNS endpoint records",
       "Restart the `kube-apiserver` to ensure DNS-related resources are properly synced and available",
-      "Check that the CoreDNS pods are running and the `kube-dns` Service has valid endpoints"
+      "Check that the CoreDNS pods are running and that the `kube-dns` Service has valid endpoints"
     ],
     answer: 3,
     explanation: "If a pod cannot resolve any DNS names, the first check should be the health of CoreDNS pods and the `kube-dns` Service endpoints. If CoreDNS is not running or the Service has no endpoints, DNS resolution will fail cluster-wide. Restarting the API server is drastic and unlikely to help. The pod's Service is unrelated to DNS resolution. Memory limits on the application pod do not affect DNS resolution.\n\nWhy other options are wrong:\n- A: Increasing the pod's memory limit does not affect DNS resolution; DNS queries are handled by CoreDNS, not the pod's memory.\n- B: Deleting and recreating the pod's Service does not fix DNS resolution; the issue is with the DNS server, not the Service.\n- C: Restarting the kube-apiserver is drastic and unlikely to fix DNS issues; CoreDNS operates independently.\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/",
@@ -1160,10 +1160,10 @@ var questions = [
     text: "A network engineer wants to detect when a `NetworkPolicy` is misconfigured and blocking legitimate traffic. Which metric from kube-state-metrics is most useful?",
     diagram: null,
     options: [
-      "`kube_networkpolicy_labels` showing all policy labels attached to the resources in the namespace",
-      "`kube_pod_status_phase` tracking pods stuck in `Pending` state due to scheduling or networking",
+      "`kube_networkpolicy_labels` showing policy labels attached to the resources in the namespace",
+      "`kube_pod_status_phase` tracking pods stuck in `Pending` state; helpful for scheduling issues",
       "`kube_pod_container_status_restarts_total` counting container restarts caused by network issues",
-      "No built-in metric exists; the engineer should use CNI-level observability tools such as `Hubble`"
+      "No built-in metric exists; the engineer should use CNI-level tools such as Cilium's `Hubble`"
     ],
     answer: 3,
     explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
@@ -1304,9 +1304,9 @@ var questions = [
     text: "A team configures an Ingress with `ingressClassName: nginx`. The cluster has two Ingress controllers: one with class `nginx` and another with class `traefik`. What determines which controller processes this Ingress?",
     diagram: null,
     options: [
-      "The controller matching the `IngressClass` that was installed first in the cluster takes priority",
-      "Both the `nginx` and `traefik` controllers process the `Ingress` and the first to respond wins",
-      "The `kube-apiserver` assigns the Ingress to the controller with the least current load value",
+      "The controller matching the `IngressClass` installed first in the cluster takes priority",
+      "Both `nginx` and `traefik` controllers process the `Ingress` and the first to respond wins",
+      "The `kube-apiserver` assigns the Ingress to the controller with the least current load",
       "The controller whose `IngressClass` resource name matches `nginx` processes this Ingress"
     ],
     answer: 3,
@@ -1433,9 +1433,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><text x="200" y="20" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">Zero-Trust Network</text><rect x="20" y="40" width="160" height="40" rx="4" fill="#326CE5"/><text x="100" y="65" text-anchor="middle" fill="#fff" font-size="10">Layer 1 — ?</text><rect x="220" y="40" width="160" height="40" rx="4" fill="#4CAF50"/><text x="300" y="65" text-anchor="middle" fill="#fff" font-size="10">Layer 2 — ?</text><rect x="20" y="110" width="160" height="40" rx="4" fill="#FF9800"/><text x="100" y="135" text-anchor="middle" fill="#fff" font-size="10">Layer 3 — ?</text><rect x="220" y="110" width="160" height="40" rx="4" fill="#9C27B0"/><text x="300" y="135" text-anchor="middle" fill="#fff" font-size="10">Layer 4 — ?</text><rect x="120" y="180" width="160" height="40" rx="4" fill="#f44336"/><text x="200" y="205" text-anchor="middle" fill="#fff" font-size="10">Layer 5 — ?</text></svg>',
     options: [
       "Default-deny `NetworkPolicy`, mTLS via a service mesh, and identity-based authorization rules",
-      "`NodePort` Services with strong passwords and firewall rules applied on each individual node",
-      "`ResourceQuotas` to limit pod counts and `LimitRanges` for memory in every cluster namespace",
-      "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem` on every pod in the cluster"
+      "`NodePort` Services with strong passwords, firewall rules, and IP allowlists on each node",
+      "`ResourceQuotas` to limit pod counts, CPU shares, and memory in every cluster namespace",
+      "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem` set on every cluster pod"
     ],
     answer: 0,
     explanation: "Zero-trust networking assumes no implicit trust within the network. This requires default-deny policies (no communication unless explicitly allowed), mutual TLS for encrypted and authenticated service-to-service communication, and identity-based authorization. NodePort with passwords is perimeter-based, not zero-trust. ResourceQuotas and LimitRanges address resource management. PodSecurityAdmission handles pod security contexts, not network trust.\n\nWhy other options are wrong:\n- B: NodePort with passwords is a perimeter-based approach, not zero-trust; it relies on network boundary security.\n- C: ResourceQuotas and LimitRanges address resource management, not network trust or identity verification.\n- D: PodSecurityAdmission handles pod security contexts (filesystem, capabilities), not network-level trust or authentication.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1497,7 +1497,7 @@ var questions = [
     diagram: null,
     options: [
       "No impact — tracing frameworks ignore `X-Request-ID` headers in the request pipeline flow",
-      "The Ingress controller automatically re-injects the header for all downstream service calls",
+      "The Ingress controller re-injects the header automatically; downstream services receive it",
       "The trace breaks at that service; downstream spans appear as separate uncorrelated traces",
       "kube-proxy adds the missing header using iptables MARK rules on the packet metadata fields"
     ],
@@ -1515,7 +1515,7 @@ var questions = [
       "Fix the NetworkPolicy in Git, push the change, and let the GitOps tool sync the correction",
       "Wait for the Argo Rollout to automatically detect the NetworkPolicy issue and trigger rollback",
       "Delete all NetworkPolicies in the namespace to restore connectivity between all the services",
-      "Restart kube-proxy on all nodes to clear the faulty rules and restore the prior configuration"
+      "Restart kube-proxy on all nodes, clear the faulty rules, and restore the prior configuration"
     ],
     answer: 0,
     explanation: "Following GitOps practices, the correct response is to fix the faulty NetworkPolicy in the Git repository and let the GitOps tool (e.g., Argo CD) sync the corrected version. Argo Rollouts monitors application metrics but does not directly detect NetworkPolicy issues. Deleting all policies is too broad and removes intentional restrictions. Restarting kube-proxy does not affect NetworkPolicy enforcement, which is handled by the CNI plugin.\n\nWhy other options are wrong:\n- B: Argo Rollouts monitors application metrics (like error rates) but does not directly detect NetworkPolicy issues.\n- C: Deleting all NetworkPolicies is too broad and removes intentional security restrictions.\n- D: Restarting kube-proxy does not affect NetworkPolicy enforcement, which is handled by the CNI plugin.\n\nReference: https://argo-cd.readthedocs.io/en/stable/",

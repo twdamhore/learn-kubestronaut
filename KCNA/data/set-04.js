@@ -88,10 +88,10 @@ var questions = [
     text: "A cloud-native application follows the Twelve-Factor App methodology. How does this methodology recommend handling persistent data storage?",
     diagram: null,
     options: [
-      "Store all data in local container filesystems for optimal read and write performance at runtime",
+      "Store all persistent data in local container filesystems for optimal read and write performance at runtime",
       "Embed database drivers directly into the application binary to avoid any external service dependencies",
-      "Treat backing services like databases as attached resources, accessed via configuration and swapped without code changes",
-      "Treat in-memory caching as the primary data strategy, avoiding external backing services entirely"
+      "Treat backing services like databases as attached resources, configured via URLs and swapped without code changes",
+      "Treat in-memory caching as the primary data strategy and avoid reliance on external backing services"
     ],
     answer: 2,
     explanation: "The Twelve-Factor App methodology treats backing services (databases, caches, message queues) as attached resources, accessed via configuration. This means a MySQL database should be consumable via a URL and swappable without any code changes. This decouples the application from specific storage implementations.\n\nWhy other options are wrong:\n- A: Storing data in local container filesystems violates factor VI (processes should be stateless) and factor IV (backing services as attached resources)\n- B: Embedding drivers violates the principle of treating backing services as swappable attached resources\n- D: Relying on in-memory caching as the primary strategy avoids external backing services, which directly contradicts factor IV (backing services as attached resources)\n\nReference: https://12factor.net/backing-services",
@@ -312,10 +312,10 @@ var questions = [
     text: "A security audit reveals that a pod mounts a `hostPath` volume pointing to `/etc` on the node. What is the primary security concern with this configuration?",
     diagram: null,
     options: [
-      "The pod may read or modify sensitive host files like `/etc/shadow`, enabling privilege escalation",
-      "The pod can read files from `/etc` but the read-only access poses a limited security concern for node configuration",
+      "The pod may read or modify sensitive host files like `/etc/shadow`, potentially enabling privilege escalation",
+      "The pod can read files from `/etc` but read-only access poses a limited security concern for the node",
       "The `hostPath` volume is encrypted by default so there is no meaningful security concern for the host",
-      "The pod can mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath mounts"
+      "The pod can mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath"
     ],
     answer: 0,
     explanation: "Mounting `hostPath` volumes, especially to sensitive directories like `/etc`, is a significant security risk. A container with write access could modify host-level configuration files, create backdoor accounts, or escalate privileges. Pod Security Standards restrict `hostPath` usage, and most production clusters should disallow it except for system-level DaemonSets.\n\nWhy other options are wrong:\n- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted; they expose raw host filesystem paths to the container\n- D: There are no default securityContext restrictions that force hostPath mounts to read-only; hostPath volumes are read-write by default unless explicitly configured otherwise\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
@@ -360,7 +360,7 @@ var questions = [
     text: "A GitOps team manages StatefulSet manifests in Git, including `volumeClaimTemplates`. An engineer modifies the storage size in the `volumeClaimTemplates` from 10Gi to 20Gi and merges the change. What happens when the GitOps controller applies this update?",
     diagram: null,
     options: [
-      "The `volumeClaimTemplates` change is applied in-place and all existing PVCs are automatically resized by the controller",
+      "The `volumeClaimTemplates` change is applied in-place and existing PVCs are automatically resized",
       "New `PVCs` are created at `20Gi` while old PVCs are deleted and their underlying storage is reclaimed",
       "The GitOps controller automatically recreates the entire `StatefulSet` resource with the new PVC size",
       "The update fails because `volumeClaimTemplates` in a StatefulSet are immutable after initial creation"
@@ -681,8 +681,8 @@ var questions = [
     diagram: null,
     options: [
       "`spec.selector` on the PVC, which accepts `matchLabels` to restrict binding to PVs with matching labels",
-      "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC exists",
-      "`spec.nodeAffinity` acts as a node-level selector restricting which nodes can mount the PV, not PVC label matching",
+      "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC is created",
+      "`spec.nodeAffinity` restricts which nodes can mount the PV but does not filter PVs by label value",
       "`spec.storageClassName` ensures only PVCs with the matching class can bind but not by label value"
     ],
     answer: 0,
@@ -713,9 +713,9 @@ var questions = [
     diagram: null,
     options: [
       "`kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes > 0.9` (per PV)",
-      "`kube_pod_container_resource_limits / kube_pod_container_resource_requests > 0.9`",
+      "`kube_pod_container_resource_limits / kube_pod_container_resource_requests > 0.9` (per pod)",
       "`(node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.9`",
-      "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9` (per pod)"
+      "`container_memory_usage_bytes / container_memory_limit_bytes > 0.9` (per container)"
     ],
     answer: 0,
     explanation: "The ratio `kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes` gives the volume utilization as a fraction. When this exceeds 0.9 (90%), the alert fires. The other expressions monitor container resources or node-level filesystems, not PersistentVolume usage specifically.\n\nWhy other options are wrong:\n- B: kube_pod_container_resource_limits / kube_pod_container_resource_requests compares pod resource specs, not PV usage\n- C: This ratio measures node-level filesystem utilization, not per-PV disk usage; PV monitoring requires kubelet_volume_stats metrics\n- D: container_memory_usage_bytes / container_memory_limit_bytes tracks memory utilization, not storage volume usage\n\nReference: https://kubernetes.io/docs/reference/instrumentation/metrics/",
@@ -777,9 +777,9 @@ var questions = [
     diagram: null,
     options: [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
-      "Serverless frameworks on Kubernetes default to in-memory scratch space, since PVC mounts are not enabled in Knative pod templates",
-      "PersistentVolumes are automatically reclaimed by the platform when serverless functions scale down to zero running pods",
-      "Knative defaults to `emptyDir` volumes and requires additional configuration for PersistentVolumeClaim mounts in function pods"
+      "Serverless frameworks on Kubernetes default to in-memory scratch space since PVC mounts are not enabled in Knative pods",
+      "PersistentVolumes are automatically reclaimed by the platform when serverless functions scale to zero running pods",
+      "Knative defaults to `emptyDir` volumes and requires extra configuration for PersistentVolumeClaim mounts in pods"
     ],
     answer: 0,
     explanation: "Serverless workloads scale to zero when idle, meaning PVs must be detached and reattached on each cold start, adding latency. Additionally, `ReadWriteOnce` PVs cannot be mounted by multiple pods simultaneously, which conflicts with serverless auto-scaling. This is why serverless architectures typically use object storage (e.g., S3) rather than PV-based storage.\n\nWhy other options are wrong:\n- B: Serverless functions in Kubernetes can technically access persistent and ephemeral storage\n- C: PVs are not automatically deleted when functions scale to zero; PVCs persist independently of pods\n- D: Knative does not restrict volumes to emptyDir only; PVCs can be configured in the pod template\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -825,12 +825,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="10" width="300" height="40" rx="6" fill="#326CE5"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="13" font-weight="bold">CSI Driver Architecture</text><rect x="20" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="75" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Identity</text><text x="75" y="105" text-anchor="middle" font-size="9" fill="#666">GetPluginInfo</text><text x="75" y="117" text-anchor="middle" font-size="9" fill="#666">GetCapabilities</text><rect x="145" y="70" width="110" height="55" rx="4" fill="#E8F0FE" stroke="#326CE5"/><text x="200" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Controller</text><text x="200" y="105" text-anchor="middle" font-size="9" fill="#666">Ctrl Op 1</text><text x="200" y="117" text-anchor="middle" font-size="9" fill="#666">Ctrl Op 2</text><rect x="270" y="70" width="110" height="55" rx="4" fill="#A8D08D" stroke="#6AA84F"/><text x="325" y="90" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Node</text><text x="325" y="105" text-anchor="middle" font-size="9" fill="#333">Operation 1</text><text x="325" y="117" text-anchor="middle" font-size="9" fill="#333">Operation 2</text><rect x="20" y="155" width="170" height="35" rx="4" fill="#FFF3CD" stroke="#FFC107"/><text x="105" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Controller Node</text><rect x="210" y="155" width="170" height="35" rx="4" fill="#D4EDDA" stroke="#28A745"/><text x="295" y="177" text-anchor="middle" font-size="10" fill="#333">Runs on Every Worker</text><line x1="75" y1="125" x2="75" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="200" y1="125" x2="105" y2="155" stroke="#FFC107" stroke-width="1.5" stroke-dasharray="4"/><line x1="325" y1="125" x2="295" y2="155" stroke="#28A745" stroke-width="1.5" stroke-dasharray="4"/></svg>',
     options: [
       "Creating and deleting volumes on the storage backend via the Controller plugin's RPC interface",
-      "Registering the CSI driver with the Kubernetes API server using the node-driver-registrar sidecar",
+      "Registering the CSI driver with the kubelet (via the registration socket) using the node-driver-registrar",
       "Scheduling pods to nodes based on volume topology constraints provided by the CSI driver's reports",
       "Staging (formatting/mounting to a global path) and publishing (bind-mounting into the pod) volumes"
     ],
     answer: 3,
-    explanation: "The CSI Node plugin runs on every worker node and handles `NodeStageVolume` (mounting the volume to a staging path, including formatting if needed) and `NodePublishVolume` (bind-mounting from the staging path into the pod's mount namespace). Volume creation and attachment are handled by the Controller plugin, not the Node plugin.\n\nWhy other options are wrong:\n- A: Creating and deleting volumes is handled by the Controller plugin service, not the Node plugin\n- B: Driver registration with the API server is handled by the node-driver-registrar sidecar, not the Node plugin service itself\n- C: Pod scheduling is handled by kube-scheduler; the CSI Node plugin does not schedule pods\n\nReference: https://kubernetes-csi.github.io/docs/deploying.html",
+    explanation: "The CSI Node plugin runs on every worker node and handles `NodeStageVolume` (mounting the volume to a staging path, including formatting if needed) and `NodePublishVolume` (bind-mounting from the staging path into the pod's mount namespace). Volume creation and attachment are handled by the Controller plugin, not the Node plugin.\n\nWhy other options are wrong:\n- A: Creating and deleting volumes is handled by the Controller plugin service, not the Node plugin\n- B: Driver registration with the kubelet is handled by the node-driver-registrar sidecar, not the Node plugin service itself\n- C: Pod scheduling is handled by kube-scheduler; the CSI Node plugin does not schedule pods\n\nReference: https://kubernetes-csi.github.io/docs/deploying.html",
     verify: "kubectl get csinodes"
   },
   {
@@ -842,7 +842,7 @@ var questions = [
     options: [
       "All pods from `pod-0` through `pod-4` are updated to the new revision simultaneously",
       "Only `pod-3` and `pod-4` are updated; pods with ordinal below 3 keep the old revision",
-      "Only `pod-0`, `pod-1`, and `pod-2` are updated because they are below the partition value",
+      "Only `pod-0`, `pod-1`, and `pod-2` are updated; pods at or above the partition keep the old revision",
       "No pods are updated at all until the partition value is removed from the update strategy"
     ],
     answer: 1,
@@ -1003,7 +1003,7 @@ var questions = [
       "It is a bug in the StatefulSet controller that has not been fixed and is tracked in a known issue",
       "Retaining PVCs prevents data loss; when the pod is recreated with the same ordinal it reattaches",
       "PVCs in Lost state are automatically re-created by the StatefulSet controller to restore the previous binding",
-      "The kubelet does not have RBAC permissions to delete PVCs so they remain after pod termination"
+      "The kubelet lacks RBAC permissions to delete PVCs; they remain in the namespace after pod termination"
     ],
     answer: 1,
     explanation: "StatefulSets are designed for stateful workloads where data preservation is critical. When a pod is deleted (intentionally or due to failure), the PVC is retained so that the replacement pod (with the same ordinal and name) can reattach to the same data. This ensures data survives pod rescheduling, node failures, and intentional restarts.\n\nWhy other options are wrong:\n- A: PVC retention is an intentional design feature for data safety, not a bug\n- C: The StatefulSet controller does not auto-recreate PVCs in Lost state; Lost indicates the bound PV was deleted and requires manual intervention\n- D: The kubelet is not involved in PVC deletion; PVCs are API objects managed by the controller-manager\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -1178,7 +1178,7 @@ var questions = [
     options: [
       "The I/O throughput of each PVC measured in bytes per second from the `kubelet_volume_stats` endpoint",
       "The current phase (`Pending`, `Bound`, `Lost`) of each PVC exposed as a gauge metric with labels",
-      "The total number of PVCs that have been created since the cluster was first started and initialized",
+      "The total number of PVCs created since cluster initialization (cumulative counter per namespace)",
       "The actual storage capacity being consumed by each PVC as reported by the underlying CSI driver"
     ],
     answer: 1,
@@ -1209,7 +1209,7 @@ var questions = [
     diagram: null,
     options: [
       "The PV is reserved for that specific PVC; other PVCs cannot bind to it even if they match criteria",
-      "The PV is immediately deleted from the cluster as soon as that specific PVC object is first created",
+      "The PV is immediately deleted from the cluster; deletion is triggered when the referenced PVC is created",
       "The `claimRef` field is informational only and does not affect the binding process in any real way",
       "The PV automatically creates the referenced PVC if it does not already exist in the target namespace"
     ],
@@ -1241,7 +1241,7 @@ var questions = [
     diagram: null,
     options: [
       "The etcd cluster keeps quorum with 2 of 3 members and continues; the failed member must be replaced",
-      "The entire Kubernetes cluster becomes unavailable immediately because etcd has lost all quorum members",
+      "The entire Kubernetes cluster becomes unavailable immediately; etcd has lost all quorum members",
       "The remaining 2 etcd members automatically replicate data to a new disk provisioned by the controller",
       "Kubernetes switches to an in-memory mode and continues operating until the disk failure is repaired"
     ],
@@ -1321,7 +1321,7 @@ var questions = [
     diagram: null,
     options: [
       "No pods are updated; each pod must be manually deleted to trigger recreation with the new spec",
-      "Pods are updated one at a time in reverse ordinal order as part of the standard rolling update",
+      "Pods are updated one at a time in reverse ordinal order; each waits for readiness before proceeding",
       "All pods are immediately updated with the new image by the StatefulSet controller in parallel",
       "The StatefulSet rejects the update until all existing pods are drained from their current nodes"
     ],
@@ -1480,10 +1480,10 @@ var questions = [
     text: "A StatefulSet with `revisionHistoryLimit: 5` has been updated 8 times. How many ControllerRevision objects are retained?",
     diagram: null,
     options: [
-      "Only the current revision is retained; all previous revisions are immediately deleted after updates",
-      "All 9 revisions are retained because revisionHistoryLimit applies to Deployment ReplicaSets, not StatefulSets",
-      "6 ControllerRevision objects are retained (5 historical plus the current); the 3 oldest are garbage collected",
-      "StatefulSets do not use ControllerRevision objects; they track updates via pod template hashes"
+      "Only the current revision is retained; all previous revisions are immediately deleted after each update",
+      "All 9 revisions are kept because revisionHistoryLimit does not apply to StatefulSet ControllerRevisions",
+      "6 ControllerRevision objects are retained: 5 historical plus the current, with the 3 oldest garbage collected",
+      "StatefulSets do not use ControllerRevision objects; they track updates via pod template hash labels instead"
     ],
     answer: 2,
     explanation: "StatefulSets use ControllerRevision objects to track revision history. The revisionHistoryLimit field (default 10) controls how many non-current (historical) revisions are retained. With a limit of 5 and 9 total revisions (1 initial + 8 updates), Kubernetes keeps 5 historical revisions plus the current one (6 total), garbage collecting the 3 oldest. This is analogous to revisionHistoryLimit on Deployments with ReplicaSets.\n\nWhy other options are wrong:\n- A: The revisionHistoryLimit allows retaining multiple historical revisions, not just the current one\n- B: Kubernetes garbage collects old ControllerRevisions beyond the limit; it does not retain all indefinitely\n- D: StatefulSets do use ControllerRevision objects to track revision history, unlike Deployments which use ReplicaSets\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#revision-history-limit",
@@ -1512,7 +1512,7 @@ var questions = [
     text: "A StorageClass has `reclaimPolicy: Delete`. When a PVC using this StorageClass is deleted, what happens to the dynamically provisioned PV and its underlying storage?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="15" width="130" height="45" rx="5" fill="#E8F0FE" stroke="#326CE5" stroke-width="2"/><text x="95" y="42" text-anchor="middle" font-size="12" fill="#333">PVC (Bound)</text><rect x="230" y="15" width="130" height="45" rx="5" fill="#FFF3CD" stroke="#FFC107" stroke-width="2"/><text x="295" y="42" text-anchor="middle" font-size="12" fill="#333">PV (Bound)</text><line x1="160" y1="37" x2="230" y2="37" stroke="#326CE5" stroke-width="2"/><text x="60" y="90" text-anchor="middle" font-size="22" fill="#CC0000">X</text><text x="95" y="95" text-anchor="middle" font-size="11" fill="#CC0000">PVC Deleted</text><line x1="130" y1="90" x2="230" y2="90" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowR)"/><rect x="230" y="75" width="130" height="35" rx="5" fill="#F8D7DA" stroke="#CC0000" stroke-width="2"/><text x="295" y="97" text-anchor="middle" font-size="11" fill="#CC0000">PV ???</text><line x1="295" y1="110" x2="295" y2="140" stroke="#CC0000" stroke-width="2" stroke-dasharray="4,2"/><rect x="220" y="140" width="150" height="35" rx="5" fill="#F8D7DA" stroke="#CC0000"/><text x="295" y="162" text-anchor="middle" font-size="10" fill="#CC0000">Cloud Disk ???</text></svg>',
     options: [
-      "The PV is retained in `Released` state for manual cleanup by a cluster administrator at a later time",
+      "The PV is retained in `Released` state for manual cleanup (e.g., removing the claimRef) by an admin",
       "Both the PV object and underlying storage resource (e.g., cloud disk) are automatically deleted",
       "The PV is deleted but the underlying cloud disk is preserved and must be cleaned up manually after",
       "The PV transitions to `Available` state for reuse by another PVC that matches its access modes"
@@ -1561,7 +1561,7 @@ var questions = [
     diagram: null,
     options: [
       "`spec.minReadySeconds` — ensures each pod is ready for a specified duration before the rolling update proceeds",
-      "`spec.updateStrategy.rollingUpdate.maxUnavailable: 2` — allows two pods to be updated simultaneously during the rollout",
+      "`spec.updateStrategy.rollingUpdate.maxUnavailable: 2` — allows two pods to be updated at the same time",
       "`spec.replicas: 3` — the replica count itself ensures availability by maintaining the desired pod count",
       "`spec.revisionHistoryLimit` — controls how many old ControllerRevision objects are kept after each update"
     ],
@@ -1595,7 +1595,7 @@ var questions = [
       "The release is uninstalled anyway, with all resources deleted regardless of the hook failure status",
       "The uninstall is aborted; the release and all resources remain intact until the hook is resolved",
       "Helm deletes the StatefulSet but keeps the PVCs to preserve data in case of hook failure events",
-      "Helm retries the hook indefinitely using exponential backoff until it eventually succeeds or times out"
+      "Helm retries the hook with exponential backoff; it keeps retrying until it eventually succeeds or times out"
     ],
     answer: 1,
     explanation: "Helm hooks follow a strict lifecycle. If a `pre-delete` hook Job fails, Helm aborts the uninstall process and the release remains in its current state. This is a safety mechanism: since the backup did not complete successfully, proceeding with deletion could result in data loss. The operator must investigate the hook failure and either fix it or manually delete the release.\n\nWhy other options are wrong:\n- A: Helm does not proceed with uninstall if a pre-delete hook fails; it aborts to protect data\n- C: Helm does not selectively delete resources; the entire uninstall is aborted on hook failure\n- D: Helm does not retry hooks with exponential backoff; the hook runs once and its failure aborts the operation\n\nReference: https://helm.sh/docs/topics/charts_hooks/",

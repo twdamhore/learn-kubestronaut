@@ -88,8 +88,8 @@ var questions = [
     text: "An SRE team adopts Argo CD for GitOps-based deployments. After pushing a manifest change to the Git repository, Argo CD shows the application status as <code>OutOfSync</code> but does not automatically deploy the change. What is the most likely reason?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="60" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Git Repo</text><rect x="150" y="70" width="100" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Argo CD</text><rect x="290" y="70" width="100" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="340" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">K8s Cluster</text><line x1="110" y1="95" x2="148" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9a)"/><line x1="250" y1="95" x2="288" y2="95" stroke="#999" stroke-width="2" stroke-dasharray="6,3"/><text x="200" y="155" text-anchor="middle" fill="#555" font-size="11" font-style="italic">Why no auto-deploy?</text><defs><marker id="arrow9a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
-      "Argo CD requires Flux to be installed as a co-controller for enabling automatic sync operations on the cluster",
-      "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
+      "Argo CD requires Flux as a co-controller for enabling automatic sync operations on the cluster",
+      "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not auto-applied",
       "Git webhooks must be configured through a third-party integration because Argo CD relies solely on polling",
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source specification"
     ],
@@ -523,7 +523,7 @@ var questions = [
       "<code>kubectl get all</code> does not include ConfigMaps; it returns only a predefined subset of resource types",
       "Label selectors cannot filter ConfigMaps because they are namespace-scoped rather than cluster-scoped",
       "ConfigMaps have limited label support and are not commonly filtered using label selectors in production",
-      "The <code>-l</code> flag only works with workload resources like Deployments, not configuration resources"
+      "The <code>-l</code> flag only works with workload resources; configuration resources like ConfigMaps are excluded"
     ],
     answer: 0,
     explanation: "The `kubectl get all` command returns only a predefined set of resource types (Pods, Services, Deployments, ReplicaSets, StatefulSets, DaemonSets, Jobs, CronJobs). ConfigMaps, Secrets, PVCs, and many other resource types are not included. To find labeled ConfigMaps, you must explicitly run `kubectl get configmap -l env=production`.\n\nWhy other options are wrong:\n- B: Label selectors work on all resource types including namespace-scoped resources like ConfigMaps\n- C: ConfigMaps fully support labels; they can be created, queried, and filtered using label selectors\n- D: The -l flag works with all resource types, not just workloads; the issue is with 'get all' scope\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/",
@@ -937,7 +937,7 @@ var questions = [
     diagram: null,
     options: [
       "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer will terminate the container",
-      "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately, and the node eviction manager reclaims them",
+      "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately by the node eviction manager",
       "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
@@ -986,8 +986,8 @@ var questions = [
     options: [
       "Create or update an <code>imagePullSecret</code> in the namespace and reference it in the Pod spec or ServiceAccount",
       "Recreate the Pod with <code>hostNetwork: true</code> to allow direct network access to the private registry endpoint",
-      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries may not retain older tags",
-      "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for private registry lookups"
+      "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries may not retain older tagged images",
+      "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for registry lookups"
     ],
     answer: 0,
     explanation: "The `unauthorized` error indicates that the container runtime cannot authenticate to the private registry. Kubernetes uses `imagePullSecrets` (Secrets of type `kubernetes.io/dockerconfigjson`) to provide registry credentials. These can be referenced directly in the Pod spec or attached to the default ServiceAccount in the namespace for automatic injection.\n\nWhy other options are wrong:\n- B: hostNetwork does not solve authentication issues; it changes network namespace, not registry credentials\n- C: Private registries serve any valid tag; the latest tag is not special for authentication purposes\n- D: CoreDNS configuration is for DNS resolution, not registry authentication or authorization\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
@@ -1099,7 +1099,7 @@ var questions = [
       "Yes, Kubernetes automatically encrypts all Secret values using AES-256 before storing them in etcd",
       "Yes, the Secret is encrypted using the cluster's built-in PKI infrastructure managed by the CA",
       "No, the value is only base64-encoded (not encrypted); encryption at rest must be configured separately",
-      "No, the value is hashed with a one-way function, so the original password cannot be recovered"
+      "No, the value is hashed with a one-way function; the original password cannot be recovered from it"
     ],
     answer: 2,
     explanation: "Kubernetes Secrets are stored as base64-encoded strings by default, which is an encoding scheme, not encryption. Anyone with read access to Secrets can decode the value with `echo TXlTM2NyZXQ= | base64 -d`. For actual encryption, administrators must enable encryption at rest via an `EncryptionConfiguration` on the API server or use an external secrets manager.\n\nWhy other options are wrong:\n- A: Kubernetes does not automatically encrypt Secrets with AES-256; encryption at rest must be configured\n- B: Secrets are not encrypted with PKI; they are base64-encoded, which is reversible encoding\n- D: The value is not hashed; base64 is a reversible encoding, and the original value can be easily decoded\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#risks",
@@ -1225,7 +1225,7 @@ var questions = [
     diagram: null,
     options: [
       "All ingress and egress traffic is denied by default when a CNI plugin with NetworkPolicy support is installed in the cluster",
-      "Egress traffic is allowed by default while all ingress traffic requires an explicit NetworkPolicy to be permitted in the namespace",
+      "Egress traffic is allowed by default; all ingress traffic requires an explicit NetworkPolicy to be permitted in the namespace",
       "The Pod can only communicate with other Pods in the same namespace because cross-namespace traffic is blocked by default",
       "All traffic is allowed because no NetworkPolicy selects this Pod; Kubernetes follows a default-allow model until a policy applies"
     ],
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A cluster administrator wants to understand the flow of a Pod creation request. They submit a Deployment manifest via <code>kubectl apply</code>. In which order do the control plane components process this request?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="110" height="35" rx="6" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="65" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold">kubectl apply</text><rect x="145" y="10" width="110" height="35" rx="6" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="200" y="32" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Component A</text><rect x="145" y="80" width="110" height="35" rx="6" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component B</text><rect x="280" y="10" width="110" height="35" rx="6" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="335" y="32" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component C</text><rect x="280" y="80" width="110" height="35" rx="6" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="335" y="102" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component D</text><rect x="145" y="155" width="110" height="35" rx="6" fill="#00695C" stroke="#004D40" stroke-width="2"/><text x="200" y="177" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Component E</text><line x1="120" y1="93" x2="145" y2="93" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="45" x2="200" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="27" x2="280" y2="27" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="255" y1="97" x2="280" y2="97" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="200" y1="115" x2="200" y2="155" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="335" y1="45" x2="335" y2="80" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/><text x="200" y="145" text-anchor="middle" fill="#333" font-size="8" font-style="italic">order: ???</text></svg>',
     options: [
-      "kubectl sends the manifest to the scheduler, which validates it, forwards it to the API server, and the API server persists it in etcd",
+      "kubectl sends the manifest to the scheduler, which validates it; the scheduler forwards it to the API server, and the API server persists it in etcd",
       "API server stores the Deployment in etcd; controllers create ReplicaSet and Pods; scheduler assigns nodes; kubelet starts containers",
       "The kubelet directly receives the manifest from kubectl, creates the Pods locally, starts containers, and reports status to the API server",
       "etcd receives the manifest first, triggers the controller manager to create Pods, which then notifies the API server of state changes"
@@ -1336,10 +1336,10 @@ var questions = [
     text: "A team configures a Service of type <code>LoadBalancer</code> in a bare-metal Kubernetes cluster (no cloud provider). After creation, the Service shows <code>EXTERNAL-IP</code> as <code>&lt;pending&gt;</code> indefinitely. What is the likely cause and solution?",
     diagram: null,
     options: [
-      "The Service YAML is malformed and needs the <code>loadBalancerIP</code> field explicitly specified in the spec",
+      "The Service YAML is malformed; the <code>loadBalancerIP</code> field must be explicitly specified in the spec",
       "The kube-proxy DaemonSet needs to be restarted to detect the new LoadBalancer Service type correctly",
       "Bare-metal clusters lack a cloud load balancer; MetalLB or similar must be installed to allocate IPs",
-      "The cluster's CoreDNS must be configured with an external DNS provider before LoadBalancer IPs can be allocated"
+      "CoreDNS must be configured with an external DNS provider before LoadBalancer IPs can be allocated"
     ],
     answer: 2,
     explanation: "The `LoadBalancer` Service type relies on an external cloud provider's load balancer integration to provision an external IP. In bare-metal environments, no such integration exists by default, so the external IP remains `<pending>`. MetalLB is a popular solution that provides a network load balancer implementation for bare-metal clusters, enabling IP address allocation for LoadBalancer Services.\n\nWhy other options are wrong:\n- A: The YAML is valid; loadBalancerIP is optional and the issue is the lack of a load balancer controller\n- B: Restarting kube-proxy does not provision external IPs; kube-proxy handles iptables, not IP allocation\n- D: CoreDNS handles service discovery, not IP allocation; LoadBalancer IP provisioning requires a load balancer controller\n\nReference: https://metallb.io/",
@@ -1466,7 +1466,7 @@ var questions = [
     options: [
       "The container receives SIGTERM and has 60 seconds to shut down; if it does not exit, the kubelet sends SIGKILL",
       "The scheduler waits 60 seconds before attempting to find a replacement node for the Pod on another cluster node",
-      "The kubelet immediately kills the container and waits 60 seconds before removing the Pod object from the API server",
+      "The kubelet immediately kills the container; it then waits 60 seconds before removing the Pod object from the API server",
       "The Pod continues to receive new traffic from the Service for 60 seconds before being removed from Endpoints"
     ],
     answer: 0,
@@ -1480,7 +1480,7 @@ var questions = [
     text: "A team evaluates KEDA (Kubernetes Event-Driven Autoscaling) for their event-processing workload that consumes messages from an Apache Kafka topic. How does KEDA differ from the standard Horizontal Pod Autoscaler?",
     diagram: null,
     options: [
-      "KEDA manages its own scaling loop independently of the HPA, so both should not target the same workload",
+      "KEDA manages its own scaling loop (separate from the HPA), so both should not target the same workload",
       "KEDA scales on external event sources (Kafka lag, queue depth) and supports scaling to zero replicas",
       "KEDA is primarily designed for batch workloads and provides limited support for long-running Deployments",
       "KEDA provides faster scaling by bypassing the Kubernetes API server and directly managing Pod counts"
@@ -1514,7 +1514,7 @@ var questions = [
     options: [
       "Yes, annotations and labels are interchangeable and usable for scheduling purposes in all Kubernetes versions",
       "Yes, but only if the annotation key strictly follows the DNS subdomain naming convention for node selectors",
-      "No, annotations are restricted to cluster-scoped objects and cannot be applied to namespace-scoped resources",
+      "No, annotations are restricted to cluster-scoped objects; they cannot be applied to namespace-scoped resources like Pods",
       "No, annotations are non-identifying metadata not used by selectors or scheduling; labels are required for selection"
     ],
     answer: 3,
@@ -1577,8 +1577,8 @@ var questions = [
     diagram: null,
     options: [
       "All three probes run simultaneously from the moment the container starts, checking the same endpoint concurrently",
-      "The startup probe completely replaces both the liveness and readiness probes for the lifetime of the container",
-      "The startup probe runs first (up to 300s); liveness and readiness probes start only after it succeeds",
+      "The startup probe completely replaces both probes (liveness and readiness) for the entire lifetime of the container",
+      "The startup probe runs first (up to 300s) and liveness and readiness probes begin only after it succeeds",
       "The startup probe only affects the readiness probe; the liveness probe runs independently from container start"
     ],
     answer: 2,

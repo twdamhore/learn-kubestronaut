@@ -146,3 +146,67 @@
 
 ### s07-q099 (length-balance)
 - **Option D:** Trimmed from "and allow transparent IP resolution for clients" to "and resolve IPs transparently" (143->125). Ratio reduced from 1.192 to 1.042.
+
+---
+
+# Round 40 Review - Set 07
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 17 across 16 questions
+
+## Changes
+
+### s07-q006 (length-balance)
+- **All options:** Added descriptive suffixes to all four command options ("to stream output", "for a shell", "to join stdin", "for a tunnel") to reduce ratio from 1.206 to 1.102.
+
+### s07-q010 (length-balance)
+- **Option B:** Expanded from "based on their current labels" to "based on their current assigned labels in the cluster" (97->121). Ratio reduced from 1.206 to 1.090.
+
+### s07-q015 (length-balance)
+- **Option A (correct):** Expanded from "waits for new pods before" to "waits for new pods to be healthy before" (110->124). Answer was shortest with gap=10; now within 3 chars of the longest.
+
+### s07-q031 (giveaway)
+- **Option C:** Added parenthetical "(e.g., Calico)" to break the unique parenthetical pattern that was only present in the correct answer D.
+
+### s07-q039 (giveaway + length-balance)
+- **Option A:** Added parenthetical "(e.g., double each tier)" and rewrote to match correct answer's structure.
+- **Option C (correct):** Removed parenthetical "(e.g., Jaeger or Zipkin)" and rewrote as "with tools like Jaeger or Zipkin" to eliminate unique structural giveaway.
+
+### s07-q045 (giveaway)
+- **Option A (correct):** Removed parenthetical "(e.g., `Fluentd`, `Loki`)" and rewrote as "like Fluentd or Loki" to eliminate unique structural giveaway.
+- **Option D:** Added parenthetical "(via the API server)" to break pattern exclusivity.
+
+### s07-q048 (length-balance)
+- **Option C (correct):** Expanded from "from disk" to "from the mounted path" then trimmed to 126 chars. Answer was shortest at 119 with gap=10; now gap reduced to 5.
+
+### s07-q049 (length-balance)
+- **Option A (correct):** Expanded from "desired state in Git" to "desired state declared in Git" (84->93). Answer was shortest with gap=6; now within 3 chars of others.
+
+### s07-q057 (giveaway)
+- **Option A (correct):** Replaced parenthetical "(e.g., `linux/arm64`)" with inline "like `linux/arm64`" to eliminate unique structural pattern.
+- **Option B:** Added parenthetical "(e.g., v20 vs v24)" to break pattern exclusivity across options.
+
+### s07-q069 (length-balance)
+- **All options:** Rebalanced from 124-145 spread (ratio 1.169) to 121-126 spread (ratio 1.041).
+
+### s07-q070 (length-balance)
+- **Options A, B, D:** Padded distractors to reduce gap with correct answer C (was longest at 122, gap=9). Now all options within 117-122 range (ratio 1.043).
+
+### s07-q078 (length-balance)
+- **Option A:** Expanded "by the controller" to "by the deployment controller" (108->119).
+- **Option C:** Trimmed "readiness check failures" to "readiness failures" (126->120). Ratio reduced from 1.167 to 1.034.
+
+### s07-q088 (giveaway)
+- **Option A:** Added semicolon to break unique semicolon pattern in correct answer C. Changed "with SIGKILL and creates" to "with SIGKILL; it then creates".
+
+### s07-q090 (length-balance)
+- **Option B (correct):** Trimmed "triggering eviction after 5 minutes" to "triggering eviction" (138->122). Answer was longest with gap=9; now shortest by only 1 char.
+
+### s07-q096 (giveaway)
+- **Option A:** Added semicolon structure to break unique semicolon pattern in correct answer C. Rewrote to include "; NodePort Services must use `Cluster` instead".
+
+### s07-q097 (length-balance)
+- **Option C:** Expanded from 47 to 58 chars by adding "app=web:v2" to make it a plausible but incorrect full command.
+- **Option D:** Expanded from 45 to 53 chars by adding "--prune" flag. Ratio reduced from 1.178 to 1.094.
+- **Explanation:** Updated option D explanation to reference the added --prune flag.

@@ -210,3 +210,105 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 ### s10-q029 (length-balance)
 - **Option B:** Trimmed from 138 to 129 chars. Removed "by users" at end.
 - **Option C (correct):** Expanded from 115 to 128 chars. Added "all" and "priority" for completeness.
+
+---
+
+# Round 40 Review - Set 10
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 52 option adjustments across 20 questions
+
+## Changes
+
+### s10-q002 (length-balance)
+- **Option B:** Trimmed from 135 to 133 chars. Removed backticks around `RuntimeDefault` or `Localhost`.
+- **Option C (correct):** Expanded from 120 to 125 chars. Added "value" for length balance.
+
+### s10-q004 (length-balance)
+- **Option B:** Trimmed from 112 to 109 chars. Removed "the" before "skew".
+- **Option C:** Trimmed from 115 to 108 chars. Removed "entirely".
+- **Option D (correct):** Trimmed from 126 to 114 chars. Shortened "its skew calculation" from "in its skew calculation".
+
+### s10-q012 (length-balance)
+- **Option A (correct):** Expanded from 113 to 120 chars. Changed "encryption at rest in etcd" to "etcd encryption at rest for secrets".
+- **Option C:** Trimmed from 125 to 123 chars. Removed "a" before "vault".
+
+### s10-q013 (length-balance)
+- **Option A:** Expanded from 108 to 113 chars. Added "delay" after "tolerationSeconds".
+- **Option C (correct):** Expanded from 107 to 117 chars. Added "the taint" for clarity.
+
+### s10-q017 (length-balance)
+- **Option A (correct):** Expanded from 134 to 140 chars. Added "resource" before "with `handler: runsc`".
+- **Option B:** Trimmed from 146 to 139 chars. Changed "sandbox runtime" to "sandbox mode".
+- **Option C:** Trimmed from 143 to 136 chars. Changed "containerd runtime handler" to "containerd handler".
+- **Option D:** Trimmed from 151 to 140 chars. Changed "the kubelet service" to "kubelet".
+
+### s10-q020 (length-balance)
+- **Option A (correct):** Expanded from 110 to 121 chars. Changed "has fewer than 5 dots" to "contains fewer than 5 dots total".
+
+### s10-q022 (length-balance)
+- **Option A (correct):** Expanded from 139 to 151 chars. Added "and pod binding" for technical detail.
+- **Option D:** Trimmed from 155 to 150 chars. Changed "1 hour" to "1h".
+
+### s10-q023 (length-balance)
+- **Option A (correct):** Trimmed from 149 to 109 chars. Removed verbose parenthetical detail, shortened to core claim.
+- **Option B:** Trimmed from 127 to 116 chars. Changed "even with evictions" to "with evictions".
+- **Option C:** Trimmed from 136 to 115 chars. Shortened with abbreviation "PDBs".
+- **Option D:** Trimmed from 138 to 115 chars. Simplified phrasing.
+
+### s10-q035 (length-balance)
+- **Option A:** Expanded from 108 to 114 chars. Added "fully" for balance.
+- **Option B (correct):** Expanded from 113 to 114 chars. Changed "simultaneously" to "together".
+- **Option C:** Expanded from 101 to 113 chars. Added "constraints" for specificity.
+- **Option D:** Trimmed from 121 to 113 chars. Removed "it" at end.
+
+### s10-q037 (length-balance)
+- **Option A:** Trimmed from 139 to 127 chars. Rewording for conciseness.
+- **Option B:** Trimmed from 136 to 126 chars. Changed "all running pods to complete before creating new pods" to shorter form.
+- **Option D (correct):** Expanded from 120 to 128 chars. Changed "2 of 6" to "2 out of 6".
+
+### s10-q043 (length-balance)
+- **Option A (correct):** Expanded from 125 to 132 chars. Added "backend" before "pods".
+- **Option B:** Trimmed from 146 to 129 chars. Simplified phrasing.
+
+### s10-q056 (length-balance)
+- **Option A:** Expanded from 102 to 115 chars. Added "the quota-compute definition" for specificity.
+- **Option D:** Changed em dash to semicolon for consistency.
+
+### s10-q061 (length-balance)
+- **Option A (correct):** Expanded from 112 to 116 chars. Added "path" before "prefix".
+- **Option B:** Trimmed from 114 to 109 chars. Removed "path" at end.
+- **Option D:** Trimmed from 126 to 111 chars. Shortened ending.
+
+### s10-q064 (length-balance)
+- **Option A:** Trimmed from 114 to 108 chars. Removed "instance".
+- **Option B (correct):** Changed "read-write" to "writable" (117 to 114 chars).
+- **Option C:** Changed "first container's" to "that container's" (123 to 121 chars).
+- **Option D:** Trimmed from 132 to 118 chars. Removed "for isolation".
+
+### s10-q072 (length-balance)
+- **Option A:** Expanded from 113 to 119 chars. Added "set to" before "`Local`".
+- **Option B (correct):** Expanded from 111 to 121 chars. Added "on another node" for clarity.
+- **Option C:** Trimmed from 131 to 118 chars. Removed "on that node".
+
+### s10-q079 (length-balance)
+- **Option D:** Trimmed from 142 to 126 chars. Shortened "between admission requests, not within the same request" to "between admission requests, not within one".
+
+### s10-q083 (length-balance)
+- **Option B:** Expanded from 103 to 109 chars. Added "nodes" at end.
+- **Option D:** Expanded from 111 to 115 chars. Added "only" at end.
+
+### s10-q088 (length-balance)
+- **Option A:** Trimmed from 136 to 118 chars. Changed "over remote endpoints by default in merged services" to "over remote ones by default".
+- **Option B (correct):** Expanded from 117 to 126 chars. Added "backend" before "endpoints".
+
+### s10-q095 (length-balance)
+- **Option A:** Trimmed from 128 to 119 chars. Removed "overall".
+- **Option B (correct):** Expanded from 112 to 122 chars. Added "atomically" for precision.
+- **Option C:** Trimmed from 123 to 115 chars. Removed "call" at end.
+
+### s10-q097 (length-balance)
+- **Option A:** Trimmed from 141 to 133 chars. Removed "implicitly".
+- **Option B (correct):** Expanded from 125 to 131 chars. Added "all" before "egress".
+- **Option D:** Expanded from 121 to 129 chars. Changed "cluster default policy" to "cluster-level default policy".

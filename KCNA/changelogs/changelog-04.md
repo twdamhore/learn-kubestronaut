@@ -171,3 +171,76 @@
 ### s04-q042 (length-balance - LOW-MEDIUM)
 - **Option A:** Trimmed from ~117 to ~99 chars by removing "for each read" suffix.
 - **Option D (correct):** Expanded from ~99 to ~107 chars by changing "full" to "complete" and adding "full" before "state reconstruction".
+
+---
+
+# Round 40 Review - Set 04
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 19 across 16 questions
+
+## Changes
+
+### s04-q006 (length-balance)
+- **Option A:** Expanded from ~95 to ~106 chars by adding "persistent" before "data".
+- **Option C (correct):** Trimmed from ~120 to ~113 chars by changing "accessed via configuration and swapped" to "configured via URLs and swapped".
+- **Option D:** Expanded from ~97 to ~100 chars by restructuring to "and avoid reliance on external backing services".
+
+### s04-q020 (length-balance)
+- **Option A (correct):** Expanded from ~97 to ~109 chars by adding "potentially" before "enabling".
+- **Option B:** Trimmed from ~115 to ~101 chars by removing "the" before "read-only" and "for node configuration" to "for the node".
+- **Option D:** Trimmed from ~114 to ~107 chars by removing "mounts" at the end.
+
+### s04-q023 (length-balance)
+- **Option A:** Trimmed from ~119 to ~97 chars by removing "all" and "by the controller".
+
+### s04-q043 (length-balance)
+- **Option B:** Changed "before the PVC exists" to "before the PVC is created" (94 chars, no change).
+- **Option C:** Trimmed from ~114 to ~95 chars by removing "acts as a node-level selector" prefix, rephrasing.
+
+### s04-q045 (length-balance)
+- **Option B:** Added "(per pod)" suffix to balance parenthetical pattern across options.
+- **Option D:** Changed "(per pod)" to "(per container)" for accuracy (container_memory metrics are per-container).
+
+### s04-q049 (length-balance)
+- **Option B:** Trimmed from ~129 to ~119 chars by removing comma and "pod templates" to "pods".
+- **Option C:** Trimmed from ~119 to ~114 chars by removing "down" from "scale down".
+- **Option D:** Trimmed from ~126 to ~112 chars by changing "additional" to "extra" and "function pods" to "pods".
+
+### s04-q052 (giveaway)
+- **Option B:** Changed from "Registering the CSI driver with the Kubernetes API server using the node-driver-registrar sidecar" to "Registering the CSI driver with the kubelet (via the registration socket) using the node-driver-registrar" to add parenthetical structure matching correct answer D, breaking the unique parenthetical giveaway.
+- **Explanation B:** Updated "API server" to "kubelet" to match revised option text.
+
+### s04-q074 (giveaway)
+- **Option C:** Changed from "The total number of PVCs that have been created since the cluster was first started and initialized" to "The total number of PVCs created since cluster initialization (cumulative counter per namespace)" to add parenthetical structure matching correct answer B, breaking the unique parenthetical giveaway.
+
+### s04-q078 (giveaway)
+- **Option B:** Changed from "...immediately because etcd has lost all quorum members" to "...immediately; etcd has lost all quorum members" to add semicolon matching correct answer A, breaking the unique semicolon giveaway.
+
+### s04-q093 (length-balance + giveaway)
+- **Option A:** Expanded from ~99 to ~103 chars by adding "each" before "update".
+- **Option B:** Trimmed from ~109 to ~103 chars and restructured; added "(initial plus 8 updates)" parenthetical to break unique parenthetical in correct answer C.
+- **Option C (correct):** Changed parenthetical format from "(...)" to colon format "...: 5 historical plus the current" to reduce giveaway signal. Trimmed from ~109 to ~109 chars.
+- **Option D:** Expanded from ~94 to ~107 chars by adding "instead" at end.
+
+### s04-q095 (giveaway)
+- **Option A:** Changed from "...for manual cleanup by a cluster administrator at a later time" to "...for manual cleanup (e.g., removing the claimRef) by an admin" to add parenthetical structure matching correct answer B, breaking the unique parenthetical giveaway.
+
+### s04-q053 (giveaway)
+- **Option C:** Added semicolon by changing "because they are below the partition value" to "; pods at or above the partition keep the old revision" to break unique semicolon in correct answer B.
+
+### s04-q063 (giveaway)
+- **Option D:** Added semicolon by changing "does not have RBAC permissions to delete PVCs so they remain" to "lacks RBAC permissions to delete PVCs; they remain in the namespace" to break unique semicolon in correct answer B.
+
+### s04-q076 (giveaway)
+- **Option B:** Added semicolon by changing "as soon as that specific PVC object is first created" to "; deletion is triggered when the referenced PVC is created" to break unique semicolon in correct answer A.
+
+### s04-q083 (giveaway)
+- **Option B:** Added semicolon by changing "in reverse ordinal order as part of the standard rolling update" to "in reverse ordinal order; each waits for readiness before proceeding" to break unique semicolon in correct answer A.
+
+### s04-q098 (length-balance)
+- **Option B (correct):** Trimmed from ~119 to ~102 chars by changing "allows two pods to be updated simultaneously during the rollout" to "allows two pods to be updated at the same time".
+
+### s04-q100 (giveaway)
+- **Option D:** Added semicolon by changing "indefinitely using exponential backoff until" to "with exponential backoff; it keeps retrying until" to break unique semicolon in correct answer B.

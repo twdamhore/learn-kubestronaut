@@ -176,3 +176,67 @@
 
 ### s06-q100 (length-balance/giveaway)
 - **All options:** Balanced from range 51-75 (ratio 1.47) to 52-59 (ratio 1.13). Correct answer C was shortest; now tied for longest. Shortened D from 75 to 55 chars.
+
+---
+
+# Round 40 Review - Set 06
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 16 across 16 questions
+
+## Changes
+
+### s06-q016 (length-balance)
+- **Options A/B/D:** Reworded for balance. Trimmed B from 89 to 78 chars, trimmed D from 85 to 80 chars, expanded A from 75 to 78 chars. Ratio improved from 1.19 to 1.03.
+
+### s06-q021 (length-balance/giveaway)
+- **Option C (correct):** Expanded from 39 to 46 chars by adding "policy" to "preemption policy enabled". Correct answer was shortest; now tied for longest. Ratio improved from 1.18 to 1.10.
+
+### s06-q034 (length-balance)
+- **Option D:** Shortened from 99 to 84 chars by replacing "by kubelet after the upgrade; others remain stopped" with "automatically; others remain stopped". Ratio improved from 1.21 to 1.06.
+
+### s06-q035 (length-balance/giveaway)
+- **All options:** Balanced by adding "metric"/"from kubelet"/etc. suffixes. Correct A was shortest at 47; now 54 (longest). Ratio improved from 1.19 to 1.10.
+
+### s06-q044 (length-balance)
+- **All options:** Prepended "The" and added "applied to a node"/"on a node" suffixes to balance inherently different keyword lengths (`PreferNoSchedule` vs `NoExecute`). Ratio improved from 1.29 to 1.04.
+
+### s06-q047 (length-balance)
+- **Option A:** Expanded from 57 to 62 chars by adding "the". **Option D:** Trimmed from 66 to 62 chars. Ratio improved from 1.16 to 1.05.
+
+### s06-q054 (length-balance)
+- **Options A/B:** Expanded slightly ("available nodes", "runtime state"). **Option C:** Trimmed from 73 to 66 chars. Ratio improved from 1.16 to 1.14.
+
+### s06-q055 (length-balance/giveaway)
+- **All options:** Reworded for balance. Correct A (longest at 80) trimmed to 77. D (shortest at 65) expanded to 74. Ratio improved from 1.23 to 1.04.
+
+### s06-q056 (length-balance)
+- **Options B/C/D:** Expanded with minor wording additions ("daemon", "all Pods", "setup"). Ratio improved from 1.17 to 1.04.
+
+### s06-q058 (length-balance/giveaway)
+- **All options:** Balanced by adding "replica"/"node-level"/"setting"/"request" qualifiers. Correct D (longest at 49) trimmed to 48. B (shortest at 40) expanded to 48. Ratio improved from 1.23 to 1.06.
+
+### s06-q060 (length-balance/giveaway)
+- **Options A/C/D:** Expanded to balance with B. Correct A (shortest at 64) expanded to 75. Ratio improved from 1.17 to 1.09.
+
+### s06-q062 (length-balance/giveaway)
+- **Options B/C:** Expanded with "rules"/"available" to close gap. Correct D (longest at 68) unchanged. Ratio improved from 1.15 to 1.01.
+
+### s06-q068 (length-balance)
+- **All options:** Added "project"/"framework"/"and admission tool"/"for AI" suffixes. Ratio improved from 1.22 to 1.07.
+
+### s06-q078 (length-balance)
+- **Option C:** Expanded from 72 to 83 chars by adding "a fully mandatory constraint". Ratio improved from 1.18 to 1.08.
+
+### s06-q080 (length-balance)
+- **Options B/C/D:** Expanded with "CNI plugin binary"/"directory path"/"config" additions. Ratio improved from 1.22 to 1.10.
+
+### s06-q085 (length-balance/giveaway)
+- **Options A/C/D:** Reworded. Correct D (shortest at 61) expanded to 70 by adding "assigned". C trimmed from 73 to 70. Ratio improved from 1.20 to 1.09.
+
+### s06-q086 (length-balance/giveaway)
+- **Option B (correct):** Expanded from 65 to 78 chars by adding "network-attached PV is moved to". Correct answer was shortest; now tied for longest. Ratio improved from 1.20 to 1.05.
+
+### s06-q096 (length-balance/giveaway)
+- **Options C/D:** Expanded for balance. Correct C (shortest at 68) expanded to 78. D expanded from 71 to 77. Ratio improved from 1.16 to 1.03.

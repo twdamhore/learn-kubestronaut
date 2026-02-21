@@ -173,3 +173,73 @@
 
 ### s01-q100 (structural giveaway - LOW-MEDIUM)
 - **Option D:** Changed from "requires YAML input" / "primarily uses" to "only accepts YAML file input" / "primarily uses" with semicolon separator, giving it a dual-contrast structure similar to correct answer B.
+
+---
+
+# Round 40 Review - Set 01
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 21 across 18 questions
+
+## Changes
+
+### s01-q004 (length-balance)
+- **Option A:** Trimmed "entirely" from "bypassing the CRI layer entirely" to reduce from 103ch to 94ch. Ratio improved from 1.321 to 1.205.
+
+### s01-q008 (length-balance)
+- **Option A:** Trimmed "central" from "to a central backend" to reduce from 92ch to 84ch.
+- **Option C (correct):** Added "on targets" after "metric endpoints" to expand from 79ch to 90ch. Correct answer no longer shortest.
+
+### s01-q016 (length-balance)
+- **Option A:** Added "in the cluster" to expand from 74ch to 84ch.
+- **Option B:** Trimmed "automatically" from "that automatically adjusts" to reduce from 101ch to 91ch. Ratio improved from 1.365 to 1.095.
+
+### s01-q034 (length-balance)
+- **Option B:** Added "and error rates" to expand from 81ch to 97ch. Ratio improved from 1.222 to 1.148.
+
+### s01-q036 (structural giveaway)
+- **Option A:** Restructured to include a semicolon ("initialization phase; node resource constraints block them"), matching the semicolon structure in correct answer D.
+
+### s01-q038 (length-balance)
+- **Option A:** Trimmed "for the" to "for" to reduce from 91ch to 87ch.
+- **Option D (correct):** Expanded from "since" phrasing to "because the Service resides in" to expand from 78ch to 86ch. Ratio improved from 1.167 to 1.125.
+
+### s01-q039 (length-balance)
+- **Option A:** Trimmed "automatically spreads Pods" to "to spread Pods" to reduce from 111ch to 98ch. Ratio improved from 1.306 to 1.153.
+
+### s01-q044 (structural giveaway)
+- **Option A:** Added "Slack, and PagerDuty" comma-list to match the 3-item comma-list in correct answer C.
+- **Option B:** Added "deduplicates them, and" to give option B a comma-list structure matching correct answer C.
+
+### s01-q065 (length-balance)
+- **All options:** Added descriptive suffixes ("with comma-separated selectors", "with an OR keyword", etc.) to bring options closer in length. Ratio improved from 1.205 to 1.136.
+
+### s01-q069 (length-balance)
+- **Option B:** Trimmed "entirely" and "a fresh one" to reduce from 120ch to 102ch.
+- **Option D:** Trimmed "with an auto-generated suffix appended to the name to prevent" to "with an auto-generated suffix to prevent naming" to reduce from 113ch to 99ch. Ratio improved from 1.237 to 1.052.
+
+### s01-q073 (length-balance)
+- **Option A:** Trimmed "creates" to "stores" and "evaluates nodes and assigns" to "assigns" to reduce from 146ch to 135ch.
+- **Option D:** Trimmed "evaluates and assigns them to available nodes" to "assigns them to nodes" to reduce from 165ch to 140ch. Ratio improved from 1.320 to 1.120.
+
+### s01-q081 (length-balance)
+- **Option C:** Trimmed "that Deployments do not support natively" to "than Deployments" to reduce from 118ch to 94ch. Ratio improved from 1.216 to 1.096.
+
+### s01-q083 (length-balance)
+- **Option A:** Trimmed "verbs on" to "on" and "for" to "to" to reduce from 117ch to 110ch. Ratio improved from 1.182 to 1.111.
+
+### s01-q086 (length-balance)
+- **Option C:** Trimmed "until the desired state is achieved" to "to desired state" to reduce from 129ch to 116ch. Ratio improved from 1.206 to 1.084.
+
+### s01-q089 (length-balance)
+- **Option C:** Trimmed "on Kubernetes runtimes" to "on Kubernetes" to reduce from 104ch to 95ch. Ratio improved from 1.156 to 1.067.
+
+### s01-q091 (length-balance)
+- **Option B:** Trimmed "during execution" to reduce from 107ch to 90ch. Ratio improved from 1.163 to 1.089.
+
+### s01-q096 (structural giveaway)
+- **Option C:** Restructured to include a semicolon ("provisions a new node; the 5th Pod schedules once the node joins"), matching the semicolon in correct answer B. Updated explanation bullet for option C to match.
+
+### s01-q100 (length-balance)
+- **Option C:** Trimmed "resource creation" to "creation" and "subsequent updates" to "updates" to reduce from 129ch to 109ch. Ratio improved from 1.217 to 1.085.

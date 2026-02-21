@@ -88,10 +88,10 @@ var questions = [
     text: "You need to inspect the filesystem of a running container to check if a configuration file was mounted correctly. Which command allows you to open an interactive shell inside the container?",
     diagram: null,
     options: [
-      "`kubectl logs <pod-name> --follow`",
-      "`kubectl exec -it <pod-name> -- /bin/sh`",
-      "`kubectl attach <pod-name> --stdin`",
-      "`kubectl port-forward <pod-name> 8080:80`"
+      "`kubectl logs <pod-name> --follow` to stream output",
+      "`kubectl exec -it <pod-name> -- /bin/sh` for a shell",
+      "`kubectl attach <pod-name> --stdin` to join stdin",
+      "`kubectl port-forward <pod-name> 8080:80` for a tunnel"
     ],
     answer: 1,
     explanation: "`kubectl exec -it <pod-name> -- /bin/sh` starts an interactive shell session inside the running container. The `-i` flag keeps stdin open and `-t` allocates a TTY. This lets you navigate the filesystem, inspect files, check environment variables, and run diagnostic commands directly inside the container.\n\nWhy other options are wrong:\n- A: kubectl logs shows container stdout/stderr output, not an interactive shell\n- C: kubectl attach connects to the main process stdin, not a new shell session\n- D: kubectl port-forward creates a network tunnel, not a shell session\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/",
@@ -153,7 +153,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod's `imagePullSecret` is missing and all nodes are refusing to process the pull request from the registry",
-      "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current labels",
+      "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
       "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
     ],
@@ -232,7 +232,7 @@ var questions = [
     text: "After a rolling update, some pods from the new ReplicaSet are in `CrashLoopBackOff` while old pods were terminated. Users are experiencing downtime. What deployment setting could have prevented this scenario?",
     diagram: null,
     options: [
-      "Configuring `minReadySeconds` and a readiness probe so the rollout waits for new pods before removing old ones",
+      "Configuring `minReadySeconds` and a readiness probe so the rollout waits for new pods to be healthy before removing old ones",
       "Setting `spec.strategy.type` to `Recreate` so all existing pods are replaced simultaneously during each deployment update",
       "Increasing `terminationGracePeriodSeconds` to give the old pods more time to complete in-flight requests before shutdown",
       "Adding a `PodDisruptionBudget` with `maxUnavailable: 100%` to allow the deployment controller to remove all pods at once"
@@ -490,7 +490,7 @@ var questions = [
     options: [
       "The `kube-scheduler`, which could not find a valid node placement for the pod sandbox container creation request",
       "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
-      "The CNI plugin, which failed to assign a valid network namespace to the new pod sandbox container on the node",
+      "The CNI plugin (e.g., Calico), which failed to assign a valid network namespace to the new pod sandbox on the node",
       "The CRI (e.g., containerd) relaying an OCI runtime error from the low-level `runc` runtime during pod sandbox creation"
     ],
     answer: 3,
@@ -616,9 +616,9 @@ var questions = [
     text: "In a distributed microservices system, a chain of calls (A -> B -> C) is experiencing intermittent failures. Service C's pods are healthy, but Service B logs show `context deadline exceeded` when calling Service C. What technique would help pinpoint the latency source?",
     diagram: null,
     options: [
-      "Scale up replicas across the distributed service chain to handle the increased load and reduce latency",
+      "Scale up replicas across the distributed service chain (e.g., double each tier) to reduce per-pod load",
       "Restarting all pods in the request chain to clear any stale connections or cached network state data",
-      "Implementing distributed tracing (e.g., Jaeger or Zipkin) to visualize latency across each hop",
+      "Implementing distributed tracing with tools like Jaeger or Zipkin to visualize latency across each hop",
       "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
     ],
     answer: 2,
@@ -712,10 +712,10 @@ var questions = [
     text: "You need to retrieve logs from a pod that crashed and was replaced 2 hours ago. The new pod has the same name. `kubectl logs <pod> --previous` shows logs from the current pod's previous restart, not from the pod that was replaced. How can you retrieve the old logs?",
     diagram: null,
     options: [
-      "The old pod's logs are permanently lost unless a cluster-level log aggregation system (e.g., `Fluentd`, `Loki`) collected them",
+      "The old pod's logs are permanently lost unless a cluster-level log aggregation system like Fluentd or Loki collected them",
       "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
       "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
-      "Use `kubectl get events` which automatically captures full container logs on termination and stores them in the API server"
+      "Use `kubectl get events` which automatically captures full container logs (via the API server) on pod termination events"
     ],
     answer: 0,
     explanation: "`kubectl logs --previous` only retrieves logs from the previous container instance within the same pod. When a pod is deleted and replaced, its logs are lost from the node. Cluster-level log aggregation (using tools like Fluentd, Fluent Bit, or Grafana Loki) captures and stores logs externally, making them available after pod deletion.\n\nWhy other options are wrong:\n- B: --since only filters logs within the current or previous container instance, not across replaced pods\n- C: kubectl describe does not store log lines; it shows events and resource metadata only\n- D: kubectl get events captures event objects, not full container log output\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/logging/#cluster-level-logging-architectures",
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "ConfigMap volume mounts are immutable after pod creation and require a full pod delete and recreate cycle to update the mounted data",
       "ConfigMap changes are only propagated by the kubelet at a fixed 24-hour synchronization interval, regardless of any manual restarts",
-      "The application caches config at startup and does not re-read from disk—verify the pod actually restarted with new data",
+      "The application caches config at startup and does not re-read the mounted path—verify the pod actually restarted with new data",
       "The `kube-controller-manager` must be restarted for ConfigMap changes to propagate across the cluster to all affected pod volumes"
     ],
     answer: 2,
@@ -776,7 +776,7 @@ var questions = [
     text: "A GitOps tool (e.g., ArgoCD) shows a Deployment as `OutOfSync` after someone manually ran `kubectl scale deployment web --replicas=5` in the cluster. The Git repository defines `replicas: 3`. What will happen on the next sync?",
     diagram: null,
     options: [
-      "ArgoCD will revert the Deployment to `replicas: 3` to match the desired state in Git",
+      "ArgoCD will revert the Deployment to `replicas: 3` to match the desired state declared in Git",
       "ArgoCD will preserve the manual change and then update the Git repository to `replicas: 5`",
       "ArgoCD will compute an average of the values and set the `replicas: 4` as a compromise state",
       "ArgoCD will mark the Deployment as failed and then stop syncing until it is manually resolved"
@@ -904,8 +904,8 @@ var questions = [
     text: "A team is debugging an application that works locally in Docker but fails in Kubernetes with `exec format error`. The cluster nodes run on `linux/amd64`. What is the most likely cause?",
     diagram: null,
     options: [
-      "The container image was built for a different CPU architecture (e.g., `linux/arm64`) incompatible with `amd64`",
-      "The Kubernetes version is incompatible with the Docker version that was used to build the container image",
+      "The container image was built for a different CPU architecture like `linux/arm64` that is incompatible with `amd64`",
+      "The Kubernetes version is incompatible with the Docker version (e.g., v20 vs v24) used to build the container image",
       "The container runtime on the cluster nodes does not support the `OCI` image format used by this container",
       "The pod's security context prevents execution of the container's entrypoint binary on the scheduled node"
     ],
@@ -1096,10 +1096,10 @@ var questions = [
     text: "A pod with two containers shares an `emptyDir` volume. Container A writes a file to the volume, but Container B cannot find it. Both containers mount the volume but at different `mountPath` values. Is this expected behavior?",
     diagram: null,
     options: [
-      "No, both containers see the same files because `emptyDir` is shared storage—the file should be visible, so check the exact file paths",
-      "No, emptyDir volumes use copy-on-write semantics so each container sees an independent snapshot of the data rather than the same underlying files",
-      "Yes, different mount paths create isolated storage spaces within the same `emptyDir`, preventing cross-container file visibility",
-      "Yes, `emptyDir` volumes are read-only by default so Container B lacks the necessary write permissions to see mutable content"
+      "No, both containers see the same files because `emptyDir` is shared storage—check the exact file paths used by each container",
+      "No, emptyDir volumes use copy-on-write semantics so each container gets an independent snapshot of the data at mount time",
+      "Yes, different mount paths create isolated storage spaces within the same `emptyDir` volume, preventing cross-container access",
+      "Yes, `emptyDir` volumes are read-only by default so Container B lacks write permissions needed to see mutable content from A"
     ],
     answer: 0,
     explanation: "An `emptyDir` volume is a shared directory at the pod level. All containers that mount it see the same underlying data, regardless of the mount path. If Container A writes `/mnt/data/file.txt` and Container B mounts the same volume at `/shared/data`, it should see the file at `/shared/data/file.txt`. If the file is missing, verify the exact paths and that both containers mount the same volume name.\n\nWhy other options are wrong:\n- B: emptyDir does not use copy-on-write; all containers share the same underlying directory and see identical files\n- C: Different mount paths access the same underlying volume data; the mount path is just the view into the pod\n- D: emptyDir volumes are read-write by default, not read-only\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -1112,10 +1112,10 @@ var questions = [
     text: "A pod has `priorityClassName: high-priority` set. During a resource crunch, the scheduler preempts a lower-priority pod to make room. What happens to the preempted pod?",
     diagram: null,
     options: [
-      "It is `Paused` in place and automatically resumed when cluster resources become available again after rebalancing",
-      "It is moved to a different node automatically by the scheduler without any interruption to the running process",
+      "It is `Paused` in place on the node and automatically resumed when sufficient cluster resources become available again",
+      "It is moved to a different node automatically by the scheduler without any interruption to the currently running process",
       "It is gracefully terminated and its owner controller creates a replacement that may stay `Pending` if resources are scarce",
-      "It is terminated along with its owning controller, requiring the operator to redeploy both resources afterward"
+      "It is terminated along with its owning controller resource, requiring the operator to redeploy both of them afterward"
     ],
     answer: 2,
     explanation: "Preemption gracefully terminates the lower-priority pod (respecting its `terminationGracePeriodSeconds`). If the pod is managed by a controller like a Deployment or ReplicaSet, the controller creates a replacement pod. However, the replacement may also end up `Pending` if cluster resources remain constrained. Preemption does not migrate pods—it terminates them.\n\nWhy other options are wrong:\n- A: Kubernetes does not pause pods; preempted pods are terminated\n- B: Pod migration is not a Kubernetes feature; pods are terminated and recreated, not live-migrated\n- D: Preemption only terminates the pod, not its owning controller; the controller persists and creates replacements\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/",
@@ -1240,9 +1240,9 @@ var questions = [
     text: "A Deployment has `maxUnavailable: 0` and `maxSurge: 1` in its rolling update strategy. During an update, you observe that the old pods are not terminated until the new pod is `Ready`. What happens if the new pod enters `CrashLoopBackOff`?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Rolling Update: maxUnavailable=0, maxSurge=1</text><rect x="30" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="65" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-1 OK</text><rect x="110" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="145" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-2 OK</text><rect x="190" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="225" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-3 OK</text><rect x="280" y="55" width="90" height="30" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="325" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">new-1 CRASH</text><text x="200" y="120" text-anchor="middle" fill="#e76f51" font-size="11">Rollout status: ???</text><text x="200" y="140" text-anchor="middle" fill="#aaa" font-size="10">Old pods: ???</text><text x="200" y="160" text-anchor="middle" fill="#aaa" font-size="10">What is the impact on old pods and the rollout?</text></svg>',
     options: [
-      "All old pods are immediately terminated by the controller to make room for the new replacement pod instances",
+      "All old pods are immediately terminated by the deployment controller to make room for the new replacement pod instances",
       "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
-      "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness check failures",
+      "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness failures",
       "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
     ],
     answer: 1,
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A pod has `terminationGracePeriodSeconds: 30`. When a rolling update begins, what happens during those 30 seconds?",
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="160" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Pod Termination Lifecycle</text><rect x="20" y="55" width="65" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="52" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">Signal ?</text><line x1="85" y1="70" x2="105" y2="70" stroke="#888" stroke-width="1.5" marker-end="url(#a88)"/><rect x="105" y="55" width="130" height="30" rx="5" fill="#3d405b" stroke="#888" stroke-width="1.5"/><text x="170" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">Grace period (30s)</text><line x1="235" y1="70" x2="260" y2="70" stroke="#888" stroke-width="1.5" marker-end="url(#a88)"/><rect x="260" y="55" width="65" height="30" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="292" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">Signal ?</text><text x="170" y="115" text-anchor="middle" fill="#aaa" font-size="10">What happens at each stage?</text><text x="170" y="135" text-anchor="middle" fill="#aaa" font-size="10">What signal is sent if the process is still running?</text><defs><marker id="a88" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The kubelet immediately kills the container with SIGKILL and creates the new replacement container on the same node",
+      "The kubelet immediately kills the container with SIGKILL; it then creates the new replacement container on the same node",
       "The container continues serving traffic for the full 30 seconds while the new version starts running alongside it",
       "The kubelet sends SIGTERM giving the container 30 seconds to shut down gracefully; then SIGKILL is sent if needed",
       "The pod's readiness probe is suspended for the 30-second window to allow the container to drain active connections"
@@ -1433,7 +1433,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod exceeded its resource limits after 5 minutes, so the kubelet's `eviction-manager` terminated it to reclaim node resources",
-      "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction after 5 minutes",
+      "The node became `NotReady` and the pod's `NoExecute` toleration with `tolerationSeconds: 300` expired, triggering eviction",
       "The scheduler detected a better node for the pod and performed a live migration after the 300-second warm-up period elapsed",
       "The pod's NoExecute toleration expired because the PodDisruptionBudget overrides tolerationSeconds after a 300-second window"
     ],
@@ -1528,7 +1528,7 @@ var questions = [
     text: "Traffic to a Service with `externalTrafficPolicy: Local` is not reaching pods on some nodes. Requests to those nodes' NodePort return `connection refused`. What explains this?",
     diagram: null,
     options: [
-      "The `Local` external traffic policy is deprecated and no longer supported in recent Kubernetes versions for NodePort Services",
+      "The `Local` external traffic policy is deprecated in recent Kubernetes versions; NodePort Services must use `Cluster` instead",
       "The `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
       "With `externalTrafficPolicy: Local`, kube-proxy only routes to pods on the same node; nodes without a pod drop the traffic",
       "The CNI plugin does not support the `Local` external traffic policy and silently falls back to the default `Cluster` behavior"
@@ -1546,11 +1546,11 @@ var questions = [
     options: [
       "`kubectl rollout undo deployment/web --to-revision=2`",
       "`kubectl rollout restart deployment/web --revision=2`",
-      "`kubectl set image deployment/web --revision=2`",
-      "`kubectl apply -f deployment-v2.yaml --force`"
+      "`kubectl set image deployment/web --revision=2 app=web:v2`",
+      "`kubectl apply -f deployment-v2.yaml --force --prune`"
     ],
     answer: 0,
-    explanation: "`kubectl rollout undo deployment/web --to-revision=2` rolls the Deployment back to the specific revision number 2. Without `--to-revision`, it rolls back to the immediately previous revision. The rollout history is maintained by keeping old ReplicaSets (controlled by `revisionHistoryLimit`). Each undo creates a new revision entry in the history.\n\nWhy other options are wrong:\n- B: rollout restart creates a new revision, not a rollback to a specific old revision\n- C: kubectl set image changes the image but does not support a --revision flag for rollback\n- D: kubectl apply with a YAML file requires having the correct version manifest and --force is disruptive\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout_undo/",
+    explanation: "`kubectl rollout undo deployment/web --to-revision=2` rolls the Deployment back to the specific revision number 2. Without `--to-revision`, it rolls back to the immediately previous revision. The rollout history is maintained by keeping old ReplicaSets (controlled by `revisionHistoryLimit`). Each undo creates a new revision entry in the history.\n\nWhy other options are wrong:\n- B: rollout restart creates a new revision, not a rollback to a specific old revision\n- C: kubectl set image changes the image but does not support a --revision flag for rollback\n- D: kubectl apply with a YAML file requires having the correct version manifest; --force and --prune are disruptive\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout_undo/",
     verify: "kubectl rollout history deployment/web"
   },
   {

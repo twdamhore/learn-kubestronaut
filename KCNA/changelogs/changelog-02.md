@@ -219,3 +219,72 @@
 ### s02-q085 (length-balance - LOW)
 - **Problem:** Option A was a 148-character outlier compared to other options.
 - **Option A:** Trimmed. Changed from `"The ResourceQuota rejects the pod because it has no memory specification, since the LimitRange injects defaults only after the quota check completes"` to `"The ResourceQuota rejects the pod because the LimitRange injects defaults only after the quota check completes"`.
+
+---
+
+# Round 40 Review - Set 02
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 17 across 12 questions
+
+## Changes
+
+### s02-q043 (giveaway/length-balance)
+- **Problem:** Correct option B was the longest (124 chars, ratio 1.253) and used a semicolon structure unique among the options.
+- **Option B (correct):** Replaced semicolon with comma. Changed from `"Sharing ConfigMaps between services creates tight coupling; changes to Service B's config could unexpectedly break Service A"` to `"Sharing ConfigMaps between services creates tight coupling, so changes to Service B's config could break Service A"`.
+- **Option C:** Added semicolon for structural balance. Changed from `"Kubernetes rate-limits ConfigMap read operations so sharing would cause pod performance degradation"` to `"Kubernetes rate-limits ConfigMap read operations per namespace; sharing would cause pod performance degradation"`.
+- **Option D:** Expanded for length balance. Changed from `"Shared ConfigMaps are automatically replicated across namespaces causing eventual data inconsistency"` to `"Shared ConfigMaps are automatically replicated across namespaces by the controller, causing eventual data inconsistency"`.
+
+### s02-q048 (length-balance)
+- **Problem:** Correct option A was the longest (123 chars, ratio 1.242) due to R37 padding; C and D were only 99 chars each.
+- **Option A (correct):** Trimmed. Changed `"for per-container memory usage and limit data"` to `"for per-container memory and limit data"`.
+- **Options C, D:** Expanded slightly. Added `"event"` to C and `"throttle"` to D.
+
+### s02-q071 (giveaway)
+- **Problem:** Correct option A was the longest (109 chars, ratio 1.172) and had a unique parenthetical `(e.g., Vault)` and `e.g.` not present in other options.
+- **Option A (correct):** Removed parenthetical example. Changed from `"Use an external secrets operator that syncs from a shared store (e.g., Vault) into each cluster independently"` to `"Use an external secrets operator that syncs from a shared external store into each cluster independently"`.
+- **Option D:** Added parenthetical to balance structure. Changed from `"Store Secrets in a shared NFS volume that is mounted by both clusters for synchronized access"` to `"Store Secrets in a shared NFS volume (e.g., EFS) that is mounted by both clusters for synchronized access"`.
+
+### s02-q038 (length-balance)
+- **Problem:** Correct option D and B were tied at 113 chars while A and C were both 96 chars (ratio 1.177).
+- **Option A:** Expanded. Changed `"mounted in place"` to `"mounted in the container"`.
+- **Option C:** Expanded. Changed `"to override mount mode"` to `"to override the default mount mode"`.
+
+### s02-q046 (giveaway)
+- **Problem:** Correct option D had a unique parenthetical `(e.g., \`SIGHUP\`)` not present in other options.
+- **Option D (correct):** Removed parenthetical. Changed from `"Use a sidecar that watches the mounted ConfigMap volume and signals (e.g., \`SIGHUP\`) the main process"` to `"Use a sidecar that watches the mounted ConfigMap volume for changes and signals the main process to reload"`.
+- **Option A:** Added parenthetical to balance. Changed from `"Configure the kubelet \`--sync-frequency\` to a lower interval so volume-mounted ConfigMaps propagate to pods instantly"` to `"Configure the kubelet \`--sync-frequency\` (e.g., \`5s\`) so volume-mounted ConfigMaps propagate to pods instantly"`.
+
+### s02-q059 (giveaway)
+- **Problem:** Correct option C had a unique comma-list structure (`first, then ..., then ...`) while wrong options had zero commas.
+- **Option D:** Added matching comma-list structure with reversed (incorrect) order. Changed from `"\`Guaranteed\` pods are evicted first because they consume the most predictable and reserved resources"` to `"\`Guaranteed\` pods are evicted first, then \`Burstable\`, then \`BestEffort\` as reserved resources are reclaimed"`.
+- **Explanation D:** Updated to address the reversed order.
+
+### s02-q060 (giveaway)
+- **Problem:** Correct option B had a triple giveaway: unique parenthetical `(e.g., \`DB_HOST\`)`, unique semicolon, and unique `e.g.` usage.
+- **Option B (correct):** Removed parenthetical and semicolon. Changed from `"\`--from-env-file\` creates one key per line (e.g., \`DB_HOST\`); \`--from-file\` stores the whole file as one key"` to `"\`--from-env-file\` creates one key per line like \`DB_HOST\`, while \`--from-file\` stores the whole file as one key"`.
+- **Option C:** Added semicolon for structural balance. Changed from `"\`--from-env-file\` only supports \`.env\` file extensions while \`--from-file\` supports any arbitrary file extension"` to `"\`--from-env-file\` only supports \`.env\` file extensions; \`--from-file\` supports any arbitrary file extension format"`.
+
+### s02-q076 (giveaway)
+- **Problem:** Correct option C had a unique comma-list structure with 2 commas while wrong options had zero commas.
+- **Option A:** Added comma-list structure to match. Changed from `"Define one volume with the full ConfigMap and mount it in both containers; each reads only its own file from the directory"` to `"Define one volume with the full ConfigMap, mount it in both containers, and let each read only its own file"`.
+
+### s02-q024 (giveaway)
+- **Problem:** Correct option D had a unique parenthetical `(e.g., \`values-dev.yaml\`, \`values-prod.yaml\`)` not present in other options.
+- **Option D (correct):** Removed parenthetical. Changed from `"In separate values files (e.g., \`values-dev.yaml\`, \`values-prod.yaml\`) passed with \`-f\` flag"` to `"In separate values files like \`values-dev.yaml\` and \`values-prod.yaml\` passed with the \`-f\` flag"`.
+- **Option A:** Added parenthetical to balance. Changed from `"In the \`Chart.yaml\` file, which supports per-environment overrides natively within Helm's schema"` to `"In the \`Chart.yaml\` file (e.g., \`chart-dev.yaml\`, \`chart-prod.yaml\`) using per-environment overrides"`.
+
+### s02-q019 (length-balance)
+- **Problem:** Ratio 1.227 due to option C being an outlier at 119 chars while correct B was 97 chars.
+- **Option C:** Trimmed. Changed from `"Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service in the namespace"` to `"Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service"`.
+
+### s02-q034 (length-balance)
+- **Problem:** Ratio 1.250 due to wrong options B (131), C (126), and D (140) being outliers vs correct A (112).
+- **Option B:** Trimmed. Changed from `"Delete all existing Secrets and recreate them from scratch — Kubernetes will re-encrypt on creation using the new key automatically"` to `"Delete all existing Secrets and recreate them — Kubernetes will re-encrypt on creation using the new key"`.
+- **Option C:** Trimmed. Changed from `"Run \`kubectl rotate-keys --provider=aescbc\` which handles the full key rotation process automatically without any manual steps"` to `"Run \`kubectl rotate-keys --provider=aescbc\` which handles the full key rotation process automatically"`.
+- **Option D:** Trimmed. Changed from `"Replace the old key with the new one in \`EncryptionConfiguration\`, restart the API server, then wait for data to re-encrypt on the next read"` to `"Replace the old key with the new one in \`EncryptionConfiguration\`, restart the API server, then wait for re-encryption on read"`.
+
+### s02-q035 (length-balance)
+- **Problem:** Ratio 1.191 due to option B being an outlier at 131 chars while correct A was 110 chars.
+- **Option B:** Trimmed. Changed from `"Split the dataset across approximately two ConfigMaps and merge them inside the container at startup using an init container script"` to `"Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container"`.

@@ -182,3 +182,43 @@
 
 ### s08-q100 (length-balance)
 - **Option D (correct):** Extended from 110 to 118 chars by expanding "app" to "application" in "app state visualization". No longer shortest; ratio improved from 1.091 to 1.081.
+
+---
+
+# Round 40 Review - Set 08
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 10 across 10 questions
+
+## Changes
+
+### s08-q009 (length-balance)
+- **Option D:** Extended from 87 to 95 chars by adding "a" and "layer" to close gap with A (100). Ratio improved from 1.149 to 1.053.
+
+### s08-q023 (length-balance/giveaway)
+- **Option B:** Reworded "reserved GPU nodes" to "reserved GPU node pool" (111 chars). **Option D (correct):** Trimmed from 122 to 112 chars by removing "corresponding" and restructuring to "add a matching toleration to only the ML workload Pod specs". Correct answer no longer longest; ratio improved from 1.140 to 1.036.
+
+### s08-q038 (length-balance)
+- **Option D (correct):** Extended from 86 to 89 chars by changing "marked failed" to "marked as failed". Still shortest but ratio improved from 1.105 to 1.067.
+
+### s08-q045 (giveaway)
+- **Option C (correct):** Replaced unique semicolon with comma-based phrasing: "not updated without restart, while volume mounts are eventually refreshed". Eliminates structural giveaway.
+
+### s08-q062 (giveaway/length-balance)
+- **Option A:** Trimmed from 126 to 125 chars by changing "do not support" to "cannot handle". **Option B:** Extended from 112 to 119 chars by adding "routing to". **Option C (correct):** Restructured from semicolon to comma phrasing: "and `kube-proxy` balances at L4 per connection, so one connection goes to one Pod" (121 chars). Eliminates unique semicolon giveaway; ratio improved from 1.125 to 1.068.
+
+### s08-q064 (giveaway)
+- **Option B (correct):** Replaced unique semicolon with comma: "including backing services, and different databases cause subtle bugs". Eliminates structural giveaway.
+
+### s08-q068 (giveaway/length-balance)
+- **Option A (correct):** Replaced semicolon with "so" phrasing: "throttled by the CFS scheduler so it cannot exceed 2 CPU cores, but it is not killed" (101 chars). **Option C:** Extended from 91 to 99 chars by adding "from the node" and restructuring. **Option D:** Trimmed from 104 to 100 chars by changing "configured threshold" to "configured limit". Eliminates unique semicolon; ratio improved from 1.143 to 1.052.
+
+### s08-q072 (length-balance/giveaway)
+- **Option B (correct):** Replaced semicolon with comma: "requiring a majority quorum, and with 2 of 3 members available the quorum is maintained" (118 chars). **Option C:** Extended from 107 to 123 chars by adding "all data afterward on recovery". **Option D:** Extended from 107 to 121 chars by adding "fully" and "cluster". Eliminates unique semicolon; ratio improved from 1.150 to 1.042.
+
+### s08-q075 (length-balance)
+- **Option C:** Extended from 90 to 97 chars by adding "single" before "node". Ratio improved from 1.133 to 1.052.
+
+### s08-q100 (length-balance/giveaway)
+- **Option C:** Extended from 111 to 123 chars by adding "like GitHub". **Option D (correct):** Trimmed from 118 to 115 chars by replacing "controller-based" with "modular" and removing semicolon (replaced with ", while"). Correct answer no longer longest; ratio improved from 1.081 to 1.079.

@@ -117,3 +117,46 @@
 ### s05-q052 (length-balance - LOW)
 - **Problem:** Wrong option D was 77 chars; others were 63-67 chars.
 - **Fix:** Shortened D from "Each authenticator is assigned to specific API groups and evaluated per-group" to "Each authenticator is assigned to specific API groups for evaluation".
+
+---
+
+# Round 40 Review - Set 05
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 11 across 11 questions
+
+## Changes
+
+### s05-q003 (length-balance)
+- **Option A:** Shortened from "The container runs as root, overriding the pod-level `securityContext` setting" (78 chars) to "The container runs as root, overriding the pod-level security setting" (69 chars). Ratio was 1.182, now 1.045.
+
+### s05-q008 (length-balance)
+- **Option B:** Expanded from "Fluentd log aggregation paired with regex pattern matching" (58) to "Fluentd log aggregation paired with regex-based pattern matching" (64). **Option D (correct):** Expanded from "Falco with custom rules for runtime security monitoring" (55) to "Falco with custom rules for monitoring runtime syscall activity" (63). Correct was shortest at ratio 1.145, now mid-range at 1.085.
+
+### s05-q029 (length-balance)
+- **Option C (correct):** Expanded from "DNS fails because UDP port 53 is not permitted by the egress rule" (65) to "DNS fails because UDP port 53 is not allowed by the egress policy rule" (70). Correct was shortest at ratio 1.138, now mid-range at 1.104.
+
+### s05-q044 (length-balance)
+- **Options A, C, D:** Rebalanced. A (correct) expanded from 71 to 75, C shortened from 80 to 75, D expanded from 68 to 74. Ratio was 1.176, now 1.027.
+
+### s05-q049 (length-balance)
+- **Option A:** Expanded from 73 to 77 chars. **Option C (correct):** Shortened from "Attackers cannot install persistent backdoors since changes are lost on restart" (79) to "Attackers cannot persist backdoors since all changes are lost on restart" (72). Correct was longest at ratio 1.113, now mid-range at 1.085.
+
+### s05-q060 (length-balance)
+- **Option B (correct):** Shortened from "If the gateway is compromised, all backend services are accessible unauthenticated" (82) to "If the gateway is compromised, all backend services become accessible directly" (78). Correct was longest at ratio 1.079, now mid-range at 1.039.
+
+### s05-q067 (length-balance)
+- **Option B:** Shortened from "An error is raised because of the conflicting automount settings" (64) to "An error is raised because of conflicting automount configuration" (65). **Option C (correct):** Expanded from "The Pod spec setting takes precedence and the token is mounted" (62) to "The Pod spec setting takes precedence and a token is mounted normally" (69). Correct was shortest at ratio 1.081, now within range at 1.095.
+
+### s05-q073 (length-balance)
+- **Option A:** Expanded from "A `nodeSelector` entry matching the `security: high` node label" (63) to "A `nodeSelector` entry matching the `security: high` label on nodes" (67). **Option B (correct):** Expanded from "A `toleration` matching the taint `security=high:NoSchedule`" (60) to "A `toleration` for the taint `security=high:NoSchedule` in the spec" (67). Correct was shortest at ratio 1.133, now tied at 1.075.
+
+### s05-q077 (length-balance)
+- **Option C (correct):** Adjusted from "An HTTP 200 with a `TokenReview` response containing user identity" (66) to "An HTTP 200 with a `TokenReview` response that contains user identity" (69). **Option D:** Adjusted from "An HTTP 200 response with a plain-text `username` string in the body" (68) to "An HTTP 200 response with a plain-text `username` value in the body" (67). Correct was shortest at ratio 1.091, now mid-range at 1.075.
+
+### s05-q085 (length-balance)
+- **Option C (correct):** Expanded from "Access to the API server's `/healthz` and `/metrics` HTTP endpoints" (67) to "Access to the API server's own `/healthz` and `/metrics` HTTP endpoints" (71). **Option D:** Shortened from "Read-only access to all `CustomResourceDefinition` objects across the cluster" (77) to "Read-only access to all `CustomResourceDefinition` objects in the cluster" (73). Correct was shortest at ratio 1.149, now mid-range at 1.074.
+
+### s05-q087 (length-balance)
+- **Option A:** Expanded from "The update succeeds but triggers an automatic Pod restart cycle" (63) to "The update succeeds but triggers an automatic Pod restart cycle for consumers" (77). **Option C:** Shortened from "The `immutable` field is advisory only and does not enforce any restriction" (75) to "The `immutable` field is advisory and does not enforce any restriction" (70). Ratio was 1.190, now 1.132.

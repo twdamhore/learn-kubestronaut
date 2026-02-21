@@ -146,3 +146,57 @@
 - 12 length-balance fixes (normalizing option character counts across 12 questions)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+# Round 40 Review - Set 03
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 12 across 12 questions
+
+## Changes
+
+### s03-q007 (length-balance)
+- **Option A (correct):** Expanded from 84 to 94 chars (changed "`ingress`" to "`Ingress`" and added "its" and "field") to close 10.7% gap with longest D (93ch). Ratio reduced from 1.107 to 1.044.
+
+### s03-q011 (length-balance)
+- **Options B, C, D:** Padded by 1-7 chars each ("containing", "for it", "full") to close 13% gap with correct A (52ch). Ratio reduced from 1.130 to 1.019.
+
+### s03-q050 (length-balance)
+- **Option B (correct):** Trimmed from 103 to 94 chars (removed "on the Deployment") to eliminate longest-is-correct signal. Ratio reduced from 1.096 to 1.032.
+
+### s03-q055 (length-balance)
+- **Option D (correct):** Expanded from 91 to 99 chars (added "Service" before "backend") to close 9.9% gap with longest option A (100ch). Ratio reduced from 1.099 to 1.020.
+
+### s03-q082 (length-balance)
+- **Options A, B, C:** Trimmed by 4-9 chars each to close 10.2% gap with correct D (88ch). Ratio reduced from 1.102 to 1.047.
+
+### s03-q065 (length-balance)
+- **Option D (correct):** Expanded from 86 to 91 chars (added "that" before "the `kube-dns`") to close 9.3% gap with longest C (94ch). Ratio reduced from 1.093 to 1.033.
+
+### s03-q030 (length-balance)
+- **Option C (correct):** Expanded from 66 to 71 chars (changed "namespace only" to "namespace", added "currently") to close 10.6% gap with longest B (73ch). Ratio reduced from 1.106 to 1.090.
+
+### s03-q020 (giveaway)
+- **Option A:** Added comma-list structure ("encryption, authentication, and access") to match correct D's comma-list pattern, removing unique structural signal.
+
+### s03-q090 (giveaway + length-balance)
+- **Options B, C:** Added comma-list structure to match correct A's pattern. Trimmed D from 96 to 93 chars. Ratio reduced from 1.103 to 1.069.
+
+### s03-q073 (giveaway + length-balance)
+- **Option B:** Added semicolon structure to match correct D's semicolon pattern. Trimmed A and D by 4-5 chars. Ratio reduced from 1.032 to 1.033 (neutral); semicolon giveaway removed.
+
+### s03-q094 (giveaway)
+- **Option B:** Restructured with semicolon ("re-injects the header automatically; downstream services receive it") to match correct C's semicolon pattern, removing unique structural signal.
+
+### s03-q095 (giveaway)
+- **Option D:** Restructured with comma-list ("Restart kube-proxy on all nodes, clear the faulty rules, and restore...") to match correct A's comma-list pattern, removing unique structural signal.
+
+## Summary
+
+- 7 length-balance fixes (normalizing option character counts)
+- 5 giveaway fixes (removing unique structural signals: comma-lists, semicolons)
+- 3 questions had both giveaway and length-balance fixes
+- No answer indices were changed
+- No accuracy or explanation changes

@@ -40,7 +40,7 @@ var questions = [
     text: "A Pod spec sets `runAsNonRoot: true` at the pod-level `securityContext`, but one container image has `USER root` in its Dockerfile. What occurs when this Pod is scheduled?",
     diagram: null,
     options: [
-      "The container runs as root, overriding the pod-level `securityContext` setting",
+      "The container runs as root, overriding the pod-level security setting",
       "The Pod is rejected at the admission stage with a security warning",
       "The container fails to start with a `RunAsNonRoot` validation error",
       "Kubernetes automatically remaps root UID to the `nobody` UID 65534"
@@ -121,9 +121,9 @@ var questions = [
     diagram: null,
     options: [
       "Prometheus metrics scraping combined with custom alerting rules",
-      "Fluentd log aggregation paired with regex pattern matching",
+      "Fluentd log aggregation paired with regex-based pattern matching",
       "Jaeger distributed tracing along with detailed span analysis",
-      "Falco with custom rules for runtime security monitoring"
+      "Falco with custom rules for monitoring runtime syscall activity"
     ],
     answer: 3,
     explanation: "Falco is a CNCF runtime security project that monitors system calls made by containers and triggers alerts based on customizable rules. Prometheus monitors metrics, Fluentd aggregates logs, and Jaeger handles distributed tracing -- none of which directly inspect syscall behavior.\n\nWhy other options are wrong:\n- A: Prometheus scrapes metrics but does not inspect syscalls within containers\n- B: Fluentd aggregates logs; regex matching on logs is reactive and does not detect syscall anomalies\n- C: Jaeger traces distributed request paths, not container-level system call behavior\n\nReference: https://falco.org/docs/",
@@ -458,7 +458,7 @@ var questions = [
     options: [
       "DNS resolution works because NetworkPolicy does not affect DNS traffic",
       "DNS resolution uses the node's resolver, fully bypassing the egress policy",
-      "DNS fails because UDP port 53 is not permitted by the egress rule",
+      "DNS fails because UDP port 53 is not allowed by the egress policy rule",
       "The kubelet resolves DNS on behalf of the Pod before the connection"
     ],
     answer: 2,
@@ -696,10 +696,10 @@ var questions = [
     text: "A Role grants `watch` on `secrets` in the `monitoring` namespace. A RoleBinding binds it to ServiceAccount `prometheus`. What can Prometheus do with this permission?",
     diagram: null,
     options: [
-      "Receive a stream of Secret objects including full data as changes occur",
+      "Receive a real-time stream of Secret objects including full data on changes",
       "Only receive notifications when Secrets change, not their actual data values",
-      "List all Secrets once at startup but only receive metadata in subsequent updates",
-      "Read Secret metadata only, without access to the encoded data values"
+      "List all Secrets once at startup and receive only metadata in later updates",
+      "Read Secret metadata only, without access to the encoded data field values"
     ],
     answer: 0,
     explanation: "The `watch` verb allows establishing a long-lived connection that streams updates for the resource. For Secrets, this includes the full Secret data (base64-encoded values) in the watch events. This is functionally equivalent to reading Secrets continuously and should be granted with the same caution as `get` and `list`.\n\nWhy other options are wrong:\n- B: Watch events include the full Secret object data, not just change notifications\n- C: Watch is a streaming verb that continuously receives full updates, not just metadata\n- D: Watch events include the full Secret object, not just metadata; there is no metadata-only watch mode\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
@@ -776,9 +776,9 @@ var questions = [
     text: "A cloud native application uses short-lived, immutable containers. How does immutability improve security?",
     diagram: null,
     options: [
-      "Immutable containers run faster than mutable ones, reducing exposure time",
+      "Immutable containers run faster than mutable ones, reducing the exposure time",
       "Immutable containers automatically encrypt their underlying filesystems",
-      "Attackers cannot install persistent backdoors since changes are lost on restart",
+      "Attackers cannot persist backdoors since all changes are lost on restart",
       "Immutable containers do not need RBAC policies for access control purposes"
     ],
     answer: 2,
@@ -953,7 +953,7 @@ var questions = [
     diagram: null,
     options: [
       "Each microservice must implement its own TLS termination at the service level",
-      "If the gateway is compromised, all backend services are accessible unauthenticated",
+      "If the gateway is compromised, all backend services become accessible directly",
       "Microservices behind the gateway are unable to use service mesh capabilities",
       "The gateway adds latency that offsets the security benefits of centralized auth"
     ],
@@ -1065,8 +1065,8 @@ var questions = [
     diagram: null,
     options: [
       "The ServiceAccount setting takes precedence and no token is mounted",
-      "An error is raised because of the conflicting automount settings",
-      "The Pod spec setting takes precedence and the token is mounted",
+      "An error is raised because of conflicting automount configuration",
+      "The Pod spec setting takes precedence and a token is mounted normally",
       "The token is mounted into the Pod but it is expired immediately"
     ],
     answer: 2,
@@ -1160,9 +1160,9 @@ var questions = [
     text: "A security-hardened node has the taint `security=high:NoSchedule`. A Pod for a sensitive workload needs to be scheduled on this node. What must the Pod spec include?",
     diagram: null,
     options: [
-      "A `nodeSelector` entry matching the `security: high` node label",
-      "A `toleration` matching the taint `security=high:NoSchedule`",
-      "A `nodeAffinity` with a required scheduling rule to bypass the taint",
+      "A `nodeSelector` entry matching the `security: high` label on nodes",
+      "A `toleration` for the taint `security=high:NoSchedule` in the spec",
+      "A `nodeAffinity` required scheduling rule configured to bypass the taint",
       "An annotation `scheduler.alpha.kubernetes.io/tolerations` on the Pod"
     ],
     answer: 1,
@@ -1226,8 +1226,8 @@ var questions = [
     options: [
       "An HTTP 302 redirect response pointing to the external identity provider",
       "A signed `JWT` containing the authenticated user's identity claim fields",
-      "An HTTP 200 with a `TokenReview` response containing user identity",
-      "An HTTP 200 response with a plain-text `username` string in the body"
+      "An HTTP 200 with a `TokenReview` response that contains user identity",
+      "An HTTP 200 response with a plain-text `username` value in the body"
     ],
     answer: 2,
     explanation: "The webhook token authenticator sends a `TokenReview` request to the external endpoint. The webhook must respond with HTTP 200 and a `TokenReview` response that includes the authenticated user's username, UID, and groups. This integrates Kubernetes with external identity systems.\n\nWhy other options are wrong:\n- A: The webhook does not return an HTTP redirect; it returns a TokenReview response\n- B: The webhook does not return a JWT; it returns a structured TokenReview API object\n- D: The response is not plain text; it must be a JSON TokenReview object\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#webhook-token-authentication",
@@ -1354,8 +1354,8 @@ var questions = [
     options: [
       "Access to Pod health check endpoints and `/metrics` scraping targets",
       "Access to health check resources across all namespaces in the cluster",
-      "Access to the API server's `/healthz` and `/metrics` HTTP endpoints",
-      "Read-only access to all `CustomResourceDefinition` objects across the cluster"
+      "Access to the API server's own `/healthz` and `/metrics` HTTP endpoints",
+      "Read-only access to all `CustomResourceDefinition` objects in the cluster"
     ],
     answer: 2,
     explanation: "The `nonResourceURLs` field in a ClusterRole grants access to API server endpoints that are not backed by Kubernetes resources. `/healthz` provides API server health status and `/metrics` exposes Prometheus-format metrics. These can only be used in ClusterRoles, not namespace-scoped Roles.\n\nWhy other options are wrong:\n- A: nonResourceURLs access API server HTTP endpoints, not Pod health checks or metrics targets\n- B: nonResourceURLs are URL paths, not Kubernetes resource types across namespaces\n- D: nonResourceURLs grant access to specific API server HTTP paths, not to custom resource definitions\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole",
@@ -1384,9 +1384,9 @@ var questions = [
     text: "An application stores database credentials in a Kubernetes Secret and mounts it as a volume. The Secret has `immutable: true` set. What happens when someone tries to update the Secret?",
     diagram: null,
     options: [
-      "The update succeeds but triggers an automatic Pod restart cycle",
+      "The update succeeds but triggers an automatic Pod restart cycle for consumers",
       "The Secret is versioned and both old and new values coexist together",
-      "The `immutable` field is advisory only and does not enforce any restriction",
+      "The `immutable` field is advisory and does not enforce any restriction",
       "The update is rejected by the API server because the Secret is immutable"
     ],
     answer: 3,

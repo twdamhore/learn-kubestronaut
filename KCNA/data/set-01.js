@@ -56,7 +56,7 @@ var questions = [
     text: "A DevOps engineer is setting up a new Kubernetes cluster and needs to choose a container runtime. The cluster must comply with the Kubernetes Container Runtime Interface (CRI). Which of the following is a valid CRI-compliant runtime that Kubernetes can use natively since v1.24?",
     diagram: null,
     options: [
-      "`dockerd` bypassing the CRI layer entirely via the built-in dockershim adapter and its socket interface",
+      "`dockerd` bypassing the CRI layer via the built-in dockershim adapter and its socket interface",
       "`rkt` (Rocket) with a pre-CRI container format based on the appc specification",
       "`containerd` with the CRI plugin enabled, communicating via the standard gRPC interface",
       "`LXC` with a custom Kubernetes bridge module for container lifecycle management"
@@ -120,9 +120,9 @@ var questions = [
     text: "An operations team has deployed a Kubernetes cluster and wants to set up monitoring for cluster-level metrics such as CPU usage, memory consumption, and Pod counts. Which tool from the CNCF ecosystem is the de facto standard for collecting and querying time-series metrics in Kubernetes environments?",
     diagram: null,
     options: [
-      "Fluentd, which collects and forwards time-series metric data from nodes to a central backend",
+      "Fluentd, which collects and forwards time-series metric data from nodes to a backend",
       "Grafana, which collects metrics directly from kubelets and stores them internally",
-      "Prometheus, which scrapes metric endpoints and stores time-series data natively",
+      "Prometheus, which scrapes metric endpoints on targets and stores time-series data natively",
       "Jaeger, which provides distributed metrics collection and aggregation pipelines"
     ],
     answer: 2,
@@ -248,8 +248,8 @@ var questions = [
     text: "An SRE team needs to aggregate logs from all containers running across a Kubernetes cluster into a centralized logging backend. They want the solution to run automatically on every node without manual scheduling. Which Kubernetes pattern and resource combination is most appropriate?",
     diagram: null,
     options: [
-      "Deploy a logging agent as a sidecar container inside every application Pod",
-      "Deploy a single logging Deployment with `replicas` equal to the node count that automatically adjusts",
+      "Deploy a logging agent as a sidecar container inside every application Pod in the cluster",
+      "Deploy a single logging Deployment with `replicas` equal to the node count that adjusts",
       "A DaemonSet, which guarantees a single Pod copy is present on all cluster nodes as they join",
       "Configure the kubelet to forward all container logs to the backend service directly"
     ],
@@ -537,7 +537,7 @@ var questions = [
     diagram: null,
     options: [
       "Centralized logging with correlated timestamps and request IDs across all services in the system",
-      "Health check endpoints on each service that report response times back to callers",
+      "Health check endpoints on each service that report response times and error rates to callers",
       "Distributed tracing, which propagates context headers across service boundaries in a request chain",
       "Metric dashboards showing per-service average latency aggregated over the last hour of observations"
     ],
@@ -568,7 +568,7 @@ var questions = [
     text: "A developer notices that their application Pod has been assigned to a node but the container is not yet running. The Pod status shows `Init:0/2`. What does this status indicate?",
     diagram: null,
     options: [
-      "The Pod's 2 containers are stuck in their initialization phase due to node resource constraints",
+      "The Pod's 2 containers are stuck in their initialization phase; node resource constraints block them",
       "The init process (PID 1) inside each of the Pod's 2 containers failed to start properly",
       "The Pod requires 2 volumes to be mounted and neither is currently available on the assigned node",
       "The Pod has 2 init containers that must complete before main containers start; none have finished"
@@ -600,10 +600,10 @@ var questions = [
     text: "A frontend application needs to discover and communicate with a backend Service named `inventory-api` in the `production` namespace. The frontend is deployed in the same namespace. What DNS name should the frontend use to reach the backend?",
     diagram: null,
     options: [
-      "`inventory-api.production.pod.cluster.local`, using the Pod DNS subdomain for the namespace",
+      "`inventory-api.production.pod.cluster.local`, using the Pod DNS subdomain for namespace",
       "`inventory-api.cluster.local`, as the minimal short-form name from any namespace",
       "`production.inventory-api.svc.cluster.local`, following the namespace-first DNS convention",
-      "`inventory-api` since the Service is in the same namespace as the frontend Pod"
+      "`inventory-api`, because the Service resides in the same namespace as the frontend Pod"
     ],
     answer: 3,
     explanation: "Within the same namespace, a Service can be reached using just its name (`inventory-api`). The fully qualified domain name (FQDN) follows the pattern `<service-name>.<namespace>.svc.cluster.local`. So `inventory-api.production.svc.cluster.local` is the FQDN. The first option incorrectly uses `pod` instead of `svc`. The second option (`inventory-api.cluster.local`) omits the namespace and `svc` components, making it an invalid DNS name for Kubernetes Services. The third option reverses the namespace and service name order.\n\nWhy other options are wrong:\n- A: Uses `.pod.cluster.local` instead of `.svc.cluster.local` — this is the Pod DNS format, not Service DNS.\n- B: `inventory-api.cluster.local` omits the namespace and `svc` segments, making it invalid for Service DNS.\n- C: Reverses the namespace and service name order — the correct order is `<service>.<namespace>.svc.cluster.local`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
@@ -616,7 +616,7 @@ var questions = [
     text: "A monitoring team needs to deploy a log collector agent on every node in the cluster, including new nodes that are added later. The agent should run exactly one instance per node. Which workload resource should they use?",
     diagram: null,
     options: [
-      "A Deployment with `replicas` set to the node count and a `podAntiAffinity` rule that automatically spreads Pods",
+      "A Deployment with `replicas` set to the node count and a `podAntiAffinity` rule to spread Pods",
       "A StatefulSet with node affinity rules targeting each node by its individual hostname label",
       "A DaemonSet, which ensures a single Pod copy is placed on each cluster node as nodes join",
       "A CronJob that periodically checks for new nodes and creates Pods on unmonitored ones"
@@ -696,8 +696,8 @@ var questions = [
     text: "A team has Prometheus running in their cluster and wants to set up alerts when Pod CPU usage exceeds 80% for more than 5 minutes. Which component in the Prometheus ecosystem is responsible for handling alerting rules and sending notifications?",
     diagram: null,
     options: [
-      "The Prometheus server itself, which sends email and Slack notifications directly when rules trigger",
-      "Grafana, which evaluates Prometheus alerting rules and dispatches notification messages to channels",
+      "The Prometheus server itself, which sends email, Slack, and PagerDuty notifications directly when rules trigger",
+      "Grafana, which evaluates Prometheus alerting rules, deduplicates them, and dispatches notifications",
       "Alertmanager, which receives alerts from Prometheus, handling deduplication, grouping, and routing",
       "Node Exporter, which monitors node-level metrics and triggers alerts when thresholds are exceeded"
     ],
@@ -1032,10 +1032,10 @@ var questions = [
     text: "A developer attaches labels `app: frontend` and `tier: web` to their Pod. Later, they need to query all Pods with the label `app: frontend` but NOT `tier: api`. Which `kubectl` command correctly filters using these label selectors?",
     diagram: null,
     options: [
-      "`kubectl get pods -l app=frontend,tier!=api`",
-      "`kubectl get pods -l app=frontend OR tier!=api`",
-      "`kubectl get pods --labels app=frontend --no tier`",
-      "`kubectl get pods -l app=frontend --exclude tier=api`"
+      "`kubectl get pods -l app=frontend,tier!=api` with comma-separated selectors",
+      "`kubectl get pods -l app=frontend OR tier!=api` with an OR keyword",
+      "`kubectl get pods --labels app=frontend --no tier` with a --no flag",
+      "`kubectl get pods -l app=frontend --exclude tier=api` with --exclude"
     ],
     answer: 0,
     explanation: "The `-l` flag supports both equality-based (`app=frontend`) and inequality-based (`tier!=api`) selectors, separated by commas for AND logic. The comma means both conditions must be true. There is no `OR` operator in label selectors. The `--labels` and `--exclude` flags do not exist in kubectl for label filtering.\n\nWhy other options are wrong:\n- B: There is no `OR` operator in kubectl label selectors; commas provide AND logic.\n- C: `--labels` and `--no` are not valid kubectl flags for label filtering.\n- D: `--exclude` is not a valid kubectl flag for label filtering.\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/",
@@ -1097,9 +1097,9 @@ var questions = [
     diagram: null,
     options: [
       "Kubernetes rejects the command because the Deployment already exists and requires `edit` to modify",
-      "Kubernetes deletes the existing Deployment entirely and recreates a fresh one from the updated YAML manifest definitions",
+      "Kubernetes deletes the existing Deployment and recreates it from the updated YAML manifest definitions",
       "Kubernetes performs a three-way merge comparing the last applied config, live state, and new file",
-      "Kubernetes creates a duplicate Deployment with an auto-generated suffix appended to the name to prevent conflicts"
+      "Kubernetes creates a duplicate Deployment with an auto-generated suffix to prevent naming conflicts"
     ],
     answer: 2,
     explanation: "`kubectl apply` uses a declarative approach with a three-way merge strategy. It compares the new configuration, the last-applied-configuration annotation (stored on the object), and the current live state to determine what changes to make. This allows it to update only the fields that changed. It does not reject existing resources, create duplicates, or delete and recreate the resource.\n\nWhy other options are wrong:\n- A: `kubectl apply` is designed to update existing resources; it does not reject them.\n- B: `kubectl apply` does not delete and recreate resources; it performs an in-place merge.\n- D: Kubernetes does not create duplicate resources with auto-generated suffixes from `kubectl apply`.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
@@ -1160,10 +1160,10 @@ var questions = [
     text: "A team needs to understand how the various control plane components interact. When a user runs `kubectl create deployment nginx --image=nginx`, which sequence of events correctly describes what happens in the control plane?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="white" font-size="11">etcd</text><rect x="280" y="100" width="110" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="335" y="122" text-anchor="middle" fill="white" font-size="10">Scheduler</text><rect x="230" y="200" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="290" y="222" text-anchor="middle" fill="white" font-size="10">Kubelet</text><rect x="50" y="200" width="120" height="35" rx="6" fill="#555" stroke="#aaa" stroke-width="1"/><text x="110" y="222" text-anchor="middle" fill="white" font-size="10">Controller Mgr</text><rect x="10" y="100" width="110" height="35" rx="6" fill="#326CE5" stroke="#fff" stroke-width="1.5"/><text x="65" y="122" text-anchor="middle" fill="white" font-size="11">API Server</text><text x="200" y="135" text-anchor="middle" fill="#FFD700" font-size="13" font-weight="bold">? What is the order ?</text></svg>',
     options: [
-      "API server creates the Deployment in etcd, scheduler evaluates nodes and assigns it, kubelet creates the Pod, and containers start via the runtime",
+      "API server stores the Deployment in etcd, scheduler assigns it to a node, kubelet creates the Pod, and containers start via the runtime",
       "Scheduler receives the request first, assigns nodes, then API server creates the Deployment and Pods, kubelet starts containers",
       "API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers",
-      "API server creates Pods directly in etcd, scheduler evaluates and assigns them to available nodes, kubelet starts containers, then controller manager monitors health"
+      "API server creates Pods directly in etcd, scheduler assigns them to nodes, kubelet starts containers, and controller manager monitors health"
     ],
     answer: 2,
     explanation: "The correct sequence is: the API server receives the request and stores the Deployment object in `etcd`. The Deployment controller (in `kube-controller-manager`) detects the new Deployment and creates a ReplicaSet. The ReplicaSet controller then creates the specified number of Pod objects. The scheduler detects unscheduled Pods and assigns them to nodes. Finally, the kubelet on each assigned node starts the containers via the container runtime. Each component watches for changes through the API server.\n\nWhy other options are wrong:\n- A: Incorrectly skips the controller-manager step — the scheduler does not directly receive the Deployment.\n- B: The scheduler does not receive requests first; all requests go through the API server.\n- D: The API server does not create Pods directly — the controller-manager creates ReplicaSets which create Pods.\n\nReference: https://kubernetes.io/docs/concepts/overview/components/",
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "Yes, ReplicaSets should be created directly when you need more than 10 replicas for performance reasons",
       "No, because ReplicaSets are deprecated and will be removed in a future Kubernetes version release",
-      "Yes, ReplicaSets provide finer-grained control over Pod identity and ordering that Deployments do not support natively",
+      "Yes, ReplicaSets provide finer-grained control over Pod identity and ordering than Deployments",
       "No, Deployments manage ReplicaSets and add rolling update and rollback capabilities on top of them"
     ],
     answer: 3,
@@ -1320,7 +1320,7 @@ var questions = [
     text: "A cluster administrator needs to create a service account that can list and get Pods in the `development` namespace but cannot delete or create them. Which RBAC resources should they create?",
     diagram: null,
     options: [
-      "A `ClusterRole` with `get` and `list` verbs on Pods, bound via a `ClusterRoleBinding` for the `development` namespace",
+      "A `ClusterRole` with `get` and `list` on Pods, bound via a `ClusterRoleBinding` to the `development` namespace",
       "A `Role` in `development` with `get` and `list` on Pods, and a `RoleBinding` to the service account",
       "A `Role` with all verbs on Pods, then create a `NetworkPolicy` to restrict any write operations from it",
       "A `ServiceAccount` annotated with `rbac.authorization.kubernetes.io/verbs: get,list` for automatic binding"
@@ -1370,7 +1370,7 @@ var questions = [
     options: [
       "Declarative commands execute faster because they bypass most of the validation checks performed by the API server",
       "Declarative config describes the desired end state, enabling version control, audit trails, and reproducibility",
-      "Declarative manifests automatically retry failed operations, rollback on errors, and converge until the desired state is achieved",
+      "Declarative manifests automatically retry failed operations, rollback on errors, and converge to desired state",
       "Declarative management infers the desired state from command-line flags instead of requiring manifest files"
     ],
     answer: 1,
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Functions are short-lived, event-driven compute units scaled automatically by the platform",
       "Functions are long-running processes that handle multiple requests concurrently in a thread pool",
-      "Functions are compiled to WebAssembly (Wasm) for efficient cold-start performance on Kubernetes runtimes",
+      "Functions are compiled to WebAssembly (Wasm) for efficient cold-start performance on Kubernetes",
       "Functions require dedicated nodes with specialized hardware to execute efficiently at scale"
     ],
     answer: 0,
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "Through HTTP headers like `traceparent` from W3C Trace Context forwarded to downstream calls",
-      "Through shared environment variables like `TRACE_ID` that all Pods in the cluster can read during execution",
+      "Through shared environment variables like `TRACE_ID` that all Pods in the cluster can read",
       "Through Kubernetes annotations on Pod objects that carry trace context, queried via the API server",
       "Through the CNI plugin, which embeds trace IDs in the IP packet headers for network-level tracing"
     ],
@@ -1530,11 +1530,11 @@ var questions = [
     options: [
       "All 5 replicas start successfully because Kubernetes overcommits CPU (fitting 3 per node at 500m each)",
       "Only 4 replicas can be scheduled; the 5th Pod remains in Pending state without sufficient resources",
-      "Kubernetes automatically provisions a new node to handle the additional requested replicas",
+      "Kubernetes automatically provisions a new node; the 5th Pod schedules once the node joins",
       "The scale operation is rejected by the API server because it exceeds the cluster capacity"
     ],
     answer: 1,
-    explanation: "With 2 nodes of 1 CPU each, the cluster has 2000m total allocatable CPU. Each Pod requests 500m, so 4 Pods can be scheduled (2 per node). The 5th Pod remains in `Pending` state because there is insufficient CPU to satisfy its request. Resource requests are guaranteed allocations, not soft limits. Kubernetes does not auto-provision nodes (that requires a cluster autoscaler). The API server accepts the scale request; scheduling is a separate concern.\n\nWhy other options are wrong:\n- A: Resource requests are guaranteed allocations; 3 × 500m = 1500m exceeds a single node's 1000m capacity, so only 2 Pods fit per node.\n- C: Kubernetes does not automatically provision new nodes; that requires a cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after.\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    explanation: "With 2 nodes of 1 CPU each, the cluster has 2000m total allocatable CPU. Each Pod requests 500m, so 4 Pods can be scheduled (2 per node). The 5th Pod remains in `Pending` state because there is insufficient CPU to satisfy its request. Resource requests are guaranteed allocations, not soft limits. Kubernetes does not auto-provision nodes (that requires a cluster autoscaler). The API server accepts the scale request; scheduling is a separate concern.\n\nWhy other options are wrong:\n- A: Resource requests are guaranteed allocations; 3 × 500m = 1500m exceeds a single node's 1000m capacity, so only 2 Pods fit per node.\n- C: Kubernetes does not automatically provision new nodes; that requires a separate cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after.\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: "microk8s kubectl describe nodes | grep -A5 Allocatable"
   },
   {
@@ -1594,7 +1594,7 @@ var questions = [
     options: [
       "They are identical in behavior; `create` is simply an alias for `apply` with the same semantics and output",
       "`kubectl create` is imperative and fails if the resource exists; `kubectl apply` is declarative and updates",
-      "`kubectl create` handles initial resource creation while `kubectl apply` handles subsequent updates, each optimized for its stage",
+      "`kubectl create` handles initial creation while `kubectl apply` handles updates, each optimized for its stage",
       "`kubectl apply` only accepts YAML file input; `kubectl create` primarily uses command-line generators for resources"
     ],
     answer: 1,

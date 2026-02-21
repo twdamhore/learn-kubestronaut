@@ -195,3 +195,53 @@
 ### s09-q098 (length-balance)
 - **Option A (answer):** Trimmed ~101->97 chars. Changed "The failurePolicy field" to "The webhook's failurePolicy field" and simplified end clause.
 - **Option D:** Trimmed ~118->102 chars. Replaced "ValidatingWebhookConfiguration resources are advisory and do not block requests" with "validating webhook configurations are advisory and non-blocking".
+
+---
+
+# Round 40 Review - Set 09
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 14 across 12 questions
+
+## Changes
+
+### s09-q006 (length-balance)
+- **Option A:** Trimmed ~110->94 chars. Changed "Argo CD requires Flux to be installed as" to "Argo CD requires Flux as".
+- **Option B (answer):** Expanded ~95->100 chars. Changed "not applied" to "not auto-applied".
+
+### s09-q033 (giveaway)
+- **Option D:** Added semicolon to match structural pattern of correct answer A. Changed "not configuration resources" to "; configuration resources like ConfigMaps are excluded".
+
+### s09-q059 (length-balance)
+- **Option B:** Trimmed ~133->118 chars. Shortened "are tracked separately, and the node eviction manager reclaims them" to "are tracked separately by the node eviction manager".
+
+### s09-q062 (length-balance)
+- **Option C:** Expanded ~91->100 chars. Added "images" after "older tagged".
+- **Option D:** Trimmed ~108->100 chars. Removed "The cluster's" prefix, starting with "CoreDNS".
+
+### s09-q069 (giveaway)
+- **Option D:** Added semicolon to match structural pattern of correct answer C. Changed "so the original" to "; the original".
+
+### s09-q077 (giveaway)
+- **Option B:** Added semicolon to match structural pattern of correct answer D. Changed "by default while" to "by default;".
+
+### s09-q080 (giveaway)
+- **Option A:** Added semicolon to match structural pattern of correct answer B. Changed "which validates it, forwards it" to "which validates it; the scheduler forwards it".
+
+### s09-q084 (giveaway + length-balance)
+- **Option A:** Added semicolon to match structural pattern of correct answer C. Changed "is malformed and needs" to "is malformed; the".
+- **Option D:** Trimmed ~111->97 chars. Removed "The cluster's" prefix, starting with "CoreDNS".
+
+### s09-q092 (giveaway)
+- **Option C:** Added semicolon to match structural pattern of correct answer A. Changed "and waits" to "; it then waits".
+
+### s09-q093 (giveaway)
+- **Option A:** Added parenthetical "(separate from the HPA)" to match the parenthetical enumeration pattern in correct answer B.
+
+### s09-q095 (giveaway)
+- **Option C:** Added semicolon to match structural pattern of correct answer D. Changed "objects and cannot" to "objects; they cannot". Also expanded to ~120 chars by appending "like Pods".
+
+### s09-q099 (length-balance + giveaway)
+- **Option B:** Added parenthetical "(liveness and readiness)" to match parenthetical in correct answer C. Expanded ~110->115 chars.
+- **Option C (answer):** Changed semicolon to "and" to reduce structural uniqueness. Expanded ~101->104 chars.
