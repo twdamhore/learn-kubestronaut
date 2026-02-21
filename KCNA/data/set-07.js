@@ -9,7 +9,7 @@ var questions = [
     diagram: null,
     options: [
       "The container image cannot be pulled from the registry and the pod enters ImagePullBackOff status",
-      "The node running the pod has run out of available disk space and is actively evicting workloads",
+      "The node ran out of disk space, triggered eviction, and is actively removing workloads from the host",
       "The container starts, crashes, and Kubernetes restarts it with exponential back-off delays",
       "The pod's readiness probe is failing so it is being removed from the Service endpoint list"
     ],
@@ -760,7 +760,7 @@ var questions = [
     text: "You apply a ConfigMap change and restart the pods, but the application still reads old configuration values. The ConfigMap is mounted as a volume (not as environment variables). What could explain this?",
     diagram: null,
     options: [
-      "ConfigMap volume mounts are immutable after pod creation and require a full pod delete and recreate cycle to update the mounted data",
+      "ConfigMap volume mounts are immutable after pod creation—a full pod delete and recreate cycle is required to update the mounted data",
       "ConfigMap changes are only propagated by the kubelet at a fixed 24-hour synchronization interval, regardless of any manual restarts",
       "The application caches config at startup and does not re-read the mounted path—verify the pod actually restarted with new data",
       "The `kube-controller-manager` must be restarted for ConfigMap changes to propagate across the cluster to all affected pod volumes"
@@ -824,7 +824,7 @@ var questions = [
     text: "A pod with `resources.requests.memory: 8Gi` is `Pending` in a cluster where the largest node has 16Gi total memory but only 6Gi allocatable. What does 'allocatable' mean in this context?",
     diagram: null,
     options: [
-      "The total physical RAM installed on the node minus the memory currently consumed by running pod workloads",
+      "The total physical RAM installed on the node minus memory consumed by pods, init containers, and sidecar processes",
       "The memory limit specified in the node's LimitRange resource that restricts individual pod memory requests",
       "The maximum memory that a single pod can request according to the namespace's ResourceQuota configuration",
       "The memory available for pods after reserving resources for the kubelet, system daemons, and OS overhead"
@@ -1097,7 +1097,7 @@ var questions = [
     diagram: null,
     options: [
       "No, both containers see the same files because `emptyDir` is shared storage—check the exact file paths used by each container",
-      "No, emptyDir volumes use copy-on-write semantics so each container gets an independent snapshot of the data at mount time",
+      "No, emptyDir volumes use copy-on-write semantics—each container gets an independent snapshot of the data at mount time",
       "Yes, different mount paths create isolated storage spaces within the same `emptyDir` volume, preventing cross-container access",
       "Yes, `emptyDir` volumes are read-only by default so Container B lacks write permissions needed to see mutable content from A"
     ],
@@ -1274,7 +1274,7 @@ var questions = [
     options: [
       "Existing pods continue to run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
       "All pods in the cluster immediately stop because the controller manager manages the container runtime (e.g., containerd) directly",
-      "DaemonSet and Job pods are most affected because these controller loops reconcile more frequently than ReplicaSet controllers",
+      "DaemonSet and Job pods are most affected—these controller loops reconcile more frequently than ReplicaSet controllers",
       "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario automatically"
     ],
     answer: 0,
@@ -1307,7 +1307,7 @@ var questions = [
       "The change was pushed to a different branch that ArgoCD is not tracking—verify `targetRevision` in the Application spec",
       "ArgoCD caches the last-known Git state indefinitely and requires a manual `argocd app refresh` to detect any new commits",
       "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
-      "ArgoCD detected the change but its reconciliation loop is paused due to a configured sync window restriction on this application"
+      "ArgoCD detected the change but its reconciliation loop is paused—a configured sync window restriction is blocking this application"
     ],
     answer: 0,
     explanation: "ArgoCD's Application resource specifies a `targetRevision` (branch, tag, or commit) to track. If the developer pushed to a different branch than what ArgoCD monitors, the application will remain `Synced` with the old state. Verifying the branch configuration and commit history on the tracked branch is the correct troubleshooting step.\n\nWhy other options are wrong:\n- B: ArgoCD automatically refreshes via polling (default 3 minutes) and webhooks; a manual refresh is not required\n- C: Resource quotas block pod creation, not ArgoCD's sync detection; the app would show OutOfSync, not Synced\n- D: A sync window restriction would show the app as OutOfSync with sync blocked, not as Synced with the old version\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/tracking_strategies/",
@@ -1465,7 +1465,7 @@ var questions = [
     diagram: null,
     options: [
       "The cluster is optimally sized because it has sufficient headroom for unexpected traffic spikes and burst workloads",
-      "The low utilization indicates a monitoring error and the actual real-time resource usage is likely much higher overall",
+      "The low utilization indicates a monitoring error—the actual real-time resource usage is likely much higher overall",
       "The cluster is over-provisioned—resource requests are likely much higher than actual usage, or there are too many nodes",
       "Node-level metrics provide limited value for cost optimization compared to pod-level metrics for workload planning"
     ],

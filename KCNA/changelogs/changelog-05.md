@@ -206,3 +206,28 @@
 
 ### s05-q079 (structural-giveaway)
 - **Option A (correct):** Removed unique semicolon. Changed from "Secrets cannot be used across namespaces; it must exist in the Pod's namespace" (78) to "Secrets cannot be used across namespaces and the Secret must exist in `production`" (82). Also improved specificity by referencing the namespace from the question.
+
+---
+
+# Round 42 Review - Set 05
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 7 across 5 questions
+
+## Changes
+
+### s05-q002 (backtick-density giveaway + length-balance)
+- **Options A, B, C, D:** Correct option A had 10 backticks (5 backtick-pairs) vs max 6 in others, creating a structural giveaway. Removed backticks from namespace name literals (already identified in question stem) across all options and added `podSelector`/`namespaceSelector` backtick terms to C and D for balance. A: bt 10->6, B: bt 6->4, C: bt 4->4, D: bt 6->4. Ratio was 1.096, now 1.106 (within bounds).
+
+### s05-q018 (length-balance)
+- **Option A:** Expanded from "`None` — disables all audit logging for the matched resource" (60) to "`None` — disables all audit logging for the matched resource entirely" (69). Ratio was 1.150, now 1.062.
+
+### s05-q040 (length-balance)
+- **Option C:** Expanded from "View Pod execution logs across the entire cluster scope" (55) to "View Pod execution logs across the entire cluster-wide scope" (60). **Option D:** Shortened from "Create Pods but not execute commands inside existing containers" (63) to "Create new Pods but not execute commands inside existing ones" (61). Ratio was 1.145, now 1.089.
+
+### s05-q080 (length-balance)
+- **Option D:** Shortened from "A workload secrets management system designed to replace native Kubernetes Secrets" (82) to "A workload secrets management system that replaces native Kubernetes Secrets" (76). Ratio was 1.123, now 1.041.
+
+### s05-q087 (length-balance)
+- **Option A:** Shortened from "The update succeeds but triggers an automatic Pod restart cycle for consumers" (77) to "The update succeeds but triggers an automatic Pod restart cycle afterward" (73). Ratio was 1.132, now 1.074.

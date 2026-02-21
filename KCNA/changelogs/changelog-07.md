@@ -266,3 +266,41 @@
 
 ### s07-q100 (giveaway)
 - **Option B:** Added parenthetical "(e.g., with backoff)" to break unique parenthetical+e.g. pattern in correct answer A.
+
+---
+
+# Round 42 Review - Set 07
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 7 across 7 questions
+
+## Changes
+
+### s07-q001 (giveaway)
+- **Problem:** Correct answer C had a unique comma-list structure ("starts, crashes, and") not present in any distractor.
+- **Fix:** Rewrote option B from "The node running the pod has run out of available disk space and is actively evicting workloads" to "The node ran out of disk space, triggered eviction, and is actively removing workloads from the host" to add a matching comma-list pattern.
+
+### s07-q048 (giveaway)
+- **Problem:** Correct answer C had a unique em-dash not present in any distractor.
+- **Fix:** Added em-dash to option A: changed "are immutable after pod creation and require a full pod delete" to "are immutable after pod creation—a full pod delete and recreate cycle is required".
+
+### s07-q052 (giveaway)
+- **Problem:** Correct answer D had a unique comma-and-list pattern ("kubelet, system daemons, and OS overhead") not present in any distractor.
+- **Fix:** Rewrote option A from "minus the memory currently consumed by running pod workloads" to "minus memory consumed by pods, init containers, and sidecar processes" to add a matching comma-and-list pattern.
+
+### s07-q069 (giveaway)
+- **Problem:** Correct answer A had a unique em-dash not present in any distractor.
+- **Fix:** Added em-dash to option B: changed "use copy-on-write semantics so each container" to "use copy-on-write semantics—each container".
+
+### s07-q080 (giveaway)
+- **Problem:** Correct answer A had a unique em-dash not present in any distractor.
+- **Fix:** Added em-dash to option C: changed "are most affected because these controller loops" to "are most affected—these controller loops".
+
+### s07-q082 (giveaway)
+- **Problem:** Correct answer A had a unique em-dash not present in any distractor.
+- **Fix:** Added em-dash to option D: changed "is paused due to a configured sync window restriction on this application" to "is paused—a configured sync window restriction is blocking this application".
+
+### s07-q092 (giveaway)
+- **Problem:** Correct answer C had a unique em-dash not present in any distractor.
+- **Fix:** Added em-dash to option B: changed "indicates a monitoring error and the actual" to "indicates a monitoring error—the actual".

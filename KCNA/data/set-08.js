@@ -153,10 +153,10 @@ var questions = [
     text: "Your platform team is implementing GitOps for continuous deployment. They want a Kubernetes-native controller that watches a Git repository and automatically reconciles the cluster state to match the declared manifests. Which pair of CNCF graduated projects are purpose-built for this workflow?",
     diagram: null,
     options: [
-      "Argo CD and Flux — GitOps controllers that reconcile cluster resources from Git state",
+      "Argo CD and Flux — GitOps controllers that reconcile cluster resources with declared Git state",
       "Jenkins and Spinnaker — CI/CD pipelines that push deployment changes to Kubernetes clusters",
       "Helm and Kustomize — templating tools that generate Kubernetes manifests from template files",
-      "Tekton and Buildpacks — CI tools that build and package container images from source code"
+      "Tekton and Buildpacks — CI tools that build and package container images from app source code"
     ],
     answer: 0,
     explanation: "Argo and Flux are both CNCF graduated projects designed specifically for GitOps workflows. They run as controllers inside the cluster, continuously watching Git repositories and reconciling cluster state to match the declared manifests. Helm and Kustomize are manifest management tools, not GitOps controllers. Jenkins and Spinnaker follow a push-based CI/CD model.\n\nWhy other options are wrong:\n- B: Jenkins and Spinnaker use push-based CI/CD models, not pull-based GitOps reconciliation\n- C: Helm and Kustomize are manifest templating/management tools, not GitOps controllers\n- D: Tekton is a CI/CD pipeline engine and Buildpacks build images; neither is a GitOps controller\n\nReference: https://www.cncf.io/projects/argo/",
@@ -186,9 +186,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Inter-Service Communication Pattern</text><rect x="30" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod A</text><rect x="40" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="70" y="79" text-anchor="middle" fill="white" font-size="9">App</text><rect x="110" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="140" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="220" y="40" width="150" height="80" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="295" y="55" text-anchor="middle" fill="#93c5fd" font-size="9">Pod B</text><rect x="230" y="62" width="60" height="25" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="260" y="79" text-anchor="middle" fill="white" font-size="9">Proxy</text><rect x="300" y="62" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="330" y="79" text-anchor="middle" fill="white" font-size="9">App</text><line x1="140" y1="87" x2="260" y2="87" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrowPurple)"/><text x="200" y="105" text-anchor="middle" fill="#a78bfa" font-size="9">encrypted</text><rect x="120" y="150" width="160" height="40" rx="6" fill="#4a1d96" stroke="#a78bfa"/><text x="200" y="175" text-anchor="middle" fill="white" font-size="10">???</text><line x1="140" y1="120" x2="180" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><line x1="260" y1="120" x2="220" y2="150" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4"/><defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a78bfa"/></marker></defs></svg>',
     options: [
       "Deploy an API gateway (e.g., Kong or Ambassador) at the cluster ingress to handle service-to-service traffic",
-      "Add mTLS libraries to each microservice codebase and implement retry logic in application middleware code",
+      "Add mTLS libraries to each microservice codebase, implement retry logic, and configure traffic shifting in code",
       "Implement a service mesh (e.g., Linkerd or Istio) with sidecar proxies handling mTLS, shifting, and retries",
-      "Use Kubernetes NetworkPolicies to encrypt all traffic and configure retries via Pod annotation declarations"
+      "Use Kubernetes NetworkPolicies to encrypt traffic, configure retries, and manage routing via Pod annotations"
     ],
     answer: 2,
     explanation: "A service mesh injects sidecar proxies alongside each application container, providing mTLS, traffic management (canary shifting, retries), and observability without application code changes. API gateways typically handle north-south traffic, not east-west. NetworkPolicies control traffic flow but do not provide encryption or retry logic natively.\n\nWhy other options are wrong:\n- A: API gateways handle north-south (external) traffic, not east-west (inter-service) communication\n- B: Adding mTLS libraries to each service requires application code changes, violating the requirement\n- D: NetworkPolicies control traffic flow but do not provide encryption, traffic shifting, or retries\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service-mesh/",
@@ -298,8 +298,8 @@ var questions = [
     diagram: null,
     options: [
       "Prometheus — scrapes application metrics endpoints and stores them as time-series data",
-      "Jaeger — collects distributed traces across microservices for latency analysis tasks",
-      "Fluentd — a unified logging layer that collects, transforms, and routes log data",
+      "Jaeger — collects distributed traces across microservices for latency analysis purposes",
+      "Fluentd — a unified logging layer that collects, parses, and routes log data to backends",
       "Grafana — a visualization and dashboarding tool for metrics, alerts, and log queries"
     ],
     answer: 2,
@@ -458,10 +458,10 @@ var questions = [
     text: "A company uses Envoy as their edge proxy and also as sidecar proxies within their service mesh. Which statement about Envoy is correct?",
     diagram: null,
     options: [
-      "Envoy is a CNCF graduated L7 proxy with service discovery, load balancing, TLS, and gRPC support",
-      "Envoy is a CNCF incubating project used as a container runtime for managing workloads on K8s nodes",
-      "Envoy is a CNCF graduated monitoring tool that scrapes and aggregates metrics from app endpoints",
-      "Envoy is a CNCF sandbox project that provides DNS resolution and service discovery for clusters"
+      "Envoy is a CNCF graduated L7 proxy supporting service discovery, load balancing, TLS termination, and gRPC",
+      "Envoy is a CNCF incubating project serving as a container runtime for managing workloads on cluster nodes",
+      "Envoy is a CNCF graduated monitoring tool that scrapes, aggregates, and stores metrics from app endpoints",
+      "Envoy is a CNCF sandbox project that provides DNS resolution, service discovery, and routing for clusters"
     ],
     answer: 0,
     explanation: "Envoy is a CNCF graduated high-performance L4/L7 proxy originally developed at Lyft. It supports dynamic configuration via xDS APIs, advanced load balancing, circuit breaking, TLS termination, and native support for HTTP/2 and gRPC. It is widely used as a data plane proxy in service meshes like Istio and as an edge/API gateway.\n\nWhy other options are wrong:\n- B: Envoy is graduated (not incubating) and is a proxy, not a container runtime\n- C: Envoy is a proxy, not a monitoring tool; Prometheus is the CNCF monitoring project\n- D: Envoy is graduated (not sandbox) and is a proxy, not a DNS/service discovery tool\n\nReference: https://www.envoyproxy.io/docs/envoy/latest/",
@@ -635,9 +635,9 @@ var questions = [
     diagram: null,
     options: [
       "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` weighting zone labels equally across all nodes",
-      "`topologySpreadConstraints` with `maxSkew: 1`, `topologyKey: topology.kubernetes.io/zone`, and `DoNotSchedule`",
+      "`topologySpreadConstraints` with maxSkew 1, topologyKey `topology.kubernetes.io/zone`, and `DoNotSchedule` policy",
       "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` to prevent any two Pods in the same zone",
-      "`resourceQuota` per zone namespace to limit the maximum number of Pods allowed in each availability zone segment"
+      "`resourceQuota` per zone namespace limiting the maximum number of `Pods` allowed in each availability zone segment"
     ],
     answer: 1,
     explanation: "`topologySpreadConstraints` allow fine-grained control over how Pods are distributed across topology domains (zones, nodes, regions). Setting `maxSkew: 1` means the difference in Pod count between any two zones cannot exceed 1. With `whenUnsatisfiable: DoNotSchedule`, the scheduler will not place a Pod if it would violate the constraint. Pod anti-affinity with `required` would prevent any co-location, which is too restrictive for 6 replicas across 2 zones.\n\nWhy other options are wrong:\n- A: nodeAffinity preferred weights attract Pods to nodes but do not enforce even distribution across zones\n- C: podAntiAffinity required would prevent any two Pods in the same zone, too restrictive for 6 replicas/2 zones\n- D: ResourceQuota limits aggregate resource usage in a namespace, not Pod count per topology zone\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -778,7 +778,7 @@ var questions = [
     text: "A platform team is evaluating NATS for inter-service communication. Which statement correctly describes NATS in the CNCF ecosystem?",
     diagram: null,
     options: [
-      "NATS is a CNCF graduated messaging system supporting pub/sub, request/reply, and streaming for cloud apps",
+      "NATS is a CNCF graduated messaging system supporting pub/sub, request/reply, and streaming for cloud native apps",
       "NATS is a CNCF graduated distributed tracing system that collects spans from microservices across the cluster",
       "NATS is a CNCF graduated container runtime that competes with containerd for CRI compliance on Kubernetes nodes",
       "NATS is a CNCF sandbox secret management tool that stores and distributes encrypted credentials for workloads"
@@ -910,7 +910,7 @@ var questions = [
       "OpenTelemetry focuses primarily on distributed tracing and delegates metrics collection to Prometheus client libraries",
       "OpenTelemetry is a CNCF sandbox project that standardises trace export formats but requires Jaeger SDKs for instrumentation",
       "OpenTelemetry provides unified instrumentation for traces and metrics but has deprecated its log signal in favour of Fluentd",
-      "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs, SDKs, and collectors for traces, metrics, and logs"
+      "OpenTelemetry is a CNCF graduated project providing vendor-neutral APIs plus SDKs and collectors for all telemetry signals"
     ],
     answer: 3,
     explanation: "OpenTelemetry (OTel) is a CNCF graduated project that provides a unified, vendor-neutral framework for instrumentation. It offers APIs and SDKs for traces, metrics, and logs, and supports exporting data to multiple backends simultaneously — for example, traces to Jaeger and metrics in Prometheus format. It merged the OpenTracing and OpenCensus projects.\n\nWhy other options are wrong:\n- A: OTel provides its own metrics APIs and SDKs; it does not delegate metrics collection to Prometheus client libraries\n- B: OTel is CNCF graduated (not sandbox) and provides its own instrumentation SDKs; it does not require Jaeger SDKs\n- C: OTel actively supports the log signal alongside traces and metrics; it has not deprecated logs in favour of Fluentd\n\nReference: https://opentelemetry.io/docs/",
@@ -1131,10 +1131,10 @@ var questions = [
     text: "A Pod enters `OOMKilled` status repeatedly. The container has `resources.limits.memory: 256Mi` set, and application profiling shows it uses up to 300Mi under load. What is the correct remediation?",
     diagram: null,
     options: [
-      "Increase the memory limit to at least 300Mi with headroom to prevent the kernel OOM killer from acting",
+      "Increase the memory limit to at least 300Mi with headroom to prevent the kernel OOM killer from acting on it",
       "Set `restartPolicy: Never` on the Pod to prevent Kubernetes from restarting the killed container instance",
       "Add a `livenessProbe` that checks memory usage and restarts the container before it gets OOMKilled by cgroup",
-      "Increase the CPU limit so the application can process memory allocations and garbage collection cycles faster"
+      "Increase the CPU limit so the application processes memory allocations and garbage collection cycles faster"
     ],
     answer: 0,
     explanation: "OOMKilled occurs when a container's memory usage exceeds its cgroup memory limit. The Linux kernel's OOM killer terminates the process. The fix is to increase `resources.limits.memory` to accommodate the application's actual memory needs with appropriate headroom. CPU limits do not affect memory behavior. Setting `restartPolicy: Never` does not solve the root cause. Liveness probes cannot prevent OOM kills.\n\nWhy other options are wrong:\n- B: Setting restartPolicy:Never stops restarts but does not fix the OOM root cause\n- C: livenessProbe cannot detect or prevent kernel OOM kills; OOM kills happen at the cgroup level\n- D: CPU limits do not affect memory allocation or garbage collection speed in a meaningful way\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits",
@@ -1212,13 +1212,13 @@ var questions = [
     text: "A team creates a ResourceQuota in the `dev` namespace that sets `requests.cpu: 4` and `limits.cpu: 8`. A developer tries to create a Pod with `requests.cpu: 2` and `limits.cpu: 3` when 3 CPU of requests are already consumed. What happens?",
     diagram: null,
     options: [
-      "The Pod is created successfully because the CPU limit of 3 is still under the namespace quota limit of 8",
+      "The Pod is created successfully because the CPU limit (3) is still under the namespace quota limit of 8 total",
       "The Pod is created but throttled to use only 1 CPU request since that is all the remaining quota allows",
       "The ResourceQuota is ignored because it primarily targets Deployments and ReplicaSets, not individual Pods",
-      "Pod creation is rejected because total CPU requests would be 5 (3 existing + 2 new), exceeding the quota of 4"
+      "Pod creation is rejected because total CPU requests would be 5 cores, exceeding the namespace quota of 4"
     ],
     answer: 3,
-    explanation: "ResourceQuotas enforce aggregate resource constraints across all resources in a namespace. With 3 CPU requests already consumed and the new Pod requesting 2, the total would be 5, exceeding the `requests.cpu: 4` quota. The API server rejects the Pod creation at admission time. ResourceQuotas apply to all resource types (Pods, Deployments, Services, etc.) within the namespace.\n\nWhy other options are wrong:\n- A: ResourceQuota checks both requests AND limits; even though limit is under 8, requests exceed 4\n- B: ResourceQuota does not throttle; it either admits or rejects the resource creation entirely\n- C: ResourceQuota applies to all resource types in the namespace, including individual Pods\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
+    explanation: "ResourceQuotas enforce aggregate resource constraints across all resources in a namespace. With 3 CPU requests already consumed and the new Pod requesting 2, the total would be 5, exceeding the `requests.cpu: 4` quota. The API server rejects the Pod creation at admission time. ResourceQuotas apply to all resource types (Pods, Deployments, Services, etc.) within the namespace.\n\nWhy other options are wrong:\n- A: ResourceQuota checks both requests AND limits independently; even though the limit is under 8, requests exceed 4\n- B: ResourceQuota does not throttle; it either admits or rejects the resource creation entirely\n- C: ResourceQuota applies to all resource types in the namespace, including individual Pods\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
     verify: "kubectl describe resourcequota -n dev"
   },
   {
@@ -1277,7 +1277,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Cluster Logging Architecture</text><rect x="15" y="40" width="180" height="110" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="56" text-anchor="middle" fill="#93c5fd" font-size="9">Node</text><rect x="25" y="65" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="55" y="82" text-anchor="middle" fill="white" font-size="8">Pod A</text><rect x="95" y="65" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="125" y="82" text-anchor="middle" fill="white" font-size="8">Pod B</text><rect x="30" y="105" width="55" height="20" rx="3" fill="#374151" stroke="#6b7280"/><text x="57" y="119" text-anchor="middle" fill="#9ca3af" font-size="7">/var/log</text><rect x="100" y="105" width="80" height="30" rx="4" fill="#b45309" stroke="#f59e0b"/><text x="140" y="124" text-anchor="middle" fill="white" font-size="8">???</text><line x1="55" y1="90" x2="55" y2="105" stroke="#6b7280" stroke-width="1"/><line x1="125" y1="90" x2="85" y2="105" stroke="#6b7280" stroke-width="1"/><line x1="85" y1="115" x2="100" y2="118" stroke="#f59e0b" stroke-width="1.5"/><rect x="250" y="70" width="130" height="45" rx="6" fill="#1e40af" stroke="#3b82f6"/><text x="315" y="92" text-anchor="middle" fill="white" font-size="9">Elasticsearch / Backend</text><line x1="180" y1="120" x2="250" y2="92" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrLog)"/><text x="220" y="100" text-anchor="middle" fill="#fcd34d" font-size="7">forward</text><defs><marker id="arrLog" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker></defs></svg>',
     options: [
       "Sidecar logging — a logging container is injected into every Pod to capture and forward application logs",
-      "Node-level logging agent — a DaemonSet reads container logs from `/var/log/containers/` on each node",
+      "Node-level logging agent — a DaemonSet reads container log files from `/var/log/containers/` on each node",
       "Application-level logging — each application writes logs directly to a remote centralized logging service",
       "Event-driven logging — a DaemonSet watches Kubernetes `Events` and forwards them as structured log entries"
     ],
@@ -1454,11 +1454,11 @@ var questions = [
     options: [
       "Events record audit logs of all API server authentication and authorization decisions for security compliance",
       "Events store persistent application logs from container stdout and stderr streams for long-term retention",
-      "Events record state changes for cluster resources: Pod scheduling, image pulls, probe failures, scaling",
+      "Events record state changes and lifecycle transitions for cluster resources such as scheduling and scaling",
       "Events track network packet flows between Pods for security auditing and network performance monitoring"
     ],
     answer: 2,
-    explanation: "Kubernetes Events are objects that record significant occurrences in the cluster lifecycle. They capture information about Pod scheduling (`Scheduled`), image pulling (`Pulling`, `Pulled`), container lifecycle (`Created`, `Started`, `Killing`), probe failures (`Unhealthy`), and controller actions (`ScalingReplicaSet`). Events are short-lived by default (retained for 1 hour) and are crucial for troubleshooting.\n\nWhy other options are wrong:\n- A: Events are not audit logs; audit logs are separate API server feature configured via audit policy\n- B: Events are not application logs; container stdout/stderr are separate from Kubernetes Events\n- D: Events do not track network packet flows; network monitoring requires separate tools like Hubble\n\nReference: https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/",
+    explanation: "Kubernetes Events are objects that record significant occurrences in the cluster lifecycle. They capture information about Pod scheduling (`Scheduled`), image pulling (`Pulling`, `Pulled`), container lifecycle (`Created`, `Started`, `Killing`), probe failures (`Unhealthy`), and controller actions (`ScalingReplicaSet`). Events are short-lived by default (retained for 1 hour) and are crucial for troubleshooting.\n\nWhy other options are wrong:\n- A: Events are not audit logs; audit logs are a separate API server feature configured via audit policy\n- B: Events are not application logs; container stdout/stderr are separate from Kubernetes Events\n- D: Events do not track network packet flows; network monitoring requires separate tools like Hubble\n\nReference: https://kubernetes.io/docs/reference/kubernetes-api/cluster-resources/event-v1/",
     verify: "kubectl get events --sort-by='.lastTimestamp'"
   },
   {
@@ -1468,10 +1468,10 @@ var questions = [
     text: "A team deploys an application but the Pod shows `CreateContainerConfigError`. The container spec references a Secret named `app-creds` as an environment variable source. The Secret does not exist in the namespace. What is the expected behavior?",
     diagram: null,
     options: [
-      "The `CreateContainerConfigError` is transient and resolves automatically once kubelet retries and skips missing refs",
-      "The kubelet creates the missing Secret automatically with default empty values and proceeds to start the container Pod",
-      "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read the missing credentials",
-      "The container cannot start because mandatory env var references to non-existent Secrets cause `CreateContainerConfigError`"
+      "`CreateContainerConfigError` is transient and resolves once the kubelet retries and skips the missing Secret refs",
+      "The kubelet creates the missing Secret automatically with empty default values and proceeds to start the container",
+      "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read missing credentials",
+      "The container cannot start because env var references to a non-existent Secret cause `CreateContainerConfigError`"
     ],
     answer: 3,
     explanation: "When a container references a Secret (or ConfigMap) via `envFrom` or `env.valueFrom.secretKeyRef` and the referenced resource does not exist, the container cannot be configured and the Pod enters `CreateContainerConfigError`. The container never starts. To make a reference optional, set `optional: true` on the reference, allowing the container to start even if the Secret is missing.\n\nWhy other options are wrong:\n- A: CreateContainerConfigError is NOT transient; it persists until the Secret is created or the reference is marked optional\n- B: The kubelet does NOT auto-create missing Secrets; the reference must exist or be marked optional\n- C: The container never starts so it cannot crash; CrashLoopBackOff requires the container to start first\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables",
@@ -1501,7 +1501,7 @@ var questions = [
     diagram: null,
     options: [
       "Rewriting the entire monolith from scratch in a new language and framework then deploying it all at once",
-      "Incrementally replacing monolith features with microservices, routing via a facade until fully replaced",
+      "Incrementally replacing monolith features with microservices while routing via a facade until fully migrated",
       "Running the monolith and microservices on separate clusters with no shared traffic or communication path",
       "Splitting the monolithic database into horizontal shards while keeping all existing application code unchanged"
     ],
@@ -1533,7 +1533,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Technology Map Structure</text><rect x="20" y="40" width="170" height="30" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="105" y="60" text-anchor="middle" fill="white" font-size="9">Category A</text><rect x="210" y="40" width="170" height="30" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="295" y="60" text-anchor="middle" fill="white" font-size="9">Category B</text><rect x="20" y="80" width="170" height="30" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="105" y="100" text-anchor="middle" fill="white" font-size="9">Category C</text><rect x="210" y="80" width="170" height="30" rx="4" fill="#b45309" stroke="#f59e0b"/><text x="295" y="100" text-anchor="middle" fill="white" font-size="9">Category D</text><rect x="20" y="120" width="170" height="30" rx="4" fill="#be123c" stroke="#f43f5e"/><text x="105" y="140" text-anchor="middle" fill="white" font-size="9">Category E</text><rect x="210" y="120" width="170" height="30" rx="4" fill="#374151" stroke="#6b7280"/><text x="295" y="140" text-anchor="middle" fill="white" font-size="9">Category F</text><rect x="20" y="160" width="360" height="30" rx="4" fill="#064e3b" stroke="#10b981"/><text x="200" y="180" text-anchor="middle" fill="white" font-size="9">Category G | Category H | Category I | Category J</text><text x="200" y="220" text-anchor="middle" fill="#64748b" font-size="9">landscape.cncf.io</text></svg>',
     options: [
       "It catalogs only officially hosted CNCF projects and strictly filters out all commercial products from the listing entirely",
-      "The CNCF landscape categorizes cloud native technologies across runtime, orchestration, observability, and the wider ecosystem",
+      "The CNCF landscape categorizes cloud native technologies across categories such as runtime and orchestration and observability",
       "The CNCF landscape is a certification program that validates vendor products for Kubernetes compatibility and conformance testing",
       "The CNCF landscape is a dependency graph showing which CNCF projects depend on each other for build and runtime dependencies"
     ],

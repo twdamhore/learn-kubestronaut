@@ -369,3 +369,54 @@
 ### s02-q086 (giveaway)
 - **Problem:** Correct option D had a unique semicolon not present in other options.
 - **Option A:** Added semicolon. Changed `"as encrypted strings while \`data\`"` to `"as encrypted strings; \`data\`"`.
+
+---
+
+# Round 42 Review - Set 02
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 14 across 8 questions
+
+## Changes
+
+### s02-q003 (giveaway/backtick-density)
+- **Problem:** Correct option A had 6 backticks while options B, C, and D each had only 2, creating a backtick density giveaway.
+- **Option B:** Added backtick term. Changed `"the general-purpose Secret type that accepts any arbitrary key-value pair"` to `"the general-purpose Secret type that accepts arbitrary \`data\` key-value pairs"`.
+- **Option C:** Added backtick term. Changed `"intended for storing container registry credentials"` to `"stores registry credentials in the \`.dockerconfigjson\` key"`.
+- **Option D:** Added backtick term and adjusted wording. Changed `"stores SSH private keys, not X.509 certificate material"` to `"stores SSH private keys in the \`ssh-privatekey\` field only"`. Updated explanation bullet accordingly.
+
+### s02-q009 (giveaway/backtick-density)
+- **Problem:** Correct option A had 4 backticks while options C and D had 0, creating a backtick density imbalance.
+- **Option C:** Added backtick term. Changed `"it has a memory limit set which prevents any OOM killing action"` to `"it has a \`limits.memory\` value set which prevents OOM killing"`.
+- **Option D:** Added backtick term. Changed `"The pod with the higher absolute memory limit"` to `"The pod with the higher absolute \`limits.memory\` value"`.
+
+### s02-q012 (giveaway/backtick-density)
+- **Problem:** Correct option A had 6 backticks while options B and D had 0, creating a backtick density giveaway.
+- **Option D:** Added backtick formatting to path and field names. Changed `"Mount the ConfigMap volume at /app/config using items to select settings.yaml, implying read-only"` to `"Mount the ConfigMap volume at \`/app/config\` using \`items\` to select \`settings.yaml\` as read-only"`.
+
+### s02-q018 (length-balance)
+- **Problem:** Correct option A was the shortest at 83 chars while others ranged 91-93 (ratio 1.120).
+- **Option A (correct):** Expanded. Changed `"Store config in environment variables injected at runtime via ConfigMaps or Secrets"` to `"Store configuration in environment variables injected at runtime via ConfigMaps or Secrets"`.
+
+### s02-q025 (giveaway)
+- **Problem:** Correct option B had a unique parenthetical `(Bitnami)` not present in other options.
+- **Option A:** Added parenthetical to balance. Changed `"Commit Secrets as base64-encoded values since Git does not display binary data in plain diffs"` to `"Commit Secrets as base64-encoded values (not plaintext) since Git does not display binary data in diffs"`.
+
+### s02-q030 (length-balance)
+- **Problem:** Option D was an outlier at 106 chars while others ranged 92-95 (ratio 1.152).
+- **Option D:** Trimmed. Changed `"The pod creation fails because the LimitRange requires the developer to explicitly specify resource values"` to `"The pod creation fails because LimitRange requires developers to explicitly specify resource values"`.
+
+### s02-q034 (length-balance)
+- **Problem:** Option D was an outlier at 119 chars (ratio 1.178 with min C=101).
+- **Option C:** Expanded slightly. Changed `"the full key rotation process automatically"` to `"the full key rotation lifecycle automatically"`.
+- **Option D:** Trimmed. Changed `"restart the API server, and data re-encrypts on read"` to `"restart the API server, and let data re-encrypt"`.
+
+### s02-q090 (giveaway/backtick-density)
+- **Problem:** Correct option A had 6 backticks while options B had 2, C had 2, and D had 0.
+- **Option B:** Added backtick term. Changed `"to prevent reading any resource data including Secret contents"` to `"to prevent \`kubectl get\` from reading Secret data contents"`.
+- **Option D:** Added backtick term. Changed `"Remove all Secret permissions from the Role"` to `"Remove all Secret permissions from the \`Role\`"`.
+
+### s02-q092 (giveaway/comma-list)
+- **Problem:** Correct option D had a unique 3-comma list structure while other options had 0-2 commas.
+- **Option A:** Added 3rd comma to match structure. Changed `"validated at build time, and cached for runtime performance"` to `"validated at build, cached for performance, and versioned internally"`.

@@ -277,3 +277,46 @@
 
 ### s06-q090 (length-balance/keyword-echo)
 - **Option C (correct):** Replaced "namespace-level totals" with "aggregate consumption" to remove keyword echo from question stem. **Options B/D:** Added "Pod" for balance. Ratio improved from 1.18 to 1.05.
+
+---
+
+# Round 42 Review - Set 06
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 11 across 10 questions
+
+## Changes
+
+### s06-q001 (length-balance)
+- **Option A:** Trimmed from 84 to 80 chars by removing "rule". **Option B (correct):** Expanded from 73 to 77 chars by replacing "specified" with "for matching". Correct answer was shortest; now in mid-range. Ratio improved from 1.15 to 1.08.
+
+### s06-q002 (length-balance)
+- **Option A:** Trimmed from 78 to 74 chars by removing "status". **Option C (correct):** Expanded from 69 to 73 chars by adding "for it". Correct answer was shortest; now tied for mid-range. Ratio improved from 1.13 to 1.04.
+
+### s06-q007 (length-balance)
+- **All options:** Rewrote all four options to balance lengths. Option A from 59 to 79 (removed escaped quotes, restructured). B from 81 to 75. C (correct) from 85 to 78. D from 87 to 75. Ratio improved from 1.47 to 1.08.
+
+### s06-q039 (length-balance)
+- **Option C (correct):** Expanded from 46 to 51 chars by adding "CNCF" before "backup". Correct answer was shortest; now in mid-range. Ratio improved from 1.11 to 1.04.
+
+### s06-q042 (backtick-density giveaway)
+- **Option C (correct):** Removed backticks from "Allocatable" and "Allocated resources" to reduce backtick count from 6 (3 pairs) to 2 (1 pair), matching other options. Previously the only option with 3 backtick pairs vs 1 pair in all others.
+
+### s06-q044 (length-balance)
+- **Option C:** Expanded from 43 to 44 chars by adding "a" ("on a node" instead of "on node"). Ratio improved from 1.12 to 1.10.
+
+### s06-q064 (length-balance)
+- **All options:** Reworded for balance. A from 62 to 66 ("of the two taints"), B from 61 to 65 ("label set"), C (correct) from 56 to 64 ("every taint...to be scheduled"), D from 60 to 65 ("here"). Correct answer was shortest; now in mid-range. Ratio improved from 1.11 to 1.03.
+
+### s06-q068 (length-balance)
+- **Option A (correct):** Trimmed from 57 to 56 chars ("scheduling" instead of "scheduler"). **Option C:** Expanded from 51 to 54 chars ("system" instead of "tool"). Correct answer was longest; now tied. Ratio improved from 1.12 to 1.04.
+
+### s06-q092 (length-balance)
+- **Option B:** Expanded from 63 to 67 chars by adding "new". **Option D (correct):** Trimmed from 72 to 69 chars by removing "it". Correct answer was longest; now tied with A. Ratio improved from 1.14 to 1.07.
+
+### s06-q095 (length-balance)
+- **Option B:** Expanded from 64 to 70 chars ("jump ahead to"). **Option C:** Trimmed from 73 to 69 chars (removed "all"). Ratio improved from 1.14 to 1.08.
+
+### s06-q100 (length-balance/giveaway)
+- **Option B:** Expanded from 52 to 55 chars ("matched by it"). **Option C (correct):** Trimmed from 59 to 55 chars ("by this wildcard form"). Correct answer was longest; now tied. Ratio improved from 1.13 to 1.05.

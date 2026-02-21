@@ -48,12 +48,12 @@ var questions = [
     diagram: null,
     options: [
       "`kubernetes.io/tls` — requires `tls.crt` and `tls.key` fields for certificate data",
-      "`Opaque` — the general-purpose Secret type that accepts any arbitrary key-value pair",
-      "`kubernetes.io/dockerconfigjson` — intended for storing container registry credentials",
-      "`kubernetes.io/ssh-auth` — stores SSH private keys, not X.509 certificate material"
+      "`Opaque` — the general-purpose Secret type that accepts arbitrary `data` key-value pairs",
+      "`kubernetes.io/dockerconfigjson` — stores registry credentials in the `.dockerconfigjson` key",
+      "`kubernetes.io/ssh-auth` — stores SSH private keys in the `ssh-privatekey` field only"
     ],
     answer: 0,
-    explanation: "The `kubernetes.io/tls` Secret type is specifically designed for TLS certificates and requires the `tls.crt` and `tls.key` fields. Ingress controllers look for this type when configured for TLS termination. `Opaque` could technically hold the data but lacks the validation and semantic meaning. `dockerconfigjson` is for container registry credentials. `ssh-auth` is for SSH private keys, not TLS certificates.\n\nWhy other options are wrong:\n- B: Opaque is general-purpose and lacks the tls.crt/tls.key validation that Ingress controllers expect\n- C: dockerconfigjson is specifically for container registry pull credentials, not TLS certificates\n- D: ssh-auth stores SSH private keys for SSH authentication, not X.509 TLS certificates\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets",
+    explanation: "The `kubernetes.io/tls` Secret type is specifically designed for TLS certificates and requires the `tls.crt` and `tls.key` fields. Ingress controllers look for this type when configured for TLS termination. `Opaque` could technically hold the data but lacks the validation and semantic meaning. `dockerconfigjson` is for container registry credentials. `ssh-auth` is for SSH private keys, not TLS certificates.\n\nWhy other options are wrong:\n- B: Opaque is general-purpose and lacks the tls.crt/tls.key validation that Ingress controllers expect\n- C: dockerconfigjson is specifically for container registry pull credentials, not TLS certificates\n- D: ssh-auth stores SSH private keys in the ssh-privatekey field, not TLS certificate material\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets",
     verify: "kubectl create secret tls --help"
   },
   {
@@ -145,8 +145,8 @@ var questions = [
     options: [
       "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
       "Both pods have equal eviction priority since they both have resource values explicitly specified in their `spec`",
-      "This pod is protected from eviction because it has a memory limit set which prevents any OOM killing action",
-      "The pod with the higher absolute memory limit is evicted first because allocation size determines priority"
+      "This pod is protected from eviction because it has a `limits.memory` value set which prevents OOM killing",
+      "The pod with the higher absolute `limits.memory` value is evicted first because allocation size determines priority"
     ],
     answer: 0,
     explanation: "Kubernetes evicts pods based on QoS class priority: `BestEffort` pods are evicted first, then `Burstable`, and `Guaranteed` pods last. This pod has unequal requests and limits, making it `Burstable`. Under node memory pressure, it would be evicted before a `Guaranteed` pod. Having a memory limit does not prevent eviction — it prevents the container from using more than the limit. Eviction order considers QoS class, not just absolute resource values.\n\nWhy other options are wrong:\n- B: Having resource specs does not make eviction priority equal; QoS class determines the order\n- C: Memory limits prevent usage beyond the cap but do not protect pods from node-level eviction\n- D: Eviction priority is based on QoS class first, not absolute resource limit values\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
@@ -196,7 +196,7 @@ var questions = [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
       "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
-      "Mount the ConfigMap volume at /app/config using items to select settings.yaml, implying read-only"
+      "Mount the ConfigMap volume at `/app/config` using `items` to select `settings.yaml` as read-only"
     ],
     answer: 0,
     explanation: "Using `subPath` allows mounting a single key from a ConfigMap as a specific file path without replacing the entire directory. Adding `readOnly: true` on the volume mount ensures the container cannot write to it. While ConfigMap volume mounts are effectively read-only by default (writes are not persisted), explicitly setting `readOnly: true` provides defense in depth. Using an init container adds unnecessary complexity. ConfigMap immutability controls API-level changes, not mount permissions.\n\nWhy other options are wrong:\n- B: Using an init container adds unnecessary complexity when readOnly + subPath solves the requirement directly\n- C: ConfigMap immutability prevents API-level modifications but does not control filesystem mount permissions\n- D: While items can select specific keys, this approach does not explicitly enforce read-only access via the readOnly mount flag\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#configmap",
@@ -291,7 +291,7 @@ var questions = [
     text: "A company migrating to Kubernetes wants to follow the twelve-factor app methodology. Their legacy application reads configuration from a hardcoded file path inside the binary. What change aligns with twelve-factor principles for configuration management?",
     diagram: null,
     options: [
-      "Store config in environment variables injected at runtime via ConfigMaps or Secrets",
+      "Store configuration in environment variables injected at runtime via ConfigMaps or Secrets",
       "Embed all possible configurations in the container image, building one per each environment",
       "Use a shared NFS mount across all pods to store a single centralized configuration file path",
       "Hardcode the production configuration and use compile-time build flags for other environments"
@@ -407,7 +407,7 @@ var questions = [
     text: "A GitOps team stores all Kubernetes manifests in Git, including ConfigMaps with database URLs. They want to manage Secrets without committing plaintext credentials to the repository. Which approach follows GitOps best practices?",
     diagram: null,
     options: [
-      "Commit Secrets as base64-encoded values since Git does not display binary data in plain diffs",
+      "Commit Secrets as base64-encoded values (not plaintext) since Git does not display binary data in diffs",
       "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts",
       "Store Secrets in a separate private Git repository with tightly restricted team access controls",
       "Avoid storing Secrets in Git entirely; instead create them manually via `kubectl create secret` each time"
@@ -498,7 +498,7 @@ var questions = [
       "Request: 256Mi, Limit: 256Mi — the default limit value is used for both fields automatically",
       "Request: 0, Limit: 256Mi — requests default to zero when not specified by the pod specification",
       "Request: 128Mi, Limit: 256Mi — the LimitRange injects defaults for unspecified resource fields",
-      "The pod creation fails because the LimitRange requires the developer to explicitly specify resource values"
+      "The pod creation fails because LimitRange requires developers to explicitly specify resource values"
     ],
     answer: 2,
     explanation: "A LimitRange with `default` and `defaultRequest` values automatically injects these into containers that do not specify their own resource values. `defaultRequest.memory` sets the request to 128Mi and `default.memory` sets the limit to 256Mi. Requests do not default to zero or to the limit value. The pod creation does not fail — LimitRanges are specifically designed to provide defaults so that ResourceQuotas can be enforced.\n\nWhy other options are wrong:\n- A: The request defaults to the defaultRequest value (128Mi), not the limit value (256Mi)\n- B: Requests do not default to zero; the LimitRange defaultRequest field sets the value\n- D: Pod creation does not fail because LimitRange is specifically designed to inject defaults\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
@@ -561,8 +561,8 @@ var questions = [
     options: [
       "Add the new key first in `EncryptionConfiguration`, restart the API server, then re-encrypt all existing Secrets",
       "Delete all existing Secrets and recreate them — Kubernetes will re-encrypt on creation using the new key",
-      "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation process automatically",
-      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, and data re-encrypts on read"
+      "Run `kubectl rotate-keys --provider=aescbc` which handles the full key rotation lifecycle automatically",
+      "Replace the old key with the new one in `EncryptionConfiguration`, restart the API server, and let data re-encrypt"
     ],
     answer: 0,
     explanation: "Key rotation for etcd encryption requires adding the new key as the first (active) entry while keeping the old key for decrypting existing data. After restarting the API server, all existing Secrets must be rewritten so they are re-encrypted with the new key. A common method is to read and replace all Secrets. There is no `kubectl rotate-keys` command. Simply replacing the key without rewriting data would leave existing Secrets unreadable. Data is not re-encrypted on read.\n\nWhy other options are wrong:\n- B: Deleting and recreating all Secrets is destructive and unnecessary when key rotation can preserve them\n- C: There is no kubectl rotate-keys command in Kubernetes\n- D: Simply replacing the key without rewriting data leaves existing Secrets encrypted with the old key, not re-encrypted on read\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/#rotating-a-decryption-key",
@@ -1490,9 +1490,9 @@ var questions = [
     diagram: null,
     options: [
       "Remove `get` and `list` verbs for Secrets from the Role, keeping `create` and pod reference permissions",
-      "Set `readOnly: true` on the namespace metadata to prevent reading any resource data including Secret contents",
+      "Set `readOnly: true` on the namespace metadata to prevent `kubectl get` from reading Secret data contents",
       "Enable Secret encryption at rest on the cluster — this prevents `kubectl get` from displaying decoded values",
-      "Remove all Secret permissions from the Role — pods can still mount Secrets without RBAC user authorization"
+      "Remove all Secret permissions from the `Role` — pods can still mount Secrets without RBAC user authorization"
     ],
     answer: 0,
     explanation: "RBAC Roles can grant fine-grained permissions. Removing `get` and `list` verbs for Secrets prevents developers from reading Secret data directly via `kubectl`. However, they can still `create` Secrets and create pods that reference Secrets. The kubelet (using its own credentials) fetches the Secret data for pod mounts. There is no `readOnly` namespace setting. Encryption at rest protects etcd, not API access. Pods cannot mount Secrets if the kubelet lacks permission, but developers' RBAC is separate from the kubelet's.\n\nWhy other options are wrong:\n- B: There is no readOnly metadata field on Kubernetes namespaces\n- C: Encryption at rest protects etcd storage, not API server output; kubectl get still decodes base64\n- D: Removing all Secret permissions would prevent developers from creating Secrets needed for pods\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
@@ -1523,7 +1523,7 @@ var questions = [
     text: "A company's cloud-native strategy document states that \"configuration must be treated as a first-class artifact.\" In practical Kubernetes terms, what does this mean?",
     diagram: null,
     options: [
-      "Configuration files should be compiled into the application binary, validated at build time, and cached for runtime performance",
+      "Configuration files should be compiled into the application binary, validated at build, cached for performance, and versioned internally",
       "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires tooling",
       "Configuration is best managed by a dedicated operations team who apply, validate, and monitor changes through `kubectl` commands",
       "ConfigMaps and Secrets should be version-controlled, peer-reviewed, tested in staging, and deployed through a CI/CD pipeline"

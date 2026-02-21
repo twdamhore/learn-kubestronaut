@@ -106,8 +106,8 @@ var questions = [
     options: [
       "Change the Service type from NodePort to LoadBalancer to provision an external IP address",
       "Restart the kube-proxy DaemonSet to force a complete refresh of the iptables routing rules",
-      "Verify the Service selector labels match Pod labels using <code>kubectl get endpoints</code>",
-      "Increase the <code>nodePort</code> range in the API server startup configuration parameters"
+      "Verify that the Service selector labels match the Pod labels using <code>kubectl get endpoints</code>",
+      "Increase the <code>nodePort</code> range in the API server startup configuration to allow higher ports"
     ],
     answer: 2,
     explanation: "When Pods are healthy but a Service is not routing traffic, the first diagnostic step is to verify that the Service's selector matches the Pod labels. Running `kubectl get endpoints <service>` shows whether the Service has discovered any backing Pods. An empty Endpoints list confirms a selector mismatch.\n\nWhy other options are wrong:\n- A: Changing Service type does not diagnose the issue; it changes the access method entirely\n- B: Restarting kube-proxy is a heavy-handed action unlikely to fix a selector mismatch problem\n- D: Increasing nodePort range is irrelevant since port 30080 is already within the default 30000-32767 range\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -202,7 +202,7 @@ var questions = [
     options: [
       "Service 2 is not propagating trace context headers in its outgoing requests to Service 3, so the trace is broken",
       "Jaeger does not support more than 2 spans per trace due to its default Badger storage backend configuration limits",
-      "The Jaeger collector has run out of available storage space and is selectively dropping newly received span data from traces",
+      "The Jaeger collector has run out of storage space and is selectively dropping newly received span data",
       "OpenTelemetry focuses primarily on tracing gRPC-based services and provides limited HTTP endpoint instrumentation"
     ],
     answer: 0,
@@ -216,7 +216,7 @@ var questions = [
     text: "An application team creates a ConfigMap named <code>app-config</code> and mounts it as a volume in their Pod at <code>/etc/config</code>. They update the ConfigMap data using <code>kubectl edit configmap app-config</code>. After a few minutes, the files in the mounted volume reflect the new values. However, the application still uses the old configuration. Why?",
     diagram: null,
     options: [
-      "ConfigMap volume mounts are cached at creation time and rarely refresh their contents without a pod restart",
+      "ConfigMap volume mounts are cached at creation time and rarely refresh without a pod restart",
       "Updated ConfigMaps require a new PersistentVolumeClaim to propagate the changed data to the Pod",
       "The application reads configuration only at startup and does not watch for file changes on disk",
       "The kubelet only syncs ConfigMap updates during scheduled node restarts or maintenance windows"
@@ -249,7 +249,7 @@ var questions = [
     diagram: null,
     options: [
       "A second Job is created and runs concurrently alongside the still-active first Job from the 10:00 run",
-      "The CronJob controller terminates the running 10:00 Job and immediately starts the 10:05 Job",
+      "The CronJob controller terminates the still-running 10:00 Job and immediately starts the 10:05 Job",
       "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job completes",
       "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
     ],
@@ -393,8 +393,8 @@ var questions = [
     diagram: null,
     options: [
       "Add a <code>nodeSelector</code> matching the new node's hostname label to target that specific node for scheduling",
-      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> so the DaemonSet Pod is permitted onto the tainted node",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force a rescheduling pass on the tainted node",
+      "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> so the DaemonSet Pod tolerates the taint",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force a rescheduling pass on all tainted nodes",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -746,8 +746,8 @@ var questions = [
     options: [
       "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin) routing rules",
       "Only SRV records are created for headless Services; A records require extra DNS configuration in CoreDNS",
-      "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the Kubernetes DNS system entirely",
-      "Individual A records for each Pod (by ordinal) plus a Service-level A record that returns all Pod IPs in the response"
+      "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the DNS system",
+      "Individual A records for each Pod (by ordinal) plus a Service-level A record returning all Pod IPs"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates stable DNS entries for each Pod. Each Pod gets a predictable hostname (`<pod-name>.<service-name>.<namespace>.svc.cluster.local`). The Service DNS name itself returns A records for all Pod IPs. This provides stable network identities essential for stateful workloads like databases.\n\nWhy other options are wrong:\n- A: Headless Services do not use kube-proxy or ClusterIP; they return Pod IPs directly in DNS\n- B: Both A records and SRV records are created for headless Services backed by StatefulSets\n- C: Headless Services do participate in DNS; they return A records for all matching Pod IPs\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -761,8 +761,8 @@ var questions = [
     diagram: null,
     options: [
       "No CPU limit is applied to the container; the Pod runs without any enforced limit on CPU usage",
-      "The CPU limit is set equal to the specified request value: <code>200m</code> to match the request",
-      "The LimitRange default of <code>500m</code> is applied since the developer did not specify a limit",
+      "The CPU limit is automatically set equal to the specified request value of <code>200m</code> to match the request",
+      "The LimitRange default limit of <code>500m</code> is applied since the developer did not specify a limit",
       "Pod creation fails because both requests and limits must be explicitly specified under a quota"
     ],
     answer: 2,
@@ -776,7 +776,7 @@ var questions = [
     text: "A Kubernetes cluster uses a StorageClass with <code>reclaimPolicy: Delete</code>. A developer deletes a PersistentVolumeClaim (PVC) that was bound to a PersistentVolume (PV) dynamically provisioned by this StorageClass. What happens to the PV and the underlying storage?",
     diagram: null,
     options: [
-      "The PV transitions to <code>Released</code> state and can be rebound to a new PVC after manual cleanup",
+      "The PV transitions to <code>Released</code> state and can be rebound to a new PVC after manual data cleanup",
       "The PV is retained in the cluster but the underlying storage volume is wiped clean by the provisioner",
       "The PV remains bound to the deleted PVC indefinitely until an administrator performs manual cleanup",
       "The PV and its underlying storage are automatically deleted by the provisioner upon PVC deletion"
@@ -840,7 +840,7 @@ var questions = [
     text: "A team configures a Horizontal Pod Autoscaler (HPA) targeting 70% average CPU utilization for their Deployment with <code>minReplicas: 2</code> and <code>maxReplicas: 10</code>. Current average CPU utilization across 4 replicas is 90%. How does the HPA calculate the desired replica count?",
     diagram: null,
     options: [
-      "It doubles the current count (<code>2 * currentReplicas = 2 * 4 = 8</code>) to bring utilization below the target threshold",
+      "It doubles the current count (<code>2 * currentReplicas = 2 * 4 = 8</code>) to bring utilization below the threshold",
       "It adds 1 replica at a time in successive reconciliation cycles until utilization drops below the 70% target",
       "It scales to <code>maxReplicas</code> (10) because 90% > 70% triggers a full scale-up to the configured ceiling",
       "It computes <code>ceil(currentReplicas * (currentUtilization / targetUtilization))</code> = <code>ceil(4 * 90/70) = 6</code>"
@@ -1082,7 +1082,7 @@ var questions = [
     options: [
       "Scale the canary Deployment to 9 replicas to achieve an even 50/50 Pod ratio behind the shared Service",
       "Use a service mesh or Ingress controller with weighted routing to send 50% of traffic to the canary",
-      "Modify the Kubernetes Service to use <code>sessionAffinity: ClientIP</code> with a 50% hash ring split",
+      "Modify the Kubernetes Service to use <code>sessionAffinity: ClientIP</code> with a 50% hash ring traffic split",
       "Create two separate Services and configure DNS-based round-robin load balancing between them both"
     ],
     answer: 1,
@@ -1097,7 +1097,7 @@ var questions = [
     diagram: null,
     options: [
       "Yes, Kubernetes encrypts all Secret values using AES-256 (symmetric encryption) before storing them in etcd",
-      "Yes, the Secret is encrypted using the cluster's built-in PKI infrastructure managed by the CA",
+      "Yes, the Secret is encrypted using the cluster's built-in PKI infrastructure managed by the cluster CA",
       "No, the value is only base64-encoded (not encrypted); encryption at rest must be configured separately",
       "No, the value is hashed with a one-way function; the original password cannot be recovered from it"
     ],
@@ -1162,8 +1162,8 @@ var questions = [
     options: [
       "The PVC is bound to a 10Gi EBS volume that supports <code>ReadWriteMany</code> access mode across multiple nodes",
       "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume for <code>ReadWriteMany</code> access",
-      "The PVC is created with <code>ReadWriteOnce</code> mode, silently downgrading from the requested access mode",
-      "The PVC stays <code>Pending</code> because AWS EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
+      "The PVC is created with <code>ReadWriteOnce</code> mode, silently downgrading from the requested access mode setting",
+      "The PVC stays <code>Pending</code> because EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
     ],
     answer: 3,
     explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.\n\nWhy other options are wrong:\n- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -1256,8 +1256,8 @@ var questions = [
     text: "A platform team wants to implement structured logging across all microservices in their Kubernetes cluster. Currently, some services log in JSON format while others use unstructured plain text. They use Fluentd to collect and parse logs. What is the primary benefit of standardizing on JSON-formatted structured logs?",
     diagram: null,
     options: [
-      "Structured JSON logs consume less storage space than plain text logs due to their compact format",
-      "Fluentd requires custom Lua scripts to parse plain text log formats, making it impractical for large clusters",
+      "Structured JSON logs consume less storage space than plain text log formats due to their compact encoding",
+      "Fluentd requires custom Lua scripts to parse plain text log formats, making it impractical at scale",
       "Structured JSON logs enable consistent parsing and querying in log aggregation systems without custom regex",
       "Elasticsearch indexes JSON logs natively but requires additional ingest pipelines for non-JSON formats"
     ],
@@ -1291,7 +1291,7 @@ var questions = [
       "Immediately, because Flux receives a Git webhook notification for every push event to the repository branch",
       "Up to 5 minutes matching the reconciliation interval, unless a webhook or manual trigger is configured",
       "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later",
-      "The fix requires manual approval in the Flux dashboard before it can be applied to the cluster"
+      "The fix requires manual approval in the Flux reconciliation dashboard before it can be applied to the cluster"
     ],
     answer: 1,
     explanation: "Flux reconciles on a configurable interval (5 minutes in this case). Without a Git webhook configured, Flux polls the repository at each interval. The fix will be applied at the next reconciliation cycle, which could be up to 5 minutes after the push. Configuring a webhook notification from Git to Flux triggers immediate reconciliation upon push, reducing the delay.\n\nWhy other options are wrong:\n- A: Webhook notifications supplement the reconciliation interval; they are not configured in this scenario\n- C: The timing is based on when the fix is pushed relative to the next reconciliation, not the broken push\n- D: Flux does not require manual approval after failures; it reconciles automatically on each interval\n\nReference: https://fluxcd.io/flux/concepts/",
@@ -1321,9 +1321,9 @@ var questions = [
     diagram: null,
     options: [
       "Configure <code>imagePullPolicy: Never</code> on all Pods to prevent pulling from external registries (any origin)",
-      "Set a NetworkPolicy that blocks outbound traffic to all registries except <code>registry.company.com</code>",
+      "Set a NetworkPolicy that blocks all outbound traffic to registries except <code>registry.company.com</code>",
       "Create a ResourceQuota that limits the number of images pulled from external container registries",
-      "Use an admission controller (OPA Gatekeeper or Kyverno) to validate the image repository on Pod creation"
+      "Use an admission controller (OPA Gatekeeper or Kyverno) to validate image repositories at creation"
     ],
     answer: 3,
     explanation: "Admission controllers like OPA Gatekeeper or Kyverno can inspect Pod specs during creation and reject those with images from unauthorized registries. A policy can enforce that all image references start with `registry.company.com/`. NetworkPolicies could block traffic but are less precise and may break other functionality. `imagePullPolicy: Never` only works if the image is pre-cached on the node.\n\nWhy other options are wrong:\n- A: imagePullPolicy: Never prevents pulling but does not validate which registries are allowed\n- B: NetworkPolicy blocks traffic but cannot inspect image references in Pod specs during creation\n- C: ResourceQuota limits resource consumption quantities, not image source registries\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Edit the <code>values.yaml</code> file in the chart source and change <code>replicaCount</code> to 1 directly in the repository",
       "Use <code>helm install --set replicaCount=1</code> or provide a separate <code>-f staging-values.yaml</code> to override",
-      "Create a Kustomize overlay that patches the Helm template output to change the replica count",
+      "Create a Kustomize overlay that patches the rendered Helm template output to change the replica count",
       "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for the staging environment"
     ],
     answer: 1,
@@ -1448,10 +1448,10 @@ var questions = [
     text: "A Kubernetes cluster is configured with multiple RuntimeClasses: <code>runc</code> (default), <code>gvisor</code>, and <code>kata</code>. A Pod spec includes <code>runtimeClassName: gvisor</code>. What does this configure?",
     diagram: null,
     options: [
-      "The Pod's containers use gVisor (runsc) for user-space kernel sandboxing instead of the default runc runtime",
-      "The Pod is scheduled only on nodes that have gVisor hardware acceleration (KVM) and kernel support",
-      "The Pod uses gVisor's built-in container image format instead of OCI-compliant images for its containers",
-      "The kubelet downloads and installs the gVisor runtime on the node automatically before starting the Pod"
+      "The Pod's containers run under gVisor (runsc) for user-space kernel sandboxing instead of the default runc",
+      "The Pod is scheduled only on nodes that have gVisor hardware acceleration (KVM) and full kernel support",
+      "The Pod uses gVisor's built-in container image format instead of OCI-compliant images for containers",
+      "The kubelet downloads and installs the gVisor runtime on the node automatically before starting Pods"
     ],
     answer: 0,
     explanation: "The `runtimeClassName` field in a Pod spec selects which container runtime handler processes the Pod. When set to `gvisor`, the containerd (or CRI-O) runtime uses the gVisor (runsc) handler instead of the default runc. gVisor intercepts system calls in user space, providing an additional isolation layer. The RuntimeClass must be pre-configured on the cluster with the corresponding handler.\n\nWhy other options are wrong:\n- B: RuntimeClass does not restrict scheduling by hardware; use nodeSelector or tolerations for that\n- C: gVisor uses standard OCI images; it does not have its own container image format\n- D: The kubelet does not install runtimes; they must be pre-installed and configured on the node\n\nReference: https://kubernetes.io/docs/concepts/containers/runtime-class/",
@@ -1514,11 +1514,11 @@ var questions = [
     options: [
       "Yes, annotations and labels are interchangeable and usable for scheduling purposes in all Kubernetes versions",
       "Yes, but only if the annotation key strictly follows the DNS subdomain naming convention for node selectors",
-      "No, annotations are restricted to cluster-scoped objects; they cannot be applied to namespace-scoped resources like Pods",
-      "No, annotations are non-identifying metadata not used by selectors or scheduling; labels are required for selection"
+      "No, annotations are restricted to cluster-scoped objects; they cannot be applied to Pods or Deployments",
+      "No, annotations store non-identifying metadata not used by selectors or scheduling; labels handle selection"
     ],
     answer: 3,
-    explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.\n\nWhy other options are wrong:\n- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods, not just namespaces\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
+    explanation: "Annotations and labels serve different purposes in Kubernetes. Labels are key-value pairs used for identification and selection by controllers, Services, and scheduling constraints. Annotations are key-value pairs for storing arbitrary non-identifying metadata (such as descriptions, tool configurations, or build information). They cannot be used in selectors, `nodeSelector`, or affinity rules.\n\nWhy other options are wrong:\n- A: Annotations and labels are not interchangeable; labels are for identification and selection\n- B: DNS naming convention is irrelevant; annotations fundamentally cannot be used in selectors\n- C: Annotations can be added to any Kubernetes object including Pods and Deployments, not just cluster-scoped objects\n\nReference: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/",
     verify: "kubectl get pod my-pod -o jsonpath='{.metadata.annotations}'"
   },
   {

@@ -274,3 +274,55 @@
 
 ### s08-q094 (length-balance)
 - **Option C:** Extended from 99 to 104 chars by adding "path" at end. Ratio improved from 1.111 to 1.068.
+
+---
+
+# Round 42 Review - Set 08
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 14 across 14 questions
+
+## Changes
+
+### s08-q010 (length-balance)
+- **Option A (correct):** Reworded from "reconcile cluster resources from Git state" to "reconcile cluster resources with declared Git state" (94 chars). **Option D:** Extended from 89 to 93 chars by adding "app" before "source code". Correct no longer shortest; ratio improved from 1.082 to 1.033.
+
+### s08-q012 (giveaway)
+- **Option B:** Added commas by rewriting to "Add mTLS libraries to each microservice codebase, implement retry logic, and configure traffic shifting in code". **Option D:** Added commas by rewriting to "Use Kubernetes NetworkPolicies to encrypt traffic, configure retries, and manage routing via Pod annotations". Eliminates unique comma-list pattern that was only present in correct option C. Structural giveaway removed.
+
+### s08-q019 (length-balance)
+- **Option B:** Extended from 84 to 87 chars by changing "tasks" to "purposes". **Option C (correct):** Extended from 80 to 88 chars by changing "routes log data" to "parses, and routes log data to backends". Correct no longer shortest; ratio improved from 1.075 to 1.048.
+
+### s08-q029 (giveaway)
+- **Options B, C, D:** Added commas to all distractors to match comma-list structure in correct A. B: "serving as a container runtime for managing workloads on cluster nodes". C: "scrapes, aggregates, and stores metrics from app endpoints". D: "DNS resolution, service discovery, and routing for clusters". Eliminates unique comma-heavy pattern. Ratio improved from 1.032 to 1.010.
+
+### s08-q040 (giveaway)
+- **Option B (correct):** Reduced backtick density from 8 to 4 by removing backticks from `maxSkew: 1` (now "maxSkew 1") and `DoNotSchedule` format. **Option D:** Added backticks to `Pods` to increase its backtick count. Reduces backtick contrast from 8-vs-4 to 4-vs-4. Backtick density giveaway eliminated.
+
+### s08-q049 (length-balance)
+- **Option A (correct):** Extended from 105 to 112 chars by adding "native" before "apps". Correct no longer shortest; ratio improved from 1.057 to 1.028.
+
+### s08-q057 (giveaway)
+- **Option D (correct):** Reworded from "vendor-neutral APIs, SDKs, and collectors for traces, metrics, and logs" to "vendor-neutral APIs plus SDKs and collectors for all telemetry signals" (122 chars). Eliminates unique 4-comma pattern not present in other options.
+
+### s08-q071 (length-balance)
+- **Option A (correct):** Extended from 102 to 108 chars by adding "on it" at end. **Option D:** Trimmed from 109 to 107 chars by removing "the" before "application". Correct no longer shortest; ratio improved from 1.069 to 1.029.
+
+### s08-q076 (length-balance/giveaway)
+- **Option A:** Added parenthetical "(3)" to match parenthetical in correct D. Extended from 104 to 109 chars. **Option D (correct):** Trimmed from 109 to 104 chars by removing parenthetical "(3 existing + 2 new)" and rephrasing to "5 cores, exceeding the namespace quota of 4". Correct no longer longest; unique parenthetical giveaway eliminated.
+
+### s08-q080 (length-balance)
+- **Option B (correct):** Extended from 100 to 105 chars by adding "files" after "log". Correct no longer shortest; ratio improved from 1.060 to 1.019.
+
+### s08-q091 (giveaway/length-balance)
+- **Option C (correct):** Reworded from "Pod scheduling, image pulls, probe failures, scaling" (comma-list) to "state changes and lifecycle transitions for cluster resources such as scheduling and scaling" (106 chars). Eliminates unique 3-comma pattern not present in other options. Ratio improved from 1.058 to 1.058 but correct moved from shortest to middle.
+
+### s08-q092 (length-balance)
+- **Option A:** Trimmed from 116 to 113 chars by removing "The" prefix and adjusting wording. **Option B:** Trimmed from 118 to 114 chars by swapping "default empty" to "empty default". **Option C:** Trimmed from 115 to 111 chars by removing "the" before "missing". **Option D (correct):** Trimmed from 122 to 113 chars by changing "mandatory env var references to non-existent Secrets" to "env var references to a non-existent Secret". Ratio improved from 1.061 to 1.027.
+
+### s08-q094 (length-balance)
+- **Option B (correct):** Extended from 103 to 108 chars by adding "while" and changing "fully replaced" to "fully migrated". Correct no longer shortest; ratio improved from 1.068 to 1.058.
+
+### s08-q096 (giveaway)
+- **Option B (correct):** Reworded from "runtime, orchestration, observability, and the wider ecosystem" to "categories such as runtime and orchestration and observability" (126 chars). Eliminates unique 3-comma pattern not present in other options.

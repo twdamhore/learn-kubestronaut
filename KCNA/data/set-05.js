@@ -24,10 +24,10 @@ var questions = [
     text: "You need to allow traffic from Pods labeled `app: frontend` in the `web` namespace to reach Pods labeled `app: api` in the `backend` namespace on port 8443. Which NetworkPolicy spec is correct?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="170" height="140" rx="8" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="95" y="22" text-anchor="middle" fill="#4cc9f0" font-size="12">ns: web</text><rect x="30" y="60" width="130" height="40" rx="5" fill="#16213e" stroke="#f72585" stroke-width="1.5"/><text x="95" y="85" text-anchor="middle" fill="#f8f8f2" font-size="11">app: frontend</text><rect x="220" y="30" width="170" height="140" rx="8" fill="#1a1a2e" stroke="#4cc9f0" stroke-width="2"/><text x="305" y="22" text-anchor="middle" fill="#4cc9f0" font-size="12">ns: backend</text><rect x="240" y="60" width="130" height="40" rx="5" fill="#16213e" stroke="#f72585" stroke-width="1.5"/><text x="305" y="85" text-anchor="middle" fill="#f8f8f2" font-size="11">app: api</text><line x1="160" y1="80" x2="240" y2="80" stroke="#7b2ff7" stroke-width="2" marker-end="url(#arrowhead)"/><text x="200" y="72" text-anchor="middle" fill="#b5179e" font-size="10">:8443</text><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7b2ff7"/></marker></defs></svg>',
     options: [
-      "An ingress policy in `backend` with `namespaceSelector` for `web` and `podSelector` for `app: frontend`",
-      "An egress NetworkPolicy in `web` namespace with `podSelector` matching the label `app: api` on port 8443",
-      "An ingress NetworkPolicy in the `web` namespace selecting Pods matching `app: frontend` for this traffic",
-      "An egress NetworkPolicy in `backend` using `namespaceSelector` matching the `web` namespace on port 8443"
+      "An ingress policy in backend with a `namespaceSelector` for web and a `podSelector` for `app: frontend`",
+      "An egress NetworkPolicy in web namespace with a `podSelector` matching `app: api` on port 8443",
+      "An ingress NetworkPolicy in the web namespace selecting Pods with `podSelector` for `app: frontend`",
+      "An egress NetworkPolicy in backend using `namespaceSelector` and `podSelector` matching web on port 8443"
     ],
     answer: 0,
     explanation: "NetworkPolicy is applied in the namespace of the target Pods. An ingress policy in the `backend` namespace selects Pods with `app: api` and allows ingress from the `web` namespace Pods labeled `app: frontend` on port 8443. The `namespaceSelector` identifies the source namespace.\n\nWhy other options are wrong:\n- B: An egress policy in the source namespace controls outbound traffic but does not use namespaceSelector to identify cross-namespace targets correctly here\n- C: The ingress policy must be in the destination namespace (backend), not the source namespace (web)\n- D: An egress policy in the destination namespace does not control traffic flowing into that namespace\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -280,7 +280,7 @@ var questions = [
     text: "Audit logging is enabled on the kube-apiserver. A security analyst wants to capture which users accessed Secrets without logging the Secret data itself. Which audit level should they configure?",
     diagram: null,
     options: [
-      "`None` — disables all audit logging for the matched resource",
+      "`None` — disables all audit logging for the matched resource entirely",
       "`Request` — logs the request metadata along with the request body",
       "`Metadata` — logs request metadata without request or response body",
       "`RequestResponse` — logs metadata plus request body and response body"
@@ -634,8 +634,8 @@ var questions = [
     options: [
       "Execute commands inside any Pod in any namespace via exec",
       "Execute commands only in Pods that he originally created",
-      "View Pod execution logs across the entire cluster scope",
-      "Create Pods but not execute commands inside existing containers"
+      "View Pod execution logs across the entire cluster-wide scope",
+      "Create new Pods but not execute commands inside existing ones"
     ],
     answer: 0,
     explanation: "The `pods/exec` subresource controls access to `kubectl exec` functionality. A ClusterRoleBinding with this permission grants Dave the ability to exec into any Pod in any namespace. This is a highly privileged permission that should be carefully restricted.\n\nWhy other options are wrong:\n- B: pods/exec access is not restricted to self-created Pods; it applies to all Pods\n- C: pods/exec grants exec access, not log viewing (that would be pods/log)\n- D: The rule grants exec access specifically via pods/exec, not Pod creation which requires the `create` verb on `pods`\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
@@ -1275,7 +1275,7 @@ var questions = [
       "A vulnerability scanning framework specifically built for container images",
       "A network policy engine for controlling service-to-service communications",
       "A standard for issuing and verifying cryptographic identities to workloads",
-      "A workload secrets management system designed to replace native Kubernetes Secrets"
+      "A workload secrets management system that replaces native Kubernetes Secrets"
     ],
     answer: 2,
     explanation: "SPIFFE (Secure Production Identity Framework For Everyone) defines a standard for workload identity, and SPIRE is its runtime implementation. It issues SPIFFE Verifiable Identity Documents (SVIDs) as X.509 certificates or JWT tokens, enabling workloads to authenticate to each other without application-level credential management.\n\nWhy other options are wrong:\n- A: SPIFFE is an identity framework, not a vulnerability scanner\n- B: SPIFFE provides workload identity, not network policy enforcement\n- D: SPIFFE issues cryptographic identities, not secrets management\n\nReference: https://spiffe.io/docs/latest/spiffe-about/overview/",
@@ -1384,7 +1384,7 @@ var questions = [
     text: "An application stores database credentials in a Kubernetes Secret and mounts it as a volume. The Secret has `immutable: true` set. What happens when someone tries to update the Secret?",
     diagram: null,
     options: [
-      "The update succeeds but triggers an automatic Pod restart cycle for consumers",
+      "The update succeeds but triggers an automatic Pod restart cycle afterward",
       "The Secret is versioned and both old and new values coexist together",
       "The `immutable` field is advisory and does not enforce any restriction",
       "The update is rejected by the API server because the Secret is immutable"

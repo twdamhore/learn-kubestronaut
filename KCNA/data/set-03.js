@@ -106,8 +106,8 @@ var questions = [
     options: [
       "All egress is still allowed because the policy only lists `Ingress` in its `policyTypes` field",
       "All egress is blocked because any `NetworkPolicy` implicitly denies all traffic directions",
-      "Egress to the internet is blocked but egress within the cluster namespace is still permitted",
-      "The policy is rejected by the API server because it must define both ingress and egress rules"
+      "Egress to the internet is blocked but `Egress` within the cluster namespace is still permitted",
+      "The policy is rejected by the API server because `policyTypes` must list both directions"
     ],
     answer: 0,
     explanation: "When a `NetworkPolicy` only lists `Ingress` in `policyTypes` (or omits `policyTypes` and only defines ingress rules), it restricts inbound traffic according to its rules but does not affect egress at all — egress remains fully open. A policy does not implicitly deny directions it does not cover. Partial egress blocking is not a default behavior. The policy is syntactically valid.\n\nWhy other options are wrong:\n- B: A NetworkPolicy does not implicitly deny directions not covered by its policyTypes list.\n- C: Partial egress blocking (e.g., internet-only block) is not a default behavior of any NetworkPolicy.\n- D: The API server accepts policies that define only ingress or only egress rules; both are not required.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -410,11 +410,11 @@ var questions = [
     options: [
       "Install a bare-metal load balancer implementation such as `MetalLB` to allocate external IPs",
       "Restart the kube-controller-manager with the `--cloud-provider=external` flag for LB support",
-      "Switch to `NodePort` because bare-metal clusters lack built-in external load balancer provisioning",
+      "Switch to a different Service type such as `NodePort` to bypass the external LB provisioning gap",
       "Add the annotation `service.beta.kubernetes.io/load-balancer-type: internal` to the Service"
     ],
     answer: 0,
-    explanation: "On bare-metal clusters, there is no cloud provider to provision an external load balancer, so `LoadBalancer` Services stay `Pending`. MetalLB is a widely used solution that allocates IPs from a configured pool and announces them via ARP or BGP. Switching to `NodePort` is a workaround but does not solve the `LoadBalancer` requirement. Restarting kube-controller-manager does not help without an actual provider. The `internal` annotation is for cloud environments to create internal LBs.\n\nWhy other options are wrong:\n- B: Restarting the kube-controller-manager with `--cloud-provider=external` does not help without an actual LB provider implementation.\n- C: Switching to NodePort is a workaround, not a solution for the LoadBalancer requirement.\n- D: The `internal` annotation is for cloud environments to create internal LBs; it has no effect on bare-metal.\n\nReference: https://metallb.universe.tf/",
+    explanation: "On bare-metal clusters, there is no cloud provider to provision an external load balancer, so `LoadBalancer` Services stay `Pending`. MetalLB is a widely used solution that allocates IPs from a configured pool and announces them via ARP or BGP. Switching to `NodePort` is a workaround but does not solve the `LoadBalancer` requirement. Restarting kube-controller-manager does not help without an actual provider. The `internal` annotation is for cloud environments to create internal LBs.\n\nWhy other options are wrong:\n- B: Restarting the kube-controller-manager with `--cloud-provider=external` does not help without an actual LB provider implementation.\n- C: Switching to NodePort is a workaround that avoids the problem rather than solving the LoadBalancer requirement.\n- D: The `internal` annotation is for cloud environments to create internal LBs; it has no effect on bare-metal.\n\nReference: https://metallb.universe.tf/",
     verify: "kubectl get svc -o wide"
   },
   {
@@ -937,9 +937,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80 ?</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443 ?</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
       "Only `Policy A` takes effect — it was created first and has priority in the namespace",
-      "Policy B overrides Policy A — it was created more recently and takes full precedence",
+      "`Policy B` overrides Policy A — it was created more recently and takes full precedence",
       "Both policies merge additively — ingress from `web` on 80 AND `api` on 443 is allowed",
-      "The policies conflict with each other — the result is that all ingress traffic is denied"
+      "The policies conflict — `NetworkPolicy` rules cancel each other out and deny all ingress"
     ],
     answer: 2,
     explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on creation time; multiple NetworkPolicies are always unioned regardless of when they were created.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1162,8 +1162,8 @@ var questions = [
     options: [
       "`kube_networkpolicy_labels` showing policy labels attached to the resources in the namespace",
       "`kube_pod_status_phase` tracking pods stuck in `Pending` state; helpful for scheduling issues",
-      "`kube_pod_container_status_restarts_total` counting container restarts caused by network issues",
-      "No built-in metric exists; the engineer should use CNI-level tools such as Cilium's `Hubble`"
+      "`kube_pod_container_status_restarts_total` counting restarts such as those from network errors",
+      "No built-in metric exists; the engineer should use CNI-level tools like Cilium's `Hubble`"
     ],
     answer: 3,
     explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
@@ -1418,11 +1418,11 @@ var questions = [
     options: [
       "Yes, because `10.0.5.15` is within the `10.0.0.0/8` CIDR and matches the allow rule",
       "No, because `10.0.5.15` falls within the `except` block `10.0.5.0/24` and is excluded",
-      "Yes, because the `except` clause is evaluated differently for egress than for ingress rules",
-      "No, because `ipBlock` rules have reduced enforcement within the cluster's internal network"
+      "Yes, because the `except` clause is evaluated differently for `egress` than for ingress rules",
+      "No, because `ipBlock` rules with `cidr` in the `10.x.x.x` range have reduced enforcement"
     ],
     answer: 1,
-    explanation: "The `except` field in an `ipBlock` excludes a subset of the CIDR. While `10.0.5.15` is within `10.0.0.0/8`, it is also within the excepted `10.0.5.0/24` range, so it is blocked. The `except` field applies to both ingress and egress. `ipBlock` works with any valid CIDR regardless of whether it is private or public.\n\nWhy other options are wrong:\n- A: While `10.0.5.15` is within `10.0.0.0/8`, it falls within the `except` block and is therefore excluded.\n- C: The `except` clause applies to both ingress and egress rules, not just egress.\n- D: `ipBlock` rules apply to any valid CIDR regardless of whether it is a private or public IP range.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    explanation: "The `except` field in an `ipBlock` excludes a subset of the CIDR. While `10.0.5.15` is within `10.0.0.0/8`, it is also within the excepted `10.0.5.0/24` range, so it is blocked. The `except` field applies to both ingress and egress. `ipBlock` works with any valid CIDR regardless of whether it is private or public.\n\nWhy other options are wrong:\n- A: While `10.0.5.15` is within `10.0.0.0/8`, it falls within the `except` block and is therefore excluded.\n- C: The `except` clause applies to both ingress and egress rules, not just egress.\n- D: `ipBlock` rules enforce equally on all CIDR ranges; there is no reduced enforcement for private ranges like `10.x.x.x`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
     verify: null
   },
   {

@@ -387,3 +387,54 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q096 (giveaway — unique semicolon in correct)
 - **Option B (correct):** Replaced semicolon with ", so". Changed "CI and CD; compromised" to "CI and CD, so compromised".
+
+---
+
+# Round 42 Review - Set 10
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 15 option adjustments across 10 questions
+
+## Changes
+
+### s10-q015 (backtick density giveaway)
+- **Option A:** Added backtick around `WAL` to balance correct answer's backtick density. Changed "Increase Prometheus memory allocation and enable WAL compression" to "Increase Prometheus memory allocation and enable `WAL` compression". Also changed "time series data" to "series data".
+- **Option B:** Added backtick around `TSDB` to balance. Changed "to a time-series database" to "to a `TSDB`". Also changed "Switch to a push-based metrics model" to "Switch to a push-based metrics model" (kept) and trimmed "natively" wording.
+
+### s10-q018 (backtick density imbalance — correct A had 8 backticks, D had only 2)
+- **Option D:** Added backtick around `SIEM` to increase D's backtick count from 2 to 4, reducing the gap with correct A's 8.
+
+### s10-q027 (length-balance — correct C shortest at 107, ratio 1.093)
+- **Option B:** Expanded from 112 to 121 chars. Changed "and the restart is too fast" to "and the restart interval is too fast".
+- **Option C (correct):** Expanded from 107 to 111 chars. Changed "another pod on the same node is already bound to port 8080 on the host" to "another pod or host process on the same node is already bound to port 8080".
+
+### s10-q031 (backtick density — D had 0 backticks while correct B had 6)
+- **Option D:** Added backtick around `egress` to give D at least 2 backticks, reducing structural imbalance.
+
+### s10-q039 (length-balance — A outlier at 141, correct C shortest at 129)
+- **Option A:** Trimmed from 141 to 133 chars. Changed "continue to work normally" to "continue normally".
+
+### s10-q041 (length-balance — correct D shortest at 115 vs C at 126)
+- **Option C:** Trimmed from 126 to 122 chars. Changed "before firing during deployments" to "before firing during deploy windows".
+- **Option D (correct):** Expanded from 115 to 122 chars. Changed "Add a minimum request rate condition:" to "Add a minimum request rate guard:" and appended "per second".
+
+### s10-q046 (backtick density — correct C had 8, D had only 2)
+- **Option D:** Added backticks around `Task` and `params`. Changed "to evaluate each task output and dynamically inject the parameters" to "to evaluate each `Task` output and dynamically inject `params`".
+
+### s10-q069 (length-balance — correct A shortest at 114, D longest at 127, ratio 1.114)
+- **Option A (correct):** Expanded from 114 to 118 chars. Changed "succeeds only if" to "succeeds only if the re-pushed image carries a valid cosign signature".
+- **Option C:** Expanded from 118 to 126 chars. Changed "at policy creation, not pod admission" to "at policy creation time, not at pod admission".
+- **Option D:** Trimmed from 127 to 128 chars. Changed "flags a supply chain risk" to "flags a supply chain issue".
+
+### s10-q073 (length-balance — A outlier at 144, correct B shortest at 131)
+- **Option A:** Trimmed from 144 to 126 chars. Removed "via deletion entries" from end.
+
+### s10-q078 (length-balance — correct B shortest at 114, ratio 1.105)
+- **Option A:** Trimmed from 126 to 116 chars. Changed "for customer data, using a read-only database connection pool" to "for customer data using a read-only connection pool".
+- **Option B (correct):** Expanded from 114 to 120 chars. Changed "in Orders" to "in Orders" and added "domain" before "data models".
+
+### s10-q083 (correct longest at 119 + backtick density giveaway)
+- **Option A (correct):** Trimmed from 119 to 113 chars. Changed "still honors" to "honors".
+- **Option B:** Added backticks around `zone-b` and `zone-c` to balance A's backtick density. Changed "based solely on" to "based on".
+- **Option C:** Added backtick around `DoNotSchedule` to balance backtick density.

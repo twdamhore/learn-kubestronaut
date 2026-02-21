@@ -337,3 +337,77 @@
 
 ### s09-q004 note
 - Comma-list giveaway: answer C had 5 commas while distractors had 1 each. Added comma-lists to options A and D to balance the structural pattern.
+
+---
+
+# Round 42 Review - Set 09
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 22 across 18 questions
+
+## Changes
+
+### s09-q007 (length-balance)
+- **Option C (answer):** Expanded ~79->88 chars. Added "that" before "the Service selector" for natural phrasing.
+- **Option D:** Expanded ~78->89 chars. Added "to allow higher ports" at end.
+
+### s09-q013 (length-balance)
+- **Option C:** Trimmed ~124->102 chars. Removed "of available" and "from traces" to reduce outlier length.
+
+### s09-q014 (length-balance)
+- **Option A:** Trimmed ~107->93 chars. Removed "their contents" to reduce outlier length.
+
+### s09-q016 (length-balance)
+- **Option B:** Expanded ~92->97 chars. Changed "the running" to "the still-running" for consistency with option A wording.
+
+### s09-q025 (length-balance)
+- **Option B (answer):** Trimmed ~108->93 chars. Changed "so the DaemonSet Pod is permitted onto the tainted node" to "so the DaemonSet Pod tolerates the taint".
+- **Option C:** Expanded ~95->96 chars. Added "all" before "tainted nodes".
+
+### s09-q047 (length-balance)
+- **Option C:** Trimmed ~119->99 chars. Removed "Kubernetes" and "entirely" to reduce outlier length.
+- **Option D (answer):** Trimmed ~117->98 chars. Changed "that returns all Pod IPs in the response" to "returning all Pod IPs".
+
+### s09-q048 (length-balance)
+- **Option B:** Expanded ~84->100 chars. Added "automatically" before "set equal" and "of" after "value".
+- **Option C (answer):** Expanded ~85->91 chars. Added "limit" after "default".
+
+### s09-q049 (length-balance)
+- **Option A:** Expanded ~89->94 chars. Added "data" before "cleanup".
+
+### s09-q053 (length-balance)
+- **Option A:** Trimmed ~110->103 chars. Changed "the target threshold" to "the threshold".
+
+### s09-q068 (length-balance)
+- **Option C:** Expanded ~89->97 chars. Added "traffic" after "50% hash ring".
+
+### s09-q069 (length-balance)
+- **Option B:** Expanded ~94->102 chars. Added "cluster" before "CA".
+
+### s09-q073 (length-balance + giveaway)
+- **Option C:** Expanded ~95->103 chars. Added "setting" at end.
+- **Option D (answer):** Trimmed ~105->101 chars. Changed "AWS EBS" to "EBS".
+
+### s09-q079 (length-balance)
+- **Option A:** Expanded ~96->105 chars. Added "log formats" after "plain text".
+- **Option B:** Trimmed ~109->99 chars. Changed "for large clusters" to "at scale".
+
+### s09-q081 (length-balance)
+- **Option D:** Expanded ~94->109 chars. Added "reconciliation" before "dashboard".
+
+### s09-q083 (length-balance + giveaway)
+- **Option B:** Expanded ~94->98 chars. Added "all" before "outbound traffic".
+- **Option D (answer):** Trimmed ~104->98 chars. Changed "on Pod creation" to "at creation".
+
+### s09-q089 (length-balance)
+- **Option C:** Expanded ~92->101 chars. Added "rendered" before "Helm template".
+
+### s09-q091 (length-balance + giveaway)
+- **Option A (answer):** Trimmed ~108->106 chars. Changed "use gVisor" to "run under gVisor" and "instead of the default runc runtime" to "instead of the default runc".
+- **Option C:** Trimmed ~104->100 chars. Removed "its" before "containers".
+- **Option D:** Trimmed ~103->100 chars. Changed "the Pod" to "Pods" at end.
+
+### s09-q095 (length-balance + giveaway)
+- **Option C:** Trimmed ~120->103 chars. Changed "namespace-scoped resources like Pods" to "Pods or Deployments".
+- **Option D (answer):** Trimmed ~115->108 chars. Changed "annotations are non-identifying metadata not used by" to "annotations store non-identifying metadata not used by" and "labels are required for selection" to "labels handle selection".

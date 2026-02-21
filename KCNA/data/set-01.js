@@ -123,7 +123,7 @@ var questions = [
       "Fluentd, which collects and forwards time-series metric data from nodes to a backend",
       "Grafana, which collects metrics directly from kubelets and stores them internally",
       "Prometheus, which scrapes metric endpoints on targets and stores time-series data natively",
-      "Jaeger, which provides distributed metrics collection and aggregation pipelines"
+      "Jaeger, which provides distributed metrics collection and aggregation pipeline support"
     ],
     answer: 2,
     explanation: "Prometheus is the CNCF graduated project that serves as the standard for metrics collection in Kubernetes. It uses a pull-based model to scrape metric endpoints and stores data as time series. Fluentd is for log aggregation, not metrics. Jaeger is for distributed tracing. Grafana is a visualization tool that queries data sources like Prometheus but does not collect or store metrics itself.\n\nWhy other options are wrong:\n- A: Fluentd is for log aggregation, not metrics collection.\n- B: Grafana is a visualization/dashboard tool that queries data sources like Prometheus; it does not collect or store metrics.\n- D: Jaeger is a distributed tracing system, not a metrics collection tool.\n\nReference: https://prometheus.io/docs/introduction/overview/",
@@ -379,7 +379,7 @@ var questions = [
       "Set the Deployment strategy to `Recreate` with a `minReadySeconds` value of 30 for safe transitions",
       "Use a `StatefulSet` instead of a `Deployment` because `StatefulSets` support ordered rolling updates",
       "Create a new `Deployment` alongside the old one and shift traffic using a `Service` selector change",
-      "Set the Deployment strategy to `RollingUpdate` with `maxUnavailable: 1` and `maxSurge: 1`"
+      "Set the Deployment strategy to `RollingUpdate` with `maxUnavailable: 1` and `maxSurge: 1` configured"
     ],
     answer: 3,
     explanation: "The `RollingUpdate` strategy with `maxUnavailable: 1` ensures that at most 1 Pod is taken down at a time during the update, keeping at least 4 of the 5 replicas available. `maxSurge: 1` allows one extra Pod to be created during the rollout. The `Recreate` strategy terminates all Pods before creating new ones, causing downtime. Manual traffic shifting is error-prone and unnecessary. StatefulSets are for stateful applications and are not needed here.\n\nWhy other options are wrong:\n- A: The Recreate strategy terminates all Pods before creating new ones, causing downtime.\n- B: StatefulSets are for stateful applications; they are not needed for a simple zero-downtime rolling update.\n- C: Manual traffic shifting via a second Deployment and Service selector is error-prone and unnecessary.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
@@ -568,8 +568,8 @@ var questions = [
     text: "A developer notices that their application Pod has been assigned to a node but the container is not yet running. The Pod status shows `Init:0/2`. What does this status indicate?",
     diagram: null,
     options: [
-      "The Pod's 2 containers are stuck in their initialization phase; node resource constraints block them",
-      "The init process (PID 1) inside each of the Pod's 2 containers failed to start properly",
+      "The Pod's 2 containers are stuck in their initialization phase; resource constraints block them",
+      "The init process (PID 1) inside each of the Pod's 2 containers failed to start up properly",
       "The Pod requires 2 volumes to be mounted and neither is currently available on the assigned node",
       "The Pod has 2 init containers that must complete before main containers start; none have finished"
     ],
@@ -696,7 +696,7 @@ var questions = [
     text: "A team has Prometheus running in their cluster and wants to set up alerts when Pod CPU usage exceeds 80% for more than 5 minutes. Which component in the Prometheus ecosystem is responsible for handling alerting rules and sending notifications?",
     diagram: null,
     options: [
-      "The Prometheus server itself, which sends email, Slack, and PagerDuty notifications directly when rules trigger",
+      "The Prometheus server itself, which sends email, Slack, and PagerDuty notifications when rules trigger",
       "Grafana, which evaluates Prometheus alerting rules, deduplicates them, and dispatches notifications",
       "Alertmanager, which receives alerts from Prometheus, handling deduplication, grouping, and routing",
       "Node Exporter, which monitors node-level metrics and triggers alerts when thresholds are exceeded"
@@ -875,10 +875,10 @@ var questions = [
       "A `LoadBalancer` Service for each backend that the Ingress resource routes traffic to",
       "A `kube-proxy` upgrade to support HTTP path-based routing natively on cluster nodes",
       "An Ingress controller such as NGINX that watches Ingress resources and configures routing",
-      "A DNS server running inside the cluster that maps Ingress hostnames to individual Pod IPs"
+      "A DNS server such as CoreDNS that maps Ingress hostnames to individual Pod IPs directly"
     ],
     answer: 2,
-    explanation: "An Ingress resource by itself is just a set of routing rules. An Ingress controller (like NGINX, Traefik, or HAProxy) must be running in the cluster to watch for Ingress resources and implement the actual routing. Without an Ingress controller, Ingress resources have no effect. Backend services do not need to be LoadBalancer type. `kube-proxy` does not handle HTTP routing. Cluster DNS (CoreDNS) resolves Service names but does not implement Ingress routing.\n\nWhy other options are wrong:\n- A: Backend Services do not need to be LoadBalancer type; ClusterIP is sufficient for Ingress routing.\n- B: kube-proxy handles L4 Service routing (iptables/IPVS) and does not support HTTP path-based routing.\n- D: Cluster DNS (CoreDNS) resolves Service names but does not implement Ingress routing rules.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/",
+    explanation: "An Ingress resource by itself is just a set of routing rules. An Ingress controller (like NGINX, Traefik, or HAProxy) must be running in the cluster to watch for Ingress resources and implement the actual routing. Without an Ingress controller, Ingress resources have no effect. Backend services do not need to be LoadBalancer type. `kube-proxy` does not handle HTTP routing. Cluster DNS (CoreDNS) resolves Service names but does not implement Ingress routing.\n\nWhy other options are wrong:\n- A: Backend Services do not need to be LoadBalancer type; ClusterIP is sufficient for Ingress routing.\n- B: kube-proxy handles L4 Service routing (iptables/IPVS) and does not support HTTP path-based routing.\n- D: CoreDNS resolves Service names but does not implement Ingress routing rules.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/",
     verify: "microk8s kubectl get ingress --all-namespaces"
   },
   {
@@ -1050,7 +1050,7 @@ var questions = [
     options: [
       "Set `spec.priority` to a high value; the kubelet avoids evicting high-priority Pods during pressure events",
       "Set resource `requests` equal to `limits` (Guaranteed QoS), making the Pod least likely to be evicted",
-      "Set `spec.terminationGracePeriodSeconds` to a very high value to delay the eviction process entirely",
+      "Set `spec.terminationGracePeriodSeconds` (grace period) to a very high value to delay eviction entirely",
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
     ],
     answer: 1,
@@ -1162,8 +1162,8 @@ var questions = [
     options: [
       "API server stores the Deployment in etcd, scheduler assigns it to a node, kubelet creates the Pod, and containers start via the runtime",
       "Scheduler receives the request first, assigns nodes, then API server creates the Deployment and Pods, kubelet starts containers",
-      "API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds them, kubelet starts containers",
-      "API server creates Pods directly in etcd, scheduler assigns them to nodes, kubelet starts containers, and controller manager monitors health"
+      "API server stores Deployment in etcd, controller creates ReplicaSet and Pods, scheduler binds Pods to nodes, kubelet starts containers",
+      "API server creates Pods directly in etcd, scheduler assigns them to nodes, kubelet starts containers, then controller manager monitors"
     ],
     answer: 2,
     explanation: "The correct sequence is: the API server receives the request and stores the Deployment object in `etcd`. The Deployment controller (in `kube-controller-manager`) detects the new Deployment and creates a ReplicaSet. The ReplicaSet controller then creates the specified number of Pod objects. The scheduler detects unscheduled Pods and assigns them to nodes. Finally, the kubelet on each assigned node starts the containers via the container runtime. Each component watches for changes through the API server.\n\nWhy other options are wrong:\n- A: Incorrectly skips the controller-manager step — the scheduler does not directly receive the Deployment.\n- B: The scheduler does not receive requests first; all requests go through the API server.\n- D: The API server does not create Pods directly — the controller-manager creates ReplicaSets which create Pods.\n\nReference: https://kubernetes.io/docs/concepts/overview/components/",
@@ -1240,7 +1240,7 @@ var questions = [
     text: "A team wants to ensure their Pod is scheduled on a node in the `us-east-1a` availability zone. They have labeled their nodes with `topology.kubernetes.io/zone=us-east-1a`. Which Pod spec configuration achieves this without bypassing the scheduler?",
     diagram: null,
     options: [
-      "Set `spec.nodeName` to one of the nodes in the `us-east-1a` zone",
+      "Set `spec.nodeName` directly to one of the nodes in the `us-east-1a` zone",
       "Add an annotation `scheduler.kubernetes.io/zone: us-east-1a` to the Pod",
       "Use `spec.nodeSelector` with `topology.kubernetes.io/zone: us-east-1a`",
       "Configure `PodAffinity` to attract the Pod to the `us-east-1a` zone label"
@@ -1273,9 +1273,9 @@ var questions = [
     diagram: null,
     options: [
       "It does not create DNS records, so Pods rely on environment variables injected by the kubelet for discovery",
-      "It creates a ClusterIP but hides it from `kubectl get svc` output for additional security purposes",
+      "It creates a ClusterIP but hides it from the `kubectl get svc` output for additional security purposes",
       "DNS queries for the Service return individual Pod IPs instead of a virtual IP, enabling direct access",
-      "It routes all client traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
+      "It routes all traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
     ],
     answer: 2,
     explanation: "A headless Service (`clusterIP: None`) does not get a virtual IP. Instead, DNS queries for the Service name return A records for all the Pod IPs backing the Service. This allows clients to discover and connect to individual Pods directly, which is essential for stateful applications like databases. Headless Services still create DNS records. The ClusterIP is not hidden. Traffic is not limited to one Pod.\n\nWhy other options are wrong:\n- A: Headless Services do create DNS records — they return individual Pod IP A records.\n- B: The ClusterIP is not hidden; it is explicitly set to None, meaning no virtual IP is allocated.\n- D: Traffic is not limited to one Pod; DNS returns all Pod IPs for client-side selection.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
@@ -1530,8 +1530,8 @@ var questions = [
     options: [
       "All 5 replicas start successfully because Kubernetes overcommits CPU (fitting 3 per node at 500m each)",
       "Only 4 replicas can be scheduled; the 5th Pod remains in Pending state without sufficient resources",
-      "Kubernetes automatically provisions a new node; the 5th Pod schedules once the node joins",
-      "The scale operation is rejected by the API server because it exceeds the cluster capacity"
+      "Kubernetes automatically provisions a new node via the autoscaler; the 5th Pod schedules once it joins",
+      "The scale operation is rejected by the API server because it exceeds the total cluster capacity"
     ],
     answer: 1,
     explanation: "With 2 nodes of 1 CPU each, the cluster has 2000m total allocatable CPU. Each Pod requests 500m, so 4 Pods can be scheduled (2 per node). The 5th Pod remains in `Pending` state because there is insufficient CPU to satisfy its request. Resource requests are guaranteed allocations, not soft limits. Kubernetes does not auto-provision nodes (that requires a cluster autoscaler). The API server accepts the scale request; scheduling is a separate concern.\n\nWhy other options are wrong:\n- A: Resource requests are guaranteed allocations; 3 × 500m = 1500m exceeds a single node's 1000m capacity, so only 2 Pods fit per node.\n- C: Kubernetes does not automatically provision new nodes; that requires a separate cluster autoscaler.\n- D: The API server accepts the scale request; scheduling is a separate concern handled after.\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",

@@ -8,8 +8,8 @@ var questions = [
     text: "A team wants to ensure their GPU-intensive workload runs only on nodes with NVIDIA GPUs. They have already labeled those nodes with <code>gpu=nvidia</code>. Which Pod spec field is the simplest way to target these nodes?",
     diagram: null,
     options: [
-      "A. `spec.affinity.nodeAffinity` with a `requiredDuringScheduling` match expression rule",
-      "B. `spec.nodeSelector` with the label key-value pair `gpu: nvidia` specified",
+      "A. `spec.affinity.nodeAffinity` with a `requiredDuringScheduling` match expression",
+      "B. `spec.nodeSelector` with the label key-value pair `gpu: nvidia` for matching",
       "C. `spec.tolerations` with key `gpu`, value `nvidia`, and the `NoSchedule` effect",
       "D. `spec.nodeName` hardcoded to the specific hostname of the target GPU node"
     ],
@@ -24,9 +24,9 @@ var questions = [
     text: "You apply a taint <code>kubectl taint nodes node1 dedicated=ml:NoSchedule</code>. A data-processing Pod without any tolerations is pending. What happens when the scheduler evaluates node1?",
     diagram: null,
     options: [
-      "A. The Pod is scheduled on node1 but immediately enters `CrashLoopBackOff` status",
+      "A. The Pod is scheduled on node1 but immediately enters `CrashLoopBackOff`",
       "B. The Pod is scheduled on node1 with a taint-mismatch warning event recorded",
-      "C. The scheduler skips node1 because the Pod lacks a matching toleration",
+      "C. The scheduler skips node1 because the Pod lacks a matching toleration for it",
       "D. The taint is ignored when the Pod has a `nodeSelector` matching node1 labels"
     ],
     answer: 2,
@@ -104,10 +104,10 @@ var questions = [
     text: "A security policy requires that only infrastructure Pods run on control-plane nodes. The control-plane nodes already have the taint <code>node-role.kubernetes.io/control-plane:NoSchedule</code>. How should the infrastructure Pods be configured?",
     diagram: null,
     options: [
-      "A. Add `nodeSelector: node-role.kubernetes.io/control-plane: \"\"` to match labels",
-      "B. Set `spec.nodeName` to the hostname of each individual control-plane node in turn",
-      "C. Add a toleration for key `node-role.kubernetes.io/control-plane`, effect `NoSchedule`",
-      "D. Remove the taint from the control-plane nodes and enforce isolation via `NetworkPolicy`"
+      "A. Add a `nodeSelector` matching the `node-role.kubernetes.io/control-plane` label",
+      "B. Set `spec.nodeName` to the hostname of each control-plane node individually",
+      "C. Add a toleration for `node-role.kubernetes.io/control-plane` with `NoSchedule`",
+      "D. Remove the taint from control-plane nodes and use `NetworkPolicy` to isolate"
     ],
     answer: 2,
     explanation: "To schedule Pods on tainted nodes, the Pods must carry a matching toleration. Adding a toleration with the correct key and effect allows the scheduler to consider control-plane nodes. A `nodeSelector` alone does not bypass taints, and removing the taint would defeat the isolation purpose.\n\nWhy other options are wrong:\n- A: nodeSelector matches labels but does not bypass taints; the Pod would still be blocked by the taint\n- B: nodeName bypasses the scheduler but is inflexible and does not scale to multiple control-plane nodes\n- D: Removing the taint defeats the isolation purpose and allows any Pod to schedule on control-plane nodes\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#concepts",
@@ -618,7 +618,7 @@ var questions = [
     options: [
       "A. etcd-operator, an etcd lifecycle management tool",
       "B. Longhorn, a cloud-native distributed storage system",
-      "C. Velero, a backup and disaster-recovery project",
+      "C. Velero, a CNCF backup and disaster-recovery project",
       "D. Stash, a third-party backup and restore toolkit"
     ],
     answer: 2,
@@ -666,7 +666,7 @@ var questions = [
     options: [
       "A. `kubectl top nodes` to view current allocatable usage per node in the cluster",
       "B. `kubectl get nodes -o wide` and check the STATUS column for each node entry",
-      "C. `kubectl describe nodes` and sum `Allocatable` minus `Allocated resources`",
+      "C. `kubectl describe nodes` and sum Allocatable minus Allocated resources shown",
       "D. `kubectl get pods --all-namespaces | wc -l` to count the running Pod total"
     ],
     answer: 2,
@@ -698,7 +698,7 @@ var questions = [
     options: [
       "A. The `NoSchedule` taint effect on the target node",
       "B. The `NoExecute` taint effect on the target node",
-      "C. The `PreferNoSchedule` taint effect on node",
+      "C. The `PreferNoSchedule` taint effect on a node",
       "D. `PreemptLowerPriority` applied as a taint effect"
     ],
     answer: 0,
@@ -1016,10 +1016,10 @@ var questions = [
     text: "A node has two taints: <code>gpu=true:NoSchedule</code> and <code>zone=restricted:NoSchedule</code>. A Pod tolerates only <code>gpu=true:NoSchedule</code>. Can this Pod be scheduled on the node?",
     diagram: null,
     options: [
-      "A. Yes, tolerating one of the taints is sufficient for scheduling",
-      "B. Yes, but only if the `nodeSelector` also matches a node label",
-      "C. No, the Pod must tolerate all taints present on the node",
-      "D. No, unless `operator: Exists` is used to tolerate all taints"
+      "A. Yes, tolerating one of the two taints is sufficient for scheduling",
+      "B. Yes, but only if the `nodeSelector` also matches a node label set",
+      "C. No, the Pod must tolerate all taints on the node to be scheduled",
+      "D. No, unless `operator: Exists` is used to tolerate all taints here"
     ],
     answer: 2,
     explanation: "A Pod must tolerate all `NoSchedule` taints on a node to be scheduled there. Tolerating only one of multiple taints is insufficient. Each taint acts as an independent gate, and all must be satisfied. The Pod would need to add a second toleration for `zone=restricted:NoSchedule`.\n\nWhy other options are wrong:\n- A: Tolerating one taint is not sufficient; all NoSchedule taints must be tolerated\n- B: nodeSelector does not affect taint evaluation; taints are checked independently\n- D: operator: Exists without a key would tolerate all taints, but the question says the Pod only tolerates the gpu taint\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -1080,9 +1080,9 @@ var questions = [
     text: "Which Kubernetes SIG project extends the Kubernetes scheduler with custom scheduling plugins, allowing teams to implement domain-specific scheduling logic?",
     diagram: null,
     options: [
-      "A. Scheduler Plugins, the custom scheduler extension project",
+      "A. Scheduler Plugins, the custom scheduling extension project",
       "B. Descheduler, the Pod rebalancing and eviction framework",
-      "C. Kueue, the job queueing and resource admission tool",
+      "C. Kueue, the job queueing and resource admission system",
       "D. Volcano, the batch scheduling system for AI workloads"
     ],
     answer: 0,
@@ -1465,9 +1465,9 @@ var questions = [
     diagram: null,
     options: [
       "A. `metadata.labels` gains a `node.kubernetes.io/unschedulable: true` label",
-      "B. `status.conditions` adds a `Schedulable: False` condition entry",
+      "B. `status.conditions` adds a new `Schedulable: False` condition entry",
       "C. `metadata.annotations` gains `scheduler.alpha.kubernetes.io/disabled`",
-      "D. `spec.unschedulable` is set to `true` to signal the scheduler to skip it"
+      "D. `spec.unschedulable` is set to `true` to signal the scheduler to skip"
     ],
     answer: 3,
     explanation: "`kubectl cordon` sets `spec.unschedulable: true` on the Node object. The scheduler checks this field during the filtering phase and excludes unschedulable nodes from consideration. This declarative approach to node lifecycle aligns with cloud-native infrastructure-as-code principles.\n\nWhy other options are wrong:\n- A: Cordoning modifies spec.unschedulable, not metadata.labels; no label is added\n- B: There is no Schedulable condition in node status; cordon uses the spec field\n- C: No annotation is added; the mechanism uses the spec.unschedulable field\n\nReference: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/",
@@ -1513,8 +1513,8 @@ var questions = [
     diagram: null,
     options: [
       "A. Skip directly to v1.30 to reduce the total number of maintenance windows",
-      "B. Upgrade to v1.28 first, pause for validation, then jump to v1.30",
-      "C. Build a new v1.30 cluster from scratch and migrate all existing workloads",
+      "B. Upgrade to v1.28 first, pause for validation, then jump ahead to v1.30",
+      "C. Build a new v1.30 cluster from scratch and migrate existing workloads",
       "D. Upgrade sequentially through v1.28, v1.29, and v1.30 one at a time"
     ],
     answer: 3,
@@ -1593,8 +1593,8 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Toleration Configuration</text><rect x="30" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="80" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: gpu=true</text><text x="80" y="88" text-anchor="middle" fill="#888" font-size="8">NoSchedule</text><rect x="150" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="200" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: team=ops</text><text x="200" y="88" text-anchor="middle" fill="#888" font-size="8">NoExecute</text><rect x="270" y="50" width="100" height="50" rx="5" fill="#0d2137" stroke="#ff9800" stroke-width="1.5"/><text x="320" y="72" text-anchor="middle" fill="#ff9800" font-size="9">Taint: any=any</text><text x="320" y="88" text-anchor="middle" fill="#888" font-size="8">PreferNoSchedule</text><rect x="100" y="125" width="200" height="40" rx="6" fill="#1a2a1a" stroke="#4caf50" stroke-width="1.5"/><text x="200" y="149" text-anchor="middle" fill="#4caf50" font-size="11">Which taints are matched?</text><line x1="80" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="130" y="108" fill="#999" font-size="8">match?</text><line x1="200" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="210" y="112" fill="#999" font-size="8">match?</text><line x1="320" y1="100" x2="200" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/><text x="270" y="108" fill="#999" font-size="8">match?</text><text x="200" y="185" text-anchor="middle" fill="#888" font-size="9">???</text></svg>',
     options: [
       "A. Only taints with the `NoSchedule` effect are matched by it",
-      "B. Only taints that have no value field set are matched",
-      "C. All taints on the node are matched as a wildcard toleration",
+      "B. Only taints that have no value field set are matched by it",
+      "C. All taints on the node are matched by this wildcard form",
       "D. No taints are matched because the key field is required"
     ],
     answer: 2,

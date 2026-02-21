@@ -251,3 +251,38 @@
 - 1 question had both giveaway and length-balance fixes (s03-q059)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+# Round 42 Review - Set 03
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 7 across 5 questions
+
+## Changes
+
+### s03-q007 (backtick-density giveaway)
+- **Option C:** Added backticks around `Egress` to balance backtick density (was 0 backticks, now 2; correct A has 4).
+- **Option D:** Added backticks around `policyTypes` and reworded to "because `policyTypes` must list both directions" (was 0 backticks, now 2).
+
+### s03-q026 (giveaway)
+- **Option C:** Reworded from "Switch to `NodePort` because bare-metal clusters lack built-in external load balancer provisioning" to "Switch to a different Service type such as `NodePort` to bypass the external LB provisioning gap", adding "such as" to match correct A's "such as `MetalLB`" pattern and removing unique specificity signal.
+
+### s03-q059 (backtick-density giveaway)
+- **Option B:** Added backticks around `Policy B` (was 0 backticks, now 2; correct C has 4).
+- **Option D:** Added backtick around `NetworkPolicy` and reworded to "The policies conflict — `NetworkPolicy` rules cancel each other out and deny all ingress" (was 0 backticks, now 2). Ratio reduced from 1.094 to 1.035.
+
+### s03-q073 (giveaway)
+- **Option C:** Reworded from "counting container restarts caused by network issues" to "counting restarts such as those from network errors", adding "such as" to match correct D's example pattern.
+- **Option D:** Changed "such as Cilium's `Hubble`" to "like Cilium's `Hubble`" so both C and D now have example phrases, removing the unique specificity signal from the correct answer.
+
+### s03-q089 (backtick-density giveaway)
+- **Option C:** Added backticks around `egress` (was 2 backticks, now 4; correct B has 6).
+- **Option D:** Reworded from "have reduced enforcement within the cluster's internal network" to "with `cidr` in the `10.x.x.x` range have reduced enforcement" (was 2 backticks, now 6), balancing backtick density with correct B.
+
+## Summary
+
+- 5 giveaway fixes (3 backtick-density imbalances, 2 unique-example-phrase signals)
+- No answer indices were changed
+- No accuracy or explanation changes

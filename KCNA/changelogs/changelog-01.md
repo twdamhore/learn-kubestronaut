@@ -305,3 +305,47 @@
 
 ### s01-q099 (length-balance)
 - **Option B (correct):** Added "automatically" at end to expand from 82ch to 96ch. Correct answer no longer shortest; ratio improved from 1.122 to 1.103.
+
+---
+
+# Round 42 Review - Set 01
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 14 across 10 questions
+
+## Changes
+
+### s01-q008 (length-balance)
+- **Option D:** Added "support" after "pipeline" to expand from 79ch to 86ch. Ratio improved from 1.139 to 1.111.
+
+### s01-q024 (length-balance)
+- **Option D (correct):** Added "configured" at end to expand from 89ch to 100ch. Correct answer no longer shortest; ratio improved from 1.124 to 1.010.
+
+### s01-q036 (length-balance)
+- **Option A:** Removed "node" from "node resource constraints" to reduce from 100ch to 95ch.
+- **Option B:** Added "up" after "start" to expand from 87ch to 90ch. Ratio improved from 1.149 to 1.078.
+
+### s01-q044 (length-balance)
+- **Option A:** Removed "directly" from "notifications directly when rules trigger" to reduce from 111ch to 102ch. Ratio improved from 1.144 to 1.052.
+
+### s01-q055 (giveaway - unique example phrase)
+- **Option D:** Changed from "A DNS server running inside the cluster that maps Ingress hostnames to individual Pod IPs" to "A DNS server such as CoreDNS that maps Ingress hostnames to individual Pod IPs directly", adding a named example to match the "such as NGINX" in correct answer C. Updated explanation bullet to match.
+
+### s01-q066 (giveaway - unique parenthetical)
+- **Option C:** Changed from "Set `spec.terminationGracePeriodSeconds` to a very high value to delay the eviction process entirely" to "Set `spec.terminationGracePeriodSeconds` (grace period) to a very high value to delay eviction entirely", adding a parenthetical to match the "(Guaranteed QoS)" in correct answer B.
+
+### s01-q073 (length-balance)
+- **Option C (correct):** Expanded "scheduler binds them" to "scheduler binds Pods to nodes" to expand from 125ch to 134ch. Correct answer no longer shortest.
+- **Option D:** Trimmed "and controller manager monitors health" to "then controller manager monitors" to reduce from 140ch to 134ch. Ratio improved from 1.120 to 1.063.
+
+### s01-q078 (length-balance)
+- **Option A:** Added "directly" after "nodeName" to expand from 64ch to 73ch. Ratio improved from 1.141 to 1.043.
+
+### s01-q080 (length-balance)
+- **Option B:** Added "the" before "kubectl" to expand from 98ch to 102ch.
+- **Option D:** Removed "client" from "all client traffic" to reduce from 112ch to 105ch. Ratio improved from 1.143 to 1.059.
+
+### s01-q096 (length-balance)
+- **Option C:** Added "via the autoscaler" and changed "the 5th Pod schedules once the node joins" to "the 5th Pod schedules once it joins" to expand from 89ch to 102ch.
+- **Option D:** Added "total" before "cluster capacity" to expand from 89ch to 95ch. Ratio improved from 1.146 to 1.074.

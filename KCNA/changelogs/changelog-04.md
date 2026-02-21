@@ -289,3 +289,72 @@
 - **Option C:** Added backtick-quoted term by changing "cumulative counter per namespace" to "per-namespace `counter` metric" to reduce backtick density gap with correct answer B (which has 3 backtick terms).
 - **Option D:** Added backtick-quoted term by changing "as reported by the underlying CSI driver" to "as reported by the CSI driver's `volume_stats` endpoint".
 - **Explanation C/D:** Updated to match revised option text.
+
+---
+
+# Round 42 Review - Set 04
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 20 across 17 questions
+
+## Changes
+
+### s04-q003 (giveaway)
+- **Option D:** Changed "for example" to "e.g." and added "per replica" suffix to break unique "e.g." pattern in correct answer B and balance length (was 87 chars, now 99).
+
+### s04-q006 (length-balance)
+- **Option C (correct):** Trimmed from 113 to 108 chars by removing "code" from "without code changes".
+- **Option D:** Expanded from 100 to 104 chars by adding "any" before "reliance". Ratio improved from 1.13 to 1.06.
+
+### s04-q010 (length-balance)
+- **Option D (correct):** Expanded from 98 to 108 chars by adding "projected" before "files". Ratio improved from 1.14 to 1.13.
+
+### s04-q013 (length-balance)
+- **Option B:** Expanded from 79 to 88 chars by adding "designed" before "for".
+- **Option C (correct):** Expanded from 78 to 90 chars by adding "deploys and" before "manages".
+- **Option D:** Expanded from 79 to 85 chars by adding "local" before "block volumes". Ratio improved from 1.13 to 1.06.
+
+### s04-q016 (length-balance)
+- **Option A:** Trimmed from 117 to 103 chars by removing "automatically" to "is replicated".
+- **Option D (correct):** Expanded from 103 to 106 chars by changing "have" to "include". Ratio improved from 1.14 to 1.06.
+
+### s04-q033 (length-balance)
+- **Option A:** Expanded from 76 to 87 chars by adding "per volume" suffix.
+- **Option B:** Expanded from 74 to 85 chars by adding "per device" suffix. Ratio improved from 1.12 to 1.10.
+
+### s04-q037 (length-balance)
+- **Option A (correct):** Expanded from 75 to 81 chars by changing "the request" to "the PVC's request". Ratio improved from 1.11 to 1.02.
+
+### s04-q040 (length-balance)
+- **Option A (correct):** Expanded from 95 to 106 chars by adding "explicitly" before "prohibits". Ratio improved from 1.11 to 1.07.
+
+### s04-q041 (length-balance)
+- **Option C (correct):** Trimmed from 108 to 103 chars by removing "same" from "the same zone".
+- **Option D:** Expanded from 96 to 105 chars by adding "the binding step" instead of "binding". Ratio improved from 1.13 to 1.05.
+
+### s04-q047 (length-balance)
+- **Option D:** Expanded from 69 to 80 chars by adding "(exported)" suffix. Ratio improved from 1.13 to 1.10.
+
+### s04-q048 (length-balance)
+- **Option C:** Trimmed from 110 to 96 chars by shortening "the disk pressure condition is resolved" to "disk pressure is resolved".
+- **Option D (correct):** Expanded from 96 to 102 chars by adding "space" after "disk". Ratio improved from 1.15 to 1.06.
+
+### s04-q053 (length-balance)
+- **Option B (correct):** Expanded from 85 to 98 chars by restructuring to "receive the new revision; pods below the partition value keep the old one". Ratio improved from 1.11 to 1.11 (correct moved from shortest to balanced middle).
+
+### s04-q063 (length-balance)
+- **Option B (correct):** Expanded from 96 to 106 chars by changing "the pod" to "the replacement pod". Ratio improved from 1.14 to 1.12.
+
+### s04-q065 (giveaway)
+- **Option A:** Added comma-list "for compute, storage, and networking" to break unique comma-list pattern in correct answer B. Changed from "cheapest storage tier that meets baseline SLAs" to "cheapest tier for compute, storage, and networking".
+
+### s04-q068 (length-balance)
+- **Option C (correct):** Expanded from 97 to 103 chars by adding "stale" before "`VolumeAttachment`". Ratio improved from 1.12 to 1.10.
+
+### s04-q074 (giveaway)
+- **Option A:** Added backtick-quoted terms `read_bytes` and `write_bytes` to increase backtick count from 2 to 6, matching correct answer B's backtick density. Changed from "measured in bytes per second from" to "(`read_bytes`, `write_bytes`) of each PVC from".
+- **Explanation A:** Updated to reference "read/write byte metrics" instead of "throughput".
+
+### s04-q087 (length-balance)
+- **Option B (correct):** Expanded from 101 to 109 chars by adding "storage" before "issues". Ratio improved from 1.11 to 1.09.

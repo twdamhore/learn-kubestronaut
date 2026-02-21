@@ -232,8 +232,8 @@ var questions = [
     text: "A Prometheus instance scraping 500 pods experiences high memory usage and slow queries. The team discovers that each pod exposes 2,000 unique time series with a label `request_id` that has unbounded cardinality. What is the correct approach to resolve this while maintaining useful metrics?",
     diagram: null,
     options: [
-      "A. Increase Prometheus memory allocation and enable WAL compression to reduce the storage footprint of high-cardinality time series data",
-      "B. Switch to a push-based metrics model where pods send metrics directly to a time-series database that handles high cardinality natively",
+      "A. Increase Prometheus memory allocation and enable `WAL` compression to reduce the storage footprint of high-cardinality series data",
+      "B. Switch to a push-based metrics model where pods send metrics directly to a `TSDB` that handles high cardinality natively",
       "C. Use `metric_relabel_configs` to drop the `request_id` label before ingestion, and use distributed tracing for per-request data",
       "D. Add `sample_limit` to the scrape config to cap time series per target and configure recording rules to aggregate high-cardinality data"
     ],
@@ -283,7 +283,7 @@ var questions = [
       "A. Change the level to `Metadata` for secrets and add a `RequestResponse` rule only for `delete` and `create` verbs",
       "B. Set `level: None` for secrets accessed by system service accounts and keep `RequestResponse` for user-initiated requests",
       "C. Reduce `--audit-log-maxsize` and `--audit-log-maxbackup` flags to limit disk usage while keeping the same audit level",
-      "D. Change to `level: Request` globally and rely on external SIEM tools to reconstruct response bodies from request data"
+      "D. Change to `level: Request` globally and rely on external `SIEM` tools to reconstruct response bodies from request data"
     ],
     answer: 0,
     explanation: "The `RequestResponse` level captures full request and response bodies, which for Secrets includes the encoded secret data — generating enormous log entries. Changing to `Metadata` level for most secret operations captures who accessed what and when, without logging the actual secret content. Adding a targeted `RequestResponse` rule only for `create` and `delete` verbs captures the full detail for the highest-risk operations while dramatically reducing log volume for routine `get` and `list` operations.\n\nWhy other options are wrong:\n- B: Setting level: None for system service accounts could miss legitimate security events like compromised service accounts accessing secrets\n- C: Reducing maxsize and maxbackup limits disk usage but does not reduce log generation rate; it only causes older logs to be rotated out faster\n- D: Changing to level: Request globally still logs full request bodies for all resources, which is still verbose; it also loses response data for all resources\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
@@ -425,8 +425,8 @@ var questions = [
     diagram: null,
     options: [
       "A. The `sidecar` container has a secondary listener binding to port 8080 in addition to its configured primary port 9090",
-      "B. A previous `app` container instance has not released port 8080 due to TCP TIME_WAIT, and the restart is too fast",
-      "C. The pod has `hostNetwork: true`, and another pod on the same node is already bound to port 8080 on the host",
+      "B. A previous `app` container instance has not released port 8080 due to TCP TIME_WAIT, and the restart interval is too fast",
+      "C. The pod has `hostNetwork: true`, and another pod or host process on the same node is already bound to port 8080",
       "D. Both containers share a network namespace, and the `app` container's liveness probe on port 8080 creates a conflict"
     ],
     answer: 2,
@@ -491,7 +491,7 @@ var questions = [
       "A. Yes, the `podSelector` matches the source pod's `role: frontend` label regardless of the originating namespace label",
       "B. No, `namespaceSelector` and `podSelector` under the same `from` entry form an AND condition — both must match",
       "C. Yes, `namespaceSelector` and `podSelector` in the same array element are evaluated as an OR condition by the CNI",
-      "D. No, the egress policy does not include a rule allowing return traffic responses back to the frontend pod in staging"
+      "D. No, the `egress` policy does not include a rule allowing return traffic responses back to the frontend pod in staging"
     ],
     answer: 1,
     explanation: "When `namespaceSelector` and `podSelector` appear in the same `from` entry (same YAML map), they form an AND condition — the source pod must match both selectors. The pod must be in a namespace with `env: production` AND have the label `role: frontend`. Since the source pod is in a namespace labeled `env: staging`, the `namespaceSelector` does not match, so traffic is denied. If they were separate list items (separate `-` entries), they would be OR conditions.\n\nWhy other options are wrong:\n- A: podSelector alone does not match across namespaces; when combined with namespaceSelector in the same entry, both must match (AND logic)\n- C: namespaceSelector and podSelector in the same array element are AND, not OR; separate list items would be OR\n- D: NetworkPolicy ingress and egress are independent; return traffic for established connections is not blocked by ingress rules\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -616,7 +616,7 @@ var questions = [
     text: "An operator creates a `ValidatingWebhookConfiguration` with `failurePolicy: Fail` and a `namespaceSelector` that matches all namespaces. The webhook service goes down. What impact does this have on the cluster?",
     diagram: null,
     options: [
-      "A. Only create and update operations on matched resources are blocked; read operations and deletions continue to work normally in all namespaces",
+      "A. Only create and update operations on matched resources are blocked; read operations and deletions continue normally in all namespaces",
       "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
       "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
       "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
@@ -650,8 +650,8 @@ var questions = [
     options: [
       "A. Change the alert threshold from 5% to 10% to account for statistical insignificance during low-traffic deployment windows",
       "B. Replace `rate()` with `increase()` to use absolute counts instead of per-second rates, which are less sensitive to low volume",
-      "C. Increase the `for` duration from 10 to 30 minutes so the alert waits for traffic to normalize before firing during deployments",
-      "D. Add a minimum request rate condition: only fire when error ratio exceeds 5% AND `rate(http_requests_total[5m]) > 1`"
+      "C. Increase the `for` duration from 10 to 30 minutes so the alert waits for traffic to normalize before firing during deploy windows",
+      "D. Add a minimum request rate guard: only fire when error ratio exceeds 5% AND `rate(http_requests_total[5m]) > 1` per second"
     ],
     answer: 3,
     explanation: "At low traffic volumes, error rate percentages can be misleading — 1 error out of 20 requests yields a 5% error rate. Adding a minimum request rate threshold (e.g., `> 1` request per second) ensures the alert only fires when there is sufficient traffic volume for the error rate to be statistically meaningful. This is a standard practice in SRE for preventing alert noise during maintenance windows or low-traffic periods. Simply raising the threshold (option A) would miss real issues at normal traffic levels.\n\nWhy other options are wrong:\n- A: Raising the threshold to 10% masks real issues at normal traffic volumes where 5% errors would be significant\n- B: Using increase() instead of rate() changes the metric to absolute counts but does not address the statistical significance problem at low volumes\n- C: Increasing the for duration delays all alerts equally, not just low-traffic ones; it could miss genuine issues during normal traffic\n\nReference: https://prometheus.io/docs/practices/alerting/",
@@ -731,7 +731,7 @@ var questions = [
       "A. Use `PipelineResources` of type `git` and `image` to automatically wire inputs and outputs between the sequential tasks",
       "B. Mount a shared `PersistentVolumeClaim` across all tasks and write data to agreed paths; use env vars for the image tag",
       "C. Use `Workspaces` for sharing cloned source and `Task Results` to pass the image tag from `build-image` to `deploy`",
-      "D. Use Tekton `Conditions` to evaluate each task output and dynamically inject the parameters into the subsequent task run"
+      "D. Use Tekton `Conditions` to evaluate each `Task` output and dynamically inject `params` into the subsequent task run"
     ],
     answer: 2,
     explanation: "Tekton's recommended approach for inter-task data sharing combines `Workspaces` and `Results`. Workspaces (backed by PVCs or other volume types) provide shared filesystem access for large data like source code. Task Results are small string outputs (limited to 4096 bytes) stored by a task and consumable as parameters by downstream tasks — perfect for passing an image tag. `PipelineResources` (option A) have been deprecated. Option B works but is less idiomatic because it relies on convention-based file paths rather than Tekton's native Workspace and Result abstractions.\n\nWhy other options are wrong:\n- A: PipelineResources are deprecated in Tekton and should not be used for new pipelines; they lack flexibility and are being removed\n- B: Shared PVC with agreed paths works but is less idiomatic than Workspaces; using env vars for image tags is fragile compared to Results\n- D: Tekton Conditions are deprecated (replaced by WhenExpressions); they were for conditional execution, not for passing parameters\n\nReference: https://tekton.dev/docs/pipelines/pipelines/#using-results",
@@ -1096,10 +1096,10 @@ var questions = [
     text: "A container image is signed using `cosign` and pushed to a registry. A Kyverno `ClusterPolicy` with `verifyImages` rule enforces signature verification. A deployment references the image by tag (`:latest`). The image is re-pushed with a different digest but the same tag. Does the existing running pod get affected, and does a new pod creation succeed?",
     diagram: null,
     options: [
-      "A. The existing pod is unaffected; new pod creation succeeds only if the re-pushed image has a valid cosign signature",
+      "A. The existing pod is unaffected; new pod creation succeeds only if the re-pushed image carries a valid cosign signature",
       "B. The existing pod is terminated because its image digest no longer matches the tag; new pod creation is blocked by Kyverno",
-      "C. Both existing and new pods are unaffected because Kyverno only checks signatures at policy creation, not pod admission",
-      "D. The existing pod continues running; new creation fails because Kyverno detects the digest changed and flags a supply chain risk"
+      "C. Both existing and new pods are unaffected because Kyverno only checks signatures at policy creation time, not at pod admission",
+      "D. The existing pod continues running; new creation fails because Kyverno detects the digest changed and flags a supply chain issue"
     ],
     answer: 0,
     explanation: "Running pods are not affected by image tag changes — Kubernetes resolves the image tag to a digest at pull time and records it in the pod status. The container continues running with its original image. For new pod creation, Kyverno's `verifyImages` policy checks the image signature at admission time. If the re-pushed image has a valid cosign signature matching the policy's key or keyless configuration, the pod is admitted. If the new image is unsigned or signed with a different key, it is rejected. The policy does not track tag-to-digest mapping changes.\n\nWhy other options are wrong:\n- D: Kyverno does not detect digest changes as a supply chain risk per se; it verifies the signature of the current image at admission time\n- B: Running pods are not terminated by image tag changes; Kubernetes resolves tags to digests at pull time and does not re-check\n- C: Kyverno checks signatures at pod admission time, not at policy creation time; every new pod creation triggers verification\n\nReference: https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
@@ -1160,7 +1160,7 @@ var questions = [
     text: "The kubelet on a worker node loses connectivity to the API server. The node's lease in the `kube-node-lease` namespace expires. After `node-monitor-grace-period` (default 40s) passes, what sequence of actions does the control plane take?",
     diagram: null,
     options: [
-      "A. The node controller marks the node `NotReady` immediately; after `pod-eviction-timeout` the controller starts evicting pods via deletion entries",
+      "A. The node controller marks the node `NotReady` immediately; after `pod-eviction-timeout` the controller starts evicting pods",
       "B. The node controller marks the node `Unknown`; after taint-based eviction delay, pods are evicted unless they tolerate `unreachable`",
       "C. The node controller deletes the node object after a timeout; the scheduler then reschedules most of the affected pods to other nodes",
       "D. The node controller adds a `node.kubernetes.io/not-ready` taint; pods without matching tolerations are evicted after `tolerationSeconds`"
@@ -1240,8 +1240,8 @@ var questions = [
     text: "A microservices architecture uses the Strangler Fig pattern to migrate from a monolith. An API gateway routes traffic: `/api/orders/*` goes to the new Orders microservice, while all other paths go to the monolith. The team discovers that the Orders microservice needs data from the monolith's Customers module. What is the recommended approach during migration?",
     diagram: "<svg viewBox='0 0 400 220' xmlns='http://www.w3.org/2000/svg'><rect x='140' y='5' width='120' height='30' rx='5' fill='#FF9800' stroke='#fff'/><text x='200' y='25' text-anchor='middle' fill='#fff' font-size='11'>API Gateway</text><rect x='30' y='75' width='120' height='50' rx='5' fill='#9E9E9E' stroke='#fff'/><text x='90' y='97' text-anchor='middle' fill='#fff' font-size='10'>Monolith</text><text x='90' y='115' text-anchor='middle' fill='#fff' font-size='8'>Customers + Others</text><rect x='250' y='75' width='120' height='50' rx='5' fill='#4CAF50' stroke='#fff'/><text x='310' y='97' text-anchor='middle' fill='#fff' font-size='10'>Orders Svc</text><text x='310' y='115' text-anchor='middle' fill='#4CAF50' font-size='8'>(new)</text><line x1='170' y1='35' x2='100' y2='70' stroke='#aaa' stroke-width='1.5'/><text x='120' y='52' fill='#aaa' font-size='8'>/*</text><line x1='230' y1='35' x2='300' y2='70' stroke='#4CAF50' stroke-width='1.5'/><text x='275' y='52' fill='#4CAF50' font-size='8'>/orders/*</text><line x1='250' y1='105' x2='155' y2='105' stroke='#f44' stroke-width='1.5' stroke-dasharray='4' marker-end='url(#a3)'/><text x='200' y='145' text-anchor='middle' fill='#f44' font-size='9'>Needs customer data</text><defs><marker id='a3' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#f44'/></marker></defs></svg>",
     options: [
-      "A. The Orders service should directly query the monolith's database for customer data, using a read-only database connection pool",
-      "B. Create an Anti-Corruption Layer in Orders that calls the monolith's Customers API, translating between data models",
+      "A. The Orders service should directly query the monolith's database for customer data using a read-only connection pool",
+      "B. Create an Anti-Corruption Layer in Orders that calls the monolith's Customers API, translating between domain data models",
       "C. Delay the Orders migration until the Customers module is also extracted as a microservice to avoid cross-boundary dependencies",
       "D. Replicate the entire Customers database table into the Orders microservice using Change Data Capture for real-time sync"
     ],
@@ -1320,9 +1320,9 @@ var questions = [
     text: "A cluster has the `PodTopologySpread` feature enabled. A Deployment with 6 replicas specifies:\n```yaml\ntopologySpreadConstraints:\n- maxSkew: 1\n  topologyKey: topology.kubernetes.io/zone\n  whenUnsatisfiable: ScheduleAnyway\n  labelSelector:\n    matchLabels:\n      app: web\n```\nThe cluster has 3 zones: zone-a (5 nodes), zone-b (2 nodes), zone-c (1 node). All nodes have available capacity. How does `ScheduleAnyway` affect pod distribution?",
     diagram: null,
     options: [
-      "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` still honors `maxSkew: 1` as a soft scoring preference",
-      "B. Pods are distributed based solely on available node capacity: 4 in zone-a, 1 in zone-b, and 1 in zone-c nodes",
-      "C. Pods are distributed 3-2-1 across zones proportional to node count, identical to DoNotSchedule when skew is met",
+      "A. Pods are distributed 2-2-2 across zones because `ScheduleAnyway` honors `maxSkew: 1` as a soft scoring preference",
+      "B. Pods are distributed based on available node capacity: 4 in zone-a, 1 in `zone-b`, and 1 in `zone-c` nodes",
+      "C. Pods are distributed 3-2-1 across zones proportional to node count, identical to `DoNotSchedule` when skew is met",
       "D. Pods are distributed unevenly because `ScheduleAnyway` makes the topology constraint purely informational only"
     ],
     answer: 0,
