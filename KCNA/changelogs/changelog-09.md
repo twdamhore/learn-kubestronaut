@@ -435,3 +435,42 @@
 ### s09-q098 (giveaway - code tag imbalance)
 - **Option B:** Added `<code>timeoutSeconds</code>` to balance code tag presence. Changed "until the endpoint becomes reachable" to "until the timeoutSeconds value expires" to naturally incorporate the code term.
 - Previously only the correct answer (A) had a `<code>` tag. Now A and B both have code formatting.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-09.js`
+**Issues found**: 11
+
+### s09-q011 — giveaway: "because" uniquely in correct answer
+- **Option C:** Changed "due to" to "because of" so that B (correct) is no longer the only option containing "because".
+
+### s09-q016 — giveaway: "because" uniquely in correct answer
+- **Option A:** Reworded to include "because" ("runs concurrently because the Forbid policy allows overlapping runs") so D (correct) is not the only option with "because". Trimmed to 95 chars for length balance.
+
+### s09-q021 — giveaway: "because" uniquely in correct answer
+- **Option B:** Reworded to include "because" ("automatically adjusted because the API server detects unset resource fields") so D (correct) is not the only option with "because".
+
+### s09-q029 — giveaway: comma-list uniquely in correct answer
+- **Option C:** Added comma-separated list "build, test, and deploy" (was "build stages") to balance the comma-heavy pattern of correct answer A ("Tasks, Pipelines, PipelineRuns"). Trimmed "pipeline" to keep length under ratio.
+
+### s09-q055 — giveaway: comma-list uniquely in correct answer
+- **Option D:** Added comma-separated list "handshakes, slow starts, and teardowns" to balance correct answer A's "TLS, routing, and telemetry". Trimmed "TCP" and "every single" to keep length under ratio.
+
+### s09-q061 — giveaway: "because" uniquely in correct answer
+- **Option D:** Reworded to include "because" ("dropped from the scrape configuration because three consecutive timeouts trigger its removal") so C (correct) is not the only option with "because". Trimmed to 106 chars for length balance.
+
+### s09-q072 — giveaway: comma-list uniquely in correct answer
+- **Option A:** Added comma-separated list "threats, anomalous syscalls, and policy violations" to balance correct answer B's "images, filesystems, and Git repos". Trimmed trailing "on the cluster" for length balance.
+
+### s09-q073 — giveaway: "because" uniquely in correct answer
+- **Option A:** Reworded to include "because" ("bound to a 10Gi EBS volume because EBS natively supports") so D (correct) is not the only option with "because".
+
+### s09-q078 — giveaway: comma-list uniquely in correct answer
+- **Option C:** Restructured to include "mTLS, retries, and circuit breaking" comma-list matching correct answer B's pattern. Shortened from 130 to 123 chars.
+
+### s09-q086 — giveaway: "like" uniquely in correct answer
+- **Option C:** Added "like a GPU or compute tier" to balance correct answer B's "like Kubecost". Trimmed "regardless of utilization" for length balance.
+
+### s09-q094 — giveaway: "like" uniquely in correct answer (only "such as" in C)
+- **Option D:** Added "like bytes sent and received" to balance correct answer A's "like Deployment replicas". Now A and D both use "like" while C uses "such as".

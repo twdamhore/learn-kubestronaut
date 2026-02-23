@@ -253,3 +253,21 @@
 
 ### s05-q100 (unique-because giveaway)
 - **Option A:** Changed from "The ClusterRoleBinding is created successfully without any restriction or warning" to "The ClusterRoleBinding is created because the SA has `create` on ClusterRoleBindings". Added "because" clause to balance the structural pattern where only the correct answer (B) used "because" reasoning. Updated A explanation accordingly.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-05.js`
+**Issues found**: 4
+
+### s05-q044 (unique-including giveaway)
+- **Option A (correct):** Changed from "Receive a real-time stream of Secret objects including full data on changes" to "Receive a real-time stream of Secret objects with full data on every change". Removed unique "including" from the correct answer, which was not present in any distractor.
+
+### s05-q091 (unique-like giveaway)
+- **Option B:** Changed from "Managing RBAC certificates used for user authentication to the API server" to "Managing RBAC certificates like client certs used for API server auth". Added "like" to distractor B to balance the pattern where only the correct answer (A) used "like".
+
+### s05-q017 (unique-both/not-just giveaway)
+- **Option D (correct):** Changed from "mTLS authenticates both client and server, not just the server side" to "mTLS verifies the identity of the client and server in each connection". Removed unique "both...not just" contrast pattern from the correct answer, which made it structurally distinct from all distractors.
+
+### s05-q059 (unique-while giveaway)
+- **Option A (correct):** Changed from "Tags are mutable and can point to different images while digests are immutable" to "Tags are mutable and can be repointed to a different image; digests are immutable". Removed unique "while" contrast pattern. Added semicolon to distractor D ("Digests are required by default admission controllers; tags are being deprecated") to balance the semicolon usage.

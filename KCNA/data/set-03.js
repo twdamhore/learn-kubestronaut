@@ -248,10 +248,10 @@ var questions = [
     text: "A cluster uses CoreDNS. A pod in namespace `alpha` resolves the short name `my-svc`. According to the default `resolv.conf` search domains, which FQDN does the resolver try first?",
     diagram: null,
     options: [
-      "`my-svc.default.svc.cluster.local`",
-      "`my-svc.alpha.cluster.local`",
-      "`my-svc.svc.cluster.local`",
-      "`my-svc.alpha.svc.cluster.local`"
+      "`my-svc.default.svc.cluster.local` using the default NS",
+      "`my-svc.alpha.cluster.local` skipping the svc segment",
+      "`my-svc.svc.cluster.local` omitting the namespace",
+      "`my-svc.alpha.svc.cluster.local` using the pod's NS"
     ],
     answer: 3,
     explanation: "The kubelet injects search domains into each pod's `/etc/resolv.conf` in this order: `<namespace>.svc.cluster.local`, `svc.cluster.local`, `cluster.local`. A short name is appended to the first search domain first, yielding `my-svc.alpha.svc.cluster.local`. The first option uses the default namespace, which is wrong for a pod in alpha.\n\nWhy other options are wrong:\n- A: Uses the `default` namespace, but the pod is in `alpha`; the first search domain uses the pod's own namespace.\n- B: `my-svc.alpha.cluster.local` skips the `svc` segment; this is not a valid search domain.\n- C: `my-svc.svc.cluster.local` omits the namespace; the first search domain is `<namespace>.svc.cluster.local`.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
@@ -267,7 +267,7 @@ var questions = [
       "SRV records only, with no A records created for the individual pod endpoints",
       "CNAME records that map `cache-0` through `cache-2` to the node's IP address",
       "A single A record for `cache` that resolves to all three pod IPs at one time",
-      "A records like `cache-0.cache.<ns>.svc.cluster.local` resolving to each pod IP"
+      "A records `cache-0.cache.<ns>.svc.cluster.local` resolving to each pod IP address"
     ],
     answer: 3,
     explanation: "A headless Service combined with a StatefulSet creates individual A records for each pod following the pattern `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. This gives each pod a stable DNS identity. CNAME records to node IPs are not created. While a DNS query on the Service name returns all pod IPs, individual pod A records are the distinguishing feature. SRV records exist too, but A records are also created.\n\nWhy other options are wrong:\n- A: Both SRV and A records are created for StatefulSet pods behind a headless Service; A records are not omitted.\n- B: CNAME records mapping to node IPs are not created; the A records point to individual pod IPs.\n- C: While the Service-level DNS query returns all pod IPs, the distinguishing feature is individual per-pod A records.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#srv-records",
@@ -665,7 +665,7 @@ var questions = [
     diagram: null,
     options: [
       "IPVS uses hash-based lookup structures providing O(1) routing regardless of endpoint count",
-      "IPVS supports TLS termination at the kernel level for improved security on each cluster node",
+      "IPVS supports TLS termination at the kernel level (L4) for improved security on each cluster node",
       "IPVS automatically encrypts inter-node traffic using kernel-level IPsec tunnels by default",
       "IPVS eliminates the need for a CNI plugin by handling all pod networking within the kernel"
     ],
@@ -1163,7 +1163,7 @@ var questions = [
       "No single metric captures this; correlate `kube_networkpolicy_labels` with pod traffic counters",
       "`kube_pod_status_phase` tracking pods stuck in `Pending` state; helpful for scheduling issues",
       "`kube_pod_container_status_restarts_total` counting restarts such as those from network errors",
-      "No built-in metric exists; the engineer should use CNI-level tools like Cilium's `Hubble`"
+      "No built-in metric exists; the engineer should use CNI-level flow tools such as Cilium's `Hubble`"
     ],
     answer: 3,
     explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: Correlating `kube_networkpolicy_labels` with pod traffic counters does not reveal policy misconfiguration because the labels metric only exposes metadata, not traffic flow data.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A developer sets `spec.ports[0].appProtocol: kubernetes.io/h2c` on a Service. What does this indicate to consuming infrastructure?",
     diagram: null,
     options: [
-      "The Service enables TLS 1.2 encryption for proxy-to-backend pod connections by default",
+      "The Service enables TLS (1.2) encryption for proxy-to-backend pod connections by default",
       "kube-proxy will use HTTP/2 to communicate with the API server for this Service endpoint",
       "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2 via protocol negotiation",
       "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
@@ -1432,7 +1432,7 @@ var questions = [
     text: "A platform team implements a zero-trust network model in their Kubernetes cluster. Which combination of features best supports this model?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><text x="200" y="20" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">Zero-Trust Network</text><rect x="20" y="40" width="160" height="40" rx="4" fill="#326CE5"/><text x="100" y="65" text-anchor="middle" fill="#fff" font-size="10">Layer 1 — ?</text><rect x="220" y="40" width="160" height="40" rx="4" fill="#4CAF50"/><text x="300" y="65" text-anchor="middle" fill="#fff" font-size="10">Layer 2 — ?</text><rect x="20" y="110" width="160" height="40" rx="4" fill="#FF9800"/><text x="100" y="135" text-anchor="middle" fill="#fff" font-size="10">Layer 3 — ?</text><rect x="220" y="110" width="160" height="40" rx="4" fill="#9C27B0"/><text x="300" y="135" text-anchor="middle" fill="#fff" font-size="10">Layer 4 — ?</text><rect x="120" y="180" width="160" height="40" rx="4" fill="#f44336"/><text x="200" y="205" text-anchor="middle" fill="#fff" font-size="10">Layer 5 — ?</text></svg>',
     options: [
-      "Default-deny `NetworkPolicy`, mTLS via a service mesh, and identity-based authorization rules",
+      "`NetworkPolicy` default-deny rules, mTLS via a service mesh, and identity-based authorization",
       "`NodePort` Services with strong passwords, firewall rules, and IP allowlists on each node",
       "`ResourceQuotas` to limit pod counts, CPU shares, and memory in every cluster namespace",
       "`PodSecurityAdmission` in enforce mode with `readOnlyRootFilesystem` set on every cluster pod"

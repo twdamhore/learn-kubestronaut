@@ -393,3 +393,45 @@
 ### s04-q099 (giveaway)
 - **Option A:** Added em-dash and backtick-quoted `gp3` and `iops` to break unique em-dash and reduce backtick density gap in correct answer C (was C only had em-dash, C=4 backticks vs A=0; now A and C both have em-dashes, A=4 and C=4 backticks).
 - **Explanation A:** Updated to reference "queue depth mechanism" to match revised option text.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-04.js`
+**Issues found**: 9
+
+### s04-q006 (giveaway)
+- **Option B:** Added "like JDBC connectors" to break unique "like" pattern in correct answer C. Changed from "Embed database drivers directly into the application binary to avoid any external service dependencies" to "Embed database drivers like JDBC connectors directly into the binary to avoid external dependencies".
+
+### s04-q020 (giveaway)
+- **Option C:** Added "like a Secret volume" to break unique "like" pattern in correct answer A. Changed from "The `hostPath` volume is encrypted by default so there is no meaningful security concern for the host" to "The `hostPath` volume is encrypted like a Secret volume so there is no meaningful security concern".
+- **Explanation C:** Updated to reference "like Secret volumes" to match revised option text.
+
+### s04-q022 (giveaway)
+- **Option A:** Added "like host-attached SSDs" to break unique "like" pattern in correct answer B. Changed from "Use local node storage combined with manual backup scripts that are run periodically via cron jobs" to "Use local node storage like host-attached SSDs combined with manual backup scripts run via cron jobs".
+
+### s04-q023 (giveaway)
+- **Option B:** Added "because" to break unique "because" pattern in correct answer D. Changed from "New `PVCs` are created at `20Gi` while old PVCs are deleted and their underlying storage is reclaimed" to "New `PVCs` are created at `20Gi` because the controller deletes old PVCs and reclaims their storage".
+- **Explanation B:** Updated to match revised option text.
+
+### s04-q030 (giveaway)
+- **Option B:** Added backtick-quoted `sessionAffinity: ClientIP` to break unique colon-enum pattern in correct answer A (which has `clusterIP: None`). Changed from "A `ClusterIP` Service with session affinity enabled to route traffic to consistent replicas" to "A `ClusterIP` Service with `sessionAffinity: ClientIP` to route traffic to consistent replicas".
+- **Explanation B:** Updated to reference "sessionAffinity" to match revised option text.
+
+### s04-q031 (giveaway)
+- **Option D:** Added "like `/data/pod-0`" to break unique "like" pattern in correct answer A. Changed from "Each pod replica must write to a separate directory on the same `ReadWriteOnce` volume to avoid conflicts" to "Each pod replica must write to a separate directory like `/data/pod-0` on the same `ReadWriteOnce` volume".
+
+### s04-q040 (giveaway)
+- **Option D:** Added "because" to break unique "because" pattern in correct answer A. Changed from "The `restricted` profile only limits CPU and memory resource usage, it does not restrict volume types" to "The `restricted` profile passes because it only limits CPU and memory resource usage, not volume types".
+- **Explanation D:** Updated to reference security contexts and privilege escalation to match revised option text.
+
+### s04-q068 (giveaway)
+- **Option B:** Added "because" to break unique "because" pattern in correct answer C. Changed from "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster" to "The PVC was accidentally deleted because the node reboot process triggered a cleanup that removed it".
+- **Explanation B:** Updated to clarify that node reboots do not trigger PVC deletion.
+
+### s04-q093 (giveaway)
+- **Option D:** Added colon-enumeration to break unique colon pattern in correct answer C. Changed from "StatefulSets do not use ControllerRevision objects; they track updates via pod template hash labels instead" to "StatefulSets track updates differently: they use pod template hash labels on pods instead of ControllerRevisions".
+- **Explanation D:** Updated to reference that pod template hash labels are used by Deployments, not StatefulSets.
+
+### s04-q094 (giveaway)
+- **Option C:** Added "like a monthly quota" to break unique "like" pattern in correct answer B. Changed from "Assign each team a fixed storage budget with no actual tracking or enforcement of usage against limits" to "Assign each team a fixed storage budget like a monthly quota with no tracking or enforcement of usage".

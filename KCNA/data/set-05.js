@@ -267,7 +267,7 @@ var questions = [
       "mTLS encrypts traffic using stronger cipher suites than standard TLS",
       "mTLS eliminates the need for network policies between mesh services",
       "mTLS automatically rotates all secrets stored in the etcd data store",
-      "mTLS authenticates both client and server, not just the server side"
+      "mTLS verifies the identity of the client and server in each connection"
     ],
     answer: 3,
     explanation: "Mutual TLS requires both parties to present certificates, authenticating both client and server. Standard TLS only authenticates the server to the client. This provides identity verification for service-to-service communication, which is critical in zero-trust architectures.\n\nWhy other options are wrong:\n- A: mTLS uses the same cipher suites as TLS; the difference is in mutual authentication\n- B: mTLS provides identity verification but does not replace network policies for traffic control\n- C: mTLS has no relationship with etcd secrets rotation\n\nReference: https://kubernetes.io/docs/concepts/services-networking/",
@@ -696,7 +696,7 @@ var questions = [
     text: "A Role grants `watch` on `secrets` in the `monitoring` namespace. A RoleBinding binds it to ServiceAccount `prometheus`. What can Prometheus do with this permission?",
     diagram: null,
     options: [
-      "Receive a real-time stream of Secret objects including full data on changes",
+      "Receive a real-time stream of Secret objects with full data on every change",
       "Only receive notifications when Secrets change, not their actual data values",
       "List all Secrets once at startup and receive only metadata in later updates",
       "Read Secret metadata only, without access to the encoded data field values"
@@ -936,10 +936,10 @@ var questions = [
     text: "A security policy requires that all containers use image digests instead of tags. Why is this practice recommended?",
     diagram: null,
     options: [
-      "Tags are mutable and can point to different images while digests are immutable",
+      "Tags are mutable and can be repointed to a different image; digests are immutable",
       "Digests download significantly faster than tags when pulling from registries",
       "Digests enable automatic vulnerability scanning during the image pull phase",
-      "Digests are required by default admission controllers and tags are being deprecated"
+      "Digests are required by default admission controllers; tags are being deprecated"
     ],
     answer: 0,
     explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported and not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "Provisioning and renewing TLS certificates from issuers like Let's Encrypt",
-      "Managing RBAC certificates used for user authentication to the API server",
+      "Managing RBAC certificates like client certs used for API server auth",
       "Encrypting etcd data at rest using X.509 certificates and key management",
       "Scanning container images for expired or misconfigured SSL certificates"
     ],

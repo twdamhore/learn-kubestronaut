@@ -471,3 +471,18 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 ### s10-q061 (correct A longest at 117 + backtick density imbalance — D had 0 backticks)
 - **Option A (correct):** Trimmed from 117 to 112 chars. Changed "the original path `/v2/users`, but `api-v2` expects requests at `/users` without the path prefix" to "the original `/v2/users` path, but `api-v2` expects requests at `/users` without the prefix".
 - **Option D:** Added backticks around `/v2/users` and `api-v1` to balance backtick density (0 to 4 backticks).
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-10.js`
+**Issues found**: 3
+
+### s10-q028 — unique colon-enumeration in correct answer
+- **Option D:** Added colon-enumeration to balance correct B's unique colon pattern. Changed "to ensure an atomic reversal" to ": lock all resources, then atomically reverse".
+
+### s10-q039 — unique "including" in correct answer
+- **Option A:** Added "including" to balance correct C's unique use. Changed "read operations and deletions continue normally" to "read operations including GET and LIST continue normally".
+
+### s10-q084 — unique "including" in correct answer
+- **Option B:** Added "including" to balance correct C's unique use. Changed "No, secret values are redacted in `list` and `watch` responses by the API server; only a `get` on a specific secret returns actual encoded data" to "No, secret values including encoded data are redacted in `list` and `watch` responses; only `get` on a specific secret returns the full values".

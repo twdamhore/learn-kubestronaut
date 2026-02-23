@@ -507,7 +507,7 @@ var questions = [
       "The pod starts normally but the environment variable is set to an empty string, causing application errors at runtime when the database URL is used",
       "The pod fails with a `CreateContainerConfigError` status because the referenced key does not exist in the ConfigMap, blocking container startup",
       "The pod starts but Kubernetes automatically injects a default value of `localhost` for any missing ConfigMap keys referenced in the pod spec",
-      "The pod enters `Pending` state while the scheduler waits for the ConfigMap to be updated with the missing key before proceeding with scheduling"
+      "The pod enters `Pending` state because the scheduler waits for the ConfigMap to be updated with the missing key before proceeding"
     ],
     answer: 1,
     explanation: "When a pod spec uses `configMapKeyRef` to reference a specific key in a ConfigMap and that key does not exist, the container creation fails with `CreateContainerConfigError`. The pod will not start until the ConfigMap is updated to include the missing key or the reference is marked as `optional: true`.\n\nWhy other options are wrong:\n- A: An empty string would occur if the key exists but is empty; a missing key causes CreateContainerConfigError\n- C: Kubernetes never injects default values for missing ConfigMap keys\n- D: The scheduler does not wait for ConfigMap keys; this is a kubelet container creation error\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#restrictions",
@@ -617,7 +617,7 @@ var questions = [
     diagram: null,
     options: [
       "Scale up replicas across the distributed service chain (e.g., double each tier) to reduce per-pod load",
-      "Restarting all pods in the request chain to clear any stale connections or cached network state data",
+      "Restarting all pods in the request chain like Services B and C to clear any stale connections or cached state",
       "Implementing distributed tracing with tools like Jaeger or Zipkin to visualize latency across each hop",
       "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
     ],
@@ -747,7 +747,7 @@ var questions = [
       "Yes, Services route traffic to individual containers independently, so the healthy one still receives incoming requests normally",
       "No, the pod is removed from the Service's Endpoints because overall pod readiness is `False` when any container is not ready",
       "Yes, but only if the Service has `sessionAffinity: ClientIP` configured which allows partial pod readiness to serve traffic",
-      "No, Kubernetes immediately terminates the entire pod when any container enters a crash loop back-off waiting state in the pod"
+      "No, Kubernetes immediately terminates the entire pod because any container entering a crash loop triggers full pod replacement"
     ],
     answer: 1,
     explanation: "A pod's overall readiness is the logical AND of all its containers' readiness states. Since one container is crashing (not ready), the pod condition `Ready` is `False`. Kubernetes removes pods with `Ready: False` from Service Endpoints. This means even the healthy container will not receive Service traffic until the other container is also ready.\n\nWhy other options are wrong:\n- A: Services route to pods, not individual containers; if the pod is not ready, no traffic is sent\n- C: sessionAffinity: ClientIP affects session routing, not partial readiness behavior\n- D: Kubernetes does not terminate the entire pod when one container crashes; it restarts just that container\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate",
@@ -873,7 +873,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
       "Listing `Egress` in `policyTypes` without defining egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS",
-      "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods entirely",
+      "The NetworkPolicy Ingress rule only allows traffic from app=frontend, including its replicas, so the database pods are denied inbound api connections",
       "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
     ],
@@ -1098,7 +1098,7 @@ var questions = [
     options: [
       "No, both containers see the same files because `emptyDir` is shared storage—check the exact file paths used by each container",
       "No, emptyDir volumes use copy-on-write semantics—each container gets an independent snapshot of the data at mount time",
-      "Yes, different mount paths create isolated storage spaces within the same `emptyDir` volume, preventing cross-container access",
+      "Yes, different mount paths create isolated storage spaces because `emptyDir` segments data per mount, preventing cross-access",
       "Yes, `emptyDir` volumes are read-only by default so Container B lacks write permissions needed to see mutable content from A"
     ],
     answer: 0,
@@ -1240,7 +1240,7 @@ var questions = [
     text: "A Deployment has `maxUnavailable: 0` and `maxSurge: 1` in its rolling update strategy. During an update, you observe that the old pods are not terminated until the new pod is `Ready`. What happens if the new pod enters `CrashLoopBackOff`?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Rolling Update: maxUnavailable=0, maxSurge=1</text><rect x="30" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="65" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-1 OK</text><rect x="110" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="145" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-2 OK</text><rect x="190" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="225" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-3 OK</text><rect x="280" y="55" width="90" height="30" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="325" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">new-1 CRASH</text><text x="200" y="120" text-anchor="middle" fill="#e76f51" font-size="11">Rollout status: ???</text><text x="200" y="140" text-anchor="middle" fill="#aaa" font-size="10">Old pods: ???</text><text x="200" y="160" text-anchor="middle" fill="#aaa" font-size="10">What is the impact on old pods and the rollout?</text></svg>',
     options: [
-      "All old pods are immediately terminated by the deployment controller to make room for the new replacement pod instances",
+      "All old pods are immediately terminated because the deployment controller needs room for the new replacement pod instances",
       "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
       "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness failures",
       "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
@@ -1288,7 +1288,7 @@ var questions = [
     text: "A pod has an `emptyDir` volume with `sizeLimit: 100Mi`. The application writes 150Mi of data to it. What happens?",
     diagram: null,
     options: [
-      "The writes silently fail and the application receives I/O errors after reaching the 100Mi size boundary",
+      "The writes silently fail because the kernel enforces a hard cap, and the application receives I/O errors",
       "The `emptyDir` volume automatically expands to accommodate the extra data beyond the configured limit",
       "The kubelet evicts the pod because it exceeded the ephemeral storage limit for the `emptyDir` volume",
       "The `sizeLimit` serves as a soft guideline and the kubelet logs a warning rather than evicting the Pod"

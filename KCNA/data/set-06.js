@@ -26,7 +26,7 @@ var questions = [
     options: [
       "A. The Pod is scheduled on node1 but immediately enters `CrashLoopBackOff`",
       "B. The Pod is scheduled on node1 with a taint-mismatch warning event recorded",
-      "C. The scheduler skips node1 because the Pod lacks a matching toleration for it",
+      "C. The scheduler skips node1 since the Pod lacks a matching toleration for it",
       "D. The taint is ignored when the Pod has a `nodeSelector` matching node1 labels"
     ],
     answer: 2,
@@ -363,7 +363,7 @@ var questions = [
       "A. The cluster becomes read-only until the failed etcd member fully recovers",
       "B. All write operations fail but reads still succeed from the other members",
       "C. The kube-apiserver switches to an in-memory store as its fallback mode",
-      "D. The cluster continues normally because 2 of 3 members form a quorum"
+      "D. The cluster continues normally as 2 of 3 members still form a quorum"
     ],
     answer: 3,
     explanation: "etcd uses the Raft consensus algorithm requiring a majority (quorum) of members to agree on writes. With 3 members, a quorum is 2, so losing 1 member still allows normal read and write operations. Losing a second member would make the cluster unable to reach consensus.\n\nWhy other options are wrong:\n- A: The cluster does not become read-only; with quorum intact, both reads and writes succeed\n- B: Writes do not fail with quorum maintained; 2 of 3 members is sufficient for consensus\n- C: The API server has no in-memory fallback store; it always requires etcd to be available\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#multi-node-etcd-cluster",
@@ -603,7 +603,7 @@ var questions = [
       "A. The Pod is immediately evicted and rescheduled to a matching node",
       "B. The Pod enters a `Pending` state until a new node with the label exists",
       "C. The kubelet terminates the Pod during its next regular sync cycle run",
-      "D. The Pod continues running because the rule is `IgnoredDuringExecution`"
+      "D. The Pod continues running since the rule is `IgnoredDuringExecution`"
     ],
     answer: 3,
     explanation: "The `IgnoredDuringExecution` suffix means the affinity rule is only evaluated at scheduling time. Once a Pod is running, changes to node labels do not trigger eviction. The Pod continues on the node even if it no longer matches the affinity rule.\n\nWhy other options are wrong:\n- A: IgnoredDuringExecution means no eviction occurs after scheduling; the Pod is not evicted\n- B: The Pod does not enter Pending; it continues running on the current node\n- C: The kubelet does not terminate Pods due to affinity rule changes; this is explicitly ignored\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",
@@ -936,13 +936,13 @@ var questions = [
     text: "During an etcd backup, the <code>etcdctl</code> command requires specific flags to authenticate. Which set of flags is required when TLS is enabled?",
     diagram: null,
     options: [
-      "A. `--username` and `--password` flags",
+      "A. `--user`, `--password`, and `--auth`",
       "B. `--cacert`, `--cert`, and `--key`",
-      "C. `--token` and `--endpoint` flags",
-      "D. `--kubeconfig` and `--context` flag"
+      "C. `--token`, `--secret`, and `--auth`",
+      "D. `--kubeconfig`, `--ns`, and `--user`"
     ],
     answer: 1,
-    explanation: "When TLS is enabled on etcd (standard for kubeadm clusters), `etcdctl` requires `--cacert` (CA certificate), `--cert` (client certificate), and `--key` (client key) for mutual TLS authentication. These certificates are typically found in `/etc/kubernetes/pki/etcd/`.\n\nWhy other options are wrong:\n- A: etcd does not use username/password authentication by default; TLS client certificates are standard\n- C: etcd does not use token-based authentication; it uses mutual TLS in kubeadm clusters\n- D: etcdctl is a standalone tool that does not use kubeconfig files; those are for kubectl\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
+    explanation: "When TLS is enabled on etcd (standard for kubeadm clusters), `etcdctl` requires `--cacert` (CA certificate), `--cert` (client certificate), and `--key` (client key) for mutual TLS authentication. These certificates are typically found in `/etc/kubernetes/pki/etcd/`.\n\nWhy other options are wrong:\n- A: etcd does not use username/password authentication by default; TLS client certificates are standard\n- C: etcd does not use token-based or secret-based authentication; it uses mutual TLS in kubeadm clusters\n- D: etcdctl is a standalone tool that does not use kubeconfig files or namespaces; those are for kubectl\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster",
     verify: "ls /etc/kubernetes/pki/etcd/"
   },
   {
@@ -1032,10 +1032,10 @@ var questions = [
     text: "A CI/CD pipeline must validate that a Kubernetes manifest does not schedule Pods on control-plane nodes. Which tool can perform this validation before deployment?",
     diagram: null,
     options: [
-      "A. `kubectl apply --dry-run=server` to simulate the deployment result",
-      "B. `kubectl auth can-i` to check user permissions for the operation",
-      "C. `helm lint` to validate the chart syntax and template rendering",
-      "D. A policy engine like `OPA Gatekeeper` or `Kyverno` with a constraint"
+      "A. `kubectl apply --dry-run=server` to simulate the deployment on cluster",
+      "B. `kubectl auth can-i` to verify user permissions for the operation",
+      "C. `helm lint` to validate the chart syntax and its template rendering",
+      "D. `OPA Gatekeeper` or `Kyverno` policy engine with a custom constraint"
     ],
     answer: 3,
     explanation: "Policy engines like OPA Gatekeeper or Kyverno can enforce policies that reject manifests scheduling Pods on control-plane nodes. These can run as admission webhooks in the cluster or as CLI tools in CI pipelines. `--dry-run=server` validates syntax but not scheduling policies.\n\nWhy other options are wrong:\n- A: --dry-run=server validates API syntax and admission but does not check custom scheduling policies\n- B: kubectl auth can-i checks RBAC permissions, not manifest content or scheduling policies\n- C: helm lint validates chart structure and template syntax, not scheduling or placement policies\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-admission/",
@@ -1384,8 +1384,8 @@ var questions = [
     text: "During a rolling cluster upgrade, you want to validate that the new node version works correctly before upgrading all nodes. Which strategy achieves this?",
     diagram: '<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="220" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1"/><text x="200" y="28" text-anchor="middle" fill="#7ec8e3" font-size="13" font-weight="bold">Node Upgrade Approach</text><rect x="20" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="60" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 1</text><text x="60" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="110" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="150" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 2</text><text x="150" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="200" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="240" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 3</text><text x="240" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><rect x="290" y="45" width="80" height="40" rx="5" fill="#0d2137" stroke="#555" stroke-width="1.5"/><text x="330" y="62" text-anchor="middle" fill="#aaa" font-size="9">Node 4</text><text x="330" y="76" text-anchor="middle" fill="#888" font-size="8">v???</text><line x1="200" y1="100" x2="200" y2="115" stroke="#7ec8e3" stroke-width="1" stroke-dasharray="3,3"/><text x="200" y="130" text-anchor="middle" fill="#ff9800" font-size="10">Step 1: ???</text><text x="200" y="150" text-anchor="middle" fill="#ff9800" font-size="10">Step 2: ???</text><text x="200" y="170" text-anchor="middle" fill="#ff9800" font-size="10">Step 3: ???</text><text x="200" y="190" text-anchor="middle" fill="#4caf50" font-size="10">Step 4: ???</text><text x="200" y="210" text-anchor="middle" fill="#f44336" font-size="10">Step 5: ???</text></svg>',
     options: [
-      "A. Upgrade all worker nodes simultaneously for version consistency across the cluster",
-      "B. Upgrade the control plane components only and validate them without upgrading workers",
+      "A. Upgrade all worker nodes simultaneously, without validation, for fast consistency",
+      "B. Upgrade the control plane only, validate it, then leave workers on the old version",
       "C. Upgrade one canary node first, validate its workloads, then proceed with the rest",
       "D. Run two separate clusters during the transition and migrate workloads between them"
     ],

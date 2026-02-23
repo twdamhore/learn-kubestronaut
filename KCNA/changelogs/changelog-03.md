@@ -313,3 +313,34 @@
 - 1 length-balance fix (reducing option spread)
 - No answer indices were changed
 - No accuracy changes
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-03.js`
+**Issues found**: 6
+
+### s03-q016 — length-balance (DNS name options)
+- Added brief descriptive suffixes to all four DNS name options ("using the default NS", "skipping the svc segment", "omitting the namespace", "using the pod's NS") to reduce the 30.8% length ratio caused by inherently different DNS string lengths. Ratio reduced from 1.308 to 1.122.
+
+### s03-q017 — giveaway (unique "like" in correct)
+- Changed correct option D from "A records like `cache-0.cache.<ns>...`" to "A records `cache-0.cache.<ns>...`" to remove the unique "like" example phrase that signaled the correct answer.
+
+### s03-q042 — giveaway (unique parenthetical in correct)
+- Added parenthetical "(L4)" to distractor B ("at the kernel level (L4)") to balance the unique parenthetical "O(1)" in correct option A, removing the structural signal.
+
+### s03-q073 — giveaway (unique "like" in correct)
+- Changed correct option D from "CNI-level tools like Cilium's `Hubble`" to "CNI-level flow tools such as Cilium's `Hubble`" to remove the unique "like" keyword. Now both C ("such as those from") and D ("such as Cilium's") share the example phrase pattern.
+
+### s03-q085 — giveaway (unique parenthetical in correct)
+- Added parenthetical "(1.2)" to distractor A ("TLS (1.2) encryption") to balance the unique parenthetical "(h2c)" in correct option D, removing the structural signal.
+
+### s03-q090 — giveaway (backtick-start pattern mismatch)
+- Restructured correct option A from "Default-deny `NetworkPolicy`, mTLS via..." to "`NetworkPolicy` default-deny rules, mTLS via..." so it starts with a backtick like all three distractors, removing the unique structural standout.
+
+## Summary
+
+- 1 length-balance fix (DNS name option padding)
+- 5 giveaway fixes (2 unique "like" keywords, 2 unique parentheticals, 1 backtick-start mismatch)
+- No answer indices were changed
+- No accuracy or explanation changes

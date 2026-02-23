@@ -439,3 +439,39 @@
 ### s02-q070 (giveaway/such-as)
 - **Problem:** Correct option A had a unique "such as" phrasing not present in any other option, creating a structural giveaway.
 - **Option B:** Added "such as" to balance the pattern. Changed `"No — the service mesh manages all configuration including application-specific settings (database URLs and feature flags)"` to `"No — the service mesh manages all configuration including application-specific settings such as database URLs and flags"`.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-02.js`
+**Issues found**: 10
+
+### s02-q006 — giveaway ("because" unique to correct)
+- **Option A:** Added "because" to balance the pattern. Changed `"The pod is created and Kubernetes auto-assigns"` to `"The pod is created because Kubernetes auto-assigns"`.
+
+### s02-q011 — giveaway ("because" unique to correct)
+- **Option A:** Added "because" to balance the pattern. Changed `"The key will be \`data\` since \`--from-file\` uses"` to `"The key will be \`data\` because \`--from-file\` uses"`.
+
+### s02-q019 — giveaway ("like" unique to correct)
+- **Option A:** Added "like" to balance the pattern. Changed `"Merge all 30 services into a single monolith managed by Helm to reduce the total number of ConfigMaps needed"` to `"Merge all 30 services into a monolith managed by tools like Helm to reduce the total ConfigMap count"`.
+
+### s02-q020 — giveaway ("like" unique to correct)
+- **Option B:** Added "like" to balance the pattern. Changed `"Argo CD integrates with external vaults to encrypt Secrets during GitOps synchronization when deploying to target clusters"` to `"Argo CD integrates with external vaults like HashiCorp Vault to encrypt Secrets during GitOps synchronization to clusters"`.
+
+### s02-q024 — giveaway ("like" unique to correct)
+- **Option C:** Added "like" to balance the pattern. Changed `"Directly in manifests inside \`templates/\` with \`if/else\` blocks to handle each environment path"` to `"Directly in template manifests inside \`templates/\` with \`if/else\` blocks like environment conditionals"`.
+
+### s02-q036 — giveaway ("because" unique to correct)
+- **Option A:** Added "because" to balance the pattern. Changed `"The pod is created but placed in \`Pending\` state until other pods are evicted"` to `"The pod is created but placed in \`Pending\` state because other pods must be evicted"`.
+
+### s02-q039 — giveaway ("like" unique to correct)
+- **Option D:** Added "like" to balance the pattern. Changed `"Configuring RBAC to deny \`get\` verb access to Secrets for all users within the namespace scope"` to `"Configuring RBAC to deny verbs like \`get\` on Secrets for all users within the namespace scope"`.
+
+### s02-q052 — length-balance (ratio 1.151)
+- **Option D:** Trimmed from 99 to 97 chars. Changed `"when limits are set"` to `"when limits exist"` to bring ratio under 1.15.
+
+### s02-q060 — giveaway ("like" unique to correct)
+- **Option C:** Added "like" to balance the pattern. Changed `"\`--from-env-file\` only supports \`.env\` file extensions; \`--from-file\` supports any arbitrary file extension format"` to `"\`--from-env-file\` only supports file extensions like \`.env\`; \`--from-file\` supports any arbitrary file extension"`.
+
+### s02-q070 — giveaway ("like" unique to correct, residual from R43)
+- **Option C:** Added "like" to balance the pattern. Changed `"No — Istio's VirtualService resources replace ConfigMaps"` to `"No — Istio resources like VirtualService replace ConfigMaps"`.

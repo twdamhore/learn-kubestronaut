@@ -89,7 +89,7 @@ var questions = [
     diagram: null,
     options: [
       "Store all persistent data in local container filesystems for optimal read and write performance at runtime",
-      "Embed database drivers directly into the application binary to avoid any external service dependencies",
+      "Embed database drivers like JDBC connectors directly into the binary to avoid external dependencies",
       "Treat backing services like databases as attached resources, configured via URLs and swapped without changes",
       "Treat in-memory caching as the primary data strategy and avoid any reliance on external backing services"
     ],
@@ -314,11 +314,11 @@ var questions = [
     options: [
       "The pod may read or modify sensitive host files like `/etc/shadow`, potentially enabling privilege escalation",
       "The pod can read files from `/etc` but read-only access poses a limited security concern for the node",
-      "The `hostPath` volume is encrypted by default so there is no meaningful security concern for the host",
+      "The `hostPath` volume is encrypted like a Secret volume so there is no meaningful security concern",
       "The pod can mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath"
     ],
     answer: 0,
-    explanation: "Mounting `hostPath` volumes, especially to sensitive directories like `/etc`, is a significant security risk. A container with write access could modify host-level configuration files, create backdoor accounts, or escalate privileges. Pod Security Standards restrict `hostPath` usage, and most production clusters should disallow it except for system-level DaemonSets.\n\nWhy other options are wrong:\n- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted; they expose raw host filesystem paths to the container\n- D: There are no default securityContext restrictions that force hostPath mounts to read-only; hostPath volumes are read-write by default unless explicitly configured otherwise\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+    explanation: "Mounting `hostPath` volumes, especially to sensitive directories like `/etc`, is a significant security risk. A container with write access could modify host-level configuration files, create backdoor accounts, or escalate privileges. Pod Security Standards restrict `hostPath` usage, and most production clusters should disallow it except for system-level DaemonSets.\n\nWhy other options are wrong:\n- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted like Secret volumes; they expose raw host filesystem paths to the container\n- D: There are no default securityContext restrictions that force hostPath mounts to read-only; hostPath volumes are read-write by default unless explicitly configured otherwise\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
     verify: "kubectl get pod <pod-name> -o jsonpath='{.spec.volumes[*].hostPath}'"
   },
   {
@@ -344,7 +344,7 @@ var questions = [
     text: "A team follows cloud-native principles and needs to deploy a stateful application that requires high availability and data replication. Which approach aligns best with cloud-native storage practices?",
     diagram: null,
     options: [
-      "Use local node storage combined with manual backup scripts that are run periodically via cron jobs",
+      "Use local node storage like host-attached SSDs combined with manual backup scripts run via cron jobs",
       "Deploy a distributed storage solution like Ceph via Rook that provides replication and self-healing",
       "Store all data on a single NFS server located outside the cluster to centralize data management tasks",
       "Use application-managed in-memory replication across pods, avoiding external storage dependencies for simplicity"
@@ -361,12 +361,12 @@ var questions = [
     diagram: null,
     options: [
       "The `volumeClaimTemplates` change is applied in-place and existing PVCs are automatically resized",
-      "New `PVCs` are created at `20Gi` while old PVCs are deleted and their underlying storage is reclaimed",
+      "New `PVCs` are created at `20Gi` because the controller deletes old PVCs and reclaims their storage",
       "The GitOps controller automatically recreates the entire `StatefulSet` resource with the new PVC size",
       "The update fails because `volumeClaimTemplates` in a StatefulSet are immutable after initial creation"
     ],
     answer: 3,
-    explanation: "The `volumeClaimTemplates` field of a StatefulSet is immutable after initial creation. Attempting to update it will result in a validation error from the API server. To change PVC sizes, teams must either expand existing PVCs if the StorageClass supports volume expansion, or perform a manual migration involving StatefulSet recreation.\n\nWhy other options are wrong:\n- A: volumeClaimTemplates are immutable; existing PVCs cannot be resized via StatefulSet spec updates\n- B: Old PVCs are not deleted during spec changes; the update is rejected entirely by the API server\n- C: The GitOps controller cannot automatically recreate the StatefulSet to bypass the immutability constraint\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
+    explanation: "The `volumeClaimTemplates` field of a StatefulSet is immutable after initial creation. Attempting to update it will result in a validation error from the API server. To change PVC sizes, teams must either expand existing PVCs if the StorageClass supports volume expansion, or perform a manual migration involving StatefulSet recreation.\n\nWhy other options are wrong:\n- A: volumeClaimTemplates are immutable; existing PVCs cannot be resized via StatefulSet spec updates\n- B: The controller does not delete old PVCs to create new ones; the update is rejected entirely by the API server\n- C: The GitOps controller cannot automatically recreate the StatefulSet to bypass the immutability constraint\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.volumeClaimTemplates}'"
   },
   {
@@ -473,12 +473,12 @@ var questions = [
     diagram: null,
     options: [
       "A headless Service (`clusterIP: None`) providing DNS SRV records for each pod in the set",
-      "A `ClusterIP` Service with session affinity enabled to route traffic to consistent replicas",
+      "A `ClusterIP` Service with `sessionAffinity: ClientIP` to route traffic to consistent replicas",
       "An Ingress resource configured with path-based routing rules to direct traffic to each pod",
       "A `NodePort` Service (one port per pod) exposing each Cassandra replica on every cluster node"
     ],
     answer: 0,
-    explanation: "A headless Service creates DNS records for each pod in the StatefulSet, enabling peer discovery. Cassandra nodes can use DNS lookups against the headless Service to discover all cluster members. SRV records provide both the hostname and port for each pod. A regular `ClusterIP` Service would load-balance and hide individual pod identities.\n\nWhy other options are wrong:\n- B: A ClusterIP Service with session affinity hides individual pod identities behind a virtual IP\n- C: An Ingress handles external HTTP traffic and does not provide internal pod-to-pod discovery\n- D: A NodePort Service exposes pods externally on node ports; it does not provide DNS-based peer discovery\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
+    explanation: "A headless Service creates DNS records for each pod in the StatefulSet, enabling peer discovery. Cassandra nodes can use DNS lookups against the headless Service to discover all cluster members. SRV records provide both the hostname and port for each pod. A regular `ClusterIP` Service would load-balance and hide individual pod identities.\n\nWhy other options are wrong:\n- B: A ClusterIP Service with sessionAffinity hides individual pod identities behind a virtual IP\n- C: An Ingress handles external HTTP traffic and does not provide internal pod-to-pod discovery\n- D: A NodePort Service exposes pods externally on node ports; it does not provide DNS-based peer discovery\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id",
     verify: "kubectl get svc <service-name> -o jsonpath='{.spec.clusterIP}'"
   },
   {
@@ -491,7 +491,7 @@ var questions = [
       "The PV must support `ReadWriteMany` access, or the team should use an external object store like S3 instead",
       "The application must switch to using `emptyDir` volumes because horizontal scaling requires ephemeral storage",
       "Each pod mounts a separate copy of the same ReadWriteOnce PV, which the scheduler creates transparently",
-      "Each pod replica must write to a separate directory on the same `ReadWriteOnce` volume to avoid conflicts"
+      "Each pod replica must write to a separate directory like `/data/pod-0` on the same `ReadWriteOnce` volume"
     ],
     answer: 0,
     explanation: "Block storage PVs typically support only `ReadWriteOnce`, which limits mounting to a single node. For horizontal scaling across nodes, the team needs either a shared filesystem supporting `ReadWriteMany` (e.g., NFS, CephFS) or an external object store like S3 that is natively multi-client. Using `emptyDir` would lose data on pod restart.\n\nWhy other options are wrong:\n- B: emptyDir volumes are ephemeral and lose data on pod restart; they are not suitable for persistent file storage\n- C: The scheduler does not transparently create separate copies of a ReadWriteOnce PV for each pod; a single RWO PV can only be mounted on one node at a time\n- D: Multiple pods on different nodes cannot mount the same RWO volume; writing to separate directories does not solve the node restriction\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -635,10 +635,10 @@ var questions = [
       "Pod creation is denied because the `restricted` profile explicitly prohibits the use of `hostPath` volumes",
       "The pod is created successfully but the `hostPath` volume is silently ignored by the admission controller",
       "The pod is created with read-only access to the `hostPath` mount enforced by the restricted profile",
-      "The `restricted` profile only limits CPU and memory resource usage, it does not restrict volume types"
+      "The `restricted` profile passes because it only limits CPU and memory resource usage, not volume types"
     ],
     answer: 0,
-    explanation: "The `restricted` Pod Security Standard disallows `hostPath` volumes entirely. When enforcement is set to `enforce`, the API server rejects pod creation attempts that include `hostPath` volumes. This prevents containers from accessing the host filesystem, which is a common privilege escalation vector. Only the `privileged` profile allows `hostPath` volumes.\n\nWhy other options are wrong:\n- B: The restricted profile does not silently ignore hostPath; it actively rejects the pod creation\n- C: The restricted profile does not allow read-only hostPath access; hostPath is entirely prohibited\n- D: The restricted profile restricts many settings including volume types, not just CPU and memory\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+    explanation: "The `restricted` Pod Security Standard disallows `hostPath` volumes entirely. When enforcement is set to `enforce`, the API server rejects pod creation attempts that include `hostPath` volumes. This prevents containers from accessing the host filesystem, which is a common privilege escalation vector. Only the `privileged` profile allows `hostPath` volumes.\n\nWhy other options are wrong:\n- B: The restricted profile does not silently ignore hostPath; it actively rejects the pod creation\n- C: The restricted profile does not allow read-only hostPath access; hostPath is entirely prohibited\n- D: The restricted profile restricts many settings including volume types, security contexts, and privilege escalation, not just CPU and memory\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
     verify: "kubectl label ns <namespace> pod-security.kubernetes.io/enforce=restricted --overwrite"
   },
   {
@@ -1081,12 +1081,12 @@ var questions = [
     diagram: null,
     options: [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
-      "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster",
+      "The PVC was accidentally deleted because the node reboot process triggered a cleanup that removed it",
       "The PV is still attached to the old node because the stale `VolumeAttachment` object was not cleaned up",
       "The CSI driver requires a graceful `NodeUnstageVolume` call from the rebooted node before reattachment"
     ],
     answer: 2,
-    explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: The Multi-Attach error is caused by a stale VolumeAttachment object, not a missing NodeUnstageVolume call; the old node was rebooting and could not perform any RPC\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: Node reboots do not trigger PVC deletion; if the PVC were missing, the error would reference a missing claim, not Multi-Attach\n- D: The Multi-Attach error is caused by a stale VolumeAttachment object, not a missing NodeUnstageVolume call; the old node was rebooting and could not perform any RPC\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: "kubectl get volumeattachment"
   },
   {
@@ -1483,10 +1483,10 @@ var questions = [
       "Only the current revision is retained; all previous revisions are immediately deleted after each update",
       "All 9 revisions are kept because revisionHistoryLimit does not apply to StatefulSet ControllerRevisions",
       "6 ControllerRevision objects are retained: 5 historical plus the current, with the 3 oldest garbage collected",
-      "StatefulSets do not use ControllerRevision objects; they track updates via pod template hash labels instead"
+      "StatefulSets track updates differently: they use pod template hash labels on pods instead of ControllerRevisions"
     ],
     answer: 2,
-    explanation: "StatefulSets use ControllerRevision objects to track revision history. The revisionHistoryLimit field (default 10) controls how many non-current (historical) revisions are retained. With a limit of 5 and 9 total revisions (1 initial + 8 updates), Kubernetes keeps 5 historical revisions plus the current one (6 total), garbage collecting the 3 oldest. This is analogous to revisionHistoryLimit on Deployments with ReplicaSets.\n\nWhy other options are wrong:\n- A: The revisionHistoryLimit allows retaining multiple historical revisions, not just the current one\n- B: Kubernetes garbage collects old ControllerRevisions beyond the limit; it does not retain all indefinitely\n- D: StatefulSets do use ControllerRevision objects to track revision history, unlike Deployments which use ReplicaSets\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#revision-history-limit",
+    explanation: "StatefulSets use ControllerRevision objects to track revision history. The revisionHistoryLimit field (default 10) controls how many non-current (historical) revisions are retained. With a limit of 5 and 9 total revisions (1 initial + 8 updates), Kubernetes keeps 5 historical revisions plus the current one (6 total), garbage collecting the 3 oldest. This is analogous to revisionHistoryLimit on Deployments with ReplicaSets.\n\nWhy other options are wrong:\n- A: The revisionHistoryLimit allows retaining multiple historical revisions, not just the current one\n- B: Kubernetes garbage collects old ControllerRevisions beyond the limit; it does not retain all indefinitely\n- D: StatefulSets do use ControllerRevision objects to track revision history; pod template hash labels are used by Deployments, not StatefulSets\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#revision-history-limit",
     verify: "kubectl get controllerrevision -l app=<statefulset>"
   },
   {
@@ -1498,7 +1498,7 @@ var questions = [
     options: [
       "Monitor total cluster storage costs without any per-team breakdown or allocation tracking in the system",
       "Use PVC labels with a cost tool like Kubecost that maps storage usage to teams via namespace or labels",
-      "Assign each team a fixed storage budget with no actual tracking or enforcement of usage against limits",
+      "Assign each team a fixed storage budget like a monthly quota with no tracking or enforcement of usage",
       "Rely on the cloud provider's billing dashboard, which automatically groups charges by K8s namespace"
     ],
     answer: 1,

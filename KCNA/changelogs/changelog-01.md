@@ -376,3 +376,33 @@
 
 ### s01-q092 (giveaway - unique colon + comma-list)
 - **Option D:** Changed from `"When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"` to `"Only when developers request it: before a release, during hotfixes, or when external audits require verification"`, adding both a colon-enumeration and a 3-item comma-list to match the structural pattern in correct answer C. Updated explanation bullet for option D to match.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-01.js`
+**Issues found**: 8
+
+### s01-q038 (giveaway - unique "because" keyword)
+- **Option B:** Changed from `"inventory-api.cluster.local, as the minimal short-form name from any namespace"` to `"inventory-api.cluster.local, because it is the minimal short-form name from any namespace"`, adding "because" to match the keyword in correct answer D.
+
+### s01-q041 (giveaway - unique "because" keyword)
+- **Option A:** Changed from `"The emptyDir data is automatically migrated to the new node by the kubelet during Pod rescheduling"` to `"The emptyDir data is migrated to the new node because the kubelet handles Pod rescheduling"`, adding "because" to match the keyword in correct answer D.
+
+### s01-q063 (giveaway - unique "like" keyword)
+- **Option C:** Changed from `"Use PodDisruptionBudgets per project to control spending during disruption events in prod"` to `"Use PodDisruptionBudgets per project like a spending cap to control costs during disruptions"`, adding "like" to match the keyword in correct answer B.
+
+### s01-q071 (giveaway - unique "like" keyword)
+- **Option A:** Changed from `"The init container pattern, which sets up network rules before the application container starts"` to `"The init container pattern, where a container like istio-init sets up network rules at startup"`, adding "like" with a named example to match the pattern in correct answer C.
+
+### s01-q082 (giveaway - unique "like" keyword)
+- **Option D:** Changed from `"Use the --squash flag to compress all image layers into one, which removes most unused files from the output"` to `"Use a build flag like --squash to compress all image layers into one, removing most unused files from the output"`, adding "like" to match the keyword in correct answer A.
+
+### s01-q087 (giveaway - unique "like" keyword)
+- **Option D:** Changed from `"gRPC streaming connections that buffer messages in memory during service downtime periods"` to `"gRPC streaming like bidirectional streams that buffer messages in memory during downtime"`, adding "like" to match the keyword in correct answer A.
+
+### s01-q092 (giveaway - unique 3-item comma-list + length-balance)
+- **Option B:** Changed from `"After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities"` to `"After deployment to production, where a runtime scanner monitors containers, flags issues, and reports vulnerabilities"`, adding a 3-item comma-list to match the structure in correct answer C. Also reduces length ratio from pre-fix levels.
+
+### s01-q093 (giveaway - unique "because" keyword)
+- **Option A:** Changed from `"The Git repository has been updated with new changes that have not yet been applied to the cluster"` to `"The Git repository has been updated with new changes that are pending because they have not yet been applied"`, adding "because" to match the keyword in correct answer B.

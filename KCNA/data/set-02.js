@@ -95,7 +95,7 @@ var questions = [
     text: "A cluster administrator creates a ResourceQuota in the `dev` namespace that sets `requests.cpu: 4` and `limits.cpu: 8`. A developer tries to create a pod without specifying any CPU requests or limits. What happens?",
     diagram: null,
     options: [
-      "The pod is created and Kubernetes auto-assigns default CPU values derived from the ResourceQuota",
+      "The pod is created because Kubernetes auto-assigns default CPU values derived from the ResourceQuota",
       "The pod is scheduled but placed in pending state until the administrator adds a LimitRange object",
       "The pod is created with `BestEffort` QoS class and its resources do not count against the quota",
       "Pod creation is rejected because CPU quota exists but the pod specifies no CPU requests/limits"
@@ -175,7 +175,7 @@ var questions = [
     text: "An engineer creates a ConfigMap from a file using `kubectl create configmap nginx-conf --from-file=nginx.conf`. Later they mount this ConfigMap into a pod. What will be the key name in the ConfigMap's `data` field?",
     diagram: null,
     options: [
-      "The key will be `data` since `--from-file` uses a generic key name derived from the flag",
+      "The key will be `data` because `--from-file` uses a generic key name derived from the flag",
       "The key will be auto-generated as a SHA hash of the file contents for content uniqueness",
       "The key will be `nginx-conf`, matching the ConfigMap name that was specified on create",
       "The key will be `nginx.conf` because the filename becomes the key name by default"
@@ -307,7 +307,7 @@ var questions = [
     text: "A microservices platform has 30 services, each requiring slightly different configurations per environment. The team is spending significant time managing ConfigMaps manually. Which cloud-native pattern would best address this at scale?",
     diagram: null,
     options: [
-      "Merge all 30 services into a single monolith managed by Helm to reduce the total number of ConfigMaps needed",
+      "Merge all 30 services into a monolith managed by tools like Helm to reduce the total ConfigMap count",
       "Use a centralized config tool like Spring Cloud Config or Consul, integrated with Kubernetes APIs",
       "Store all configurations in a single large ConfigMap managed by Kustomize, shared across every service",
       "Reduce ConfigMap usage significantly by hardcoding most configuration values in each service's Dockerfile"
@@ -324,7 +324,7 @@ var questions = [
     diagram: null,
     options: [
       "External Secrets Operator syncs secrets from external stores like AWS Secrets Manager into Kubernetes clusters automatically",
-      "Argo CD integrates with external vaults to encrypt Secrets during GitOps synchronization when deploying to target clusters",
+      "Argo CD integrates with external vaults like HashiCorp Vault to encrypt Secrets during GitOps synchronization to clusters",
       "Fluentd collects Secret data from application logs and injects them into destination pods for configuration management",
       "Prometheus can monitor and rotate Secrets automatically across multiple cluster environments using built-in rotation policies"
     ],
@@ -393,7 +393,7 @@ var questions = [
     options: [
       "In the `Chart.yaml` file (e.g., `chart-dev.yaml`, `chart-prod.yaml`) using per-environment overrides",
       "In a ConfigMap that Helm reads at install time using the `--config-from` flag for each release",
-      "Directly in manifests inside `templates/` with `if/else` blocks to handle each environment path",
+      "Directly in template manifests inside `templates/` with `if/else` blocks like environment conditionals",
       "In separate values files like `values-dev.yaml` and `values-prod.yaml` passed with the `-f` flag"
     ],
     answer: 3,
@@ -591,7 +591,7 @@ var questions = [
     text: "A namespace has a ResourceQuota that limits total memory requests to 2Gi. Currently, pods in the namespace have consumed 1.5Gi of memory requests. A developer tries to deploy a pod requesting 700Mi of memory. What happens?",
     diagram: null,
     options: [
-      "The pod is created but placed in `Pending` state until other pods are evicted to free up namespace quota",
+      "The pod is created but placed in `Pending` state because other pods must be evicted to free up namespace quota",
       "The pod is created and the ResourceQuota is automatically increased to accommodate the new pod request",
       "The pod creation is rejected by the admission controller because 1.5Gi + 700Mi exceeds the 2Gi quota",
       "The pod is created but with its memory request automatically reduced to 500Mi to fit within the quota"
@@ -644,7 +644,7 @@ var questions = [
       "A NetworkPolicy that blocks all access to the Kubernetes Secrets API from pods in the namespace",
       "Setting `allowEnvSecrets: false` in the namespace's ResourceQuota spec to block env var mounts",
       "A validating admission webhook or policy engine like OPA Gatekeeper or Kyverno for enforcement",
-      "Configuring RBAC to deny `get` verb access to Secrets for all users within the namespace scope"
+      "Configuring RBAC to deny verbs like `get` on Secrets for all users within the namespace scope"
     ],
     answer: 2,
     explanation: "Validating admission webhooks and policy engines like OPA Gatekeeper or Kyverno can inspect pod specifications and reject those that reference Secrets in `env` or `envFrom` fields. NetworkPolicies control network traffic, not API access patterns. There is no `allowEnvSecrets` field in ResourceQuota. RBAC controls who can access Secrets but cannot distinguish between how pods consume them (env vs volume).\n\nWhy other options are wrong:\n- A: NetworkPolicies control network traffic between pods, not API access patterns for Secrets\n- B: There is no allowEnvSecrets field in ResourceQuota\n- D: RBAC controls who can access Secrets but cannot distinguish how pods consume them (env vs volume)\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/",
@@ -866,7 +866,7 @@ var questions = [
       "Zero is assigned as the request and the pod becomes `BestEffort` quality of service class",
       "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
       "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
-      "The pod creation fails because the admission controller requires explicit requests when limits are set"
+      "The pod creation fails because the admission controller requires explicit requests when limits exist"
     ],
     answer: 1,
     explanation: "When a container specifies a limit but no request for a resource, Kubernetes automatically sets the request equal to the limit. This means the container effectively gets `requests.memory: 256Mi` and `limits.memory: 256Mi`. The pod does not become BestEffort (it has resource specifications) and creation does not fail. Kubernetes does not use a half-of-limit default.\n\nWhy other options are wrong:\n- A: The request is not zero; it is set equal to the limit, so the pod is not BestEffort\n- C: Kubernetes does not use a half-of-limit default for requests\n- D: Pod creation does not fail; Kubernetes auto-sets requests to match limits\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -993,7 +993,7 @@ var questions = [
     options: [
       "There is no difference — both flags produce the same ConfigMap structure with identical keys and values in output",
       "`--from-env-file` creates one key per line like `DB_HOST`, while `--from-file` stores the whole file as one key",
-      "`--from-env-file` only supports `.env` file extensions; `--from-file` supports any arbitrary file extension format",
+      "`--from-env-file` only supports file extensions like `.env`; `--from-file` supports any arbitrary file extension",
       "`--from-env-file` encrypts the values before storing them while `--from-file` stores them in plaintext as given"
     ],
     answer: 1,
@@ -1157,7 +1157,7 @@ var questions = [
     options: [
       "Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps",
       "No — the service mesh manages all configuration including application-specific settings such as database URLs and flags",
-      "No — Istio's VirtualService resources replace ConfigMaps for all configuration needs across every service in the mesh",
+      "No — Istio resources like VirtualService replace ConfigMaps for all configuration needs across every service in the mesh",
       "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
     ],
     answer: 0,

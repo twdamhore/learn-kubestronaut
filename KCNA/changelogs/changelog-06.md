@@ -334,3 +334,33 @@
 ### s06-q037 (structural giveaway — dash character inconsistency)
 - **Problem:** Correct answer B used `--` (two ASCII hyphens) as the structural separator between the command name and description, while all three wrong options (A, C, D) used `—` (Unicode em-dash U+2014). This created a visual structural giveaway where the correct option looked different from the others.
 - **Fix:** Changed option B separator from `--` to `—` to match the em-dash character used in options A, C, and D. Length changed from 85 to 84 chars; ratio improved from 1.09 to 1.08.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-06.js`
+**Issues found**: 7
+
+### s06-q002 — giveaway: "because" unique to correct answer
+- **Problem:** Correct answer C uniquely contained the word "because" ("The scheduler skips node1 because the Pod lacks..."), which no distractor used. This causal conjunction can signal the correct answer.
+- **Fix:** Changed "because" to "since" in option C.
+
+### s06-q023 — giveaway: "because" unique to correct answer
+- **Problem:** Correct answer D uniquely contained "because" ("The cluster continues normally because 2 of 3 members form a quorum").
+- **Fix:** Changed "because" to "as" in option D.
+
+### s06-q038 — giveaway: "because" unique to correct answer
+- **Problem:** Correct answer D uniquely contained "because" ("The Pod continues running because the rule is `IgnoredDuringExecution`").
+- **Fix:** Changed "because" to "since" in option D.
+
+### s06-q059 — giveaway: comma-list unique to correct + length imbalance
+- **Problem:** Correct answer B listed 3 comma-separated flags while all distractors listed 2 flags with "and" (0 commas). Original ratio was 1.09 but the structural pattern was a giveaway. Additionally, after making all options 3-item lists, a length imbalance emerged (ratio 1.27+).
+- **Fix:** Rewrote all four options as 3-item comma-separated flag lists with balanced lengths: A (36), B (33), C (37), D (37). Ratio: 1.12. Updated explanation to match new distractor flag names.
+
+### s06-q065 — giveaway: "like" unique to correct answer
+- **Problem:** Correct answer D uniquely contained "like" ("A policy engine like `OPA Gatekeeper` or `Kyverno`"), providing examples that no distractor offered.
+- **Fix:** Restructured D to "`OPA Gatekeeper` or `Kyverno` policy engine with a custom constraint", removing the "like" exemplary pattern. Also minor rewording of A/B/C for consistency.
+
+### s06-q087 — giveaway: comma-list unique to correct answer
+- **Problem:** Correct answer C had 2 commas (listing sequential steps) while all distractors had 0 commas, creating a structural giveaway.
+- **Fix:** Added commas to distractors A and B by restructuring their phrasing (A: "simultaneously, without validation, for fast consistency"; B: "only, validate it, then leave workers on the old version").

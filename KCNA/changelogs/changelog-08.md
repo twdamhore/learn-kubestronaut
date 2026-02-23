@@ -380,3 +380,21 @@
 ### s08-q096 (giveaway)
 - **Problem:** Correct option B had unique "such as" pattern not present in other options (introduced in R42 rewording).
 - **Fix:** Added "such as" to option A: "only officially hosted CNCF projects such as graduated and incubating". Eliminates unique "such as" pattern.
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-08.js`
+**Issues found**: 3
+
+### s08-q036 — giveaway: unique "like" in correct answer
+- **Problem:** Correct option C (Tekton) uniquely used the word "like" ("CRDs like `Task`, `Pipeline`...") while no distractor contained "like", creating a structural giveaway.
+- **Fix:** Added "like" to option B (Argo CD): changed "that syncs `Application` state from Git" to "that syncs resources like `Application` from Git". Eliminates unique "like" pattern in correct answer.
+
+### s08-q083 — giveaway: unique colon-enumeration in correct answer
+- **Problem:** Correct option D had 2 colons ("entries: one with..." and "role: frontend") while no distractor had any colons, creating a structural giveaway.
+- **Fix:** Rewrote option A to include 2 colons: "A single `from` entry combining both selectors: `podSelector` matching labels and `namespaceSelector`: both conditions must be true". Balances colon-enumeration pattern.
+
+### s08-q092 — giveaway: unique "because" in correct answer
+- **Problem:** Correct option D uniquely used "because" ("cannot start because env var references...") while no distractor contained "because", creating a structural giveaway.
+- **Fix:** Added "because" to option C: changed "transitions to `CrashLoopBackOff` as the application fails" to "transitions to `CrashLoopBackOff` because the application fails". Eliminates unique "because" pattern in correct answer.

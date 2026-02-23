@@ -443,7 +443,7 @@ var questions = [
       "A. Retry the shipping service call with exponential backoff until it succeeds, keeping the saga open indefinitely",
       "B. Execute compensating transactions in reverse: release the inventory reservation, then refund the payment",
       "C. Mark the saga as partially complete and let eventual consistency reconcile service state asynchronously",
-      "D. Roll back using a two-phase commit protocol across all three services to ensure an atomic reversal"
+      "D. Roll back using a two-phase commit protocol across all three services: lock all resources, then atomically reverse"
     ],
     answer: 1,
     explanation: "The Saga pattern handles distributed transaction failures through compensating transactions executed in reverse order. When the shipping service fails, the orchestrator must undo the previously completed steps: first release the inventory reservation (compensate inventory), then issue a payment refund (compensate payment). This maintains eventual consistency. Unlike two-phase commit, sagas do not provide atomicity — they rely on compensating actions. Keeping the saga open indefinitely (option A) would leave resources locked.\n\nWhy other options are wrong:\n- A: Retrying indefinitely keeps resources locked and does not address the failure; it can cause resource starvation and timeout cascading\n- C: Marking as partially complete leaves the system in an inconsistent state; compensating transactions are needed to restore consistency\n- D: Two-phase commit is a different pattern than saga; sagas deliberately avoid 2PC because it requires distributed locks and has availability issues\n\nReference: https://microservices.io/patterns/data/saga.html",
@@ -616,7 +616,7 @@ var questions = [
     text: "An operator creates a `ValidatingWebhookConfiguration` with `failurePolicy: Fail` and a `namespaceSelector` that matches all namespaces. The webhook service goes down. What impact does this have on the cluster?",
     diagram: null,
     options: [
-      "A. Only create and update operations on matched resources are blocked; read operations and deletions continue normally in all namespaces",
+      "A. Only create and update operations on matched resources are blocked; read operations including GET and LIST continue normally in all namespaces",
       "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
       "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
       "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
@@ -1337,7 +1337,7 @@ var questions = [
     diagram: null,
     options: [
       "A. No, `get`/`list`/`watch` only provide read access to secret metadata; the user cannot modify, delete, or escalate privileges via secrets",
-      "B. No, secret values are redacted in `list` and `watch` responses by the API server; only a `get` on a specific secret returns actual encoded data",
+      "B. No, secret values including encoded data are redacted in `list` and `watch` responses; only `get` on a specific secret returns the full values",
       "C. Yes, `list` and `watch` return full secret data, giving the user access to all secrets including service account tokens across namespaces",
       "D. Yes, but only if the user also has `get` on the `secrets/data` subresource, which is required for accessing the base64-encoded values"
     ],

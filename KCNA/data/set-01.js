@@ -601,7 +601,7 @@ var questions = [
     diagram: null,
     options: [
       "`inventory-api.production.pod.cluster.local`, using the Pod DNS subdomain for namespace",
-      "`inventory-api.cluster.local`, as the minimal short-form name from any namespace",
+      "`inventory-api.cluster.local`, because it is the minimal short-form name from any namespace",
       "`production.inventory-api.svc.cluster.local`, following the namespace-first DNS convention",
       "`inventory-api`, because the Service resides in the same namespace as the frontend Pod"
     ],
@@ -648,7 +648,7 @@ var questions = [
     text: "A developer creates a Pod with an `emptyDir` volume shared between two containers. Later, the Pod is rescheduled to a different node. What happens to the data stored in the `emptyDir` volume?",
     diagram: null,
     options: [
-      "The emptyDir data is automatically migrated to the new node by the kubelet during Pod rescheduling",
+      "The emptyDir data is migrated to the new node because the kubelet handles Pod rescheduling",
       "The data persists on the original node and can be manually mounted on the new node later",
       "The data is preserved in `etcd` and restored automatically when the Pod starts on the new node",
       "The data is lost because `emptyDir` volumes share the same lifecycle as the Pod they belong to"
@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "Use separate clusters for each project to ensure complete cost isolation across all teams",
       "Use namespaces per project with `ResourceQuotas` and labels, plus tools like Kubecost",
-      "Use `PodDisruptionBudgets` per project to control spending during disruption events in prod",
+      "Use `PodDisruptionBudgets` per project like a spending cap to control costs during disruptions",
       "Use `PriorityClasses` to assign cost tiers where higher-priority Pods cost more per project"
     ],
     answer: 1,
@@ -1128,7 +1128,7 @@ var questions = [
     text: "A team is running a service mesh in their cluster and notices that each application Pod has an additional container they did not define. This container intercepts all network traffic to and from the application container. What is this pattern called?",
     diagram: null,
     options: [
-      "The init container pattern, which sets up network rules before the application container starts",
+      "The init container pattern, where a container like istio-init sets up network rules at startup",
       "The ambassador pattern, where an external proxy runs as a separate Deployment outside the Pod",
       "The sidecar proxy pattern, where an injected container like Envoy handles service communication",
       "The adapter pattern, which transforms outgoing traffic to a standard protocol for other services"
@@ -1307,7 +1307,7 @@ var questions = [
       "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final production stage",
       "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in a final layer",
       "Build the application on the host machine with native compilers and copy the binary into a `latest` tagged base image",
-      "Use the `--squash` flag to compress all image layers into one, which removes most unused files from the output"
+      "Use a build flag like `--squash` to compress all image layers into one, removing most unused files from the output"
     ],
     answer: 0,
     explanation: "Multi-stage builds allow you to use a full build environment in an early stage and copy only the compiled artifacts into a minimal final stage (like `distroless` or `alpine`). This produces small, secure images without build tools or unnecessary packages. Removing packages from a full image still leaves layer history. Building on the host introduces inconsistencies. The `--squash` flag is experimental and does not selectively remove files from earlier layers.\n\nWhy other options are wrong:\n- B: Removing packages from a full image still leaves layer history and produces a larger image.\n- C: Building on the host introduces environment inconsistencies and may include unnecessary dependencies.\n- D: The --squash flag is experimental and does not selectively remove files from earlier layers.\n\nReference: https://docs.docker.com/build/building/multi-stage/",
@@ -1387,7 +1387,7 @@ var questions = [
       "Asynchronous messaging through a broker like RabbitMQ or Kafka that persists messages",
       "Synchronous REST API calls with retry logic and exponential backoff between services",
       "Shared database tables where services write messages for each other to read and process",
-      "gRPC streaming connections that buffer messages in memory during service downtime periods"
+      "gRPC streaming like bidirectional streams that buffer messages in memory during downtime"
     ],
     answer: 0,
     explanation: "A message broker (like RabbitMQ, Kafka, or NATS JetStream) provides durable, asynchronous communication between services. Messages are persisted in the broker, so if a consuming service is down, messages queue up and are delivered when it recovers. Synchronous REST calls fail when the target is down, even with retries. Shared database tables create tight coupling. gRPC in-memory buffers are lost if either side restarts.\n\nWhy other options are wrong:\n- B: Synchronous REST calls fail when the target is down; retry logic does not solve message persistence during outages.\n- C: Shared database tables create tight coupling between services and are an anti-pattern.\n- D: gRPC in-memory buffers are lost if either side restarts, failing the durability requirement.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
@@ -1465,7 +1465,7 @@ var questions = [
     diagram: null,
     options: [
       "During the build and testing stages, where scanning blocks the pipeline if critical vulnerabilities are found",
-      "After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities",
+      "After deployment to production, where a runtime scanner monitors containers, flags issues, and reports vulnerabilities",
       "At multiple stages: during the build, before deployment via admission control, and in the image registry",
       "Only when developers request it: before a release, during hotfixes, or when external audits require verification"
     ],
@@ -1480,7 +1480,7 @@ var questions = [
     text: "A team uses Argo CD for GitOps-based deployments. They notice that after manually editing a Deployment in the cluster using `kubectl edit`, Argo CD shows the application as `OutOfSync`. What does this status mean?",
     diagram: null,
     options: [
-      "The Git repository has been updated with new changes that have not yet been applied to the cluster",
+      "The Git repository has been updated with new changes that are pending because they have not yet been applied",
       "The live cluster state differs from the desired state in Git because manual edits introduced drift",
       "Argo CD has lost connectivity to the Git repository and cannot verify the current application state",
       "The application has errors and Argo CD reports a health check failure for the deployed resources"

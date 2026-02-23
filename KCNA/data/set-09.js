@@ -170,7 +170,7 @@ var questions = [
     options: [
       "The scheduler assigns it to one of the V100 nodes since both are NVIDIA GPUs with compatible compute capabilities",
       "The Pod remains in <code>Pending</code> state with a FailedScheduling event because no node matches <code>accelerator: nvidia-tesla-a100</code>",
-      "The Pod is scheduled on a V100 node but the container fails to start due to incompatible GPU driver versions",
+      "The Pod is scheduled on a V100 node but the container fails to start because of incompatible GPU driver versions",
       "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with GPU resources"
     ],
     answer: 1,
@@ -248,7 +248,7 @@ var questions = [
     text: "A CronJob is configured with <code>concurrencyPolicy: Forbid</code> and a schedule of <code>*/5 * * * *</code>. A Job triggered at 10:00 takes 7 minutes to complete. What happens at 10:05 when the next scheduled run is due?",
     diagram: null,
     options: [
-      "A second Job is created and runs concurrently alongside the still-active first Job from the 10:00 run",
+      "A second Job is created and runs concurrently because the Forbid policy allows overlapping runs",
       "The CronJob controller terminates the still-running 10:00 Job and immediately starts the 10:05 Job",
       "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job completes",
       "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
@@ -329,7 +329,7 @@ var questions = [
     diagram: null,
     options: [
       "The Pod is created successfully with default CPU values automatically assigned by the cluster scheduler",
-      "The ResourceQuota configuration is automatically adjusted to accommodate the new Pod's requirements",
+      "The ResourceQuota configuration is automatically adjusted because the API server detects unset resource fields",
       "The Pod is created but remains in <code>Pending</code> state until a suitable LimitRange is defined in the namespace",
       "The API server rejects Pod creation because CPU requests and limits must be specified under a quota"
     ],
@@ -458,7 +458,7 @@ var questions = [
     options: [
       "Tekton, which defines CI/CD components (Tasks, Pipelines, PipelineRuns) as Kubernetes CRDs",
       "Prometheus, which provides pipeline monitoring through its alerting engine (Alertmanager rules)",
-      "Envoy, which routes CI/CD pipeline traffic between build stages via its proxy configuration",
+      "Envoy, which routes CI/CD traffic between build, test, and deploy stages via its proxy configuration",
       "Harbor, which stores pipeline definitions alongside container images in its artifact registry"
     ],
     answer: 0,
@@ -875,7 +875,7 @@ var questions = [
       "Each request is proxied through the Envoy sidecar, adding overhead for TLS, routing, and telemetry",
       "Envoy replaces kube-proxy iptables rules, causing slower network packet processing on each node",
       "Envoy sidecars consume all available CPU on the node, starving the application containers of resources",
-      "The service mesh disables TCP connection reuse, forcing a new TCP handshake for every single request"
+      "The service mesh disables connection reuse, forcing new handshakes, slow starts, and teardowns per request"
     ],
     answer: 0,
     explanation: "Envoy sidecar proxies intercept both inbound and outbound traffic for each Pod. Each hop involves the source Pod's Envoy (egress), network transit, and the destination Pod's Envoy (ingress). The proxy adds latency for TLS handshakes, header parsing, load balancing decisions, and metrics collection. This 2-5ms overhead per hop is typical and is the trade-off for the features a service mesh provides.\n\nWhy other options are wrong:\n- B: Envoy does not replace kube-proxy; both operate independently in a service mesh deployment\n- C: Sidecars have resource limits and do not consume all CPU; 2-5ms overhead is from proxying, not starvation\n- D: Service meshes support connection pooling and reuse; they do not disable TCP connection reuse\n\nReference: https://istio.io/latest/docs/ops/deployment/performance-and-scalability/",
@@ -971,7 +971,7 @@ var questions = [
       "Prometheus waits the full 12 seconds and collects the metrics since the response is within <code>scrape_interval</code>",
       "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
       "The scrape fails because the 12-second response exceeds the 10-second <code>scrape_timeout</code> and <code>up</code> reads 0",
-      "The target is permanently dropped from the scrape configuration after three consecutive timeout failures"
+      "The target is dropped from the scrape configuration because three consecutive timeouts trigger its removal"
     ],
     answer: 2,
     explanation: "When a scrape target's response time exceeds the configured `scrape_timeout`, Prometheus records the scrape as failed. The `up` metric for this target is set to `0`, indicating the target is unreachable. Prometheus does not auto-adjust timeouts. The solution is either to optimize the target's `/metrics` endpoint or increase the `scrape_timeout` in the Prometheus configuration.\n\nWhy other options are wrong:\n- A: Prometheus does not wait beyond scrape_timeout; the scrape is aborted and marked as failed\n- B: Prometheus does not auto-adjust timeouts; configuration changes must be made manually\n- D: Prometheus does not drop targets from config after timeouts; they remain and are retried each interval\n\nReference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config",
@@ -1144,7 +1144,7 @@ var questions = [
     text: "A security team wants to scan container images for known vulnerabilities before they are deployed to the Kubernetes cluster. They need a cloud-native open-source solution that integrates with their existing CI/CD pipeline and container registry. Which project should they consider?",
     diagram: null,
     options: [
-      "Falco, which detects runtime security threats and anomalous behavior in running containers on the cluster",
+      "Falco, which detects runtime threats, anomalous syscalls, and policy violations in running containers",
       "Trivy, which scans container images, filesystems, and Git repos for vulnerabilities and misconfigurations",
       "OPA Gatekeeper, which enforces admission control policies on Kubernetes resources during API requests",
       "cert-manager, which automates the management and renewal of TLS certificates for cluster workloads"
@@ -1160,7 +1160,7 @@ var questions = [
     text: "A developer creates a PersistentVolumeClaim requesting <code>10Gi</code> of storage with <code>accessModes: [ReadWriteMany]</code>. The only available StorageClass provisions AWS EBS volumes. What happens?",
     diagram: null,
     options: [
-      "The PVC is bound to a 10Gi EBS volume that supports <code>ReadWriteMany</code> access mode across multiple nodes",
+      "The PVC is bound to a 10Gi EBS volume because EBS natively supports <code>ReadWriteMany</code> access mode across nodes",
       "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume for <code>ReadWriteMany</code> access",
       "The PVC is created with <code>ReadWriteOnce</code> mode, silently downgrading from the requested access mode setting",
       "The PVC stays <code>Pending</code> because EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
@@ -1242,7 +1242,7 @@ var questions = [
     options: [
       "A monolithic API gateway, because it provides a single control point for all traffic policies and is simpler to manage across services",
       "A service mesh, because it embeds mTLS, retries, and circuit breaking into sidecar proxies without requiring application code changes",
-      "Neither; these features should be implemented directly in each microservice's application code for maximum control and flexibility",
+      "Neither; mTLS, retries, and circuit breaking should be implemented directly in each microservice's code for maximum control",
       "A DNS-based load balancer, because it natively supports mTLS and retry logic at the DNS resolution layer for all service traffic"
     ],
     answer: 1,
@@ -1370,7 +1370,7 @@ var questions = [
     options: [
       "Dividing the total cluster cost equally among all teams regardless of their actual resource consumption",
       "Using namespace resource quotas and labels with tools like Kubecost to map actual usage to team costs",
-      "Assigning each team a dedicated node pool and billing based on node count regardless of utilization",
+      "Assigning each team a dedicated node pool like a GPU or compute tier and billing based on node count",
       "Monitoring only the number of Pods per team since all Pods are assumed to consume equal resources"
     ],
     answer: 1,
@@ -1499,7 +1499,7 @@ var questions = [
       "Kubernetes object state metrics like Deployment replicas, Pod phase, and Job status from the API",
       "Node CPU utilization and memory usage at the hardware level collected from system-level exporters",
       "Container-level resource consumption metrics such as CPU throttling and memory working set size",
-      "Network bandwidth metrics for inter-Pod communication measured at the container network interface"
+      "Network bandwidth metrics like bytes sent and received for inter-Pod communication at the network interface"
     ],
     answer: 0,
     explanation: "kube-state-metrics generates metrics about the state of Kubernetes objects by watching the API server. It exposes information like the number of desired vs. available replicas in a Deployment, Pod phase (Pending, Running, Failed), Job success/failure counts, and node conditions. These are complementary to node_exporter (hardware metrics) and cAdvisor (container resource metrics).\n\nWhy other options are wrong:\n- B: Node CPU/memory usage is provided by node_exporter and cAdvisor, not kube-state-metrics\n- C: Container-level resource metrics are exposed by cAdvisor, not kube-state-metrics\n- D: Network bandwidth metrics are from node_exporter or cAdvisor, not kube-state-metrics\n\nReference: https://github.com/kubernetes/kube-state-metrics",

@@ -334,3 +334,30 @@
 ### s07-q093 (giveaway)
 - **Problem:** Correct answer B had a unique "such as" pattern ("such as a manual kill command") not present in any distractor.
 - **Fix:** Added matching "such as" pattern to option A: changed "calls exit(137) in its error handler to signal a custom fatal error condition" to "calls exit(137) in its error handler, such as a custom fatal error condition sent to the orchestration layer".
+
+---
+
+## Round 44 — 2026-02-23
+**File**: `set-07.js`
+**Issues found**: 7
+
+### s07-q032 — giveaway: "because" unique to correct answer B
+- Added "because" to distractor D: changed "The pod enters `Pending` state while the scheduler waits for the ConfigMap to be updated with the missing key before proceeding with scheduling" to "The pod enters `Pending` state because the scheduler waits for the ConfigMap to be updated with the missing key before proceeding".
+
+### s07-q039 — giveaway: "like X or Y" unique to correct answer C
+- Added "like" pattern to distractor B: changed "Restarting all pods in the request chain to clear any stale connections or cached network state data" to "Restarting all pods in the request chain like Services B and C to clear any stale connections or cached state".
+
+### s07-q047 — giveaway: "because" unique to correct answer B
+- Added "because" to distractor D: changed "No, Kubernetes immediately terminates the entire pod when any container enters a crash loop back-off waiting state in the pod" to "No, Kubernetes immediately terminates the entire pod because any container entering a crash loop triggers full pod replacement".
+
+### s07-q055 — giveaway: "including" unique to correct answer A
+- Added "including" to distractor B: changed "The NetworkPolicy Ingress rule only allows traffic from app=frontend, so the database pods are denied inbound connections from the api pods entirely" to "The NetworkPolicy Ingress rule only allows traffic from app=frontend, including its replicas, so the database pods are denied inbound api connections".
+
+### s07-q069 — giveaway: "because" unique to correct answer A
+- Added "because" to distractor C: changed "Yes, different mount paths create isolated storage spaces within the same `emptyDir` volume, preventing cross-container access" to "Yes, different mount paths create isolated storage spaces because `emptyDir` segments data per mount, preventing cross-access".
+
+### s07-q078 — giveaway: "because" unique to correct answer B
+- Added "because" to distractor A: changed "All old pods are immediately terminated by the deployment controller to make room for the new replacement pod instances" to "All old pods are immediately terminated because the deployment controller needs room for the new replacement pod instances".
+
+### s07-q081 — giveaway: "because" unique to correct answer C
+- Added "because" to distractor A: changed "The writes silently fail and the application receives I/O errors after reaching the 100Mi size boundary" to "The writes silently fail because the kernel enforces a hard cap, and the application receives I/O errors". Also kept length balanced (ratio 1.040).

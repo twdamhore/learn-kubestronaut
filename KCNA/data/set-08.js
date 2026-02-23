@@ -571,7 +571,7 @@ var questions = [
     diagram: null,
     options: [
       "Argo Workflows — uses `Workflow` and `WorkflowTemplate` CRDs to define multi-step container-native DAG pipelines",
-      "Argo CD — a GitOps continuous delivery tool that syncs `Application` state from Git to Kubernetes clusters",
+      "Argo CD — a GitOps continuous delivery tool that syncs resources like `Application` from Git to Kubernetes clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task`, `Pipeline`, and `PipelineRun`",
       "Flux — a GitOps toolkit that reconciles cluster state from `GitRepository` and `Kustomization` sources continuously"
     ],
@@ -1324,7 +1324,7 @@ var questions = [
     text: "A team needs to implement a NetworkPolicy that allows ingress traffic to their `web` Pods only from Pods labeled `role: frontend` in the same namespace and from any Pod in the `monitoring` namespace. Which NetworkPolicy spec achieves this?",
     diagram: null,
     options: [
-      "A single `from` entry with both `podSelector` and `namespaceSelector`, requiring both conditions true simultaneously for every match",
+      "A single `from` entry combining both selectors: `podSelector` matching labels and `namespaceSelector`: both conditions must be true",
       "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
       "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from all `monitoring` namespace Pods for egress traffic controls",
       "Two separate `from` entries: one with `podSelector` matching `role: frontend`, and another with `namespaceSelector` for `monitoring`"
@@ -1470,7 +1470,7 @@ var questions = [
     options: [
       "`CreateContainerConfigError` is transient and resolves once the kubelet retries and skips the missing Secret refs",
       "The kubelet creates the missing Secret automatically with empty default values and proceeds to start the container",
-      "The Pod is scheduled but transitions to `CrashLoopBackOff` as the application fails to read missing credentials",
+      "The Pod is scheduled but transitions to `CrashLoopBackOff` because the application fails to read missing credentials",
       "The container cannot start because env var references to a non-existent Secret cause `CreateContainerConfigError`"
     ],
     answer: 3,
