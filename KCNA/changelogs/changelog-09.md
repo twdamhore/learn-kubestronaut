@@ -411,3 +411,27 @@
 ### s09-q095 (length-balance + giveaway)
 - **Option C:** Trimmed ~120->103 chars. Changed "namespace-scoped resources like Pods" to "Pods or Deployments".
 - **Option D (answer):** Trimmed ~115->108 chars. Changed "annotations are non-identifying metadata not used by" to "annotations store non-identifying metadata not used by" and "labels are required for selection" to "labels handle selection".
+
+---
+
+# Round 43 Review - Set 09
+
+**Date:** 2026-02-23
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 5 across 3 questions
+
+## Changes
+
+### s09-q005 (giveaway - code tag imbalance)
+- **Option A:** Added `<code>kubernetes_sd_configs</code>` to balance code tag presence across options. Trimmed "allocated" to keep length under ratio 1.15.
+- **Option C:** Added `<code>ServiceMonitor</code>` to balance code tag presence. Trimmed trailing phrase for length balance.
+- Previously only the correct answer (D) had a `<code>` tag, making it visually distinct. Now A, C, and D all have code formatting.
+
+### s09-q023 (giveaway - code density imbalance)
+- **Option A:** Added `<code>LoadBalancer</code>` around the Service type to add a code tag (was 0, now 1).
+- **Option C:** Added `<code>ClusterIP</code>` around the address type to add a code tag (was 0, now 1).
+- Previously A and C had 0 code tags while the correct answer D had 3. Now all four options have at least 1 code tag.
+
+### s09-q098 (giveaway - code tag imbalance)
+- **Option B:** Added `<code>timeoutSeconds</code>` to balance code tag presence. Changed "until the endpoint becomes reachable" to "until the timeoutSeconds value expires" to naturally incorporate the code term.
+- Previously only the correct answer (A) had a `<code>` tag. Now A and B both have code formatting.

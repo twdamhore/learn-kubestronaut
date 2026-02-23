@@ -206,7 +206,7 @@ var questions = [
       "OpenEBS — a container-attached storage solution providing per-pod local block volumes"
     ],
     answer: 2,
-    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF incubating project, not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF incubating project, not graduated\n\nReference: https://www.cncf.io/projects/rook/",
+    explanation: "Rook is a CNCF graduated project that provides storage orchestration for Kubernetes, with its primary use case being managing Ceph clusters. It turns distributed storage into self-managing, self-scaling, and self-healing services. Longhorn is a CNCF incubating project that provides block storage and does not orchestrate Ceph clusters. MinIO is not a CNCF-hosted project. OpenEBS is a CNCF sandbox project (re-accepted October 2024), not graduated.\n\nWhy other options are wrong:\n- A: Longhorn is a CNCF incubating project providing block storage but does not orchestrate Ceph clusters\n- B: MinIO is not a CNCF-hosted project; it is a standalone S3-compatible object storage server\n- D: OpenEBS is a CNCF sandbox project (re-accepted October 2024), not graduated\n\nReference: https://www.cncf.io/projects/rook/",
     verify: null
   },
   {
@@ -283,7 +283,7 @@ var questions = [
       "Examine kubelet logs, CSI driver logs, and `kubectl describe pv/pvc` events for storage errors",
       "Check Elasticsearch application logs, JVM heap dumps, and container restart counts for storage errors",
       "Review the kube-scheduler logs for scheduling decisions related to pod placement on specific nodes",
-      "Check the kube-apiserver audit logs for PVC creation timestamps and API request latencies"
+      "Check the `kube-apiserver` audit logs for PVC creation timestamps and API request latencies"
     ],
     answer: 0,
     explanation: "Storage I/O issues require a multi-layer debugging approach. The kubelet logs contain volume mount/unmount operations and errors. CSI driver logs show low-level storage operations. The events on PV and PVC objects (visible via `kubectl describe`) reveal binding issues, provisioning failures, and attachment errors. Application logs alone miss infrastructure-level problems.\n\nWhy other options are wrong:\n- B: Application-level diagnostics like logs and heap dumps do not reveal infrastructure storage failures at the CSI or kubelet layer\n- C: Scheduler logs show pod placement decisions, not storage I/O errors or data corruption details\n- D: API server audit logs show API request timing, not storage-level I/O or corruption diagnostics\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
@@ -728,8 +728,8 @@ var questions = [
     text: "A PV is created with `persistentVolumeReclaimPolicy: Recycle`. What does the `Recycle` policy do when the bound PVC is deleted?",
     diagram: null,
     options: [
-      "The PV and its underlying storage resource are permanently deleted from the backend by the volume controller",
-      "The PV is archived to a designated backup location in the cluster before its data is deleted permanently",
+      "The PV and its storage are permanently removed via the `Delete` action by the volume controller",
+      "The PV is moved to an `Archived` state in a backup location before its data is removed permanently",
       "The PV runs a basic `rm -rf` on the volume contents and returns to `Available` state for new claims",
       "The PV is retained indefinitely in `Released` state until an administrator performs a manual cleanup step"
     ],
@@ -1066,8 +1066,8 @@ var questions = [
     options: [
       "Use `RollingUpdate` with `partition` set to progressively lower values, verifying health each step",
       "Use `Recreate` strategy to replace all ZooKeeper nodes simultaneously in a single update batch run",
-      "Delete the StatefulSet entirely and recreate it from scratch with the new container image version",
-      "Scale the StatefulSet down to 0 replicas, update the spec, verify health, then scale back up"
+      "Delete the StatefulSet with `kubectl delete` and recreate it from scratch with the new image version",
+      "Scale the StatefulSet to `replicas: 0`, update the pod template spec, then scale back up to verify"
     ],
     answer: 0,
     explanation: "The `partition` field in StatefulSet `RollingUpdate` strategy enables staged rollouts. Start with `partition: 4` to update only `pod-4`. After verifying health, set `partition: 3` to also update `pod-3`, and continue until all nodes are updated. This canary approach is ideal for clustered applications like ZooKeeper that require quorum maintenance during updates.\n\nWhy other options are wrong:\n- B: Recreate strategy does not exist for StatefulSets; it would also cause total cluster unavailability\n- C: Deleting and recreating the StatefulSet loses stability guarantees and causes full downtime\n- D: Scaling to 0 causes full downtime; the partition approach allows zero-downtime rolling updates\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
@@ -1083,10 +1083,10 @@ var questions = [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
       "The PVC was accidentally deleted during the node reboot process and no longer exists in the cluster",
       "The PV is still attached to the old node because the stale `VolumeAttachment` object was not cleaned up",
-      "The CSI driver requires a graceful unmount from the rebooted node before it allows reattachment to a new node"
+      "The CSI driver requires a graceful `NodeUnstageVolume` call from the rebooted node before reattachment"
     ],
     answer: 2,
-    explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: The Multi-Attach error is caused by a stale VolumeAttachment object, not a CSI driver design requirement for graceful unmount; the old node was rebooting and could not perform a graceful detach\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    explanation: "A `Multi-Attach` error occurs when a `ReadWriteOnce` volume is still considered attached to the original node. After a node failure, the `VolumeAttachment` object may not be cleaned up immediately, especially if the node is unreachable. The `--force` delete of the old pod or waiting for the node lease to expire resolves this by allowing volume detach.\n\nWhy other options are wrong:\n- A: Image pull issues cause ImagePullBackOff, not Multi-Attach errors in ContainerCreating state\n- B: If the PVC were deleted, the error would be about a missing claim, not Multi-Attach\n- D: The Multi-Attach error is caused by a stale VolumeAttachment object, not a missing NodeUnstageVolume call; the old node was rebooting and could not perform any RPC\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: "kubectl get volumeattachment"
   },
   {
@@ -1416,7 +1416,7 @@ var questions = [
     text: "A container image includes a `VOLUME` instruction in the Dockerfile. When this container runs in Kubernetes without any volume mounts defined in the pod spec, what happens?",
     diagram: null,
     options: [
-      "The runtime creates an anonymous `emptyDir`-like volume at the path, managed by the container runtime as a Kubernetes-tracked ephemeral volume attached to the pod lifecycle",
+      "The runtime creates an anonymous `emptyDir`-like volume at the path \u2014 managed by Kubernetes as a tracked ephemeral volume attached to the pod lifecycle and visible in the pod spec",
       "Kubernetes automatically creates a PersistentVolumeClaim for the VOLUME path declared in the image and binds it to a dynamically provisioned PV via the default StorageClass",
       "The VOLUME instruction is not translated into Kubernetes volume mounts \u2014 the container runtime may create anonymous bind mounts, but these are outside Kubernetes management",
       "The pod fails to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects containers with unmatched VOLUME declarations"
@@ -1576,13 +1576,13 @@ var questions = [
     text: "A developer defines a `StorageClass` with `parameters.type: gp3` and `parameters.iops: \"5000\"` for an AWS EBS CSI driver. What do these parameters control?",
     diagram: null,
     options: [
-      "The Kubernetes scheduler's disk I/O priority for pods using this StorageClass for their volume claims",
+      "The Kubernetes scheduler's disk I/O priority \u2014 `gp3` maps to high priority and `iops` sets the queue depth",
       "The maximum I/O rate that the `kubelet` allows for volume operations performed on the mounted PV path",
       "The provisioned cloud disk characteristics — `gp3` sets the EBS volume type and `iops` sets the IOPS",
       "The replication factor for the PV across availability zones managed by the EBS CSI driver controller"
     ],
     answer: 2,
-    explanation: "StorageClass `parameters` are passed directly to the CSI provisioner, which uses them when creating the underlying storage. For the AWS EBS CSI driver, `type: gp3` creates a gp3 EBS volume, and `iops: \"5000\"` provisions 5000 IOPS. These are cloud-provider-specific settings that the CSI driver translates into API calls to the storage backend.\n\nWhy other options are wrong:\n- A: The scheduler does not have a disk I/O priority mechanism controlled by StorageClass parameters\n- B: The kubelet does not enforce I/O rate limits based on StorageClass parameters; IOPS is a cloud disk setting\n- D: StorageClass parameters like type and iops configure the disk itself, not cross-zone replication\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#parameters",
+    explanation: "StorageClass `parameters` are passed directly to the CSI provisioner, which uses them when creating the underlying storage. For the AWS EBS CSI driver, `type: gp3` creates a gp3 EBS volume, and `iops: \"5000\"` provisions 5000 IOPS. These are cloud-provider-specific settings that the CSI driver translates into API calls to the storage backend.\n\nWhy other options are wrong:\n- A: The scheduler does not have a disk I/O priority or queue depth mechanism controlled by StorageClass parameters\n- B: The kubelet does not enforce I/O rate limits based on StorageClass parameters; IOPS is a cloud disk setting\n- D: StorageClass parameters like type and iops configure the disk itself, not cross-zone replication\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#parameters",
     verify: "kubectl get storageclass <name> -o jsonpath='{.parameters}'"
   },
   {

@@ -304,3 +304,33 @@
 ### s07-q092 (giveaway)
 - **Problem:** Correct answer C had a unique em-dash not present in any distractor.
 - **Fix:** Added em-dash to option B: changed "indicates a monitoring error and the actual" to "indicates a monitoring error—the actual".
+
+---
+
+# Round 43 Review - Set 07
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 5 across 5 questions
+
+## Changes
+
+### s07-q037 (length-balance)
+- **Problem:** Option A (97 chars) was too short compared to option B (110 chars), creating a ratio of 1.134.
+- **Fix:** Expanded option A from "determines when the pod first receives Service traffic" to "determines when the pod first receives Service traffic from clients" (97->110 chars). Ratio reduced from 1.134 to 1.068.
+
+### s07-q045 (giveaway)
+- **Problem:** Correct answer A had a unique "like X or Y" pattern ("like Fluentd or Loki") not present in any distractor.
+- **Fix:** Added matching "like" pattern to option D: changed "which automatically captures full container logs (via the API server) on pod termination events" to "which captures full container logs like stdout and stderr on pod termination events automatically".
+
+### s07-q067 (length-balance)
+- **Problem:** Options C (98 chars) and D (99 chars) were notably shorter than A (111) and B (111), creating a ratio of 1.133.
+- **Fix:** Expanded option C from "starts a shell at boot time" to "starts a shell process at container boot time" (98->116 chars). Expanded option D from "to allow root access to the system process" to "to allow elevated root access to the host system process" (99->113 chars). Ratio reduced from 1.133 to 1.045.
+
+### s07-q091 (giveaway)
+- **Problem:** Correct answer A had a unique "such as" pattern ("such as assigning an IP or setting up veth pairs") not present in any distractor.
+- **Fix:** Added matching "such as" pattern to option B: changed "failed to pull the required container image from the configured registry endpoint" to "failed to pull the required container image, such as a missing tag or registry timeout".
+
+### s07-q093 (giveaway)
+- **Problem:** Correct answer B had a unique "such as" pattern ("such as a manual kill command") not present in any distractor.
+- **Fix:** Added matching "such as" pattern to option A: changed "calls exit(137) in its error handler to signal a custom fatal error condition" to "calls exit(137) in its error handler, such as a custom fatal error condition sent to the orchestration layer".

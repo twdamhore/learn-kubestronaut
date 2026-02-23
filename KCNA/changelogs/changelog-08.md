@@ -326,3 +326,57 @@
 
 ### s08-q096 (giveaway)
 - **Option B (correct):** Reworded from "runtime, orchestration, observability, and the wider ecosystem" to "categories such as runtime and orchestration and observability" (126 chars). Eliminates unique 3-comma pattern not present in other options.
+
+---
+
+# Round 43 Review - Set 08
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 11 across 11 questions
+
+## Changes
+
+### s08-q017 (giveaway)
+- **Problem:** Correct option D had unique "including" pattern not present in other options.
+- **Fix:** Added "including" to option A: "missing runtime binaries including `curl` and TLS libraries needed for HTTPS connections". Eliminates unique keyword pattern.
+
+### s08-q031 (giveaway)
+- **Problem:** Correct option B had unique parenthetical "(or selected subset of)" and unique em-dash not present in other options.
+- **Fix:** Added em-dashes and parentheticals to options A, C, D: A now "Deployment — ... adjusted (scaled) ...", C now "StatefulSet — ...", D now "Job — ... (full) node count". Eliminates unique structural patterns.
+
+### s08-q052 (giveaway)
+- **Problem:** Correct option A had unique parenthetical pattern with "O(1)" while other options had no parentheticals.
+- **Fix:** Added parenthetical to option B: "mutual TLS (mTLS)" to balance parenthetical usage.
+
+### s08-q060 (giveaway)
+- **Problem:** Correct option A had unique parenthetical "(Sentry)" while other options had no parentheticals.
+- **Fix:** Added parentheticals to options B "(AES)" and C "(KVM)" to balance structural patterns.
+
+### s08-q063 (giveaway/length-balance)
+- **Problem:** Correct option B had unique parentheticals "(500m)" and "(256Mi)" while other options had none.
+- **Fix:** Added parentheticals to options A "(closest)" and D "(A and B)". Trimmed A from 111 to 101 chars and adjusted D to avoid ratio exceeding 1.15.
+
+### s08-q064 (giveaway)
+- **Problem:** Correct option B had unique "including" pattern not present in other options.
+- **Fix:** Added "including" to option A: "using lighter-weight databases including SQLite in development". Eliminates unique keyword pattern.
+
+### s08-q075 (giveaway)
+- **Problem:** Correct option B had unique parenthetical "(Network File System)" while other options had none.
+- **Fix:** Added parentheticals to options A "(Elastic Block Store)" and C "(Persistent Volume)". Eliminates unique parenthetical in correct answer.
+
+### s08-q085 (giveaway)
+- **Problem:** Correct option A had unique em-dash pattern; options C and D lacked em-dashes entirely.
+- **Fix:** Added em-dashes to options C and D: C now "inside the same container as the application — minimize network latency...", D now "in the application source — ensure reliability...". Eliminates unique em-dash giveaway.
+
+### s08-q087 (giveaway)
+- **Problem:** Correct option A had unique parenthetical "(reserved capacity)" while other options had none.
+- **Fix:** Added parentheticals to options B "(unschedulable remainder)" and C "(CFS)". Eliminates unique parenthetical in correct answer.
+
+### s08-q091 (giveaway)
+- **Problem:** Correct option C had unique "such as" pattern not present in other options (introduced in R42 rewording).
+- **Fix:** Added "such as" to option A: "record audit logs of API server decisions such as authentication and authorization". Eliminates unique "such as" pattern.
+
+### s08-q096 (giveaway)
+- **Problem:** Correct option B had unique "such as" pattern not present in other options (introduced in R42 rewording).
+- **Fix:** Added "such as" to option A: "only officially hosted CNCF projects such as graduated and incubating". Eliminates unique "such as" pattern.

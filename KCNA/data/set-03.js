@@ -138,11 +138,11 @@ var questions = [
     options: [
       "No — pods on different nodes traverse kube-proxy which performs source NAT on cross-node packets",
       "Yes — the Kubernetes networking model requires every pod to have a unique routable IP without NAT",
-      "Cross-node communication requires a `LoadBalancer` Service to bridge node boundaries for pods",
-      "Cross-node communication requires both pods to share the same namespace and network policy selector"
+      "Yes — but only through a `LoadBalancer` Service that explicitly bridges the node boundary for pods",
+      "No — both pods must share the same namespace and network policy selector to allow cross-node traffic"
     ],
     answer: 1,
-    explanation: "The Kubernetes networking model mandates that every pod gets a unique, routable IP and that pods can communicate directly across nodes without NAT. CNI plugins like Calico implement this requirement using BGP, VXLAN, or IP-in-IP overlays. kube-proxy handles Service traffic, not direct pod-to-pod traffic. Neither Services nor namespace boundaries affect this fundamental guarantee.\n\nWhy other options are wrong:\n- A: kube-proxy handles Service-level traffic (ClusterIP, NodePort), not direct pod-to-pod communication, and does not perform source NAT on pod traffic.\n- C: A LoadBalancer Service is for external access; it is not needed for basic pod-to-pod communication across nodes.\n- D: Namespace boundaries and network policy selectors do not affect the fundamental pod-to-pod networking guarantee.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
+    explanation: "The Kubernetes networking model mandates that every pod gets a unique, routable IP and that pods can communicate directly across nodes without NAT. CNI plugins like Calico implement this requirement using BGP, VXLAN, or IP-in-IP overlays. kube-proxy handles Service traffic, not direct pod-to-pod traffic. Neither Services nor namespace boundaries affect this fundamental guarantee.\n\nWhy other options are wrong:\n- A: kube-proxy handles Service-level traffic (ClusterIP, NodePort), not direct pod-to-pod communication, and does not perform source NAT on pod traffic.\n- C: A LoadBalancer Service is for external access; pods communicate directly across nodes without one.\n- D: Namespace boundaries and network policy selectors do not affect the fundamental pod-to-pod networking guarantee.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/networking/",
     verify: null
   },
   {
@@ -1160,13 +1160,13 @@ var questions = [
     text: "A network engineer wants to detect when a `NetworkPolicy` is misconfigured and blocking legitimate traffic. Which metric from kube-state-metrics is most useful?",
     diagram: null,
     options: [
-      "`kube_networkpolicy_labels` showing policy labels attached to the resources in the namespace",
+      "No single metric captures this; correlate `kube_networkpolicy_labels` with pod traffic counters",
       "`kube_pod_status_phase` tracking pods stuck in `Pending` state; helpful for scheduling issues",
       "`kube_pod_container_status_restarts_total` counting restarts such as those from network errors",
       "No built-in metric exists; the engineer should use CNI-level tools like Cilium's `Hubble`"
     ],
     answer: 3,
-    explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: `kube_networkpolicy_labels` shows labels on policy objects but cannot detect blocked traffic from misconfigured policies.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
+    explanation: "kube-state-metrics exposes metadata about NetworkPolicy objects but does not track actual traffic blocked by policies. To detect blocked legitimate traffic, engineers need CNI-level tools such as Cilium's flow logs (Hubble), Calico flow logs, or eBPF-based monitoring. Pod phase and restart metrics may show symptoms but do not directly indicate policy misconfiguration.\n\nWhy other options are wrong:\n- A: Correlating `kube_networkpolicy_labels` with pod traffic counters does not reveal policy misconfiguration because the labels metric only exposes metadata, not traffic flow data.\n- B: `kube_pod_status_phase` tracks pod phases like Pending but does not indicate network connectivity issues from policies.\n- C: `kube_pod_container_status_restarts_total` counts container restarts but restarts may have many causes unrelated to NetworkPolicy.\n\nReference: https://docs.cilium.io/en/stable/observability/hubble/",
     verify: null
   },
   {
@@ -1418,7 +1418,7 @@ var questions = [
     options: [
       "Yes, because `10.0.5.15` is within the `10.0.0.0/8` CIDR and matches the allow rule",
       "No, because `10.0.5.15` falls within the `except` block `10.0.5.0/24` and is excluded",
-      "Yes, because the `except` clause is evaluated differently for `egress` than for ingress rules",
+      "Yes, because the `except` clause is evaluated differently for `egress` than for ingress",
       "No, because `ipBlock` rules with `cidr` in the `10.x.x.x` range have reduced enforcement"
     ],
     answer: 1,

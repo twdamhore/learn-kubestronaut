@@ -358,3 +358,38 @@
 
 ### s04-q087 (length-balance)
 - **Option B (correct):** Expanded from 101 to 109 chars by adding "storage" before "issues". Ratio improved from 1.11 to 1.09.
+
+---
+
+# Round 43 Review - Set 04
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 10 across 7 questions
+
+## Changes
+
+### s04-q013 (accuracy)
+- **Explanation:** Changed OpenEBS from "CNCF incubating" to "CNCF sandbox project (re-accepted October 2024)". OpenEBS was archived and re-accepted to CNCF sandbox in Oct 2024; it was never promoted to incubating. The Round 38 change was based on incorrect information.
+
+### s04-q018 (giveaway)
+- **Option D:** Added backtick-quoted `kube-apiserver` to break unique backtick pattern in correct answer A (was A=2, B=0, C=0, D=0; now A=2, D=2).
+
+### s04-q046 (giveaway)
+- **Option A:** Added backtick-quoted `Delete` to break backtick imbalance (was A=0, B=0, C=4, D=2; now A=2, B=2, C=4, D=2). Also trimmed to 95 chars.
+- **Option B:** Added backtick-quoted `Archived` to further balance backticks. Trimmed from 109 to 98 chars. Ratio improved from 1.13 to 1.11.
+
+### s04-q067 (giveaway)
+- **Option C:** Added backtick-quoted `kubectl delete` to break backtick imbalance (was C=0; now C=2).
+- **Option D:** Added backtick-quoted `replicas: 0` to break backtick imbalance (was D=0; now D=2). All four options now have backticks (A=4, B=2, C=2, D=2).
+
+### s04-q068 (giveaway)
+- **Option D:** Added backtick-quoted `NodeUnstageVolume` to break unique backtick pattern in correct answer C (was C=2, all others 0; now C=2, D=2). Changed "graceful unmount" to "graceful `NodeUnstageVolume` call".
+- **Explanation D:** Updated to reference "missing NodeUnstageVolume call" instead of "graceful unmount".
+
+### s04-q089 (giveaway)
+- **Option A:** Added em-dash to break unique em-dash in correct answer C (was only C had em-dash; now A and C both have em-dashes). Restructured from comma-separated to em-dash clause.
+
+### s04-q099 (giveaway)
+- **Option A:** Added em-dash and backtick-quoted `gp3` and `iops` to break unique em-dash and reduce backtick density gap in correct answer C (was C only had em-dash, C=4 backticks vs A=0; now A and C both have em-dashes, A=4 and C=4 backticks).
+- **Explanation A:** Updated to reference "queue depth mechanism" to match revised option text.

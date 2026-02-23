@@ -320,3 +320,17 @@
 
 ### s06-q100 (length-balance/giveaway)
 - **Option B:** Expanded from 52 to 55 chars ("matched by it"). **Option C (correct):** Trimmed from 59 to 55 chars ("by this wildcard form"). Correct answer was longest; now tied. Ratio improved from 1.13 to 1.05.
+
+---
+
+# Round 43 Review - Set 06
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 1 across 1 question
+
+## Changes
+
+### s06-q037 (structural giveaway — dash character inconsistency)
+- **Problem:** Correct answer B used `--` (two ASCII hyphens) as the structural separator between the command name and description, while all three wrong options (A, C, D) used `—` (Unicode em-dash U+2014). This created a visual structural giveaway where the correct option looked different from the others.
+- **Fix:** Changed option B separator from `--` to `—` to match the em-dash character used in options A, C, and D. Length changed from 85 to 84 chars; ratio improved from 1.09 to 1.08.

@@ -438,3 +438,36 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 - **Option A (correct):** Trimmed from 119 to 113 chars. Changed "still honors" to "honors".
 - **Option B:** Added backticks around `zone-b` and `zone-c` to balance A's backtick density. Changed "based solely on" to "based on".
 - **Option C:** Added backtick around `DoNotSchedule` to balance backtick density.
+
+---
+
+# Round 43 Review - Set 10
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 10 option adjustments across 7 questions
+
+## Changes
+
+### s10-q016 (length-balance — C outlier at 156, others ~138, ratio 1.139)
+- **Option C:** Trimmed from 156 to 139 chars. Changed "which is below the 100-miss threshold" to "below the 100-miss threshold" and "immediately after" to "once".
+
+### s10-q024 (length-balance — ratio 1.137, A=117 vs D=133)
+- **Option A:** Expanded from 117 to 125 chars. Added "cluster" before "routing".
+- **Option D:** Trimmed from 133 to 119 chars. Changed "regardless of health check results" to "ignoring health checks".
+
+### s10-q031 (giveaway — unique em-dash in correct B)
+- **Option B (correct):** Replaced em-dash with ", so". Changed "form an AND condition — both must match" to "form an AND condition, so both must match".
+
+### s10-q036 (giveaway — unique em-dash in correct C)
+- **Option C (correct):** Replaced em-dash with colon. Changed "depends on the Rego policy — if it only" to "depends on the Rego policy: if it only".
+
+### s10-q045 (giveaway — unique "because" in correct A)
+- **Option C:** Added "because" to balance. Changed "if actual memory consumption exceeds" to "because actual memory consumption may exceed".
+
+### s10-q052 (giveaway — unique "because" in correct A)
+- **Option D:** Added "because" to balance. Changed "which bypasses the read-only constraint" to "because subPath bypasses the read-only constraint".
+
+### s10-q061 (correct A longest at 117 + backtick density imbalance — D had 0 backticks)
+- **Option A (correct):** Trimmed from 117 to 112 chars. Changed "the original path `/v2/users`, but `api-v2` expects requests at `/users` without the path prefix" to "the original `/v2/users` path, but `api-v2` expects requests at `/users` without the prefix".
+- **Option D:** Added backticks around `/v2/users` and `api-v1` to balance backtick density (0 to 4 backticks).

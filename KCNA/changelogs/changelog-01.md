@@ -349,3 +349,30 @@
 ### s01-q096 (length-balance)
 - **Option C:** Added "via the autoscaler" and changed "the 5th Pod schedules once the node joins" to "the 5th Pod schedules once it joins" to expand from 89ch to 102ch.
 - **Option D:** Added "total" before "cluster capacity" to expand from 89ch to 95ch. Ratio improved from 1.146 to 1.074.
+
+---
+
+# Round 43 Review - Set 01
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 8 across 5 questions
+
+## Changes
+
+### s01-q050 (giveaway - unique comma-list)
+- **Option A:** Changed from `"The runtime behavior of containers including CPU and memory limits enforcement policies"` to `"The runtime behavior of containers including CPU limits, memory limits, and enforcement"`, adding a 3-item comma-list to match the comma-list structure in correct answer B.
+- **Option D:** Changed from `"The signing and verification process for container images in production registries"` to `"The signing, verification, and trust process for container images in production registries"`, adding a 3-item comma-list.
+
+### s01-q058 (giveaway - unique em-dash)
+- **Option A:** Changed from `"It reduces container image sizes because only changed layers need to be rebuilt each time"` to `"It reduces container image sizes — only the changed layers need to be rebuilt each time"`, adding an em-dash to match the em-dash structure in correct answer C.
+
+### s01-q069 (giveaway - unique comma-list)
+- **Option B:** Changed from `"Kubernetes deletes the existing Deployment and recreates it from the updated YAML manifest definitions"` to `"Kubernetes deletes the existing Deployment, its ReplicaSet, and all Pods, then recreates from the new YAML"`, adding a 3-item comma-list to match the comma-list in correct answer C. Updated explanation bullet for option B to match.
+
+### s01-q085 (giveaway - unique comma-list + length-balance)
+- **Option A:** Changed from `"The PVC requests more storage than any node has available disk space for provisioning"` to `"The PVC requests more capacity than available disk space, storage quota, or node resources"`, adding a 3-item comma-list to match the comma-list in correct answer C.
+- **Option B:** Added "suitable" before "node" to expand from 82ch to 91ch, improving overall length balance. Ratio improved from 1.061 to 1.058.
+
+### s01-q092 (giveaway - unique colon + comma-list)
+- **Option D:** Changed from `"When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"` to `"Only when developers request it: before a release, during hotfixes, or when external audits require verification"`, adding both a colon-enumeration and a 3-item comma-list to match the structural pattern in correct answer C. Updated explanation bullet for option D to match.

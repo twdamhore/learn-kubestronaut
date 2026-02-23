@@ -1026,10 +1026,10 @@ var questions = [
       "No — the total requested would be 4.5 CPU, exceeding the 4 CPU allocatable capacity on this node",
       "Yes — the scheduler looks at actual usage, not requests, and the node likely has spare CPU available",
       "Yes — CPU is compressible, so the scheduler ignores CPU requests when making scheduling decisions",
-      "It depends on whether the existing pods have CPU limits set in addition to their resource requests"
+      "No — but only because existing pods have CPU limits set, which the scheduler counts toward allocatable"
     ],
     answer: 0,
-    explanation: "The scheduler uses resource requests, not actual usage or limits, to determine if a pod fits on a node. Current requests total 3 CPU (1 + 1.5 + 0.5), and adding 1.5 would require 4.5 CPU, exceeding the 4 CPU allocatable. The scheduler will not place the pod on this node. While CPU is compressible at runtime, the scheduler still uses requests for placement decisions. Limits do not affect scheduling — only requests matter.\n\nWhy other options are wrong:\n- B: The scheduler uses requests, not actual usage, for placement decisions\n- C: While CPU is compressible at runtime, the scheduler still uses CPU requests for scheduling\n- D: CPU limits do not affect scheduling decisions; only requests matter for node placement\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled",
+    explanation: "The scheduler uses resource requests, not actual usage or limits, to determine if a pod fits on a node. Current requests total 3 CPU (1 + 1.5 + 0.5), and adding 1.5 would require 4.5 CPU, exceeding the 4 CPU allocatable. The scheduler will not place the pod on this node. While CPU is compressible at runtime, the scheduler still uses requests for placement decisions. Limits do not affect scheduling — only requests matter.\n\nWhy other options are wrong:\n- B: The scheduler uses requests, not actual usage, for placement decisions\n- C: While CPU is compressible at runtime, the scheduler still uses CPU requests for scheduling\n- D: The scheduler does not count limits toward allocatable capacity; only requests matter for placement\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-requests-are-scheduled",
     verify: "kubectl describe node <node-name> | grep -A5 'Allocated resources'"
   },
 
@@ -1156,7 +1156,7 @@ var questions = [
     diagram: null,
     options: [
       "Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps",
-      "No — the service mesh manages all configuration including application-specific settings (database URLs and feature flags)",
+      "No — the service mesh manages all configuration including application-specific settings such as database URLs and flags",
       "No — Istio's VirtualService resources replace ConfigMaps for all configuration needs across every service in the mesh",
       "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
     ],

@@ -11,10 +11,10 @@ var questions = [
       "Access is denied because a Role cannot be referenced by a ClusterRoleBinding",
       "The user can list Pods across every namespace including `payments` in the cluster",
       "The user can list Pods only in the `payments` namespace using the bound Role",
-      "The ClusterRoleBinding escalates the Role permissions to apply cluster-wide"
+      "The ClusterRoleBinding escalates the Role because it is a cluster-level binding"
     ],
     answer: 0,
-    explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.\n\nWhy other options are wrong:\n- B: A ClusterRoleBinding with a ClusterRole would grant cluster-wide access, but the scenario uses a Role (not ClusterRole) which cannot be referenced by a ClusterRoleBinding\n- C: The binding itself is invalid; a ClusterRoleBinding cannot reference a namespace-scoped Role, so no access is granted\n- D: No escalation occurs because the binding is rejected by the API server\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
+    explanation: "A ClusterRoleBinding can only reference a ClusterRole, not a namespaced Role. Attempting to bind a Role via a ClusterRoleBinding results in an API error. The admin should use a RoleBinding instead to grant access within the `payments` namespace.\n\nWhy other options are wrong:\n- B: A ClusterRoleBinding with a ClusterRole would grant cluster-wide access, but the scenario uses a Role (not ClusterRole) which cannot be referenced by a ClusterRoleBinding\n- C: The binding itself is invalid; a ClusterRoleBinding cannot reference a namespace-scoped Role, so no access is granted\n- D: No escalation occurs because the binding is rejected by the API server before any permissions are granted\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding",
     verify: "kubectl auth can-i list pods --namespace=payments --as=jane 2>&1"
   },
   {
@@ -810,11 +810,11 @@ var questions = [
     options: [
       "The RoleBinding is created and grants node deletion permissions within the `staging` namespace",
       "The request is denied because the developer cannot escalate beyond their existing permissions",
-      "The RoleBinding is created but the `delete nodes` permission is silently ignored by the API",
+      "The RoleBinding is created but `delete nodes` is ignored because nodes are cluster-scoped",
       "The API server automatically downgrades the referenced ClusterRole to a namespace-scoped Role"
     ],
     answer: 1,
-    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism. Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources.\n\nWhy other options are wrong:\n- A: Nodes are cluster-scoped; a namespace RoleBinding cannot effectively grant node permissions, and escalation prevention blocks this\n- C: Permissions are not silently ignored; the API server actively rejects the escalation attempt\n- D: The API server does not downgrade ClusterRoles to namespace-scoped Roles\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
+    explanation: "Kubernetes RBAC prevents privilege escalation by default. A user can only create RoleBindings that grant permissions they already possess. Since the developer does not have `delete` on `nodes`, the API server rejects the RoleBinding creation. This is enforced by the RBAC escalation prevention mechanism. Additionally, nodes are cluster-scoped resources, and a namespace-scoped RoleBinding cannot effectively grant permissions on cluster-scoped resources.\n\nWhy other options are wrong:\n- A: Nodes are cluster-scoped; a namespace RoleBinding cannot effectively grant node permissions, and escalation prevention blocks this\n- C: Permissions are not silently ignored; the API server actively rejects the escalation attempt before the RoleBinding is created\n- D: The API server does not downgrade ClusterRoles to namespace-scoped Roles\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
     verify: "kubectl auth can-i create rolebindings --as=developer -n staging"
   },
   {
@@ -1384,13 +1384,13 @@ var questions = [
     text: "An application stores database credentials in a Kubernetes Secret and mounts it as a volume. The Secret has `immutable: true` set. What happens when someone tries to update the Secret?",
     diagram: null,
     options: [
-      "The update succeeds but triggers an automatic Pod restart cycle afterward",
+      "The update succeeds because `immutable` does not block data-field changes",
       "The Secret is versioned and both old and new values coexist together",
       "The `immutable` field is advisory and does not enforce any restriction",
       "The update is rejected by the API server because the Secret is immutable"
     ],
     answer: 3,
-    explanation: "When a Secret has `immutable: true`, the API server rejects any update to the Secret's `data` or `stringData` fields. This protects against accidental or malicious modifications. To change the values, you must delete and recreate the Secret. Immutable Secrets also improve cluster performance by reducing API server watch load.\n\nWhy other options are wrong:\n- A: Updates are rejected, so there is no Pod restart triggered\n- B: Secrets are not versioned; the update is simply rejected\n- C: The immutable field is enforced by the API server, not advisory\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#secret-immutable",
+    explanation: "When a Secret has `immutable: true`, the API server rejects any update to the Secret's `data` or `stringData` fields. This protects against accidental or malicious modifications. To change the values, you must delete and recreate the Secret. Immutable Secrets also improve cluster performance by reducing API server watch load.\n\nWhy other options are wrong:\n- A: The immutable field does block data-field changes; updates are rejected by the API server\n- B: Secrets are not versioned; the update is simply rejected\n- C: The immutable field is enforced by the API server, not advisory\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#secret-immutable",
     verify: "kubectl get secret <name> -o jsonpath='{.immutable}'"
   },
   {
@@ -1592,13 +1592,13 @@ var questions = [
     text: "A CI/CD pipeline runs `kubectl apply` using a ServiceAccount bound to a custom ClusterRole. The ClusterRole grants `create`, `update`, and `delete` on Deployments, Services, ConfigMaps, and ClusterRoleBindings. A developer modifies the pipeline to also deploy a ClusterRoleBinding granting `cluster-admin`. What happens?",
     diagram: null,
     options: [
-      "The ClusterRoleBinding is created successfully without any restriction or warning",
+      "The ClusterRoleBinding is created because the SA has `create` on ClusterRoleBindings",
       "The request is denied because the ServiceAccount cannot escalate its permissions",
       "The pipeline execution pauses and waits for a manual approval step to continue",
       "The ClusterRoleBinding is created but marked as pending administrative review"
     ],
     answer: 1,
-    explanation: "Kubernetes RBAC prevents privilege escalation. A user or ServiceAccount can only create RoleBindings or ClusterRoleBindings that grant permissions they already possess. Since the pipeline's ServiceAccount does not have `cluster-admin`, it cannot create a ClusterRoleBinding granting that role.\n\nWhy other options are wrong:\n- A: RBAC escalation prevention blocks the creation of bindings granting unowned permissions\n- C: There is no built-in manual approval step for RBAC escalation attempts\n- D: The request is denied outright, not created in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
+    explanation: "Kubernetes RBAC prevents privilege escalation. A user or ServiceAccount can only create RoleBindings or ClusterRoleBindings that grant permissions they already possess. Since the pipeline's ServiceAccount does not have `cluster-admin`, it cannot create a ClusterRoleBinding granting that role.\n\nWhy other options are wrong:\n- A: Having `create` on ClusterRoleBindings is necessary but not sufficient; RBAC escalation prevention still blocks bindings that grant unowned permissions\n- C: There is no built-in manual approval step for RBAC escalation attempts\n- D: The request is denied outright, not created in a pending state\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#privilege-escalation-prevention-and-bootstrapping",
     verify: "kubectl auth can-i create clusterrolebindings --as=system:serviceaccount:<ns>:<sa>"
   },
 ];

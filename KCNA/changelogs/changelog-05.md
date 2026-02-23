@@ -231,3 +231,25 @@
 
 ### s05-q087 (length-balance)
 - **Option A:** Shortened from "The update succeeds but triggers an automatic Pod restart cycle for consumers" (77) to "The update succeeds but triggers an automatic Pod restart cycle afterward" (73). Ratio was 1.132, now 1.074.
+
+---
+
+# Round 43 Review - Set 05
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 4 across 4 questions
+
+## Changes
+
+### s05-q001 (unique-because giveaway)
+- **Option D:** Changed from "The ClusterRoleBinding escalates the Role permissions to apply cluster-wide" to "The ClusterRoleBinding escalates the Role because it is a cluster-level binding". Added "because" clause to balance the structural pattern where only the correct answer (A) used "because" reasoning. Updated D explanation accordingly.
+
+### s05-q051 (unique-because giveaway)
+- **Option C:** Changed from "The RoleBinding is created but the `delete nodes` permission is silently ignored by the API" to "The RoleBinding is created but `delete nodes` is ignored because nodes are cluster-scoped". Added "because" clause to balance the structural pattern where only the correct answer (B) used "because" reasoning. Updated C explanation accordingly.
+
+### s05-q087 (unique-because giveaway)
+- **Option A:** Changed from "The update succeeds but triggers an automatic Pod restart cycle afterward" to "The update succeeds because `immutable` does not block data-field changes". Added "because" clause to balance the structural pattern where only the correct answer (D) used "because" reasoning. Updated A explanation accordingly.
+
+### s05-q100 (unique-because giveaway)
+- **Option A:** Changed from "The ClusterRoleBinding is created successfully without any restriction or warning" to "The ClusterRoleBinding is created because the SA has `create` on ClusterRoleBindings". Added "because" clause to balance the structural pattern where only the correct answer (B) used "because" reasoning. Updated A explanation accordingly.

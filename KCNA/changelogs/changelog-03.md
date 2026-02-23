@@ -286,3 +286,30 @@
 - 5 giveaway fixes (3 backtick-density imbalances, 2 unique-example-phrase signals)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+# Round 43 Review - Set 03
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 4 across 3 questions
+
+## Changes
+
+### s03-q009 (polarity giveaway)
+- **Option C:** Reworded from "Cross-node communication requires a `LoadBalancer` Service to bridge node boundaries for pods" to "Yes — but only through a `LoadBalancer` Service that explicitly bridges the node boundary for pods", adding "Yes —" prefix to match correct B's structure.
+- **Option D:** Reworded from "Cross-node communication requires both pods to share the same namespace and network policy selector" to "No — both pods must share the same namespace and network policy selector to allow cross-node traffic", adding "No —" prefix to match A's structure. Now 2 Yes + 2 No options remove the lone-Yes polarity giveaway.
+
+### s03-q073 (polarity giveaway)
+- **Option A:** Reworded from "`kube_networkpolicy_labels` showing policy labels attached to the resources in the namespace" to "No single metric captures this; correlate `kube_networkpolicy_labels` with pod traffic counters". Now both A and D start with "No...", removing the unique negative-framing signal on correct D. Updated wrong-answer explanation accordingly.
+
+### s03-q089 (length-balance)
+- **Option C:** Trimmed from "the `except` clause is evaluated differently for `egress` than for ingress rules" to "...for `egress` than for ingress" (93ch to 87ch), reducing ratio from 1.120 to 1.060.
+
+## Summary
+
+- 2 polarity giveaway fixes (removing lone Yes/No structural signals from correct answers)
+- 1 length-balance fix (reducing option spread)
+- No answer indices were changed
+- No accuracy changes

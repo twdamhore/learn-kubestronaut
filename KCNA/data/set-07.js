@@ -584,7 +584,7 @@ var questions = [
     text: "A `startupProbe` is configured on a container with `failureThreshold: 30` and `periodSeconds: 10`. The application takes about 3 minutes to initialize. What is the purpose of the `startupProbe` in this scenario?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Startup Probe Timeline</text><line x1="40" y1="80" x2="370" y2="80" stroke="#555" stroke-width="2"/><rect x="40" y="65" width="200" height="30" rx="4" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="140" y="84" text-anchor="middle" fill="#e0e0e0" font-size="10">Startup Probe Active (???)</text><rect x="240" y="65" width="60" height="30" rx="4" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="270" y="84" text-anchor="middle" fill="#e0e0e0" font-size="9">??? probe(s)</text><rect x="305" y="65" width="60" height="30" rx="4" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="335" y="84" text-anchor="middle" fill="#e0e0e0" font-size="9">??? probe(s)</text><text x="40" y="120" fill="#aaa" font-size="10">failureThreshold: 30</text><text x="40" y="138" fill="#aaa" font-size="10">periodSeconds: 10</text><text x="40" y="156" fill="#aaa" font-size="10">Max startup time: ???</text><text x="40" y="174" fill="#e76f51" font-size="10">Liveness + Readiness behavior: ???</text></svg>',
     options: [
-      "It takes over from the readiness probe and determines when the pod first receives Service traffic",
+      "It takes over from the readiness probe and determines when the pod first receives Service traffic from clients",
       "It continuously monitors the application process and restarts it if startup takes longer than 30 seconds total",
       "It gives the application up to 300 seconds to start before liveness and readiness probes begin checking",
       "It signals the scheduler to delay placing additional pods on the same node until this one becomes healthy"
@@ -715,7 +715,7 @@ var questions = [
       "The old pod's logs are permanently lost unless a cluster-level log aggregation system like Fluentd or Loki collected them",
       "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
       "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
-      "Use `kubectl get events` which automatically captures full container logs (via the API server) on pod termination events"
+      "Use `kubectl get events` which captures full container logs like stdout and stderr on pod termination events automatically"
     ],
     answer: 0,
     explanation: "`kubectl logs --previous` only retrieves logs from the previous container instance within the same pod. When a pod is deleted and replaced, its logs are lost from the node. Cluster-level log aggregation (using tools like Fluentd, Fluent Bit, or Grafana Loki) captures and stores logs externally, making them available after pod deletion.\n\nWhy other options are wrong:\n- B: --since only filters logs within the current or previous container instance, not across replaced pods\n- C: kubectl describe does not store log lines; it shows events and resource metadata only\n- D: kubectl get events captures event objects, not full container log output\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/logging/#cluster-level-logging-architectures",
@@ -1066,8 +1066,8 @@ var questions = [
     options: [
       "A new container image was pulled from an untrusted external container registry (e.g., a public Docker Hub repo)",
       "Someone executed an interactive shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
-      "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell at boot time",
-      "The container's security context was modified at runtime to allow root access to the system process"
+      "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell process at container boot time",
+      "The container's security context was modified at runtime to allow elevated root access to the host system process"
     ],
     answer: 1,
     explanation: "Falco monitors system calls at runtime and triggers alerts based on predefined rules. The alert `Terminal shell in container` fires when a shell process (e.g., `/bin/sh`, `/bin/bash`) is spawned inside a running container, typically via `kubectl exec`. This is a security-relevant event because it could indicate unauthorized access to a production container.\n\nWhy other options are wrong:\n- A: Pulling images from untrusted registries triggers different Falco rules, not the terminal shell rule\n- C: CMD starting a shell at boot is the container's normal entrypoint, not an interactive terminal session\n- D: Security context cannot be modified at runtime; this is not what triggers the terminal shell alert\n\nReference: https://falco.org/docs/rules/default-rules/",
@@ -1449,7 +1449,7 @@ var questions = [
     diagram: null,
     options: [
       "The CNI plugin failed to configure pod sandbox networking, such as assigning an IP or setting up veth pairs",
-      "The container runtime failed to pull the required container image from the configured registry endpoint",
+      "The container runtime failed to pull the required container image, such as a missing tag or registry timeout",
       "The kubelet process failed to authenticate with the API server using its current client certificate pair",
       "The kube-proxy could not create the required iptables rules for routing traffic to the new pod sandbox"
     ],
@@ -1480,7 +1480,7 @@ var questions = [
     text: "A pod's container exits with code 137 but there is no `OOMKilled` reason in the pod status. The container's `State` shows `Reason: Error`. What else could cause exit code 137?",
     diagram: null,
     options: [
-      "The application explicitly calls exit(137) in its error handler to signal a custom fatal error condition to the orchestration layer",
+      "The application explicitly calls exit(137) in its error handler, such as a custom fatal error condition sent to the orchestration layer",
       "The container received a SIGKILL (signal 9) from an external source such as a manual kill command or system-level memory pressure",
       "The container exceeded its configured CPU limits, causing the kernel to throttle and eventually terminate the process with SIGKILL",
       "The kubelet sent SIGTERM (signal 15) because the container exceeded its terminationGracePeriodSeconds, producing exit code 143 (128+15)"

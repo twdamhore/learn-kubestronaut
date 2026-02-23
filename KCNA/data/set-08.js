@@ -265,7 +265,7 @@ var questions = [
     text: "A Pod is stuck in `CrashLoopBackOff`. The application logs show it cannot connect to a required external API on port 443. The namespace has a policy that blocks all outbound traffic by default. What is the most likely cause?",
     diagram: null,
     options: [
-      "The container image is missing the `curl` binary and TLS libraries needed for outbound HTTPS connections",
+      "The container image is missing runtime binaries including `curl` and TLS libraries needed for HTTPS connections",
       "The Pod's `readinessProbe` is failing because port 443 is not exposed as a containerPort in the Pod spec",
       "Kubernetes DNS cannot resolve the external API hostname due to a missing entry in the CoreDNS ConfigMap",
       "The `default-deny` egress NetworkPolicy blocks all outbound traffic including HTTPS to the external API"
@@ -490,10 +490,10 @@ var questions = [
     text: "A team needs to run a log collection agent on every node in the cluster, including nodes added later. If a node is removed, the agent Pod should be cleaned up automatically. Which workload resource is designed for this pattern?",
     diagram: null,
     options: [
-      "Deployment with `replicas` set to the current node count and manually adjusted as nodes change",
+      "Deployment — with `replicas` set to the current node count and manually adjusted (scaled) as nodes change",
       "DaemonSet — ensures exactly one `Pod` copy runs on every (or selected subset of) cluster node(s)",
-      "StatefulSet with `podManagementPolicy: Parallel` and replicas matching the current node count",
-      "Job with `completions` equal to the number of nodes and `parallelism` set to the total node count"
+      "StatefulSet — with `podManagementPolicy: Parallel` and replicas matching the current node count exactly",
+      "Job — with `completions` equal to the number of nodes and `parallelism` set to the total (full) node count"
     ],
     answer: 1,
     explanation: "A DaemonSet ensures that a copy of a Pod runs on every node in the cluster (or a subset, when using node selectors or tolerations). When nodes are added, the DaemonSet controller automatically schedules a Pod. When nodes are removed, the Pod is garbage collected. Deployments do not automatically match the node count, and Jobs are for finite workloads.\n\nWhy other options are wrong:\n- A: Deployment replicas must be manually adjusted when nodes change; no auto-tracking of node count\n- C: StatefulSet maintains stable identities but does not auto-match node count or track node changes\n- D: Job is for finite workloads with a defined end; it does not run continuously on every node\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -828,9 +828,9 @@ var questions = [
     diagram: null,
     options: [
       "IPVS offers O(1) connection processing via hash lookups, improving performance for large clusters",
-      "IPVS encrypts all Service traffic using mutual TLS without requiring a service mesh or extra certs",
+      "IPVS encrypts all Service traffic using mutual TLS (mTLS) without requiring a service mesh or certs",
       "IPVS handles both Service routing and DNS resolution for Service names at the kernel level",
-      "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs using BGP"
+      "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs via BGP"
     ],
     answer: 0,
     explanation: "IPVS (IP Virtual Server) uses hash tables in the Linux kernel for Service routing decisions, providing O(1) time complexity regardless of the number of Services. In contrast, iptables rules are processed sequentially (O(n)), which causes performance degradation as the number of Services grows. IPVS also supports multiple load-balancing algorithms (round-robin, least connections, etc.).\n\nWhy other options are wrong:\n- B: IPVS does not encrypt traffic with mTLS; encryption requires a service mesh or TLS certificates\n- C: IPVS handles Service routing only; DNS resolution remains the responsibility of CoreDNS\n- D: IPVS still uses ClusterIP addresses; it does not eliminate them or use BGP for routing\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#proxy-mode-ipvs",
@@ -956,8 +956,8 @@ var questions = [
     diagram: null,
     options: [
       "gVisor interposes a user-space kernel (Sentry) intercepting container syscalls, reducing host attack surface",
-      "gVisor encrypts all container filesystem data at rest using hardware-backed encryption on the host storage",
-      "gVisor runs each container inside a full virtual machine using QEMU for complete hardware-level isolation",
+      "gVisor encrypts all container filesystem data at rest using hardware-backed encryption (AES) on host storage",
+      "gVisor runs each container inside a full virtual machine using QEMU (KVM) for hardware-level isolation",
       "gVisor restricts Linux capabilities and applies strict seccomp profiles to reduce the container privilege set"
     ],
     answer: 0,
@@ -1003,10 +1003,10 @@ var questions = [
     text: "A Pod specification requests 500m CPU and 256Mi memory. The scheduler finds two candidate nodes: Node A has 400m CPU available, and Node B has 600m CPU and 512Mi memory available. Where does the scheduler place the Pod?",
     diagram: null,
     options: [
-      "Node A, because the scheduler uses a best-effort approach and places Pods on partially matching nodes",
+      "Node A, because the scheduler uses best-effort and places Pods on partially matching (closest) nodes",
       "Node B, because it is the only node meeting both CPU (500m) and memory (256Mi) resource requests",
       "Neither node — the Pod remains `Pending` because neither node has exactly the requested resources",
-      "The scheduler splits the Pod across both nodes, running the CPU-intensive portion on Node B only"
+      "The scheduler splits the Pod across both nodes (A and B), running the CPU portion on Node B only"
     ],
     answer: 1,
     explanation: "The Kubernetes scheduler only places a Pod on a node that satisfies all resource requests. Node A has only 400m CPU available, which is insufficient for the 500m CPU request. Node B has 600m CPU and 512Mi memory, both exceeding the Pod's requests. Pods cannot be split across nodes. If no node meets the requirements, the Pod stays `Pending`.\n\nWhy other options are wrong:\n- A: The scheduler does not use best-effort on partial matches; it requires all resource requests to be met\n- C: The Pod does not stay Pending because Node B meets requirements; 'exactly matching' is not required\n- D: Pods cannot be split across nodes; a Pod runs entirely on a single node\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/#kube-scheduler",
@@ -1019,7 +1019,7 @@ var questions = [
     text: "An architect is reviewing Factor X (Dev/prod parity) of the twelve-factor app methodology. The team runs PostgreSQL 14 in production but uses SQLite in development. Which statement correctly identifies the violation?",
     diagram: null,
     options: [
-      "There is no violation — using lighter-weight databases in development is an accepted trade-off that accelerates iteration",
+      "There is no violation — using lighter-weight databases including SQLite in development is an accepted trade-off for speed",
       "Factor X requires minimizing gaps between dev and prod including backing services, and different databases cause subtle bugs",
       "Factor X primarily addresses the application codebase and deployment pipeline rather than the choice of backing services",
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
@@ -1195,9 +1195,9 @@ var questions = [
     text: "An application requires a PersistentVolume with `ReadWriteMany` (RWX) access mode so multiple Pods on different nodes can write to it simultaneously. Which storage backend commonly supports RWX?",
     diagram: null,
     options: [
-      "AWS EBS — block storage attached to a single EC2 instance, designed for individual workload attachment",
+      "AWS EBS (Elastic Block Store) — block storage attached to a single EC2 instance for individual workloads",
       "NFS (Network File System) — a network filesystem supporting concurrent read/write from multiple nodes",
-      "Local PV — uses disks on a specific node, inherently bound to that single node for storage access",
+      "Local PV (Persistent Volume) — uses disks on a specific node, inherently bound to that single node",
       "Azure Managed Disks — premium block storage providing high IOPS for single-node database workloads"
     ],
     answer: 1,
@@ -1358,8 +1358,8 @@ var questions = [
     options: [
       "Treat backing services as attached resources swappable via config — e.g., swap local PostgreSQL for RDS by changing a URL",
       "Embed the database driver and connection pool (e.g., HikariCP) in the application binary to avoid external runtime dependencies",
-      "Run all backing services inside the same container as the application process to achieve the lowest possible network latency",
-      "Hard-code backing service connection strings in the application source code to ensure reliability and avoid config drift issues"
+      "Run all backing services inside the same container as the application — minimize network latency by co-locating all processes",
+      "Hard-code backing service connection strings in the application source — ensure reliability and avoid config drift issues"
     ],
     answer: 0,
     explanation: "Factor IV (Backing services) states that backing services (databases, caches, SMTP, message queues) should be treated as attached resources, accessed via URLs or credentials stored in configuration. The application should be able to swap a local PostgreSQL for a managed cloud database (like Amazon RDS) by changing a configuration value without any code changes. This promotes loose coupling and environment portability.\n\nWhy other options are wrong:\n- B: Embedding drivers is fine, but connection pool/config should not be baked in; backing services should be swappable\n- C: Running all services in the same container violates separation and makes swapping impossible\n- D: Hard-coding connection strings couples the app to specific instances, violating the swappable resource principle\n\nReference: https://12factor.net/backing-services",
@@ -1389,8 +1389,8 @@ var questions = [
     diagram: null,
     options: [
       "Resource slack — the gap between resource requests (reserved capacity) and actual utilization, representing waste",
-      "Resource fragmentation — unused capacity on nodes that cannot fit any additional Pod due to scheduling constraints",
-      "Resource throttling — the gap between resource limits and actual usage when the kernel restricts CPU time slices",
+      "Resource fragmentation — unused capacity on nodes that cannot fit any additional Pod (unschedulable remainder) on them",
+      "Resource throttling — the gap between resource limits and actual usage when the kernel restricts CPU (CFS) time slices",
       "Resource contention — multiple Pods competing for the same finite node resources causing performance degradation"
     ],
     answer: 0,
@@ -1452,7 +1452,7 @@ var questions = [
     text: "A team uses `kubectl get events --sort-by='.lastTimestamp'` to troubleshoot cluster issues. What type of information do Kubernetes Events provide?",
     diagram: null,
     options: [
-      "Events record audit logs of all API server authentication and authorization decisions for security compliance",
+      "Events record audit logs of API server decisions such as authentication and authorization for compliance",
       "Events store persistent application logs from container stdout and stderr streams for long-term retention",
       "Events record state changes and lifecycle transitions for cluster resources such as scheduling and scaling",
       "Events track network packet flows between Pods for security auditing and network performance monitoring"
@@ -1532,7 +1532,7 @@ var questions = [
     text: "A team uses the CNCF Cloud Native Landscape to evaluate projects for their platform. Which statement accurately describes the CNCF landscape?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="240" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Technology Map Structure</text><rect x="20" y="40" width="170" height="30" rx="4" fill="#7c3aed" stroke="#a78bfa"/><text x="105" y="60" text-anchor="middle" fill="white" font-size="9">Category A</text><rect x="210" y="40" width="170" height="30" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="295" y="60" text-anchor="middle" fill="white" font-size="9">Category B</text><rect x="20" y="80" width="170" height="30" rx="4" fill="#1e40af" stroke="#3b82f6"/><text x="105" y="100" text-anchor="middle" fill="white" font-size="9">Category C</text><rect x="210" y="80" width="170" height="30" rx="4" fill="#b45309" stroke="#f59e0b"/><text x="295" y="100" text-anchor="middle" fill="white" font-size="9">Category D</text><rect x="20" y="120" width="170" height="30" rx="4" fill="#be123c" stroke="#f43f5e"/><text x="105" y="140" text-anchor="middle" fill="white" font-size="9">Category E</text><rect x="210" y="120" width="170" height="30" rx="4" fill="#374151" stroke="#6b7280"/><text x="295" y="140" text-anchor="middle" fill="white" font-size="9">Category F</text><rect x="20" y="160" width="360" height="30" rx="4" fill="#064e3b" stroke="#10b981"/><text x="200" y="180" text-anchor="middle" fill="white" font-size="9">Category G | Category H | Category I | Category J</text><text x="200" y="220" text-anchor="middle" fill="#64748b" font-size="9">landscape.cncf.io</text></svg>',
     options: [
-      "It catalogs only officially hosted CNCF projects and strictly filters out all commercial products from the listing entirely",
+      "It catalogs only officially hosted CNCF projects such as graduated and incubating and filters out all commercial products",
       "The CNCF landscape categorizes cloud native technologies across categories such as runtime and orchestration and observability",
       "The CNCF landscape is a certification program that validates vendor products for Kubernetes compatibility and conformance testing",
       "The CNCF landscape is a dependency graph showing which CNCF projects depend on each other for build and runtime dependencies"

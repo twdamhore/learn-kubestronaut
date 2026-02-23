@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "A. `kubectl certificate list` — displays all cluster certificates and their status",
-      "B. `kubeadm certs check-expiration` -- lists managed certificates and their expiry dates",
+      "B. `kubeadm certs check-expiration` — lists managed certificates and their expiry dates",
       "C. `etcdctl cert status` — shows certificate validity for etcd client connections",
       "D. `kubeadm certs renew` — regenerates expiring certificates without listing dates"
     ],

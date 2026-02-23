@@ -420,3 +420,22 @@
 ### s02-q092 (giveaway/comma-list)
 - **Problem:** Correct option D had a unique 3-comma list structure while other options had 0-2 commas.
 - **Option A:** Added 3rd comma to match structure. Changed `"validated at build time, and cached for runtime performance"` to `"validated at build, cached for performance, and versioned internally"`.
+
+---
+
+# Round 43 Review - Set 02
+
+**Date:** 2026-02-21
+**File:** `KCNA/data/set-02.js`
+**Issues fixed:** 3 across 2 questions
+
+## Changes
+
+### s02-q062 (giveaway/polarity)
+- **Problem:** Correct option A was the lone "No" answer among 2 "Yes" options and 1 "It depends" option, creating a polarity giveaway.
+- **Option D:** Changed from `"It depends on whether the existing pods have CPU limits set in addition to their resource requests"` to `"No — but only because existing pods have CPU limits set, which the scheduler counts toward allocatable"`. This creates a 2-No / 2-Yes distribution.
+- **Explanation D:** Updated bullet to address the new wording. Changed `"CPU limits do not affect scheduling decisions; only requests matter for node placement"` to `"The scheduler does not count limits toward allocatable capacity; only requests matter for placement"`.
+
+### s02-q070 (giveaway/such-as)
+- **Problem:** Correct option A had a unique "such as" phrasing not present in any other option, creating a structural giveaway.
+- **Option B:** Added "such as" to balance the pattern. Changed `"No — the service mesh manages all configuration including application-specific settings (database URLs and feature flags)"` to `"No — the service mesh manages all configuration including application-specific settings such as database URLs and flags"`.

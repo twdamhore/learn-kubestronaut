@@ -250,7 +250,7 @@ var questions = [
     options: [
       "A. Two scheduled runs are missed during the 12-minute window; after the job finishes, only the most recent missed schedule triggers a new job",
       "B. Two runs are skipped silently due to `Forbid`; after the job finishes, the next run occurs at the next scheduled interval with no catch-up",
-      "C. The CronJob controller counts 2 missed starts, which is below the 100-miss threshold, so it schedules a catch-up run immediately after the long job finishes",
+      "C. The CronJob controller counts 2 missed starts, below the 100-miss threshold, so it schedules a catch-up run once the long job finishes",
       "D. All missed runs are queued and execute sequentially after the long-running job completes because `startingDeadlineSeconds` is long enough"
     ],
     answer: 0,
@@ -376,10 +376,10 @@ var questions = [
     text: "A Kubernetes cluster runs a Service with `externalTrafficPolicy: Local` of type `LoadBalancer`. The load balancer health checks are configured on the NodePort. Pods are running on only 2 of the 4 nodes. What behavior do clients observe?",
     diagram: "<svg viewBox='0 0 400 250' xmlns='http://www.w3.org/2000/svg'><rect x='140' y='5' width='120' height='30' rx='5' fill='#FF9800' stroke='#fff'/><text x='200' y='25' text-anchor='middle' fill='#fff' font-size='11'>Load Balancer</text><rect x='20' y='80' width='70' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='55' y='97' text-anchor='middle' fill='#fff' font-size='9'>Node 1</text><text x='55' y='112' text-anchor='middle' fill='#fff' font-size='8'>Pod A</text><rect x='110' y='80' width='70' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='145' y='97' text-anchor='middle' fill='#fff' font-size='9'>Node 2</text><text x='145' y='112' text-anchor='middle' fill='#fff' font-size='8'>Pod B</text><rect x='220' y='80' width='70' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='255' y='97' text-anchor='middle' fill='#fff' font-size='9'>Node 3</text><text x='255' y='112' text-anchor='middle' fill='#fff' font-size='8'>No Pod</text><rect x='310' y='80' width='70' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='345' y='97' text-anchor='middle' fill='#fff' font-size='9'>Node 4</text><text x='345' y='112' text-anchor='middle' fill='#fff' font-size='8'>No Pod</text><line x1='200' y1='35' x2='55' y2='75' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='35' x2='145' y2='75' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='35' x2='255' y2='75' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='35' x2='345' y2='75' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
-      "A. Traffic is distributed across all 4 nodes; nodes without pods forward traffic to nodes with pods via internal routing",
+      "A. Traffic is distributed across all 4 nodes; nodes without pods forward traffic to nodes with pods via internal cluster routing",
       "B. The load balancer only sends traffic to nodes 1 and 2 because health checks on nodes 3 and 4 fail, preserving client source IP",
       "C. Clients experience intermittent failures because the load balancer round-robins across all nodes including those without pods",
-      "D. The Service automatically updates the load balancer to remove nodes 3 and 4 from the target group, regardless of health check results"
+      "D. The Service automatically updates the load balancer to remove nodes 3 and 4 from the target group, ignoring health checks"
     ],
     answer: 1,
     explanation: "With `externalTrafficPolicy: Local`, kube-proxy only programs iptables/IPVS rules on nodes that have local pods for the Service. The health check endpoint (the `healthCheckNodePort`) returns a 503 on nodes without pods, causing the external load balancer to exclude those nodes from its target pool. This ensures traffic only reaches nodes with backend pods, preserving the client's source IP address by avoiding the extra SNAT hop that occurs with `Cluster` policy.\n\nWhy other options are wrong:\n- A: With externalTrafficPolicy: Local, traffic is NOT forwarded across nodes; only nodes with local pods handle traffic\n- C: Clients do not experience failures because the load balancer health checks remove podless nodes from the target pool before sending traffic\n- D: The Service does not update the load balancer target group directly; the health check mechanism handles node exclusion\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#external-traffic-policy",
@@ -489,7 +489,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Yes, the `podSelector` matches the source pod's `role: frontend` label regardless of the originating namespace label",
-      "B. No, `namespaceSelector` and `podSelector` under the same `from` entry form an AND condition — both must match",
+      "B. No, `namespaceSelector` and `podSelector` under the same `from` entry form an AND condition, so both must match",
       "C. Yes, `namespaceSelector` and `podSelector` in the same array element are evaluated as an OR condition by the CNI",
       "D. No, the `egress` policy does not include a rule allowing return traffic responses back to the frontend pod in staging"
     ],
@@ -570,7 +570,7 @@ var questions = [
     options: [
       "A. The pod is admitted because Gatekeeper only validates the primary container specifications, not init containers in the pod spec",
       "B. The pod is rejected because Gatekeeper evaluates all containers including init, ephemeral, and regular containers in the spec",
-      "C. The result depends on the Rego policy — if it only iterates `input.review.object.spec.containers`, init containers are skipped",
+      "C. The result depends on the Rego policy: if it only iterates `input.review.object.spec.containers`, init containers are skipped",
       "D. The pod is admitted but flagged with a warning annotation because Gatekeeper uses `warn` enforcement for partial compliance"
     ],
     answer: 2,
@@ -714,7 +714,7 @@ var questions = [
     options: [
       "A. `Guaranteed` QoS — this pod is last to be evicted during memory pressure because requests equal limits for all resources",
       "B. `Burstable` QoS — the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
-      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods if actual memory consumption exceeds `limits.memory`",
+      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods because actual memory consumption may exceed `limits.memory`",
       "D. `Guaranteed` QoS — it is evicted after `Burstable` pods but before `BestEffort` pods during node memory pressure events"
     ],
     answer: 0,
@@ -827,7 +827,7 @@ var questions = [
       "A. Mount two `emptyDir` volumes at `/tmp` and `/var/log/app` because the read-only policy does not apply to mounts",
       "B. Add `allowedHostPaths` entries for `/tmp` and `/var/log/app` in PodSecurityPolicy to whitelist writable paths",
       "C. Set `readOnlyRootFilesystem: false` but use an OPA policy to restrict writes to only `/tmp` and `/var/log/app`",
-      "D. Use `subPath` mounts from a single `emptyDir` volume to both paths, which bypasses the read-only constraint"
+      "D. Use `subPath` mounts from a single `emptyDir` volume to both paths because subPath bypasses the read-only constraint"
     ],
     answer: 0,
     explanation: "When `readOnlyRootFilesystem: true` is set, the container's root filesystem is mounted read-only. However, volumes mounted into the container are independent of this setting. Mounting `emptyDir` volumes at `/tmp` and `/var/log/app` provides writable directories at those paths while keeping the rest of the filesystem read-only. This is the standard pattern for applications that need specific writable directories. PodSecurityPolicy (option B) is deprecated, and option D's reasoning about bypassing is incorrect — subPath works but the explanation is wrong.\n\nWhy other options are wrong:\n- B: PodSecurityPolicy is deprecated and removed since K8s 1.25; allowedHostPaths is not a current mechanism\n- C: Disabling readOnlyRootFilesystem removes an important security layer; OPA cannot enforce filesystem-level write restrictions\n- D: subPath does not bypass readOnlyRootFilesystem; the explanation is incorrect, and the real reason emptyDir works is that volume mounts are independent of root filesystem settings\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
@@ -968,10 +968,10 @@ var questions = [
     text: "An Ingress resource specifies two rules:\n1. `host: api.example.com`, path `/v1` -> Service `api-v1:80`\n2. `host: api.example.com`, path `/v2` -> Service `api-v2:80`\n\nThe Ingress controller is nginx. A request to `https://api.example.com/v2/users` returns a 404 from the `api-v2` service. The same request directly to the `api-v2` Service ClusterIP works. What is the likely issue?",
     diagram: null,
     options: [
-      "A. The Ingress forwards the original path `/v2/users`, but `api-v2` expects requests at `/users` without the path prefix",
+      "A. The Ingress forwards the original `/v2/users` path, but `api-v2` expects requests at `/users` without the prefix",
       "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` rule",
       "C. The nginx Ingress controller strips TLS before forwarding and `api-v2` rejects non-HTTPS backend connections",
-      "D. The Ingress controller merges overlapping path rules into a single backend, routing /v2/users to api-v1 instead"
+      "D. The Ingress controller merges overlapping path rules into a single backend, routing `/v2/users` to `api-v1` instead"
     ],
     answer: 0,
     explanation: "By default, the nginx Ingress controller forwards the request with the original path intact. When `/v2/users` matches the `/v2` prefix rule, the full path `/v2/users` is sent to the `api-v2` backend. If the application only handles routes starting at `/` (e.g., `/users`), it returns 404 for `/v2/users`. The fix is to add the `nginx.ingress.kubernetes.io/rewrite-target` annotation to strip the path prefix. Option B is relevant but `pathType: Prefix` is typically already set for this use case.\n\nWhy other options are wrong:\n- B: pathType: Prefix is relevant but is typically already set; the core issue is that the full path including prefix is forwarded to the backend\n- C: TLS termination at the ingress is standard behavior; backends typically receive HTTP, and api-v2 would be configured to accept HTTP on its backend port\n- D: The ingress controller can route to multiple services under the same host with different path prefixes; this is a core ingress feature\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource",

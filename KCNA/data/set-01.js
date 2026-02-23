@@ -792,10 +792,10 @@ var questions = [
     text: "A security team requires that all container images in the cluster must conform to the OCI (Open Container Initiative) image specification. What does the OCI image specification define?",
     diagram: null,
     options: [
-      "The runtime behavior of containers including CPU and memory limits enforcement policies",
+      "The runtime behavior of containers including CPU limits, memory limits, and enforcement",
       "The format for container images including the manifest, filesystem layers, and config",
       "The network security policies that container images must embed for Kubernetes compliance",
-      "The signing and verification process for container images in production registries"
+      "The signing, verification, and trust process for container images in production registries"
     ],
     answer: 1,
     explanation: "The OCI Image Specification defines a standard format for container images, including the image manifest (which lists layers and configuration), the filesystem layer format (how layers are packaged), and the image configuration (runtime defaults). It does not define runtime resource limits, network policies, or image signing processes. Image signing is addressed by separate projects like Sigstore/cosign and Notary.\n\nWhy other options are wrong:\n- A: The OCI image spec defines image format, not runtime resource limits enforcement.\n- C: Network security policies are not embedded in container images by the OCI spec.\n- D: Image signing and verification are handled by separate projects like Sigstore/cosign and Notary, not the OCI image spec.\n\nReference: https://opencontainers.org/",
@@ -920,7 +920,7 @@ var questions = [
     text: "A team practices immutable infrastructure by building new container images for every code change instead of modifying running containers. A colleague questions this approach, arguing it wastes time rebuilding images. What is the primary benefit of immutable infrastructure?",
     diagram: null,
     options: [
-      "It reduces container image sizes because only changed layers need to be rebuilt each time",
+      "It reduces container image sizes — only the changed layers need to be rebuilt each time",
       "It reduces the need for version control since each image is a self-contained deployment artifact",
       "It ensures consistency and reproducibility — every deployment uses a known, tested artifact",
       "It allows faster rollbacks because the container runtime can hot-swap layers without restarts"
@@ -1097,12 +1097,12 @@ var questions = [
     diagram: null,
     options: [
       "Kubernetes rejects the command because the Deployment already exists and requires `edit` to modify",
-      "Kubernetes deletes the existing Deployment and recreates it from the updated YAML manifest definitions",
+      "Kubernetes deletes the existing Deployment, its ReplicaSet, and all Pods, then recreates from the new YAML",
       "Kubernetes performs a three-way merge comparing the last applied config, live state, and new file",
       "Kubernetes creates a duplicate Deployment with an auto-generated suffix to prevent naming conflicts"
     ],
     answer: 2,
-    explanation: "`kubectl apply` uses a declarative approach with a three-way merge strategy. It compares the new configuration, the last-applied-configuration annotation (stored on the object), and the current live state to determine what changes to make. This allows it to update only the fields that changed. It does not reject existing resources, create duplicates, or delete and recreate the resource.\n\nWhy other options are wrong:\n- A: `kubectl apply` is designed to update existing resources; it does not reject them.\n- B: `kubectl apply` does not delete and recreate resources; it performs an in-place merge.\n- D: Kubernetes does not create duplicate resources with auto-generated suffixes from `kubectl apply`.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
+    explanation: "`kubectl apply` uses a declarative approach with a three-way merge strategy. It compares the new configuration, the last-applied-configuration annotation (stored on the object), and the current live state to determine what changes to make. This allows it to update only the fields that changed. It does not reject existing resources, create duplicates, or delete and recreate the resource.\n\nWhy other options are wrong:\n- A: `kubectl apply` is designed to update existing resources; it does not reject them.\n- B: `kubectl apply` does not delete and recreate the Deployment, ReplicaSet, or Pods; it performs an in-place merge.\n- D: Kubernetes does not create duplicate resources with auto-generated suffixes from `kubectl apply`.\n\nReference: https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#in-place-updates-of-resources",
     verify: null
   },
   {
@@ -1352,8 +1352,8 @@ var questions = [
     text: "A team has a PersistentVolumeClaim that is stuck in `Pending` state. Running `kubectl describe pvc` shows the event: `no persistent volumes available for this claim and no storage class is set`. What is the most likely cause?",
     diagram: null,
     options: [
-      "The PVC requests more storage than any node has available disk space for provisioning",
-      "The `kube-scheduler` cannot find a node with the requested volume type for the PVC",
+      "The PVC requests more capacity than available disk space, storage quota, or node resources",
+      "The `kube-scheduler` cannot find a suitable node with the requested volume type for the PVC",
       "The PVC has no `storageClassName`, there is no default StorageClass, and no PV matches",
       "The PVC is in a different namespace than the PersistentVolume it should bind to for use"
     ],
@@ -1467,10 +1467,10 @@ var questions = [
       "During the build and testing stages, where scanning blocks the pipeline if critical vulnerabilities are found",
       "After deployment in production, where a runtime scanner monitors containers for newly found vulnerabilities",
       "At multiple stages: during the build, before deployment via admission control, and in the image registry",
-      "When developers request it manually, to avoid blocking the automated deployment pipeline with extra scans"
+      "Only when developers request it: before a release, during hotfixes, or when external audits require verification"
     ],
     answer: 2,
-    explanation: "A defense-in-depth approach scans at multiple stages. During the build, the CI pipeline scans the newly built image. Before deployment, an admission controller (like OPA Gatekeeper or Kyverno) can reject images with critical vulnerabilities. Registries can continuously scan stored images for newly discovered CVEs. Scanning only at build misses new vulnerabilities discovered later. Scanning only in production is too late. Manual scanning is unreliable.\n\nWhy other options are wrong:\n- A: Scanning only at build and testing stages misses new vulnerabilities discovered after the image is built and stored in a registry.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual scanning is unreliable and does not scale with automated deployment pipelines.\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
+    explanation: "A defense-in-depth approach scans at multiple stages. During the build, the CI pipeline scans the newly built image. Before deployment, an admission controller (like OPA Gatekeeper or Kyverno) can reject images with critical vulnerabilities. Registries can continuously scan stored images for newly discovered CVEs. Scanning only at build misses new vulnerabilities discovered later. Scanning only in production is too late. Manual scanning is unreliable.\n\nWhy other options are wrong:\n- A: Scanning only at build and testing stages misses new vulnerabilities discovered after the image is built and stored in a registry.\n- B: Scanning only in production is too late; vulnerable images should be caught before deployment.\n- D: Manual or on-demand scanning is unreliable and does not scale with automated deployment pipelines.\n\nReference: https://kubernetes.io/docs/concepts/security/overview/",
     verify: null
   },
   {

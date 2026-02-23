@@ -72,9 +72,9 @@ var questions = [
     text: "A platform team configures Prometheus to scrape metrics from application Pods. They add the annotation <code>prometheus.io/scrape: \"true\"</code> to their Pod spec, but Prometheus is not collecting metrics. The Prometheus configuration uses <code>kubernetes_sd_configs</code> with role <code>pod</code>. What should they check first?",
     diagram: null,
     options: [
-      "Whether the Prometheus server has enough CPU and memory allocated to scrape all annotated targets",
+      "Whether the Prometheus server has enough CPU and memory to scrape all <code>kubernetes_sd_configs</code> targets",
       "Whether the application Pods have a readiness probe defined that gates the scraping of metrics endpoints",
-      "Whether the Prometheus Operator CRDs are correctly installed and reconciled within the current cluster",
+      "Whether the Prometheus Operator CRDs like <code>ServiceMonitor</code> are correctly installed and reconciled",
       "Whether the relabeling rules filter on the <code>prometheus.io/scrape</code> annotation and the correct metrics port"
     ],
     answer: 3,
@@ -360,9 +360,9 @@ var questions = [
     text: "A Kubernetes cluster runs CoreDNS for service discovery. An application Pod attempts to resolve the DNS name <code>my-svc.my-ns.svc.cluster.local</code> but receives <code>NXDOMAIN</code>. The Service <code>my-svc</code> exists in namespace <code>my-ns</code>. Which of the following could cause this?",
     diagram: null,
     options: [
-      "The Service type must be set to LoadBalancer for CoreDNS to generate DNS records for the Service",
+      "The Service type must be set to <code>LoadBalancer</code> for CoreDNS to generate DNS records for the Service",
       "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
-      "CoreDNS maps ClusterIP addresses to IP ranges and does not support hostname-based Service lookups",
+      "CoreDNS maps <code>ClusterIP</code> addresses to IP ranges and does not support hostname-based Service lookups",
       "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to the CoreDNS nameserver"
     ],
     answer: 3,
@@ -1561,7 +1561,7 @@ var questions = [
     diagram: null,
     options: [
       "The webhook's <code>failurePolicy</code> field determines whether the API server rejects or allows the request",
-      "The API server retries the webhook call with exponential backoff until the endpoint becomes reachable",
+      "The API server retries the webhook call with exponential backoff until the <code>timeoutSeconds</code> value expires",
       "All admission webhooks in the cluster are automatically disabled when any single webhook is unreachable",
       "Pod creation proceeds normally because validating webhook configurations are advisory and non-blocking"
     ],
