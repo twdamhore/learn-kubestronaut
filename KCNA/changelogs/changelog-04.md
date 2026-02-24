@@ -456,3 +456,34 @@
 
 ### s04-q083 — polarity giveaway
 - **Option D:** Changed from "The StatefulSet rejects the update until all existing pods are drained from their current nodes" to "No update proceeds until all existing pods are drained from their current nodes by the controller" to break lone "No" polarity in correct answer A (was 1 "No" + 0 others; now 1 "No" + 1 "No").
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-04.js`
+**Issues found**: 7
+
+### s04-q020 — giveaway (unique "may" qualifier in correct)
+- **Option D:** Changed "The pod can mount" to "The pod may mount" to break unique "may" qualifier in correct answer A (was only A had "may"; now A and D both have "may").
+
+### s04-q024 — giveaway (unique ", or" alternative in correct)
+- **Option D:** Changed from "The pod's service account does not have RBAC permissions to create or access volume claim resources" to "The pod's service account lacks RBAC permissions to create PVCs, or the namespace quota blocks claims" to break unique ", or" alternative pattern in correct answer B (was only B had ", or"; now B and D both have ", or").
+- **Explanation D:** Updated to reference "RBAC permissions or quota violations" to match revised option text.
+
+### s04-q031 — giveaway (unique ", or" alternative in correct)
+- **Option C:** Changed from "Each pod mounts a separate copy of the same ReadWriteOnce PV, which the scheduler creates transparently" to "Each pod mounts a separate copy of the ReadWriteOnce PV, or the scheduler clones it transparently per pod" to break unique ", or" alternative pattern in correct answer A (was only A had ", or"; now A and C both have ", or").
+- **Explanation C:** Updated to reference "clone or create separate copies" to match revised option text.
+
+### s04-q048 — giveaway (unique "may" qualifier in correct)
+- **Option C:** Changed "The node is automatically drained" to "The node may be automatically drained" to break unique "may" qualifier in correct answer D (was only D had "may"; now C and D both have "may").
+
+### s04-q056 — giveaway (unique "since" causal conjunction in correct)
+- **Option A (correct):** Changed "since all cluster state" to "because all cluster state" to remove the unique "since" pattern.
+- **Option C:** Changed from "The cluster continues operating normally by falling back to locally cached data on each component" to "The cluster continues operating normally because each component caches enough data locally to proceed" so that "because" appears in both A and C, breaking the unique causal conjunction giveaway.
+- **Explanation C:** Updated to reference "cache enough data locally" to match revised option text.
+
+### s04-q079 — giveaway (unique "while" contrast conjunction in correct)
+- **Option A:** Changed from "Saga provides strong consistency by coordinating writes across services through a central transaction broker" to "Saga provides strong consistency through a central transaction broker while coordinating writes across services" to break unique "while" contrast conjunction in correct answer B (was only B had "while"; now A and B both have "while").
+
+### s04-q089 — giveaway (unique "may" qualifier in correct)
+- **Option D:** Changed from "The pod fails to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects containers with unmatched VOLUME declarations" to "The pod may fail to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects unmatched VOLUME declarations" to break unique "may" qualifier in correct answer C (was only C had "may"; now C and D both have "may").

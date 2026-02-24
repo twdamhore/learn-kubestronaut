@@ -498,3 +498,24 @@
 
 ### s09-q048 — giveaway: "since" uniquely in correct answer
 - **Option C (correct):** Changed "The LimitRange default limit of `500m` is applied since the developer did not specify a limit" to "The LimitRange default limit of `500m` is applied when the developer does not specify a limit". The causal conjunction "since" was uniquely present in the correct answer, providing a structural giveaway to test-savvy students.
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-09.js`
+**Issues found**: 5
+
+### s09-q036 — giveaway: "while" uniquely in correct answer
+- **Option B:** Changed "which interposes a user-space kernel to intercept all system calls for application-level sandboxing" to "which interposes a user-space kernel to intercept system calls while providing sandbox isolation" so that the correct answer C is no longer the only option containing the contrast connector "while".
+
+### s09-q039 — giveaway: "while" uniquely in correct answer
+- **Option D:** Changed "It live-migrates all running containers from the node to other available nodes without restarting them" to "It live-migrates all running containers to other available nodes while preserving their in-memory state" so that the correct answer A is no longer the only option containing "while".
+
+### s09-q043 — giveaway: "while" uniquely in correct answer
+- **Option A:** Changed "A Gateway resource configured with dual upstream backends for mirroring production traffic to the canary" to "A Gateway resource configured with dual upstream backends for mirroring traffic while routing to the canary" so that the correct answer D is no longer the only option containing "while".
+
+### s09-q077 — giveaway: "until" uniquely in correct answer
+- **Option A:** Changed "All ingress and egress traffic is denied by default when a CNI plugin with NetworkPolicy support is installed in the cluster" to "All ingress and egress traffic is denied by default until the CNI plugin with NetworkPolicy support completes its initialization" so that the correct answer D is no longer the only option containing the conditional qualifier "until".
+
+### s09-q081 — giveaway: "unless" uniquely in correct answer
+- **Option C:** Changed "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later" to "Exactly 5 minutes after the broken manifest was deployed, unless Flux detects a faster polling source" so that the correct answer B is no longer the only option containing the conditional qualifier "unless".

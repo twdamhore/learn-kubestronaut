@@ -315,7 +315,7 @@ var questions = [
       "The pod may read or modify sensitive host files like `/etc/shadow`, potentially enabling privilege escalation",
       "The pod can read files from `/etc` but read-only access poses a limited security concern for the node",
       "The `hostPath` volume is encrypted like a Secret volume so there is no meaningful security concern",
-      "The pod can mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath"
+      "The pod may mount `/etc` but gains read-only access due to default securityContext restrictions on hostPath"
     ],
     answer: 0,
     explanation: "Mounting `hostPath` volumes, especially to sensitive directories like `/etc`, is a significant security risk. A container with write access could modify host-level configuration files, create backdoor accounts, or escalate privileges. Pod Security Standards restrict `hostPath` usage, and most production clusters should disallow it except for system-level DaemonSets.\n\nWhy other options are wrong:\n- B: hostPath volumes allow both read and write access by default; they are not read-only\n- C: hostPath volumes are not encrypted like Secret volumes; they expose raw host filesystem paths to the container\n- D: There are no default securityContext restrictions that force hostPath mounts to read-only; hostPath volumes are read-write by default unless explicitly configured otherwise\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
@@ -379,10 +379,10 @@ var questions = [
       "The container image is too large to download within the default image pull timeout for the runtime",
       "The PV is unavailable, the CSI driver is malfunctioning, or the volume is attached to another node",
       "The pod's resource requests for CPU or memory exceed the available capacity on the scheduled node",
-      "The pod's service account does not have RBAC permissions to create or access volume claim resources"
+      "The pod's service account lacks RBAC permissions to create PVCs, or the namespace quota blocks claims"
     ],
     answer: 1,
-    explanation: "A `FailedMount` event with a timeout indicates a volume-level issue. Common causes include: the underlying storage being unreachable, the CSI driver pod being down or misconfigured, the volume being stuck attached to a previous node (common with `ReadWriteOnce` volumes), or the PV not existing. This is distinct from image pull or resource scheduling issues.\n\nWhy other options are wrong:\n- A: Image pull issues produce ImagePullBackOff events, not FailedMount events\n- C: Resource scheduling issues cause Pending state, not ContainerCreating with FailedMount\n- D: RBAC permission errors would result in Forbidden API errors, not volume mount timeout events\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/#my-pod-is-stuck-waiting",
+    explanation: "A `FailedMount` event with a timeout indicates a volume-level issue. Common causes include: the underlying storage being unreachable, the CSI driver pod being down or misconfigured, the volume being stuck attached to a previous node (common with `ReadWriteOnce` volumes), or the PV not existing. This is distinct from image pull or resource scheduling issues.\n\nWhy other options are wrong:\n- A: Image pull issues produce ImagePullBackOff events, not FailedMount events\n- C: Resource scheduling issues cause Pending state, not ContainerCreating with FailedMount\n- D: RBAC permission errors or quota violations would result in Forbidden or quota-exceeded API errors, not volume mount timeout events\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/#my-pod-is-stuck-waiting",
     verify: "kubectl describe pod <pod-name> && kubectl get volumeattachment"
   },
   {
@@ -490,11 +490,11 @@ var questions = [
     options: [
       "The PV must support `ReadWriteMany` access, or the team should use an external object store like S3 instead",
       "The application must switch to using `emptyDir` volumes because horizontal scaling requires ephemeral storage",
-      "Each pod mounts a separate copy of the same ReadWriteOnce PV, which the scheduler creates transparently",
+      "Each pod mounts a separate copy of the ReadWriteOnce PV, or the scheduler clones it transparently per pod",
       "Each pod replica must write to a separate directory like `/data/pod-0` on the same `ReadWriteOnce` volume"
     ],
     answer: 0,
-    explanation: "Block storage PVs typically support only `ReadWriteOnce`, which limits mounting to a single node. For horizontal scaling across nodes, the team needs either a shared filesystem supporting `ReadWriteMany` (e.g., NFS, CephFS) or an external object store like S3 that is natively multi-client. Using `emptyDir` would lose data on pod restart.\n\nWhy other options are wrong:\n- B: emptyDir volumes are ephemeral and lose data on pod restart; they are not suitable for persistent file storage\n- C: The scheduler does not transparently create separate copies of a ReadWriteOnce PV for each pod; a single RWO PV can only be mounted on one node at a time\n- D: Multiple pods on different nodes cannot mount the same RWO volume; writing to separate directories does not solve the node restriction\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    explanation: "Block storage PVs typically support only `ReadWriteOnce`, which limits mounting to a single node. For horizontal scaling across nodes, the team needs either a shared filesystem supporting `ReadWriteMany` (e.g., NFS, CephFS) or an external object store like S3 that is natively multi-client. Using `emptyDir` would lose data on pod restart.\n\nWhy other options are wrong:\n- B: emptyDir volumes are ephemeral and lose data on pod restart; they are not suitable for persistent file storage\n- C: The scheduler does not clone or create separate copies of a ReadWriteOnce PV per pod; a single RWO PV can only be mounted on one node at a time\n- D: Multiple pods on different nodes cannot mount the same RWO volume; writing to separate directories does not solve the node restriction\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: null
   },
   {
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "No effect on scheduling or eviction; `DiskPressure` is an informational metric only for monitoring",
       "All existing pods on the node are immediately terminated and rescheduled to other available nodes",
-      "The node is automatically drained and cordoned by the controller until disk pressure is resolved",
+      "The node may be automatically drained and cordoned by the controller until disk pressure is resolved",
       "The scheduler stops placing new pods on the node, and the kubelet may evict pods to reclaim disk space"
     ],
     answer: 3,
@@ -888,13 +888,13 @@ var questions = [
     text: "The `etcd` datastore in a Kubernetes cluster uses persistent storage for its data directory. What happens to the cluster if etcd's storage becomes corrupted or unavailable?",
     diagram: null,
     options: [
-      "The control plane becomes non-functional since all cluster state is stored in the etcd data store",
+      "The control plane becomes non-functional because all cluster state is stored in the etcd data store",
       "Only new pod creation is affected; the API server falls back to a read-only cache for existing state",
-      "The cluster continues operating normally by falling back to locally cached data on each component",
+      "The cluster continues operating normally because each component caches enough data locally to proceed",
       "The kube-apiserver automatically switches to an in-memory backup store when etcd is unavailable"
     ],
     answer: 0,
-    explanation: "etcd is the sole source of truth for all Kubernetes cluster state, including pod definitions, services, secrets, and configuration. If etcd's storage becomes corrupted or unavailable, the kube-apiserver cannot read or write any cluster state. Running containers may continue executing, but no new operations (scheduling, scaling, updates) can occur until etcd is restored.\n\nWhy other options are wrong:\n- B: The API server does not have a read-only cache fallback mode; it depends on etcd for all operations\n- C: Control plane components do not have sufficient local caches to continue operating normally without etcd\n- D: There is no automatic in-memory backup store switchover; etcd must be restored for the cluster to function\n\nReference: https://kubernetes.io/docs/concepts/overview/components/#etcd",
+    explanation: "etcd is the sole source of truth for all Kubernetes cluster state, including pod definitions, services, secrets, and configuration. If etcd's storage becomes corrupted or unavailable, the kube-apiserver cannot read or write any cluster state. Running containers may continue executing, but no new operations (scheduling, scaling, updates) can occur until etcd is restored.\n\nWhy other options are wrong:\n- B: The API server does not have a read-only cache fallback mode; it depends on etcd for all operations\n- C: Control plane components do not cache enough data locally to continue operating normally without etcd\n- D: There is no automatic in-memory backup store switchover; etcd must be restored for the cluster to function\n\nReference: https://kubernetes.io/docs/concepts/overview/components/#etcd",
     verify: "kubectl get --raw='/readyz?verbose'"
   },
   {
@@ -1256,7 +1256,7 @@ var questions = [
     text: "A microservices application uses the Saga pattern for distributed transactions across services that each have their own database. Why is the Saga pattern preferred over traditional two-phase commit (2PC) for cloud-native applications?",
     diagram: null,
     options: [
-      "Saga provides strong consistency by coordinating writes across services through a central transaction broker",
+      "Saga provides strong consistency through a central transaction broker while coordinating writes across services",
       "Saga avoids distributed locks, maintaining service autonomy while requiring compensating transactions",
       "Saga is faster because it skips all validation and integrity checking steps in the transaction workflow",
       "Two-phase commit does not work with any database technology used in modern cloud-native applications"
@@ -1419,7 +1419,7 @@ var questions = [
       "The runtime creates an anonymous `emptyDir`-like volume at the path \u2014 managed by Kubernetes as a tracked ephemeral volume attached to the pod lifecycle and visible in the pod spec",
       "Kubernetes automatically creates a PersistentVolumeClaim for the VOLUME path declared in the image and binds it to a dynamically provisioned PV via the default StorageClass",
       "The VOLUME instruction is not translated into Kubernetes volume mounts \u2014 the container runtime may create anonymous bind mounts, but these are outside Kubernetes management",
-      "The pod fails to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects containers with unmatched VOLUME declarations"
+      "The pod may fail to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects unmatched VOLUME declarations"
     ],
     answer: 2,
     explanation: "In Kubernetes, the VOLUME instruction from a Dockerfile is not translated into Kubernetes-managed volume mounts. Kubernetes itself does not create PVs, PVCs, or emptyDir volumes for Dockerfile VOLUME paths. However, the container runtime (containerd) does create runtime-managed anonymous bind mounts for VOLUME paths, which exist outside Kubernetes\u2019s awareness. These runtime mounts are not visible as Kubernetes volumes and are not backed by PVs or PVCs. For persistent or shared storage in Kubernetes, volumes must be explicitly defined in the pod spec.\n\nWhy other options are wrong:\n- A: The runtime does create anonymous bind mounts, but these are runtime-managed, not Kubernetes emptyDir volumes\n- B: Kubernetes does not automatically create PVCs for VOLUME instructions in Dockerfiles\n- D: The pod does not fail to start; it runs normally regardless of whether explicit volumes are defined for those paths\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/",

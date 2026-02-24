@@ -408,3 +408,25 @@
 ### s08-q086 — giveaway: unique colon in correct answer
 - **Problem:** Correct option B (answer=1) uniquely contained a colon ("controllers: Node controller for...") while no distractor had any colons, creating a structural giveaway that could signal the correct answer without domain knowledge.
 - **Fix:** Restructured option A to include a colon: changed "Scheduling Pods to nodes, managing CronJobs, running admission webhooks, and handling resource quota enforcement across namespaces" to "Scheduling Pods to nodes and managing CronJobs: running admission webhooks and handling resource quota enforcement across namespaces". Now both A and B contain a colon, eliminating the unique structural pattern. Length ratio remains at 1.056.
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-08.js`
+**Issues found**: 4
+
+### s08-q002 — giveaway: unique "since" in correct answer
+- **Problem:** Correct option A uniquely contained the word "since" ("since Kubernetes version 1.13") while no distractor used "since", creating a structural keyword giveaway.
+- **Fix:** Added "since" to option C: changed "etcd, which stores DNS records as key-value pairs for Pod name lookups" to "etcd, which has stored DNS records as key-value pairs since cluster init". Now both A and C contain "since", eliminating the unique pattern.
+
+### s08-q016 — giveaway: unique "while" in correct answer
+- **Problem:** Correct option C (`Forbid`) uniquely contained the contrast word "while" ("while an existing run has not yet finished") while no distractor used "while", creating a structural giveaway.
+- **Fix:** Moved "while" from correct C to distractor B: changed C from "skips new Job creation entirely while an existing run has not yet finished" to "skips new Job creation entirely when an existing run has not yet finished". Changed B from "terminates the currently running Job and starts a new one in its place" to "terminates the currently running Job while starting a new one in its place". Now B has "while" instead of C.
+
+### s08-q037 — giveaway: unique "while" in correct answer
+- **Problem:** Correct option B (Canary) uniquely contained the contrast word "while" ("while monitoring metrics before rollout") while no distractor used "while", creating a structural giveaway.
+- **Fix:** Removed "while" from correct B and added it to distractor C: changed B from "shift a small traffic percentage to the new version while monitoring metrics before rollout" to "shift a small traffic percentage to the new version and monitor metrics before full rollout". Changed C from "run two full environments simultaneously and switch the load balancer at once for cutover" to "run two full environments simultaneously while switching the load balancer at once for cutover".
+
+### s08-q045 — giveaway: unique "while" in correct answer
+- **Problem:** Correct option C uniquely contained the contrast word "while" ("while volume mounts are eventually refreshed") while no distractor used "while", creating a structural giveaway.
+- **Fix:** Moved "while" from correct C to distractor A: changed C from "not updated without restart, while volume mounts are eventually refreshed" to "not updated without restart, but volume mounts are eventually refreshed". Changed A from "which can take several hours in large production clusters" to "while this can take several hours in large clusters". Now A has "while" instead of C.

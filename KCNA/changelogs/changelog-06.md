@@ -382,3 +382,13 @@
 ### s06-q038 — giveaway: "since" unique to correct answer
 - **Problem:** Round 44 changed "because" to "since" in the correct answer D, but "since" is still a causal conjunction giveaway when no distractor uses it.
 - **Fix:** Changed "since" to "as" in option D: "The Pod continues running as the rule is `IgnoredDuringExecution`".
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-06.js`
+**Issues found**: 1
+
+### s06-q038 — giveaway: "as" causal conjunction still unique to correct answer
+- **Problem:** Round 45 changed "since" to "as" in correct answer D, but "as" used causally ("The Pod continues running as the rule is...") remains a causal conjunction giveaway when no distractor uses any causal conjunction.
+- **Fix:** Restructured option D to eliminate the causal conjunction entirely: changed from "The Pod continues running as the rule is `IgnoredDuringExecution`" to "The Pod continues running under the `IgnoredDuringExecution` behavior". Length changed from 65 to 69 chars; ratio remains 1.09.

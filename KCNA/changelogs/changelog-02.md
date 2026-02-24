@@ -491,3 +491,13 @@
 
 ### s02-q088 — length-balance (ratio 1.138, correct C shortest)
 - **Option C (correct):** Padded from 94 to 101 chars. Changed `"An \`emptyDir\` volume shared between the init container and the main container within the same pod"` to `"An \`emptyDir\` volume shared between the init container and the main application container within the pod"`.
+
+## Round 46 — 2026-02-24
+**File**: `set-02.js`
+**Issues found**: 2
+
+### s02-q035 — giveaway ("since" unique to correct)
+- **Option B:** Added "since" clause to balance the pattern. Changed `"Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container"` to `"Split the dataset across two ConfigMaps and merge them at startup using an init container, since each holds 1 MiB"`.
+
+### s02-q046 — giveaway (correct D lacks backticks while all distractors have them)
+- **Option D (correct):** Added backtick-formatted term to match distractors' code formatting density. Changed `"Use a sidecar that watches the mounted ConfigMap volume for changes and signals the main process to reload"` to `"Use a sidecar that watches the mounted ConfigMap volume for changes and sends a \`SIGHUP\` signal to reload"`.

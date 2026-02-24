@@ -352,3 +352,29 @@
 **Issues found**: 0
 
 No issues found. All 100 questions passed review for option length balance (max/min ratio threshold 1.15), giveaway patterns (unique structural signals, phrase patterns, backtick density, polarity), factual accuracy (CNCF project statuses, Kubernetes features, metric names), and explanation quality. Answer distribution is well-balanced (A=25, B=24, C=25, D=26). This set has been through 9 prior review rounds (Rounds 36-44) with 72+ cumulative fixes applied.
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-03.js`
+**Issues found**: 4
+
+### s03-q029 — giveaway (backtick-density gap, option D had 0 backticks)
+- Added backticks around `etcd` and `kube-apiserver` in option D (was 0 backticks, now 4) to reduce the gap with correct option C (4 backticks). Previously option D was the only option with zero backtick-wrapped terms.
+
+### s03-q037 — giveaway (unique double quotes in correct answer)
+- Added escaped double quotes around `"nlb"` in distractor B's annotation value to match the `"true"` quote pattern in correct option C, removing the unique double-quote structural signal from the correct answer.
+
+### s03-q040 — giveaway (backtick-density gap, option A had 0 backticks)
+- Added backticks around `kube-proxy` and `iptables` in option A (was 0 backticks, now 4) to reduce the gap with correct option B (4 backticks). Previously option A was the only option with zero backtick-wrapped terms.
+
+### s03-q047 — giveaway (unique double quotes in correct answer)
+- Changed option A from `kube_service_info` to `kube_service_info{service="<name>"}` to add Prometheus label-selector syntax with double quotes, matching the `{ready="true"}` pattern in correct option C. Removes the unique double-quote structural signal.
+
+## Summary
+
+- 4 giveaway fixes (2 unique double-quote signals, 2 backtick-density gaps with 0-backtick distractors)
+- No answer indices were changed
+- No accuracy or explanation changes
+- All 100 questions pass length-balance check (no ratio > 1.15)
+- Answer distribution unchanged: A=25, B=24, C=25, D=26

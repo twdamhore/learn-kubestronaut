@@ -414,3 +414,15 @@
 **Issues found**: 0
 
 No issues found. All 100 questions were reviewed for option length balance (max/min ratio > 1.15), giveaway patterns (unique keywords, structural elements, polarity, backtick density, parentheticals), factual accuracy (CNCF project maturity levels, Kubernetes features as of Feb 2026), and explanation quality. No actionable issues remain after 9 previous rounds of refinement (Rounds 36-44).
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-01.js`
+**Issues found**: 2
+
+### s01-q049 — giveaway: causal "as" unique to correct answer
+- Option A (correct) used ", as `kube-proxy` routes to Pods" where the causal conjunction "as" (meaning "since/because") was not present in any distractor. Changed "as" to "where" to remove the causal conjunction signal: `"By sending requests to \`<any-node-ip>:31234\`, where \`kube-proxy\` routes to Pods"`.
+
+### s01-q092 — giveaway: "At multiple stages" comprehensive-answer pattern
+- Option C (correct) began with "At multiple stages:" which is a strong "all of the above" signal that test-savvy students can exploit without domain knowledge. Rephrased to remove the comprehensive flag while preserving accuracy: changed from `"At multiple stages: during the build, before deployment via admission control, and in the image registry"` to `"In the CI build pipeline, before deployment via admission control, and continuously in the image registry"`. Ratio unchanged at 1.124.

@@ -603,7 +603,7 @@ var questions = [
       "A. The Pod is immediately evicted and rescheduled to a matching node",
       "B. The Pod enters a `Pending` state until a new node with the label exists",
       "C. The kubelet terminates the Pod during its next regular sync cycle run",
-      "D. The Pod continues running as the rule is `IgnoredDuringExecution`"
+      "D. The Pod continues running under the `IgnoredDuringExecution` behavior"
     ],
     answer: 3,
     explanation: "The `IgnoredDuringExecution` suffix means the affinity rule is only evaluated at scheduling time. Once a Pod is running, changes to node labels do not trigger eviction. The Pod continues on the node even if it no longer matches the affinity rule.\n\nWhy other options are wrong:\n- A: IgnoredDuringExecution means no eviction occurs after scheduling; the Pod is not evicted\n- B: The Pod does not enter Pending; it continues running on the current node\n- C: The kubelet does not terminate Pods due to affinity rule changes; this is explicitly ignored\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",

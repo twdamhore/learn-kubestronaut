@@ -778,7 +778,7 @@ var questions = [
     options: [
       "Immutable containers run faster than mutable ones, reducing the exposure time",
       "Immutable containers automatically encrypt their underlying filesystems",
-      "Attackers cannot persist backdoors since all changes are lost on restart",
+      "Attackers cannot persist backdoors and all changes are lost on container restart",
       "Immutable containers do not need RBAC policies for access control purposes"
     ],
     answer: 2,
@@ -1257,9 +1257,9 @@ var questions = [
     diagram: null,
     options: [
       "Secrets cannot be used across namespaces and the Secret must exist in `production`",
-      "The Secret name contains a typo preventing the kubelet from locating the resource",
+      "The Secret name contains a typo preventing the kubelet from locating `tls-cert`",
       "TLS-type Secrets require a special RBAC role to access from within Pod containers",
-      "The Pod's ServiceAccount lacks permission to read Secrets from another namespace"
+      "The Pod's ServiceAccount lacks `get` permission to read Secrets from `default`"
     ],
     answer: 0,
     explanation: "Kubernetes Secrets are namespace-scoped resources. A Pod can only reference Secrets within its own namespace. The Secret `tls-cert` must be created in the `production` namespace for the Pod to mount it. Cross-namespace Secret access is not supported natively.\n\nWhy other options are wrong:\n- B: The error message clearly states the Secret name, so a typo is not the issue here\n- C: TLS-type Secrets do not require special RBAC roles for Pod mounting\n- D: The Pod references the Secret in its spec; the SA permissions are for API access, not volume mounts\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",

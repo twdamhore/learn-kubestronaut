@@ -374,3 +374,22 @@
 
 ### s07-q039 — giveaway: "like X or Y" tool-enumeration pattern unique to correct answer C
 - Added "like" to distractor D: changed "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other" to "Adding CPU resource limits to all services like B and C to prevent noisy-neighbor problems affecting each other". Now B, C, and D all contain "like". Ratio 1.088.
+
+## Round 46 — 2026-02-24
+**File**: `set-07.js`
+**Issues found**: 5
+
+### s07-q021 — giveaway: "while" unique to correct answer B
+- Added "while" to distractor D: changed "The Deployment's replica count was scaled down from 3 to 2 and the excess pod is being terminated by the controller" to "The Deployment's replica count was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles". Ratio 1.140.
+
+### s07-q078 — giveaway: "while" unique to correct answer B
+- Added "while" to distractor C: changed "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness failures" to "Kubernetes automatically reverts to the previous Deployment revision while `maxUnavailable: 0` detects readiness failures". Ratio 1.052.
+
+### s07-q083 — giveaway: "since" unique to correct answer D
+- Added "since" to distractor B: changed "Multiple virtual IPs allocated by the headless Service for load balancing across the StatefulSet pod instances" to "Multiple virtual IPs allocated by the headless Service, since it load-balances across all StatefulSet pod instances". Ratio 1.065.
+
+### s07-q095 — giveaway: "or" pattern unique to correct answer D
+- Added "or" to distractor C: changed "The Kubernetes version does not support the API version used in the chart manifests, causing an incompatibility validation error" to "The Kubernetes version does not support the API version or resource kind used in the chart manifests, causing a validation error". Ratio 1.113.
+
+### s07-q099 — giveaway: "since" unique to correct answer C
+- Added "since" to distractor A: changed "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes" to "The kube-proxy is not updating iptables rules for the new Service, since stale routing entries persist across all cluster nodes". Ratio 1.058.

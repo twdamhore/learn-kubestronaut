@@ -459,7 +459,7 @@ var questions = [
       "In a `ConfigMap` in the same namespace as the Ingress resource for TLS data",
       "In the Ingress controller's container filesystem at the `/etc/ssl/` directory",
       "In a `Secret` of type `kubernetes.io/tls` referenced by the Ingress resource",
-      "In etcd directly, accessible only by the kube-apiserver component at runtime"
+      "In `etcd` directly, accessible only by the `kube-apiserver` component at runtime"
     ],
     answer: 2,
     explanation: "Ingress TLS configuration references a Kubernetes `Secret` of type `kubernetes.io/tls` that contains `tls.crt` and `tls.key` fields. The Ingress controller reads this Secret to configure TLS. ConfigMaps are for non-sensitive data. Storing certs directly on the controller filesystem is not the standard approach. While Secrets are stored in etcd, they are accessed through the API server as Secret objects, not directly.\n\nWhy other options are wrong:\n- A: ConfigMaps are for non-sensitive configuration data; TLS certificates and keys are sensitive and belong in Secrets.\n- B: Storing certs directly on the controller filesystem is not the standard Kubernetes approach; it bypasses declarative management.\n- D: While Secrets are stored in etcd, they are accessed through the API server as Secret objects, not accessed directly from etcd.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls",
@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "Type `ClusterIP` with `externalIPs` set to the VPC subnet range for internal load balancing purposes",
-      "Type `NodePort` with annotation `service.beta.kubernetes.io/aws-load-balancer-type: nlb` set on it",
+      "Type `NodePort` with annotation `service.beta.kubernetes.io/aws-load-balancer-type: \"nlb\"` on it",
       "Type `LoadBalancer` with annotation `service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"`",
       "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution "
     ],
@@ -632,7 +632,7 @@ var questions = [
     text: "After upgrading the CNI plugin, all new pods get stuck in `ContainerCreating` state. Existing pods still work. What should the engineer check first?",
     diagram: null,
     options: [
-      "Whether kube-proxy is running in IPVS mode instead of iptables mode on the affected nodes",
+      "Whether `kube-proxy` is running in IPVS mode instead of `iptables` mode on the affected nodes",
       "Whether CNI binaries and config under `/etc/cni/net.d/` and `/opt/cni/bin/` are installed",
       "Whether the kubelet has the `--network-plugin=cni` flag removed from its startup arguments",
       "Whether CoreDNS pods are in `CrashLoopBackOff` and unable to resolve pod DNS registrations"
@@ -744,7 +744,7 @@ var questions = [
     text: "A cluster operator wants to alert when a Service has zero ready endpoints for more than 5 minutes. Which kube-state-metrics metric best serves this use case?",
     diagram: null,
     options: [
-      "`kube_service_info` filtered by service name and namespace labels in a dashboard query",
+      "`kube_service_info{service=\"<name>\"}` filtered by namespace labels in a dashboard query",
       "`kube_endpoint_ready_count` with an alert threshold set at zero ready endpoints",
       "`kube_endpoint_address{ready=\"true\"}` equal to zero for the target Service over time",
       "`container_network_receive_bytes_total` dropping to zero on target pods in Prometheus"

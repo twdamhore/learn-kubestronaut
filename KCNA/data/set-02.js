@@ -575,8 +575,8 @@ var questions = [
     text: "A team notices their ConfigMap has reached its maximum size. They need to store a large dataset (approximately 2 MiB) that an application pod must read at startup. What alternative should they consider?",
     diagram: null,
     options: [
-      "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB of data",
-      "Split the dataset across two ConfigMaps and merge them inside the container at startup using an init container",
+      "Use a PersistentVolume to store the large dataset, since ConfigMaps are limited to approximately 1 MiB",
+      "Split the dataset across two ConfigMaps and merge them at startup using an init container, since each holds 1 MiB",
       "Increase the ConfigMap size limit by modifying the API server's `--max-configmap-size` startup configuration flag",
       "Use a Secret instead of a ConfigMap, which supports up to 10 MiB of data storage for larger configuration files"
     ],
@@ -758,7 +758,7 @@ var questions = [
       "Configure the kubelet `--sync-frequency` (e.g., `5s`) so volume-mounted ConfigMaps propagate to pods instantly",
       "Set `immutable: false` on the ConfigMap and enable watch-based kubelet propagation to refresh env vars in the pod",
       "Use `kubectl rollout restart` after each ConfigMap update to replace pods with ones reading the new values",
-      "Use a sidecar that watches the mounted ConfigMap volume for changes and signals the main process to reload"
+      "Use a sidecar that watches the mounted ConfigMap volume for changes and sends a `SIGHUP` signal to reload"
     ],
     answer: 3,
     explanation: "A sidecar pattern is a proven cloud-native approach: mount the ConfigMap as a volume (not with subPath), and a sidecar watches for file changes. When detected, it sends a signal (like SIGHUP) to the main process to reload configuration. Adjusting kubelet sync frequency does not guarantee instant propagation, setting immutable: false is not a real field, and rollout restart replaces pods entirely rather than enabling dynamic reloading.\n\nWhy other options are wrong:\n- A: --sync-frequency controls kubelet sync interval but volume updates still have cache TTL delay; it cannot force instant propagation and does not reload the application process\n- B: ConfigMaps are mutable by default; immutable: false is not a real field, and kubelet volume syncing does not refresh env vars -- only volume-mounted files are updated\n- C: rollout restart replaces pods entirely rather than enabling dynamic reloading without downtime as the question requires\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically",

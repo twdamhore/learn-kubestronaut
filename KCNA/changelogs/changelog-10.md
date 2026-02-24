@@ -504,3 +504,18 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q089 — accuracy: Kyverno maturity level outdated
 - **Explanation:** Changed "Kyverno (CNCF Incubating)" to "Kyverno (CNCF Graduated)". Same maturity update as q044.
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-10.js`
+**Issues found**: 3
+
+### s10-q007 — unique "like" in correct answer B
+- **Option A:** Added "like" to balance correct B's unique use. Changed "The write succeeds but the pod is evicted by the kubelet when it detects the volume exceeds its size limit" to "The write succeeds but the pod is evicted by the kubelet, like an ephemeral storage violation, when size is exceeded".
+
+### s10-q058 — unique "while" in correct answer D
+- **Option B:** Added "while" to balance correct D's unique use. Changed "Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy" to "Each instance watches a partitioned namespace subset, while other instances handle the remaining namespace partitions".
+
+### s10-q063 — unique "while" in correct answer A
+- **Option C:** Added "while" to balance correct A's unique use. Changed "Pods 0, 1, and 2 are updated first; then pods 3 and 4 are updated only once the first group is fully ready" to "Pods 0, 1, and 2 are updated first, while pods 3 and 4 wait; then pods 3 and 4 update once the first group is ready".

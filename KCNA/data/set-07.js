@@ -331,7 +331,7 @@ var questions = [
       "All three pods belong to the same ReplicaSet (`6d8f9b`) and one has developed a corrupted container filesystem causing crashes",
       "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while old pods (`6d8f9b`) remain",
       "The third pod was manually created outside of the Deployment controller and is unrelated to the current ReplicaSet",
-      "The Deployment's replica count was scaled down from 3 to 2 and the excess pod is being terminated by the controller"
+      "The Deployment's replica count was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
     ],
     answer: 1,
     explanation: "The pod name template in Kubernetes Deployments is `<deployment>-<replicaset-hash>-<pod-hash>`. Two pods share the hash `6d8f9b` (old ReplicaSet) and one has `7c4e2a` (new ReplicaSet). This indicates a rolling update is in progress, but the new revision is failing. The Deployment controller pauses the rollout when new pods crash.\n\nWhy other options are wrong:\n- A: Different ReplicaSet hashes (6d8f9b vs 7c4e2a) prove pods belong to different ReplicaSets\n- C: Deployment-managed pods follow the naming pattern; the third pod matches the deployment name\n- D: A scale-down terminates pods gracefully, not with CrashLoopBackOff status\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -1242,7 +1242,7 @@ var questions = [
     options: [
       "All old pods are immediately terminated because the deployment controller needs room for the new replacement pod instances",
       "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
-      "Kubernetes automatically reverts to the previous Deployment revision when `maxUnavailable: 0` detects readiness failures",
+      "Kubernetes automatically reverts to the previous Deployment revision while `maxUnavailable: 0` detects readiness failures",
       "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
     ],
     answer: 1,
@@ -1321,7 +1321,7 @@ var questions = [
     diagram: null,
     options: [
       "The IP addresses of the nodes where the StatefulSet pods are running, returned through the cluster DNS system",
-      "Multiple virtual IPs allocated by the headless Service for load balancing across the StatefulSet pod instances",
+      "Multiple virtual IPs allocated by the headless Service, since it load-balances across all StatefulSet pod instances",
       "The IP addresses of the `kube-proxy` instances on each node that handle traffic routing for this Service type",
       "The individual pod IPs of each StatefulSet member, since a headless Service returns pod IPs instead of a VIP"
     ],
@@ -1514,7 +1514,7 @@ var questions = [
     options: [
       "The Helm chart has a syntax error in one of its templates (e.g., a missing closing bracket) that prevents rendering",
       "The Helm repository index is corrupted and needs to be rebuilt before the chart can be installed into the target namespace",
-      "The Kubernetes version does not support the API version used in the chart manifests, causing an incompatibility validation error",
+      "The Kubernetes version does not support the API version or resource kind used in the chart manifests, causing a validation error",
       "A resource in the chart (e.g., Service or ConfigMap) already exists in the namespace from a previous manual or Helm deployment"
     ],
     answer: 3,
@@ -1576,7 +1576,7 @@ var questions = [
     text: "After deleting and recreating a Service, existing pods that cached the old Service ClusterIP are getting `connection refused` errors when trying to connect. Why is this happening, and how should clients discover Services?",
     diagram: null,
     options: [
-      "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes",
+      "The kube-proxy is not updating iptables rules for the new Service, since stale routing entries persist across all cluster nodes",
       "The pods need to be restarted for the new iptables rules to take effect because they cache network state at startup time",
       "The Service got a new ClusterIP. Clients should use DNS names instead of hardcoded IPs, since DNS resolves to the new IP",
       "Switching the Service to `type: ExternalName` would decouple the Service from a fixed ClusterIP and resolve IPs transparently"

@@ -104,7 +104,7 @@ var questions = [
     text: "A Pod uses an `emptyDir` volume with `medium: Memory` and `sizeLimit: 256Mi`. The container writes 300Mi of data to this volume. What is the expected behavior?",
     diagram: null,
     options: [
-      "A. The write succeeds but the pod is evicted by the kubelet when it detects the volume exceeds its size limit",
+      "A. The write succeeds but the pod is evicted by the kubelet, like an ephemeral storage violation, when size is exceeded",
       "B. The write operation fails with an I/O error at the 256Mi boundary, behaving like a full filesystem on disk",
       "C. The pod continues running since `sizeLimit` on memory-backed `emptyDir` volumes is advisory, not enforced",
       "D. The container is OOM-killed because memory-backed `emptyDir` usage counts against the container memory cgroup"
@@ -921,7 +921,7 @@ var questions = [
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='80' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 1</text><text x='80' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='80' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='150' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='200' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 2</text><text x='200' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='200' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='270' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='320' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 3</text><text x='320' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='320' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='100' y='120' width='200' height='40' rx='6' fill='#1a1a2e' stroke='#FF9800' stroke-width='1.5'/><text x='200' y='145' text-anchor='middle' fill='#FF9800' font-size='10'>???</text><line x1='80' y1='90' x2='180' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='90' x2='200' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='320' y1='90' x2='220' y2='118' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
       "A. All three instances process work simultaneously using distributed locking on individual resources stored in `etcd`",
-      "B. Each instance watches a partitioned subset of namespaces, dividing the workload using consistent hashing strategy",
+      "B. Each instance watches a partitioned namespace subset, while other instances handle the remaining namespace partitions",
       "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
       "D. They use leader election via Lease objects in `kube-system`, and only the leader reconciles while others stand by"
     ],
@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "A. Only pods with ordinal >= 3 (that is, pods 3 and 4) are updated, while pods 0, 1, and 2 keep the previous spec",
       "B. The update proceeds in batches of 3 pods at a time (one batch per cycle); it starts from the highest ordinal",
-      "C. Pods 0, 1, and 2 are updated first; then pods 3 and 4 are updated only once the first group is fully ready",
+      "C. Pods 0, 1, and 2 are updated first, while pods 3 and 4 wait; then pods 3 and 4 update once the first group is ready",
       "D. The partition creates two independent groups (lower and upper) that can be rolled back completely separately"
     ],
     answer: 0,

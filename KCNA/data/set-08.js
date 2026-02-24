@@ -27,7 +27,7 @@ var questions = [
     options: [
       "CoreDNS, the default cluster DNS provider since Kubernetes version 1.13",
       "Envoy, acting as a sidecar proxy that intercepts and resolves DNS queries",
-      "etcd, which stores DNS records as key-value pairs for Pod name lookups",
+      "etcd, which has stored DNS records as key-value pairs since cluster init",
       "NATS, which publishes DNS record updates via its messaging bus system"
     ],
     answer: 0,
@@ -250,8 +250,8 @@ var questions = [
     diagram: null,
     options: [
       "`Allow` — permits concurrent Job runs without any scheduling restriction on overlap",
-      "`Replace` — terminates the currently running Job and starts a new one in its place",
-      "`Forbid` — skips new Job creation entirely while an existing run has not yet finished",
+      "`Replace` — terminates the currently running Job while starting a new one in its place",
+      "`Forbid` — skips new Job creation entirely when an existing run has not yet finished",
       "`Queue` — enqueues the new Job to run sequentially after the current one completes"
     ],
     answer: 2,
@@ -587,8 +587,8 @@ var questions = [
     diagram: null,
     options: [
       "Recreate — terminate all old Pods before launching new ones, resulting in a brief downtime window period",
-      "Canary — shift a small traffic percentage to the new version while monitoring metrics before rollout",
-      "Blue-green — run two full environments simultaneously and switch the load balancer at once for cutover",
+      "Canary — shift a small traffic percentage to the new version and monitor metrics before full rollout",
+      "Blue-green — run two full environments simultaneously while switching the load balancer at once for cutover",
       "Rolling update — replace Pods one by one in sequence until all instances are running the new version"
     ],
     answer: 1,
@@ -714,9 +714,9 @@ var questions = [
     text: "An engineer is investigating why a ConfigMap change is not reflected in a running Pod. The Pod mounts the ConfigMap as an environment variable. Which statement explains this behavior?",
     diagram: null,
     options: [
-      "ConfigMap updates are delayed until the kubelet's sync period expires, which can take several hours in large production clusters",
+      "ConfigMap updates are delayed until the kubelet's sync period expires, while this can take several hours in large clusters",
       "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before updates take effect in Pods",
-      "Env vars from ConfigMaps are set at Pod creation and not updated without restart, while volume mounts are eventually refreshed",
+      "Env vars from ConfigMaps are set at Pod creation and not updated without restart, but volume mounts are eventually refreshed",
       "The kubelet polls ConfigMap changes every 5 seconds and refreshes both environment variables and volume-mounted data"
     ],
     answer: 2,

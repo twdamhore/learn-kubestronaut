@@ -569,7 +569,7 @@ var questions = [
     diagram: null,
     options: [
       "runc, because it uses Linux namespaces and cgroups that provide complete VM-equivalent workload isolation",
-      "gVisor (runsc), which interposes a user-space kernel to intercept all system calls for application-level sandboxing",
+      "gVisor (runsc), which interposes a user-space kernel to intercept system calls while providing sandbox isolation",
       "Kata Containers, which runs each container inside a lightweight VM while remaining compatible with the CRI",
       "Docker-in-Docker, which nests Docker engines inside containers to provide process-level workload isolation"
     ],
@@ -619,7 +619,7 @@ var questions = [
       "It cordons the node and evicts all non-DaemonSet, non-mirror Pods while respecting PodDisruptionBudgets",
       "It stops the kubelet process on the node, archives all container logs, and marks the node as unavailable",
       "It deletes the node object from the cluster, removing it from the scheduler's active node registry until re-added",
-      "It live-migrates all running containers from the node to other available nodes without restarting them"
+      "It live-migrates all running containers to other available nodes while preserving their in-memory state"
     ],
     answer: 0,
     explanation: "`kubectl drain` first cordons the node (marks it as unschedulable) and then evicts all Pods except DaemonSet Pods and mirror Pods. It respects PodDisruptionBudgets during eviction, which may cause the drain to block if evicting a Pod would violate the budget. The node object remains in the cluster with an unschedulable taint.\n\nWhy other options are wrong:\n- B: kubectl drain does not stop the kubelet or archive logs; those are separate manual operations\n- C: kubectl drain does not delete the node object; it only cordons and evicts Pods from the node\n- D: Kubernetes does not live-migrate containers; Pods are terminated and rescheduled as new instances\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/",
@@ -680,7 +680,7 @@ var questions = [
     text: "A service mesh is deployed using Istio in a Kubernetes cluster. The platform team wants to implement traffic mirroring to test a new version of the <code>recommendation-service</code> with production traffic without affecting users. Which Istio resource supports this?",
     diagram: null,
     options: [
-      "A <code>Gateway</code> resource configured with dual upstream backends for mirroring production traffic to the canary",
+      "A <code>Gateway</code> resource configured with dual upstream backends for mirroring traffic while routing to the canary",
       "A <code>DestinationRule</code> with <code>trafficPolicy.loadBalancer.simple: ROUND_ROBIN</code> distributing across versions",
       "A <code>PeerAuthentication</code> policy that routes all mTLS-encrypted traffic directly to the test version only",
       "A <code>VirtualService</code> with a <code>mirror</code> field that duplicates traffic to the new version while serving from stable"
@@ -1224,7 +1224,7 @@ var questions = [
     text: "A cluster uses Calico as the CNI plugin with <code>NetworkPolicy</code> enforcement enabled. A developer creates a Pod in the <code>app</code> namespace but does not create any NetworkPolicies in that namespace. What is the default network behavior for that Pod?",
     diagram: null,
     options: [
-      "All ingress and egress traffic is denied by default when a CNI plugin with NetworkPolicy support is installed in the cluster",
+      "All ingress and egress traffic is denied by default until the CNI plugin with NetworkPolicy support completes its initialization",
       "Egress traffic is allowed by default; all ingress traffic requires an explicit NetworkPolicy to be permitted in the namespace",
       "The Pod can only communicate with other Pods in the same namespace because cross-namespace traffic is blocked by default",
       "All traffic is allowed because no NetworkPolicy selects this Pod; Kubernetes follows a default-allow model until a policy applies"
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "Immediately, because Flux receives a Git webhook notification for every push event to the repository branch",
       "Up to 5 minutes matching the reconciliation interval, unless a webhook or manual trigger is configured",
-      "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later",
+      "Exactly 5 minutes after the broken manifest was deployed, unless Flux detects a faster polling source",
       "The fix requires manual approval in the Flux reconciliation dashboard before it can be applied to the cluster"
     ],
     answer: 1,

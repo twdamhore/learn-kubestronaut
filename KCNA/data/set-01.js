@@ -776,7 +776,7 @@ var questions = [
     text: "A team wants to expose their web application to external traffic. They set up a Service of type `NodePort`. After deployment, the Service is assigned NodePort 31234. How can external clients access the application?",
     diagram: null,
     options: [
-      "By sending requests to `<any-node-ip>:31234`, as `kube-proxy` routes to Pods",
+      "By sending requests to `<any-node-ip>:31234`, where `kube-proxy` routes to Pods",
       "By sending requests to `<cluster-ip>:31234` from outside the cluster network",
       "Through a DNS lookup of `<service-name>.svc.cluster.local:31234` from any network",
       "By connecting to the Pod IP directly on port 31234 from external clients"
@@ -1466,7 +1466,7 @@ var questions = [
     options: [
       "During the build and testing stages, where scanning blocks the pipeline if critical vulnerabilities are found",
       "After deployment to production, where a runtime scanner monitors containers, flags issues, and reports vulnerabilities",
-      "At multiple stages: during the build, before deployment via admission control, and in the image registry",
+      "In the CI build pipeline, before deployment via admission control, and continuously in the image registry",
       "Only when developers request it: before a release, during hotfixes, or when external audits require verification"
     ],
     answer: 2,

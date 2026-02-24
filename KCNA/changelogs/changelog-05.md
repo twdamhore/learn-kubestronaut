@@ -286,3 +286,15 @@
 
 ### s05-q082 (length-balance)
 - **Option C:** Shortened from "Environment variables are injected once at startup, never refreshed, and become stale on rotation" (97 chars) to "Environment variables are injected at startup and are never refreshed on rotation" (81 chars). Ratio was 1.115 (C longest at 97 vs B at 87), now 1.099.
+
+---
+
+## Round 46 — 2026-02-24
+**File**: `set-05.js`
+**Issues found**: 2
+
+### s05-q049 (unique-since giveaway)
+- **Option C (correct):** Changed from "Attackers cannot persist backdoors since all changes are lost on restart" to "Attackers cannot persist backdoors and all changes are lost on container restart". Removed unique "since" (causal conjunction) from the correct answer, which was not present in any distractor.
+
+### s05-q079 (backtick-density giveaway)
+- **Options B, D:** Correct answer A uniquely had backticks (2) while no distractor had any. Added backticks to B: changed "The Secret name contains a typo preventing the kubelet from locating the resource" to "The Secret name contains a typo preventing the kubelet from locating `tls-cert`". Added backticks to D: changed "The Pod's ServiceAccount lacks permission to read Secrets from another namespace" to "The Pod's ServiceAccount lacks `get` permission to read Secrets from `default`". Backtick distribution now: A=2, B=2, C=0, D=4.
