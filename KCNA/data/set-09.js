@@ -539,7 +539,7 @@ var questions = [
       "Use a single Deployment and perform a rolling update with <code>maxSurge: 100%</code> to replace all Pods at once",
       "Create a <code>v2</code> Deployment with a <code>version: v2</code> label, verify its health, then switch the Service selector",
       "Use a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured time schedule",
-      "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect incoming traffic"
+      "Deploy v2 Pods into a separate namespace, configure an ExternalName Service, and redirect incoming traffic"
     ],
     answer: 1,
     explanation: "Blue-green deployment involves running two identical environments (blue for current, green for new). In Kubernetes, this is achieved by creating a second Deployment with a distinct version label, validating it, and then switching the Service selector to point to the new version. This provides instant rollback by simply reverting the selector.\n\nWhy other options are wrong:\n- A: maxSurge: 100% creates all new Pods at once, but old Pods are still removed progressively and there is no explicit traffic-switch step, so it is not blue-green\n- C: CronJob-based traffic swapping is not a recognized deployment pattern and lacks reliability\n- D: ExternalName Services create CNAME DNS records and cannot handle cross-namespace routing properly\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "No CPU limit is applied to the container; the Pod runs without any enforced limit on CPU usage",
       "The CPU limit is automatically set equal to the specified request value of <code>200m</code> to match the request",
-      "The LimitRange default limit of <code>500m</code> is applied since the developer did not specify a limit",
+      "The LimitRange default limit of <code>500m</code> is applied when the developer does not specify a limit",
       "Pod creation fails because both requests and limits must be explicitly specified under a quota"
     ],
     answer: 2,
@@ -1018,7 +1018,7 @@ var questions = [
     options: [
       "Synchronous HTTP request-response between all services with retry logic built into each caller",
       "Event-driven architecture using a message broker (NATS, Kafka, or RabbitMQ) with publish-subscribe",
-      "Shared database tables where each consumer service polls for new records on a scheduled interval",
+      "Shared database tables where each consumer service polls for inserts, updates, and deletes on a timer",
       "gRPC bidirectional streaming (client and server) configured between each producer and consumer service"
     ],
     answer: 1,
@@ -1065,7 +1065,7 @@ var questions = [
     diagram: null,
     options: [
       "Pods keep running, the node is marked <code>NotReady</code>, and the control plane begins evicting Pods after timeout",
-      "The kubelet automatically restarts all Pods on the node to attempt reconnection to the API server endpoint",
+      "The kubelet restarts all Pods on the node, clears their caches, and reattempts connection to the API server",
       "All Pods on the node are immediately terminated by the container runtime when the network partition occurs",
       "The Pods are instantly marked <code>Failed</code> and rescheduled to other available nodes without any termination delay"
     ],
@@ -1497,12 +1497,12 @@ var questions = [
     diagram: null,
     options: [
       "Kubernetes object state metrics like Deployment replicas, Pod phase, and Job status from the API",
-      "Node CPU utilization and memory usage at the hardware level collected from system-level exporters",
+      "Node CPU utilization, memory usage, and disk I/O at the hardware level from system-level exporters",
       "Container-level resource consumption metrics such as CPU throttling and memory working set size",
       "Network bandwidth metrics like bytes sent and received for inter-Pod communication at the network interface"
     ],
     answer: 0,
-    explanation: "kube-state-metrics generates metrics about the state of Kubernetes objects by watching the API server. It exposes information like the number of desired vs. available replicas in a Deployment, Pod phase (Pending, Running, Failed), Job success/failure counts, and node conditions. These are complementary to node_exporter (hardware metrics) and cAdvisor (container resource metrics).\n\nWhy other options are wrong:\n- B: Node CPU/memory usage is provided by node_exporter and cAdvisor, not kube-state-metrics\n- C: Container-level resource metrics are exposed by cAdvisor, not kube-state-metrics\n- D: Network bandwidth metrics are from node_exporter or cAdvisor, not kube-state-metrics\n\nReference: https://github.com/kubernetes/kube-state-metrics",
+    explanation: "kube-state-metrics generates metrics about the state of Kubernetes objects by watching the API server. It exposes information like the number of desired vs. available replicas in a Deployment, Pod phase (Pending, Running, Failed), Job success/failure counts, and node conditions. These are complementary to node_exporter (hardware metrics) and cAdvisor (container resource metrics).\n\nWhy other options are wrong:\n- B: Node CPU, memory, and disk I/O usage is provided by node_exporter and cAdvisor, not kube-state-metrics\n- C: Container-level resource metrics are exposed by cAdvisor, not kube-state-metrics\n- D: Network bandwidth metrics are from node_exporter or cAdvisor, not kube-state-metrics\n\nReference: https://github.com/kubernetes/kube-state-metrics",
     verify: "kubectl get deployment kube-state-metrics -n kube-system"
   },
   {
@@ -1528,7 +1528,7 @@ var questions = [
     text: "A team runs a Pod with <code>hostNetwork: true</code> in its spec. The application inside the Pod binds to port 80. What are the networking implications?",
     diagram: null,
     options: [
-      "The Pod receives a dedicated ClusterIP that routes traffic on port 80 through the kube-proxy rules",
+      "The Pod receives a dedicated ClusterIP, routes traffic on port 80, and uses kube-proxy iptables rules",
       "The Pod creates a virtual network interface on the host that NATs all traffic to port 80 via iptables",
       "The Pod shares the host network namespace, binding to the node's IP on port 80, one Pod per node",
       "The Pod communicates only with other hostNetwork Pods and cannot reach cluster-networked Pods"

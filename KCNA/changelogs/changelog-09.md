@@ -474,3 +474,27 @@
 
 ### s09-q094 — giveaway: "like" uniquely in correct answer (only "such as" in C)
 - **Option D:** Added "like bytes sent and received" to balance correct answer A's "like Deployment replicas". Now A and D both use "like" while C uses "such as".
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-09.js`
+**Issues found**: 6
+
+### s09-q034 — giveaway: comma-separated clauses uniquely in correct answer
+- **Option D:** Restructured from "Deploy v2 Pods into a separate namespace and use an ExternalName Service to redirect incoming traffic" to "Deploy v2 Pods into a separate namespace, configure an ExternalName Service, and redirect incoming traffic" to add comma-separated clauses matching correct answer B's multi-clause structure.
+
+### s09-q064 — giveaway: comma-list uniquely in correct answer
+- **Option C:** Changed "polls for new records on a scheduled interval" to "polls for inserts, updates, and deletes on a timer" to add a three-item comma-list matching correct answer B's "(NATS, Kafka, or RabbitMQ)" pattern.
+
+### s09-q067 — giveaway: comma-separated clauses uniquely in correct answer
+- **Option B:** Restructured from "The kubelet automatically restarts all Pods on the node to attempt reconnection to the API server endpoint" to "The kubelet restarts all Pods on the node, clears their caches, and reattempts connection to the API server" to add comma-separated clauses matching correct answer A's multi-clause structure.
+
+### s09-q094 — giveaway: comma-list uniquely in correct answer
+- **Option B:** Changed "Node CPU utilization and memory usage at the hardware level collected from system-level exporters" to "Node CPU utilization, memory usage, and disk I/O at the hardware level from system-level exporters" to add a three-item comma-list matching correct answer A's "Deployment replicas, Pod phase, and Job status" pattern. Updated explanation to match.
+
+### s09-q096 — giveaway: comma-separated clauses uniquely in correct answer
+- **Option A:** Restructured from "The Pod receives a dedicated ClusterIP that routes traffic on port 80 through the kube-proxy rules" to "The Pod receives a dedicated ClusterIP, routes traffic on port 80, and uses kube-proxy iptables rules" to add comma-separated clauses matching correct answer C's multi-clause structure.
+
+### s09-q048 — giveaway: "since" uniquely in correct answer
+- **Option C (correct):** Changed "The LimitRange default limit of `500m` is applied since the developer did not specify a limit" to "The LimitRange default limit of `500m` is applied when the developer does not specify a limit". The causal conjunction "since" was uniquely present in the correct answer, providing a structural giveaway to test-savvy students.

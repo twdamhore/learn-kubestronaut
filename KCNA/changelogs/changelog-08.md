@@ -398,3 +398,13 @@
 ### s08-q092 — giveaway: unique "because" in correct answer
 - **Problem:** Correct option D uniquely used "because" ("cannot start because env var references...") while no distractor contained "because", creating a structural giveaway.
 - **Fix:** Added "because" to option C: changed "transitions to `CrashLoopBackOff` as the application fails" to "transitions to `CrashLoopBackOff` because the application fails". Eliminates unique "because" pattern in correct answer.
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-08.js`
+**Issues found**: 1
+
+### s08-q086 — giveaway: unique colon in correct answer
+- **Problem:** Correct option B (answer=1) uniquely contained a colon ("controllers: Node controller for...") while no distractor had any colons, creating a structural giveaway that could signal the correct answer without domain knowledge.
+- **Fix:** Restructured option A to include a colon: changed "Scheduling Pods to nodes, managing CronJobs, running admission webhooks, and handling resource quota enforcement across namespaces" to "Scheduling Pods to nodes and managing CronJobs: running admission webhooks and handling resource quota enforcement across namespaces". Now both A and B contain a colon, eliminating the unique structural pattern. Length ratio remains at 1.056.

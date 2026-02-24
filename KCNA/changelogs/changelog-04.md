@@ -435,3 +435,24 @@
 
 ### s04-q094 (giveaway)
 - **Option C:** Added "like a monthly quota" to break unique "like" pattern in correct answer B. Changed from "Assign each team a fixed storage budget with no actual tracking or enforcement of usage against limits" to "Assign each team a fixed storage budget like a monthly quota with no tracking or enforcement of usage".
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-04.js`
+**Issues found**: 5
+
+### s04-q007 — polarity giveaway
+- **Option C:** Changed from "The PVC is waiting for a pod to reference it before the volume binding process can be triggered by the controller" to "No binding occurs yet because the PVC is waiting for a pod to reference it before the volume binding process starts" to break lone "No" polarity in correct answer A (was 1 "No" + 0 others; now 1 "No" + 1 "No").
+
+### s04-q014 — polarity giveaway
+- **Option D:** Changed from "The PVC is rejected because `WaitForFirstConsumer` requires a pod reference to be specified at creation time" to "No PVC is accepted without a pod reference because `WaitForFirstConsumer` requires one at creation time" to break lone "No" polarity in correct answer C (was 1 "No" + 0 others; now 1 "No" + 1 "No").
+
+### s04-q039 — giveaway (unique colon in correct)
+- **Option A:** Changed from "Pods are terminated in ascending order starting with `pod-0` and `pod-1` before the higher ordinals" to "Pods are terminated in ascending ordinal order: `pod-0` is removed first, then `pod-1` before higher ordinals" to break unique colon in correct answer C.
+
+### s04-q044 — length-balance
+- **Option D:** Expanded from 84 to ~98 chars by adding "the" and "directory" to the sentence. Ratio improved from 1.14 to 1.10.
+
+### s04-q083 — polarity giveaway
+- **Option D:** Changed from "The StatefulSet rejects the update until all existing pods are drained from their current nodes" to "No update proceeds until all existing pods are drained from their current nodes by the controller" to break lone "No" polarity in correct answer A (was 1 "No" + 0 others; now 1 "No" + 1 "No").

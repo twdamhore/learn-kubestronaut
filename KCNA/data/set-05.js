@@ -715,7 +715,7 @@ var questions = [
       "Immediately, because the volume is directly backed by the API server",
       "Only after the Pod is manually restarted by an administrator or tool",
       "After the kubelet sync period, which is up to a few minutes by default",
-      "After the Secret is deleted and recreated as a new resource in the namespace"
+      "After the Secret is first deleted and then recreated as a new resource"
     ],
     answer: 2,
     explanation: "When a Secret is mounted as a volume, the kubelet periodically syncs the mounted content with the API server. The update delay depends on the kubelet's sync period and cache propagation delay, typically up to a couple of minutes. Secrets mounted as environment variables require a Pod restart.\n\nWhy other options are wrong:\n- A: Updates are not immediate; there is a kubelet sync delay\n- B: Volume-mounted Secrets update without Pod restart (unlike env var-mounted Secrets)\n- D: Deleting and recreating is unnecessary; the kubelet picks up changes to the existing Secret automatically\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
@@ -1083,7 +1083,7 @@ var questions = [
       "Yes, because DaemonSets are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
-      "No, the `baseline` profile also restricts `hostPath` volumes"
+      "No, the `baseline` profile also restricts `hostPath` volume mounts"
     ],
     answer: 1,
     explanation: "The restricted Pod Security Standard prohibits hostPath volumes entirely. The baseline profile does not restrict hostPath volumes at all. Only the restricted and privileged profiles differ on hostPath: restricted forbids it while privileged allows it. For log collectors requiring host access, the namespace must use the privileged profile, or the Pods must be exempted.\n\nWhy other options are wrong:\n- A: DaemonSets are not exempt from Pod Security Standards\n- C: The restricted profile prohibits hostPath volumes entirely, regardless of readOnly setting\n- D: The baseline profile does not restrict hostPath volumes at all; only the restricted profile prohibits hostPath volumes entirely, so the claim about baseline is incorrect\n\nReference: https://kubernetes.io/docs/concepts/security/pod-security-standards/",
@@ -1306,7 +1306,7 @@ var questions = [
     options: [
       "Environment variables are not encrypted by Kubernetes while in transit between components",
       "Volume mounts automatically encrypt Secret data before writing it to the container disk",
-      "Environment variables are injected once at startup, never refreshed, and become stale on rotation",
+      "Environment variables are injected at startup and are never refreshed on rotation",
       "Env vars leak through process listings and crash dumps while volume-mounted files do not"
     ],
     answer: 3,

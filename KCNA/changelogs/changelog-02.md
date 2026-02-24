@@ -475,3 +475,19 @@
 
 ### s02-q070 — giveaway ("like" unique to correct, residual from R43)
 - **Option C:** Added "like" to balance the pattern. Changed `"No — Istio's VirtualService resources replace ConfigMaps"` to `"No — Istio resources like VirtualService replace ConfigMaps"`.
+
+## Round 45 — 2026-02-23
+**File**: `set-02.js`
+**Issues found**: 4
+
+### s02-q025 — length-balance (ratio 1.146, correct B shortest)
+- **Option B (correct):** Padded from 89 to 103 chars. Changed `"Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts"` to `"Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the in-cluster controller decrypts"`.
+
+### s02-q052 — giveaway (unique colon in correct B)
+- **Option A:** Added colon to balance the pattern. Changed `"Zero is assigned as the request and the pod becomes \`BestEffort\` quality of service class"` to `"Zero is assigned as the memory request: the pod becomes \`BestEffort\` quality of service class"`.
+
+### s02-q069 — giveaway (unique colon in correct B)
+- **Option C:** Added colon to balance the pattern. Changed `"Using if/else logic in the application would require a full code review for every single environment configuration change"` to `"Using if/else logic in the application requires a full code review: every environment configuration change needs approval"`.
+
+### s02-q088 — length-balance (ratio 1.138, correct C shortest)
+- **Option C (correct):** Padded from 94 to 101 chars. Changed `"An \`emptyDir\` volume shared between the init container and the main container within the same pod"` to `"An \`emptyDir\` volume shared between the init container and the main application container within the pod"`.

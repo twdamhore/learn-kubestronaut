@@ -486,3 +486,21 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q084 — unique "including" in correct answer
 - **Option B:** Added "including" to balance correct C's unique use. Changed "No, secret values are redacted in `list` and `watch` responses by the API server; only a `get` on a specific secret returns actual encoded data" to "No, secret values including encoded data are redacted in `list` and `watch` responses; only `get` on a specific secret returns the full values".
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-10.js`
+**Issues found**: 4
+
+### s10-q036 — unique structural colon in correct answer
+- **Option A:** Added colon to balance correct C's unique structural colon (introduced in R43 when em-dash was changed to colon). Changed "The pod is admitted because Gatekeeper only validates the primary container specifications, not init containers in the pod spec" to "The pod is admitted because Gatekeeper validates only primary containers: init and ephemeral containers are excluded from the check".
+
+### s10-q041 — unique structural colon in correct answer
+- **Option A:** Added colon to balance correct D's unique structural colon pattern ("guard: only fire when..."). Changed "Change the alert threshold from 5% to 10% to account for statistical insignificance during low-traffic deployment windows" to "Raise the alert threshold: change from 5% to 10% to account for statistical insignificance during low-traffic deployment windows".
+
+### s10-q044 — accuracy: Kyverno maturity level outdated
+- **Explanation:** Changed "Kyverno is a CNCF Incubating project" to "Kyverno is a CNCF Graduated project (graduated July 2024)". Kyverno graduated from CNCF in July 2024.
+
+### s10-q089 — accuracy: Kyverno maturity level outdated
+- **Explanation:** Changed "Kyverno (CNCF Incubating)" to "Kyverno (CNCF Graduated)". Same maturity update as q044.

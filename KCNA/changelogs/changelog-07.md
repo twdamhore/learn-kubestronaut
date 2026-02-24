@@ -361,3 +361,16 @@
 
 ### s07-q081 — giveaway: "because" unique to correct answer C
 - Added "because" to distractor A: changed "The writes silently fail and the application receives I/O errors after reaching the 100Mi size boundary" to "The writes silently fail because the kernel enforces a hard cap, and the application receives I/O errors". Also kept length balanced (ratio 1.040).
+
+## Round 45 — 2026-02-23
+**File**: `set-07.js`
+**Issues found**: 3
+
+### s07-q053 — giveaway: "X, Y, or Z" multi-solution pattern unique to correct answer C
+- Added matching "X, Y, or Z" comma-or pattern to distractor A: changed "Increase the `limits.cpu` on the existing pods to give them more processing power for handling additional load" to "Increase `limits.cpu` on existing pods, lower `requests.memory`, or adjust QoS class for more processing power". Updated explanation for option A to reflect the new wording. Ratio 1.078.
+
+### s07-q057 — giveaway: "like" unique to correct answer A
+- Added "like" to distractor C: changed "The container runtime on the cluster nodes does not support the `OCI` image format used by this container" to "The container runtime on the cluster nodes does not support the image format like `OCI` used by this container". Ratio 1.106.
+
+### s07-q039 — giveaway: "like X or Y" tool-enumeration pattern unique to correct answer C
+- Added "like" to distractor D: changed "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other" to "Adding CPU resource limits to all services like B and C to prevent noisy-neighbor problems affecting each other". Now B, C, and D all contain "like". Ratio 1.088.

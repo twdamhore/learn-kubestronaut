@@ -364,3 +364,21 @@
 ### s06-q087 — giveaway: comma-list unique to correct answer
 - **Problem:** Correct answer C had 2 commas (listing sequential steps) while all distractors had 0 commas, creating a structural giveaway.
 - **Fix:** Added commas to distractors A and B by restructuring their phrasing (A: "simultaneously, without validation, for fast consistency"; B: "only, validate it, then leave workers on the old version").
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-06.js`
+**Issues found**: 3
+
+### s06-q002 — giveaway: "since" unique to correct answer
+- **Problem:** Round 44 changed "because" to "since" in the correct answer C, but "since" is still a causal conjunction giveaway when no distractor uses it.
+- **Fix:** Rewrote option C from "The scheduler skips node1 since the Pod lacks a matching toleration for it" to "The scheduler skips node1 and the Pod stays pending without a toleration for it", removing the causal conjunction entirely.
+
+### s06-q005 — giveaway: comma-density unique to correct answer + length imbalance
+- **Problem:** Correct answer D had 3 commas (4-item list: "cordon, drain, upgrade, and uncordon") while all distractors had only 1 comma each, creating a structural giveaway. After adding commas to distractors, length imbalance emerged.
+- **Fix:** Rewrote options A and B to also contain comma-separated lists (A: "skipping cordon, drain, and validation"; B: "control plane, verifying health, then leaving"). Expanded C with additional clause. Ratio improved from 1.23 to 1.06; comma counts now A=3, B=2, C=2, D=3.
+
+### s06-q038 — giveaway: "since" unique to correct answer
+- **Problem:** Round 44 changed "because" to "since" in the correct answer D, but "since" is still a causal conjunction giveaway when no distractor uses it.
+- **Fix:** Changed "since" to "as" in option D: "The Pod continues running as the rule is `IgnoredDuringExecution`".

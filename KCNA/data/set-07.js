@@ -619,7 +619,7 @@ var questions = [
       "Scale up replicas across the distributed service chain (e.g., double each tier) to reduce per-pod load",
       "Restarting all pods in the request chain like Services B and C to clear any stale connections or cached state",
       "Implementing distributed tracing with tools like Jaeger or Zipkin to visualize latency across each hop",
-      "Adding CPU resource limits to all services to prevent noisy-neighbor problems affecting each other"
+      "Adding CPU resource limits to all services like B and C to prevent noisy-neighbor problems affecting each other"
     ],
     answer: 2,
     explanation: "Distributed tracing propagates a correlation ID through each service in a request chain, recording timing at each hop. Tools like Jaeger or Zipkin visualize the end-to-end trace, making it easy to identify which service or network hop introduces the latency. This is more effective than guessing or restarting pods for intermittent issues.\n\nWhy other options are wrong:\n- A: Scaling replicas across the distributed chain might help if the issue is load, but does not identify the latency source\n- B: Restarting pods is a shotgun approach that does not diagnose the root cause of intermittent failures\n- D: CPU limits can cause throttling but adding them does not diagnose the existing latency problem\n\nReference: https://www.jaegertracing.io/docs/latest/getting-started/",
@@ -840,13 +840,13 @@ var questions = [
     text: "After scaling a Deployment from 3 to 10 replicas, 7 new pods stay in `Pending`. The events show `0/5 nodes are available: 5 Insufficient cpu`. The existing 3 pods use `requests.cpu: 500m` each. What is the most effective resolution?",
     diagram: null,
     options: [
-      "Increase the `limits.cpu` on the existing pods to give them more processing power for handling additional load",
+      "Increase `limits.cpu` on existing pods, lower `requests.memory`, or adjust QoS class for more processing power",
       "Change the Deployment strategy from `RollingUpdate` to `Recreate` so all pods are replaced simultaneously",
       "Reduce `requests.cpu` per pod, add nodes with more CPU, or enable the cluster autoscaler for new nodes",
       "Set `priorityClassName: system-node-critical` on the Deployment to preempt lower-priority existing workloads"
     ],
     answer: 2,
-    explanation: "When pods are `Pending` due to `Insufficient cpu`, the cluster lacks enough allocatable CPU across all nodes to satisfy the pod requests. The options are: reduce the per-pod CPU request (if safe), add more nodes, or enable the cluster autoscaler. Using `system-node-critical` priority would preempt other pods, which is not appropriate for application workloads.\n\nWhy other options are wrong:\n- A: Increasing limits does not free up schedulable CPU; requests are what the scheduler uses\n- B: Recreate strategy does not add capacity; it would cause downtime and does not solve Insufficient cpu\n- D: system-node-critical priority is for system components, not application workloads; misuse causes disruption\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    explanation: "When pods are `Pending` due to `Insufficient cpu`, the cluster lacks enough allocatable CPU across all nodes to satisfy the pod requests. The options are: reduce the per-pod CPU request (if safe), add more nodes, or enable the cluster autoscaler. Using `system-node-critical` priority would preempt other pods, which is not appropriate for application workloads.\n\nWhy other options are wrong:\n- A: Increasing CPU limits, lowering memory requests, or changing QoS class does not free up schedulable CPU; CPU requests are what the scheduler uses\n- B: Recreate strategy does not add capacity; it would cause downtime and does not solve Insufficient cpu\n- D: system-node-critical priority is for system components, not application workloads; misuse causes disruption\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
     verify: "kubectl describe nodes | grep -A5 'Allocated resources'"
   },
   {
@@ -906,7 +906,7 @@ var questions = [
     options: [
       "The container image was built for a different CPU architecture like `linux/arm64` that is incompatible with `amd64`",
       "The Kubernetes version is incompatible with the Docker version (e.g., v20 vs v24) used to build the container image",
-      "The container runtime on the cluster nodes does not support the `OCI` image format used by this container",
+      "The container runtime on the cluster nodes does not support the image format like `OCI` used by this container",
       "The pod's security context prevents execution of the container's entrypoint binary on the scheduled node"
     ],
     answer: 0,

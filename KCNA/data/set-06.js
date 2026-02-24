@@ -26,7 +26,7 @@ var questions = [
     options: [
       "A. The Pod is scheduled on node1 but immediately enters `CrashLoopBackOff`",
       "B. The Pod is scheduled on node1 with a taint-mismatch warning event recorded",
-      "C. The scheduler skips node1 since the Pod lacks a matching toleration for it",
+      "C. The scheduler skips node1 and the Pod stays pending without a toleration for it",
       "D. The taint is ignored when the Pod has a `nodeSelector` matching node1 labels"
     ],
     answer: 2,
@@ -72,10 +72,10 @@ var questions = [
     text: "A platform team is designing their cluster upgrade strategy. They want zero-downtime deployments and the ability to roll back quickly. Which approach best aligns with cloud-native principles?",
     diagram: null,
     options: [
-      "A. In-place upgrade of all nodes simultaneously, without workload migration",
-      "B. Upgrading the control plane only, leaving workers on the old version",
-      "C. Creating a parallel cluster, then migrating workloads in a single batch",
-      "D. Rolling upgrade with cordon, drain, upgrade, and uncordon on each node"
+      "A. In-place upgrade of all nodes at once, skipping cordon, drain, and validation",
+      "B. Upgrading the control plane, verifying health, then leaving workers on old version",
+      "C. Creating a parallel cluster, migrating workloads, then decommissioning the old one",
+      "D. Rolling upgrade with cordon, drain, upgrade, and uncordon on each node in turn"
     ],
     answer: 3,
     explanation: "A rolling upgrade strategy processes one node at a time: cordon to prevent new scheduling, drain to evict existing Pods, upgrade the node, then uncordon. This ensures workload availability throughout the process and allows rollback by stopping the procedure.\n\nWhy other options are wrong:\n- A: Simultaneous upgrade causes downtime for all workloads and provides no rollback path\n- B: Leaving workers on the old version indefinitely creates version skew issues and is not a complete upgrade\n- C: Batch migration to a new cluster is disruptive and does not enable incremental rollback\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/",
@@ -603,7 +603,7 @@ var questions = [
       "A. The Pod is immediately evicted and rescheduled to a matching node",
       "B. The Pod enters a `Pending` state until a new node with the label exists",
       "C. The kubelet terminates the Pod during its next regular sync cycle run",
-      "D. The Pod continues running since the rule is `IgnoredDuringExecution`"
+      "D. The Pod continues running as the rule is `IgnoredDuringExecution`"
     ],
     answer: 3,
     explanation: "The `IgnoredDuringExecution` suffix means the affinity rule is only evaluated at scheduling time. Once a Pod is running, changes to node labels do not trigger eviction. The Pod continues on the node even if it no longer matches the affinity rule.\n\nWhy other options are wrong:\n- A: IgnoredDuringExecution means no eviction occurs after scheduling; the Pod is not evicted\n- B: The Pod does not enter Pending; it continues running on the current node\n- C: The kubelet does not terminate Pods due to affinity rule changes; this is explicitly ignored\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity",

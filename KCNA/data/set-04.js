@@ -106,11 +106,11 @@ var questions = [
     options: [
       "No PV in the cluster supports the `ReadWriteMany` access mode that the PVC requires, so no binding candidate exists",
       "The PV's `ReadWriteOnce` access mode is compatible with the PVC's `ReadWriteMany` request but capacity mismatch prevents binding",
-      "The PVC is waiting for a pod to reference it before the volume binding process can be triggered by the controller",
+      "No binding occurs yet because the PVC is waiting for a pod to reference it before the volume binding process starts",
       "The PVC remains unbound because the scheduler has not yet assigned it to a specific availability zone in the region"
     ],
     answer: 0,
-    explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for pod references before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: The scheduler does not assign PVCs to availability zones during binding; PVC pending state here is caused by access mode mismatch, not zone assignment\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
+    explanation: "A PVC will remain `Pending` if no PV matches its requirements. While the capacity requirement is met (100Gi >= 50Gi), the access mode is not: `ReadWriteOnce` PVs cannot satisfy a `ReadWriteMany` request. The PVC needs a PV that explicitly supports `ReadWriteMany` to bind successfully.\n\nWhy other options are wrong:\n- B: A PV with greater capacity than the PVC request is eligible for binding; capacity mismatch is not the cause\n- C: PVCs do not wait for a pod reference before binding (unless WaitForFirstConsumer is set on the StorageClass)\n- D: The scheduler does not assign PVCs to availability zones during binding; PVC pending state here is caused by access mode mismatch, not zone assignment\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
     verify: "kubectl describe pvc <pvc-name>"
   },
   {
@@ -219,10 +219,10 @@ var questions = [
       "A PV has been dynamically provisioned and is now sitting in `Available` state waiting for the PVC to bind",
       "A PV has been provisioned already and is bound to the PVC immediately upon the PVC creation in the cluster",
       "No PV exists yet because provisioning is deferred until a pod actually mounts the PVC on a scheduled node",
-      "The PVC is rejected because `WaitForFirstConsumer` requires a pod reference to be specified at creation time"
+      "No PVC is accepted without a pod reference because `WaitForFirstConsumer` requires one at creation time"
     ],
     answer: 2,
-    explanation: "`WaitForFirstConsumer` delays the binding and provisioning of a PV until a pod that uses the PVC is scheduled. This ensures the PV is created in the same topology zone as the pod. Until a pod references and uses the PVC, no PV is provisioned, and the PVC remains in `Pending` state with a waiting event.\n\nWhy other options are wrong:\n- A: No PV is provisioned yet, so none can be in Available state; provisioning is deferred\n- B: Provisioning and binding are both deferred until a pod is scheduled; the PVC stays Pending\n- D: WaitForFirstConsumer does not require a pod reference at PVC creation time; it waits for a pod to be scheduled\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
+    explanation: "`WaitForFirstConsumer` delays the binding and provisioning of a PV until a pod that uses the PVC is scheduled. This ensures the PV is created in the same topology zone as the pod. Until a pod references and uses the PVC, no PV is provisioned, and the PVC remains in `Pending` state with a waiting event.\n\nWhy other options are wrong:\n- A: No PV is provisioned yet, so none can be in Available state; provisioning is deferred\n- B: Provisioning and binding are both deferred until a pod is scheduled; the PVC stays Pending\n- D: WaitForFirstConsumer does not require a pod reference at PVC creation time; the PVC is accepted and waits for a pod to be scheduled\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
     verify: "kubectl describe pvc <pvc-name>"
   },
   {
@@ -616,7 +616,7 @@ var questions = [
     text: "A StatefulSet is being scaled down from 5 replicas to 3. In which order are the pods terminated when using the default `OrderedReady` policy?",
     diagram: null,
     options: [
-      "Pods are terminated in ascending order starting with `pod-0` and `pod-1` before the higher ordinals",
+      "Pods are terminated in ascending ordinal order: `pod-0` is removed first, then `pod-1` before higher ordinals",
       "All excess pods (`pod-3` and `pod-4`) are terminated simultaneously without any ordering guarantee",
       "Pods are terminated in reverse ordinal order: `pod-4` is removed first, then `pod-3` is terminated",
       "Kubernetes randomly selects which pods to terminate from the set of pods exceeding the replica count"
@@ -699,7 +699,7 @@ var questions = [
       "In the container image layer, directly modifying the original image stored in the registry cache",
       "In the overlay's upper writable layer on the node's filesystem, consuming node disk space",
       "In a dedicated PersistentVolume that is automatically created for the container by the kubelet",
-      "In memory (RAM) since `/tmp` inside containers is backed by a tmpfs mount by default"
+      "In memory (RAM) since the `/tmp` directory inside containers is backed by a tmpfs mount by default"
     ],
     answer: 1,
     explanation: "OverlayFS uses a layered approach with read-only lower layers (image layers) and a writable upper layer. Any writes to the container filesystem, including `/tmp`, go to the upper layer stored on the node's disk. This consumes node-level storage and can lead to disk pressure. For predictable temporary storage, an `emptyDir` volume is recommended.\n\nWhy other options are wrong:\n- A: Container image layers are read-only; writes go to the overlay upper layer, not the image itself\n- C: No PVC is automatically created for container filesystem writes; PVCs must be explicitly defined\n- D: /tmp inside containers is not backed by tmpfs by default; it uses the overlay writable layer on disk\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -1323,10 +1323,10 @@ var questions = [
       "No pods are updated; each pod must be manually deleted to trigger recreation with the new spec",
       "Pods are updated one at a time in reverse ordinal order; each waits for readiness before proceeding",
       "All pods are immediately updated with the new image by the StatefulSet controller in parallel",
-      "The StatefulSet rejects the update until all existing pods are drained from their current nodes"
+      "No update proceeds until all existing pods are drained from their current nodes by the controller"
     ],
     answer: 0,
-    explanation: "With `OnDelete` update strategy, the StatefulSet controller does not automatically update pods when the spec changes. Each pod continues running with the old spec until it is manually deleted. When a pod is deleted, the controller recreates it with the updated spec. This gives operators full control over the update timing and order.\n\nWhy other options are wrong:\n- B: RollingUpdate updates pods automatically in reverse ordinal order; OnDelete requires manual deletion\n- C: OnDelete does not update any pods automatically; it waits for manual deletion of each pod\n- D: OnDelete does not require draining nodes; it simply delays recreation until the pod is deleted\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#on-delete",
+    explanation: "With `OnDelete` update strategy, the StatefulSet controller does not automatically update pods when the spec changes. Each pod continues running with the old spec until it is manually deleted. When a pod is deleted, the controller recreates it with the updated spec. This gives operators full control over the update timing and order.\n\nWhy other options are wrong:\n- B: RollingUpdate updates pods automatically in reverse ordinal order; OnDelete requires manual deletion\n- C: OnDelete does not update any pods automatically; it waits for manual deletion of each pod\n- D: OnDelete does not require draining nodes before proceeding; it simply delays recreation until each pod is manually deleted\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#on-delete",
     verify: "kubectl get statefulset <name> -o jsonpath='{.spec.updateStrategy}'"
   },
   {

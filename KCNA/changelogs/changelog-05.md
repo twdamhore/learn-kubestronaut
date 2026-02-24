@@ -271,3 +271,18 @@
 
 ### s05-q059 (unique-while giveaway)
 - **Option A (correct):** Changed from "Tags are mutable and can point to different images while digests are immutable" to "Tags are mutable and can be repointed to a different image; digests are immutable". Removed unique "while" contrast pattern. Added semicolon to distractor D ("Digests are required by default admission controllers; tags are being deprecated") to balance the semicolon usage.
+
+---
+
+## Round 45 — 2026-02-23
+**File**: `set-05.js`
+**Issues found**: 3
+
+### s05-q045 (length-balance)
+- **Option D:** Shortened from "After the Secret is deleted and recreated as a new resource in the namespace" (76 chars) to "After the Secret is first deleted and then recreated as a new resource" (70 chars). Ratio was 1.118 (D longest at 76 vs A/B at 68), now 1.029.
+
+### s05-q068 (length-balance)
+- **Option D:** Expanded from "No, the `baseline` profile also restricts `hostPath` volumes" (60 chars) to "No, the `baseline` profile also restricts `hostPath` volume mounts" (66 chars). Ratio was 1.133 (D shortest at 60 vs A at 68), now 1.046.
+
+### s05-q082 (length-balance)
+- **Option C:** Shortened from "Environment variables are injected once at startup, never refreshed, and become stale on rotation" (97 chars) to "Environment variables are injected at startup and are never refreshed on rotation" (81 chars). Ratio was 1.115 (C longest at 97 vs B at 87), now 1.099.

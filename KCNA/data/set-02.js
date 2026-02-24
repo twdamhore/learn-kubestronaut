@@ -408,7 +408,7 @@ var questions = [
     diagram: null,
     options: [
       "Commit Secrets as base64-encoded values (not plaintext) since Git does not display binary data in diffs",
-      "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the cluster decrypts",
+      "Use Sealed Secrets (Bitnami) to encrypt Secrets before committing; only the in-cluster controller decrypts",
       "Store Secrets in a separate private Git repository with tightly restricted team access controls",
       "Avoid storing Secrets in Git entirely; instead create them manually via `kubectl create secret` each time"
     ],
@@ -863,7 +863,7 @@ var questions = [
     text: "A container's `resources.limits.memory` is set to `256Mi` but no `resources.requests.memory` is specified. What memory request does Kubernetes assign?",
     diagram: null,
     options: [
-      "Zero is assigned as the request and the pod becomes `BestEffort` quality of service class",
+      "Zero is assigned as the memory request: the pod becomes `BestEffort` quality of service class",
       "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
       "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
       "The pod creation fails because the admission controller requires explicit requests when limits exist"
@@ -1141,7 +1141,7 @@ var questions = [
     options: [
       "Kubernetes does not support conditional logic inside ConfigMaps so if/else is not valid for configuration management at all",
       "Externalizing config separates concerns: app logic stays environment-agnostic while config is managed independently",
-      "Using if/else logic in the application would require a full code review for every single environment configuration change",
+      "Using if/else logic in the application requires a full code review: every environment configuration change needs approval",
       "ConfigMaps per environment use less cluster memory and etcd storage than a single ConfigMap with embedded conditionals"
     ],
     answer: 1,
@@ -1459,7 +1459,7 @@ var questions = [
     options: [
       "A `hostPath` volume pointing to a shared directory on the node filesystem for data exchange between containers",
       "A `configMap` volume that the init container populates at runtime by writing data into the mounted path",
-      "An `emptyDir` volume shared between the init container and the main container within the same pod",
+      "An `emptyDir` volume shared between the init container and the main application container within the pod",
       "A `persistentVolumeClaim` that the init container writes to and the main container reads from at startup"
     ],
     answer: 2,
