@@ -939,7 +939,7 @@ var questions = [
       "Yes, because the PV supports multiple access modes so multiple PVCs can bind to it at the same time",
       "No, a PV can only be bound to one PVC at a time regardless of which access modes are configured",
       "Yes, if the second PVC also requests `ReadOnlyMany` access mode matching the PV's capabilities",
-      "No, unless the StorageClass provisioner explicitly enables multi-PVC binding in its configuration"
+      "No, regardless of access modes, unless the StorageClass provisioner enables multi-PVC binding"
     ],
     answer: 1,
     explanation: "A PersistentVolume in Kubernetes can only be bound to a single PVC at a time. This is a one-to-one relationship regardless of the PV's listed access modes. The access modes on the PV describe what the underlying storage supports, but they do not enable multi-PVC binding. Multiple pods can use the same PVC, subject to the access mode of that PVC.\n\nWhy other options are wrong:\n- A: Multiple access modes on a PV describe capabilities; they do not enable multi-PVC binding\n- C: ReadOnlyMany allows multi-node read access for a single PVC, not multiple PVCs binding to one PV\n- D: No StorageClass provisioner can enable multi-PVC binding; the one-to-one PV-PVC binding rule is enforced at the API level\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding",
@@ -1128,7 +1128,7 @@ var questions = [
     text: "A pod requires two PVCs: one backed by a local SSD PV on `node-a` and another backed by a local NVMe PV on `node-b`. Can the scheduler place this pod?",
     diagram: null,
     options: [
-      "Yes, the scheduler can mount volumes from both nodes into the pod using cross-node volume access",
+      "Yes, the scheduler can simultaneously mount volumes from both nodes via cross-node volume access",
       "No, a pod runs on a single node and cannot use local PVs from two different nodes simultaneously",
       "Yes, if both local PVs are configured with `ReadWriteMany` access mode for multi-node mounting",
       "No, the scheduler detects the conflict and splits the pod's containers across both nodes automatically"
@@ -1273,7 +1273,7 @@ var questions = [
     diagram: null,
     options: [
       "The mount fails because the PVC `ReadWriteOnce` access mode conflicts with the `readOnly` volume flag",
-      "The `readOnly` flag is ignored by the kubelet because the PVC's access mode explicitly allows writes",
+      "The kubelet ignores the `readOnly` flag regardless, because the PVC's access mode allows writes",
       "The PVC's access mode is changed automatically to `ReadOnlyMany` to match the `readOnly` mount flag",
       "The container mounts the volume as read-only at the OS level, regardless of the PVC's `accessModes`"
     ],

@@ -833,3 +833,18 @@ Set-09 had 0 backtick-balance flags. No changes needed.
 ### s09-q097 (first-word giveaway)
 - **Problem:** Correct answer A started with "Overlays" while two distractors (B, C) started with "Kustomize", creating a 2-1-1 first-word cluster.
 - **Fix:** Changed B from "Kustomize directly modifies the base manifest files in place for each environment during the build process" to "Base manifest files are directly modified in place by Kustomize for each environment during the build process". Now B starts with "Base", breaking the "Kustomize" cluster.
+
+---
+
+# Round 49 Review - set-09.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 1
+
+---
+
+## s09-q020 (giveaway - escaped quotes only in correct answer)
+
+**Problem:** Only the correct answer C contained escaped quotation marks (`\"previous release\"`), making it uniquely identifiable via punctuation not present in any distractor.
+**Fix:** Changed "revision 0 means \"previous release\"" to "revision 0 targets the prior revision". This removes the unique quote marks while preserving the meaning. Raw length changed from 115 to 117 chars; ratio remains under 1.15.

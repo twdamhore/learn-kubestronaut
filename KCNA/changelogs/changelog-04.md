@@ -666,3 +666,24 @@ No issues found. All 100 questions pass length balance (threshold 1.15), giveawa
 - No answer indices were changed
 - No accuracy or explanation changes
 - All three checkers report 0 flags for set-04
+
+---
+
+## Round 49 — 2026-02-25
+**File**: `set-04.js`
+**Issues fixed**: 3 (keyword giveaway — unique "regardless" and "simultaneously" in correct answers)
+
+### s04-q059 — keyword giveaway (unique "regardless" in correct)
+- **Option D:** Changed "No, unless the StorageClass provisioner explicitly enables multi-PVC binding in its configuration" to "No, regardless of access modes, unless the StorageClass provisioner enables multi-PVC binding" to add "regardless" to a distractor, breaking the unique keyword signal in correct answer B.
+
+### s04-q071 — keyword giveaway (unique "simultaneously" in correct)
+- **Option A:** Changed "Yes, the scheduler can mount volumes from both nodes into the pod using cross-node volume access" to "Yes, the scheduler can simultaneously mount volumes from both nodes via cross-node volume access" to add "simultaneously" to a distractor, breaking the unique keyword signal in correct answer B.
+
+### s04-q080 — keyword giveaway (unique "regardless" in correct)
+- **Option B:** Changed "The `readOnly` flag is ignored by the kubelet because the PVC's access mode explicitly allows writes" to "The kubelet ignores the `readOnly` flag regardless, because the PVC's access mode allows writes" to add "regardless" to a distractor, breaking the unique keyword signal in correct answer D.
+
+### Summary
+- 3 keyword giveaway fixes ("regardless" x2, "simultaneously" x1)
+- No answer indices were changed
+- No accuracy or explanation changes
+- All 5 checkers report 0 flags for set-04

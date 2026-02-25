@@ -620,3 +620,14 @@ No issues found. All 100 questions pass all three automated checkers (length bal
 
 ### s08-q090 — giveaway: first-word 2-1-1, correct "deploy" vs "use" (2x)
 - **Option D:** Changed first word from "Use" to "Run": "Run a CronJob that periodically checks for new versions and automatically switches the Service selector". Breaks the 2x "use" cluster among distractors.
+
+---
+
+# Round 49 Review - set-08.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 0
+
+---
+No changes needed. All 100 questions pass all five automated checkers (length balance at 1.15 threshold, giveaway pattern, backtick balance, first-word pattern, keyword uniqueness) with 0 flags. Manual review confirmed: correct answer indices are accurate, CNCF project statuses are current (gRPC incubating, Thanos incubating, Cilium graduated, NATS graduated, Knative graduated, KEDA graduated, OpenTelemetry graduated, Falco graduated), explanations are factually sound, HPA formula in q089 is correct (ceil(2*(140/70))=4), Raft quorum logic in q072 is correct, and no structural giveaway patterns exist.

@@ -587,7 +587,7 @@ var questions = [
       "Type `ClusterIP` with `externalIPs` set to the VPC subnet range for internal load balancing purposes",
       "Type `NodePort` with annotation `service.beta.kubernetes.io/aws-load-balancer-type: \"nlb\"` on it",
       "Type `LoadBalancer` with annotation `service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"`",
-      "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution "
+      "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution"
     ],
     answer: 2,
     explanation: "To create an internal AWS load balancer, you use a `LoadBalancer` Service with the `aws-load-balancer-internal` annotation set to `\"true\"`. `NodePort` does not provision cloud load balancers regardless of annotations. `ClusterIP` with `externalIPs` requires manual IP management and does not create a cloud load balancer. `ExternalName` maps DNS but does not provision infrastructure.\n\nWhy other options are wrong:\n- A: ClusterIP with `externalIPs` requires manual IP management and does not provision a cloud load balancer.\n- B: NodePort does not provision cloud load balancers regardless of annotations applied to it.\n- D: ExternalName maps DNS but does not provision any infrastructure or load balancer.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer",

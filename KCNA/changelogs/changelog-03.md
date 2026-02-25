@@ -553,3 +553,18 @@ No issues found. All 100 questions passed review for option length balance (max/
 - No answer indices were changed
 - No accuracy or explanation changes
 - All three checkers report 0 flags for set-03
+
+---
+
+## Round 49 — 2026-02-25
+**File**: `set-03.js`
+**Issues fixed**: 1
+
+### s03-q037 — trailing whitespace in option D
+- **Option D:** Removed trailing space character from "Type `ExternalName` with `externalName` set to the NLB DNS name for direct internal DNS resolution ". Cosmetic fix only; no content change.
+
+### Summary
+- 1 cosmetic fix (trailing whitespace removal)
+- No answer indices were changed
+- No accuracy or explanation changes
+- All five checkers (length balance, giveaway, backtick balance, first-word, keyword unique) report 0 flags

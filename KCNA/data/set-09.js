@@ -314,7 +314,7 @@ var questions = [
     options: [
       "Run <code>helm delete my-release</code> then <code>helm install</code> with the previous chart version to redeploy",
       "Run <code>helm rollback my-release 1</code> to roll back to the first revision (the original install state)",
-      "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 means \"previous release\")",
+      "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 targets the prior revision)",
       "Manually edit each Kubernetes resource to match the previous chart's templates and the desired configuration"
     ],
     answer: 2,
