@@ -299,7 +299,7 @@ var questions = [
       "Apply `nodeSelector` on ML Pods to target GPU nodes, and add taints to GPU nodes with tolerations",
       "Use a `ResourceQuota` to reserve GPU nodes for ML workloads by capping resource usage per namespace",
       "Set `nodeName` directly in the ML Pod specs to hardcode specific GPU node names for scheduling",
-      "Configure the `kube-scheduler` with a custom profile that only considers GPU nodes for all Pods"
+      "Configure the `kube-scheduler` with a custom profile, and route only GPU-capable workloads to those nodes"
     ],
     answer: 0,
     explanation: "The correct approach combines `nodeSelector` (or node affinity) to direct ML Pods to GPU nodes, and taints on GPU nodes to repel non-ML workloads, with tolerations on the ML Pods so they can be scheduled on tainted nodes. `ResourceQuota` manages resource consumption per namespace, not node scheduling. Hardcoding `nodeName` bypasses the scheduler and is fragile. A custom scheduler profile would affect all Pods, not just ML workloads.\n\nWhy other options are wrong:\n- B: ResourceQuota manages resource consumption per namespace, not node-level scheduling.\n- C: Hardcoding nodeName bypasses the scheduler entirely and is fragile if that node goes down.\n- D: A custom scheduler profile would affect all Pods, not just ML workloads.\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
@@ -491,7 +491,7 @@ var questions = [
       "The node's `containerd` runtime has reached its maximum image cache size and cannot pull any new images",
       "The cluster nodes cannot reach the container registry, or the Pod lacks required `imagePullSecrets`",
       "The `kube-scheduler` has placed the Pod on a node that does not support the container image format",
-      "The `ImagePullBackOff` status most commonly indicates the image tag does not exist in the remote registry"
+      "The `ImagePullBackOff` status indicates the image tag does not exist in the registry, or the digest is wrong"
     ],
     answer: 1,
     explanation: "The `ImagePullBackOff` status means the kubelet failed to pull the container image. Even if the image exists and the registry is accessible from outside the cluster, the cluster nodes themselves need network access to the registry. For private registries, the Pod or ServiceAccount must have `imagePullSecrets` configured. Container runtimes do not have a maximum cache size that blocks pulls. Image format incompatibility is extremely rare with modern runtimes. The error can occur for multiple reasons, not just missing tags.\n\nWhy other options are wrong:\n- A: Container runtimes do not have a maximum image cache size that blocks new pulls.\n- C: Modern container runtimes support standard OCI images; format incompatibility is extremely rare.\n- D: ImagePullBackOff can occur for multiple reasons (network, auth, missing tag), not just missing tags.\n\nReference: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy",
@@ -537,7 +537,7 @@ var questions = [
     diagram: null,
     options: [
       "Centralized logging with correlated timestamps and request IDs across all services in the system",
-      "Health check endpoints on each service that report response times and error rates to callers",
+      "Health check endpoints on each service, which report response times and error rates to callers",
       "Distributed tracing, which propagates context headers across service boundaries in a request chain",
       "Metric dashboards showing per-service average latency aggregated over the last hour of observations"
     ],
@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "Pod anti-affinity with `topologyKey: kubernetes.io/hostname` to spread Pods across nodes",
-      "A `nodeSelector` with unique labels on each node targeted individually by each replica Pod",
+      "Per-node `nodeSelector` labels targeting each node individually for each replica Pod",
       "A `PodDisruptionBudget` with `maxUnavailable: 1` configured to prevent any co-location",
       "A taint on each node that only tolerates a single Pod from the Deployment's workload set"
     ],
@@ -763,7 +763,7 @@ var questions = [
       "An init container that runs the migration to completion before the app containers start",
       "A Job resource that runs the migration as a separate workload before the Deployment is created",
       "A `postStart` lifecycle hook on the application container that runs the migration task",
-      "A sidecar container with a higher `priority` value to ensure it starts before the app"
+      "Setting a sidecar container with a higher `priority` value to ensure it starts before the app"
     ],
     answer: 0,
     explanation: "Init containers are specialized containers that run before the main application containers in a Pod. They run sequentially, and each must complete successfully (exit code 0) before the next init container or main container starts. `postStart` hooks run concurrently with the container's ENTRYPOINT, so there is no guarantee the migration finishes before the app process begins. A separate Job would need external orchestration. Sidecar containers run concurrently with the main container, and there is no priority-based startup ordering for regular containers.\n\nWhy other options are wrong:\n- B: A separate Job requires external orchestration to coordinate timing with the Deployment.\n- C: A postStart hook runs concurrently with the container's ENTRYPOINT, so it cannot guarantee the migration completes before the app starts.\n- D: Sidecar containers run concurrently with the main container; there is no priority-based startup ordering for regular containers.\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/",
@@ -873,7 +873,7 @@ var questions = [
     diagram: null,
     options: [
       "A `LoadBalancer` Service for each backend that the Ingress resource routes traffic to",
-      "A `kube-proxy` upgrade to support HTTP path-based routing natively on cluster nodes",
+      "Upgrading `kube-proxy` to support HTTP path-based routing natively on cluster nodes",
       "An Ingress controller such as NGINX that watches Ingress resources and configures routing",
       "A DNS server such as CoreDNS that maps Ingress hostnames to individual Pod IPs directly"
     ],
@@ -939,7 +939,7 @@ var questions = [
       "A `ClusterIP` Service with annotation-based routing rules to handle external HTTP traffic directly",
       "An `Ingress` resource with an Ingress controller that handles routing and TLS termination",
       "A `DaemonSet` running an HTTP proxy on every node with `hostNetwork: true` for direct access",
-      "A `ConfigMap` that defines routing rules consumed by `kube-proxy` for HTTP load balancing"
+      "Defining routing rules in a `ConfigMap` consumed by `kube-proxy` for HTTP load balancing"
     ],
     answer: 1,
     explanation: "An Ingress resource, backed by an Ingress controller (like NGINX or Traefik), is the standard Kubernetes mechanism for managing external HTTP/HTTPS access. Ingress controllers can handle TLS termination, path-based routing, rate limiting, and integrate with authentication plugins. `ClusterIP` is internal-only. A DaemonSet-based proxy bypasses Kubernetes networking abstractions. `kube-proxy` does not handle HTTP-level routing or load balancing.\n\nWhy other options are wrong:\n- A: A ClusterIP Service is internal-only and does not support annotation-based HTTP routing; it cannot serve as an external entry point.\n- C: A DaemonSet-based proxy with hostNetwork bypasses Kubernetes networking abstractions and is not the standard pattern.\n- D: kube-proxy does not handle HTTP-level routing or load balancing; ConfigMaps cannot configure it for this purpose.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/",
@@ -1272,7 +1272,7 @@ var questions = [
     text: "A team creates a headless Service by setting `clusterIP: None`. They want to understand how this differs from a regular ClusterIP Service. What is the behavior of a headless Service?",
     diagram: null,
     options: [
-      "It does not create DNS records, so Pods rely on environment variables injected by the kubelet for discovery",
+      "No DNS records are created, so Pods rely on environment variables injected by the kubelet for discovery",
       "It creates a ClusterIP but hides it from the `kubectl get svc` output for additional security purposes",
       "DNS queries for the Service return individual Pod IPs instead of a virtual IP, enabling direct access",
       "It routes all traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
@@ -1320,7 +1320,7 @@ var questions = [
     text: "A cluster administrator needs to create a service account that can list and get Pods in the `development` namespace but cannot delete or create them. Which RBAC resources should they create?",
     diagram: null,
     options: [
-      "A `ClusterRole` with `get` and `list` on Pods, bound via a `ClusterRoleBinding` to the `development` namespace",
+      "A `ClusterRole` with `get` and `list` on Pods, and a `ClusterRoleBinding` scoped to the `development` namespace",
       "A `Role` in `development` with `get` and `list` on Pods, and a `RoleBinding` to the service account",
       "A `Role` with all verbs on Pods, then create a `NetworkPolicy` to restrict any write operations from it",
       "A `ServiceAccount` annotated with `rbac.authorization.kubernetes.io/verbs: get,list` for automatic binding"
@@ -1355,7 +1355,7 @@ var questions = [
       "The PVC requests more capacity than available disk space, storage quota, or node resources",
       "The `kube-scheduler` cannot find a suitable node with the requested volume type for the PVC",
       "The PVC has no `storageClassName`, there is no default StorageClass, and no PV matches",
-      "The PVC is in a different namespace than the PersistentVolume it should bind to for use"
+      "The PVC is in a different namespace, and the PersistentVolume it should bind to cannot be found"
     ],
     answer: 2,
     explanation: "The error message indicates two issues: no dynamic provisioning (no StorageClass set) and no existing PV matches the claim. For dynamic provisioning, the PVC needs a `storageClassName` referencing a StorageClass, or a default StorageClass must exist. For static provisioning, a PV must match the PVC's access modes, capacity, and storage class. PVs are cluster-scoped (not namespaced), so namespace mismatch is not possible. The scheduler is not involved in PVC binding.\n\nWhy other options are wrong:\n- A: The error mentions no StorageClass and no matching PV, not insufficient disk space.\n- B: The kube-scheduler is not involved in PVC binding; PV binding is handled by the PV controller.\n- D: PersistentVolumes are cluster-scoped (not namespaced), so namespace mismatch cannot occur.\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#lifecycle-of-a-volume-and-claim",

@@ -57,7 +57,7 @@ var questions = [
     diagram: null,
     options: [
       "Prometheus, because it natively supports collecting traces, logs, and spans alongside its metrics pipeline",
-      "Jaeger, because it provides a unified collection pipeline for all telemetry types including metrics",
+      "Jaeger, because it provides a unified pipeline for traces, spans, metrics, and logs in one backend",
       "OpenTelemetry, because it provides unified APIs, SDKs, and collectors for traces, metrics, and logs",
       "Fluentd, because it can collect, transform, and forward all signal types with built-in trace correlation"
     ],
@@ -90,7 +90,7 @@ var questions = [
     options: [
       "Argo CD requires Flux installed as a co-controller to enable automatic sync operations on the cluster",
       "The sync policy is <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
-      "Git webhooks must be configured through a third-party integration because Argo CD relies solely on polling",
+      "Git webhooks are detected by Argo CD but not acted upon without a third-party sync integration layer",
       "The Argo CD application manifest is missing the required <code>repoURL</code> field in its source specification"
     ],
     answer: 1,
@@ -168,7 +168,7 @@ var questions = [
     text: "A data-processing Pod requires a GPU node for its workload. The cluster has nodes labeled <code>accelerator=nvidia-tesla-v100</code>. The Pod spec uses a <code>nodeSelector</code> with <code>accelerator: nvidia-tesla-a100</code>. What happens when this Pod is submitted?",
     diagram: null,
     options: [
-      "The scheduler assigns it to a V100 node since both are NVIDIA GPUs with compatible compute capabilities on the cluster",
+      "The scheduler assigns it to a V100 node: both are NVIDIA GPUs with compatible compute capabilities on the cluster",
       "The Pod remains in <code>Pending</code> state because no node matches the label <code>accelerator: nvidia-tesla-a100</code>",
       "The Pod is scheduled on a V100 node but the container fails to start because of incompatible GPU driver versions",
       "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with GPU resources"
@@ -394,7 +394,7 @@ var questions = [
     options: [
       "Add a <code>nodeSelector</code> matching the new node's hostname label to target that node for scheduling",
       "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> so the DaemonSet Pod tolerates the taint",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force rescheduling on all tainted nodes",
+      "Set the DaemonSet's <code>updateStrategy: OnDelete</code> to force a rescheduling pass on all tainted nodes",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -585,7 +585,7 @@ var questions = [
     diagram: null,
     options: [
       "Neither backend receives the request because <code>/api/v1/users</code> is not an exact match for <code>/api</code>",
-      "The Ingress controller returns a 404 because the path <code>/api/v1/users</code> is not explicitly defined",
+      "The Ingress controller returns a 404 error: the path <code>/api/v1/users</code> is not explicitly defined",
       "The request goes to <code>api-service:8080</code> because <code>/api/v1/users</code> starts with <code>/api</code>",
       "The request is load-balanced equally between both backends using the configured round-robin algorithm"
     ],
@@ -713,7 +713,7 @@ var questions = [
     diagram: null,
     options: [
       "Only node-2, because it has the most available CPU resources among all three cluster nodes",
-      "All three nodes, because the scheduler overcommits resources based on the configured limits",
+      "All three nodes, because the scheduler overcommits both requests and limits when scheduling",
       "None of the nodes, because CPU requests must be specified using millicore unit notation",
       "node-1 and node-2, because both have at least 3 allocatable CPU cores for the Pod request"
     ],
@@ -777,7 +777,7 @@ var questions = [
     diagram: null,
     options: [
       "The PV transitions to <code>Released</code> state and can be rebound to a new PVC after manual data cleanup",
-      "The PV is retained in the cluster but the underlying storage volume is wiped clean by the provisioner",
+      "The PV is retained in the cluster but the underlying storage volume is automatically wiped by the provisioner",
       "The PV remains bound to the deleted PVC indefinitely until an administrator performs manual cleanup",
       "The PV and its underlying storage are automatically deleted by the provisioner upon PVC deletion"
     ],
@@ -888,7 +888,7 @@ var questions = [
     text: "A cluster administrator runs <code>kubectl get componentstatuses</code> (deprecated) and sees that the scheduler component shows as <code>Unhealthy</code>. Which impact does a non-functioning kube-scheduler have on the cluster?",
     diagram: null,
     options: [
-      "Existing running Pods are immediately terminated because the scheduler manages their full lifecycle",
+      "Existing running Pods stay active at first, but are then terminated because the scheduler manages their lifecycle",
       "The <code>kube-apiserver</code> stops accepting new Pod creation requests until the scheduler recovers fully",
       "All Services lose their ClusterIP addresses because the scheduler is responsible for allocating them",
       "New Pods remain <code>Pending</code> with no node assignment, but existing running Pods continue unaffected"
@@ -938,7 +938,7 @@ var questions = [
     options: [
       "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer terminates the container",
       "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately by the node eviction manager",
-      "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit",
+      "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation, and the container's cgroup memory limit stays intact",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
     ],
     answer: 0,
@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "The developer can select from multiple compatible API groups for each resource type during manifest creation",
       "The API group used for each resource is determined by the namespace in which the resource is being created",
-      "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent versions",
+      "All resources default to the <code>v1</code> API group, and other API groups are deprecated in recent versions",
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
     ],
     answer: 3,
@@ -1016,7 +1016,7 @@ var questions = [
     text: "A team migrates from a monolithic REST API to microservices. They need a communication pattern where a service publishes events that multiple consumer services can process independently and asynchronously. Which pattern is most appropriate?",
     diagram: null,
     options: [
-      "Synchronous HTTP request-response between all services with retry logic built into each caller",
+      "Synchronous HTTP request-response between all services with retry, timeout, or circuit-breaker logic",
       "Event-driven architecture using a message broker (NATS, Kafka, or RabbitMQ) with publish-subscribe",
       "Shared database tables where each consumer service polls for inserts, updates, and deletes on a timer",
       "gRPC bidirectional streaming (client and server) configured between each producer and consumer service"
@@ -1112,7 +1112,7 @@ var questions = [
     text: "After upgrading a Deployment's container image, all new Pods are stuck in <code>Pending</code> state. Running <code>kubectl describe pod</code> shows: <code>0/3 nodes are available: 3 Insufficient cpu</code>. The existing Pods from the old ReplicaSet are still running. What is happening?",
     diagram: null,
     options: [
-      "The new container image requires a different CPU architecture than the cluster's <code>amd64</code> worker nodes support",
+      "The new image targets a different architecture: <code>arm64</code>, and the cluster only has <code>amd64</code> nodes",
       "The cluster has run out of available IP addresses in the Pod CIDR range configured for the cluster network",
       "The new Pod spec requests more CPU than is available, and <code>maxUnavailable: 0</code> prevents old Pod termination",
       "The kube-scheduler is not running and therefore cannot assign any new Pods to the available cluster nodes"

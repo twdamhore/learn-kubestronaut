@@ -676,3 +676,97 @@
 
 ### s09-q089 (length-balance)
 - Trimmed A from 127->116 by removing "file". Trimmed D from 130->118 by shortening "staging deploy" to "staging". Expanded C from 101->107 by adding "value".
+
+---
+
+# Round 47c Review - set-09.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 12
+
+---
+
+## s09-q004 (comma-count giveaway)
+
+**Problem:** Correct answer C had 5 commas while distractors had 3, 1, and 3. The low comma count on option B (1 comma) made the correct answer structurally distinct.
+**Change:** Rewrote option B from "Jaeger, because it provides a unified collection pipeline for all telemetry types including metrics" to "Jaeger, because it provides a unified pipeline for traces, spans, metrics, and logs in one backend". B now has 5 commas, matching the correct answer's pattern.
+
+---
+
+## s09-q006 (keyword "but" giveaway)
+
+**Problem:** Only the correct answer B contained the word "but" ("changes are detected but not applied"), making it uniquely identifiable.
+**Change:** Rewrote option C from "Git webhooks must be configured through a third-party integration because Argo CD relies solely on polling" to "Git webhooks are detected by Argo CD but not acted upon without a third-party sync integration layer". Expanded C from 94 to 100 chars to maintain ratio under 1.15.
+
+---
+
+## s09-q011 (colon giveaway)
+
+**Problem:** Only the correct answer B contained a colon (in `accelerator: nvidia-tesla-a100`), making it visually distinct.
+**Change:** Restructured option A from "The scheduler assigns it to a V100 node since both are NVIDIA GPUs with compatible compute capabilities on the cluster" to "The scheduler assigns it to a V100 node: both are NVIDIA GPUs with compatible compute capabilities on the cluster". This adds a colon to a distractor.
+
+---
+
+## s09-q025 (colon giveaway)
+
+**Problem:** Only the correct answer B contained a colon (in `dedicated=monitoring:NoSchedule`), making it visually distinct.
+**Change:** Restructured option C from "Set the DaemonSet's `updateStrategy` to `OnDelete`..." to "Set the DaemonSet's `updateStrategy: OnDelete`..." by merging the two code spans with a colon separator, adding a colon to a distractor.
+
+---
+
+## s09-q037 (colon giveaway)
+
+**Problem:** Only the correct answer C contained a colon (in `api-service:8080`), making it visually distinct.
+**Change:** Restructured option B from "The Ingress controller returns a 404 because the path..." to "The Ingress controller returns a 404 error: the path...". Expanded B from 99 to 105 chars to maintain ratio under 1.15.
+
+---
+
+## s09-q045 (keyword "both" giveaway)
+
+**Problem:** Only the correct answer D contained the word "both" ("because both have at least 3 allocatable CPU cores..."), making it uniquely identifiable.
+**Change:** Rewrote option B from "All three nodes, because the scheduler overcommits resources based on the configured limits" to "All three nodes, because the scheduler overcommits both requests and limits when scheduling". This adds "both" to a distractor.
+
+---
+
+## s09-q049 (keyword "automatically" giveaway)
+
+**Problem:** Only the correct answer D contained the word "automatically" ("The PV and its underlying storage are automatically deleted..."), making it uniquely identifiable.
+**Change:** Added "automatically" to option B: "The PV is retained in the cluster but the underlying storage volume is automatically wiped by the provisioner".
+
+---
+
+## s09-q056 (keyword ", but" and "but" giveaway)
+
+**Problem:** Only the correct answer D contained ", but" and the word "but" ("with no node assignment, but existing running Pods continue unaffected"), making it structurally unique.
+**Change:** Rewrote option A from "Existing running Pods are immediately terminated because the scheduler manages their full lifecycle" to "Existing running Pods stay active at first, but are then terminated because the scheduler manages their lifecycle". This adds ", but" and "but" to a distractor.
+
+---
+
+## s09-q059 (keyword ", and" giveaway)
+
+**Problem:** Only the correct answer A contained the compound clause ", and" ("count against the Pod's memory budget, and the kernel OOM killer..."), making it structurally unique.
+**Change:** Rewrote option C from "The tmpfs mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit" to "The tmpfs mount is charged to the node's system-reserved allocation, and the container's cgroup memory limit stays intact". Trimmed "is unaffected" to "stays intact" to keep ratio at 1.145.
+
+---
+
+## s09-q063 (keyword ", and" giveaway)
+
+**Problem:** Only the correct answer D contained the compound clause ", and" ("belongs to a specific API group, and the API server..."), making it structurally unique.
+**Change:** Added a comma before "and" in option C: "All resources default to the `v1` API group, and other API groups are deprecated in recent versions". This adds ", and" to a distractor.
+
+---
+
+## s09-q064 (keyword ", or" giveaway)
+
+**Problem:** Only the correct answer B contained the alternative clause ", or" (in "NATS, Kafka, or RabbitMQ"), making it structurally unique.
+**Change:** Rewrote option A from "Synchronous HTTP request-response between all services with retry logic built into each caller" to "Synchronous HTTP request-response between all services with retry, timeout, or circuit-breaker logic". This adds ", or" to a distractor.
+
+---
+
+## s09-q070 (colon and ", and" giveaway)
+
+**Problem:** Only the correct answer C contained both a colon (in `maxUnavailable: 0`) and the compound clause ", and", making it doubly distinct.
+**Change:** Rewrote option A from "The new container image requires a different CPU architecture than the cluster's `amd64` worker nodes support" to "The new image targets a different architecture: `arm64`, and the cluster only has `amd64` nodes". This adds both a colon and ", and" to a distractor. Trimmed A to 117 chars (from 134 in interim version) to keep ratio at 1.114.
+
+---

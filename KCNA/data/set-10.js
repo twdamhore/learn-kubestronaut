@@ -9,9 +9,9 @@ var questions = [
     diagram: null,
     options: [
       "A. The PVCs for replicas 3 and 4 are automatically deleted along with the backing PersistentVolumes by the controller",
-      "B. The PVCs are orphaned and the StorageClass reclaim policy immediately triggers deletion of the associated PVs",
+      "B. The PVCs are orphaned and the StorageClass reclaim policy triggers PV deletion, and the volumes are immediately removed",
       "C. The PVCs are marked with a `deletionTimestamp` but remain in the namespace until the StatefulSet is fully deleted",
-      "D. The PVCs remain intact and must be manually deleted, and underlying PVs are reclaimed only after PVC deletion"
+      "D. The PVCs remain intact and must be manually deleted, and the underlying PVs are reclaimed only after PVC deletion"
     ],
     answer: 3,
     explanation: "When a StatefulSet is scaled down, Kubernetes does **not** automatically delete the PVCs created by `volumeClaimTemplates`. This is by design to prevent accidental data loss. The PVCs for the removed replicas persist and must be manually deleted by an administrator. Only after a PVC is explicitly deleted does the StorageClass `reclaimPolicy` determine what happens to the underlying PV. Note: since Kubernetes 1.27+, the `persistentVolumeClaimRetentionPolicy` field in the StatefulSet spec can change this default behavior, but the default policy (`Retain`) preserves PVCs on scale-down.\n\nWhy other options are wrong:\n- A: StatefulSet controller does NOT auto-delete PVCs on scale-down; PVCs are retained by design to prevent data loss\n- B: PVCs are not orphaned in the traditional sense; they remain owned but unused, and the reclaim policy only triggers after PVC deletion, not immediately\n- C: PVCs are not marked with a deletionTimestamp; they persist fully intact without any deletion marker until explicitly removed\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -24,7 +24,7 @@ var questions = [
     text: "You configure a Pod Security Admission controller in `enforce` mode with the `restricted` profile at the namespace level. A Deployment specifies `securityContext.runAsNonRoot: true` and `allowPrivilegeEscalation: false` but omits the `seccompProfile` field. What is the result when the Deployment is applied?",
     diagram: null,
     options: [
-      "A. The Deployment is created but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
+      "A. The Deployment is created, but all pods remain in `Pending` state until a valid seccomp profile is explicitly added to the spec",
       "B. The Deployment is rejected at admission because the `restricted` profile mandates a `seccompProfile` of RuntimeDefault or Localhost",
       "C. The Deployment object is created, but the `ReplicaSet` fails to create pods because of the missing seccomp profile field value",
       "D. The pods are created with a default `RuntimeDefault` seccomp profile automatically injected by the Pod Security Admission controller"
@@ -91,7 +91,7 @@ var questions = [
       "A. Session affinity is preserved because `kube-proxy` migrates the affinity mapping to the new replacement pod endpoint",
       "B. Requests fail with connection refused until the `timeoutSeconds` expires and the client IP affinity table is refreshed",
       "C. The affinity is broken when the old endpoint is removed, and the next request is balanced to a new pod with fresh affinity",
-      "D. The session affinity entry is migrated to the replacement pod automatically by the EndpointSlice controller on update"
+      "D. The session affinity entry is migrated to the replacement pod by the EndpointSlice controller, and the timer resets on update"
     ],
     answer: 2,
     explanation: "Session affinity in Kubernetes maps a client IP to a specific backend endpoint (pod IP). During a rolling update, when the original pod is terminated and its endpoint removed, the affinity entry becomes stale. On the next request, `kube-proxy` detects the invalid endpoint and selects a new backend pod via its load-balancing algorithm, creating a new affinity binding. There is no mechanism to migrate affinity entries between pods.\n\nWhy other options are wrong:\n- A: kube-proxy does not migrate affinity mappings; there is no mechanism to transfer affinity entries between pod endpoints\n- B: Requests do not fail with connection refused; kube-proxy detects the stale endpoint and selects a new backend immediately\n- D: The EndpointSlice controller does not handle session affinity migration; it only manages endpoint sets\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/#session-affinity",
@@ -186,7 +186,7 @@ var questions = [
     options: [
       "A. Move credentials to a Secret object with `type: Opaque`, mount as a volume, and enable etcd encryption at rest for secrets",
       "B. Store credentials in the container image's environment file following `Factor III` (Config) since it separates config from code",
-      "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory loaded at startup from vault",
+      "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory, and load them at startup from vault",
       "D. Apply Factor IV (Backing Services) by hardcoding the database URL as an attached resource reference in the Deployment spec"
     ],
     answer: 0,
@@ -235,7 +235,7 @@ var questions = [
       "A. Increase Prometheus memory allocation and enable `WAL` compression to reduce the storage footprint of high-cardinality series data",
       "B. Switch to a push-based metrics model where pods send metrics directly to a `TSDB` backend that handles high cardinality natively",
       "C. Use `metric_relabel_configs` to drop the `request_id` label before ingestion, and use distributed tracing for per-request data",
-      "D. Add `sample_limit` to the scrape config to cap time series per target and use recording rules to aggregate high-cardinality data"
+      "D. Add `sample_limit` to the scrape config to cap time series per target, and use recording rules to aggregate high-cardinality data"
     ],
     answer: 2,
     explanation: "Unbounded cardinality labels like `request_id` are a well-known anti-pattern in Prometheus metrics. Each unique combination of labels creates a new time series, causing memory bloat and slow queries (the \"cardinality explosion\" problem). The correct approach is to use `metric_relabel_configs` to drop or aggregate the problematic label at scrape time, and use a purpose-built tool like distributed tracing (Jaeger, Tempo) for per-request observability. Option D with `sample_limit` would drop entire scrapes when exceeded, causing data loss.\n\nWhy other options are wrong:\n- A: Increasing memory and enabling WAL compression only delays the problem; it does not address the root cause of unbounded cardinality\n- B: Push-based models do not inherently solve cardinality problems; the label explosion would still occur in the receiving database\n- D: sample_limit drops entire scrapes when exceeded, causing complete data loss for that target rather than selectively handling the problematic label\n\nReference: https://prometheus.io/docs/practices/naming/#labels",
@@ -265,7 +265,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` resource with `handler: runsc`",
-      "B. Create a `RuntimeClass` object with `handler: gvisor` and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable sandbox mode",
+      "B. Create a `RuntimeClass` object with `handler: gvisor`, and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable sandbox mode",
       "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd handler on detection",
       "D. Add gVisor as a plugin in the kubelet configuration file and restart kubelet; the `RuntimeClass` is auto-generated from plugin registration"
     ],
@@ -280,8 +280,8 @@ var questions = [
     text: "A cluster operator configures the `kube-apiserver` with `--audit-policy-file` pointing to an audit policy. The policy has a rule with `level: RequestResponse` for all resources in the `secrets` group. After deploying the policy, the audit log file grows rapidly and fills the disk. Which targeted change reduces log volume while still capturing security-relevant secret access?",
     diagram: null,
     options: [
-      "A. Change the level to `Metadata` for secrets and add a `RequestResponse` rule only for `delete` and `create` verbs",
-      "B. Set `level: None` for secrets accessed by system service accounts and keep `RequestResponse` for user-initiated requests",
+      "A. Change the level to `Metadata` for secrets and add a specific `RequestResponse` rule only for `delete` and `create` verbs",
+      "B. Set `level: None` for secrets accessed by `system:serviceaccount` identities and keep `RequestResponse` for user-initiated access",
       "C. Reduce `--audit-log-maxsize` and `--audit-log-maxbackup` flags to limit disk usage while keeping the same audit level",
       "D. Change to `level: Request` globally and rely on external `SIEM` tools to reconstruct response bodies from request data"
     ],
@@ -409,7 +409,7 @@ var questions = [
     diagram: null,
     options: [
       "A. One new pod from the surge is created but never becomes Ready, so the 5 old pods keep running and the rollout stalls",
-      "B. The rollout creates new pods one at a time regardless of readiness; `maxUnavailable: 0` only prevents old pod deletions",
+      "B. The rollout creates new pods one at a time regardless of readiness, but `maxUnavailable: 0` only prevents old pod deletions",
       "C. The rollout immediately rolls back to the previous version automatically after `progressDeadlineSeconds` is exceeded",
       "D. The rollout creates 6 pods total (5 old + 1 new) then begins terminating old pods because total exceeds desired count"
     ],
@@ -490,7 +490,7 @@ var questions = [
     options: [
       "A. Yes, the `podSelector` matches the source pod's `role: frontend` label regardless of the originating namespace label",
       "B. No, `namespaceSelector` and `podSelector` under the same `from` entry form an AND condition, so both must match",
-      "C. Yes, `namespaceSelector` and `podSelector` in the same array element are evaluated as an OR condition by the CNI",
+      "C. Yes, `namespaceSelector` and `podSelector` in the same array element are both evaluated as an OR condition by the CNI",
       "D. No, the `egress` policy does not include a rule allowing return traffic responses back to the frontend pod in staging"
     ],
     answer: 1,
@@ -520,7 +520,7 @@ var questions = [
     text: "The `kube-controller-manager` runs multiple controllers in a single process. The `--controllers` flag is set to `*,-bootstrapsigner,-tokencleaner`. A new CRD is installed with a corresponding custom controller deployed as a Deployment. Which statement is correct about the interaction between built-in and custom controllers?",
     diagram: null,
     options: [
-      "A. The custom controller must register with the `kube-controller-manager` via the controller registration API to avoid resource conflicts",
+      "A. The custom controller must register with the `kube-controller-manager` via the controller registration API, and avoid resource conflicts",
       "B. The `--controllers` flag must include the custom controller name prefixed with `+` to enable it alongside the disabled built-in controllers",
       "C. Built-in controllers have priority over custom controllers for the same resource type, potentially causing reconciliation conflicts on CRDs",
       "D. The custom controller operates independently with its own informer cache, and the `--controllers` flag only affects built-in controllers"
@@ -616,7 +616,7 @@ var questions = [
     text: "An operator creates a `ValidatingWebhookConfiguration` with `failurePolicy: Fail` and a `namespaceSelector` that matches all namespaces. The webhook service goes down. What impact does this have on the cluster?",
     diagram: null,
     options: [
-      "A. Only create and update operations are blocked; read operations including GET and LIST continue normally across all namespaces",
+      "A. Only create and update operations are blocked; read operations, including GET and LIST, continue normally across all namespaces",
       "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
       "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
       "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
@@ -745,7 +745,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The API server bypasses the conversion webhook and reads the `v1alpha1` object from etcd, returning it directly without version conversion",
-      "B. The conversion webhook pre-converted the resource when the storage version was changed, so the API server serves the cached `v1beta1` version",
+      "B. The conversion webhook pre-converted the resource when the storage version was changed, and the API server now serves the cached `v1beta1` copy",
       "C. The conversion webhook requires a completed storage migration job before it is able to convert `v1alpha1` resources to `v1beta1`",
       "D. The API server reads the `v1alpha1` object from etcd, invokes the conversion webhook to transform it to `v1beta1`, and returns the result"
     ],
@@ -777,7 +777,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The binary `app` was compiled for a different CPU architecture (e.g., ARM) than the node's architecture (e.g., AMD64)",
-      "B. The `CMD` should use shell form (`CMD app`) instead of exec form (`CMD [\"app\"]`) to resolve the binary via `$PATH`",
+      "B. The `CMD` uses exec form (`CMD [\"app\"]`), but it should use shell form (`CMD app`) to resolve the binary via `$PATH`",
       "C. The binary `app` exists in the build stage but was not copied to the final stage in the multi-stage Dockerfile",
       "D. The container's `securityContext` has `readOnlyRootFilesystem: true`, preventing runtime access to the binary path"
     ],
@@ -920,9 +920,9 @@ var questions = [
     text: "A highly available Kubernetes cluster has 3 control-plane nodes, each running `kube-apiserver`, `kube-controller-manager`, and `kube-scheduler`. How do the controller-manager and scheduler coordinate to prevent duplicate work across the 3 instances?",
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='80' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 1</text><text x='80' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='80' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='150' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='200' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 2</text><text x='200' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='200' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='270' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='320' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 3</text><text x='320' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='320' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='100' y='120' width='200' height='40' rx='6' fill='#1a1a2e' stroke='#FF9800' stroke-width='1.5'/><text x='200' y='145' text-anchor='middle' fill='#FF9800' font-size='10'>???</text><line x1='80' y1='90' x2='180' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='90' x2='200' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='320' y1='90' x2='220' y2='118' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
-      "A. All three instances process work simultaneously using distributed locking on individual resources stored in `etcd`",
+      "A. All three instances process work simultaneously using distributed locking on resources, and changes are stored in `etcd`",
       "B. Each instance watches a partitioned namespace subset, while other instances handle the remaining namespace partitions",
-      "C. The API server round-robins controller requests across the three instances using an internal load balancer proxy",
+      "C. The API server round-robins controller requests across the three control-plane instances using an internal load balancer proxy",
       "D. They use leader election via Lease objects in `kube-system`, and only the leader reconciles while others stand by"
     ],
     answer: 3,
@@ -953,7 +953,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Add an entry to `/etc/fstab` inside the container image for the block device path and the desired filesystem type",
-      "B. Use an init container to run `mkfs.ext4 /dev/xvda` before the app container starts, then mount in the main container",
+      "B. Use an init container to automatically run `mkfs.ext4 /dev/xvda` before the app container starts, then mount in the main container",
       "C. Change the PVC to `volumeMode: Filesystem` so the CSI driver formats and mounts the volume automatically via kubelet",
       "D. Add a `formatOptions` field in the StorageClass parameters to have the block device pre-formatted before pod attachment"
     ],
@@ -969,7 +969,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The Ingress forwards the original `/v2/users` path, but `api-v2` expects requests at `/users` without the prefix",
-      "B. The Ingress needs `pathType: Prefix` instead of the default `Exact` to match `/v2/users` under the `/v2` rule",
+      "B. The Ingress uses `pathType: Exact` by default, but it needs `pathType: Prefix` to match `/v2/users` under the `/v2` rule",
       "C. The nginx Ingress controller strips TLS before forwarding and `api-v2` rejects non-HTTPS backend connections",
       "D. The Ingress controller merges overlapping path rules into a single backend, routing `/v2/users` to `api-v1` instead"
     ],
@@ -1034,7 +1034,7 @@ var questions = [
     options: [
       "A. Both updates succeed because they modify different fields and the API server merges the changes automatically",
       "B. The first update succeeds, but the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
-      "C. The API server queues both updates and applies them sequentially, incrementing resourceVersion for each one",
+      "C. The API server queues both updates, but applies them sequentially, incrementing resourceVersion for each one",
       "D. Both updates fail because only the resource owner identified by `metadata.ownerReferences` can update CRs"
     ],
     answer: 1,
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A pod runs normally for hours, then is suddenly terminated with reason `OOMKilled`. The container's `resources.limits.memory` is set to `512Mi`. The application is a web server that spawns worker processes to handle requests, and `kubectl top pod` shows memory usage at 510Mi while the app's own /metrics endpoint reports 480Mi RSS. What explains the OOM kill despite the application reporting memory usage below the limit?",
     diagram: null,
     options: [
-      "A. The kernel's memory cgroup accounting includes page cache from worker processes, which combined with RSS exceeded the limit",
+      "A. The kernel's memory cgroup accounting includes page cache from worker processes, but combined with RSS this exceeded the limit",
       "B. The kubelet's eviction threshold was triggered before the container reached its limit, killing the largest memory consumer pod",
       "C. The container's child worker processes consume additional memory counted by the cgroup but not by the app's /metrics endpoint",
       "D. Memory fragmentation caused the kernel to report higher memory usage than actual RSS, triggering the OOM kill prematurely"
@@ -1179,7 +1179,7 @@ var questions = [
       "A. KEDA calculates 50 desired replicas from the metric, but the `maxReplicaCount` caps the actual scaling target at 20",
       "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds the `maxReplicaCount` limit",
       "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
-      "D. KEDA computes 50 replicas, scales to 20 in a single step, then pauses scaling until the next evaluation run"
+      "D. KEDA computes 50 replicas and scales to 20 in a single step, but then pauses scaling until the next evaluation run"
     ],
     answer: 0,
     explanation: "KEDA calculates the desired replica count by dividing the metric value (queue length of 500) by the trigger threshold (10 messages per replica), yielding 50. Since this exceeds `maxReplicaCount: 20`, the target is capped at 20 replicas. KEDA then patches the HPA target or directly scales the Deployment to 20. KEDA uses the Kubernetes HPA external metrics mechanism — it does not implement its own gradual scaling logic. The HPA's built-in scaling behavior (stabilization windows, scaling policies) may further control the actual scaling speed.\n\nWhy other options are wrong:\n- B: KEDA does not blindly set to maxReplicaCount; it calculates the actual desired count first and then caps at max\n- C: KEDA does not scale linearly or double; it calculates the target directly from the metric value divided by the threshold\n- D: KEDA does not pause scaling after reaching max; it continues evaluating metrics on each interval and adjusts as queue drains\n\nReference: https://keda.sh/docs/latest/concepts/scaling-deployments/",
@@ -1224,7 +1224,7 @@ var questions = [
     text: "A pod's `livenessProbe` uses `exec` to run a script `/healthcheck.sh` that queries a local database connection. The probe has `timeoutSeconds: 5` and `periodSeconds: 10`. The pod is being restarted frequently. Logs show the application is healthy, but `kubectl describe` shows `Liveness probe failed: command timed out`. Node monitoring shows high CPU load on the node. What is the issue?",
     diagram: null,
     options: [
-      "A. The `/healthcheck.sh` script has a database query that occasionally takes longer than 5 seconds due to table lock contention on the node",
+      "A. The `/healthcheck.sh` script has a database query that occasionally takes longer than 5 seconds, and table lock contention on the node delays it",
       "B. Under high CPU load the kubelet cannot fork the exec process within `timeoutSeconds`, so the probe times out before the script starts",
       "C. The exec probe process competes for CPU with the app container, and under high node pressure it is throttled by the cgroup limit",
       "D. The kubelet probe worker pool is exhausted due to high pod density on the node, delaying probe execution beyond the timeout window"
@@ -1355,7 +1355,7 @@ var questions = [
       "A. Flux detects the remote base change on the next reconciliation cycle, applies the breaking change, and the application breaks",
       "B. Flux's built-in kustomize controller validates remote base changes against a schema before applying, rejecting breaking changes",
       "C. Flux pins remote bases to a specific commit SHA, so remote changes are only applied when the SHA reference is explicitly updated",
-      "D. Flux only watches the configured Git repository; remote base changes are not detected unless the main repo commit hash changes"
+      "D. Flux only watches the configured Git repository, and remote base changes are not detected unless the main repo commit hash changes"
     ],
     answer: 0,
     explanation: "Flux's kustomize controller runs `kustomize build` on every reconciliation cycle (every 5 minutes in this case). During the build, kustomize fetches remote bases from their source repositories. If the remote base has been updated with a breaking change, the next reconciliation will pull the latest version of that base, apply the resulting manifests, and the application will break. Flux does not automatically pin or cache remote bases — it re-fetches them each cycle. This is why pinning remote bases to a specific tag or commit ref in `kustomization.yaml` is a critical best practice.\n\nWhy other options are wrong:\n- B: Flux's kustomize controller does not validate remote base changes against a schema; it applies whatever kustomize build produces\n- C: Flux does not automatically pin remote bases to commit SHAs; it fetches whatever the remote reference points to at build time\n- D: Flux does re-fetch remote bases on each reconciliation; the kustomize build step fetches all remote resources regardless of local repo changes\n\nReference: https://fluxcd.io/flux/components/kustomize/kustomizations/",
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A multi-cluster setup uses Cilium Cluster Mesh to connect two clusters. Cluster A has a Service `backend` in namespace `app`. Cluster B needs to access this service. Both clusters have their own `backend` Service in the `app` namespace with different backends. Both services are annotated with `io.cilium/global-service: \"true\"`. How does Cilium Cluster Mesh handle service discovery?",
     diagram: null,
     options: [
-      "A. Cluster B's local service takes precedence because Cluster Mesh always prioritizes local endpoints over remote ones by default",
+      "A. Cluster B's local service takes precedence because Cluster Mesh prioritizes local endpoints over remote ones in both clusters",
       "B. Cilium merges endpoints from both clusters into a single global service, load-balancing across all combined backend pods",
       "C. Service names conflict and Cluster Mesh rejects the configuration, requiring globally unique service names across clusters",
       "D. Each cluster maintains its own namespace; cross-cluster access requires explicit `<service>.<cluster>` DNS entry mappings"
@@ -1448,10 +1448,10 @@ var questions = [
     text: "An admission controller chain processes a pod creation request in this order: MutatingAdmission -> ValidatingAdmission. A mutating webhook adds a sidecar container. A validating webhook checks that all containers have resource limits. The sidecar injected by the mutating webhook does not have resource limits. What is the outcome?",
     diagram: "<svg viewBox='0 0 400 160' xmlns='http://www.w3.org/2000/svg'><rect x='5' y='30' width='75' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='42' y='52' text-anchor='middle' fill='#fff' font-size='8'>API Request</text><text x='42' y='62' text-anchor='middle' fill='#fff' font-size='7'>Pod (1 ctr)</text><rect x='105' y='30' width='90' height='35' rx='5' fill='#FF9800' stroke='#fff'/><text x='150' y='48' text-anchor='middle' fill='#fff' font-size='8'>Mutating WH</text><text x='150' y='60' text-anchor='middle' fill='#fff' font-size='7'>+sidecar</text><rect x='220' y='30' width='90' height='35' rx='5' fill='#326CE5' stroke='#fff'/><text x='265' y='48' text-anchor='middle' fill='#fff' font-size='8'>Validating WH</text><text x='265' y='60' text-anchor='middle' fill='#aaa' font-size='7'>policy check</text><rect x='335' y='30' width='55' height='35' rx='5' fill='#666' stroke='#fff' stroke-dasharray='3'/><text x='362' y='52' text-anchor='middle' fill='#aaa' font-size='8'>etcd</text><line x1='80' y1='47' x2='100' y2='47' stroke='#4CAF50' stroke-width='1.5' marker-end='url(#a4)'/><line x1='195' y1='47' x2='215' y2='47' stroke='#FF9800' stroke-width='1.5' marker-end='url(#a4)'/><line x1='310' y1='47' x2='330' y2='47' stroke='#aaa' stroke-width='1.5' stroke-dasharray='3'/><text x='320' y='40' fill='#aaa' font-size='7'>?</text><defs><marker id='a4' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "A. The pod is created with the sidecar but without limits, because validating webhooks evaluate the original request before mutations",
+      "A. The pod is created with the sidecar but without limits, which happens because validating webhooks evaluate the request before mutations",
       "B. The pod is rejected by the validating webhook because it evaluates the final mutated object, which includes a sidecar without limits",
       "C. The pod is created because Kubernetes auto-injects default limits from the namespace LimitRange for webhook-injected containers",
-      "D. The mutating webhook changes are rolled back when the validating webhook rejects, and the pod is created without the sidecar"
+      "D. The mutating webhook changes are rolled back when the validating webhook rejects the object, and the pod is created without the sidecar"
     ],
     answer: 1,
     explanation: "The admission controller chain processes mutations first, then validations. The validating webhook receives the final mutated object — including the sidecar container added by the mutating webhook. Since the sidecar lacks resource limits, the validating webhook rejects the request. The entire pod creation fails; there is no partial rollback. This is a common operational issue with sidecar injection: the injecting webhook must ensure injected containers comply with all validation policies. The fix is to configure the mutating webhook to include resource limits on injected sidecars.\n\nWhy other options are wrong:\n- A: Validating webhooks evaluate the final mutated object, not the original request; the admission chain processes mutations first, then validations\n- C: Kubernetes does not auto-inject LimitRange defaults for webhook-injected containers in the mutation phase; LimitRange applies at the pod-level admission\n- D: There is no partial rollback mechanism; if validation fails, the entire admission request is rejected and no resource is created\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks",
@@ -1515,7 +1515,7 @@ var questions = [
       "A. It eliminates the need for a message broker by using the database as the event store, reducing infrastructure complexity",
       "B. It solves the dual-write problem by ensuring the database write and event publication both happen atomically or neither does",
       "C. It improves event publishing throughput by batching multiple events from the outbox table into a single broker publish",
-      "D. It provides exactly-once delivery by using database transaction ACID properties to guarantee each event publishes once"
+      "D. It provides exactly-once delivery by using database transaction ACID properties to guarantee both write and publish succeed once"
     ],
     answer: 1,
     explanation: "The Outbox Pattern addresses the dual-write problem in microservices. When a service needs to both update its database and publish an event, these are two separate operations that can fail independently. If the database write succeeds but the event publish fails (or vice versa), the system becomes inconsistent. By writing both the business data and the event to the same database in a single transaction, atomicity is guaranteed. The separate outbox reader then reliably publishes events, retrying on failure. This ensures at-least-once delivery (not exactly-once — option D), with consumer-side idempotency handling duplicates.\n\nWhy other options are wrong:\n- A: The outbox pattern still requires a message broker; the database is used as an intermediate reliable store, not as a replacement for the broker\n- C: Batching is a potential optimization but not the core problem the pattern solves; the fundamental issue is atomicity of write + publish\n- D: The outbox provides at-least-once delivery, not exactly-once; consumers must handle duplicates via idempotency\n\nReference: https://microservices.io/patterns/data/transactional-outbox.html",
@@ -1544,7 +1544,7 @@ var questions = [
     text: "A cluster administrator creates a `NetworkPolicy` with `policyTypes: [Ingress, Egress]` that allows ingress to pods labeled `app: db` only from pods labeled `app: api` on port 5432. Only an ingress rule is defined. After applying the policy, the `api` pods can connect to `db` pods. However, the `db` pods cannot initiate connections to any other pod. No other NetworkPolicies exist in the namespace. Why are outbound connections from `db` pods blocked?",
     diagram: "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='50' width='80' height='40' rx='5' fill='#4CAF50' stroke='#fff'/><text x='70' y='75' text-anchor='middle' fill='#fff' font-size='10'>api pods</text><rect x='170' y='50' width='80' height='40' rx='5' fill='#326CE5' stroke='#fff'/><text x='210' y='75' text-anchor='middle' fill='#fff' font-size='10'>db pods</text><rect x='310' y='50' width='80' height='40' rx='5' fill='#666' stroke='#fff'/><text x='350' y='75' text-anchor='middle' fill='#fff' font-size='10'>other pods</text><line x1='110' y1='65' x2='165' y2='65' stroke='#4CAF50' stroke-width='2' marker-end='url(#a5)'/><text x='137' y='58' text-anchor='middle' fill='#4CAF50' font-size='8'>:5432 OK</text><line x1='250' y1='70' x2='305' y2='70' stroke='#f44' stroke-width='2' stroke-dasharray='4' marker-end='url(#a5)'/><text x='277' y='62' text-anchor='middle' fill='#f44' font-size='8'>BLOCKED</text><defs><marker id='a5' markerWidth='8' markerHeight='6' refX='8' refY='3' orient='auto'><path d='M0,0 L8,3 L0,6Z' fill='#ccc'/></marker></defs></svg>",
     options: [
-      "A. The NetworkPolicy with `policyTypes: [Ingress, Egress]` blocks egress because any selected pod has default-deny for all directions",
+      "A. The NetworkPolicy with `policyTypes: [Ingress, Egress]` targets the pods, but egress is blocked because of default-deny for all directions",
       "B. The NetworkPolicy has `policyTypes: [Ingress, Egress]` but only defines ingress rules; the empty egress section denies all egress",
       "C. The CNI plugin applies a default-deny-all policy to any pod targeted by at least one NetworkPolicy, affecting both directions",
       "D. The NetworkPolicy has `policyTypes: [Ingress]` only; the `db` pods egress is blocked by a separate cluster-level default policy"
@@ -1562,7 +1562,7 @@ var questions = [
     options: [
       "A. The `batch` processor reorders spans before `tail_sampling`, causing incomplete trace assembly at the sampling decision point",
       "B. Tail sampling requires all spans of a trace together, but the DaemonSet means spans arrive at different collector instances",
-      "C. The `tail_sampling` processor has a too-short `decision_wait` period, causing decisions before all spans have been received",
+      "C. The `tail_sampling` processor has a `decision_wait` period, but it is too short, causing decisions before all spans have been received",
       "D. The OTLP gRPC receiver does not guarantee span ordering, causing the tail sampler to decide on incomplete trace fragments"
     ],
     answer: 1,

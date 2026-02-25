@@ -89,7 +89,7 @@ var questions = [
     text: "A platform engineer is configuring a Kubernetes cluster that uses Cilium as the CNI plugin. They want to enforce network policies at Layer 7 (HTTP). Which statement about Cilium is accurate?",
     diagram: null,
     options: [
-      "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar",
+      "Cilium primarily uses iptables rules for packet filtering, and it delegates Layer 7 inspection to a separate sidecar",
       "Cilium is a CNCF incubating project that relies on Envoy sidecars for basic L3/L4 networking between cluster Pods",
       "Cilium can replace kube-proxy for service routing but depends on Calico for Kubernetes NetworkPolicy enforcement",
       "Cilium leverages eBPF for high-performance networking, observability, and Layer 7 policy enforcement without sidecars"
@@ -201,7 +201,7 @@ var questions = [
     text: "A junior engineer asks why Kubernetes uses a declarative model rather than an imperative one for managing workloads. Which explanation best captures the advantage of the declarative approach?",
     diagram: null,
     options: [
-      "Declarative configuration requires fewer YAML lines, making manifests faster to write and maintain across environments",
+      "Using declarative configuration requires fewer YAML lines, and it makes manifests faster to write across environments",
       "Users define desired end state, and controllers continuously reconcile actual state, enabling self-healing operations",
       "Declarative configuration stores desired state in the Kubernetes scheduler rather than etcd for faster lookups",
       "Declarative configuration bypasses the Kubernetes API server, allowing resources to be written to etcd directly"
@@ -377,8 +377,8 @@ var questions = [
     text: "A security auditor requires the strictest built-in Pod security profile for a production namespace — containers must not escalate privileges, and the profile must enforce the most hardened posture available. Which Pod Security Standards profile should the team apply?",
     diagram: null,
     options: [
-      "`restricted` — requires non-root execution, drops all capabilities, disallows escalation",
-      "`baseline` — prevents known privilege escalations but permits containers to run as root",
+      "`restricted` — requires non-root execution, drops all capabilities, and disallows privilege escalation",
+      "`baseline` — prevents known privilege escalations, permits root containers, and blocks host namespaces",
       "`privileged` — allows unrestricted Pod access with no security restrictions or enforcement",
       "`audit` — records policy violations as annotations on API server audit-log events for review"
     ],
@@ -538,7 +538,7 @@ var questions = [
     text: "A Kubernetes cluster uses Calico as the CNI plugin. An engineer notices that Pods on different nodes can communicate without NAT. Which fundamental Kubernetes networking requirement does this demonstrate?",
     diagram: null,
     options: [
-      "Every Pod must share the same IP address as its host node to avoid unnecessary routing complexity across the cluster",
+      "Every Pod must share the same IP address as its host node, and this avoids unnecessary routing complexity across the cluster",
       "Pods must use a Service ClusterIP to communicate with Pods on other nodes since direct Pod-to-Pod traffic is blocked",
       "Cross-namespace Pod traffic requires an explicit Ingress resource; same-namespace Pods use optimized local routing",
       "All Pods can communicate across nodes without NAT, and each Pod receives its own unique cluster-routable IP address"
@@ -555,7 +555,7 @@ var questions = [
     diagram: null,
     options: [
       "Both containers share the same IP address and can communicate via `localhost`, but they must use different ports",
-      "Both containers share the same filesystem and can access each other's files without requiring any volume mounts",
+      "Both containers share the same filesystem and can access each other's files, but no explicit volume mounts are needed",
       "Both containers share CPU and memory limits so resource requests apply to the `Pod` as a whole not individual containers",
       "Both containers are automatically restarted together if either container fails a configured health check probe"
     ],
@@ -570,7 +570,7 @@ var questions = [
     text: "A team is building a CI/CD pipeline that must run inside the Kubernetes cluster as a series of steps, each in its own container. They want a Kubernetes-native pipeline engine. Which project provides custom resources like `Task`, `Pipeline`, and `PipelineRun`?",
     diagram: null,
     options: [
-      "Argo Workflows — uses `Workflow` and `WorkflowTemplate` CRDs to define multi-step container-native DAG pipelines",
+      "Argo Workflows — uses `Workflow`, `WorkflowTemplate`, and `CronWorkflow` CRDs to define multi-step DAG pipelines",
       "Argo CD — a GitOps continuous delivery tool that syncs resources like `Application` from Git to Kubernetes clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task`, `Pipeline`, and `PipelineRun`",
       "Flux — a GitOps toolkit that reconciles cluster state from `GitRepository` and `Kustomization` sources continuously"
@@ -618,7 +618,7 @@ var questions = [
     text: "An organization uses Open Policy Agent (OPA) Gatekeeper to enforce custom policies in their Kubernetes cluster. A policy requires that all container images come from an approved registry (`registry.corp.com`). At which point in the request lifecycle does Gatekeeper evaluate this policy?",
     diagram: null,
     options: [
-      "At runtime, by monitoring running container processes and blocking any unauthorized container images",
+      "Only at runtime, by monitoring running container processes and blocking unauthorized container images",
       "At scheduling time, when the kube-scheduler assigns the Pod to a specific node in the cluster",
       "At image pull time, when the kubelet on the node attempts to download the image from the registry",
       "During admission, as a validating webhook that intercepts API requests before persistence to etcd"
@@ -634,7 +634,7 @@ var questions = [
     text: "A cluster has nodes labeled `topology.kubernetes.io/zone=us-east-1a` and `topology.kubernetes.io/zone=us-east-1b`. A team wants to spread their 6-replica Deployment evenly across zones, tolerating at most 1 Pod imbalance. Which feature achieves this?",
     diagram: null,
     options: [
-      "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` weighting zone labels equally across all nodes",
+      "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution`, weighting zone labels equally, and scoring all nodes",
       "`topologySpreadConstraints` with maxSkew 1, topologyKey `topology.kubernetes.io/zone`, and `DoNotSchedule` policy",
       "`podAntiAffinity` with `requiredDuringSchedulingIgnoredDuringExecution` to prevent any two Pods in the same zone",
       "`resourceQuota` per zone namespace limiting the maximum number of `Pods` allowed in each availability zone segment"
@@ -715,7 +715,7 @@ var questions = [
     diagram: null,
     options: [
       "ConfigMap updates are delayed until the kubelet's sync period expires, while this can take several hours in large clusters",
-      "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before updates take effect in Pods",
+      "ConfigMap changes require deleting the ConfigMap resource from scratch, but updates only take effect after Pod restart",
       "Env vars from ConfigMaps are set at Pod creation and not updated without restart, but volume mounts are eventually refreshed",
       "The kubelet polls ConfigMap changes every 5 seconds and refreshes both environment variables and volume-mounted data"
     ],
@@ -762,7 +762,7 @@ var questions = [
     text: "A team is deploying a web application that requires initialization — specifically, running database migrations before the main application starts. Which Kubernetes feature allows them to run a container to completion before the main containers start?",
     diagram: null,
     options: [
-      "A `postStart` lifecycle hook on the main application container that runs a migration script",
+      "An application `postStart` lifecycle hook on the main container that runs a migration script",
       "A sidecar container that continuously runs alongside the application container in the Pod",
       "An init container in the Pod spec that runs and completes before any app containers start",
       "A `readinessProbe` that delays traffic routing until the database migration fully completes"
@@ -779,7 +779,7 @@ var questions = [
     diagram: null,
     options: [
       "NATS is a CNCF graduated messaging system supporting pub/sub, request/reply, and streaming for cloud native apps",
-      "NATS is a CNCF graduated distributed tracing system that collects spans from microservices across the cluster",
+      "NATS is a CNCF graduated distributed tracing system that collects spans, correlates traces, and monitors microservices",
       "NATS is a CNCF graduated container runtime that competes with containerd for CRI compliance on Kubernetes nodes",
       "NATS is a CNCF sandbox secret management tool that stores and distributes encrypted credentials for workloads"
     ],
@@ -859,7 +859,7 @@ var questions = [
     text: "A team is migrating a distributed database that requires stable network identities, ordered deployment, and persistent storage per replica. Which workload resource should they use?",
     diagram: null,
     options: [
-      "Deployment — provides declarative updates for stateless workloads without stable identities or ordered scaling",
+      "Deployment — provides declarative updates, rolling rollouts, and scaling for stateless workloads only",
       "StatefulSet — provides stable Pod identities, ordered deployment, and per-replica persistent storage for apps",
       "DaemonSet — ensures exactly one Pod per node for infrastructure agents and system-level daemon processes",
       "ReplicaSet — maintains Pod replicas with stable selectors but no ordered deployment or persistent storage"
@@ -892,7 +892,7 @@ var questions = [
     diagram: null,
     options: [
       "The Gateway API delegates all routing decisions to kube-proxy, which handles L7 path-based routing on each cluster node",
-      "The Gateway API replaces Services and Endpoints with a single resource combining routing and backend selection logic",
+      "The Gateway API replaces Services, Endpoints, and Ingress with a single resource combining routing and backend selection",
       "It encrypts all cluster network traffic at the transport layer using built-in automatic TLS certificate management",
       "The Gateway API provides a role-oriented model with separate Gateway, HTTPRoute, and policy resources for multi-tenancy"
     ],
@@ -1019,7 +1019,7 @@ var questions = [
     text: "An architect is reviewing Factor X (Dev/prod parity) of the twelve-factor app methodology. The team runs PostgreSQL 14 in production but uses SQLite in development. Which statement correctly identifies the violation?",
     diagram: null,
     options: [
-      "There is no violation — using lighter-weight databases including SQLite in development is an accepted trade-off for speed",
+      "There is no violation — using lighter-weight databases including SQLite in development is accepted, and it speeds up iteration",
       "Factor X requires minimizing gaps between dev and prod including backing services, and different databases cause subtle bugs",
       "Factor X primarily addresses the application codebase and deployment pipeline rather than the choice of backing services",
       "Factor X requires that development and production environments share the exact same physical hardware infrastructure and servers"
@@ -1086,7 +1086,7 @@ var questions = [
       "The container is throttled by the CFS scheduler so it cannot exceed 2 CPU cores, but it is not killed",
       "The container is immediately terminated (OOMKilled) for exceeding its configured CPU limit value",
       "The kubelet evicts the Pod from the node because it has exceeded the CPU allocation available on it",
-      "CPU limits are treated as soft targets and the kernel allows brief bursts above the configured limit"
+      "CPU limits are treated as soft targets, but the kernel allows brief bursts above the configured limit"
     ],
     answer: 0,
     explanation: "CPU limits in Kubernetes are enforced by the Linux kernel's Completely Fair Scheduler (CFS) via cgroup bandwidth controls. When a container tries to exceed its CPU limit, it is throttled (its CPU time is restricted) but not killed. This differs from memory, where exceeding the limit triggers an OOMKill. CPU requests are used for scheduling decisions, while limits cap actual usage.\n\nWhy other options are wrong:\n- B: OOMKilled is for memory limit violations, not CPU; CPU is throttled, not killed\n- C: CPU limit violations are handled by CFS throttling; the kubelet does not evict for CPU limit exceeded\n- D: CPU limits are hard caps enforced via CFS bandwidth controls in cgroups; the kernel does not allow bursts above the limit\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#how-pods-with-resource-limits-are-run",
@@ -1147,7 +1147,7 @@ var questions = [
     text: "A multi-master Kubernetes cluster runs 3 etcd instances. During a network partition, one etcd member becomes isolated. Can the remaining two members still accept writes?",
     diagram: null,
     options: [
-      "No — etcd requires full membership agreement through a two-phase commit before processing any client read or write requests",
+      "No — etcd requires full membership agreement through a two-phase commit, and no client reads or writes can be processed otherwise",
       "Yes — etcd uses Raft consensus requiring a majority quorum, and with 2 of 3 members available the quorum is maintained",
       "Yes — etcd switches to an eventual consistency mode during network partitions and reconciles all data afterward on recovery",
       "No — etcd immediately promotes one of the remaining members to operate as a fully standalone single-node cluster instance"
@@ -1163,7 +1163,7 @@ var questions = [
     text: "Which architectural pattern places a single centralized entry point between external clients and backend microservices to handle cross-cutting concerns such as auth, throttling, and traffic distribution?",
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="210" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Centralized Request Handling</text><rect x="20" y="50" width="80" height="40" rx="6" fill="#374151" stroke="#6b7280"/><text x="60" y="75" text-anchor="middle" fill="white" font-size="10">Clients</text><rect x="140" y="40" width="120" height="60" rx="6" fill="#7c3aed" stroke="#a78bfa" stroke-width="2"/><text x="200" y="65" text-anchor="middle" fill="white" font-size="10">???</text><text x="200" y="80" text-anchor="middle" fill="#c4b5fd" font-size="8">Cross-cutting concerns</text><rect x="300" y="40" width="80" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="340" y="57" text-anchor="middle" fill="white" font-size="9">Svc A</text><rect x="300" y="75" width="80" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="340" y="92" text-anchor="middle" fill="white" font-size="9">Svc B</text><rect x="300" y="110" width="80" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="340" y="127" text-anchor="middle" fill="white" font-size="9">Svc C</text><line x1="100" y1="70" x2="140" y2="70" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrGw)"/><line x1="260" y1="55" x2="300" y2="55" stroke="#14b8a6" stroke-width="1.5"/><line x1="260" y1="70" x2="300" y2="87" stroke="#14b8a6" stroke-width="1.5"/><line x1="260" y1="85" x2="300" y2="120" stroke="#14b8a6" stroke-width="1.5"/><defs><marker id="arrGw" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a78bfa"/></marker></defs></svg>',
     options: [
-      "Sidecar pattern — inject a proxy container alongside each service to handle cross-cutting concerns locally",
+      "Sidecar pattern — inject a proxy container alongside each service to handle retries, and manage concerns locally",
       "Backend for Frontend (BFF) — build a separate backend service tailored per client type (mobile, web app)",
       "API Gateway pattern — a single entry point handling auth, rate limiting, and routing for backend services",
       "Service mesh pattern — distribute proxy functionality across all service instances via sidecar injection"
@@ -1179,7 +1179,7 @@ var questions = [
     text: "A team notices that their Namespace has a `LimitRange` resource configured. What does a `LimitRange` enforce?",
     diagram: null,
     options: [
-      "It sets the maximum number of Pods and containers that can exist in the namespace at any given time",
+      "It sets the maximum number of Pods, containers, and services that can exist in the namespace at any given time",
       "It defines default, min, and max resource requests and limits for containers and Pods in the namespace",
       "It restricts which container images and tags can be pulled by Pods deployed within the namespace by URL",
       "It limits the rate and number of API requests per second that can be made to resources in that namespace"
@@ -1212,7 +1212,7 @@ var questions = [
     text: "A team creates a ResourceQuota in the `dev` namespace that sets `requests.cpu: 4` and `limits.cpu: 8`. A developer tries to create a Pod with `requests.cpu: 2` and `limits.cpu: 3` when 3 CPU of requests are already consumed. What happens?",
     diagram: null,
     options: [
-      "The Pod is created successfully because the CPU limit (3) is still under the namespace quota limit of 8 total",
+      "Pod creation succeeds because the CPU limit (3) is still under the namespace quota limit of 8 total",
       "The Pod is created but throttled to use only 1 CPU request since that is all the remaining quota allows",
       "The ResourceQuota is ignored because it primarily targets Deployments and ReplicaSets, not individual Pods",
       "Pod creation is rejected because total CPU requests would be 5 cores, exceeding the namespace quota of 4"
@@ -1324,7 +1324,7 @@ var questions = [
     text: "A team needs to implement a NetworkPolicy that allows ingress traffic to their `web` Pods only from Pods labeled `role: frontend` in the same namespace and from any Pod in the `monitoring` namespace. Which NetworkPolicy spec achieves this?",
     diagram: null,
     options: [
-      "A single `from` entry combining both selectors: `podSelector` matching labels and `namespaceSelector`: both conditions must be true",
+      "A single `from` entry combining `podSelector` matching labels, and `namespaceSelector`: both conditions must be true at once",
       "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
       "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from all `monitoring` namespace Pods for egress traffic controls",
       "Two separate `from` entries: one with `podSelector` matching `role: frontend`, and another with `namespaceSelector` for `monitoring`"
@@ -1484,7 +1484,7 @@ var questions = [
     text: "A cluster uses CoreDNS. A Pod in the `backend` namespace tries to reach a Service named `cache-svc` in the `data` namespace. Which DNS name should the Pod use?",
     diagram: null,
     options: [
-      "`cache-svc` — short names automatically resolve across all namespaces without further qualification",
+      "`cache-svc` — short names resolve across all namespaces automatically, and no further qualification is needed",
       "`cache-svc.cluster.local` — namespace is not needed since Service names are globally unique in DNS",
       "`data.cache-svc.svc.cluster.local` — the namespace prefix comes before the service name in the FQDN",
       "`cache-svc.data.svc.cluster.local` — the FQDN includes service name, namespace, and cluster domain"
@@ -1581,7 +1581,7 @@ var questions = [
     diagram: null,
     options: [
       "All existing Pods are terminated first, then new Pods with the updated spec are created, causing brief downtime",
-      "New Pods are created alongside old Pods and traffic is gradually shifted from old version to new version pods",
+      "New Pods are created alongside old Pods, and traffic is gradually shifted from the old version to the new version",
       "Pods are updated in-place without restarting — the container image is swapped while the Pod continues running",
       "A new ReplicaSet is created and scaled up while simultaneously scaling down the old ReplicaSet one Pod at a time"
     ],

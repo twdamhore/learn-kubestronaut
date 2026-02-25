@@ -761,7 +761,7 @@ var questions = [
     diagram: null,
     options: [
       "kube-proxy logs showing iptables rule updates and endpoint changes on each node",
-      "The kube-scheduler logs showing pod placement decisions for the affected workload",
+      "kube-scheduler logs showing pod placement decisions for the affected workload",
       "The etcd audit log showing key-value store operations for the Service resources",
       "The kubelet logs showing image pull progress and container start events on nodes"
     ],
@@ -920,7 +920,7 @@ var questions = [
     text: "A pod specification includes `dnsPolicy: ClusterFirst`. The pod needs to resolve both cluster-internal service names and external hostnames like `example.com`. Which behavior results from this policy?",
     diagram: null,
     options: [
-      "Cluster-internal names are resolved but external names may time out without forwarding",
+      "Cluster-internal names are resolved, which is the default, but external names may time out",
       "The pod uses the node DNS settings by default, querying CoreDNS for cluster-local names",
       "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
       "The pod queries CoreDNS and the node resolver in round-robin order for each DNS lookup"
@@ -939,7 +939,7 @@ var questions = [
       "Only `Policy A` takes effect — it was created first and has priority in the namespace",
       "`Policy B` overrides Policy A — it was created more recently and takes full precedence",
       "Both policies merge additively — ingress from `web` on 80 AND `api` on 443 is allowed",
-      "The policies conflict — `NetworkPolicy` rules cancel each other out and deny all ingress"
+      "The policies conflict — both `NetworkPolicy` rules cancel each other out and deny all ingress"
     ],
     answer: 2,
     explanation: "Multiple NetworkPolicies selecting the same pod are unioned (merged additively). The pod receives the combined set of allowed ingress rules from both policies. There is no priority based on creation order or port number. Policies do not conflict — they always add permissions, never subtract.\n\nWhy other options are wrong:\n- A: There is no priority based on creation order; multiple NetworkPolicies are always unioned.\n- B: There is no priority based on creation time; multiple NetworkPolicies are always unioned regardless of when they were created.\n- D: Policies never conflict; they always add permissions additively and never subtract.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1113,9 +1113,9 @@ var questions = [
     diagram: null,
     options: [
       "The request is immediately rejected with a 503 error because no backend pod is available",
-      "Knative's activator component holds the request while a pod is created then forwards it",
+      "The Knative activator component holds the request while a pod is created then forwards it",
       "The request is queued in the Knative CoreDNS layer until the pod IP becomes available in DNS",
-      "The Ingress controller retries the request indefinitely until a backend pod finally appears"
+      "The Ingress controller retries the request indefinitely while waiting for a backend pod to appear"
     ],
     answer: 1,
     explanation: "When a Knative service is scaled to zero, the activator component (part of the Knative data plane) buffers incoming requests while signaling the autoscaler to create pods. Once a pod is ready, the activator forwards the buffered request. Requests are not rejected. CoreDNS does not queue requests. The Ingress controller does not handle this logic — Knative has its own routing layer.\n\nWhy other options are wrong:\n- A: The request is not immediately rejected with 503; Knative's activator buffers it while scaling up.\n- C: CoreDNS does not queue requests; DNS simply resolves names and has no request buffering capability.\n- D: The Ingress controller does not handle scale-to-zero logic; Knative has its own routing and activator layer.\n\nReference: https://knative.dev/docs/serving/autoscaling/scale-to-zero/",
@@ -1288,7 +1288,7 @@ var questions = [
     text: "A `LoadBalancer` Service on GKE shows two IP addresses: one in `status.loadBalancer.ingress[0].ip` and the ClusterIP. A pod inside the cluster sends a request to the external load balancer IP. Where is the request routed?",
     diagram: null,
     options: [
-      "To the cloud load balancer, which forwards the traffic back into the cluster for routing",
+      "Through the cloud load balancer, which forwards the traffic back into the cluster for routing",
       "To the kube-apiserver, which acts as a proxy and forwards the request to the backend",
       "To the cloud load balancer, which drops it because the pod source IP is not allowed",
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
@@ -1595,7 +1595,7 @@ var questions = [
       "Horizontal Pod Autoscaler to reduce the pod count and shrink the Endpoints object size",
       "Pod topology spread constraints to distribute pods evenly and reduce endpoint churn rate",
       "`EndpointSlices`, which split endpoints into smaller objects for efficient update handling",
-      "`ServiceTopology` to filter endpoints by zone and reduce the overall Endpoints object size"
+      "`ServiceTopology`, which filters endpoints by zone to reduce the overall Endpoints object size"
     ],
     answer: 2,
     explanation: "`EndpointSlices` were introduced to solve the scalability problem of large Endpoints objects. They split the endpoint list into smaller slices (default 100 per slice), allowing incremental updates instead of rewriting a single large object. HPA reduces pods but does not solve the API efficiency issue. Topology spread is for scheduling. ServiceTopology (deprecated in favor of topology-aware hints) filters endpoints but does not solve the object size problem.\n\nWhy other options are wrong:\n- A: HPA adjusts pod count based on load metrics but does not solve the API efficiency issue of large Endpoints objects.\n- B: Topology spread constraints distribute pods across failure domains for scheduling, not for API object efficiency.\n- D: ServiceTopology (deprecated) filtered endpoints by zone for routing, not for reducing Endpoints object size.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",

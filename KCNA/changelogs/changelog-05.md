@@ -362,3 +362,26 @@
 
 **Problem:** Correct answer D started with "Env" while all three distractors started with "Completed", making the correct answer visually distinct.
 **Change:** Changed D from "Env vars and volume mounts with sensitive data remain accessible via kubectl" to "Completed Pods retain env vars and volume data accessible via kubectl commands". All options now start with "Completed".
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-05.js`
+**Issues fixed**: 4
+
+### s05-q022 — keyword giveaway (only correct contains "but")
+- **Option C:** Changed "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rule list" to "A policy with `podSelector: {matchLabels: {deny: all}}` but no ingress rule list" to add "but" to a distractor.
+
+### s05-q032 — keyword giveaway (only correct contains "automatically")
+- **Option C:** Changed "It grants admin-level permissions to all ServiceAccounts in every namespace" to "It automatically grants admin-level permissions to all ServiceAccounts in every namespace" to add "automatically" to a distractor.
+
+### s05-q045 — keyword giveaway (only correct contains `, which`)
+- **Option A:** Changed "Immediately, because the volume is directly backed by the API server" to "Immediately, which occurs because the volume is backed by the API server" to add `, which` to a distractor. Also trimmed to maintain length balance.
+
+### s05-q076 — keyword giveaway (only correct contains "but")
+- **Option B:** Changed "All current and future verbs including subresources like `pods/exec`" to "All verbs including subresources like `pods/exec`, but not custom verbs" to add "but" to a distractor. Shortened from 90ch to 71ch to fix length balance.
+
+### Summary
+- 4 keyword giveaway fixes ("but" x2, "automatically" x1, `, which` x1)
+- No answer indices were changed
+- No accuracy or explanation changes

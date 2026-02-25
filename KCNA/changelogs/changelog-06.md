@@ -409,3 +409,46 @@
 **Change:** Added backticks to B (`staging`) and C (`CI/CD`) so all wrong options now have 2 backticks each, reducing the visual contrast with the correct answer's 4 backticks. Also minor wording adjustments: B trimmed from 82 to 80 chars ("schedule set" to "schedule"), C trimmed from 84 to 82 chars ("inspects cluster health" to "checks health"). Ratio improved from 1.05 to 1.07 (negligible change).
 
 ---
+
+# Round 47c Review - set-06.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 5
+
+---
+
+## s06-q014 (keyword "but" giveaway)
+
+**Problem:** Only the correct answer B contained the word "but" ("evicted but its data..."), making it uniquely identifiable by structural pattern.
+**Change:** Rewrote option D from "Local volumes are automatically replicated across all nodes, so there is no data loss" to "Local volumes are replicated across all nodes, but only after a considerable sync delay". This adds "but" to a distractor, eliminating the giveaway. Length rebalanced (D from 88 to 90 chars; ratio 1.10).
+
+---
+
+## s06-q017 (keyword "both" giveaway)
+
+**Problem:** Only the correct answer B contained the word "both" ("Both constraints must be satisfied..."), making it uniquely identifiable.
+**Change:** Rewrote option D from "The scheduler picks whichever constraint matches the most nodes" to "The scheduler evaluates both and picks whichever matches more nodes". This adds "both" to a distractor. Trimmed D from 74 to 70 chars to maintain ratio under 1.15.
+
+---
+
+## s06-q052 (keyword "but" giveaway)
+
+**Problem:** Only the correct answer B contained the word "but" ("but etcd still uses the old one"), making it uniquely identifiable.
+**Change:** Rewrote option D from "The restored snapshot was encrypted with a different key that does not match today" to "The restored snapshot was encrypted with a key but it does not match the current one". This adds "but" to a distractor.
+
+---
+
+## s06-q071 (keyword "automatically" giveaway)
+
+**Problem:** Only the correct answer A contained the word "automatically" ("Services and DNS automatically resolve..."), making it uniquely identifiable.
+**Change:** Rewrote option D from "The CNI plugin broadcasts the new IP address to all other nodes in the cluster" to "The CNI plugin automatically broadcasts the new IP address to all other nodes". This adds "automatically" to a distractor.
+
+---
+
+## s06-q095 (keyword ", and" giveaway)
+
+**Problem:** Only the correct answer D contained the compound clause ", and" ("v1.28, v1.29, and v1.30"), making it structurally unique.
+**Change:** Added a comma before "and" in option C: "Build a new v1.30 cluster from scratch, and migrate existing workloads". This adds ", and" to a distractor, eliminating the giveaway.
+
+---

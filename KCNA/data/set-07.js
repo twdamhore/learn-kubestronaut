@@ -152,7 +152,7 @@ var questions = [
     text: "A deployment's pods fail to start with the event: `Warning FailedScheduling: 0/5 nodes are available: 5 node(s) had taint {node.kubernetes.io/not-ready: }, that the pod didn't tolerate`. What does this mean?",
     diagram: null,
     options: [
-      "The pod's `imagePullSecret` is missing and all nodes are refusing to process the pull request from the registry",
+      "An `imagePullSecret` is missing from the pod spec and all nodes are refusing to process the pull request from the registry",
       "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
       "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
@@ -168,7 +168,7 @@ var questions = [
     text: "A pod has an init container that must complete before the main application container starts. The pod is stuck in `Init:CrashLoopBackOff`. What does this status mean?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Init Container Lifecycle</text><rect x="30" y="55" width="90" height="40" rx="6" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="75" y="79" text-anchor="middle" fill="#e0e0e0" font-size="11">Init Start</text><line x1="120" y1="75" x2="150" y2="75" stroke="#888" stroke-width="1.5" marker-end="url(#arr11)"/><rect x="150" y="55" width="90" height="40" rx="6" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="195" y="72" text-anchor="middle" fill="#e0e0e0" font-size="10">Init Crashes</text><text x="195" y="85" text-anchor="middle" fill="#e0e0e0" font-size="10">(exit != 0)</text><path d="M195 95 Q195 130 75 130 Q30 130 30 95" stroke="#e76f51" stroke-width="1.5" fill="none" marker-end="url(#arr11)"/><text x="115" y="125" text-anchor="middle" fill="#e76f51" font-size="9">?</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3"/><text x="320" y="72" text-anchor="middle" fill="#666" font-size="10">Main Container</text><text x="320" y="85" text-anchor="middle" fill="#666" font-size="10">(status?)</text><text x="200" y="170" text-anchor="middle" fill="#aaa" font-size="10">What is the status of the main container?</text><defs><marker id="arr11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The main application container is crashing repeatedly and the init container is attempting to restart it",
+      "The main application container is crashing repeatedly, which causes the init container to attempt restarting it",
       "The init container keeps crashing and restarting, which prevents the main container from ever starting",
       "The init container completed successfully but the main container cannot locate the files it produced",
       "The pod was evicted due to node resource pressure and is being rescheduled on a different cluster node"
@@ -200,10 +200,10 @@ var questions = [
     text: "You run `kubectl describe pod web-app` and see the following under Conditions:\n\n```\nConditions:\n  Type     Status\n  PodScheduled   True\n  Initialized    True\n  ContainersReady False\n  Ready          False\n```\n\nWhat can you conclude?",
     diagram: null,
     options: [
-      "The pod has not yet been assigned to a node by the cluster scheduler component",
-      "The pod's init containers have not completed execution of their initialization tasks",
+      "The pod has not been assigned to a node by the scheduler, but it is waiting in the queue",
+      "The pod's init containers have not completed execution of their initialization tasks yet",
       "The pod is scheduled and initialized, but a main container is not passing readiness",
-      "The pod's volumes have failed to mount and all containers are stuck in a waiting state"
+      "The pod's volumes have failed to mount and all of its containers are stuck in a waiting state"
     ],
     answer: 2,
     explanation: "`PodScheduled: True` means a node was assigned. `Initialized: True` means all init containers completed. `ContainersReady: False` and `Ready: False` together mean at least one container's readiness probe is not passing. The pod is running but not considered ready to serve traffic.\n\nWhy other options are wrong:\n- A: PodScheduled=True contradicts this; the pod is already assigned to a node\n- B: Initialized=True contradicts this; all init containers have completed\n- D: Volume mount failures typically prevent Initialized from becoming True or show ContainerCreating status\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions",
@@ -216,7 +216,7 @@ var questions = [
     text: "A pod fails to start with the event: `Error: container has runAsNonRoot and image will run as root`. What must you change to fix this?",
     diagram: null,
     options: [
-      "Remove the `readinessProbe` from the pod spec since it conflicts with the configured security context settings",
+      "Remove the `readinessProbe` from the pod spec, or adjust the security context settings that conflict with it",
       "Add a `ClusterRoleBinding` that grants the pod's ServiceAccount root access to bypass the security restriction",
       "Ensure the container image runs as a non-root user, or set `runAsUser` to a non-zero UID in `securityContext`",
       "Set `privileged: true` in the container's security context to completely bypass the runAsNonRoot restriction"
@@ -328,7 +328,7 @@ var questions = [
     text: "A Deployment with 3 replicas shows the following after `kubectl get pods`:\n\n```\nNAME                   READY   STATUS             RESTARTS   AGE\nweb-6d8f9b-abc12       1/1     Running            0          2d\nweb-6d8f9b-def34       1/1     Running            0          2d\nweb-7c4e2a-ghi56       0/1     CrashLoopBackOff   8          12m\n```\n\nWhat can you infer about the deployment?",
     diagram: null,
     options: [
-      "All three pods belong to the same ReplicaSet (`6d8f9b`) and one has developed a corrupted container filesystem causing crashes",
+      "All three pods belong to the same ReplicaSet (`6d8f9b`) but one has developed a corrupted container filesystem causing crashes",
       "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while the old pods (`6d8f9b`) still remain running",
       "The third pod was manually created outside of the Deployment controller and is completely unrelated to the current ReplicaSet",
       "The Deployment's replica count was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
@@ -360,7 +360,7 @@ var questions = [
     text: "Your CI/CD pipeline deploys a new image tag but the pods still run the old version. The Deployment spec uses `image: myapp:latest` and `imagePullPolicy: IfNotPresent`. What explains this behavior?",
     diagram: null,
     options: [
-      "The Kubernetes API server cached the old image tag and needs to be restarted to clear its internal image cache entry",
+      "Because the Kubernetes API server cached the old image tag, it needs to be restarted to clear its internal image cache entry",
       "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
       "The container runtime installed on the cluster nodes does not support pulling images using the mutable `latest` tag name",
       "With `imagePullPolicy: IfNotPresent`, the node uses its locally cached `myapp:latest` image instead of pulling the update"
@@ -696,7 +696,7 @@ var questions = [
     text: "A pod has `restartPolicy: Always` and its single container exits with code 0. What does Kubernetes do?",
     diagram: null,
     options: [
-      "The pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy",
+      "Its pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy",
       "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of the exit code value",
       "The pod is deleted and a new replacement pod is created by the ReplicaSet controller on a potentially different cluster node",
       "The kubelet marks the pod as `Failed` because containers should not exit with code 0 under the Always restart policy rules"
@@ -969,7 +969,7 @@ var questions = [
     diagram: null,
     options: [
       "The `PersistentVolume` mounts, block devices, network disks, and NFS shares attached to pods on that node",
-      "The etcd data directory on the control plane node which stores the cluster's key-value state data",
+      "The etcd data directory on the control plane node, which stores the cluster's key-value state data",
       "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir`s",
       "The network-attached storage volumes used by the CSI driver to provision persistent volume claims"
     ],
@@ -1018,7 +1018,7 @@ var questions = [
     options: [
       "The pod's ServiceAccount CA bundle does not match the API server's TLS certificate, or the `kubernetes` Service is missing",
       "The pod does not have its `ServiceAccount` token volume mounted, so mutual TLS authentication with the API server fails",
-      "The pod needs a NetworkPolicy explicitly allowing egress traffic to the API server's endpoint IP address and port 443",
+      "The pod needs a NetworkPolicy explicitly allowing egress to the API server's endpoint IP address, or port 443 is blocked",
       "The API server restricts connections to the control plane network by default, blocking requests from pods in worker nodes"
     ],
     answer: 0,
@@ -1032,7 +1032,7 @@ var questions = [
     text: "A pod fails to start with: `Error: secret \"db-credentials\" not found`. The Secret exists in the `production` namespace, but the pod runs in the `staging` namespace. How should this be resolved?",
     diagram: null,
     options: [
-      "Move the pod to the `production` namespace using `kubectl move` to place it alongside the existing Secret resource",
+      "Move the pod to the `production` namespace using `kubectl move`, or recreate it alongside the existing Secret resource",
       "Add a cross-namespace reference in the pod spec using `secretRef.namespace: production` to access the remote Secret",
       "Create `db-credentials` in the `staging` namespace, or use an ExternalSecrets operator to sync it across namespaces",
       "Grant the `staging` pod's ServiceAccount read access to all namespaces via a ClusterRoleBinding to access the Secret"
@@ -1098,7 +1098,7 @@ var questions = [
     options: [
       "No, both containers see the same files because `emptyDir` is shared storage—check the exact file paths used by each container",
       "No, emptyDir volumes use copy-on-write semantics—each container gets an independent snapshot of the data at mount time",
-      "Yes, different mount paths create isolated storage spaces because `emptyDir` segments data per mount, preventing cross-access",
+      "Yes, different mount paths create isolated storage spaces for both containers because `emptyDir` segments data per mount path",
       "Yes, `emptyDir` volumes are read-only by default so Container B lacks write permissions needed to see mutable content from A"
     ],
     answer: 0,
@@ -1208,7 +1208,7 @@ var questions = [
     text: "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3600m, limited: 4000m`. What is preventing pod creation?",
     diagram: null,
     options: [
-      "The node does not have 500m CPU available for scheduling the new pod that the `ReplicaSet` is trying to create in production",
+      "No node has 500m CPU available for scheduling the new pod, and the `ReplicaSet` controller cannot create it in production now",
       "The pod's CPU request of 500m exceeds the maximum allowed per-pod by a LimitRange named compute-quota in the production namespace",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
       "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
@@ -1275,7 +1275,7 @@ var questions = [
       "Existing pods continue to run but controllers (Deployment, ReplicaSet, Job) cannot reconcile—crashed pods are not replaced",
       "All pods in the cluster immediately stop because the controller manager manages the container runtime (e.g., containerd) directly",
       "DaemonSet and Job pods are most affected—these controller loops reconcile more frequently than ReplicaSet controllers",
-      "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario automatically"
+      "There is no immediate impact, but the scheduler eventually takes over all controller responsibilities in a failover scenario"
     ],
     answer: 0,
     explanation: "The `kube-controller-manager` runs all built-in controllers (ReplicaSet, Deployment, Job, Node, etc.). When it is down, existing pods continue to run (the kubelet manages running containers), but no reconciliation occurs. Dead pods are not replaced, scaling does not happen, and new Deployment rollouts stall. The scheduler and controller manager are separate components with distinct responsibilities.\n\nWhy other options are wrong:\n- B: Existing containers keep running under kubelet management; kube-controller-manager does not control the runtime\n- C: All controllers are equally affected; there is no difference in reconciliation frequency between DaemonSet, Job, and ReplicaSet controllers\n- D: The scheduler handles pod placement only; it does not take over controller responsibilities\n\nReference: https://kubernetes.io/docs/concepts/architecture/controller/",
@@ -1337,7 +1337,7 @@ var questions = [
     diagram: null,
     options: [
       "Some pods lack the sidecar proxy, so they cannot participate in mTLS and their plaintext connections are rejected",
-      "The sidecar proxy containers do not have enough CPU resources allocated to handle the mTLS encryption overhead",
+      "Sidecar proxy containers do not have enough CPU resources allocated to handle the mTLS encryption overhead",
       "The Kubernetes API server does not support mTLS between pods and requires a separate certificate management tool",
       "The Service definitions need to be updated to specify TLS ports explicitly in each port mapping configuration"
     ],
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A pod's liveness probe uses a command: `exec: [\"cat\", \"/tmp/healthy\"]`. The application creates this file on startup and deletes it when it detects a fatal error. What happens after the file is deleted?",
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="160" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Exec Liveness Probe Flow</text><rect x="25" y="55" width="85" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="67" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">/tmp/healthy</text><text x="67" y="82" text-anchor="middle" fill="#2a9d8f" font-size="9">(exit ???)</text><line x1="110" y1="72" x2="130" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="130" y="55" width="85" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="172" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">File deleted</text><text x="172" y="82" text-anchor="middle" fill="#e76f51" font-size="9">cat fails (exit ???)</text><line x1="215" y1="72" x2="235" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="235" y="55" width="70" height="35" rx="5" fill="#3d405b" stroke="#888" stroke-width="1.5"/><text x="270" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">Failures</text><text x="270" y="82" text-anchor="middle" fill="#e0e0e0" font-size="9">counted</text><line x1="305" y1="72" x2="320" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="320" y="55" width="60" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="350" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">???</text><text x="350" y="82" text-anchor="middle" fill="#e0e0e0" font-size="9"></text><text x="200" y="125" text-anchor="middle" fill="#aaa" font-size="10">What happens after repeated probe failures?</text><text x="200" y="145" text-anchor="middle" fill="#aaa" font-size="10">App self-signals unhealthy by removing the marker file</text><defs><marker id="a85" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The kubelet sends a SIGTERM to the application process, giving it the termination grace period to shut down properly",
+      "The kubelet sends a SIGTERM to the application process, and the termination grace period begins for shutdown",
       "The probe command returns a non-zero exit code, and after `failureThreshold` failures the kubelet restarts the container",
       "The pod is removed from Service endpoints but the container continues running indefinitely in a degraded serving state",
       "The kubelet waits indefinitely for the `/tmp/healthy` file to be recreated before taking any corrective restart action"
@@ -1464,7 +1464,7 @@ var questions = [
     text: "A team notices their Kubernetes costs are 3x higher than expected. Running `kubectl top nodes` shows all nodes at 15-20% CPU and 30% memory utilization. What does this suggest about the cluster's resource efficiency?",
     diagram: null,
     options: [
-      "The cluster is optimally sized because it has sufficient headroom for unexpected traffic spikes and burst workloads",
+      "The cluster is optimally sized for unexpected traffic spikes, or the autoscaler is maintaining burst workload headroom",
       "The low utilization indicates a monitoring error—the actual real-time resource usage is likely much higher overall",
       "The cluster is over-provisioned—resource requests are likely much higher than actual usage, or there are too many nodes",
       "Node-level metrics provide limited value for cost optimization compared to pod-level metrics for workload planning"
@@ -1513,7 +1513,7 @@ var questions = [
     diagram: null,
     options: [
       "The Helm chart has a syntax error in one of its templates (e.g., a missing closing bracket) that prevents rendering",
-      "The Helm repository index is corrupted and needs to be rebuilt before the chart can be installed into the target namespace",
+      "A corrupted Helm repository index needs to be rebuilt before the chart can be installed into the target namespace",
       "The Kubernetes version does not support the API version or resource kind used in the chart manifests, causing a validation error",
       "A resource in the chart (e.g., Service or ConfigMap) already exists in the namespace from a previous manual or Helm deployment"
     ],
@@ -1531,7 +1531,7 @@ var questions = [
       "The `Local` external traffic policy is deprecated in recent Kubernetes versions; NodePort Services must use `Cluster` instead",
       "The `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
       "With `externalTrafficPolicy: Local`, kube-proxy only routes to pods on the same node; nodes without a pod drop the traffic",
-      "The CNI plugin does not support the `Local` external traffic policy and silently falls back to the default `Cluster` behavior"
+      "When using `Local` external traffic policy, the CNI plugin silently falls back to the default `Cluster` behavior"
     ],
     answer: 2,
     explanation: "With `externalTrafficPolicy: Local`, a node only routes incoming traffic to pods running on that specific node. If no matching pod exists on a node, the traffic is dropped (connection refused). This policy preserves the client's source IP address but requires an external load balancer that only sends traffic to nodes with healthy pods, typically using health check node ports.\n\nWhy other options are wrong:\n- A: externalTrafficPolicy: Local is not deprecated; it is actively supported and commonly used\n- B: hostNetwork: true is not required for Local policy; they are independent settings\n- D: CNI plugins handle pod networking, not Service traffic policy; kube-proxy handles externalTrafficPolicy\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#external-traffic-policy",

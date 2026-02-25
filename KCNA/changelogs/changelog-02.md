@@ -525,3 +525,57 @@
 ### s02-q076 — length-balance (ratio 1.137)
 - **Problem:** Option B was the longest (116 chars) while option D was the shortest (102 chars), with a ratio of 1.137.
 - **Option B:** Trimmed from 116 to 110 chars. Changed `"Use \`subPath\` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name"` to `"Use \`subPath\` in the ConfigMap definition to split the ConfigMap into per-container sections by container name"`.
+
+## Round 47c — 2026-02-25
+**File**: `set-02.js`
+**Issues fixed**: 16
+
+### s02-q004 — giveaway: "both" unique to correct answer
+- Option D: Added "both" by rewriting from `"\`Guaranteed\` — because Kubernetes rounds up partial specs to meet the Guaranteed threshold"` to `"\`Guaranteed\` — because Kubernetes rounds up partial specs for both CPU and memory automatically"`.
+
+### s02-q006 — giveaway: first-word (correct "pod", all distractors "the") + "but" unique to correct
+- Option B: Changed first word from `"The pod is scheduled but placed in pending state..."` to `"No scheduling occurs and the pod stays in pending state until the administrator adds a LimitRange object"`.
+- Option C: Added "but" by changing `"...and its resources do not count against the quota"` to `"...but its resources do not count against the quota"`.
+
+### s02-q008 — giveaway: first-word (correct "etcd,", all distractors "the")
+- Option B: Changed first word from `"The kube-apiserver's..."` to `"Inside the kube-apiserver's in-memory store, which is cleared each time the server is restarted"`.
+
+### s02-q032 — giveaway: "both" unique to correct answer
+- Option B: Added "both" by rewriting from `"\`Burstable\` — because the containers each have different resource values from one another"` to `"\`Burstable\` — because both the request and limit values differ across the containers"`.
+
+### s02-q040 — giveaway: `, or` unique to correct answer + length-balance
+- Option C: Added `, or` by rewriting from `"Delete the ResourceQuota in the namespace to remove the memory restriction from the pods"` to `"Delete the ResourceQuota in the namespace, or remove the memory restriction from the pods"`.
+- Option A (correct): Padded from 80 to 91 chars by adding "allocatable" before "memory".
+
+### s02-q052 — giveaway: "automatically" unique to correct answer
+- Option C: Added "automatically" by rewriting from `"Kubernetes defaults to half the limit for requests, so the request would be set to \`128Mi\`"` to `"Kubernetes automatically defaults to half the limit for requests, so the request would be \`128Mi\`"`.
+
+### s02-q055 — giveaway: first-word (correct "pod", all distractors "the")
+- Option B: Changed first word from `"The LimitRange is ignored..."` to `"CPU-specific LimitRanges are ignored because CPU constraints require a separate CpuLimitRange resource"`.
+
+### s02-q061 — giveaway: `, but` and "but" unique to correct answer
+- Option C: Added `, but` by rewriting from `"All pod creation is blocked across the entire cluster until the controller manager fully recovers"` to `"All pod creation is blocked across the entire cluster, but existing pods continue to run until recovery"`.
+
+### s02-q064 — giveaway: "both" unique to correct answer
+- Option A: Added "both" by rewriting from `"No — \`args\` does not support variable substitution; the \`command\` field is the supported location in pod specs"` to `"No — \`args\` does not support variable substitution in both literal and reference forms; only \`command\` does"`.
+
+### s02-q070 — giveaway: `, but` unique to correct answer
+- Option B: Added `, but` by rewriting from `"No — the service mesh manages all configuration including application-specific settings such as database URLs and flags"` to `"No — the service mesh manages all configuration such as database URLs and flags, but only after sidecar injection"`.
+
+### s02-q072 — giveaway: `, which` unique to correct answer
+- Option B: Changed `"Store credentials in the Kafka topic metadata where the Knative eventing system reads them on connect"` to `"Store credentials in the Kafka topic metadata, which the Knative eventing system reads on connect"`.
+
+### s02-q075 — giveaway: `, which` unique to correct answer
+- Option D: Changed `"Base64 encoding in templates causes Helm to double-encode the value when creating the Kubernetes Secret"` to `"Base64 encoding in templates causes Helm to double-encode the value, which corrupts the Kubernetes Secret"`.
+
+### s02-q083 — giveaway: `, and` unique to correct answer
+- Option C: Changed `"The container continues running but Kubernetes logs a warning and triggers an alert to the cluster administrator"` to `"The container continues running, and Kubernetes logs a warning then triggers an alert to the cluster administrator"`.
+
+### s02-q088 — giveaway: first-word (correct "an", all distractors "a")
+- Option B: Changed first word from `"A \`configMap\` volume..."` to `"Using a \`configMap\` volume that the init container populates at runtime by writing into the mounted path"`.
+
+### s02-q095 — giveaway: `, and` unique to correct answer
+- Option C: Changed `"Kubernetes automatically creates ConfigMap snapshots before every change, stored in a dedicated backup volume attached to the cluster"` to `"Kubernetes automatically creates ConfigMap snapshots before every change, and stores them in a dedicated backup volume on the cluster"`.
+
+### s02-q100 — giveaway: first-word (correct "any", all distractors "it") + `, which` unique to correct
+- Option D: Fixed both issues by rewriting from `"It validates ConfigMap content against a known checksum and blocks the deployment if the content is corrupted or tampered"` to `"The annotation validates ConfigMap content against a known checksum, which blocks the deployment if corruption occurs"`.

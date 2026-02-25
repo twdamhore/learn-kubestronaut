@@ -550,3 +550,94 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q048 — length-balance (ratio 1.103, D shortest at 107)
 - **Option D:** Expanded from 107 to 117 chars. Added "hostnames" before "in the default namespace".
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-10.js`
+**Issues found**: 26 giveaway flags + 5 length-balance flags introduced by giveaway fixes
+
+### Giveaway fixes (26 flags across 26 questions)
+
+### s10-q001 — keyword `, and` unique in correct D
+- **Option B:** Added `, and` clause. Changed "...triggers deletion of the associated PVs" to "...triggers PV deletion, and the volumes are immediately removed".
+- **Option D (correct):** Added "the" before "underlying" for length balance.
+
+### s10-q002 — keyword `, but` unique in correct C
+- **Option A:** Added `, but`. Changed "The Deployment is created but" to "The Deployment is created, but".
+
+### s10-q006 — keyword `, and` unique in correct C
+- **Option D:** Added `, and` clause. Changed "...automatically by the EndpointSlice controller on update" to "...by the EndpointSlice controller, and the timer resets on update".
+
+### s10-q012 — comma-count (correct 2 commas, others 0) + keyword `, and`
+- **Option C:** Added `, and` with commas. Changed "...stateless process memory loaded at startup from vault" to "...stateless process memory, and load them at startup from vault".
+
+### s10-q015 — keyword `, and` unique in correct C
+- **Option D:** Added `, and`. Changed "...per target and use recording rules" to "...per target, and use recording rules".
+
+### s10-q017 — keyword `, and` unique in correct A
+- **Option B:** Added `, and`. Changed "...with `handler: gvisor` and annotate" to "...with `handler: gvisor`, and annotate".
+
+### s10-q018 — backtick-density (correct A=8, others=4,4,4)
+- **Option B:** Added backticks around `system:serviceaccount` (4→6 backticks), reducing gap with correct A's 8.
+- **Option A (correct):** Expanded from 115 to 124 chars for length balance. Added "specific" before "`RequestResponse` rule".
+- **Option B:** Trimmed from 134 to 132 chars. Changed "requests" to "access".
+
+### s10-q026 — keyword "but" unique in correct A
+- **Option B:** Added "but". Changed "...regardless of readiness; `maxUnavailable: 0`" to "...regardless of readiness, but `maxUnavailable: 0`".
+
+### s10-q031 — keyword "both" unique in correct B
+- **Option C:** Added "both". Changed "...are evaluated as an OR condition" to "...are both evaluated as an OR condition".
+
+### s10-q033 — keyword `, and` unique in correct D
+- **Option A:** Added `, and`. Changed "...via the controller registration API to avoid" to "...via the controller registration API, and avoid".
+
+### s10-q039 — comma-count (correct 2, others 0,0,0)
+- **Option A:** Added commas. Changed "...read operations including GET and LIST continue" to "...read operations, including GET and LIST, continue".
+
+### s10-q047 — keyword `, and` unique in correct D
+- **Option B:** Added `, and`. Changed "...storage version was changed, so the API server serves the cached `v1beta1` version" to "...storage version was changed, and the API server now serves the cached `v1beta1` copy".
+
+### s10-q049 — keyword "but" unique in correct C
+- **Option B:** Added "but". Restructured from "The `CMD` should use shell form...instead of exec form" to "The `CMD` uses exec form...but it should use shell form".
+
+### s10-q058 — keyword `, and` unique in correct D
+- **Option A:** Added `, and`. Changed "...on individual resources stored in `etcd`" to "...on resources, and changes are stored in `etcd`". Trimmed "individual" for length balance.
+- **Option C:** Expanded for length balance. Added "control-plane" before "instances".
+
+### s10-q060 — keyword "automatically" unique in correct C
+- **Option B:** Added "automatically". Changed "Use an init container to run" to "Use an init container to automatically run".
+
+### s10-q061 — keyword `, but` and "but" unique in correct A
+- **Option B:** Added `, but`. Restructured from "The Ingress needs `pathType: Prefix` instead of the default `Exact`" to "The Ingress uses `pathType: Exact` by default, but it needs `pathType: Prefix`".
+
+### s10-q065 — keyword `, but` and "but" unique in correct B
+- **Option C:** Added ", but". Changed "The API server queues both updates and applies" to "The API server queues both updates, but applies".
+
+### s10-q066 — keyword "but" unique in correct C
+- **Option A:** Added "but". Changed "...which combined with RSS exceeded the limit" to "...but combined with RSS this exceeded the limit".
+
+### s10-q074 — keyword `, but` and "but" unique in correct A
+- **Option D:** Added ", but". Changed "KEDA computes 50 replicas, scales to 20" to "KEDA computes 50 replicas and scales to 20 in a single step, but then pauses".
+
+### s10-q077 — keyword `, and` unique in correct C
+- **Option A:** Added `, and`. Changed "...takes longer than 5 seconds due to table lock contention on the node" to "...takes longer than 5 seconds, and table lock contention on the node delays it".
+
+### s10-q085 — keyword `, and` unique in correct A
+- **Option D:** Added `, and`. Changed "...Git repository; remote base changes" to "...Git repository, and remote base changes".
+
+### s10-q088 — keyword "both" unique in correct B
+- **Option A:** Added "both". Changed "...always prioritizes local endpoints over remote ones by default" to "...prioritizes local endpoints over remote ones in both clusters".
+
+### s10-q091 — keyword `, which` unique in correct B
+- **Option A:** Added `, which`. Changed "...but without limits, because validating webhooks" to "...but without limits, which happens because validating webhooks". Trimmed "original" for length balance.
+- **Option D:** Expanded for length balance. Added "the object" after "rejects".
+
+### s10-q095 — keyword "both" unique in correct B
+- **Option D:** Added "both". Changed "...to guarantee each event publishes once" to "...to guarantee both write and publish succeed once".
+
+### s10-q097 — keyword "but" unique in correct B
+- **Option A:** Added "but". Restructured from "...blocks egress because any selected pod has" to "...targets the pods, but egress is blocked because of".
+
+### s10-q098 — keyword `, but` and "but" unique in correct B
+- **Option C:** Added ", but". Changed "...has a too-short `decision_wait` period, causing" to "...has a `decision_wait` period, but it is too short, causing".

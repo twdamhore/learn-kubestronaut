@@ -186,7 +186,7 @@ var questions = [
     options: [
       "`emptyDir` mounted in both containers for temporary shared file access",
       "`persistentVolumeClaim` with `Recycle` reclaim policy for short-term use",
-      "`hostPath` pointing to `/tmp` on the node for temporary data exchange",
+      "`hostPath` pointing to `/tmp` on the node for both containers to exchange data",
       "`nfs` volume with a temporary export configured for ephemeral sharing"
     ],
     answer: 0,
@@ -633,7 +633,7 @@ var questions = [
     diagram: null,
     options: [
       "Pod creation is denied because the `restricted` profile explicitly prohibits the use of `hostPath` volumes",
-      "The pod is created successfully but the `hostPath` volume is silently ignored by the admission controller",
+      "Pod creation succeeds but the `hostPath` volume is silently ignored by the admission controller",
       "The pod is created with read-only access to the `hostPath` mount enforced by the restricted profile",
       "The `restricted` profile passes because it only limits CPU and memory resource usage, not volume types"
     ],
@@ -683,7 +683,7 @@ var questions = [
       "`spec.selector` on the PVC, which accepts `matchLabels` to restrict binding to PVs with matching labels",
       "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC is created",
       "`spec.nodeAffinity` restricts which nodes can mount the PV but does not filter PVs by label value",
-      "`spec.storageClassName` ensures only PVCs with the matching class can bind but not by label value"
+      "`spec.storageClassName`, which ensures only PVCs with the matching class can bind, not by label value"
     ],
     answer: 0,
     explanation: "PVCs can specify a `spec.selector` with `matchLabels` to restrict which PVs they can bind to. When the administrator labels pre-provisioned PVs, PVCs with a matching `spec.selector` will only bind to PVs whose labels satisfy the selector. For pre-binding a PV to a specific PVC by name, the administrator uses `spec.claimRef` on the PV. The `storageClassName` also acts as a filter, but the question asks about label-based selection, which is the `spec.selector` field on the PVC.\n\nWhy other options are wrong:\n- B: claimRef pre-binds by name, not by label selector; it is a different binding mechanism\n- C: nodeAffinity controls node placement for volume access, not PVC-to-PV label matching\n- D: storageClassName is a class-based filter, not a label-based selector mechanism\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector",
@@ -1193,7 +1193,7 @@ var questions = [
     diagram: null,
     options: [
       "PVCs are deleted when the entire StatefulSet is deleted, but retained when individual pods are scaled down",
-      "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted from the cluster",
+      "PVCs are converted to standalone PVs with Retain policy, but only when the StatefulSet is deleted",
       "PVCs are deleted when the StatefulSet is deleted, and also deleted when individual pods are scaled down",
       "This field is not valid in the StatefulSet spec and is rejected by the API server upon submission"
     ],
@@ -1515,7 +1515,7 @@ var questions = [
       "The PV is retained in `Released` state for manual cleanup (e.g., removing the claimRef) by an admin",
       "The PV object and its underlying storage resource (e.g., cloud disk) are automatically deleted",
       "The PV is deleted but the underlying cloud disk is preserved and must be cleaned up manually after",
-      "The PV transitions to `Available` state for reuse by another PVC that matches its access modes"
+      "The PV automatically transitions to `Available` state for reuse by another PVC matching its access modes"
     ],
     answer: 1,
     explanation: "With the `Delete` reclaim policy, deleting a PVC triggers the deletion of both the PV object in Kubernetes and the underlying storage asset (e.g., AWS EBS volume, GCP persistent disk). This ensures no orphaned storage resources accumulate. For data that must survive PVC deletion, use the `Retain` reclaim policy instead.\n\nWhy other options are wrong:\n- A: The Retain policy preserves the PV in Released state; the Delete policy removes both PV and storage\n- C: The Delete policy removes the underlying cloud disk alongside the PV object, not just the PV\n- D: The Delete policy does not make the PV Available for reuse; both PV and storage are permanently removed\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#delete",

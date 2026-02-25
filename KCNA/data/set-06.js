@@ -219,7 +219,7 @@ var questions = [
       "A. The drain command will automatically migrate the local volume data to a different node in turn",
       "B. The Pod is evicted but its data on the local volume is inaccessible from the new node",
       "C. The drain command will fail unless the `--force` flag is used for Pods with local volumes here",
-      "D. Local volumes are automatically replicated across all nodes, so there is no data loss"
+      "D. Local volumes are replicated across all nodes, but only after a considerable sync delay"
     ],
     answer: 1,
     explanation: "Local PersistentVolumes are bound to a specific node. When a Pod using a local PV is evicted during drain, the rescheduled Pod cannot access the data unless it lands on the same node. This is a critical consideration for stateful workloads using local storage during maintenance.\n\nWhy other options are wrong:\n- A: Kubernetes does not automatically migrate local volume data; local PVs are node-bound\n- D: Local volumes are not replicated; they exist only on the specific node they are provisioned on\n- C: The drain command does not specifically fail for local PV Pods; --force is for standalone unmanaged Pods\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#local",
@@ -267,7 +267,7 @@ var questions = [
       "A. `nodeSelector` takes precedence and `nodeAffinity` is ignored",
       "B. Both constraints must be satisfied for the node to be eligible",
       "C. `nodeAffinity` takes precedence and `nodeSelector` is ignored",
-      "D. The scheduler picks whichever constraint matches the most nodes"
+      "D. The scheduler evaluates both and picks whichever matches more nodes"
     ],
     answer: 1,
     explanation: "When both `nodeSelector` and `nodeAffinity` are specified, a node must satisfy both constraints to be eligible. They act as an AND condition. The scheduler first filters by `nodeSelector` labels, then applies `nodeAffinity` rules to the remaining candidates.\n\nWhy other options are wrong:\n- A: nodeSelector does not take precedence; both constraints are evaluated together as an AND condition\n- C: nodeAffinity does not take precedence; it is combined with nodeSelector requirements\n- D: The scheduler does not pick the less restrictive constraint; both must be satisfied simultaneously\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -827,7 +827,7 @@ var questions = [
       "A. The kube-apiserver in-memory cache needs to be flushed by restarting the process",
       "B. The etcd restore created a new data directory but etcd still uses the old one",
       "C. The kube-controller-manager is reconciling the cluster back to a newer state now",
-      "D. The restored snapshot was encrypted with a different key that does not match today"
+      "D. The restored snapshot was encrypted with a key but it does not match the current one"
     ],
     answer: 1,
     explanation: "`etcdctl snapshot restore` creates a new data directory. If the etcd static Pod manifest still points to the old directory, etcd will serve old data. The etcd configuration in `/etc/kubernetes/manifests/etcd.yaml` must reference the new data directory path.\n\nWhy other options are wrong:\n- A: The API server reads from etcd, not an in-memory cache; restarting it would not fix a stale etcd data directory\n- C: The controller-manager reconciles to current etcd state; it cannot create newer state from old data\n- D: Encryption key mismatch would cause read errors, not stale data; the data would be unreadable\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
@@ -1131,7 +1131,7 @@ var questions = [
       "A. Services and DNS automatically resolve to the new Pod IP via endpoint updates",
       "B. The old IP address is preserved through a transparent IP address migration step",
       "C. Other Pods may need a rolling restart to pick up the newly assigned Pod IP",
-      "D. The CNI plugin broadcasts the new IP address to all other nodes in the cluster"
+      "D. The CNI plugin automatically broadcasts the new IP address to all other nodes"
     ],
     answer: 0,
     explanation: "When a new Pod is created, it gets a new IP. The endpoint controller updates the Service's Endpoints object with the new Pod IP, and CoreDNS resolves the Service name to the updated endpoints. Other Pods using the Service DNS name or ClusterIP transparently reach the new Pod.\n\nWhy other options are wrong:\n- B: Pod IP addresses are not preserved across rescheduling; new Pods get new IPs from the Pod CIDR\n- C: Other Pods using Service DNS do not need to restart; DNS and endpoint updates are transparent\n- D: CNI plugins do not broadcast IP changes; Service abstraction handles discovery via endpoints and DNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#endpoints",
@@ -1514,7 +1514,7 @@ var questions = [
     options: [
       "A. Skip directly to v1.30 to reduce the total number of maintenance windows",
       "B. Upgrade to v1.28 first, pause for validation, then jump ahead to v1.30",
-      "C. Build a new v1.30 cluster from scratch and migrate existing workloads",
+      "C. Build a new v1.30 cluster from scratch, and migrate existing workloads",
       "D. Upgrade sequentially through v1.28, v1.29, and v1.30 one at a time"
     ],
     answer: 3,

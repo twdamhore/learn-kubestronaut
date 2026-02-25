@@ -450,3 +450,64 @@
 
 **Problem:** Ratio 1.121 — option C (116 chars) was too short compared to D (130 chars).
 **Change:** Expanded C from "reached its resource quota in" to "reached its resource quota limit in" (116->126). Expanded A from "ArgoCD is not tracking" to "ArgoCD is not currently tracking" (119->129). Ratio reduced from 1.121 to 1.083.
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-07.js`
+**Issues found**: 18 giveaway flags + 3 length-balance residuals
+**Issues fixed**: 21 across 18 questions
+
+### s07-q010 — giveaway: first-word "all" vs "the"x3 + length-balance
+- Changed distractor A first word from "The" to "An": "An `imagePullSecret` is missing from the pod spec and all nodes are refusing to process the pull request from the registry". Breaks first-word pattern. Expanded from 104 to 118 chars to fix ratio from 1.163 to within threshold.
+
+### s07-q011 — giveaway: unique `, which` in correct answer
+- Added `, which` to distractor A: changed "The main application container is crashing repeatedly and the init container is attempting to restart it" to "The main application container is crashing repeatedly, which causes the init container to attempt restarting it".
+
+### s07-q013 — giveaway: unique `, but` in correct answer + length-balance
+- Added `, but` to distractor A: changed "The pod has not yet been assigned to a node by the cluster scheduler component" to "The pod has not been assigned to a node by the scheduler, but it is waiting in the queue". Trimmed from 102 to 88 chars. Trimmed B from 97 to 88 chars. Expanded D from 86 to 93 chars. Ratio reduced from 1.229 to within threshold.
+
+### s07-q014 — giveaway: unique `, or` in correct answer
+- Added `, or` to distractor A: changed "Remove the `readinessProbe` from the pod spec since it conflicts with the configured security context settings" to "Remove the `readinessProbe` from the pod spec, or adjust the security context settings that conflict with it".
+
+### s07-q021 — giveaway: unique "but" in correct answer
+- Added "but" to distractor A: changed "All three pods belong to the same ReplicaSet (`6d8f9b`) and one has developed a corrupted container filesystem causing crashes" to "All three pods belong to the same ReplicaSet (`6d8f9b`) but one has developed a corrupted container filesystem causing crashes".
+
+### s07-q023 — giveaway: first-word "with" vs "the"x3
+- Changed distractor A first word from "The" to "Because": "Because the Kubernetes API server cached the old image tag, it needs to be restarted to clear its internal image cache entry".
+
+### s07-q044 — giveaway: first-word "kubernetes" vs "the"x3
+- Changed distractor A first word from "The" to "Its": "Its pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy".
+
+### s07-q061 — giveaway: unique `, which` in correct answer
+- Added `, which` to distractor B: changed "The etcd data directory on the control plane node which stores" to "The etcd data directory on the control plane node, which stores".
+
+### s07-q064 — giveaway: unique `, or` in correct answer
+- Added `, or` to distractor C: changed "The pod needs a NetworkPolicy explicitly allowing egress traffic to the API server's endpoint IP address and port 443" to "The pod needs a NetworkPolicy explicitly allowing egress to the API server's endpoint IP address, or port 443 is blocked".
+
+### s07-q065 — giveaway: unique `, or` in correct answer
+- Added `, or` to distractor A: changed "Move the pod to the `production` namespace using `kubectl move` to place it alongside the existing Secret resource" to "Move the pod to the `production` namespace using `kubectl move`, or recreate it alongside the existing Secret resource".
+
+### s07-q069 — giveaway: unique "both" in correct answer
+- Added "both" to distractor C: changed "Yes, different mount paths create isolated storage spaces because `emptyDir` segments data per mount, preventing cross-access" to "Yes, different mount paths create isolated storage spaces for both containers because `emptyDir` segments data per mount path".
+
+### s07-q076 — giveaway: first-word "a" vs "the"x3 + unique `, and` + length-balance
+- Changed distractor A to start with "No" and added `, and`: "No node has 500m CPU available for scheduling the new pod, and the `ReplicaSet` controller cannot create it in production now". Breaks first-word pattern. Expanded from 110 to 124 chars, fixing ratio from 1.173 to within threshold.
+
+### s07-q080 — giveaway: unique "but" in correct answer
+- Added "but" to distractor D: changed "There is no impact because the scheduler takes over all controller responsibilities in a failover scenario automatically" to "There is no immediate impact, but the scheduler eventually takes over all controller responsibilities in a failover scenario".
+
+### s07-q084 — giveaway: first-word "some" vs "the"x3
+- Changed distractor B first word from "The" to "Sidecar": "Sidecar proxy containers do not have enough CPU resources allocated to handle the mTLS encryption overhead".
+
+### s07-q085 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "The kubelet sends a SIGTERM to the application process, giving it the termination grace period to shut down properly" to "The kubelet sends a SIGTERM to the application process, and the termination grace period begins for shutdown".
+
+### s07-q092 — giveaway: unique `, or` in correct answer
+- Added `, or` to distractor A: changed "The cluster is optimally sized because it has sufficient headroom for unexpected traffic spikes and burst workloads" to "The cluster is optimally sized for unexpected traffic spikes, or the autoscaler is maintaining burst workload headroom".
+
+### s07-q095 — giveaway: first-word "a" vs "the"x3
+- Changed distractor B first word from "The" to "A": "A corrupted Helm repository index needs to be rebuilt before the chart can be installed into the target namespace".
+
+### s07-q096 — giveaway: first-word "with" vs "the"x3
+- Changed distractor D first word from "The" to "When": "When using `Local` external traffic policy, the CNI plugin silently falls back to the default `Cluster` behavior".

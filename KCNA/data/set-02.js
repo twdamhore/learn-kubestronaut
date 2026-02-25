@@ -66,7 +66,7 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`Guaranteed` — because Kubernetes rounds up partial specs to meet the Guaranteed threshold"
+      "`Guaranteed` — because Kubernetes rounds up partial specs for both CPU and memory automatically"
     ],
     answer: 1,
     explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: Kubernetes does not round up or auto-fill partial resource specifications; Guaranteed requires every container to explicitly set both CPU and memory with requests equal to limits\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
@@ -96,8 +96,8 @@ var questions = [
     diagram: null,
     options: [
       "The pod is created because Kubernetes auto-assigns default CPU values derived from the ResourceQuota",
-      "The pod is scheduled but placed in pending state until the administrator adds a LimitRange object",
-      "The pod is created with `BestEffort` QoS class and its resources do not count against the quota",
+      "No scheduling occurs and the pod stays in pending state until the administrator adds a LimitRange object",
+      "The pod is created with `BestEffort` QoS class but its resources do not count against the quota",
       "Pod creation is rejected because CPU quota exists but the pod specifies no CPU requests/limits"
     ],
     answer: 3,
@@ -128,7 +128,7 @@ var questions = [
     diagram: null,
     options: [
       "The kubelet's local cache on the node where the pod is currently running and scheduled",
-      "The kube-apiserver's in-memory store which is cleared each time the server is restarted",
+      "Inside the kube-apiserver's in-memory store, which is cleared each time the server is restarted",
       "etcd, the cluster's key-value store that persists all Kubernetes API objects at rest",
       "The container runtime's internal image layer filesystem storage on the scheduling node"
     ],
@@ -528,7 +528,7 @@ var questions = [
     diagram: null,
     options: [
       "`Guaranteed` — every container has requests equal to limits for both CPU and memory",
-      "`Burstable` — because the containers each have different resource values from one another",
+      "`Burstable` — because both the request and limit values differ across the containers",
       "`Guaranteed` — but only because the total sum of requests equals the total sum of limits",
       "`Burstable` — because more than one container definition is specified inside the pod spec"
     ],
@@ -657,9 +657,9 @@ var questions = [
     text: "A pod is stuck in `Pending` state. Running `kubectl describe pod` shows the event: `0/3 nodes are available: 3 Insufficient memory`. The pod requests 4Gi of memory. Each node has 8Gi total, but existing pods already request 6Gi on each node. What is the most direct fix?",
     diagram: null,
     options: [
-      "Reduce the pod's memory request to 2Gi or less, or add a node with enough memory",
+      "Reduce the pod's memory request to 2Gi or less, or add a node with enough allocatable memory",
       "Increase the pod's memory limit to allow Kubernetes to compress memory usage on the node",
-      "Delete the ResourceQuota in the namespace to remove the memory restriction from the pods",
+      "Delete the ResourceQuota in the namespace, or remove the memory restriction from the pods",
       "Set `priorityClassName: system-cluster-critical` to preempt lower-priority existing pods"
     ],
     answer: 0,
@@ -865,7 +865,7 @@ var questions = [
     options: [
       "Zero is assigned as the memory request: the pod becomes `BestEffort` quality of service class",
       "The request is automatically set equal to the limit: `256Mi` when only limits are specified",
-      "Kubernetes defaults to half the limit for requests, so the request would be set to `128Mi`",
+      "Kubernetes automatically defaults to half the limit for requests, so the request would be `128Mi`",
       "The pod creation fails because the admission controller requires explicit requests when limits exist"
     ],
     answer: 1,
@@ -912,7 +912,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod is created but the CPU limit is automatically capped at 2 cores by the LimitRange enforcer",
-      "The LimitRange is ignored because CPU constraints require a separate CpuLimitRange resource definition",
+      "CPU-specific LimitRanges are ignored because CPU constraints require a separate CpuLimitRange resource",
       "The pod is created in `Pending` state until a node with 4 CPUs becomes available for scheduling",
       "Pod creation is rejected because the container CPU limit exceeds the LimitRange max of 2 cores"
     ],
@@ -1009,7 +1009,7 @@ var questions = [
     options: [
       "All ResourceQuotas are immediately removed from the cluster and pods can be created without any limits",
       "The scheduler takes over ResourceQuota enforcement as a fallback mechanism until recovery completes",
-      "All pod creation is blocked across the entire cluster until the controller manager fully recovers",
+      "All pod creation is blocked across the entire cluster, but existing pods continue to run until recovery",
       "The API server still enforces quotas via admission control, but quota usage tracking may go stale"
     ],
     answer: 3,
@@ -1057,7 +1057,7 @@ var questions = [
     text: "A team wants to pass a Kubernetes Secret value to a container's entrypoint command as an argument. They try using `$(SECRET_VAR)` in the `args` field. The Secret is injected as environment variable `SECRET_VAR`. Does this work?",
     diagram: null,
     options: [
-      "No — `args` does not support variable substitution; the `command` field is the supported location in pod specs",
+      "No — `args` does not support variable substitution in both literal and reference forms; only `command` does",
       "No — variable substitution in `args` is limited to ConfigMap-sourced values and does not resolve Secret references",
       "Yes — Kubernetes performs `$(VAR_NAME)` substitution in both `command` and `args` fields using defined env vars",
       "Yes — but `enableServiceLinks` must be set to `true` on the pod specification for variable resolution to work"
@@ -1156,7 +1156,7 @@ var questions = [
     diagram: null,
     options: [
       "Yes — the mesh handles network config like routing and mTLS, but app config such as DB URLs still needs ConfigMaps",
-      "No — the service mesh manages all configuration including application-specific settings such as database URLs and flags",
+      "No — the service mesh manages all configuration such as database URLs and flags, but only after sidecar injection",
       "No — Istio resources like VirtualService replace ConfigMaps for all configuration needs across every service in the mesh",
       "Yes — but only for services that do not have an Envoy sidecar proxy injected by the Istio control plane component"
     ],
@@ -1188,7 +1188,7 @@ var questions = [
     diagram: null,
     options: [
       "The Knative Eventing system automatically injects credentials for all configured event sources by default",
-      "Store credentials in the Kafka topic metadata where the Knative eventing system reads them on connect",
+      "Store credentials in the Kafka topic metadata, which the Knative eventing system reads on connect",
       "Hard-code the credentials in the Knative Service YAML as environment variable literals in the spec",
       "Reference the Secret in the KafkaSource CR, which passes credentials to the event source connector"
     ],
@@ -1242,7 +1242,7 @@ var questions = [
       "The `b64enc` function uses weak password encoding that can be easily broken by modern decoding tools and scripts",
       "The plaintext password is stored in the Helm release secret, which contains rendered manifests and values",
       "Helm templates have limited access to `.Values` inside Secret manifests due to template rendering restrictions",
-      "Base64 encoding in templates causes Helm to double-encode the value when creating the Kubernetes Secret"
+      "Base64 encoding in templates causes Helm to double-encode the value, which corrupts the Kubernetes Secret"
     ],
     answer: 1,
     explanation: "Helm stores release information (including rendered manifests and user-supplied values) as Secrets in the cluster. This means the plaintext password from `values.yaml` is stored in the Helm release Secret, even though it is base64-encoded in the rendered Secret manifest. This is a known security consideration. `b64enc` is standard base64, not weak encoding. Helm templates can access `.Values` anywhere. Kubernetes does not double-encode values that are already base64-encoded in the manifest.\n\nWhy other options are wrong:\n- A: b64enc is standard base64 encoding, not a weak or breakable cipher; the risk is elsewhere\n- C: Helm templates can access .Values anywhere, including inside Secret manifest templates\n- D: Kubernetes does not double-encode values that are already base64-encoded in the YAML manifest\n\nReference: https://helm.sh/docs/chart_best_practices/secrets/",
@@ -1377,7 +1377,7 @@ var questions = [
     options: [
       "The container is throttled and its memory allocations are slowed down until usage drops below the configured `limits.memory`",
       "The excess memory allocation silently fails and returns `null` to the application without killing the container process",
-      "The container continues running but Kubernetes logs a warning and triggers an alert to the cluster administrator",
+      "The container continues running, and Kubernetes logs a warning then triggers an alert to the cluster administrator",
       "The container process is killed by the OOM killer, and the pod's `restartPolicy` determines if it gets restarted"
     ],
     answer: 3,
@@ -1458,7 +1458,7 @@ var questions = [
     diagram: null,
     options: [
       "A `hostPath` volume pointing to a shared directory on the node filesystem for data exchange between containers",
-      "A `configMap` volume that the init container populates at runtime by writing data into the mounted path",
+      "Using a `configMap` volume that the init container populates at runtime by writing into the mounted path",
       "An `emptyDir` volume shared between the init container and the main application container within the pod",
       "A `persistentVolumeClaim` that the init container writes to and the main container reads from at startup"
     ],
@@ -1573,7 +1573,7 @@ var questions = [
     options: [
       "ConfigMaps are stored in etcd which automatically versions all changes, enabling `kubectl rollback configmap` to restore versions",
       "ConfigMaps in Git provide version history, diff capability, and rollback through standard Git operations and code review workflows",
-      "Kubernetes automatically creates ConfigMap snapshots before every change, stored in a dedicated backup volume attached to the cluster",
+      "Kubernetes automatically creates ConfigMap snapshots before every change, and stores them in a dedicated backup volume on the cluster",
       "There is no advantage over database-stored configuration — it provides the same versioning and rollback capabilities as ConfigMaps do"
     ],
     answer: 1,
@@ -1658,7 +1658,7 @@ var questions = [
       "It embeds the ConfigMap content directly in the pod template, significantly reducing the need for a separate ConfigMap resource",
       "Any change to ConfigMap content changes the hash annotation, which alters the pod template spec and triggers a rolling update",
       "It encrypts the ConfigMap data using SHA-256 for security purposes so that sensitive configuration is protected at rest",
-      "It validates ConfigMap content against a known checksum and blocks the deployment if the content is corrupted or tampered"
+      "The annotation validates ConfigMap content against a known checksum, which blocks the deployment if corruption occurs"
     ],
     answer: 1,
     explanation: "This is a well-known Helm pattern. The `sha256sum` function generates a hash of the rendered ConfigMap template. This hash is stored as a pod template annotation. When the ConfigMap content changes during a Helm upgrade, the hash changes, which modifies the pod template spec. Kubernetes detects the template change and performs a rolling update. SHA-256 is used here for change detection, not encryption or validation. The ConfigMap remains a separate resource.\n\nWhy other options are wrong:\n- A: The sha256sum generates a hash as an annotation; the ConfigMap remains a separate resource\n- C: SHA-256 is used for change detection, not encryption of the ConfigMap data\n- D: The checksum triggers a rollout on change; it does not validate or block for corruption\n\nReference: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments",

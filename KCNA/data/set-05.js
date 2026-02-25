@@ -346,7 +346,7 @@ var questions = [
     options: [
       "A policy with `podSelector: {}` and `ingress: [{}]` allowing traffic from all sources",
       "A policy with `podSelector: {}` and `policyTypes: [Ingress]` but no ingress rules",
-      "A policy with `podSelector: {matchLabels: {deny: all}}` and no ingress rule list",
+      "A policy with `podSelector: {matchLabels: {deny: all}}` but no ingress rule list",
       "A policy with `podSelector: {}` and `ingress: [{from: []}]` allowing empty source"
     ],
     answer: 1,
@@ -506,7 +506,7 @@ var questions = [
     options: [
       "It automatically merges matching ClusterRole rules into the `admin` ClusterRole",
       "It creates a new ClusterRole definition that overrides the built-in `admin` role",
-      "It grants admin-level permissions to all ServiceAccounts in every namespace",
+      "It automatically grants admin-level permissions to all ServiceAccounts in every namespace",
       "It merges the matching ClusterRole rules into the `cluster-admin` built-in role"
     ],
     answer: 0,
@@ -712,7 +712,7 @@ var questions = [
     text: "A Pod mounts a Secret as a volume at `/etc/creds`. The Secret is updated via `kubectl edit secret`. When does the Pod see the updated values?",
     diagram: null,
     options: [
-      "Immediately, because the volume is directly backed by the API server",
+      "Immediately, which occurs because the volume is backed by the API server",
       "Only after the Pod is manually restarted by an administrator or tool",
       "After the kubelet sync period, which is up to a few minutes by default",
       "After the Secret is first deleted and then recreated as a new resource"
@@ -1209,7 +1209,7 @@ var questions = [
     diagram: null,
     options: [
       "Only the standard CRUD verbs: `get`, `list`, `create`, `update`, `delete`",
-      "All current and future verbs including subresources like `pods/exec`",
+      "All verbs including subresources like `pods/exec`, but not custom verbs",
       "All current verbs on Pods but not on any Pod subresources like `exec`",
       "An error because wildcard characters are not valid in the `verbs` field"
     ],

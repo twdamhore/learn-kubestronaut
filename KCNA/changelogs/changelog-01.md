@@ -476,3 +476,39 @@ No issues found. All 100 questions were reviewed for option length balance (max/
 
 **Problem:** The correct answer (B) was the only option using a `, which` relative clause (`The \`ServiceAccount\` resource, which mounts...`), making it structurally distinct.
 **Change:** Added a `, which` relative clause to option C: changed `"The kubelet generates a unique API key for each Pod and stores it in an environment variable"` to `"The kubelet, which generates a unique API key per Pod and stores it in an environment variable"`. Ratio improved from 1.103 to 1.103 (unchanged).
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-01.js`
+**Issues fixed**: 10
+
+### s01-q019 — giveaway: `, and` unique to correct answer
+- Option D: Added `, and` by rewriting from `"Configure the \`kube-scheduler\` with a custom profile that only considers GPU nodes for all Pods"` to `"Configure the \`kube-scheduler\` with a custom profile, and route only GPU-capable workloads to those nodes"`.
+
+### s01-q031 — giveaway: `, or` unique to correct answer
+- Option D: Added `, or` by rewriting from `"The \`ImagePullBackOff\` status most commonly indicates the image tag does not exist in the remote registry"` to `"The \`ImagePullBackOff\` status indicates the image tag does not exist in the registry, or the digest is wrong"`.
+
+### s01-q034 — giveaway: `, which` unique to correct answer
+- Option B: Changed `"Health check endpoints on each service that report response times and error rates to callers"` to `"Health check endpoints on each service, which report response times and error rates to callers"`.
+
+### s01-q037 — giveaway: first-word (correct "pod", all distractors "a")
+- Option B: Changed first word from `"A \`nodeSelector\`..."` to `"Per-node \`nodeSelector\` labels targeting each node individually for each replica Pod"`.
+
+### s01-q048 — giveaway: first-word (correct "an", all distractors "a")
+- Option D: Changed first word from `"A sidecar container..."` to `"Setting a sidecar container with a higher \`priority\` value to ensure it starts before the app"`.
+
+### s01-q055 — giveaway: first-word (correct "an", all distractors "a")
+- Option B: Changed first word from `"A \`kube-proxy\` upgrade..."` to `"Upgrading \`kube-proxy\` to support HTTP path-based routing natively on cluster nodes"`.
+
+### s01-q059 — giveaway: first-word (correct "an", all distractors "a")
+- Option D: Changed first word from `"A \`ConfigMap\` that defines..."` to `"Defining routing rules in a \`ConfigMap\` consumed by \`kube-proxy\` for HTTP load balancing"`.
+
+### s01-q080 — giveaway: first-word (correct "dns", all distractors "it")
+- Option A: Changed first word from `"It does not create DNS records..."` to `"No DNS records are created, so Pods rely on environment variables injected by the kubelet for discovery"`.
+
+### s01-q083 — giveaway: `, and` unique to correct answer
+- Option A: Changed `"A \`ClusterRole\` with \`get\` and \`list\` on Pods, bound via a \`ClusterRoleBinding\` to the \`development\` namespace"` to `"A \`ClusterRole\` with \`get\` and \`list\` on Pods, and a \`ClusterRoleBinding\` scoped to the \`development\` namespace"`.
+
+### s01-q085 — giveaway: `, and` unique to correct answer
+- Option D: Changed `"The PVC is in a different namespace than the PersistentVolume it should bind to for use"` to `"The PVC is in a different namespace, and the PersistentVolume it should bind to cannot be found"`.

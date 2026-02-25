@@ -530,3 +530,30 @@
 
 **Problem:** Correct answer B started with "Both the PV object and underlying storage resource..." — the word "Both" made the answer sound more comprehensive/thorough than the alternatives, a common correct-answer signal.
 **Change:** Changed "Both the PV object and underlying storage resource" to "The PV object and its underlying storage resource" — same meaning without the comprehensive-sounding "Both" keyword.
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-04.js`
+**Issues fixed**: 5
+
+### s04-q012 — keyword giveaway (only correct contains "both")
+- **Option C:** Changed "`hostPath` pointing to `/tmp` on the node for temporary data exchange" to "`hostPath` pointing to `/tmp` on the node for both containers to exchange data" to add "both" to a distractor.
+
+### s04-q040 — first-word giveaway (correct starts with "Pod", distractors all start with "The")
+- **Option B:** Changed "The pod is created successfully but the `hostPath` volume is silently ignored" to "Pod creation succeeds but the `hostPath` volume is silently ignored" to break the 3-same "The" first-word pattern among distractors.
+
+### s04-q043 — keyword giveaway (only correct contains `, which`)
+- **Option D:** Changed "`spec.storageClassName` ensures only PVCs with the matching class can bind but not by label value" to "`spec.storageClassName`, which ensures only PVCs with the matching class can bind, not by label value" to add `, which` to a distractor.
+
+### s04-q075 — keyword giveaway (only correct contains `, but` and "but")
+- **Option B:** Changed "PVCs are converted to standalone PVs with Retain policy when the StatefulSet is deleted from the cluster" to "PVCs are converted to standalone PVs with Retain policy, but only when the StatefulSet is deleted" to add `, but` to a distractor. Also fixes length balance.
+
+### s04-q095 — keyword giveaway (only correct contains "automatically")
+- **Option D:** Changed "The PV transitions to `Available` state for reuse by another PVC that matches its access modes" to "The PV automatically transitions to `Available` state for reuse by another PVC matching its access modes" to add "automatically" to a distractor.
+
+### Summary
+- 1 first-word giveaway fix (breaking 3-same distractor pattern)
+- 4 keyword giveaway fixes ("both" x1, `, which` x1, `, but` x1, "automatically" x1)
+- No answer indices were changed
+- No accuracy or explanation changes

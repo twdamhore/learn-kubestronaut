@@ -473,3 +473,76 @@
 
 **Problem:** Correct option B contained 3 instances of "and" ("min, and max resource requests and limits for containers and Pods") while no distractor contained any "and", creating a structural list-pattern giveaway.
 **Change:** Added "and" to all three distractors: A changed to "Pods and containers", C changed to "images and tags", D changed to "rate and number". Now all options contain "and", eliminating the unique pattern.
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-08.js`
+**Issues found**: 22 giveaway flags + 3 length-balance residuals
+**Issues fixed**: 25 across 22 questions
+
+### s08-q006 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added `, and` to distractor A: changed "Cilium primarily uses iptables rules for packet filtering and delegates Layer 7 inspection to a separate sidecar" to "Cilium primarily uses iptables rules for packet filtering, and it delegates Layer 7 inspection to a separate sidecar".
+
+### s08-q013 — giveaway: first-word "users" vs "declarative"x3 + unique `, and`
+- Changed distractor A first word and added `, and`: "Using declarative configuration requires fewer YAML lines, and it makes manifests faster to write across environments". Breaks first-word pattern and adds comma.
+
+### s08-q024 — giveaway: comma-count 2 vs 0,0,0 + length-balance (correct shortest)
+- Added commas to distractor B: changed "`baseline` — prevents known privilege escalations but permits containers to run as root" to "`baseline` — prevents known privilege escalations, permits root containers, and blocks host namespaces". Expanded correct A from "disallows escalation" to "and disallows privilege escalation" (88->97 chars) to fix length ratio.
+
+### s08-q034 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "Every Pod must share the same IP address as its host node to avoid unnecessary routing complexity across the cluster" to "Every Pod must share the same IP address as its host node, and this avoids unnecessary routing complexity across the cluster".
+
+### s08-q035 — giveaway: unique `, but` in correct answer
+- Added `, but` to distractor B: changed "Both containers share the same filesystem and can access each other's files without requiring any volume mounts" to "Both containers share the same filesystem and can access each other's files, but no explicit volume mounts are needed".
+
+### s08-q036 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added commas and `, and` to distractor A: changed "Argo Workflows — uses `Workflow` and `WorkflowTemplate` CRDs to define multi-step container-native DAG pipelines" to "Argo Workflows — uses `Workflow`, `WorkflowTemplate`, and `CronWorkflow` CRDs to define multi-step DAG pipelines".
+
+### s08-q039 — giveaway: first-word "during" vs "at"x3
+- Changed distractor A first word from "At" to "Only at": "Only at runtime, by monitoring running container processes and blocking unauthorized container images".
+
+### s08-q040 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added commas and `, and` to distractor A: changed "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution` weighting zone labels equally across all nodes" to "`nodeAffinity` with `preferredDuringSchedulingIgnoredDuringExecution`, weighting zone labels equally, and scoring all nodes".
+
+### s08-q045 — giveaway: unique `, but` in correct answer
+- Added `, but` to distractor B: changed "ConfigMap changes require deleting and recreating the ConfigMap resource from scratch before updates take effect in Pods" to "ConfigMap changes require deleting the ConfigMap resource from scratch, but updates only take effect after Pod restart".
+
+### s08-q048 — giveaway: first-word "an" vs "a"x3
+- Changed distractor A first word from "A" to "An": "An application `postStart` lifecycle hook on the main container that runs a migration script".
+
+### s08-q049 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added commas and `, and` to distractor B: changed "NATS is a CNCF graduated distributed tracing system that collects spans from microservices across the cluster" to "NATS is a CNCF graduated distributed tracing system that collects spans, correlates traces, and monitors microservices".
+
+### s08-q054 — giveaway: comma-count 2 vs 0,0,0 + unique `, and` + length-balance
+- Added commas and `, and` to distractor A: changed "Deployment — provides declarative updates for stateless workloads without stable identities or ordered scaling" to "Deployment — provides declarative updates, rolling rollouts, and scaling for stateless workloads only". Trimmed from 122 to 101 chars to fix ratio from 1.173 to within threshold.
+
+### s08-q056 — giveaway: unique `, and` in correct answer
+- Added commas to distractor B: changed "The Gateway API replaces Services and Endpoints with a single resource combining routing and backend selection logic" to "The Gateway API replaces Services, Endpoints, and Ingress with a single resource combining routing and backend selection".
+
+### s08-q064 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "There is no violation — using lighter-weight databases including SQLite in development is an accepted trade-off for speed" to "There is no violation — using lighter-weight databases including SQLite in development is accepted, and it speeds up iteration".
+
+### s08-q068 — giveaway: unique `, but` in correct answer + length-balance
+- Added `, but` to distractor D: changed "CPU limits are treated as soft targets and the kernel allows brief bursts above the configured limit" to "CPU limits are treated as soft targets, but the kernel allows brief bursts above the configured limit". Ratio reduced from 1.177 to within threshold.
+
+### s08-q072 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "No — etcd requires full membership agreement through a two-phase commit before processing any client read or write requests" to "No — etcd requires full membership agreement through a two-phase commit, and no client reads or writes can be processed otherwise".
+
+### s08-q073 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "Sidecar pattern — inject a proxy container alongside each service to handle cross-cutting concerns locally" to "Sidecar pattern — inject a proxy container alongside each service to handle retries, and manage concerns locally".
+
+### s08-q074 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added commas and `, and` to distractor A: changed "It sets the maximum number of Pods and containers that can exist in the namespace at any given time" to "It sets the maximum number of Pods, containers, and services that can exist in the namespace at any given time".
+
+### s08-q076 — giveaway: first-word "pod" vs "the"x3
+- Changed distractor A first word from "The" to "Pod": "Pod creation succeeds because the CPU limit (3) is still under the namespace quota limit of 8 total".
+
+### s08-q083 — giveaway: unique `, and` in correct answer
+- Added `, and` to distractor A: changed "A single `from` entry combining both selectors: `podSelector` matching labels and `namespaceSelector`: both conditions must be true" to "A single `from` entry combining `podSelector` matching labels, and `namespaceSelector`: both conditions must be true at once".
+
+### s08-q093 — giveaway: comma-count 2 vs 0,0,0 + unique `, and`
+- Added commas and `, and` to distractor A: changed "`cache-svc` — short names automatically resolve across all namespaces without further qualification" to "`cache-svc` — short names resolve across all namespaces automatically, and no further qualification is needed".
+
+### s08-q099 — giveaway: comma-count 2 vs 0,0,0
+- Added comma to distractor B: changed "New Pods are created alongside old Pods and traffic is gradually shifted from old version to new version pods" to "New Pods are created alongside old Pods, and traffic is gradually shifted from the old version to the new version".

@@ -424,3 +424,34 @@ No issues found. All 100 questions passed review for option length balance (max/
 - No answer indices were changed
 - No accuracy or explanation changes
 - Answer distribution unchanged: A=25, B=24, C=25, D=26
+
+---
+
+## Round 47c — 2026-02-25
+**File**: `set-03.js`
+**Issues fixed**: 6
+
+### s03-q048 — first-word giveaway (correct starts with "kube-proxy", distractors all start with "The")
+- **Option B:** Changed "The kube-scheduler logs showing pod placement decisions" to "kube-scheduler logs showing pod placement decisions" to break the 3-same "The" first-word pattern among distractors.
+
+### s03-q058 — keyword giveaway (only correct contains `, which`)
+- **Option A:** Changed "Cluster-internal names are resolved but external names may time out without forwarding" to "Cluster-internal names are resolved, which is the default, but external names may time out" to add `, which` to a distractor.
+
+### s03-q059 — keyword giveaway (only correct contains "both")
+- **Option D:** Changed "The policies conflict — `NetworkPolicy` rules cancel each other out" to "The policies conflict — both `NetworkPolicy` rules cancel each other out" to add "both" to a distractor.
+
+### s03-q070 — first-word giveaway + keyword giveaway ("while")
+- **Correct B:** Changed "Knative's activator component" to "The Knative activator component" so the correct answer starts with "The" like the distractors, breaking the first-word giveaway.
+- **Option D:** Changed "retries the request indefinitely until a backend pod finally appears" to "retries the request indefinitely while waiting for a backend pod to appear" to add "while" to a distractor.
+
+### s03-q081 — first-word giveaway (correct starts with "Directly", distractors all start with "To")
+- **Option A:** Changed "To the cloud load balancer, which forwards" to "Through the cloud load balancer, which forwards" to break the 3-same "To" first-word pattern among distractors.
+
+### s03-q100 — keyword giveaway (only correct contains `, which`)
+- **Option D:** Changed "`ServiceTopology` to filter endpoints by zone" to "`ServiceTopology`, which filters endpoints by zone" to add `, which` to a distractor.
+
+### Summary
+- 3 first-word giveaway fixes (breaking 3-same distractor patterns)
+- 3 keyword giveaway fixes (`, which` x2, "both" x1, "while" x1)
+- No answer indices were changed
+- No accuracy or explanation changes
