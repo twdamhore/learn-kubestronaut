@@ -546,3 +546,35 @@
 
 ### s08-q099 — giveaway: comma-count 2 vs 0,0,0
 - Added comma to distractor B: changed "New Pods are created alongside old Pods and traffic is gradually shifted from old version to new version pods" to "New Pods are created alongside old Pods, and traffic is gradually shifted from the old version to the new version".
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-08.js`
+**Issues found**: 8 backtick-balance flags
+**Issues fixed**: 8 across 8 questions
+
+### s08-q035 — backtick-balance: correct A=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `probe`. Changed "a configured health check probe" to "a configured health check `probe`". D: 0→1 backtick-terms.
+
+### s08-q046 — backtick-balance: correct A=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `kubelet`. Changed "The kubelet on the isolated node" to "The `kubelet` on the isolated node". D: 0→1 backtick-terms.
+
+### s08-q047 — backtick-balance: correct C=2 vs avg 0.7 (3x more)
+- **Option A:** Added backticks to both instances of `Pod`. Changed "the Pod spec" to "the `Pod` spec" and "the same Pod" to "the same `Pod`". A: 0→2 backtick-terms.
+
+### s08-q066 — backtick-balance: correct D=2 vs avg 1.0 (2x more)
+- **Option A:** Added backtick to `Pod`. Changed "individual Pod readiness" to "individual `Pod` readiness". A: 0→1 backtick-terms.
+
+### s08-q070 — backtick-balance: correct A=2 vs avg 0.7 (3x more)
+- **Option D:** Added backticks to `API server` and `bearer token`. Changed "hard-code the API server URL and a static bearer token" to "hard-code the `API server` URL and a static `bearer token`". D: 0→2 backtick-terms.
+
+### s08-q080 — backtick-balance: correct B=1 vs avg 0.3 (3x more)
+- **Option A:** Added backtick to `Pod`. Changed "into every Pod" to "into every `Pod`". A: 0→1 backtick-terms.
+
+### s08-q088 — backtick-balance: correct C=2 vs avg 1.0 (2x more)
+- **Option A:** Added backtick to `NetworkPolicy`. Changed "Configuring a NetworkPolicy" to "Configuring a `NetworkPolicy`". A: 0→1 backtick-terms.
+
+### s08-q095 — backtick-balance: correct B=2 vs avg 0.7 (3x more)
+- **Option A:** Added backtick to `Pod`. Changed "The Pod's" to "The `Pod`'s". A: 1→2 backtick-terms.
+- **Option C:** Added backtick to `control-plane`. Changed "tainted control-plane nodes" to "tainted `control-plane` nodes". C: 0→1 backtick-terms.

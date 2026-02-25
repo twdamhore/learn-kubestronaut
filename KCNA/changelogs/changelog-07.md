@@ -511,3 +511,91 @@
 
 ### s07-q096 — giveaway: first-word "with" vs "the"x3
 - Changed distractor D first word from "The" to "When": "When using `Local` external traffic policy, the CNI plugin silently falls back to the default `Cluster` behavior".
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-07.js`
+**Issues found**: 27 backtick-balance flags + 1 length-balance residual
+**Issues fixed**: 28 across 27 questions
+
+### s07-q010 — backtick balance: correct D=2, distractor avg 0.7
+- Added `nodeAffinity` backticks to distractor B and `Pod` backticks to distractor A. Now A=2, B=1, C=1, D=2*.
+
+### s07-q021 — backtick balance: correct B=2, distractor avg 1.0
+- Added `Deployment` backticks to distractor C. Now A=1, B=2*, C=2, D=1.
+
+### s07-q023 — backtick balance: correct D=2, distractor avg 1.0 + length-balance residual
+- Added `imagePullPolicy` backticks to distractor C. Trimmed C from "installed on" to "on" to fix length ratio from 1.151 to within threshold. Now A=1, B=1, C=2, D=2*.
+
+### s07-q024 — backtick balance: correct A=2, distractor C=0
+- Added `kubelet` backticks to distractor C. Now A=2*, B=1, C=1, D=2.
+
+### s07-q027 — backtick balance: correct D=2, distractor A=0
+- Added `PersistentVolumeClaim` backticks to distractor A, then added `StatefulSet` backticks for second round. Now A=2, B=1, C=1, D=2*.
+
+### s07-q029 — backtick balance: correct C=2, distractors A=0, B=0
+- Added `kubelet` backticks to distractor A. Added `Pod` and `Node` backticks to distractor B. Now A=1, B=2, C=2*, D=1.
+
+### s07-q031 — backtick balance: correct D=1, distractors B=0, C=0
+- Added `kube-apiserver` backticks to distractor B. Now A=1, B=1, C=0, D=1*.
+
+### s07-q038 — backtick balance: correct A=2, distractors B=0, D=0
+- Added `kubelet` and `imagePullSecrets` backticks to distractor B. Added `base64` backticks to distractor D. Now A=2*, B=2, C=1, D=1.
+
+### s07-q041 — backtick balance: correct A=1, distractors C=0, D=0
+- Added `RBAC` backticks to distractor C. Now A=1*, B=1, C=1, D=0.
+
+### s07-q045 — backtick balance: correct A=0, all distractors=1
+- Added `Fluentd` backticks to correct answer A. Now A=1*, B=1, C=1, D=1.
+
+### s07-q047 — backtick balance: correct B=1, distractors A=0, D=0
+- Added `CrashLoopBackOff` backticks to distractor D. Now A=0, B=1*, C=1, D=1.
+
+### s07-q055 — backtick balance: correct A=2, distractors B=0, D=0
+- Added `NetworkPolicy` backticks to distractor B. Added `CNI` backticks to distractor D. Added `NetworkPolicies` backticks to distractor C for second round. Now A=2*, B=1, C=2, D=1.
+
+### s07-q057 — backtick balance: correct A=2, distractors B=0, D=0
+- Added `securityContext` backticks to distractor D. Added `Kubernetes` and `Docker` backticks to distractor B. Now A=2*, B=2, C=1, D=1.
+
+### s07-q061 — backtick balance: correct C=1, distractors B=0, D=0
+- Added `CSI` backticks to distractor D. Now A=1, B=0, C=1*, D=1.
+
+### s07-q062 — backtick balance: correct B=1, distractors A=0, C=0
+- Added `kubelet` backticks to distractor A. Now A=1, B=1*, C=0, D=1.
+
+### s07-q064 — backtick balance: correct A=1, distractors C=0, D=0
+- Added `NetworkPolicy` backticks to distractor C. Now A=1*, B=1, C=1, D=0.
+
+### s07-q067 — backtick balance: correct B=2, distractors A=0, D=0
+- Added `Docker Hub` backticks to distractor A. Added `securityContext` backticks to distractor D. Now A=1, B=2*, C=2, D=1.
+
+### s07-q070 — backtick balance: correct C=1, distractors B=0, D=0
+- Added `scheduler` backticks to distractor B. Now A=1, B=1, C=1*, D=0.
+
+### s07-q071 — backtick balance: correct A=2, distractor B=0
+- Added `Prometheus` backticks to distractor B. Now A=2*, B=1, C=1, D=2.
+
+### s07-q075 — backtick balance: correct B=3, distractor avg 1.3
+- Added `entrypoint` backticks to distractor A. Added `kube-apiserver` backticks to distractor D. Now A=2, B=3*, C=2, D=2.
+
+### s07-q076 — backtick balance: correct C=2, distractors B=0, D=0
+- Added `LimitRange` backticks to distractor B. Added `Pods` backticks to distractor D. Added `Node` backticks to distractor A for second round. Now A=2, B=1, C=2*, D=1.
+
+### s07-q078 — backtick balance: correct B=2, distractor A=0
+- Added `Deployment` and `ReplicaSet` backticks to distractor A. Now A=2, B=2*, C=1, D=1.
+
+### s07-q079 — backtick balance: correct A=1, distractors C=0, D=0
+- Added `Deployment` backticks to distractor C. Now A=1*, B=1, C=1, D=0.
+
+### s07-q082 — backtick balance: correct A=1, distractors C=0, D=0
+- Added `ResourceQuota` backticks to distractor C. Now A=1*, B=1, C=1, D=0.
+
+### s07-q085 — backtick balance: correct B=1, distractors A=0, C=0
+- Added `kubelet` backticks to distractor A. Now A=1, B=1*, C=0, D=1.
+
+### s07-q086 — backtick balance: correct C=3, distractor avg 1.3
+- Added `restricted` backticks to distractor A. Now A=2, B=1, C=3*, D=2.
+
+### s07-q096 — backtick balance: correct C=1, distractor avg 2.0 (fewer)
+- Added `kube-proxy` backticks to correct answer C. Now A=2, B=2, C=2*, D=2.

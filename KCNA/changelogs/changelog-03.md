@@ -455,3 +455,47 @@ No issues found. All 100 questions passed review for option length balance (max/
 - 3 keyword giveaway fixes (`, which` x2, "both" x1, "while" x1)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-03.js`
+**Issues fixed**: 11 (backtick-balance)
+
+### s03-q005 — backtick balance (A had 0 backtick-terms, correct D had 1)
+- **Option A:** Added backticks around `kube-proxy` (0 -> 1 term).
+
+### s03-q006 — backtick balance (A had 1 backtick-term, correct D had 2)
+- **Option A:** Added backticks around `kubelet` (1 -> 2 terms).
+
+### s03-q007 — backtick balance (B had 1 backtick-term, correct A had 2)
+- **Option B:** Added backticks around `egress` (1 -> 2 terms).
+
+### s03-q030 — backtick balance (A had 0 backtick-terms, correct C had 1)
+- **Option A:** Added backticks around `namespace` (0 -> 1 term).
+
+### s03-q035 — backtick balance (B had 0 backtick-terms, correct A had 1)
+- **Option B:** Added backticks around `Service` (0 -> 1 term).
+
+### s03-q050 — backtick balance (D had 1 backtick-term, correct B had 2)
+- **Option D:** Added backticks around `Service` (1 -> 2 terms).
+
+### s03-q054 — backtick balance (A had 0 backtick-terms, correct D had 1)
+- **Option A:** Added backticks around `selectors` (0 -> 1 term).
+
+### s03-q059 — backtick balance (B had 1 backtick-term, correct C had 2)
+- **Option B:** Added backticks around `Policy A` (1 -> 2 terms).
+
+### s03-q084 — backtick balance (D had 1 backtick-term, correct C had 2)
+- **Option D:** Added backticks around `pod` (1 -> 2 terms).
+
+### s03-q088 — backtick balance (A had 0 backtick-terms, correct C had 1)
+- **Option A:** Added backticks around `kube-proxy` (0 -> 1 term).
+
+### s03-q100 — backtick balance (A had 0 backtick-terms, correct C had 1)
+- **Option A:** Added backticks around `pod` (0 -> 1 term).
+
+### Summary
+- 11 backtick-balance fixes (adding backtick formatting to distractors to reduce correct-answer signal)
+- No answer indices were changed
+- No accuracy or explanation changes

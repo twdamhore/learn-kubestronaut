@@ -641,3 +641,76 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q098 — keyword `, but` and "but" unique in correct B
 - **Option C:** Added ", but". Changed "...has a too-short `decision_wait` period, causing" to "...has a `decision_wait` period, but it is too short, causing".
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-10.js`
+**Issues found**: 21 backtick-balance flags
+**Issues fixed**: 21 across 21 questions
+
+### s10-q012 — backtick-balance: correct A=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `Deployment`. Changed "in the Deployment spec" to "in the `Deployment` spec". D: 0→1 backtick-terms.
+
+### s10-q015 — backtick-balance: correct C=2 vs avg 1.0 (2x more)
+- **Option A:** Added backtick to `Prometheus`. Changed "Increase Prometheus memory" to "Increase `Prometheus` memory". A: 1→2 backtick-terms.
+
+### s10-q017 — backtick-balance: correct A=4 vs avg 1.7 (2.4x more)
+- **Option C:** Added backtick to `containerd`. Changed "configures the containerd handler" to "configures the `containerd` handler". C: 1→2 backtick-terms.
+- **Option D:** Added backtick to `kubelet`. Changed "in the kubelet configuration" to "in the `kubelet` configuration". D: 1→2 backtick-terms.
+
+### s10-q025 — backtick-balance: correct A=1 vs avg 2.0 (2x FEWER)
+- **Option A (correct):** Added backtick to `revision`. Changed "in the revision template" to "in the `revision` template". A: 1→2 backtick-terms.
+
+### s10-q029 — backtick-balance: correct C=1 vs avg 0.3 (3x more)
+- **Option B:** Added backtick to `PriorityClass`. Changed "no globalDefault PriorityClass" to "no globalDefault `PriorityClass`". B: 0→1 backtick-terms.
+
+### s10-q030 — backtick-balance: correct A=2 vs avg 1.0 (2x more)
+- **Option D:** Added backtick to `StorageClass`. Changed "The StorageClass must have" to "The `StorageClass` must have". D: 1→2 backtick-terms.
+
+### s10-q036 — backtick-balance: correct C=1 vs avg 0.3 (3x more)
+- **Option A:** Added backtick to `Gatekeeper`. Changed "because Gatekeeper validates" to "because `Gatekeeper` validates". A: 0→1 backtick-terms.
+
+### s10-q039 — backtick-balance: correct C=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `API server`. Changed "by the API server" to "by the `API server`". D: 0→1 backtick-terms.
+
+### s10-q045 — backtick-balance: correct A=1 vs avg 2.3 (2.3x FEWER)
+- **Option A (correct):** Added backtick to `limits`. Changed "requests equal limits" to "requests equal `limits`". A: 1→2 backtick-terms.
+
+### s10-q049 — backtick-balance: correct C=1 vs avg 2.3 (2.3x FEWER)
+- **Option C (correct):** Added backtick to `Dockerfile`. Changed "multi-stage Dockerfile" to "multi-stage `Dockerfile`". C: 1→2 backtick-terms.
+
+### s10-q050 — backtick-balance: correct A=1 vs avg 0.3 (3x more)
+- **Option B:** Added backtick to `rolling update`. Changed "a controlled rolling update" to "a controlled `rolling update`". B: 0→1 backtick-terms.
+
+### s10-q056 — backtick-balance: correct C=2 vs avg 0.7 (3x more)
+- **Option A:** Added backtick to `Deployment`. Changed "reject the Deployment" to "reject the `Deployment`". A: 0→1 backtick-terms.
+- **Option D:** Added backtick to `Deployment`. Changed "at Deployment creation" to "at `Deployment` creation". D: 0→1 backtick-terms.
+
+### s10-q058 — backtick-balance: correct D=1 vs avg 0.3 (3x more)
+- **Option B:** Added backtick to `namespace`. Changed "a partitioned namespace subset" to "a partitioned `namespace` subset". B: 0→1 backtick-terms.
+
+### s10-q059 — backtick-balance: correct B=1 vs avg 0.3 (3x more)
+- **Option A:** Added backtick to `PersistentVolume`. Changed "a ReadWriteMany PersistentVolume" to "a ReadWriteMany `PersistentVolume`". A: 0→1 backtick-terms.
+
+### s10-q062 — backtick-balance: correct D=0 but ALL distractors have backticks
+- **Option D (correct):** Added backtick to `VPA`. Changed "based on VPA recommendation" to "based on `VPA` recommendation". D: 0→1 backtick-terms.
+
+### s10-q065 — backtick-balance: correct B=1 vs avg 0.3 (3x more)
+- **Option A:** Added backtick to `API server`. Changed "the API server merges" to "the `API server` merges". A: 0→1 backtick-terms.
+
+### s10-q074 — backtick-balance: correct A=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `KEDA`. Changed "KEDA computes" to "`KEDA` computes". D: 0→1 backtick-terms.
+
+### s10-q075 — backtick-balance: correct A=3 vs avg 1.3 (2.3x more)
+- **Option B:** Added backtick to `Prometheus`. Changed "in the Prometheus operator" to "in the `Prometheus` operator". B: 1→2 backtick-terms.
+
+### s10-q090 — backtick-balance: correct C=3 vs avg 1.3 (2.3x more)
+- **Option A:** Added backtick to `Helm`. Changed "because Helm preserves" to "because `Helm` preserves". A: 0→1 backtick-terms.
+
+### s10-q094 — backtick-balance: correct B=2 vs avg 0.7 (3x more)
+- **Option C:** Added backtick to `securityContext`. Changed "the pod security context" to "the pod `securityContext`". C: 0→1 backtick-terms.
+- **Option D:** Added backtick to `UID`. Changed "UID 1000" to "`UID` 1000". D: 0→1 backtick-terms.
+
+### s10-q099 — backtick-balance: correct C=1 vs avg 0.3 (3x more)
+- **Option D:** Added backtick to `canary`. Changed "the canary traffic weight" to "the `canary` traffic weight". D: 0→1 backtick-terms.

@@ -579,3 +579,48 @@
 
 ### s02-q100 — giveaway: first-word (correct "any", all distractors "it") + `, which` unique to correct
 - Option D: Fixed both issues by rewriting from `"It validates ConfigMap content against a known checksum and blocks the deployment if the content is corrupted or tampered"` to `"The annotation validates ConfigMap content against a known checksum, which blocks the deployment if corruption occurs"`.
+
+## Round 47d — 2026-02-25
+**File**: `set-02.js`
+**Issues fixed**: 15 backtick-balance fixes across 13 questions
+
+### s02-q005 — backtick balance: correct 2x more than distractor avg
+- Option D: Added backtick formatting to `key-value`. Changed `"...containing both key-value pairs merged"` to `"...containing both \`key-value\` pairs merged"`.
+
+### s02-q009 — backtick balance: correct 2x more than distractor avg
+- Option C: Added backtick formatting to `OOM`. Changed `"...which prevents OOM killing"` to `"...which prevents \`OOM\` killing"`.
+
+### s02-q012 — backtick balance: correct 2.3x more than distractor avg
+- Option B: Added backtick formatting to `ConfigMap` and `emptyDir`. Changed `"Use an init container to copy ConfigMap data to an emptyDir..."` to `"Use an init container to copy \`ConfigMap\` data to an \`emptyDir\`..."`.
+
+### s02-q022 — backtick balance: correct 3x more than distractor avg
+- Option C: Added backtick formatting to `ResourceQuota`. Changed `"...to capture ResourceQuota-related events"` to `"...to capture \`ResourceQuota\`-related events"`.
+
+### s02-q027 — backtick balance: correct 3x more than distractor avg
+- Option B: Added backtick formatting to `Secret`. Changed `"...store it as a Secret; Secrets support..."` to `"...store it as a \`Secret\`; Secrets support..."`.
+
+### s02-q050 — backtick balance: correct 3x more than distractor avg
+- Option C: Added backtick formatting to `ConfigMap`. Changed `"Use a single ConfigMap and toggle..."` to `"Use a single \`ConfigMap\` and toggle..."`.
+- Option D: Added backtick formatting to `ConfigMap`. Changed `"Use a single ConfigMap and rely..."` to `"Use a single \`ConfigMap\` and rely..."`.
+
+### s02-q056 — backtick balance: correct 3x more than distractor avg
+- Option B: Added backtick formatting to `data`. Changed `"...of the binary data with no additional encoding..."` to `"...of the binary \`data\` with no additional encoding..."`.
+
+### s02-q059 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `Pods`. Changed `"Pods are evicted alphabetically..."` to `"\`Pods\` are evicted alphabetically..."`.
+- Option B: Added backtick formatting to `Pods`. Changed `"Pods are evicted randomly..."` to `"\`Pods\` are evicted randomly..."`.
+
+### s02-q065 — backtick balance: correct 2x more than distractor avg
+- Option A: Added backtick formatting to `ConfigMap`. Changed `"The ConfigMap is immutable..."` to `"The \`ConfigMap\` is immutable..."`.
+
+### s02-q066 — backtick balance: correct 2x more than distractor avg
+- Option A: Added backtick formatting to `projected`. Changed `"...not allowed in projected volume source definitions"` to `"...not allowed in \`projected\` volume source definitions"`.
+
+### s02-q076 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `ConfigMap`. Changed `"Define one volume with the full ConfigMap..."` to `"Define one volume with the full \`ConfigMap\`..."`.
+
+### s02-q089 — backtick balance: correct 3x more than distractor avg
+- Option D: Added backtick formatting to `container runtimes`. Changed `"...not allowed in container runtimes"` to `"...not allowed in \`container runtimes\`"`.
+
+### s02-q090 — backtick balance: correct 2.3x more than distractor avg
+- Option C: Added backtick formatting to `Secret`. Changed `"Enable Secret encryption at rest..."` to `"Enable \`Secret\` encryption at rest..."`.

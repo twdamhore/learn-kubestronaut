@@ -557,7 +557,7 @@ var questions = [
       "Both containers share the same IP address and can communicate via `localhost`, but they must use different ports",
       "Both containers share the same filesystem and can access each other's files, but no explicit volume mounts are needed",
       "Both containers share CPU and memory limits so resource requests apply to the `Pod` as a whole not individual containers",
-      "Both containers are automatically restarted together if either container fails a configured health check probe"
+      "Both containers are automatically restarted together if either container fails a configured health check `probe`"
     ],
     answer: 0,
     explanation: "Containers within the same Pod share the network namespace, meaning they share the same IP address and port space. They can communicate with each other using `localhost` but must bind to different ports to avoid conflicts. Filesystems are separate unless shared via volumes. Resource requests are specified per container, not per Pod.\n\nWhy other options are wrong:\n- B: Containers have separate filesystems; sharing requires explicit emptyDir or other volume mounts\n- C: Resource requests and limits are specified per container, not shared at the Pod level\n- D: Container restarts are managed individually; a failing liveness probe restarts only that container\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking",
@@ -733,7 +733,7 @@ var questions = [
       "The node controller evicts Pods by marking them `Terminating` and the owning ReplicaSet creates replacements on healthy nodes",
       "The `kube-scheduler` immediately reschedules all Pods to other available nodes without waiting for any timeout period",
       "The Pods continue running indefinitely on the isolated node and are never automatically rescheduled to other healthy nodes",
-      "The kubelet on the isolated node detects the network partition itself and gracefully shuts down all locally running Pods"
+      "The `kubelet` on the isolated node detects the network partition itself and gracefully shuts down all locally running Pods"
     ],
     answer: 0,
     explanation: "When a node becomes `NotReady` after the node-monitor-grace-period (default 40s), the node controller almost immediately applies the `node.kubernetes.io/unreachable:NoExecute` taint. Once the taint is applied, each Pod's `tolerationSeconds` (default 300s) countdown begins. When that timer expires, the Pod is evicted — marked as `Terminating` — and controllers like ReplicaSet create replacement Pods on healthy nodes. The actual containers on the isolated node may continue running until the partition heals and the kubelet processes the deletion.\n\nWhy other options are wrong:\n- B: The scheduler does not immediately reschedule; it waits for tolerationSeconds (default 300s) to expire\n- C: Pods are eventually evicted after tolerationSeconds expires; they do not run indefinitely\n- D: The kubelet on the isolated node cannot detect the partition itself; the control plane manages eviction\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions",
@@ -746,7 +746,7 @@ var questions = [
     text: "A Pod is in `ImagePullBackOff` state. The container spec shows `image: internal-registry.corp.com/app:v2.1`. The image exists in the registry. What is the most likely cause?",
     diagram: null,
     options: [
-      "The container port specified in the Pod spec conflicts with another container in the same Pod causing a bind error",
+      "The container port specified in the `Pod` spec conflicts with another container in the same `Pod` causing a bind error",
       "The `kube-scheduler` cannot find a node with enough available resources to schedule and pull the image properly",
       "The node lacks network access to `internal-registry.corp.com` or the Pod lacks a valid `imagePullSecret` for it",
       "The `containerd` runtime does not support pulling images from private registries that require authentication creds"
@@ -1051,7 +1051,7 @@ var questions = [
     text: "A team deploys a StatefulSet with 3 replicas and `podManagementPolicy: OrderedReady`. In what order are the Pods created during initial deployment?",
     diagram: null,
     options: [
-      "All 3 Pods are created simultaneously for fast startup regardless of individual Pod readiness status",
+      "All 3 Pods are created simultaneously for fast startup regardless of individual `Pod` readiness status",
       "Pods are created in reverse order: `pod-2` is created first, then `pod-1`, and finally `pod-0`",
       "Pods are created in random order determined by the scheduler's scoring algorithm for the nodes",
       "Pods are created sequentially: `pod-0` must be Running and Ready before `pod-1` starts creating"
@@ -1118,7 +1118,7 @@ var questions = [
       "The ServiceAccount token is auto-mounted at `/var/run/secrets/kubernetes.io/serviceaccount/` with `ca.crt`",
       "The kubelet injects the API server's TLS certificate into every container's `/etc/ssl/` directory automatically",
       "The kube-proxy provides an unauthenticated API gateway on `localhost:8080` that forwards all requests",
-      "The developer must hard-code the API server URL and a static bearer token in the application configuration"
+      "The developer must hard-code the `API server` URL and a static `bearer token` in the application configuration"
     ],
     answer: 0,
     explanation: "By default, Kubernetes mounts a ServiceAccount token at `/var/run/secrets/kubernetes.io/serviceaccount/` in every Pod. This directory contains `token` (a JWT for API authentication), `ca.crt` (the cluster CA certificate), and `namespace` (the Pod's namespace). The API server address is available via the `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` environment variables.\n\nWhy other options are wrong:\n- B: The kubelet does not inject API server TLS certs into /etc/ssl/; the SA mount includes ca.crt\n- C: kube-proxy does not provide an unauthenticated API gateway; it handles Service routing\n- D: Hard-coding credentials is insecure and unnecessary; Kubernetes provides auto-mounted SA tokens\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
@@ -1276,7 +1276,7 @@ var questions = [
     text: "A team wants to collect logs from all containers running in a Kubernetes cluster without modifying any application code. They deploy a logging agent as a DaemonSet that reads container log files from the node. Which log collection pattern does this describe?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Cluster Logging Architecture</text><rect x="15" y="40" width="180" height="110" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-dasharray="4"/><text x="105" y="56" text-anchor="middle" fill="#93c5fd" font-size="9">Node</text><rect x="25" y="65" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="55" y="82" text-anchor="middle" fill="white" font-size="8">Pod A</text><rect x="95" y="65" width="60" height="25" rx="4" fill="#0f766e" stroke="#14b8a6"/><text x="125" y="82" text-anchor="middle" fill="white" font-size="8">Pod B</text><rect x="30" y="105" width="55" height="20" rx="3" fill="#374151" stroke="#6b7280"/><text x="57" y="119" text-anchor="middle" fill="#9ca3af" font-size="7">/var/log</text><rect x="100" y="105" width="80" height="30" rx="4" fill="#b45309" stroke="#f59e0b"/><text x="140" y="124" text-anchor="middle" fill="white" font-size="8">???</text><line x1="55" y1="90" x2="55" y2="105" stroke="#6b7280" stroke-width="1"/><line x1="125" y1="90" x2="85" y2="105" stroke="#6b7280" stroke-width="1"/><line x1="85" y1="115" x2="100" y2="118" stroke="#f59e0b" stroke-width="1.5"/><rect x="250" y="70" width="130" height="45" rx="6" fill="#1e40af" stroke="#3b82f6"/><text x="315" y="92" text-anchor="middle" fill="white" font-size="9">Elasticsearch / Backend</text><line x1="180" y1="120" x2="250" y2="92" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrLog)"/><text x="220" y="100" text-anchor="middle" fill="#fcd34d" font-size="7">forward</text><defs><marker id="arrLog" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker></defs></svg>',
     options: [
-      "Sidecar logging — a logging container is injected into every Pod to capture and forward application logs",
+      "Sidecar logging — a logging container is injected into every `Pod` to capture and forward application logs",
       "Node-level logging agent — a DaemonSet reads container log files from `/var/log/containers/` on each node",
       "Application-level logging — each application writes logs directly to a remote centralized logging service",
       "Event-driven logging — a DaemonSet watches Kubernetes `Events` and forwards them as structured log entries"
@@ -1404,7 +1404,7 @@ var questions = [
     text: "A team wants to enforce that all containers in their cluster use read-only root filesystems. Which Kubernetes security mechanism can enforce this at the container level?",
     diagram: null,
     options: [
-      "Configuring a NetworkPolicy that blocks filesystem write operations on containers within the namespace scope",
+      "Configuring a `NetworkPolicy` that blocks filesystem write operations on containers within the namespace scope",
       "Setting `readOnly: true` on the PersistentVolumeClaim attached to the container to prevent write operations",
       "Setting `readOnlyRootFilesystem: true` in the container's `securityContext` for a read-only root filesystem",
       "Using a `ConfigMap` mounted with `readOnly: true` to prevent any write operations to the root filesystem"
@@ -1516,9 +1516,9 @@ var questions = [
     text: "A Pod is stuck in `Pending` state. Running `kubectl describe pod` shows the event: `0/5 nodes are available: 2 node(s) had taint {node-role.kubernetes.io/control-plane: }, 3 node(s) didn't match Pod's node affinity/selector`. What does this indicate?",
     diagram: null,
     options: [
-      "The Pod's `nodeAffinity` rule is valid but the container image cannot be pulled from the registry on any node",
+      "The `Pod`'s `nodeAffinity` rule is valid but the container image cannot be pulled from the registry on any node",
       "The Pod has a `nodeSelector` or `nodeAffinity` not matching any worker node, plus control-plane taints",
-      "The cluster has no worker nodes available; all 5 nodes are tainted control-plane nodes in the cluster",
+      "The cluster has no worker nodes available; all 5 nodes are tainted `control-plane` nodes in the cluster",
       "The Pod's `resource requests` exceed the total combined capacity of all 5 nodes in the cluster group"
     ],
     answer: 1,

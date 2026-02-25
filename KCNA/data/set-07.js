@@ -40,7 +40,7 @@ var questions = [
     text: "After deploying a new version of your application, `kubectl get pods` shows one pod with STATUS `ImagePullBackOff`. The `Events` section of `kubectl describe pod` shows `Failed to pull image \"myapp:v2.1\": rpc error: code = NotFound`. Which action would most directly resolve this?",
     diagram: null,
     options: [
-      "Restart the kubelet service on the node where the pod has been scheduled to run currently",
+      "Restart the `kubelet` service on the node where the pod has been scheduled to run currently",
       "Delete the pod's `ServiceAccount` resource and then recreate it from the original manifest",
       "Increase the pod's memory limits in its resource spec to allow the image to be pulled down",
       "Verify that image `myapp:v2.1` exists in the container registry with the correct tag"
@@ -57,7 +57,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Lifecycle</text><rect x="40" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="90" y="79" text-anchor="middle" fill="#e0e0e0" font-size="11">Running</text><line x1="140" y1="75" x2="200" y2="75" stroke="#888" stroke-width="1.5" marker-end="url(#arrow4)"/><text x="170" y="68" text-anchor="middle" fill="#aaa" font-size="10">?</text><rect x="200" y="55" width="150" height="40" rx="6" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="275" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">Terminated (Exit Code 137)</text><defs><marker id="arrow4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
       "The container's `livenessProbe` timed out and Kubernetes terminated the running process",
-      "The node ran out of available disk space causing the container to be evicted by kubelet",
+      "The node ran out of available disk space causing the container to be evicted by the `kubelet`",
       "The container exceeded its configured `limits.memory` and the Linux kernel killed it",
       "The container failed its startup probe check and was terminated by the kubelet process"
     ],
@@ -107,7 +107,7 @@ var questions = [
       "Refactor the application to emit structured logs to stdout/stderr for `kubectl logs` and aggregators",
       "SSH into the node and read the application log files directly from the container's `overlay2` filesystem layer",
       "Mount a persistent volume to store application log files and set up a cron job to periodically collect them",
-      "Disable container restart policies so the crashed container's filesystem persists for postmortem analysis"
+      "Disable container `restartPolicy` so the crashed container's filesystem persists for postmortem analysis"
     ],
     answer: 0,
     explanation: "The twelve-factor app methodology and cloud native best practices recommend that applications write logs as event streams to stdout/stderr. This enables `kubectl logs` to work natively and allows log aggregation systems like Fluentd or Loki to collect logs without custom file-path configurations.\n\nWhy other options are wrong:\n- B: SSHing into nodes bypasses Kubernetes abstractions and does not scale in cloud native environments\n- C: Persistent volumes for logs add complexity; cron-based collection is fragile and not cloud native\n- D: Disabling restarts loses self-healing and container filesystems are ephemeral anyway\n\nReference: https://12factor.net/logs",
@@ -152,9 +152,9 @@ var questions = [
     text: "A deployment's pods fail to start with the event: `Warning FailedScheduling: 0/5 nodes are available: 5 node(s) had taint {node.kubernetes.io/not-ready: }, that the pod didn't tolerate`. What does this mean?",
     diagram: null,
     options: [
-      "An `imagePullSecret` is missing from the pod spec and all nodes are refusing to process the pull request from the registry",
-      "The pod's nodeAffinity rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
-      "The cluster's admission controller is blocking pod creation due to a configured security policy enforcement violation",
+      "An `imagePullSecret` is missing from the `Pod` spec and all nodes are refusing to process the pull request from the registry",
+      "The pod's `nodeAffinity` rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
+      "The cluster's `AdmissionController` is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
     ],
     answer: 3,
@@ -217,7 +217,7 @@ var questions = [
     diagram: null,
     options: [
       "Remove the `readinessProbe` from the pod spec, or adjust the security context settings that conflict with it",
-      "Add a `ClusterRoleBinding` that grants the pod's ServiceAccount root access to bypass the security restriction",
+      "Add a `ClusterRoleBinding` that grants the pod's `ServiceAccount` root access to bypass the security restriction",
       "Ensure the container image runs as a non-root user, or set `runAsUser` to a non-zero UID in `securityContext`",
       "Set `privileged: true` in the container's security context to completely bypass the runAsNonRoot restriction"
     ],
@@ -330,8 +330,8 @@ var questions = [
     options: [
       "All three pods belong to the same ReplicaSet (`6d8f9b`) but one has developed a corrupted container filesystem causing crashes",
       "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while the old pods (`6d8f9b`) still remain running",
-      "The third pod was manually created outside of the Deployment controller and is completely unrelated to the current ReplicaSet",
-      "The Deployment's replica count was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
+      "The third pod was manually created outside of the `Deployment` controller and is completely unrelated to the current `ReplicaSet`",
+      "The Deployment's `replicas` was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
     ],
     answer: 1,
     explanation: "The pod name template in Kubernetes Deployments is `<deployment>-<replicaset-hash>-<pod-hash>`. Two pods share the hash `6d8f9b` (old ReplicaSet) and one has `7c4e2a` (new ReplicaSet). This indicates a rolling update is in progress, but the new revision is failing. The Deployment controller pauses the rollout when new pods crash.\n\nWhy other options are wrong:\n- A: Different ReplicaSet hashes (6d8f9b vs 7c4e2a) prove pods belong to different ReplicaSets\n- C: Deployment-managed pods follow the naming pattern; the third pod matches the deployment name\n- D: A scale-down terminates pods gracefully, not with CrashLoopBackOff status\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -360,9 +360,9 @@ var questions = [
     text: "Your CI/CD pipeline deploys a new image tag but the pods still run the old version. The Deployment spec uses `image: myapp:latest` and `imagePullPolicy: IfNotPresent`. What explains this behavior?",
     diagram: null,
     options: [
-      "Because the Kubernetes API server cached the old image tag, it needs to be restarted to clear its internal image cache entry",
+      "Because the `kube-apiserver` cached the old image tag, it needs to be restarted to clear its internal image cache entry",
       "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
-      "The container runtime installed on the cluster nodes does not support pulling images using the mutable `latest` tag name",
+      "The container runtime on the cluster nodes does not support pulling images using the mutable `latest` tag via `imagePullPolicy`",
       "With `imagePullPolicy: IfNotPresent`, the node uses its locally cached `myapp:latest` image instead of pulling the update"
     ],
     answer: 3,
@@ -378,7 +378,7 @@ var questions = [
     options: [
       "Deploy a sidecar that tails `/var/log/app.log` to stdout, exposing logs via `kubectl logs -c <sidecar>`",
       "Mount a `hostPath` volume so the log file is written directly to the node's filesystem for external collection",
-      "Configure the kubelet to automatically detect and forward log files written inside running container filesystems",
+      "Configure the `kubelet` to automatically detect and forward log files written inside running container filesystems",
       "Set the pod's `restartPolicy` to `Never` so the container's filesystem is preserved after a failure for analysis"
     ],
     answer: 0,
@@ -424,7 +424,7 @@ var questions = [
     text: "A StatefulSet pod `db-0` is in `CrashLoopBackOff`. You discover the application fails because it cannot write to `/data`. Running `kubectl exec db-0 -- ls -la /data` shows the directory is owned by `root` but the container runs as UID `1000`. What is the fix?",
     diagram: null,
     options: [
-      "Delete the PersistentVolumeClaim and let the StatefulSet recreate it with the correct ownership permissions",
+      "Delete the `PersistentVolumeClaim` and let the `StatefulSet` recreate it with the correct ownership permissions",
       "Change the StatefulSet's `replicas` to 0 and then back to 1 to trigger a completely fresh volume mount",
       "Set `imagePullPolicy: Always` to force a fresh image pull with the correct file permissions configured",
       "Add an `initContainer` that runs as root to execute `chown 1000:1000 /data` before the main container"
@@ -456,8 +456,8 @@ var questions = [
     text: "A pod shows `STATUS: Error` and `Exit Code: 1` after running to completion. The pod's `restartPolicy` is `Never`. What will Kubernetes do with this pod?",
     diagram: null,
     options: [
-      "The kubelet restarts the container after a back-off delay because exit code 1 indicates a transient failure",
-      "Kubernetes will delete the failed pod automatically and schedule a replacement pod on a different cluster node",
+      "The `kubelet` restarts the container after a back-off delay because exit code 1 indicates a transient failure",
+      "Kubernetes will delete the failed `Pod` automatically and schedule a replacement on a different `Node` in the cluster",
       "The pod remains in `Error` state indefinitely because `restartPolicy: Never` prevents any restarts by the kubelet",
       "The `restartPolicy: Never` causes the kubelet to mark the pod as succeeded and clear its resource allocation"
     ],
@@ -489,7 +489,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="200" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Container Stack Layers</text><rect x="50" y="50" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="71" text-anchor="middle" fill="#e0e0e0" font-size="11">kubelet</text><rect x="50" y="90" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="111" text-anchor="middle" fill="#e0e0e0" font-size="11">Layer 2 (???)</text><rect x="50" y="130" width="300" height="32" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="200" y="151" text-anchor="middle" fill="#e0e0e0" font-size="11">Layer 3 (???)</text><rect x="50" y="170" width="300" height="32" rx="5" fill="#264653" stroke="#555" stroke-width="1.5"/><text x="200" y="191" text-anchor="middle" fill="#e0e0e0" font-size="11">Linux Kernel (cgroups, namespaces)</text></svg>',
     options: [
       "The `kube-scheduler`, which could not find a valid node placement for the pod sandbox container creation request",
-      "The kube-apiserver, which rejected the pod spec during the admission control processing phase of the request",
+      "The `kube-apiserver`, which rejected the pod spec during the admission control processing phase of the request",
       "The CNI plugin (e.g., Calico), which failed to assign a valid network namespace to the new pod sandbox on the node",
       "The CRI (e.g., containerd) relaying an OCI runtime error from the low-level `runc` runtime during pod sandbox creation"
     ],
@@ -601,9 +601,9 @@ var questions = [
     diagram: null,
     options: [
       "The Secret was created with `type: Opaque` instead of required `type: kubernetes.io/dockerconfigjson`",
-      "The node's kubelet is configured to ignore image pull secrets for security compliance policy enforcement",
+      "The node's `kubelet` is configured to ignore `imagePullSecrets` for security compliance policy enforcement",
       "The container image tag is set to `latest` which bypasses authentication checks on all private registries",
-      "The Secret's data field must be base64-encoded twice for proper Docker registry authentication to succeed"
+      "The Secret's data field must be `base64`-encoded twice for proper Docker registry authentication to succeed"
     ],
     answer: 0,
     explanation: "Image pull secrets must be of type `kubernetes.io/dockerconfigjson` to be recognized by the kubelet for registry authentication. If the Secret was created as `type: Opaque`, the kubelet cannot parse the registry credentials from it, even if the data content is correct. Additionally, the secret must be referenced in the pod's `imagePullSecrets` field or in the ServiceAccount.\n\nWhy other options are wrong:\n- B: kubelet does not have a setting to ignore image pull secrets\n- C: The latest tag does not bypass authentication on private registries\n- D: Secret data only needs to be base64-encoded once; double encoding would corrupt the credentials\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
@@ -650,7 +650,7 @@ var questions = [
     options: [
       "Whether the `kube-apiserver` process is running on the control plane node host",
       "Whether the `etcd` data directory has been encrypted causing connection failures",
-      "Whether a new RBAC policy is blocking your specific user account from cluster access",
+      "Whether a new `RBAC` policy is blocking your specific user account from cluster access",
       "Whether the cluster's Ingress controller is healthy and properly forwarding requests"
     ],
     answer: 0,
@@ -712,7 +712,7 @@ var questions = [
     text: "You need to retrieve logs from a pod that crashed and was replaced 2 hours ago. The new pod has the same name. `kubectl logs <pod> --previous` shows logs from the current pod's previous restart, not from the pod that was replaced. How can you retrieve the old logs?",
     diagram: null,
     options: [
-      "The old pod's logs are permanently lost unless a cluster-level log aggregation system like Fluentd or Loki collected them",
+      "The old pod's logs are permanently lost unless a cluster-level log aggregation system like `Fluentd` or Loki collected them",
       "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
       "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
       "Use `kubectl get events` which captures full container logs like stdout and stderr on pod termination events automatically"
@@ -747,7 +747,7 @@ var questions = [
       "Yes, Services route traffic to individual containers independently, so the healthy one still receives incoming requests normally",
       "No, the pod is removed from the Service's Endpoints because overall pod readiness is `False` when any container is not ready",
       "Yes, but only if the Service has `sessionAffinity: ClientIP` configured which allows partial pod readiness to serve traffic",
-      "No, Kubernetes immediately terminates the entire pod because any container entering a crash loop triggers full pod replacement"
+      "No, Kubernetes immediately terminates the entire pod because any container entering a `CrashLoopBackOff` triggers full pod replacement"
     ],
     answer: 1,
     explanation: "A pod's overall readiness is the logical AND of all its containers' readiness states. Since one container is crashing (not ready), the pod condition `Ready` is `False`. Kubernetes removes pods with `Ready: False` from Service Endpoints. This means even the healthy container will not receive Service traffic until the other container is also ready.\n\nWhy other options are wrong:\n- A: Services route to pods, not individual containers; if the pod is not ready, no traffic is sent\n- C: sessionAffinity: ClientIP affects session routing, not partial readiness behavior\n- D: Kubernetes does not terminate the entire pod when one container crashes; it restarts just that container\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-readiness-gate",
@@ -873,9 +873,9 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
       "Listing `Egress` in `policyTypes` without defining egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS",
-      "The NetworkPolicy Ingress rule only allows traffic from app=frontend, including its replicas, so the database pods are denied inbound api connections",
-      "NetworkPolicies require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
-      "The CNI plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
+      "The `NetworkPolicy` Ingress rule only allows traffic from app=frontend, including its replicas, so the database pods are denied inbound api connections",
+      "`NetworkPolicies` require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
+      "The `CNI` plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
     ],
     answer: 0,
     explanation: "When a NetworkPolicy selects a pod, it creates a default-deny posture for the policy types specified. If `policyTypes: [Ingress, Egress]` is set (or implied), only explicitly allowed traffic is permitted. Without an egress rule, all outbound traffic (including DNS on port 53) is blocked. The fix is to add egress rules or change `policyTypes` to `[Ingress]` only.\n\nWhy other options are wrong:\n- B: The NetworkPolicy selects app=api pods, not database pods; the ingress rule controls who can reach api pods, not who can reach database pods\n- C: Egress rules are defined in the same NetworkPolicy resource, not in a separate required resource\n- D: If the CNI did not support NetworkPolicy, traffic would flow freely, not be blocked\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -905,9 +905,9 @@ var questions = [
     diagram: null,
     options: [
       "The container image was built for a different CPU architecture like `linux/arm64` that is incompatible with `amd64`",
-      "The Kubernetes version is incompatible with the Docker version (e.g., v20 vs v24) used to build the container image",
+      "The `Kubernetes` version is incompatible with the `Docker` version (e.g., v20 vs v24) used to build the container image",
       "The container runtime on the cluster nodes does not support the image format like `OCI` used by this container",
-      "The pod's security context prevents execution of the container's entrypoint binary on the scheduled node"
+      "The pod's `securityContext` prevents execution of the container's entrypoint binary on the scheduled node"
     ],
     answer: 0,
     explanation: "`exec format error` occurs when the Linux kernel cannot execute a binary because it was compiled for a different CPU architecture. If the image was built on an ARM machine (e.g., Apple M1/M2) without multi-arch support, the binaries inside are `arm64` and will not run on `amd64` nodes. Building a multi-platform image with `docker buildx` resolves this.\n\nWhy other options are wrong:\n- B: Kubernetes version and Docker build version compatibility is not a cause of exec format error\n- C: All modern runtimes support OCI image format; exec format error is about binary architecture\n- D: Security context does not cause exec format error; it would produce permission denied or similar\n\nReference: https://kubernetes.io/docs/concepts/containers/images/#multi-architecture-images-with-image-indexes",
@@ -971,7 +971,7 @@ var questions = [
       "The `PersistentVolume` mounts, block devices, network disks, and NFS shares attached to pods on that node",
       "The etcd data directory on the control plane node, which stores the cluster's key-value state data",
       "The node's root filesystem, which stores container images, writable layers, logs, and `emptyDir`s",
-      "The network-attached storage volumes used by the CSI driver to provision persistent volume claims"
+      "The network-attached storage volumes used by the `CSI` driver to provision persistent volume claims"
     ],
     answer: 2,
     explanation: "Ephemeral storage refers to the node's local filesystem used for container images, container writable layers, `emptyDir` volumes (unless backed by memory), and container log files. When this fills up, the kubelet sets `DiskPressure: True` and starts evicting pods. This is separate from PersistentVolumes, which have their own lifecycle.\n\nWhy other options are wrong:\n- A: PersistentVolumes are separate from ephemeral storage and have their own lifecycle\n- B: etcd is on control plane nodes and its data directory is not related to node DiskPressure\n- D: Network-attached CSI volumes are not ephemeral storage; they are persistent and externally managed\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage",
@@ -984,7 +984,7 @@ var questions = [
     text: "A pod shows `STATUS: ContainerCreating` for an unusually long time. `kubectl describe pod` shows the event: `Warning FailedMount: MountVolume.SetUp failed for volume \"config-vol\": configmap \"app-config\" not found`. What must you do?",
     diagram: null,
     options: [
-      "Restart the kubelet service on the node to clear its internal volume mount cache entry",
+      "Restart the `kubelet` service on the node to clear its internal volume mount cache entry",
       "Create the missing ConfigMap named `app-config` in the same namespace as the pod",
       "Delete the pod's ServiceAccount which is blocking the volume mount from completing",
       "Add a `volumeClaimTemplate` to the pod spec to dynamically provision the ConfigMap"
@@ -1018,7 +1018,7 @@ var questions = [
     options: [
       "The pod's ServiceAccount CA bundle does not match the API server's TLS certificate, or the `kubernetes` Service is missing",
       "The pod does not have its `ServiceAccount` token volume mounted, so mutual TLS authentication with the API server fails",
-      "The pod needs a NetworkPolicy explicitly allowing egress to the API server's endpoint IP address, or port 443 is blocked",
+      "The pod needs a `NetworkPolicy` explicitly allowing egress to the API server's endpoint IP address, or port 443 is blocked",
       "The API server restricts connections to the control plane network by default, blocking requests from pods in worker nodes"
     ],
     answer: 0,
@@ -1064,10 +1064,10 @@ var questions = [
     text: "Your team uses Falco, a CNCF runtime security tool, and receives an alert: `Terminal shell in container (user=root, container=web-app)`. What event triggered this alert?",
     diagram: null,
     options: [
-      "A new container image was pulled from an untrusted external container registry (e.g., a public Docker Hub repo)",
+      "A new container image was pulled from an untrusted external container registry (e.g., a public `Docker Hub` repo)",
       "Someone executed an interactive shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
       "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell process at container boot time",
-      "The container's security context was modified at runtime to allow elevated root access to the host system process"
+      "The container's `securityContext` was modified at runtime to allow elevated root access to the host system process"
     ],
     answer: 1,
     explanation: "Falco monitors system calls at runtime and triggers alerts based on predefined rules. The alert `Terminal shell in container` fires when a shell process (e.g., `/bin/sh`, `/bin/bash`) is spawned inside a running container, typically via `kubectl exec`. This is a security-relevant event because it could indicate unauthorized access to a production container.\n\nWhy other options are wrong:\n- A: Pulling images from untrusted registries triggers different Falco rules, not the terminal shell rule\n- C: CMD starting a shell at boot is the container's normal entrypoint, not an interactive terminal session\n- D: Security context cannot be modified at runtime; this is not what triggers the terminal shell alert\n\nReference: https://falco.org/docs/rules/default-rules/",
@@ -1113,7 +1113,7 @@ var questions = [
     diagram: null,
     options: [
       "It is `Paused` in place on the node and automatically resumed when sufficient cluster resources become available again",
-      "It is moved to a different node automatically by the scheduler without any interruption to the currently running process",
+      "It is moved to a different node automatically by the `scheduler` without any interruption to the currently running process",
       "It is gracefully terminated and its owner controller creates a replacement that may stay `Pending` if resources are scarce",
       "It is terminated along with its owning controller resource, requiring the operator to redeploy both of them afterward"
     ],
@@ -1129,7 +1129,7 @@ var questions = [
     diagram: null,
     options: [
       "That the `metrics-server` Deployment in `kube-system` is running and its pods are healthy and serving",
-      "That Prometheus is installed as a prerequisite for the Metrics API to function in the cluster properly",
+      "That `Prometheus` is installed as a prerequisite for the Metrics API to function in the cluster properly",
       "That each node has the `monitoring=enabled` label applied which the Metrics Server uses for discovery",
       "That the `kube-apiserver` has the `--enable-top-command` flag set in its static pod manifest file"
     ],
@@ -1192,10 +1192,10 @@ var questions = [
     text: "Running `kubectl get pod my-pod -o jsonpath='{.status.containerStatuses[0].state}'` returns `{\"waiting\":{\"reason\":\"CreateContainerConfigError\",\"message\":\"secret \\\"api-key\\\" not found\"}}`. The pod shows `STATUS: CreateContainerConfigError`. What is happening?",
     diagram: null,
     options: [
-      "The container image is missing the `api-key` binary (used by the entrypoint script) that is required for the startup sequence",
+      "The container image is missing the `api-key` binary (used by the `entrypoint` script) that is required for the startup sequence",
       "The pod spec references a Secret named `api-key` (via `envFrom` or `env.valueFrom`) that is missing in the namespace",
       "The node's container runtime cannot decrypt the `api-key` Secret due to missing `encryption-config` provider keys",
-      "The API server rejected the pod because the Secret name `api-key` is a reserved identifier in the Kubernetes system"
+      "The `kube-apiserver` rejected the pod because the Secret name `api-key` is a reserved identifier in the Kubernetes system"
     ],
     answer: 1,
     explanation: "`CreateContainerConfigError` occurs when the kubelet cannot configure the container environment. The message explicitly states the Secret `api-key` is not found. This happens when the pod spec uses `secretKeyRef` or `secretRef` to inject Secret data as environment variables, but the Secret does not exist. The pod will not start until the Secret is created.\n\nWhy other options are wrong:\n- A: api-key is a Secret name reference, not a binary; the error message explicitly says secret not found\n- C: Encryption at rest does not cause not found errors; it would cause decryption errors if misconfigured\n- D: api-key is not a reserved name in Kubernetes; any valid string can be used as a Secret name\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/",
@@ -1208,10 +1208,10 @@ var questions = [
     text: "You run `kubectl get events -n production --sort-by='.lastTimestamp'` and see: `Warning  FailedCreate  replicaset/api-7f8c9d  Error creating: pods \"api-7f8c9d-\" is forbidden: exceeded quota: compute-quota, requested: cpu=500m, used: 3600m, limited: 4000m`. What is preventing pod creation?",
     diagram: null,
     options: [
-      "No node has 500m CPU available for scheduling the new pod, and the `ReplicaSet` controller cannot create it in production now",
-      "The pod's CPU request of 500m exceeds the maximum allowed per-pod by a LimitRange named compute-quota in the production namespace",
+      "No `Node` has 500m CPU available for scheduling the new pod, and the `ReplicaSet` controller cannot create it in production now",
+      "The pod's CPU request of 500m exceeds the maximum allowed per-pod by a `LimitRange` named compute-quota in the production namespace",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
-      "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
+      "The cluster-wide CPU capacity has been fully allocated and no additional `Pods` can be scheduled on any node in the cluster"
     ],
     answer: 2,
     explanation: "The event message shows a `ResourceQuota` named `compute-quota` with a CPU limit of 4000m. Current usage is 3600m, and the new pod requests 500m, which would bring the total to 4100m—exceeding the 4000m limit. ResourceQuotas enforce per-namespace resource consumption limits.\n\nWhy other options are wrong:\n- A: The error explicitly mentions exceeded quota, not insufficient node resources\n- B: LimitRange restricts individual pod limits, not namespace-wide totals; the error names compute-quota\n- D: Cluster-wide capacity is separate from namespace ResourceQuota enforcement\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/",
@@ -1240,7 +1240,7 @@ var questions = [
     text: "A Deployment has `maxUnavailable: 0` and `maxSurge: 1` in its rolling update strategy. During an update, you observe that the old pods are not terminated until the new pod is `Ready`. What happens if the new pod enters `CrashLoopBackOff`?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Rolling Update: maxUnavailable=0, maxSurge=1</text><rect x="30" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="65" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-1 OK</text><rect x="110" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="145" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-2 OK</text><rect x="190" y="55" width="70" height="30" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="225" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">old-3 OK</text><rect x="280" y="55" width="90" height="30" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="325" y="74" text-anchor="middle" fill="#e0e0e0" font-size="9">new-1 CRASH</text><text x="200" y="120" text-anchor="middle" fill="#e76f51" font-size="11">Rollout status: ???</text><text x="200" y="140" text-anchor="middle" fill="#aaa" font-size="10">Old pods: ???</text><text x="200" y="160" text-anchor="middle" fill="#aaa" font-size="10">What is the impact on old pods and the rollout?</text></svg>',
     options: [
-      "All old pods are immediately terminated because the deployment controller needs room for the new replacement pod instances",
+      "All old pods are immediately terminated because the `Deployment` controller needs room for new `ReplicaSet` pod instances",
       "The rollout stalls because `maxUnavailable: 0` prevents terminating old pods while the new pod never becomes `Ready`",
       "Kubernetes automatically reverts to the previous Deployment revision while `maxUnavailable: 0` detects readiness failures",
       "The Deployment controller increases `maxSurge` to create additional new pods to compensate for the crashing instance"
@@ -1258,7 +1258,7 @@ var questions = [
     options: [
       "Keep a minimum warm instance by setting Knative's `minScale: 1` to avoid cold starts for this function",
       "Increase the Knative Service's `resources.limits.cpu` to speed up JIT compilation and reduce initialization time",
-      "Convert the function to a long-running Deployment to avoid the serverless model's cold start limitations",
+      "Convert the function to a long-running `Deployment` to avoid the serverless model's cold start limitations",
       "Disable health checks entirely so the container is not killed during its lengthy initialization sequence"
     ],
     answer: 0,
@@ -1306,7 +1306,7 @@ var questions = [
     options: [
       "The change was pushed to a different branch that ArgoCD is not currently tracking—verify `targetRevision` in the Application spec",
       "ArgoCD caches the last-known Git state indefinitely and requires a manual `argocd app refresh` to detect any new commits",
-      "The Kubernetes cluster has reached its resource quota limit in the target namespace, preventing any new rollouts from starting",
+      "The Kubernetes cluster has reached its `ResourceQuota` limit in the target namespace, preventing any new rollouts from starting",
       "ArgoCD detected the change but its reconciliation loop is paused—a configured sync window restriction is blocking this application"
     ],
     answer: 0,
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A pod's liveness probe uses a command: `exec: [\"cat\", \"/tmp/healthy\"]`. The application creates this file on startup and deletes it when it detects a fatal error. What happens after the file is deleted?",
     diagram: '<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="160" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">Exec Liveness Probe Flow</text><rect x="25" y="55" width="85" height="35" rx="5" fill="#264653" stroke="#2a9d8f" stroke-width="1.5"/><text x="67" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">/tmp/healthy</text><text x="67" y="82" text-anchor="middle" fill="#2a9d8f" font-size="9">(exit ???)</text><line x1="110" y1="72" x2="130" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="130" y="55" width="85" height="35" rx="5" fill="#6b2c3b" stroke="#e76f51" stroke-width="1.5"/><text x="172" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">File deleted</text><text x="172" y="82" text-anchor="middle" fill="#e76f51" font-size="9">cat fails (exit ???)</text><line x1="215" y1="72" x2="235" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="235" y="55" width="70" height="35" rx="5" fill="#3d405b" stroke="#888" stroke-width="1.5"/><text x="270" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">Failures</text><text x="270" y="82" text-anchor="middle" fill="#e0e0e0" font-size="9">counted</text><line x1="305" y1="72" x2="320" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a85)"/><rect x="320" y="55" width="60" height="35" rx="5" fill="#7b2d26" stroke="#e63946" stroke-width="1.5"/><text x="350" y="70" text-anchor="middle" fill="#e0e0e0" font-size="9">???</text><text x="350" y="82" text-anchor="middle" fill="#e0e0e0" font-size="9"></text><text x="200" y="125" text-anchor="middle" fill="#aaa" font-size="10">What happens after repeated probe failures?</text><text x="200" y="145" text-anchor="middle" fill="#aaa" font-size="10">App self-signals unhealthy by removing the marker file</text><defs><marker id="a85" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/></marker></defs></svg>',
     options: [
-      "The kubelet sends a SIGTERM to the application process, and the termination grace period begins for shutdown",
+      "The `kubelet` sends a SIGTERM to the application process, and the termination grace period begins for shutdown",
       "The probe command returns a non-zero exit code, and after `failureThreshold` failures the kubelet restarts the container",
       "The pod is removed from Service endpoints but the container continues running indefinitely in a degraded serving state",
       "The kubelet waits indefinitely for the `/tmp/healthy` file to be recreated before taking any corrective restart action"
@@ -1368,7 +1368,7 @@ var questions = [
     text: "A pod fails admission with: `Error from server (Forbidden): pods \"test\" is forbidden: violates PodSecurity \"restricted:latest\"`. The pod spec has `runAsNonRoot: true` and `allowPrivilegeEscalation: false`. What else might the `restricted` policy require?",
     diagram: null,
     options: [
-      "The pod should set `hostNetwork: true` because the restricted policy permits host networking (e.g., for trusted workloads)",
+      "The pod should set `hostNetwork: true` because the `restricted` policy permits host networking (e.g., for trusted workloads)",
       "The pod must have `resources.limits` set to zero to meet the restricted policy's compute allocation constraints",
       "The pod must drop all capabilities (`capabilities.drop: [\"ALL\"]`) and set a `seccompProfile` (e.g., `RuntimeDefault`)",
       "The pod must use the `default` ServiceAccount with `automountServiceAccountToken: false` to satisfy the restricted policy"
@@ -1530,7 +1530,7 @@ var questions = [
     options: [
       "The `Local` external traffic policy is deprecated in recent Kubernetes versions; NodePort Services must use `Cluster` instead",
       "The `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
-      "With `externalTrafficPolicy: Local`, kube-proxy only routes to pods on the same node; nodes without a pod drop the traffic",
+      "With `externalTrafficPolicy: Local`, `kube-proxy` only routes to pods on the same node; nodes without a pod drop the traffic",
       "When using `Local` external traffic policy, the CNI plugin silently falls back to the default `Cluster` behavior"
     ],
     answer: 2,

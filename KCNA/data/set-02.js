@@ -82,7 +82,7 @@ var questions = [
       "A single file called `configmap.yaml` that combines both keys and their corresponding values",
       "A directory with two files, `app.properties` and `logging.conf`, each holding its value",
       "Two subdirectories named after the keys, each containing an `index` file with the data",
-      "A single JSON file at `/etc/config/data.json` containing both key-value pairs merged"
+      "A single JSON file at `/etc/config/data.json` containing both `key-value` pairs merged"
     ],
     answer: 1,
     explanation: "When a ConfigMap is mounted as a volume, each key in the ConfigMap becomes a file in the mount directory, and the file's content is the key's value. So `/etc/config/app.properties` and `/etc/config/logging.conf` will each exist as regular files. Kubernetes does not merge keys into a single file, create subdirectories per key, or produce JSON output.\n\nWhy other options are wrong:\n- A: Kubernetes does not merge ConfigMap keys into a single configmap.yaml file\n- C: ConfigMap keys become files directly in the mount directory, not subdirectories with index files\n- D: No data.json file is produced; each key becomes its own separate file\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#add-configmap-data-to-a-volume",
@@ -145,7 +145,7 @@ var questions = [
     options: [
       "`Burstable` pods are evicted before `Guaranteed` pods when the node is under memory pressure from workloads",
       "Both pods have equal eviction priority since they both have resource values explicitly specified in their `spec`",
-      "This pod is protected from eviction because it has a `limits.memory` value set which prevents OOM killing",
+      "This pod is protected from eviction because it has a `limits.memory` value set which prevents `OOM` killing",
       "The pod with the higher absolute `limits.memory` value is evicted first because allocation size determines priority"
     ],
     answer: 0,
@@ -194,7 +194,7 @@ var questions = [
     diagram: null,
     options: [
       "Mount the ConfigMap volume with `readOnly: true` and use `subPath` to target `settings.yaml`",
-      "Use an init container to copy ConfigMap data to an emptyDir, then mount that volume read-only",
+      "Use an init container to copy `ConfigMap` data to an `emptyDir`, then mount that volume read-only",
       "Set `immutable: true` on the ConfigMap and mount normally since immutability implies read-only",
       "Mount the ConfigMap volume at `/app/config` using `items` to select `settings.yaml` as read-only"
     ],
@@ -359,7 +359,7 @@ var questions = [
     options: [
       "Write a CronJob that runs `kubectl describe resourcequota` and parses output with a shell script",
       "Use Prometheus `kube_resourcequota` metrics and create alerting rules on usage-to-hard ratios",
-      "Enable the Kubernetes audit log, then configure filters to capture ResourceQuota-related events",
+      "Enable the Kubernetes audit log, then configure filters to capture `ResourceQuota`-related events",
       "Deploy a sidecar container in every pod that reports its own CPU usage to a central database"
     ],
     answer: 1,
@@ -448,7 +448,7 @@ var questions = [
     diagram: null,
     options: [
       "Use `--from-literal` with the entire file content pasted as a single escaped string on the CLI",
-      "Convert the YAML to JSON and store it as a Secret; Secrets support larger data payloads",
+      "Convert the YAML to JSON and store it as a `Secret`; Secrets support larger data payloads",
       "Split the file into 50 individual keys, one per line, and reassemble them inside the container",
       "Use `--from-file=config.yaml` to create the ConfigMap; file content stored under that key"
     ],
@@ -825,8 +825,8 @@ var questions = [
     options: [
       "Create versioned ConfigMaps (`config-v1`, `config-v2`) and have each Deployment reference its own",
       "Store both versions' config in one ConfigMap with keys prefixed by version (e.g., `v1-flags`, `v2-flags`)",
-      "Use a single ConfigMap and toggle feature flags with environment variables set on each individual pod",
-      "Use a single ConfigMap and rely on the application to detect its own version and load correct flags"
+      "Use a single `ConfigMap` and toggle feature flags with environment variables set on each individual pod",
+      "Use a single `ConfigMap` and rely on the application to detect its own version and load correct flags"
     ],
     answer: 0,
     explanation: "Creating separate versioned ConfigMaps ensures that each Deployment version has an independent, clearly defined configuration. This avoids the complexity of version detection logic in the application and prevents accidental configuration changes from affecting the wrong version. A single ConfigMap with version-prefixed keys adds parsing complexity. Relying on application-level version detection violates the separation of concerns principle.\n\nWhy other options are wrong:\n- B: Version-prefixed keys in one ConfigMap adds parsing complexity and risk of accidental cross-version changes\n- C: Toggling flags via env vars in a single ConfigMap creates coupling between versions\n- D: Application-level version detection violates separation of concerns between config and code\n\nReference: https://kubernetes.io/docs/concepts/configuration/configmap/",
@@ -928,7 +928,7 @@ var questions = [
     diagram: null,
     options: [
       "Raw binary bytes — Kubernetes handles the encoding transparently on behalf of the user",
-      "Hexadecimal string representation of the binary data with no additional encoding needed",
+      "Hexadecimal string representation of the binary `data` with no additional encoding needed",
       "Base64-encoded string — `binaryData` fields must be base64-encoded before submission",
       "URL-encoded string using `percent-encoding` for all non-ASCII bytes in the binary content"
     ],
@@ -975,8 +975,8 @@ var questions = [
     text: "A pod with no resource requests or limits is running on a node. The node comes under memory pressure. In which order does Kubernetes evict pods?",
     diagram: null,
     options: [
-      "Pods are evicted alphabetically by name to ensure deterministic and repeatable behavior on every node",
-      "Pods are evicted randomly — there is no guaranteed or deterministic order during node pressure events",
+      "`Pods` are evicted alphabetically by name to ensure deterministic and repeatable behavior on every node",
+      "`Pods` are evicted randomly — there is no guaranteed or deterministic order during node pressure events",
       "`BestEffort` pods are evicted first, then `Burstable` exceeding requests, then `Guaranteed` pods",
       "`Guaranteed` pods are evicted first, then `Burstable`, then `BestEffort` as reserved resources are reclaimed"
     ],
@@ -1073,7 +1073,7 @@ var questions = [
     text: "A pod fails to start with the error: `Error: couldn't find key username in ConfigMap default/app-config`. The ConfigMap `app-config` exists in the `default` namespace. What is the most likely cause?",
     diagram: null,
     options: [
-      "The ConfigMap is immutable and new keys like `username` are unlikely to be resolved after initial creation",
+      "The `ConfigMap` is immutable and new keys like `username` are unlikely to be resolved after initial creation",
       "The pod and ConfigMap are in different namespaces despite both appearing to be in `default` namespace",
       "The ConfigMap was created with `--from-file` so the key is the filename, not `username` as expected",
       "ConfigMaps created with `kubectl apply` do not support direct key references from pod specifications"
@@ -1089,7 +1089,7 @@ var questions = [
     text: "A pod uses a projected volume to combine a ConfigMap and a Secret into the same directory at `/etc/combined`. Both the ConfigMap and Secret have a key called `config.yaml`. What happens?",
     diagram: null,
     options: [
-      "The pod fails to start; duplicate keys are not allowed in projected volume source definitions",
+      "The pod fails to start; duplicate keys are not allowed in `projected` volume source definitions",
       "Both files are created with automatic suffixes: `config.yaml.configmap` and `config.yaml.secret`",
       "The last source in the projected volume `sources` list wins; its `config.yaml` overwrites the other",
       "Kubernetes automatically merges the contents of both `config.yaml` files into a single combined file"
@@ -1263,7 +1263,7 @@ var questions = [
     text: "A team wants to use a single ConfigMap to provide different configuration files to different containers in the same pod. Container A needs only `app-a.conf` at its mount path and container B needs only `app-b.conf` at its mount path. Neither container should see the other's configuration file. Both files are keys in the same ConfigMap. How should the volumes and mounts be configured?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Selective ConfigMap Mounting</text><rect x="130" y="50" width="140" height="40" rx="5" fill="#326CE5"/><text x="200" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap: app-config</text><line x1="160" y1="90" x2="90" y2="130" stroke="#555" stroke-width="1"/><line x1="240" y1="90" x2="310" y2="130" stroke="#555" stroke-width="1"/><rect x="30" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="95" y="150" text-anchor="middle" fill="white" font-size="11">Container A</text><text x="95" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-a.conf</text><rect x="240" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="305" y="150" text-anchor="middle" fill="white" font-size="11">Container B</text><text x="305" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-b.conf</text><text x="200" y="215" text-anchor="middle" fill="#aaa" font-size="10">How can each container receive only its own config file?</text></svg>',
     options: [
-      "Define one volume with the full ConfigMap, mount it in both containers, and let each read only its own file",
+      "Define one volume with the full `ConfigMap`, mount it in both containers, and let each read only its own file",
       "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections by container name",
       "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
       "Create two separate ConfigMaps because a single ConfigMap does not support per-container key selection"
@@ -1476,7 +1476,7 @@ var questions = [
       "The Dockerfile `ENV` value takes precedence because it is part of the immutable container image layer",
       "The Kubernetes-defined environment variable overrides the Dockerfile `ENV` value at container start",
       "The container sees both values concatenated with a colon separator at the environment variable key",
-      "An error occurs because duplicate environment variable names are not allowed in container runtimes"
+      "An error occurs because duplicate environment variable names are not allowed in `container runtimes`"
     ],
     answer: 1,
     explanation: "Environment variables set in the Kubernetes pod spec override those defined in the container image's Dockerfile. When the container starts, the Kubernetes-defined `DATABASE_URL` from the ConfigMap replaces the image's default value. This is by design and is a core feature of configuration management in Kubernetes. Duplicate names are allowed — the Kubernetes value simply takes precedence. Values are not concatenated.\n\nWhy other options are wrong:\n- A: Dockerfile ENV values are overridden by Kubernetes-defined env vars, not the other way around\n- C: Values are not concatenated; the Kubernetes value replaces the Dockerfile value entirely\n- D: Duplicate environment variable names are allowed; the Kubernetes-set value takes precedence\n\nReference: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/",
@@ -1491,7 +1491,7 @@ var questions = [
     options: [
       "Remove `get` and `list` verbs for Secrets from the Role, keeping `create` and pod reference permissions",
       "Set `readOnly: true` on the namespace metadata to prevent `kubectl get` from reading Secret data contents",
-      "Enable Secret encryption at rest on the cluster — this prevents `kubectl get` from displaying decoded values",
+      "Enable `Secret` encryption at rest on the cluster — this prevents `kubectl get` from displaying decoded values",
       "Remove all Secret permissions from the `Role` — pods can still mount Secrets without RBAC user authorization"
     ],
     answer: 0,

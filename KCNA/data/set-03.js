@@ -72,7 +72,7 @@ var questions = [
     text: "After creating a `ClusterIP` Service, an SRE checks `kubectl get endpoints` and sees `<none>` for the Service. The pods are running. What is the most likely cause?",
     diagram: null,
     options: [
-      "The pods are running but kube-proxy has not yet started on their assigned nodes",
+      "The pods are running but `kube-proxy` has not yet started on their assigned nodes",
       "The `ClusterIP` has not yet been allocated by the API server for the Service",
       "CoreDNS has not propagated the endpoint records into etcd for this Service",
       "The Service's `selector` labels do not match the labels on the running pods"
@@ -88,7 +88,7 @@ var questions = [
     text: "A cluster administrator wants kube-proxy to use IPVS mode instead of the default iptables mode. Which component's configuration must be changed?",
     diagram: null,
     options: [
-      "The kubelet configuration on every node, setting the `proxyMode: ipvs` field",
+      "The `kubelet` configuration on every node, setting the `proxyMode: ipvs` field",
       "The CNI plugin configuration files under `/etc/cni/net.d/` on each node",
       "The kube-controller-manager startup flag `--proxy-mode=ipvs` in the manifest",
       "The kube-proxy `ConfigMap` or startup flags, setting the `mode: ipvs` field"
@@ -105,7 +105,7 @@ var questions = [
     diagram: null,
     options: [
       "All egress is still allowed because the policy only lists `Ingress` in its `policyTypes` field",
-      "All egress is blocked because any `NetworkPolicy` implicitly denies all traffic directions",
+      "All `egress` is blocked because any `NetworkPolicy` implicitly denies all traffic directions",
       "Egress to the internet is blocked but `Egress` within the cluster namespace is still permitted",
       "The policy is rejected by the API server because `policyTypes` must list both directions"
     ],
@@ -472,7 +472,7 @@ var questions = [
     text: "A team configures a `NetworkPolicy` with an empty `podSelector: {}` in namespace `production`. What is the scope of this policy?",
     diagram: null,
     options: [
-      "It applies to all pods across every namespace in the entire cluster",
+      "It applies to all pods across every `namespace` in the entire cluster",
       "It applies only to pods that have no labels in the `production` namespace",
       "It applies to every pod currently running in the `production` namespace",
       "The policy is invalid and will be rejected by the Kubernetes API server"
@@ -553,7 +553,7 @@ var questions = [
     diagram: null,
     options: [
       "They share the pod's network namespace and communicate via `localhost`",
-      "They each get a separate IP address and must use a Service to connect",
+      "They each get a separate IP address and must use a `Service` to connect",
       "They communicate only through a shared `emptyDir` volume on the node",
       "The CNI plugin creates a virtual bridge between the two container endpoints"
     ],
@@ -795,7 +795,7 @@ var questions = [
       "Delete the `Deployment` and recreate it with the new image tag specified in the pod template spec",
       "Use `kubectl set image` with a `RollingUpdate` strategy to replace pods incrementally in place",
       "Scale the `Deployment` to zero replicas, update the image tag, then scale back up to the count",
-      "Edit the `Ingress` to point to a new Service while the old Deployment is still running and ready"
+      "Edit the `Ingress` to point to a new `Service` while the old Deployment is still running and ready"
     ],
     answer: 1,
     explanation: "`kubectl set image` combined with a `RollingUpdate` strategy incrementally replaces old pods with new ones, ensuring continuous availability. Deleting and recreating causes downtime. Scaling to zero before updating guarantees downtime. Editing the Ingress alone does not update the pod image and creates a split configuration that is hard to manage.\n\nWhy other options are wrong:\n- A: Deleting and recreating a Deployment causes downtime while old pods are removed and new ones start.\n- C: Scaling to zero before updating guarantees a period of zero availability (downtime).\n- D: Editing the Ingress alone does not update the pod image; it only changes routing without deploying new code.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -856,7 +856,7 @@ var questions = [
     text: "A `NetworkPolicy` allows ingress from pods labeled `role: frontend` to pods labeled `app: backend` on port 443. A pod labeled both `role: frontend` and `app: backend` sends traffic to another `app: backend` pod on port 443. Is this traffic allowed?",
     diagram: null,
     options: [
-      "No, because the policy excludes pods matching both the source and destination selectors",
+      "No, because the policy excludes pods matching both the source and destination `selectors`",
       "Yes, but only if an explicit egress rule also allows port 443 outbound from the sender",
       "No, because the policy only allows traffic from pods that lack the `app: backend` label",
       "Yes, because the sending pod matches `role: frontend` which is allowed by the ingress rule"
@@ -937,7 +937,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="30" width="90" height="35" rx="4" fill="#326CE5"/><text x="55" y="52" text-anchor="middle" fill="#fff" font-size="10">app: web</text><rect x="10" y="130" width="90" height="35" rx="4" fill="#FF9800"/><text x="55" y="152" text-anchor="middle" fill="#fff" font-size="10">app: api</text><rect x="250" y="75" width="110" height="40" rx="4" fill="#4CAF50"/><text x="305" y="100" text-anchor="middle" fill="#fff" font-size="11">app: server</text><line x1="100" y1="48" x2="250" y2="90" stroke="#326CE5" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="58" fill="#326CE5" font-size="9">port 80 ?</text><line x1="100" y1="148" x2="250" y2="100" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="6,3"/><text x="170" y="140" fill="#FF9800" font-size="9">port 443 ?</text><text x="145" y="15" fill="#ccc" font-size="10">Policy A</text><text x="145" y="185" fill="#ccc" font-size="10">Policy B</text></svg>',
     options: [
       "Only `Policy A` takes effect — it was created first and has priority in the namespace",
-      "`Policy B` overrides Policy A — it was created more recently and takes full precedence",
+      "`Policy B` overrides `Policy A` — it was created more recently and takes full precedence",
       "Both policies merge additively — ingress from `web` on 80 AND `api` on 443 is allowed",
       "The policies conflict — both `NetworkPolicy` rules cancel each other out and deny all ingress"
     ],
@@ -1339,7 +1339,7 @@ var questions = [
       "`ConfigMap` storing key-value configuration data",
       "`Secret` storing sensitive credential information",
       "`Endpoints` or `EndpointSlice` resource objects",
-      "`ServiceAccount` for pod identity and API access"
+      "`ServiceAccount` for `pod` identity and API access"
     ],
     answer: 2,
     explanation: "The `Endpoints` (and the newer `EndpointSlice`) resources store the IP addresses of pods that back a Service. kube-proxy watches these resources and updates iptables/IPVS rules accordingly. ConfigMaps store configuration data. Secrets store sensitive data. ServiceAccounts provide pod identity for API access.\n\nWhy other options are wrong:\n- A: ConfigMaps store generic key-value configuration data, not service-to-pod endpoint mappings.\n- B: Secrets store sensitive credential data, not service endpoint IP mappings.\n- D: ServiceAccounts provide pod identity for API access, not service endpoint routing information.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/",
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A pod uses `dnsPolicy: None` and provides custom `dnsConfig` with `nameservers: [\"8.8.8.8\"]`. Can this pod resolve cluster-internal Service names?",
     diagram: null,
     options: [
-      "Yes, because kube-proxy intercepts cluster-internal DNS queries regardless of nameserver",
+      "Yes, because `kube-proxy` intercepts cluster-internal DNS queries regardless of nameserver",
       "Yes, because all DNS queries in Kubernetes are first routed through CoreDNS by the container",
       "No, because queries go to `8.8.8.8` which has no knowledge of cluster-internal Service names",
       "No, because `dnsPolicy: None` disables all kubelet-injected DNS settings for the pod entirely"
@@ -1592,7 +1592,7 @@ var questions = [
     text: "A cluster administrator notices that the Endpoints object for a Service with 5000 pods is very large and causes slow API responses. Which feature should they ensure is enabled?",
     diagram: null,
     options: [
-      "Horizontal Pod Autoscaler to reduce the pod count and shrink the Endpoints object size",
+      "Horizontal Pod Autoscaler to reduce the `pod` count and shrink the Endpoints object size",
       "Pod topology spread constraints to distribute pods evenly and reduce endpoint churn rate",
       "`EndpointSlices`, which split endpoints into smaller objects for efficient update handling",
       "`ServiceTopology`, which filters endpoints by zone to reduce the overall Endpoints object size"

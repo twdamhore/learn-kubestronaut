@@ -512,3 +512,45 @@ No issues found. All 100 questions were reviewed for option length balance (max/
 
 ### s01-q085 — giveaway: `, and` unique to correct answer
 - Option D: Changed `"The PVC is in a different namespace than the PersistentVolume it should bind to for use"` to `"The PVC is in a different namespace, and the PersistentVolume it should bind to cannot be found"`.
+
+## Round 47d — 2026-02-25
+**File**: `set-01.js`
+**Issues fixed**: 14 backtick-balance fixes across 12 questions
+
+### s01-q013 — backtick balance: correct 3x more than distractor avg
+- Option D: Added backtick formatting to `container runtime`. Changed `"Pods are managed by the container runtime, which has no dependency on any Kubernetes control plane component"` to `"Pods are managed by the \`container runtime\`, which has no dependency on any Kubernetes control plane component"`.
+
+### s01-q020 — backtick balance: correct 3x more than distractor avg
+- Option B: Added backtick formatting to `Deployment`. Changed `"Scale the Deployment to zero replicas and back to one to trigger a fresh pull of the container image"` to `"Scale the \`Deployment\` to zero replicas and back to one to trigger a fresh pull of the container image"`.
+- Option D: Added backtick formatting to `Pod`. Changed `"Edit the Pod spec to add \`restartPolicy: Never\`..."` to `"Edit the \`Pod\` spec to add \`restartPolicy: Never\`..."`.
+
+### s01-q030 — backtick balance: correct 2x more than distractor avg
+- Option B: Added backtick formatting to `etcd`. Changed `"...which automatically enables AES encryption in etcd"` to `"...which automatically enables AES encryption in \`etcd\`"`.
+
+### s01-q041 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `emptyDir`. Changed `"The emptyDir data is migrated..."` to `"The \`emptyDir\` data is migrated..."`.
+
+### s01-q049 — backtick balance: correct 3x more than distractor avg
+- Option B: Added backtick formatting to `cluster network`. Changed `"...from outside the cluster network"` to `"...from outside the \`cluster network\`"`.
+- Option D: Added backtick formatting to `Pod`. Changed `"By connecting to the Pod IP..."` to `"By connecting to the \`Pod\` IP..."`.
+
+### s01-q066 — backtick balance: correct 2x more than distractor avg
+- Option A: Added backtick formatting to `kubelet`. Changed `"...the kubelet avoids evicting..."` to `"...the \`kubelet\` avoids evicting..."`.
+
+### s01-q068 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `Deployment`. Changed `"A Deployment with a custom cron script..."` to `"A \`Deployment\` with a custom cron script..."`.
+
+### s01-q082 — backtick balance: correct 2x more than distractor avg
+- Option B: Added backtick formatting to `Ubuntu`. Changed `"Use a full Ubuntu or Debian base image..."` to `"Use a full \`Ubuntu\` or Debian base image..."`.
+
+### s01-q085 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `PVC`. Changed `"The PVC requests more capacity..."` to `"The \`PVC\` requests more capacity..."`.
+
+### s01-q091 — backtick balance: correct 3x more than distractor avg
+- Option D: Added backtick formatting to `CNI`. Changed `"Through the CNI plugin..."` to `"Through the \`CNI\` plugin..."`.
+
+### s01-q097 — backtick balance: correct 3x more than distractor avg
+- Option A: Added backtick formatting to `ClusterIP`. Changed `"The ClusterIP assigned to the Service..."` to `"The \`ClusterIP\` assigned to the Service..."`.
+
+### s01-q099 — backtick balance: correct 3x more than distractor avg
+- Option C: Added backtick formatting to `kubelet`. Changed `"The kubelet, which generates..."` to `"The \`kubelet\`, which generates..."`.

@@ -248,8 +248,8 @@ var questions = [
     text: "A DaemonSet Pod runs a log collector on every node. During a drain operation, you notice the DaemonSet Pod is not evicted. Why?",
     diagram: null,
     options: [
-      "A. DaemonSet Pods have a higher scheduling priority than regular workload Pods do",
-      "B. DaemonSet Pods include built-in tolerations that prevent eviction during drain",
+      "A. `DaemonSet` Pods have a higher scheduling priority than regular workload Pods do",
+      "B. `DaemonSet` Pods include built-in tolerations that prevent eviction during drain",
       "C. The `kubectl drain` command skips Pods in the `kube-system` namespace by default",
       "D. `kubectl drain` errors on DaemonSet Pods unless `--ignore-daemonsets` is passed"
     ],
@@ -393,7 +393,7 @@ var questions = [
     diagram: null,
     options: [
       "A. kube-proxy runs as a static Pod managed by the `kubelet` on each node",
-      "B. kube-proxy must be manually upgraded on each node via SSH connection",
+      "B. `kube-proxy` must be manually upgraded on each node via SSH connection",
       "C. kube-proxy is compiled directly into the kubelet binary on each node",
       "D. kube-proxy runs as a DaemonSet and upgrades via `kubeadm upgrade`"
     ],
@@ -411,7 +411,7 @@ var questions = [
       "A. No, placing in zone A would make the skew 3 which exceeds `maxSkew: 1`",
       "B. Yes, `maxSkew` only applies to scaling down, not during new scheduling",
       "C. Yes, but only when zone A has significantly more allocatable resources",
-      "D. No, topologySpreadConstraints requires exactly balanced distribution"
+      "D. No, `topologySpreadConstraints` requires exactly balanced distribution"
     ],
     answer: 0,
     explanation: "With zone A at 3 Pods and zone B at 1 Pod, the current skew is 2 (3-1). Adding another Pod to zone A would increase it to 3 (4-1), violating `maxSkew: 1`. The scheduler must place the Pod in zone B to keep the skew within bounds. The `whenUnsatisfiable` field controls behavior when constraints cannot be met.\n\nWhy other options are wrong:\n- B: maxSkew applies during scheduling, not only during scaling down\n- C: Available resources do not override maxSkew constraints in topology spread\n- D: topologySpreadConstraints use maxSkew to control allowed imbalance, not strict equality\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
@@ -602,7 +602,7 @@ var questions = [
     options: [
       "A. The Pod is immediately evicted and rescheduled to a matching node",
       "B. The Pod enters a `Pending` state until a new node with the label exists",
-      "C. The kubelet terminates the Pod during its next regular sync cycle run",
+      "C. The `kubelet` terminates the Pod during its next regular sync cycle run",
       "D. The Pod continues running under the `IgnoredDuringExecution` behavior"
     ],
     answer: 3,
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "A. Manual SSH into each control-plane node to run `etcdctl` backup scripts on a weekly basis",
       "B. Automated CronJobs that run `etcdctl snapshot save` and store backups in object store",
-      "C. Relying on the cloud provider to handle full VM backups including the etcd data volume",
+      "C. Relying on the cloud provider to handle full VM backups including the `etcd` data volume",
       "D. Taking etcd backups only before planned maintenance windows and major upgrade events"
     ],
     answer: 1,
@@ -873,7 +873,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Pod affinity with `topologyKey: topology.kubernetes.io/zone` and app selectors",
-      "B. Deploy collectors as a DaemonSet with zone-aware scheduling across the nodes",
+      "B. Deploy collectors as a `DaemonSet` with zone-aware scheduling across the nodes",
       "C. Set `hostNetwork: true` on collector Pods for direct node-level network access",
       "D. Configure a headless Service for the collector Pods in each availability zone"
     ],
@@ -1032,7 +1032,7 @@ var questions = [
     text: "A CI/CD pipeline must validate that a Kubernetes manifest does not schedule Pods on control-plane nodes. Which tool can perform this validation before deployment?",
     diagram: null,
     options: [
-      "A. `kubectl apply --dry-run=server` to simulate the deployment on cluster",
+      "A. `kubectl apply --dry-run=server` to simulate the `Deployment` on cluster",
       "B. `kubectl auth can-i` to verify user permissions for the operation",
       "C. `helm lint` to validate the chart syntax and its template rendering",
       "D. `OPA Gatekeeper` or `Kyverno` policy engine with a custom constraint"
@@ -1066,7 +1066,7 @@ var questions = [
     options: [
       "A. `globalDefault` only applies to Pods created after the PriorityClass was defined",
       "B. Existing Pods need to be restarted to pick up the newly set global default priority",
-      "C. The PriorityClass value exceeds the maximum allowed for any global default setting",
+      "C. The `PriorityClass` value exceeds the maximum allowed for any global default setting",
       "D. `globalDefault` applies retroactively -- existing Pods inherit the new value"
     ],
     answer: 0,
@@ -1179,7 +1179,7 @@ var questions = [
       "A. The snapshot file was originally taken from a completely different cluster altogether",
       "B. The `--initial-cluster-token` was not changed during restore, causing conflict",
       "C. The API server version is incompatible with the `etcd` version in the restored backup",
-      "D. The etcd TLS certificates have expired and must be reissued before the restore step"
+      "D. The `etcd` TLS certificates have expired and must be reissued before the restore step"
     ],
     answer: 1,
     explanation: "When restoring an etcd snapshot, a new `--initial-cluster-token` must be specified to prevent the restored member from joining the old cluster. Without a unique token, the restored etcd may attempt to reconcile with stale cluster state, causing database conflicts.\n\nWhy other options are wrong:\n- A: A snapshot from a different cluster would have different data entirely, not cause a database-out-of-date error\n- C: API server and etcd version incompatibility would cause connection or protocol errors, not stale data\n- D: Expired TLS certificates would cause authentication errors, not database-out-of-date messages\n\nReference: https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster",
@@ -1321,7 +1321,7 @@ var questions = [
     diagram: null,
     options: [
       "A. It sets the maximum time for a graceful Pod shutdown during `eviction` operations now",
-      "B. It controls the rate at which Pods are evicted from nodes during a drain operation run",
+      "B. It controls the rate at which Pods are evicted from nodes during a `drain` operation run",
       "C. It defines how long the controller waits before evicting Pods from `NotReady` nodes",
       "D. It sets the timeout for Pod readiness probes before marking Pods as not available yet"
     ],
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A CI/CD pipeline must verify that node maintenance operations complete successfully before deploying new application versions. Which approach best integrates cluster readiness checks into the pipeline?",
     diagram: null,
     options: [
-      "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if needed",
+      "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for `Deployment` recovery",
       "B. Deploy to a separate `staging` cluster that has a different maintenance schedule",
       "C. Add a manual approval gate in the `CI/CD` pipeline where an operator checks health",
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploy"

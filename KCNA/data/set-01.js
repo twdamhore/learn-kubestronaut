@@ -203,7 +203,7 @@ var questions = [
       "Worker nodes cache the full cluster state locally and operate independently of the entire control plane",
       "The `kube-proxy` takes over Pod management duties when the control plane becomes unavailable to the cluster",
       "The `kubelet` on each node continues managing running Pods using local state, without control plane access",
-      "Pods are managed by the container runtime, which has no dependency on any Kubernetes control plane component"
+      "Pods are managed by the `container runtime`, which has no dependency on any Kubernetes control plane component"
     ],
     answer: 2,
     explanation: "The `kubelet` on each worker node manages Pods on that node and maintains local knowledge of the Pods it is running. When the control plane (including `etcd`) goes down, the kubelet continues to keep existing Pods running based on its last known state. However, no new Pods can be scheduled and no changes can be made. Worker nodes do not cache the full cluster state. `kube-proxy` handles networking, not Pod management. The container runtime executes containers but relies on the kubelet for orchestration decisions.\n\nWhy other options are wrong:\n- A: Worker nodes do not cache the full cluster state; they only know about their own assigned Pods.\n- B: kube-proxy handles Service networking rules, not Pod management.\n- D: The container runtime executes containers but relies on the kubelet for restart and lifecycle decisions.\n\nReference: https://kubernetes.io/docs/concepts/architecture/nodes/",
@@ -313,9 +313,9 @@ var questions = [
     diagram: null,
     options: [
       "Delete the Pod and recreate it, since `CrashLoopBackOff` is usually a transient scheduling error",
-      "Scale the Deployment to zero replicas and back to one to trigger a fresh pull of the container image",
+      "Scale the `Deployment` to zero replicas and back to one to trigger a fresh pull of the container image",
       "Check the container logs with `kubectl logs <pod-name>` and use the `--previous` flag for crash data",
-      "Edit the Pod spec to add `restartPolicy: Never` so the container does not restart before investigation"
+      "Edit the `Pod` spec to add `restartPolicy: Never` so the container does not restart before investigation"
     ],
     answer: 2,
     explanation: "The first diagnostic step for a `CrashLoopBackOff` is to examine the container logs. Using `kubectl logs <pod-name> --previous` shows the logs from the last crashed container instance, which typically reveals the error. Deleting and recreating the Pod without understanding the root cause will likely result in the same crash. Scaling does not help diagnose the issue. You cannot edit a running Pod's restart policy.\n\nWhy other options are wrong:\n- A: Deleting and recreating the Pod without understanding the root cause will likely repeat the crash.\n- B: Scaling to zero and back does not help diagnose the issue.\n- D: You cannot edit a running Pod's restartPolicy; Pods are largely immutable after creation.\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
@@ -473,7 +473,7 @@ var questions = [
     diagram: null,
     options: [
       "Enable encryption at rest for `etcd` by configuring an `EncryptionConfiguration` on the API server",
-      "Configure RBAC to restrict access to Secrets, which automatically enables AES encryption in etcd",
+      "Configure RBAC to restrict access to Secrets, which automatically enables AES encryption in `etcd`",
       "Store Secrets as `ConfigMaps` instead, since ConfigMaps support native encryption in the `etcd` store",
       "Use `kubectl create secret --encrypt` flag to encrypt the Secret data before storing it in etcd"
     ],
@@ -648,7 +648,7 @@ var questions = [
     text: "A developer creates a Pod with an `emptyDir` volume shared between two containers. Later, the Pod is rescheduled to a different node. What happens to the data stored in the `emptyDir` volume?",
     diagram: null,
     options: [
-      "The emptyDir data is migrated to the new node because the kubelet handles Pod rescheduling",
+      "The `emptyDir` data is migrated to the new node because the kubelet handles Pod rescheduling",
       "The data persists on the original node and can be manually mounted on the new node later",
       "The data is preserved in `etcd` and restored automatically when the Pod starts on the new node",
       "The data is lost because `emptyDir` volumes share the same lifecycle as the Pod they belong to"
@@ -777,9 +777,9 @@ var questions = [
     diagram: null,
     options: [
       "By sending requests to `<any-node-ip>:31234`, where `kube-proxy` routes to Pods",
-      "By sending requests to `<cluster-ip>:31234` from outside the cluster network",
+      "By sending requests to `<cluster-ip>:31234` from outside the `cluster network`",
       "Through a DNS lookup of `<service-name>.svc.cluster.local:31234` from any network",
-      "By connecting to the Pod IP directly on port 31234 from external clients"
+      "By connecting to the `Pod` IP directly on port 31234 from external clients"
     ],
     answer: 0,
     explanation: "A `NodePort` Service opens the specified port (31234) on every node in the cluster. External clients can reach the application by sending requests to any node's IP address on that port. `kube-proxy` on each node forwards the traffic to the appropriate backing Pods. The cluster IP is internal only. The `svc.cluster.local` DNS is only resolvable within the cluster. Pod IPs are internal and the application port differs from the NodePort.\n\nWhy other options are wrong:\n- B: The ClusterIP is only routable within the cluster; external clients cannot use it.\n- C: The `.svc.cluster.local` DNS is only resolvable within the cluster, not from external hosts.\n- D: Pod IPs are internal to the cluster and the application port differs from the NodePort.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -1048,7 +1048,7 @@ var questions = [
     text: "A team notices that their Pods are being evicted from nodes during memory pressure events. They want to protect critical Pods from eviction. Which configuration provides the strongest protection against eviction?",
     diagram: null,
     options: [
-      "Set `spec.priority` to a high value; the kubelet avoids evicting high-priority Pods during pressure events",
+      "Set `spec.priority` to a high value; the `kubelet` avoids evicting high-priority Pods during pressure events",
       "Set resource `requests` equal to `limits` (Guaranteed QoS), making the Pod least likely to be evicted",
       "Set `spec.terminationGracePeriodSeconds` (grace period) to a very high value to delay eviction entirely",
       "Add the annotation `eviction.kubernetes.io/protected: true` to prevent eviction during memory pressure"
@@ -1080,7 +1080,7 @@ var questions = [
     text: "A team needs to run a report-generation task every day at midnight. The task should create a Pod, run the report, and then the Pod should terminate. If the task fails, it should retry up to 2 times. Which Kubernetes resource should they use?",
     diagram: null,
     options: [
-      "A Deployment with a custom cron script inside the container to trigger runs",
+      "A `Deployment` with a custom cron script inside the container to trigger runs",
       "A CronJob that creates a Job on the defined schedule with `backoffLimit: 2`",
       "A DaemonSet with a sleep loop that checks the system time and runs at midnight",
       "A Pod with `restartPolicy: Always` and a crontab entry inside the container"
@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "Use a multi-stage build with a minimal base image like `distroless` or `alpine` for the final production stage",
-      "Use a full Ubuntu or Debian base image and remove unnecessary packages with `apt-get remove` in a final layer",
+      "Use a full `Ubuntu` or Debian base image and remove unnecessary packages with `apt-get remove` in a final layer",
       "Build the application on the host machine with native compilers and copy the binary into a `latest` tagged base image",
       "Use a build flag like `--squash` to compress all image layers into one, removing most unused files from the output"
     ],
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A team has a PersistentVolumeClaim that is stuck in `Pending` state. Running `kubectl describe pvc` shows the event: `no persistent volumes available for this claim and no storage class is set`. What is the most likely cause?",
     diagram: null,
     options: [
-      "The PVC requests more capacity than available disk space, storage quota, or node resources",
+      "The `PVC` requests more capacity than available disk space, storage quota, or node resources",
       "The `kube-scheduler` cannot find a suitable node with the requested volume type for the PVC",
       "The PVC has no `storageClassName`, there is no default StorageClass, and no PV matches",
       "The PVC is in a different namespace, and the PersistentVolume it should bind to cannot be found"
@@ -1451,7 +1451,7 @@ var questions = [
       "Through HTTP headers like `traceparent` from W3C Trace Context forwarded to downstream calls",
       "Through shared environment variables like `TRACE_ID` that all Pods in the cluster can read",
       "Through Kubernetes annotations on Pod objects that carry trace context, queried via the API server",
-      "Through the CNI plugin, which embeds trace IDs in the IP packet headers for network-level tracing"
+      "Through the `CNI` plugin, which embeds trace IDs in the IP packet headers for network-level tracing"
     ],
     answer: 0,
     explanation: "Trace context is propagated via HTTP headers. The W3C Trace Context standard defines the `traceparent` header, which carries the trace ID and span ID. Each service extracts this header from incoming requests, creates its own span, and forwards the header to downstream calls. Environment variables are static. Pod annotations are not updated per request. The CNI plugin handles network configuration, not application-level trace data.\n\nWhy other options are wrong:\n- B: Environment variables are static and set at Pod startup; they cannot carry per-request trace context.\n- C: Kubernetes annotations on Pods are not updated per request and cannot propagate trace context.\n- D: The CNI plugin handles network configuration, not application-level trace data in IP headers.\n\nReference: https://www.w3.org/TR/trace-context/",
@@ -1544,7 +1544,7 @@ var questions = [
     text: "A team creates an `ExternalName` Service pointing to `legacy-db.example.com`. When Pods query this Service by its internal name, what response do they receive from the cluster DNS?",
     diagram: null,
     options: [
-      "The ClusterIP assigned to the Service, which proxies traffic to the external hostname",
+      "The `ClusterIP` assigned to the Service, which proxies traffic to the external hostname",
       "A CNAME record resolving to `legacy-db.example.com`, with no ClusterIP or proxy used",
       "A direct TCP connection to the external hostname, handled by `kube-proxy` on the node",
       "An error, because Services are limited to routing traffic within the cluster network"
@@ -1578,7 +1578,7 @@ var questions = [
     options: [
       "The `kube-proxy` generates and distributes authentication tokens to all Pods in the cluster",
       "The `ServiceAccount` resource, which mounts a projected token volume into each Pod automatically",
-      "The kubelet, which generates a unique API key per Pod and stores it in an environment variable",
+      "The `kubelet`, which generates a unique API key per Pod and stores it in an environment variable",
       "The container runtime creates a certificate for each container signed by the cluster CA"
     ],
     answer: 1,

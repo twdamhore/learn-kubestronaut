@@ -770,3 +770,9 @@
 **Change:** Rewrote option A from "The new container image requires a different CPU architecture than the cluster's `amd64` worker nodes support" to "The new image targets a different architecture: `arm64`, and the cluster only has `amd64` nodes". This adds both a colon and ", and" to a distractor. Trimmed A to 117 chars (from 134 in interim version) to keep ratio at 1.114.
 
 ---
+
+## Round 47d — 2026-02-25
+**File**: `set-09.js`
+**Issues fixed**: 0 backtick-balance flags
+
+Set-09 had 0 backtick-balance flags. No changes needed.

@@ -187,7 +187,7 @@ var questions = [
       "A. Move credentials to a Secret object with `type: Opaque`, mount as a volume, and enable etcd encryption at rest for secrets",
       "B. Store credentials in the container image's environment file following `Factor III` (Config) since it separates config from code",
       "C. Use Factor VI (Processes) by storing credentials in the application's stateless process memory, and load them at startup from vault",
-      "D. Apply Factor IV (Backing Services) by hardcoding the database URL as an attached resource reference in the Deployment spec"
+      "D. Apply Factor IV (Backing Services) by hardcoding the database URL as an attached resource reference in the `Deployment` spec"
     ],
     answer: 0,
     explanation: "Factor III (Config) states that configuration, especially credentials, should be stored in the environment and not in code. However, using a ConfigMap for secrets is insecure because ConfigMaps are not encrypted and are broadly accessible. Moving to a Kubernetes Secret with encryption at rest satisfies both the Twelve-Factor principle of externalizing config and the security requirement. Mounting as a volume rather than environment variables is preferred because env vars can leak into logs and child processes.\n\nWhy other options are wrong:\n- B: Storing credentials in the container image violates both security and Factor III; config should be external to the image artifact\n- C: Factor VI (Processes) states processes should be stateless; storing credentials only in process memory means losing them on restart and does not address secure storage\n- D: Factor IV (Backing Services) says treat them as attached resources via URL/config; it does not advocate hardcoding URLs in Deployment specs\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -232,7 +232,7 @@ var questions = [
     text: "A Prometheus instance scraping 500 pods experiences high memory usage and slow queries. The team discovers that each pod exposes 2,000 unique time series with a label `request_id` that has unbounded cardinality. What is the correct approach to resolve this while maintaining useful metrics?",
     diagram: null,
     options: [
-      "A. Increase Prometheus memory allocation and enable `WAL` compression to reduce the storage footprint of high-cardinality series data",
+      "A. Increase `Prometheus` memory allocation and enable `WAL` compression to reduce the storage footprint of high-cardinality series data",
       "B. Switch to a push-based metrics model where pods send metrics directly to a `TSDB` backend that handles high cardinality natively",
       "C. Use `metric_relabel_configs` to drop the `request_id` label before ingestion, and use distributed tracing for per-request data",
       "D. Add `sample_limit` to the scrape config to cap time series per target, and use recording rules to aggregate high-cardinality data"
@@ -266,8 +266,8 @@ var questions = [
     options: [
       "A. Install gVisor's `runsc` on the node, add a containerd runtime handler for `gvisor`, and create a `RuntimeClass` resource with `handler: runsc`",
       "B. Create a `RuntimeClass` object with `handler: gvisor`, and annotate the node with `runtime.kubernetes.io/gvisor=true` to enable sandbox mode",
-      "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the containerd handler on detection",
-      "D. Add gVisor as a plugin in the kubelet configuration file and restart kubelet; the `RuntimeClass` is auto-generated from plugin registration"
+      "C. Install the gVisor admission webhook, which automatically creates the `RuntimeClass` and configures the `containerd` handler on detection",
+      "D. Add gVisor as a plugin in the `kubelet` configuration file and restart kubelet; the `RuntimeClass` is auto-generated from plugin registration"
     ],
     answer: 0,
     explanation: "Using gVisor with Kubernetes requires three steps: (1) install the `runsc` binary on each node that will run sandboxed workloads, (2) configure containerd with a runtime handler that uses `runsc` (typically named `runsc` in the containerd config), and (3) create a cluster-level `RuntimeClass` resource whose `handler` field matches the containerd handler name. The `RuntimeClass` object is a cluster-scoped resource that maps the `runtimeClassName` in a pod spec to a specific CRI handler on the node.\n\nWhy other options are wrong:\n- D: gVisor is not a kubelet plugin; it is a container runtime shim that must be configured in containerd and mapped via a RuntimeClass object\n- B: RuntimeClass does not require a node annotation; it maps a handler name to a CRI runtime handler configured in the container runtime\n- C: There is no gVisor admission webhook that auto-creates RuntimeClass resources; both containerd config and RuntimeClass must be created manually\n\nReference: https://kubernetes.io/docs/concepts/containers/runtime-class/",
@@ -392,7 +392,7 @@ var questions = [
     text: "A team deploys a Knative Serving application that handles webhook events. The application experiences cold start latency of 8 seconds when scaling from zero. The SLA requires responses within 3 seconds. The team wants to minimize resource usage while meeting the SLA. What is the optimal Knative configuration?",
     diagram: null,
     options: [
-      "A. Set `minScale: 1` in the revision template to keep at least one warm instance running at all times for the service",
+      "A. Set `minScale: 1` in the `revision` template to keep at least one warm instance running at all times for the service",
       "B. Configure `scale-to-zero-grace-period` to 30 minutes globally in the Knative `config-autoscaler` ConfigMap settings",
       "C. Set `initialScale` to 3 and enable `allow-zero-initial-scale` to handle burst traffic after the first cold start event",
       "D. Use `minScale: 0` with `target-burst-capacity: -1` to disable activator buffering and let the autoscaler handle scaling"
@@ -457,7 +457,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Priority 0, because only one `globalDefault` PriorityClass can exist and the system ignores user-created default values",
-      "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault PriorityClass is configured",
+      "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault `PriorityClass` is configured",
       "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to all pods without an explicit priority assignment",
       "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class configuration"
     ],
@@ -475,7 +475,7 @@ var questions = [
       "A. EBS volumes are zone-scoped; add `nodeAffinity` matching the volume's AZ or use `volumeBindingMode: WaitForFirstConsumer`",
       "B. EBS volumes require `ReadWriteMany` access mode for cross-zone mounting; change the access mode in the PVC specification",
       "C. The PV is still attached to the old node; manually detach it with `kubectl patch pv` removing the volumeattachments finalizer",
-      "D. The StorageClass must have `allowedTopologies` set to all availability zones for the volume to be mountable across zones"
+      "D. The `StorageClass` must have `allowedTopologies` set to all availability zones for the volume to be mountable across zones"
     ],
     answer: 0,
     explanation: "AWS EBS volumes are bound to a specific availability zone and cannot be attached to instances in a different zone. When a pod is rescheduled to a node in a different AZ, the volume cannot be mounted, causing the pod to remain Pending. The correct approaches are: (1) use `nodeAffinity` or pod topology constraints to ensure pods stay in the same AZ as their volumes, or (2) use `volumeBindingMode: WaitForFirstConsumer` in the StorageClass to delay volume creation until a pod is scheduled, ensuring the volume is created in the correct AZ.\n\nWhy other options are wrong:\n- D: allowedTopologies restricts which zones can create volumes, but it does not make existing zone-scoped EBS volumes cross-zone mountable\n- B: EBS does not support ReadWriteMany at all; changing access mode would not enable cross-zone mounting\n- C: The issue is zone topology mismatch, not stale attachment; manually detaching the PV does not help if the volume is in a different AZ\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
@@ -568,7 +568,7 @@ var questions = [
     text: "An OPA Gatekeeper `ConstraintTemplate` enforces that all containers must have resource limits set. A pod with an init container specifying resource limits and a main container without limits is submitted. What is the result?",
     diagram: null,
     options: [
-      "A. The pod is admitted because Gatekeeper validates only primary containers: init and ephemeral containers are excluded from the check",
+      "A. The pod is admitted because `Gatekeeper` validates only primary containers: init and ephemeral containers are excluded from the check",
       "B. The pod is rejected because Gatekeeper evaluates all containers including init, ephemeral, and regular containers in the spec",
       "C. The result depends on the Rego policy: if it only iterates `input.review.object.spec.containers`, init containers are skipped",
       "D. The pod is admitted but flagged with a warning annotation because Gatekeeper uses `warn` enforcement for partial compliance"
@@ -619,7 +619,7 @@ var questions = [
       "A. Only create and update operations are blocked; read operations, including GET and LIST, continue normally across all namespaces",
       "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
       "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
-      "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
+      "D. Operations are queued by the `API server` for up to 30 seconds then processed without webhook validation if the service remains down"
     ],
     answer: 2,
     explanation: "With `failurePolicy: Fail`, any matching API request that cannot reach the webhook service is rejected. If the `namespaceSelector` matches all namespaces (including `kube-system`) and the webhook rules match broad resource types, a down webhook can block critical operations across the entire cluster. This is why it is a best practice to exclude `kube-system` from webhook selectors, use `failurePolicy: Ignore` for non-critical webhooks, and ensure webhook services are highly available. The API server does not auto-switch failure policies.\n\nWhy other options are wrong:\n- A: Read operations are typically unaffected, but the claim about deletions is incorrect -- if the webhook rules match DELETE operations, those are also blocked; the real issue is that all matching write operations in all namespaces including kube-system are rejected\n- B: The API server does not auto-switch failure policies; failurePolicy: Fail remains in effect regardless of webhook availability\n- D: Operations are not queued; they are immediately rejected with an error when the webhook service is unreachable\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
@@ -712,7 +712,7 @@ var questions = [
     text: "A pod has `resources.requests.cpu: 4` and `resources.limits.cpu: 4` with `resources.requests.memory: 8Gi` and `resources.limits.memory: 8Gi`. What QoS class is assigned, and what is the eviction priority during node memory pressure?",
     diagram: null,
     options: [
-      "A. `Guaranteed` QoS — this pod is last to be evicted during memory pressure because requests equal limits for all resources",
+      "A. `Guaranteed` QoS — this pod is last to be evicted during memory pressure because requests equal `limits` for all resources",
       "B. `Burstable` QoS — the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
       "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods because actual memory usage may exceed `limits.memory`",
       "D. `Guaranteed` QoS — it is evicted after `Burstable` pods but before `BestEffort` pods during node memory pressure events"
@@ -778,7 +778,7 @@ var questions = [
     options: [
       "A. The binary `app` was compiled for a different CPU architecture (e.g., ARM) than the node's architecture (e.g., AMD64)",
       "B. The `CMD` uses exec form (`CMD [\"app\"]`), but it should use shell form (`CMD app`) to resolve the binary via `$PATH`",
-      "C. The binary `app` exists in the build stage but was not copied to the final stage in the multi-stage Dockerfile",
+      "C. The binary `app` exists in the build stage but was not copied to the final stage in the multi-stage `Dockerfile`",
       "D. The container's `securityContext` has `readOnlyRootFilesystem: true`, preventing runtime access to the binary path"
     ],
     answer: 2,
@@ -793,7 +793,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Using `kubectl exec` to enter a running container and apply a hotfix directly to the application binary",
-      "B. Building a new container image for every code change and deploying it through a controlled rolling update",
+      "B. Building a new container image for every code change and deploying it through a controlled `rolling update`",
       "C. Storing application configuration in ConfigMaps mounted as volumes that trigger pod restarts on changes",
       "D. Using init containers to download and cache static assets from a CDN into an `emptyDir` volume at startup"
     ],
@@ -888,10 +888,10 @@ var questions = [
     text: "A namespace has two ResourceQuotas:\n- `quota-compute`: `requests.cpu: 4, limits.cpu: 8`\n- `quota-objects`: `count/deployments.apps: 10, count/services: 5`\n\nWhen a new Deployment is created, which quotas must have available capacity?",
     diagram: null,
     options: [
-      "A. Both quotas reject the Deployment immediately because it references resources tracked by the quota-compute definition",
+      "A. Both quotas reject the `Deployment` immediately because it references resources tracked by the quota-compute definition",
       "B. Both quotas are checked simultaneously — `quota-objects` for Deployment count and `quota-compute` for resulting pods",
       "C. Only `quota-objects` is checked at Deployment creation; `quota-compute` is checked when the ReplicaSet creates pods",
-      "D. Neither quota is checked at Deployment creation; all resource quota enforcement is deferred to pod scheduling time"
+      "D. Neither quota is checked at `Deployment` creation; all resource quota enforcement is deferred to pod scheduling time"
     ],
     answer: 2,
     explanation: "ResourceQuota enforcement happens at admission time for the specific resource being created. When a Deployment is created, only `quota-objects` is checked (for `count/deployments.apps`). The Deployment itself is not a compute resource — it is a controller object. The compute quota (`requests.cpu`, `limits.cpu`) is enforced later when the ReplicaSet controller creates pods. This two-phase enforcement means a Deployment can be created even if compute quota would prevent all its pods from running.\n\nWhy other options are wrong:\n- A: Both quotas do not reject the Deployment; quota-compute is only checked when pods are created, not when the Deployment object is created\n- B: Both quotas are not checked simultaneously at Deployment creation; only the object count quota applies to the Deployment resource\n- D: Quota enforcement is not deferred to scheduling; it happens at admission time when the specific resource (pod) is created\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#requests-vs-limits",
@@ -921,7 +921,7 @@ var questions = [
     diagram: "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='80' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 1</text><text x='80' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='80' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='150' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='200' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 2</text><text x='200' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='200' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='270' y='20' width='100' height='70' rx='6' fill='#326CE5' stroke='#fff' stroke-width='1.5'/><text x='320' y='42' text-anchor='middle' fill='#fff' font-size='9'>Control Plane 3</text><text x='320' y='57' text-anchor='middle' fill='#aaa' font-size='8'>kube-cm</text><text x='320' y='72' text-anchor='middle' fill='#aaa' font-size='8'>kube-scheduler</text><rect x='100' y='120' width='200' height='40' rx='6' fill='#1a1a2e' stroke='#FF9800' stroke-width='1.5'/><text x='200' y='145' text-anchor='middle' fill='#FF9800' font-size='10'>???</text><line x1='80' y1='90' x2='180' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='200' y1='90' x2='200' y2='118' stroke='#aaa' stroke-width='1.5'/><line x1='320' y1='90' x2='220' y2='118' stroke='#aaa' stroke-width='1.5'/></svg>",
     options: [
       "A. All three instances process work simultaneously using distributed locking on resources, and changes are stored in `etcd`",
-      "B. Each instance watches a partitioned namespace subset, while other instances handle the remaining namespace partitions",
+      "B. Each instance watches a partitioned `namespace` subset, while other instances handle the remaining namespace partitions",
       "C. The API server round-robins controller requests across the three control-plane instances using an internal load balancer proxy",
       "D. They use leader election via Lease objects in `kube-system`, and only the leader reconciles while others stand by"
     ],
@@ -936,7 +936,7 @@ var questions = [
     text: "A team containerizes a legacy application that stores user sessions in local filesystem files under `/var/sessions`. The application runs as a Deployment with 3 replicas behind a ClusterIP Service. Users report that they are randomly logged out. What is the root cause and the best cloud native solution?",
     diagram: null,
     options: [
-      "A. Use a ReadWriteMany PersistentVolume shared across all replicas so every pod can access the same filesystem-based session data",
+      "A. Use a ReadWriteMany `PersistentVolume` shared across all replicas so every pod can access the same filesystem-based session data",
       "B. Replace filesystem sessions with external Redis or Memcached and use `sessionAffinity: ClientIP` as a transitional step",
       "C. Convert the Deployment to a StatefulSet so each replica gets a dedicated PersistentVolume for storing its own session files",
       "D. Add `sessionAffinity: ClientIP` to the Service to ensure each user always reaches the same pod where their session is stored"
@@ -987,7 +987,7 @@ var questions = [
       "A. Implement cluster autoscaler with aggressive scale-down settings and use VPA in `UpdateMode: Auto` for all namespaces to right-size pods automatically",
       "B. Apply `LimitRange` in dev namespaces to enforce lower defaults, use VPA in recommendation-only mode for dev, and keep production resource settings unchanged",
       "C. Set ResourceQuotas in development namespaces to cap total CPU requests at 30% of current levels and add `LimitRange` with strict `max` constraints on pods",
-      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size resource requests based on VPA recommendation data for each workload"
+      "D. Move dev workloads to spot/preemptible nodes using taints and tolerations, and right-size resource requests based on `VPA` recommendation data for each workload"
     ],
     answer: 3,
     explanation: "The optimal approach combines cost savings with appropriate risk tolerance. Development workloads can tolerate interruptions, making spot/preemptible nodes ideal (60-80% cost savings). Using VPA recommendations to right-size resource requests ensures that requested resources match actual usage (closing the 15% utilization vs 60% request gap). Taints and tolerations ensure only dev workloads land on spot nodes, protecting production. Option B only addresses defaults for new pods. Option C aggressively cuts quota without understanding actual needs.\n\nWhy other options are wrong:\n- A: VPA in UpdateMode: Auto for all namespaces could disrupt production by restarting pods; aggressive autoscaler scale-down may evict production workloads\n- B: LimitRange with lower defaults only affects new pods; existing pods keep their current resource settings unchanged\n- C: Cutting quota to 30% of current levels may be too aggressive without understanding actual usage patterns; it could break legitimate workloads\n\nReference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
@@ -1032,7 +1032,7 @@ var questions = [
     text: "A controller watches Custom Resources and uses `metadata.resourceVersion` for optimistic concurrency. Two controller replicas read the same CR (resourceVersion: \"1000\"), each modify a different field, and attempt to update. What happens?",
     diagram: null,
     options: [
-      "A. Both updates succeed because they modify different fields and the API server merges the changes automatically",
+      "A. Both updates succeed because they modify different fields and the `API server` merges the changes automatically",
       "B. The first update succeeds, but the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
       "C. The API server queues both updates, but applies them sequentially, incrementing resourceVersion for each one",
       "D. Both updates fail because only the resource owner identified by `metadata.ownerReferences` can update CRs"
@@ -1179,7 +1179,7 @@ var questions = [
       "A. KEDA calculates 50 desired replicas from the metric, but the `maxReplicaCount` caps the actual scaling target at 20",
       "B. KEDA sets the target to 20 replicas immediately because the queue message backlog exceeds the `maxReplicaCount` limit",
       "C. KEDA scales linearly: 1, then 2, then 4, doubling every interval until reaching 20 or the queue is fully drained",
-      "D. KEDA computes 50 replicas and scales to 20 in a single step, but then pauses scaling until the next evaluation run"
+      "D. `KEDA` computes 50 replicas and scales to 20 in a single step, but then pauses scaling until the next evaluation run"
     ],
     answer: 0,
     explanation: "KEDA calculates the desired replica count by dividing the metric value (queue length of 500) by the trigger threshold (10 messages per replica), yielding 50. Since this exceeds `maxReplicaCount: 20`, the target is capped at 20 replicas. KEDA then patches the HPA target or directly scales the Deployment to 20. KEDA uses the Kubernetes HPA external metrics mechanism — it does not implement its own gradual scaling logic. The HPA's built-in scaling behavior (stabilization windows, scaling policies) may further control the actual scaling speed.\n\nWhy other options are wrong:\n- B: KEDA does not blindly set to maxReplicaCount; it calculates the actual desired count first and then caps at max\n- C: KEDA does not scale linearly or double; it calculates the target directly from the metric value divided by the threshold\n- D: KEDA does not pause scaling after reaching max; it continues evaluating metrics on each interval and adjusts as queue drains\n\nReference: https://keda.sh/docs/latest/concepts/scaling-deployments/",
@@ -1193,7 +1193,7 @@ var questions = [
     diagram: null,
     options: [
       "A. The `ServiceMonitor` and `Prometheus` CR are in different namespaces and `serviceMonitorNamespaceSelector` is not configured",
-      "B. The empty selector `{}` means \"match nothing\" in the Prometheus operator; it should be omitted entirely to match all monitors",
+      "B. The empty selector `{}` means \"match nothing\" in the `Prometheus` operator; it should be omitted entirely to match all monitors",
       "C. The application Service does not have the `monitoring: enabled` label, so the `ServiceMonitor` discovers no matching endpoints",
       "D. Prometheus needs a restart after a new `ServiceMonitor` is created because it does not watch for new monitors dynamically"
     ],
@@ -1432,7 +1432,7 @@ var questions = [
     text: "A Helm chart's `values.yaml` defines `replicaCount: 3`. A user installs the chart with `helm install myapp ./chart --set replicaCount=5`. Later, they run `helm upgrade myapp ./chart -f custom-values.yaml` where `custom-values.yaml` does not include `replicaCount`. What is the resulting `replicaCount` after the upgrade?",
     diagram: null,
     options: [
-      "A. 5, because Helm preserves values from the previous release that are not explicitly overridden in the upgrade command",
+      "A. 5, because `Helm` preserves values from the previous release that are not explicitly overridden in the upgrade command",
       "B. 1, because `helm upgrade` without `--reuse-values` resets `replicaCount` to the Kubernetes Deployment default of one replica",
       "C. 3, because `helm upgrade` resets to chart defaults and only merges values explicitly provided via `-f` or `--set` flags",
       "D. Undefined — Helm removes keys not present in upgrade values, leaving `replicaCount` unset in the rendered templates"
@@ -1498,8 +1498,8 @@ var questions = [
     options: [
       "A. UID 65534, because the Dockerfile `USER` directive takes precedence over the pod's `securityContext` at runtime",
       "B. UID 1000, because the pod `securityContext.runAsUser` overrides the Dockerfile `USER` directive at container start",
-      "C. The container fails to start because there is a conflict between the image user config and the pod security context",
-      "D. UID 1000 for the main process, but child processes inherit UID 65534 from the original image user configuration"
+      "C. The container fails to start because there is a conflict between the image user config and the pod `securityContext`",
+      "D. `UID` 1000 for the main process, but child processes inherit UID 65534 from the original image user configuration"
     ],
     answer: 1,
     explanation: "The pod's `securityContext.runAsUser` always takes precedence over the `USER` directive in the Dockerfile. When the kubelet instructs the container runtime to start the container, it passes the `runAsUser` value from the security context, which overrides the image-level setting. The process (and all child processes) run as UID 1000. This is by design — Kubernetes security contexts provide runtime enforcement that supersedes image-time configurations, allowing cluster administrators to enforce security policies regardless of how images are built.\n\nWhy other options are wrong:\n- A: Dockerfile USER does NOT take precedence; pod securityContext.runAsUser overrides the image-level USER directive at runtime\n- C: There is no conflict error; Kubernetes simply overrides the image setting with the pod security context value\n- D: Child processes inherit the same UID as the parent; they do not use the Dockerfile USER; all processes run as UID 1000\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod",
@@ -1579,7 +1579,7 @@ var questions = [
       "A. Flagger pauses the canary and waits for manual approval to either continue the rollout or initiate a rollback",
       "B. Flagger immediately scales the canary to zero and routes 100% traffic to the `primary`, marking the canary as failed",
       "C. Flagger retries the failed iteration up to the configured `threshold` count before initiating a full rollback",
-      "D. Flagger reduces the canary traffic weight by half and re-runs analysis to confirm the issue before deciding next"
+      "D. Flagger reduces the `canary` traffic weight by half and re-runs analysis to confirm the issue before deciding next"
     ],
     answer: 2,
     explanation: "Flagger uses a configurable failure threshold (the `threshold` field in the canary analysis spec, defaulting to 1-5 depending on configuration). When a metric check fails, Flagger increments the failure counter. If the counter reaches the threshold, Flagger initiates a rollback — routing all traffic to the primary and scaling down the canary. If the failure is transient and subsequent iterations succeed, the counter may reset (depending on configuration). This retry mechanism prevents rollbacks due to brief transient issues while still catching persistent problems.\n\nWhy other options are wrong:\n- A: Flagger does not pause for manual approval by default during automated canary analysis; it follows the configured threshold-based automation\n- B: Flagger does not immediately roll back on the first failure; it uses the threshold mechanism to tolerate transient issues\n- D: Flagger does not reduce canary weight by half on failure; it either retries or rolls back based on the failure threshold count\n\nReference: https://docs.flagger.app/usage/how-it-works#canary-analysis",

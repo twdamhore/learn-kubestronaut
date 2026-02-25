@@ -40,7 +40,7 @@ var questions = [
     text: "A Pod spec sets `runAsNonRoot: true` at the pod-level `securityContext`, but one container image has `USER root` in its Dockerfile. What occurs when this Pod is scheduled?",
     diagram: null,
     options: [
-      "The container runs as root, overriding the pod-level security setting",
+      "The container runs as root, overriding the `securityContext` setting",
       "The Pod is rejected at the admission stage with a security warning",
       "The container fails to start with a `RunAsNonRoot` validation error",
       "Kubernetes automatically remaps root UID to the `nobody` UID 65534"
@@ -104,7 +104,7 @@ var questions = [
     text: "A ClusterRole grants `create` and `delete` on `deployments` in the `apps` API group. A RoleBinding in the `dev` namespace binds this ClusterRole to user `alice`. What can Alice do?",
     diagram: null,
     options: [
-      "Create and delete Deployments across all namespaces in the cluster",
+      "Create and delete `Deployments` across all namespaces in the cluster",
       "Create and delete Deployments only within the `dev` namespace scope",
       "Nothing, because a ClusterRole needs a ClusterRoleBinding to work",
       "Create Deployments in `dev` but delete them in all other namespaces"
@@ -216,8 +216,8 @@ var questions = [
     text: "You have a Pod Security Admission policy that enforces `baseline` on the `apps` namespace. A new Pod requests `hostNetwork: true`. What is the outcome?",
     diagram: null,
     options: [
-      "The Pod is scheduled normally but the kubelet logs a warning event",
-      "The Pod is admitted because the `baseline` profile allows host networking",
+      "The Pod is scheduled normally but the `kubelet` logs a warning event",
+      "The Pod is admitted because the `baseline` profile allows `hostNetwork`",
       "The Pod is rejected because `baseline` prohibits `hostNetwork: true`",
       "The Pod spec is mutated by the controller to set `hostNetwork: false`"
     ],
@@ -232,7 +232,7 @@ var questions = [
     text: "A Role in the `finance` namespace grants `get` and `list` on the `secrets` resource. A RoleBinding binds this Role to user `bob`. An administrator is concerned about security. Why might this be problematic?",
     diagram: null,
     options: [
-      "Roles granting Secret access require additional approval from a cluster administrator",
+      "Roles granting `Secret` access require additional approval from a cluster administrator",
       "Bob can read all Secrets in `finance`, potentially exposing sensitive credentials",
       "RoleBindings that reference Secret access require cluster-admin level approval",
       "The `get` verb on Secrets only returns object metadata, not the actual data values"
@@ -376,10 +376,10 @@ var questions = [
     text: "A Role grants only the `get` verb on Secrets with `resourceNames: [\"db-credentials\"]`. Which statement about this restriction is correct?",
     diagram: null,
     options: [
-      "The `list` verb still returns all Secrets that exist in the namespace",
+      "The `list` verb still returns all `Secrets` that exist in the namespace",
       "The `get` verb can only retrieve the named `db-credentials` Secret",
       "The `resourceNames` field is ignored when applied to Secret resources",
-      "The restriction applies to all resource types, not just the named one"
+      "The `resourceNames` restriction applies to all resource types in the rule"
     ],
     answer: 1,
     explanation: "When `resourceNames` is specified, verbs like `get`, `update`, and `delete` are restricted to the named resources. However, `list` and `watch` cannot be effectively restricted by `resourceNames` because they return collections. The `get` verb is properly scoped to only the `db-credentials` Secret.\n\nWhy other options are wrong:\n- A: If the Role grants only get (not list), the list verb is not granted regardless of resourceNames\n- C: resourceNames is a valid field and is enforced on the specified resources\n- D: The restriction applies only to the resources listed in the same rule, not all resource types\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#referring-to-resources",
@@ -424,8 +424,8 @@ var questions = [
     text: "The kube-apiserver flag `--anonymous-auth=true` is set. A request arrives without any authentication credentials. How is it handled?",
     diagram: null,
     options: [
-      "The request is rejected with a 401 Unauthorized HTTP response status code",
-      "The request is forwarded to an external identity provider for authentication",
+      "The `kube-apiserver` rejects the request with a `401 Unauthorized` HTTP response",
+      "The request is forwarded to an external `OIDC` identity provider for authentication",
       "The request inherits the `default` ServiceAccount permissions in the namespace",
       "The request is processed as `system:anonymous` in `system:unauthenticated`"
     ],
@@ -552,8 +552,8 @@ var questions = [
     text: "A container image is pulled from a private registry that requires authentication. Where should the image pull credentials be configured in Kubernetes?",
     diagram: null,
     options: [
-      "In a ConfigMap referenced by `imagePullConfigMap` in the Pod specification",
-      "In the kubelet configuration file present on each individual worker node",
+      "In a `ConfigMap` referenced by `imagePullConfigMap` in the Pod specification",
+      "In the `kubelet` configuration file present on each individual worker node",
       "In the container runtime config file under `/etc/containerd/creds.json`",
       "In a `kubernetes.io/dockerconfigjson` Secret via `imagePullSecrets` field"
     ],
@@ -585,9 +585,9 @@ var questions = [
     diagram: null,
     options: [
       "A `nodeSelector` with `disk-encryption: enabled` on the Pod spec to match nodes",
-      "A Pod affinity rule that prefers co-location with `disk-encryption: enabled` Pods",
+      "A `podAffinity` rule that prefers co-location with `disk-encryption: enabled` Pods",
       "A taint `disk-encryption=enabled:NoSchedule` applied to the eligible worker nodes",
-      "A PriorityClass with a high priority value assigned to the sensitive workload Pod"
+      "A `PriorityClass` with a high priority value assigned to the sensitive workload Pod"
     ],
     answer: 0,
     explanation: "Using `nodeSelector` with `disk-encryption: enabled` ensures the scheduler only places the Pod on nodes with that label. Pod affinity rules match based on other Pods, not node labels. Taints repel Pods unless they have matching tolerations, which is the inverse approach.\n\nWhy other options are wrong:\n- B: Pod affinity matches based on Pod labels on nodes, not node labels for hardware features\n- C: Taints repel Pods that lack tolerations; they do not attract specific workloads to nodes\n- D: PriorityClass affects preemption priority, not node selection\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector",
@@ -745,7 +745,7 @@ var questions = [
     diagram: null,
     options: [
       "Use short-lived tokens from `kubectl create token` with limited expiration",
-      "Store the token in a ConfigMap instead of using a pipeline secret variable",
+      "Store the token in a `ConfigMap` instead of using a pipeline secret variable",
       "Grant the ServiceAccount `cluster-admin` to simplify permission management",
       "Use a long-lived token to reduce the frequency of credential rotation"
     ],
@@ -858,8 +858,8 @@ var questions = [
     options: [
       "All egress is denied because `Egress` is in `policyTypes` with no rules defined",
       "All egress traffic is allowed because no explicit `egress` rules were specified",
-      "Egress is unaffected because only `ingress` rules were defined in this policy",
-      "Egress defaults to whatever the namespace-level default network policy allows"
+      "Egress is unaffected because only `ingress` rules were defined in this `NetworkPolicy`",
+      "Egress defaults to whatever the namespace-level default `NetworkPolicy` allows"
     ],
     answer: 0,
     explanation: "When `Egress` is listed in `policyTypes` but no egress rules are provided, all egress traffic from the selected Pods is denied. The `policyTypes` field explicitly declares which directions the policy governs. Including `Egress` without rules creates a default-deny for egress on the selected Pods.\n\nWhy other options are wrong:\n- B: Egress is not allowed when Egress is explicitly listed in policyTypes with no rules\n- C: Listing Egress in policyTypes means egress IS governed by this policy, so it is affected\n- D: There is no namespace-level default policy inheritance mechanism for NetworkPolicies\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/",
@@ -1080,7 +1080,7 @@ var questions = [
     text: "A DaemonSet runs a log collector on every node. The collector needs access to host paths `/var/log` and `/var/lib/docker/containers`. Under the `restricted` Pod Security Standard, is this allowed?",
     diagram: null,
     options: [
-      "Yes, because DaemonSets are fully exempt from Pod Security Standards",
+      "Yes, because `DaemonSets` are fully exempt from Pod Security Standards",
       "No, the `restricted` profile prohibits mounting `hostPath` volumes",
       "Yes, if the `hostPath` volumes are configured as read-only mounts",
       "No, the `baseline` profile also restricts `hostPath` volume mounts"
@@ -1144,7 +1144,7 @@ var questions = [
     text: "A NetworkPolicy allows egress from Pods labeled `app: worker` to an external CIDR `10.0.0.0/8` on port 5432. The cluster Pod CIDR is `192.168.0.0/16`. Can the worker Pods reach other Pods in the cluster?",
     diagram: null,
     options: [
-      "Yes, because intra-cluster Pod traffic is exempt from all egress rules",
+      "Yes, because intra-cluster Pod traffic is exempt from `egress` rules",
       "No, because the egress rule only permits traffic to `10.0.0.0/8` CIDR",
       "Yes, because NetworkPolicies do not affect traffic to `192.168.0.0/16`",
       "No, unless UDP DNS port 53 is also explicitly allowed in the policy"
@@ -1208,7 +1208,7 @@ var questions = [
     text: "A team configures an RBAC Role with `verbs: [\"*\"]` on `resources: [\"pods\"]`. What does the wildcard grant?",
     diagram: null,
     options: [
-      "Only the standard CRUD verbs: `get`, `list`, `create`, `update`, `delete`",
+      "Only the standard CRUD verbs: get, list, create, update, and `delete`",
       "All verbs including subresources like `pods/exec`, but not custom verbs",
       "All current verbs on Pods but not on any Pod subresources like `exec`",
       "An error because wildcard characters are not valid in the `verbs` field"
@@ -1291,7 +1291,7 @@ var questions = [
       "UID 0 (root) because no container-level setting is specified for it",
       "UID 1000, inheriting from the `app` container's security context",
       "UID 3000, inheriting from the pod-level `securityContext` setting",
-      "The UID defined in the sidecar's container image Dockerfile entry"
+      "The UID defined in the sidecar's container image `Dockerfile` entry"
     ],
     answer: 2,
     explanation: "When a container does not specify its own `runAsUser`, it inherits the pod-level `securityContext` value. The `sidecar` container has no override, so it runs as UID 3000. The `app` container's setting of 1000 applies only to itself. Container-level settings do not affect sibling containers.\n\nWhy other options are wrong:\n- A: Without a container-level override, the sidecar inherits the pod-level UID, not root\n- B: Container-level settings do not propagate to sibling containers\n- D: The pod-level runAsUser overrides the Dockerfile USER directive when no container-level override exists\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
@@ -1352,8 +1352,8 @@ var questions = [
     text: "An administrator creates a ClusterRole with `nonResourceURLs: [\"/healthz\", \"/metrics\"]` and verb `get`. What access does this grant?",
     diagram: null,
     options: [
-      "Access to Pod health check endpoints and `/metrics` scraping targets",
-      "Access to health check resources across all namespaces in the cluster",
+      "Access to Pod `healthcheck` endpoints and `/metrics` scraping targets",
+      "Access to health check resources across all `namespaces` in the cluster",
       "Access to the API server's own `/healthz` and `/metrics` HTTP endpoints",
       "Read-only access to all `CustomResourceDefinition` objects in the cluster"
     ],
@@ -1368,7 +1368,7 @@ var questions = [
     text: "A Pod in the `app` namespace needs to communicate with a Service in the `database` namespace. A NetworkPolicy in `database` allows ingress only from namespaces matching the custom selector `matchLabels: {team: app}`. Which label must be applied to the `app` namespace?",
     diagram: null,
     options: [
-      "`kubernetes.io/name: app` is set automatically by the Kubernetes control plane",
+      "`kubernetes.io/name: app` is set automatically by the `kube-apiserver` control plane",
       "A custom label `app.kubernetes.io/managed-by: networkpolicy` on the namespace",
       "The label `team: app` must be applied to match the policy's `namespaceSelector`",
       "No label is needed; `namespaceSelector` resolves namespace names automatically"

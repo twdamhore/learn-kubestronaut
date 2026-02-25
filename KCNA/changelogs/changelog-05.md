@@ -385,3 +385,57 @@
 - 4 keyword giveaway fixes ("but" x2, "automatically" x1, `, which` x1)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-05.js`
+**Issues fixed**: 16 backtick-balance flags
+
+### s05-q003 — backtick balance
+- **Option A:** Added backticks to `securityContext` ("overriding the `securityContext` setting"). A: 0->1 bt.
+
+### s05-q007 — backtick balance
+- **Option A:** Added backticks to `Deployments` ("Create and delete `Deployments` across all namespaces"). A: 0->1 bt.
+
+### s05-q014 — backtick balance
+- **Option A:** Added backticks to `kubelet`. **Option B:** Added backticks to `hostNetwork`. A: 0->1 bt, B: 1->2 bt.
+
+### s05-q015 — backtick balance
+- **Option A:** Added backticks to `Secret` ("Roles granting `Secret` access"). A: 0->1 bt.
+
+### s05-q024 — backtick balance + length fix
+- **Option A:** Added backticks to `Secrets`. **Option D:** Added backticks to `resourceNames` and trimmed wording. A: 0->2 bt, D: 0->1 bt. Shortened D from 85 to 73 chars to fix length imbalance.
+
+### s05-q027 — backtick balance
+- **Option A:** Rewrote to "The `kube-apiserver` rejects the request with a `401 Unauthorized` HTTP response". **Option B:** Added `OIDC`. A: 0->2 bt, B: 0->1 bt.
+
+### s05-q035 — backtick balance
+- **Option A:** Added backticks to `ConfigMap`. **Option B:** Added backticks to `kubelet`. A: 1->2 bt, B: 0->1 bt.
+
+### s05-q037 — backtick balance
+- **Option B:** Changed "A Pod affinity rule" to "A `podAffinity` rule". **Option D:** Added backticks to `PriorityClass`. B: 1->2 bt, D: 0->1 bt.
+
+### s05-q047 — backtick balance
+- **Option B:** Added backticks to `ConfigMap` ("Store the token in a `ConfigMap`"). B: 0->1 bt.
+
+### s05-q054 — backtick balance
+- **Option C:** Added backticks to `NetworkPolicy`. **Option D:** Added backticks to `NetworkPolicy`. C: 1->2 bt, D: 0->1 bt.
+
+### s05-q068 — backtick balance
+- **Option A:** Added backticks to `DaemonSets`. A: 0->1 bt.
+
+### s05-q072 — backtick balance
+- **Option A:** Added backticks to `egress` ("exempt from `egress` rules"). A: 0->1 bt.
+
+### s05-q076 — backtick balance (correct had fewer)
+- **Option A:** Removed backticks from verb list (get, list, create, update) keeping only `delete`. A: 5->1 bt. Balanced with other options all at 1 bt each.
+
+### s05-q081 — backtick balance
+- **Option D:** Added backticks to `Dockerfile`. D: 0->1 bt.
+
+### s05-q085 — backtick balance
+- **Option A:** Added backticks to `healthcheck`. **Option B:** Added backticks to `namespaces`. A: 1->2 bt, B: 0->1 bt.
+
+### s05-q086 — backtick balance
+- **Option A:** Added backticks to `kube-apiserver`. A: 1->2 bt.

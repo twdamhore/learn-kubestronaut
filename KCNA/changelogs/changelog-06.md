@@ -452,3 +452,40 @@
 **Change:** Added a comma before "and" in option C: "Build a new v1.30 cluster from scratch, and migrate existing workloads". This adds ", and" to a distractor, eliminating the giveaway.
 
 ---
+
+## Round 47d — 2026-02-25
+**File**: `set-06.js`
+**Issues fixed**: 11 backtick-balance flags
+
+### s06-q016 — backtick balance
+- **Option A:** Added backticks to `DaemonSet`. **Option B:** Added backticks to `DaemonSet`. A: 0->1 bt, B: 0->1 bt.
+
+### s06-q025 — backtick balance
+- **Option B:** Added backticks to `kube-proxy`. B: 0->1 bt.
+
+### s06-q026 — backtick balance
+- **Option D:** Added backticks to `topologySpreadConstraints`. D: 0->1 bt.
+
+### s06-q038 — backtick balance
+- **Option C:** Added backticks to `kubelet`. C: 0->1 bt.
+
+### s06-q048 — backtick balance
+- **Option C:** Added backticks to `etcd`. C: 0->1 bt.
+
+### s06-q055 — backtick balance
+- **Option B:** Added backticks to `DaemonSet`. B: 0->1 bt.
+
+### s06-q065 — backtick balance
+- **Option A:** Added backticks to `Deployment`. A: 1->2 bt.
+
+### s06-q067 — backtick balance
+- **Option C:** Added backticks to `PriorityClass`. C: 0->1 bt.
+
+### s06-q074 — backtick balance
+- **Option D:** Added backticks to `etcd`. D: 0->1 bt.
+
+### s06-q083 — backtick balance
+- **Option B:** Added backticks to `drain`. B: 0->1 bt.
+
+### s06-q088 — backtick balance
+- **Option A:** Added backticks to `Deployment`. A: 1->2 bt.

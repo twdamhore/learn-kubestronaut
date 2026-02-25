@@ -232,7 +232,7 @@ var questions = [
     text: "A Kubernetes cluster uses a CSI driver for cloud-based block storage. A pod is scheduled to a node, but the volume attachment takes over 2 minutes and eventually times out. Which component is primarily responsible for attaching CSI volumes to nodes?",
     diagram: null,
     options: [
-      "The kube-scheduler, which assigns volumes to nodes during the pod scheduling decision process",
+      "The `kube-scheduler`, which assigns volumes to nodes during the pod scheduling decision process",
       "The kubelet on the target node, through the CSI node plugin's `NodeStageVolume` and publish RPCs",
       "The kube-controller-manager's PV controller, which manages volume lifecycle and binding state",
       "The external-attacher sidecar, which calls the CSI `ControllerPublishVolume` RPC to attach"
@@ -282,7 +282,7 @@ var questions = [
     options: [
       "Examine kubelet logs, CSI driver logs, and `kubectl describe pv/pvc` events for storage errors",
       "Check Elasticsearch application logs, JVM heap dumps, and container restart counts for storage errors",
-      "Review the kube-scheduler logs for scheduling decisions related to pod placement on specific nodes",
+      "Review the `kube-scheduler` logs for scheduling decisions related to pod placement on specific nodes",
       "Check the `kube-apiserver` audit logs for PVC creation timestamps and API request latencies"
     ],
     answer: 0,
@@ -603,7 +603,7 @@ var questions = [
       "Add a `sleep 60` step after deployment and assume all PVCs will be bound by then in the cluster",
       "Use `kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=120s` in the pipeline",
       "Skip PVC verification entirely since Kubernetes guarantees immediate binding upon PVC creation time",
-      "Check the StatefulSet replica count as a proxy for PVC binding status in the cluster verification step"
+      "Check the `StatefulSet` replica count as a proxy for PVC binding status in the cluster verification step"
     ],
     answer: 1,
     explanation: "The `kubectl wait` command with a JSONPath condition is the most reliable way to wait for PVCs to reach a specific state. Using `--for=jsonpath='{.status.phase}'=Bound` ensures the pipeline pauses until all PVCs are actually bound. Fixed sleep times are unreliable, and replica count does not directly indicate PVC status.\n\nWhy other options are wrong:\n- A: Fixed sleep times are unreliable; PVC binding may take longer or shorter than 60 seconds\n- C: Kubernetes does not guarantee immediate binding, especially with WaitForFirstConsumer or missing PVs\n- D: StatefulSet replica count indicates pod count, not whether the underlying PVCs are bound to PVs\n\nReference: https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#wait",
@@ -634,7 +634,7 @@ var questions = [
     options: [
       "Pod creation is denied because the `restricted` profile explicitly prohibits the use of `hostPath` volumes",
       "Pod creation succeeds but the `hostPath` volume is silently ignored by the admission controller",
-      "The pod is created with read-only access to the `hostPath` mount enforced by the restricted profile",
+      "The pod is created with read-only access to the `hostPath` mount enforced by the `restricted` profile",
       "The `restricted` profile passes because it only limits CPU and memory resource usage, not volume types"
     ],
     answer: 0,
@@ -651,7 +651,7 @@ var questions = [
       "In a random zone outside `us-east-1a` since the `StorageClass` does not consider pod topology constraints",
       "In all zones simultaneously for redundancy, creating a replicated volume that spans multiple regions",
       "In `us-east-1a` because `WaitForFirstConsumer` provisions the PV in the zone where the pod is scheduled",
-      "The PV is provisioned when the PVC is created because `WaitForFirstConsumer` only delays the binding step"
+      "The PV is provisioned when the `PVC` is created because `WaitForFirstConsumer` only delays the binding step"
     ],
     answer: 2,
     explanation: "`WaitForFirstConsumer` delays PV provisioning until the pod is scheduled to a node. The scheduler considers the pod's node constraints (like `nodeSelector`) and provisions the PV in the same topology (zone) as the chosen node. This prevents the PV from being created in a zone where the pod cannot run, which would cause a scheduling deadlock.\n\nWhy other options are wrong:\n- A: WaitForFirstConsumer explicitly considers pod topology constraints when provisioning the PV\n- B: PVs are not provisioned in all zones; they are created in the specific zone where the pod is scheduled\n- D: WaitForFirstConsumer delays provisioning until the pod is scheduled; it does not provision immediately\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode",
@@ -681,7 +681,7 @@ var questions = [
     diagram: null,
     options: [
       "`spec.selector` on the PVC, which accepts `matchLabels` to restrict binding to PVs with matching labels",
-      "`spec.claimRef` pre-binds the PV to a specific PVC by name and namespace before the PVC is created",
+      "`spec.claimRef` pre-binds the `PV` to a specific PVC by name and namespace before the PVC is created",
       "`spec.nodeAffinity` restricts which nodes can mount the PV but does not filter PVs by label value",
       "`spec.storageClassName`, which ensures only PVCs with the matching class can bind, not by label value"
     ],
@@ -728,7 +728,7 @@ var questions = [
     text: "A PV is created with `persistentVolumeReclaimPolicy: Recycle`. What does the `Recycle` policy do when the bound PVC is deleted?",
     diagram: null,
     options: [
-      "The PV and its storage are permanently removed via the `Delete` action by the volume controller",
+      "The `PV` and its storage are permanently removed via the `Delete` action by the volume controller",
       "The PV is moved to an `Archived` state in a backup location before its data is removed permanently",
       "The PV runs a basic `rm -rf` on the volume contents and returns to `Available` state for new claims",
       "The PV is retained indefinitely in `Released` state until an administrator performs a manual cleanup step"
@@ -777,7 +777,7 @@ var questions = [
     diagram: null,
     options: [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
-      "Serverless frameworks on Kubernetes default to in-memory scratch space since PVC mounts are not enabled in Knative pods",
+      "Serverless frameworks on Kubernetes default to in-memory scratch space since `PVC` mounts are not enabled in Knative pods",
       "PersistentVolumes are automatically reclaimed when functions scale to zero, and their data is permanently lost",
       "Knative defaults to `emptyDir` volumes and requires extra configuration for PersistentVolumeClaim mounts in pods"
     ],
@@ -808,7 +808,7 @@ var questions = [
     text: "A PVC is configured with a `selector` that uses `matchLabels: { tier: premium }`. The cluster has 5 PVs, but only 2 have the label `tier: premium`. What happens during binding?",
     diagram: null,
     options: [
-      "The PVC binds to any of the 5 PVs since labels on PersistentVolumes are purely advisory metadata only",
+      "The `PVC` binds to any of the 5 PVs since labels on PersistentVolumes are purely advisory metadata only",
       "The PVC considers only the 2 PVs labeled `tier: premium` and binds to the best match on capacity",
       "The PVC creates new PVs with the `tier: premium` label automatically via dynamic provisioning logic",
       "The PVC is rejected because label selectors are not supported on PersistentVolumeClaim specifications"
@@ -1051,7 +1051,7 @@ var questions = [
       "No, a StatefulSet can only have one associated `Service` defined for it in the cluster at a time",
       "Yes, create a regular `ClusterIP` Service with the same selector to load-balance across pods",
       "Yes, but only if the pods are labeled differently so that each Service selects different targets",
-      "No, load balancing across replicas is architecturally incompatible with StatefulSet workloads"
+      "No, load balancing across replicas is architecturally incompatible with `StatefulSet` workloads"
     ],
     answer: 1,
     explanation: "A StatefulSet can have multiple Services pointing to it. The headless Service (used in `spec.serviceName`) provides stable DNS for individual pods. A separate `ClusterIP` Service with the same label selector distributes traffic across all pods. This is a common pattern: headless Service for writes to a specific primary, regular Service for read replicas.\n\nWhy other options are wrong:\n- A: StatefulSets can have multiple Services pointing to the same pods via label selectors\n- C: Both Services can use the same selector; pods do not need different labels\n- D: Load balancing across StatefulSet replicas is a common and valid pattern for read traffic\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
@@ -1067,7 +1067,7 @@ var questions = [
       "Use `RollingUpdate` with `partition` set to progressively lower values, verifying health each step",
       "Use `Recreate` strategy to replace all ZooKeeper nodes simultaneously in a single update batch run",
       "Delete the StatefulSet with `kubectl delete` and recreate it from scratch with the new image version",
-      "Scale the StatefulSet to `replicas: 0`, update the pod template spec, then scale back up to verify"
+      "Scale the `StatefulSet` to `replicas: 0`, update the pod template spec, then scale back up to verify"
     ],
     answer: 0,
     explanation: "The `partition` field in StatefulSet `RollingUpdate` strategy enables staged rollouts. Start with `partition: 4` to update only `pod-4`. After verifying health, set `partition: 3` to also update `pod-3`, and continue until all nodes are updated. This canary approach is ideal for clustered applications like ZooKeeper that require quorum maintenance during updates.\n\nWhy other options are wrong:\n- B: Recreate strategy does not exist for StatefulSets; it would also cause total cluster unavailability\n- C: Deleting and recreating the StatefulSet loses stability guarantees and causes full downtime\n- D: Scaling to 0 causes full downtime; the partition approach allows zero-downtime rolling updates\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions",
@@ -1081,7 +1081,7 @@ var questions = [
     diagram: null,
     options: [
       "The pod's container image is not available on the new node and needs to be pulled from the registry",
-      "The PVC was accidentally deleted because the node reboot process triggered a cleanup that removed it",
+      "The `PVC` was accidentally deleted because the node reboot process triggered a cleanup that removed it",
       "The PV is still attached to the old node because the stale `VolumeAttachment` object was not cleaned up",
       "The CSI driver requires a graceful `NodeUnstageVolume` call from the rebooted node before reattachment"
     ],
@@ -1096,7 +1096,7 @@ var questions = [
     text: "A developer specifies `resources.requests.ephemeral-storage: 2Gi` and `resources.limits.ephemeral-storage: 4Gi` on a container. What does this control?",
     diagram: null,
     options: [
-      "The size of PersistentVolumes (per claim) that the container can request from the cluster's storage pool",
+      "The size of `PersistentVolumes` (per claim) that the container can request from the cluster's storage pool",
       "The temporary storage (writable layer + `emptyDir` without medium) the container can use on the node",
       "The maximum size of container images that can be pulled from the registry to the node's image cache",
       "The RAM allocation for tmpfs-backed `emptyDir` volumes (medium: Memory) mounted in the container"
@@ -1400,9 +1400,9 @@ var questions = [
     text: "A cluster has nodes in three availability zones. A StatefulSet with 3 replicas needs to spread pods across zones for high availability. Which scheduling feature achieves this?",
     diagram: null,
     options: [
-      "Set `nodeSelector` to a single zone and rely on the Kubernetes scheduler to auto-distribute across zones",
+      "Set `nodeSelector` to a single zone and rely on the Kubernetes `scheduler` to auto-distribute across zones",
       "Use `topologySpreadConstraints` with `topologyKey: topology.kubernetes.io/zone` and `maxSkew: 1`",
-      "Create three separate StatefulSets, one per availability zone, each managing a single Cassandra replica",
+      "Create three separate `StatefulSets`, one per availability zone, each managing a single Cassandra replica",
       "Set `podAntiAffinity` with `topologyKey: kubernetes.io/hostname` — this spreads pods across host nodes"
     ],
     answer: 1,
@@ -1450,7 +1450,7 @@ var questions = [
     options: [
       "On the node by the kubelet when mounting the PV, passed as options to the `mount` system call",
       "On the storage backend when creating new volumes as part of the `provisioner` workflow",
-      "On the kube-apiserver when validating PVC requests and checking storage class parameter syntax",
+      "On the `kube-apiserver` when validating PVC requests and checking storage class parameter syntax",
       "On the PVC object as metadata annotations that describe preferred mount configuration options"
     ],
     answer: 0,
@@ -1579,7 +1579,7 @@ var questions = [
       "The Kubernetes scheduler's disk I/O priority \u2014 `gp3` maps to high priority and `iops` sets the queue depth",
       "The maximum I/O rate that the `kubelet` allows for volume operations performed on the mounted PV path",
       "The provisioned cloud disk characteristics — `gp3` sets the EBS volume type and `iops` sets the IOPS",
-      "The replication factor for the PV across availability zones managed by the EBS CSI driver controller"
+      "The replication factor for the `PV` across availability zones managed by the EBS CSI driver controller"
     ],
     answer: 2,
     explanation: "StorageClass `parameters` are passed directly to the CSI provisioner, which uses them when creating the underlying storage. For the AWS EBS CSI driver, `type: gp3` creates a gp3 EBS volume, and `iops: \"5000\"` provisions 5000 IOPS. These are cloud-provider-specific settings that the CSI driver translates into API calls to the storage backend.\n\nWhy other options are wrong:\n- A: The scheduler does not have a disk I/O priority or queue depth mechanism controlled by StorageClass parameters\n- B: The kubelet does not enforce I/O rate limits based on StorageClass parameters; IOPS is a cloud disk setting\n- D: StorageClass parameters like type and iops configure the disk itself, not cross-zone replication\n\nReference: https://kubernetes.io/docs/concepts/storage/storage-classes/#parameters",

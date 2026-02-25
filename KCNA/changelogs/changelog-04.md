@@ -557,3 +557,64 @@
 - 4 keyword giveaway fixes ("both" x1, `, which` x1, `, but` x1, "automatically" x1)
 - No answer indices were changed
 - No accuracy or explanation changes
+
+---
+
+## Round 47d — 2026-02-25
+**File**: `set-04.js`
+**Issues fixed**: 16 (backtick-balance)
+
+### s04-q015 — backtick balance (A had 0 backtick-terms, correct D had 1)
+- **Option A:** Added backticks around `kube-scheduler` (0 -> 1 term).
+
+### s04-q018 — backtick balance (C had 0 backtick-terms, correct A had 1)
+- **Option C:** Added backticks around `kube-scheduler` (0 -> 1 term).
+
+### s04-q038 — backtick balance (D had 0 backtick-terms, correct B had 1)
+- **Option D:** Added backticks around `StatefulSet` (0 -> 1 term).
+
+### s04-q040 — backtick balance (C had 1 backtick-term, correct A had 2)
+- **Option C:** Added backticks around `restricted` (1 -> 2 terms).
+
+### s04-q041 — backtick balance (D had 1 backtick-term, correct C had 2)
+- **Option D:** Added backticks around `PVC` (1 -> 2 terms).
+
+### s04-q043 — backtick balance (B had 1 backtick-term, correct A had 2)
+- **Option B:** Added backticks around `PV` (1 -> 2 terms).
+
+### s04-q046 — backtick balance (A had 1 backtick-term, correct C had 2)
+- **Option A:** Added backticks around `PV` (1 -> 2 terms).
+
+### s04-q049 — backtick balance (B had 0 backtick-terms, correct A had 1)
+- **Option B:** Added backticks around `PVC` (0 -> 1 term).
+
+### s04-q051 — backtick balance (A had 0 backtick-terms, correct B had 1)
+- **Option A:** Added backticks around `PVC` (0 -> 1 term).
+
+### s04-q066 — backtick balance (D had 0 backtick-terms, correct B had 1)
+- **Option D:** Added backticks around `StatefulSet` (0 -> 1 term).
+
+### s04-q067 — backtick balance (D had 1 backtick-term, correct A had 2)
+- **Option D:** Added backticks around `StatefulSet` (1 -> 2 terms).
+
+### s04-q068 — backtick balance (B had 0 backtick-terms, correct C had 1)
+- **Option B:** Added backticks around `PVC` (0 -> 1 term).
+
+### s04-q069 — backtick balance (A had 0 backtick-terms, correct B had 1)
+- **Option A:** Added backticks around `PersistentVolumes` (0 -> 1 term).
+
+### s04-q088 — backtick balance (A had 1, C had 0; correct B had 3)
+- **Option A:** Added backticks around `scheduler` (1 -> 2 terms).
+- **Option C:** Added backticks around `StatefulSets` (0 -> 1 term).
+
+### s04-q091 — backtick balance (C had 0 backtick-terms, correct A had 1)
+- **Option C:** Added backticks around `kube-apiserver` (0 -> 1 term).
+
+### s04-q099 — backtick balance (D had 0 backtick-terms, correct C had 2)
+- **Option D:** Added backticks around `PV` (0 -> 1 term).
+
+### Summary
+- 16 backtick-balance fixes (adding backtick formatting to distractors to reduce correct-answer signal)
+- 17 total option edits (s04-q088 required 2 options to bring the distractor average above the 2x threshold)
+- No answer indices were changed
+- No accuracy or explanation changes
