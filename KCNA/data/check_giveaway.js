@@ -35,20 +35,36 @@ function stripBackticks(s) {
 const checks = [
   {
     name: "first-word",
-    desc: "3 options share same first word, correct starts differently",
+    desc: "correct answer's first word is unique and distractors cluster",
     fn(opts, correctIdx) {
-      const firstWords = opts.map((o) => o.split(/\s/)[0].toLowerCase());
+      const firstWords = opts.map((o) => o.split(/\s/)[0].toLowerCase().replace(/[^a-z0-9-]/g, ""));
       const correctFirst = firstWords[correctIdx];
       const others = firstWords.filter((_, i) => i !== correctIdx);
-      // All 3 others share the same first word, correct differs
+      // 3-vs-1: all distractors share same first word, correct differs
       if (
         others[0] === others[1] &&
         others[1] === others[2] &&
         correctFirst !== others[0]
       ) {
         return [
-          `correct starts with "${firstWords[correctIdx]}" but all 3 distractors start with "${others[0]}"`,
+          `3-vs-1: correct starts with "${correctFirst}" but all 3 distractors start with "${others[0]}"`,
         ];
+      }
+      // 2-1-1: correct's first word is unique, and at least 2 distractors share a word
+      const correctSharedByOthers = others.filter((w) => w === correctFirst).length;
+      if (correctSharedByOthers === 0) {
+        const freq = {};
+        for (const w of others) freq[w] = (freq[w] || 0) + 1;
+        const hasPair = Object.values(freq).some((c) => c >= 2);
+        if (hasPair) {
+          const pairs = Object.entries(freq)
+            .filter(([, c]) => c >= 2)
+            .map(([w, c]) => `"${w}" (${c}x)`)
+            .join(", ");
+          return [
+            `2-1-1: correct starts with unique "${correctFirst}"; distractors cluster: ${pairs}`,
+          ];
+        }
       }
       return [];
     },
@@ -146,31 +162,40 @@ const checks = [
   },
   // ── Unique keyword/phrase checks ──────────────────────────────────
   // Flag when a keyword appears ONLY in the correct answer
+  // Uses regex with word boundaries to catch keywords before punctuation/end-of-string
   ...makeKeywordChecks([
-    [", which ", "relative clause `, which`"],
-    [", and ", "compound clause `, and`"],
-    [", but ", "contrast clause `, but`"],
-    [", or ", "alternative clause `, or`"],
-    ["because ", `"because"`],
-    ["since ", `"since"`],
-    [" while ", `"while"`],
-    [" but ", `"but"`],
-    ["such as ", `"such as"`],
-    ["including ", `"including"`],
-    ["e.g.", `"e.g."`],
-    [" like ", `"like"`],
-    ["both ", `"both"`],
-    ["automatically ", `"automatically"`],
+    [/, which /i, "relative clause `, which`"],
+    [/, and /i, "compound clause `, and`"],
+    [/, but /i, "contrast clause `, but`"],
+    [/, or /i, "alternative clause `, or`"],
+    [/\bbecause\b/i, `"because"`],
+    [/\bsince\b/i, `"since"`],
+    [/\bwhile\b/i, `"while"`],
+    [/\bbut\b/i, `"but"`],
+    [/\bsuch as\b/i, `"such as"`],
+    [/\bincluding\b/i, `"including"`],
+    [/e\.g\./i, `"e.g."`],
+    [/\blike\b/i, `"like"`],
+    [/\bboth\b/i, `"both"`],
+    [/\bautomatically\b/i, `"automatically"`],
+    [/\brather than\b/i, `"rather than"`],
+    [/\binstead of\b/i, `"instead of"`],
+    [/\bimmediately\b/i, `"immediately"`],
+    [/\bnatively\b/i, `"natively"`],
+    [/\bdynamically\b/i, `"dynamically"`],
+    [/\bspecifically\b/i, `"specifically"`],
+    [/\balthough\b/i, `"although"`],
+    [/\bhowever\b/i, `"however"`],
+    [/\btherefore\b/i, `"therefore"`],
   ]),
 ];
 
 function makeKeywordChecks(keywords) {
-  return keywords.map(([kw, label]) => ({
+  return keywords.map(([regex, label]) => ({
     name: `keyword-${label}`,
     desc: `only the correct answer contains ${label}`,
     fn(opts, correctIdx) {
-      const lower = opts.map((o) => o.toLowerCase());
-      const has = lower.map((o) => o.includes(kw.toLowerCase()));
+      const has = opts.map((o) => regex.test(o));
       if (has[correctIdx] && has.filter(Boolean).length === 1) {
         return [`only correct answer contains ${label}`];
       }
