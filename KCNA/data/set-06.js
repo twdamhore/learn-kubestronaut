@@ -1144,7 +1144,7 @@ var questions = [
     text: "A StatefulSet has <code>podManagementPolicy: Parallel</code>. During a drain, how does this affect the restart behavior compared to the default <code>OrderedReady</code> policy?",
     diagram: null,
     options: [
-      "A. Pods are evicted in strict reverse ordinal order regardless of the management policy",
+      "A. Pods are evicted in reverse ordinal order and restarted simultaneously under both policies",
       "B. With `Parallel` policy, Pods are evicted in a different order than with `OrderedReady`",
       "C. With `Parallel`, replacement Pods can start simultaneously instead of sequentially",
       "D. The policy influences creation order instead of eviction, with minimal drain impact"

@@ -1033,7 +1033,7 @@ var questions = [
     diagram: null,
     options: [
       "A. Both updates succeed because they modify different fields and the `API server` merges the changes automatically",
-      "B. The first update succeeds, but the second fails with `409 Conflict` because its resourceVersion \"1000\" is stale",
+      "B. The first update succeeds, but the second fails with `409 Conflict` because its resourceVersion is now stale",
       "C. The API server queues both updates, but applies them sequentially, incrementing resourceVersion for each one",
       "D. Both updates fail because only the resource owner identified by `metadata.ownerReferences` can update CRs"
     ],

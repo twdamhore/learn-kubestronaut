@@ -667,7 +667,7 @@ var questions = [
       "IPVS uses hash-based lookup structures providing O(1) routing regardless of endpoint count",
       "IPVS supports TLS termination at the kernel level (L4) for improved security on each cluster node",
       "IPVS automatically encrypts inter-node traffic using kernel-level IPsec tunnels by default",
-      "IPVS eliminates the need for a CNI plugin by handling all pod networking within the kernel"
+      "IPVS eliminates the need for a CNI plugin regardless by handling all pod networking in the kernel"
     ],
     answer: 0,
     explanation: "IPVS uses hash tables in the Linux kernel for O(1) lookup time when routing connections to backends, whereas iptables uses sequential chain evaluation that degrades linearly with the number of rules. This makes IPVS significantly better for clusters with thousands of Services. IPVS does not provide TLS termination or encryption. A CNI plugin is still required for pod networking.\n\nWhy other options are wrong:\n- B: IPVS does not provide TLS termination at the kernel level; it is a Layer 4 load balancer.\n- C: IPVS does not encrypt inter-node traffic; encryption requires separate mechanisms like IPsec or WireGuard.\n- D: A CNI plugin is still required for pod networking; IPVS only handles Service-level load balancing.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",

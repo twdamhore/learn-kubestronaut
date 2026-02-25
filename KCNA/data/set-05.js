@@ -185,7 +185,7 @@ var questions = [
     diagram: null,
     options: [
       "Verify every request regardless of its source network location or trust level",
-      "Authenticate external traffic at the perimeter and trust all internal calls",
+      "Authenticate external traffic at the perimeter regardless and trust internal calls",
       "Encrypt only external-facing traffic at the ingress gateway layer for security",
       "Combine perimeter firewalls with namespace isolation to secure the cluster"
     ],
@@ -970,7 +970,7 @@ var questions = [
     options: [
       "No, because a NetworkPolicy only applies to Pods with the specified port actively open",
       "Yes, the policy selects Pods by label regardless of which ports the container exposes",
-      "No, because the NetworkPolicy is only evaluated once at the time of Pod creation",
+      "No, because the NetworkPolicy is evaluated once at Pod creation regardless of later changes",
       "Yes, but the NetworkPolicy forces port 443 to open on the Pod's network interface"
     ],
     answer: 1,

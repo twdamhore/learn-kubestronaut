@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 //
-// check_giveaway.js — flag questions where the correct answer has unique punctuation patterns
+// check_giveaway.js — flag questions with structural giveaways or data quality issues
 //
 // Usage:  node check_giveaway.js [--verbose]
 //
-// Checks for punctuation patterns that appear ONLY in the correct answer (not in any
-// distractor). First-word, keyword, and backtick checks are handled by their dedicated
-// scripts (check_first_word.js, check_keyword_unique.js, check_backtick_balance.js).
+// Checks for: trailing whitespace in any option, and punctuation patterns (quotation
+// marks, semicolons, parentheses, em-dashes, colons, excess commas) that appear ONLY
+// in the correct answer. First-word, keyword, and backtick checks are handled by their
+// dedicated scripts (check_first_word.js, check_keyword_unique.js, check_backtick_balance.js).
 //
 
 const fs = require("fs");
@@ -34,6 +35,32 @@ function stripBackticks(s) {
 }
 
 const checks = [
+  {
+    name: "trailing-space",
+    desc: "any option has leading or trailing whitespace",
+    fn(opts) {
+      const findings = [];
+      const labels = ["A", "B", "C", "D"];
+      for (let i = 0; i < opts.length; i++) {
+        if (opts[i] !== opts[i].trim()) {
+          findings.push(`option ${labels[i]} has leading/trailing whitespace`);
+        }
+      }
+      return findings;
+    },
+  },
+  {
+    name: "quotation-mark",
+    desc: "only the correct answer contains quotation marks (outside backticks)",
+    fn(opts, correctIdx) {
+      const cleaned = opts.map(stripBackticks);
+      const has = cleaned.map((o) => /[""\u201c\u201d]/.test(o));
+      if (has[correctIdx] && has.filter(Boolean).length === 1) {
+        return ["only correct answer contains quotation marks"];
+      }
+      return [];
+    },
+  },
   {
     name: "semicolon",
     desc: "only the correct answer contains a semicolon",

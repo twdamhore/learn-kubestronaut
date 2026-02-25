@@ -63,6 +63,8 @@ const KEYWORDS = [
   [/\bnatively\b/i, "natively"],
   [/\bdynamically\b/i, "dynamically"],
   [/\bimmediately\b/i, "immediately"],
+  [/\bregardless\b/i, "regardless"],
+  [/\bsimultaneously\b/i, "simultaneously"],
 ];
 
 function stripBackticks(s) {

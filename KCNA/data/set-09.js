@@ -1305,7 +1305,7 @@ var questions = [
     diagram: null,
     options: [
       "New Pods are created first, then old Pods are terminated after the new ones pass their readiness checks",
-      "Pods are replaced one at a time, similar to a rolling update strategy but with longer grace periods applied",
+      "Pods are replaced one at a time simultaneously in small batches, similar to a rolling update strategy",
       "All existing Pods are terminated simultaneously, then new Pods are created, causing a brief downtime period",
       "The Deployment is paused until a cluster administrator manually reviews and approves the pending update"
     ],
