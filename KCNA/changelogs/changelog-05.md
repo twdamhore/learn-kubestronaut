@@ -439,3 +439,37 @@
 
 ### s05-q086 — backtick balance
 - **Option A:** Added backticks to `kube-apiserver`. A: 1->2 bt.
+
+---
+
+# Round 48 Review - set-05.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 6
+
+---
+
+### s05-q009 (first-word giveaway)
+- **Problem:** Correct answer D started with "Mount" while two distractors (A, C) started with "Set", making correct visually distinct.
+- **Fix:** Changed D from "Mount an `emptyDir` volume at the path where temporary writes are needed" to "Use an `emptyDir` volume mounted at the path where temporary writes occur". Now D starts with "Use" matching distractor B.
+
+### s05-q038 (first-word giveaway)
+- **Problem:** Correct answer C started with "The" while two distractors (A, B) started with "Helm", making correct visually distinct.
+- **Fix:** Changed B from "Helm charts in public repositories require signed TLS certificates to install" to "The charts in public repositories require signed TLS certificates to install". Now B and C both start with "The".
+
+### s05-q078 (first-word giveaway)
+- **Problem:** Correct answer B started with "All" while two distractors (A, D) started with "The", making correct visually distinct.
+- **Fix:** Changed B from "All files in mounted volumes are owned by GID 2000 and new files inherit it" to "The mounted volume files are owned by GID 2000 and all new files inherit it". Now B starts with "The" matching A and D.
+
+### s05-q079 (first-word giveaway)
+- **Problem:** Correct answer A started with "Secrets" while two distractors (B, D) started with "The", making correct visually distinct.
+- **Fix:** Changed A from "Secrets cannot be used across namespaces and the Secret must exist in `production`" to "The Secret must exist in the `production` namespace to be mounted by the Pod". Now A starts with "The" matching B and D.
+
+### s05-q082 (first-word giveaway)
+- **Problem:** Correct answer D started with "Env" (abbreviated) while two distractors (A, C) started with "Environment" (full word), making correct visually distinct via truncation pattern.
+- **Fix:** Changed D from "Env vars leak through process listings and crash dumps while volume-mounted files do not" to "Environment variables leak through process listings and crash dumps unlike mounted files". Now D starts with "Environment" matching A and C.
+
+### s05-q096 (keyword giveaway)
+- **Problem:** Correct answer C uniquely contained "automatically" while no distractor used this word.
+- **Fix:** Changed A from "Hardcode the token in the application source code and redeploy it monthly" to "Hardcode the token in application source code and automatically redeploy monthly". Now both A and C contain "automatically".

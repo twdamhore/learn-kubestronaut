@@ -776,3 +776,18 @@
 **Issues fixed**: 0 backtick-balance flags
 
 Set-09 had 0 backtick-balance flags. No changes needed.
+
+---
+
+# Round 48 Review - set-09.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 1
+
+---
+
+## s09-q006 (giveaway - unique keyword "rather than")
+
+**Problem:** Only the correct answer B contained the phrase "rather than" ("The sync policy is `manual` rather than `automated`"), making it uniquely identifiable via a contrast connector not present in any distractor.
+**Change:** Changed "rather than" to "and not" in option B: "The sync policy is `manual` and not `automated`, so changes are detected but not applied". B length changed from 114 to 110 chars; ratio remains under 1.15.

@@ -139,7 +139,7 @@ var questions = [
       "Set `readOnlyRootFilesystem: false` to allow container filesystem writes",
       "Use an `initContainer` to pre-create all needed temporary file paths",
       "Set `allowPrivilegeEscalation: true` to bypass filesystem restrictions",
-      "Mount an `emptyDir` volume at the path where temporary writes are needed"
+      "Use an `emptyDir` volume mounted at the path where temporary writes occur"
     ],
     answer: 3,
     explanation: "Mounting an `emptyDir` volume at the required write path preserves the security benefit of a read-only root filesystem while providing a writable area. Disabling the read-only filesystem weakens security, and `allowPrivilegeEscalation` is unrelated to filesystem write access.\n\nWhy other options are wrong:\n- A: Disabling readOnlyRootFilesystem weakens security and is not recommended\n- B: An initContainer cannot pre-create files on a read-only filesystem; the constraint applies to the overlay\n- C: allowPrivilegeEscalation controls setuid/setgid, not filesystem write permissions\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container",
@@ -601,7 +601,7 @@ var questions = [
     diagram: null,
     options: [
       "Helm automatically encrypts all Secret values embedded in the chart package",
-      "Helm charts in public repositories require signed TLS certificates to install",
+      "The charts in public repositories require signed TLS certificates to install",
       "The default values file may contain sensitive data visible to anyone with access",
       "Public Helm repositories enforce RBAC-based access control on chart downloads"
     ],
@@ -1241,7 +1241,7 @@ var questions = [
     diagram: null,
     options: [
       "The filesystem is encrypted with a key derived from group ID 2000 value",
-      "All files in mounted volumes are owned by GID 2000 and new files inherit it",
+      "The mounted volume files are owned by GID 2000 and all new files inherit it",
       "Only processes running as GID 2000 can access the Pod network and volumes",
       "The volume is mounted as read-only for any process not in the group 2000"
     ],
@@ -1256,7 +1256,7 @@ var questions = [
     text: "A Pod fails to start with the error `Error: secret \"tls-cert\" not found`. The Secret exists in the `default` namespace, but the Pod runs in the `production` namespace. What is the issue?",
     diagram: null,
     options: [
-      "Secrets cannot be used across namespaces and the Secret must exist in `production`",
+      "The Secret must exist in the `production` namespace to be mounted by the Pod",
       "The Secret name contains a typo preventing the kubelet from locating `tls-cert`",
       "TLS-type Secrets require a special RBAC role to access from within Pod containers",
       "The Pod's ServiceAccount lacks `get` permission to read Secrets from `default`"
@@ -1307,7 +1307,7 @@ var questions = [
       "Environment variables are not encrypted by Kubernetes while in transit between components",
       "Volume mounts automatically encrypt Secret data before writing it to the container disk",
       "Environment variables are injected at startup and are never refreshed on rotation",
-      "Env vars leak through process listings and crash dumps while volume-mounted files do not"
+      "Environment variables leak through process listings and crash dumps unlike mounted files"
     ],
     answer: 3,
     explanation: "Environment variables are exposed through `/proc/<pid>/environ`, may appear in crash dumps, and can be logged by application frameworks. Volume-mounted Secrets are stored as files with restricted permissions and are less likely to be accidentally exposed through these channels.\n\nWhy other options are wrong:\n- A: Neither env vars nor volume mounts are encrypted in transit between components by default\n- B: Volume mounts do not automatically encrypt Secret data; they use tmpfs with file permissions\n- C: While env vars are indeed injected at start and do not auto-update, the primary security concern is exposure in process listings and logs\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod",
@@ -1528,7 +1528,7 @@ var questions = [
     text: "A microservice communicates with an external payment API using a bearer token stored in a Kubernetes Secret. The token is rotated monthly by the payment provider. What is the best practice for handling rotation?",
     diagram: null,
     options: [
-      "Hardcode the token in the application source code and redeploy it monthly",
+      "Hardcode the token in application source code and automatically redeploy monthly",
       "Store the token in a ConfigMap or external config file for easier updates",
       "Use an external secrets operator to sync the token from a vault automatically",
       "Create a new namespace for each monthly token rotation from the payment provider"

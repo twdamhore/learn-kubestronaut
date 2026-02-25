@@ -953,9 +953,9 @@ var questions = [
     diagram: null,
     options: [
       "A. Add an entry to `/etc/fstab` inside the container image for the block device path and the desired filesystem type",
-      "B. Use an init container to automatically run `mkfs.ext4 /dev/xvda` before the app container starts, then mount in the main container",
+      "B. Use an init container to run `mkfs.ext4 /dev/xvda` before the app container starts, then mount the device in the main container",
       "C. Change the PVC to `volumeMode: Filesystem` so the CSI driver formats and mounts the volume automatically via kubelet",
-      "D. Add a `formatOptions` field in the StorageClass parameters to have the block device pre-formatted before pod attachment"
+      "D. Add a `formatOptions` field in the StorageClass parameters to automatically pre-format the block device before pod attachment"
     ],
     answer: 2,
     explanation: "When `volumeMode: Block` is used, the raw block device is presented to the container without any filesystem — the application is responsible for all I/O operations directly on the block device. Most applications expect a formatted filesystem. By changing to `volumeMode: Filesystem` (the default), the kubelet instructs the CSI driver to format the volume (if needed) and mount it at the specified path. This is the standard approach for applications that use regular file I/O. Raw block mode is intended for databases or applications that manage their own on-disk format.\n\nWhy other options are wrong:\n- A: Adding fstab entries inside the container does not help; the block device has no filesystem to mount in the first place\n- B: Running mkfs in an init container works but requires elevated privileges and adds unnecessary complexity compared to using Filesystem mode\n- D: There is no formatOptions field in StorageClass parameters; filesystem formatting is handled by kubelet with volumeMode: Filesystem\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-mode",
@@ -1224,7 +1224,7 @@ var questions = [
     text: "A pod's `livenessProbe` uses `exec` to run a script `/healthcheck.sh` that queries a local database connection. The probe has `timeoutSeconds: 5` and `periodSeconds: 10`. The pod is being restarted frequently. Logs show the application is healthy, but `kubectl describe` shows `Liveness probe failed: command timed out`. Node monitoring shows high CPU load on the node. What is the issue?",
     diagram: null,
     options: [
-      "A. The `/healthcheck.sh` script has a database query that occasionally takes longer than 5 seconds, and table lock contention on the node delays it",
+      "A. The `/healthcheck.sh` script has a database query that takes longer than 5 seconds, and table lock contention delays it",
       "B. Under high CPU load the kubelet cannot fork the exec process within `timeoutSeconds`, so the probe times out before the script starts",
       "C. The exec probe process competes for CPU with the app container, and under high node pressure it is throttled by the cgroup limit",
       "D. The kubelet probe worker pool is exhausted due to high pod density on the node, delaying probe execution beyond the timeout window"

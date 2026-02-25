@@ -714,3 +714,20 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q099 — backtick-balance: correct C=1 vs avg 0.3 (3x more)
 - **Option D:** Added backtick to `canary`. Changed "the canary traffic weight" to "the `canary` traffic weight". D: 0→1 backtick-terms.
+
+---
+
+# Round 48 Review - set-10.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-10.js`
+**Issues fixed:** 3
+
+---
+
+### s10-q060 (length-balance + giveaway)
+- **Option B:** Trimmed from 133 to 130 chars. Changed "Use an init container to automatically run" to "Use an init container to run" and "then mount in the main container" to "then mount the device in the main container".
+- **Option D:** Added "automatically" to balance correct C's unique use. Changed "to have the block device pre-formatted" to "to automatically pre-format the block device" (122→128 chars).
+
+### s10-q077 (length-balance)
+- **Option A:** Trimmed from 147 to 122 chars. Changed "The `/healthcheck.sh` script has a database query that occasionally takes longer than 5 seconds, and table lock contention on the node delays it" to "The `/healthcheck.sh` script has a database query that takes longer than 5 seconds, and table lock contention delays it". Preserved `, and` to avoid introducing a giveaway pattern.
