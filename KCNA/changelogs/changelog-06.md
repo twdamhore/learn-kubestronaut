@@ -500,3 +500,13 @@
 
 ---
 No issues found. All 100 questions pass all three automated checkers (length balance at 1.15 threshold, giveaway pattern, backtick balance) with 0 flags. Manual review of accuracy, answer indices, option label ordering, explanation quality, and structural giveaway patterns found no actionable issues.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-06.js`
+**Issues fixed**: 1
+
+### s06-q072 (keyword giveaway — "instead of")
+- **Problem:** Only the correct answer C contained the phrase "instead of" ("replacement Pods can start simultaneously instead of sequentially"), making it uniquely identifiable.
+- **Fix:** Changed D from "The policy primarily influences creation order, with minimal impact on eviction behavior" to "The policy influences creation order instead of eviction, with minimal drain impact". Now both C and D contain "instead of".

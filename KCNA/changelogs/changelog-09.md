@@ -791,3 +791,45 @@ Set-09 had 0 backtick-balance flags. No changes needed.
 
 **Problem:** Only the correct answer B contained the phrase "rather than" ("The sync policy is `manual` rather than `automated`"), making it uniquely identifiable via a contrast connector not present in any distractor.
 **Change:** Changed "rather than" to "and not" in option B: "The sync policy is `manual` and not `automated`, so changes are detected but not applied". B length changed from 114 to 110 chars; ratio remains under 1.15.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-09.js`
+**Issues fixed**: 9
+
+### s09-q012 (first-word giveaway)
+- **Problem:** Correct answer D started with "Containerd" while two distractors (A, B) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed A from "The Pods are using a virtual machine runtime like Kata Containers instead of Docker for workload isolation" to "Running Pods use a virtual machine runtime like Kata Containers instead of Docker for workload isolation". Now A starts with "Running", breaking the "The" cluster.
+
+### s09-q034 (first-word giveaway)
+- **Problem:** Correct answer B started with "Create" while two distractors (A, C) started with "Use", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed C from "Use a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured time schedule" to "Configure a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured schedule". Now C starts with "Configure", breaking the "Use" cluster.
+
+### s09-q046 (first-word giveaway)
+- **Problem:** Correct answer A started with "CI/CD" while two distractors (B, C) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed B from "The `kubectl apply` command is deprecated and scheduled for removal in upcoming Kubernetes releases" to "Kubernetes has deprecated `kubectl apply` and scheduled it for removal in upcoming releases". Now B starts with "Kubernetes", breaking the "The" cluster.
+
+### s09-q055 (first-word giveaway)
+- **Problem:** Correct answer A started with "Each" while two distractors (B, C) started with "Envoy", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed C from "Envoy sidecars consume all available CPU on the node, starving the application containers of resources" to "Sidecar containers consume all available CPU on the node, starving the application containers of resources". Now C starts with "Sidecar", breaking the "Envoy" cluster.
+
+### s09-q063 (first-word giveaway)
+- **Problem:** Correct answer D started with "Each" while two distractors (A, B) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed A from "The developer can select from multiple compatible API groups for each resource type during manifest creation" to "Developers can select from multiple compatible API groups for each resource type during manifest creation". Now A starts with "Developers", breaking the "The" cluster.
+
+### s09-q067 (first-word giveaway)
+- **Problem:** Correct answer A started with "Pods" while two distractors (B, D) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed B from "The kubelet restarts all Pods on the node, clears their caches, and reattempts connection to the API server" to "After partition, the kubelet restarts all Pods on the node, clears caches, and reattempts API server connection". Now B starts with "After", breaking the "The" cluster.
+
+### s09-q084 (first-word giveaway + semicolon fix)
+- **Problem:** Correct answer C started with "Bare-metal" while two distractors (A, B) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed A from "The Service YAML is malformed; the `loadBalancerIP` field must be explicitly specified in the spec" to "A malformed Service YAML requires the `loadBalancerIP` field to be explicitly specified in the spec". Changed B from "The kube-proxy DaemonSet needs to be restarted to detect the new LoadBalancer Service type correctly" to "Restarting the kube-proxy DaemonSet is needed; it must detect the new LoadBalancer Service type correctly". A now starts with "A" and B now starts with "Restarting", breaking the "The" cluster. B also gains a semicolon to prevent a new semicolon-only-in-correct giveaway.
+
+### s09-q090 (keyword giveaway — "automatically")
+- **Problem:** Only the correct answer C contained the word "automatically" ("applied the taint automatically"), making it uniquely identifiable.
+- **Fix:** Changed D from "The taint was added by the kube-controller-manager due to a failed node health check on memory status" to "The taint was automatically added by the kube-controller-manager due to a failed node health check on status". Now both C and D contain "automatically".
+
+### s09-q097 (first-word giveaway)
+- **Problem:** Correct answer A started with "Overlays" while two distractors (B, C) started with "Kustomize", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed B from "Kustomize directly modifies the base manifest files in place for each environment during the build process" to "Base manifest files are directly modified in place by Kustomize for each environment during the build process". Now B starts with "Base", breaking the "Kustomize" cluster.

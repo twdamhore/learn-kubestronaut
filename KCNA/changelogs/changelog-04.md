@@ -629,3 +629,40 @@
 
 ---
 No issues found. All 100 questions pass length balance (threshold 1.15), giveaway pattern, and backtick balance checks. Manual review of accuracy, answer indices, option plausibility, structural giveaways (qualifiers, semicolons, em-dashes, parentheticals, polarity, first-word patterns, backtick density), and explanation correctness revealed no problems.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-04.js`
+**Issues fixed**: 8 (first-word and keyword giveaway patterns)
+
+### s04-q018 — first-word giveaway (correct "Examine", distractors cluster "Check" 2x)
+- **Option D:** Changed "Check the `kube-apiserver` audit logs..." to "Inspect the `kube-apiserver` audit logs..." to break the 2x "Check" cluster among distractors.
+
+### s04-q022 — first-word giveaway (correct "Deploy", distractors cluster "Use" 2x)
+- **Option D:** Changed "Use application-managed in-memory replication across pods, avoiding external storage dependencies for simplicity" to "Rely on application-managed in-memory replication across pods, avoiding external storage dependencies entirely" to break the 2x "Use" cluster among distractors.
+
+### s04-q034 — keyword giveaway (only correct contains "automatically")
+- **Option C:** Changed "As binary files stored in a protected directory on the node that only the kubelet process can read" to "As binary files automatically stored in a protected directory on the node that only the kubelet can read" to add "automatically" to a distractor.
+
+### s04-q062 — first-word giveaway (correct "Span", distractors cluster "The" 2x)
+- **Option D:** Changed "The container image tag used by the order service which determines the application version" to "Container image tag used by the order service, which determines the application version deployed" to break the 2x "The" cluster among distractors.
+
+### s04-q065 — first-word giveaway (correct "Match", distractors cluster "Prefer" 2x)
+- **Option C:** Changed "Prefer local volumes for their performance advantages and accept the reduced availability trade-off" to "Choose local volumes for their performance advantages and accept the reduced availability trade-off" to break the 2x "Prefer" cluster among distractors.
+
+### s04-q072 — first-word giveaway (correct "Kafka", distractors cluster "The" 2x)
+- **Option A:** Changed "The kube-apiserver sends a notification event to all running broker pods about the new cluster member" to "Kube-apiserver sends a notification event to all running broker pods about the new cluster member" to break the 2x "The" cluster among distractors.
+
+### s04-q077 — first-word giveaway (correct "A", distractors cluster "The" 2x)
+- **Option C:** Changed "The source PVC is deleted and its PV is transferred to the new PVC as part of the cloning operation" to "Source PVC is deleted and its PV is transferred to the new PVC as part of the cloning operation" to break the 2x "The" cluster among distractors.
+
+### s04-q088 — first-word giveaway (correct "Use", distractors cluster "Set" 2x)
+- **Option A:** Changed "Set `nodeSelector` to a single zone and rely on the Kubernetes `scheduler` to auto-distribute across zones" to "Apply `nodeSelector` to a single zone and rely on the Kubernetes `scheduler` to distribute across zones" to break the 2x "Set" cluster among distractors.
+
+### Summary
+- 7 first-word giveaway fixes (breaking 2x distractor first-word clusters)
+- 1 keyword giveaway fix (adding "automatically" to a distractor)
+- No answer indices were changed
+- No accuracy or explanation changes
+- All three checkers report 0 flags for set-04

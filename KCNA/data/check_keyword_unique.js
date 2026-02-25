@@ -54,9 +54,9 @@ const KEYWORDS = [
   [/, or /i, ", or"],
 
   // Contrast / qualification
-  [/\b but \b/i, " but "],
-  [/\b while \b/i, " while "],
-  [/\b like \b/i, " like "],
+  [/\bbut\b/i, "but"],
+  [/\bwhile\b/i, "while"],
+  [/\blike\b/i, "like"],
 
   // Other signal words
   [/\bspecifically\b/i, "specifically"],

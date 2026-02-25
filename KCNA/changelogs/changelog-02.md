@@ -633,3 +633,47 @@
 
 ---
 No issues found. All 100 questions pass length balance (threshold 1.15), giveaway pattern, and backtick balance checks. Manual review confirmed accuracy, correct answer indices, and balanced answer distribution (A=26, B=26, C=24, D=24).
+
+## Round 48b — 2026-02-25
+**File**: `set-02.js`
+**Issues fixed**: 13 giveaway flags (first-word patterns) + 1 backtick-balance fix
+
+### s02-q002 — giveaway: first-word cluster "the" (2x) vs correct "env"
+- Option C: Changed first word from `"The kubelet refreshes..."` to `"Kubelet refreshes env vars every 60 seconds so the operator just needs to wait a bit longer"`.
+
+### s02-q004 — giveaway: first-word cluster "guaranteed" (2x) vs correct "burstable"
+- Option D: Changed first word from `` "`Guaranteed` — because Kubernetes rounds up..." `` to `"Kubernetes assigns \`Guaranteed\` — because it rounds up partial specs for both CPU and memory"`.
+
+### s02-q006 — giveaway: first-word cluster "the" (2x) vs correct "pod"
+- Option A: Changed first word from `"The pod is created because..."` to `"Kubernetes creates the pod and auto-assigns default CPU values derived from the ResourceQuota"`.
+- Option B: Added "because" to break new keyword-"because" flag. Changed `"No scheduling occurs and the pod stays..."` to `"No scheduling occurs because the pod stays in pending state until the administrator adds a LimitRange"`.
+
+### s02-q008 — giveaway: first-word cluster "the" (2x) vs correct "etcd"
+- Option D: Changed first word from `"The container runtime's internal..."` to `"Within the container runtime's internal image layer filesystem storage on the scheduling node"`.
+
+### s02-q031 — giveaway: first-word cluster "the" (2x) vs correct "mounting"
+- Option B: Changed first word from `"The container runtime performs..."` to `"During startup the container runtime cleans any directory where a ConfigMap volume is mounted"`.
+
+### s02-q037 — giveaway: first-word cluster "guaranteed" (2x) vs correct "burstable"
+- Option D: Changed first word from `` "`Guaranteed` — because Kubernetes defaults..." `` to `"Kubernetes assigns \`Guaranteed\` — because it defaults CPU to match memory specs"`. Also trims length to fix ratio from 1.173 to within 1.15.
+
+### s02-q050 — giveaway: first-word cluster "use" (2x) vs correct "create"
+- Option C: Changed first word from `"Use a single \`ConfigMap\` and toggle..."` to `"Place all feature flags in a single \`ConfigMap\` and toggle them with environment variables per pod"`.
+
+### s02-q055 — giveaway: first-word cluster "the" (2x) vs correct "pod"
+- Option A: Changed first word from `"The pod is created but the CPU limit is automatically capped..."` to `"Kubernetes creates the pod but automatically caps the CPU limit at 2 cores via the LimitRange"`.
+
+### s02-q059 — giveaway: first-word cluster "pods" (2x) vs correct "besteffort"
+- Option A: Changed first word from `` "`Pods` are evicted alphabetically..." `` to `"Eviction occurs alphabetically by \`Pod\` name to ensure deterministic and repeatable behavior on nodes"`. Added backtick formatting to `Pod` to also fix backtick-balance flag (correct had 2.3x more backtick-terms than distractor average).
+
+### s02-q088 — giveaway: first-word cluster "a" (2x) vs correct "an"
+- Option D: Changed first word from `"A \`persistentVolumeClaim\`..."` to `"Provisioning a \`persistentVolumeClaim\` that the init container writes to and the main container reads"`.
+
+### s02-q092 — giveaway: first-word cluster "configuration" (2x) vs correct "configmaps"
+- Option A: Changed first word from `"Configuration files should be compiled..."` to `"All configuration files should be compiled into the application binary, validated at build, cached, and versioned internally"`.
+
+### s02-q096 — giveaway: first-word cluster "fluentd" (2x) vs correct "the"
+- Option D: Changed first word from `"Fluentd reads the node's kubelet configuration file..."` to `"Reading the node's kubelet configuration file lets Fluentd determine pod resource limits for enrichment"`. Also trims option A length to fix ratio from 1.194 to within 1.15.
+
+### s02-q100 — giveaway: first-word cluster "it" (2x) vs correct "any"
+- Option A: Changed first word from `"It embeds the ConfigMap content directly..."` to `"Embedding the ConfigMap content directly in the pod template reduces the need for a separate ConfigMap resource"`. Expands length to fix ratio from 1.168 to within 1.15.

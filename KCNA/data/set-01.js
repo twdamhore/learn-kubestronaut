@@ -123,7 +123,7 @@ var questions = [
       "Fluentd, which collects and forwards time-series metric data from nodes to a backend",
       "Grafana, which collects metrics directly from kubelets and stores them internally",
       "Prometheus, which scrapes metric endpoints on targets and stores time-series data natively",
-      "Jaeger, which provides distributed metrics collection and aggregation pipeline support"
+      "Jaeger, which natively provides distributed metrics collection and aggregation pipelines"
     ],
     answer: 2,
     explanation: "Prometheus is the CNCF graduated project that serves as the standard for metrics collection in Kubernetes. It uses a pull-based model to scrape metric endpoints and stores data as time series. Fluentd is for log aggregation, not metrics. Jaeger is for distributed tracing. Grafana is a visualization tool that queries data sources like Prometheus but does not collect or store metrics itself.\n\nWhy other options are wrong:\n- A: Fluentd is for log aggregation, not metrics collection.\n- B: Grafana is a visualization/dashboard tool that queries data sources like Prometheus; it does not collect or store metrics.\n- D: Jaeger is a distributed tracing system, not a metrics collection tool.\n\nReference: https://prometheus.io/docs/introduction/overview/",
@@ -248,7 +248,7 @@ var questions = [
     text: "An SRE team needs to aggregate logs from all containers running across a Kubernetes cluster into a centralized logging backend. They want the solution to run automatically on every node without manual scheduling. Which Kubernetes pattern and resource combination is most appropriate?",
     diagram: null,
     options: [
-      "Deploy a logging agent as a sidecar container inside every application Pod in the cluster",
+      "Run a logging agent as a sidecar container inside every application Pod in the cluster",
       "Deploy a single logging Deployment with `replicas` equal to the node count that adjusts",
       "A DaemonSet, which guarantees a single Pod copy is present on all cluster nodes as they join",
       "Configure the kubelet, which writes logs to disk, to forward all container logs to the backend"
@@ -586,7 +586,7 @@ var questions = [
     options: [
       "Pod anti-affinity with `topologyKey: kubernetes.io/hostname` to spread Pods across nodes",
       "Per-node `nodeSelector` labels targeting each node individually for each replica Pod",
-      "A `PodDisruptionBudget` with `maxUnavailable: 1` configured to prevent any co-location",
+      "Setting a `PodDisruptionBudget` with `maxUnavailable: 1` to prevent any co-location on nodes",
       "A taint on each node that only tolerates a single Pod from the Deployment's workload set"
     ],
     answer: 0,
@@ -680,7 +680,7 @@ var questions = [
     text: "A platform engineering team is evaluating service mesh solutions for their Kubernetes cluster. They need features like mutual TLS, traffic management, and observability between services. Which CNCF project provides a comprehensive service mesh for Kubernetes?",
     diagram: null,
     options: [
-      "Envoy, which provides a complete service mesh with a built-in control plane",
+      "Envoy, which provides a complete service mesh built specifically as a control plane",
       "Linkerd, a lightweight service mesh designed specifically for Kubernetes clusters",
       "Calico, which provides service mesh capabilities through its network CNI plugin",
       "CoreDNS, which handles service-to-service routing and mTLS within Kubernetes"
@@ -761,7 +761,7 @@ var questions = [
     diagram: null,
     options: [
       "An init container that runs the migration to completion before the app containers start",
-      "A Job resource that runs the migration as a separate workload before the Deployment is created",
+      "Running a Job resource that performs the migration as a separate workload before the Deployment",
       "A `postStart` lifecycle hook on the application container that runs the migration task",
       "Setting a sidecar container with a higher `priority` value to ensure it starts before the app"
     ],
@@ -856,7 +856,7 @@ var questions = [
     text: "A cluster administrator needs to control which actions users and service accounts can perform within the cluster. They want to grant a developer read-only access to Pods in the `staging` namespace but no access to other namespaces. Which Kubernetes authorization mechanism should they use?",
     diagram: null,
     options: [
-      "Create a `NetworkPolicy` that restricts the developer's Pod access to resources in the `staging` namespace",
+      "Apply a `NetworkPolicy` that restricts the developer's Pod access to resources in the `staging` namespace",
       "Create a `ServiceAccount` in the `staging` namespace, which automatically limits all access to that namespace",
       "Add the developer's credentials to the API server (`kube-apiserver`) configuration with namespace restrictions",
       "Configure Role-Based Access Control (RBAC) with a `Role` and `RoleBinding` in the `staging` namespace"
@@ -872,7 +872,7 @@ var questions = [
     text: "A team deploys an Ingress resource to route HTTP traffic to different backend Services based on URL paths. The Ingress routes `/api` to the API service and `/web` to the frontend service. However, traffic is not being routed. What additional component is required for Ingress resources to function?",
     diagram: null,
     options: [
-      "A `LoadBalancer` Service for each backend that the Ingress resource routes traffic to",
+      "Adding a `LoadBalancer` Service for each backend that the Ingress resource routes traffic to",
       "Upgrading `kube-proxy` to support HTTP path-based routing natively on cluster nodes",
       "An Ingress controller such as NGINX that watches Ingress resources and configures routing",
       "A DNS server such as CoreDNS that maps Ingress hostnames to individual Pod IPs directly"
@@ -905,7 +905,7 @@ var questions = [
     diagram: null,
     options: [
       "A `PersistentVolume` with `reclaimPolicy: Retain` that is pre-provisioned by an administrator",
-      "A `VolumeAttachment` resource that connects cloud storage to Pods on demand when requested",
+      "A `VolumeAttachment` resource that dynamically connects cloud storage to Pods on demand",
       "A `ConfigMap` that maps PVC names to cloud provider volume IDs for automatic volume binding",
       "A `StorageClass` with a provisioner that dynamically creates PersistentVolumes for PVCs"
     ],
@@ -936,7 +936,7 @@ var questions = [
     text: "A team is designing an API gateway for their microservices architecture on Kubernetes. The gateway should handle cross-cutting concerns like authentication, rate limiting, and request routing. Which Kubernetes resource type is commonly used as the entry point for external HTTP/HTTPS traffic to microservices?",
     diagram: null,
     options: [
-      "A `ClusterIP` Service with annotation-based routing rules to handle external HTTP traffic directly",
+      "Using a `ClusterIP` Service with annotation-based routing rules to handle external HTTP traffic",
       "An `Ingress` resource with an Ingress controller that handles routing and TLS termination",
       "A `DaemonSet` running an HTTP proxy on every node with `hostNetwork: true` for direct access",
       "Defining routing rules in a `ConfigMap` consumed by `kube-proxy` for HTTP load balancing"
@@ -1275,7 +1275,7 @@ var questions = [
       "No DNS records are created, so Pods rely on environment variables injected by the kubelet for discovery",
       "It creates a ClusterIP but hides it from the `kubectl get svc` output for additional security purposes",
       "DNS queries for the Service return individual Pod IPs instead of a virtual IP, enabling direct access",
-      "It routes all traffic to a single Pod selected from the endpoint list, bypassing round-robin distribution"
+      "Traffic is routed to a single Pod instead of using the endpoint list, bypassing round-robin distribution"
     ],
     answer: 2,
     explanation: "A headless Service (`clusterIP: None`) does not get a virtual IP. Instead, DNS queries for the Service name return A records for all the Pod IPs backing the Service. This allows clients to discover and connect to individual Pods directly, which is essential for stateful applications like databases. Headless Services still create DNS records. The ClusterIP is not hidden. Traffic is not limited to one Pod.\n\nWhy other options are wrong:\n- A: Headless Services do create DNS records — they return individual Pod IP A records.\n- B: The ClusterIP is not hidden; it is explicitly set to None, meaning no virtual IP is allocated.\n- D: Traffic is not limited to one Pod; DNS returns all Pod IPs for client-side selection.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
@@ -1496,7 +1496,7 @@ var questions = [
     text: "A team wants to perform a blue-green deployment for their application on Kubernetes. They have the current version (blue) running and want to deploy the new version (green) alongside it, then switch all traffic at once. How can they implement this using native Kubernetes resources?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="80" width="120" height="50" rx="8" fill="#2196F3" stroke="#fff" stroke-width="1.5"/><text x="70" y="100" text-anchor="middle" fill="white" font-size="11">Blue (v1)</text><text x="70" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="270" y="80" width="120" height="50" rx="8" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/><text x="330" y="100" text-anchor="middle" fill="white" font-size="11">Green (v2)</text><text x="330" y="118" text-anchor="middle" fill="white" font-size="10">3 replicas</text><rect x="140" y="10" width="120" height="40" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="white" font-size="12">???</text><line x1="170" y1="50" x2="70" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><line x1="230" y1="50" x2="330" y2="80" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/><text x="200" y="170" text-anchor="middle" fill="#ccc" font-size="12">? How does traffic switch ?</text></svg>',
     options: [
-      "Use a single Deployment and update the image tag, which performs a blue-green switch automatically per rollout",
+      "Update a single Deployment's image tag, which performs a blue-green switch automatically per rollout",
       "Deploy two Deployments (blue and green) and switch traffic by updating the Service selector to the green Pods",
       "Use an Ingress resource with weighted routing rules set to 0% blue traffic and 100% green traffic for cutover",
       "Scale the blue Deployment (v1) to zero and the green Deployment to the desired count simultaneously for the switch"
@@ -1576,7 +1576,7 @@ var questions = [
     text: "A team is investigating API server authentication. They discover that Pods can authenticate to the Kubernetes API using tokens. Which mechanism provides these tokens to Pods automatically?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="160" height="50" rx="8" fill="#333" stroke="#326CE5" stroke-width="2"/><text x="100" y="50" text-anchor="middle" fill="white" font-size="12">Pod</text><rect x="220" y="20" width="160" height="50" rx="8" fill="#326CE5" stroke="#fff" stroke-width="2"/><text x="300" y="50" text-anchor="middle" fill="white" font-size="12">API Server</text><rect x="20" y="120" width="160" height="50" rx="8" fill="#FF9800" stroke="#FFD700" stroke-width="1.5"/><text x="100" y="148" text-anchor="middle" fill="white" font-size="11">Auth Mechanism ?</text><line x1="100" y1="70" x2="100" y2="120" stroke="#aaa" stroke-width="1.5"/><line x1="180" y1="45" x2="220" y2="45" stroke="#4CAF50" stroke-width="2"/><text x="200" y="38" fill="#4CAF50" font-size="10">auth</text></svg>',
     options: [
-      "The `kube-proxy` generates and distributes authentication tokens to all Pods in the cluster",
+      "The `kube-proxy` automatically generates and distributes authentication tokens to all Pods",
       "The `ServiceAccount` resource, which mounts a projected token volume into each Pod automatically",
       "The `kubelet`, which generates a unique API key per Pod and stores it in an environment variable",
       "The container runtime creates a certificate for each container signed by the cluster CA"

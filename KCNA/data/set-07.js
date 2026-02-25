@@ -153,7 +153,7 @@ var questions = [
     diagram: null,
     options: [
       "An `imagePullSecret` is missing from the `Pod` spec and all nodes are refusing to process the pull request from the registry",
-      "The pod's `nodeAffinity` rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
+      "Each pod's `nodeAffinity` rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster",
       "The cluster's `AdmissionController` is blocking pod creation due to a configured security policy enforcement violation",
       "All five nodes are `NotReady` and the pods lack a toleration for the `not-ready` taint applied by the node controller"
     ],
@@ -330,7 +330,7 @@ var questions = [
     options: [
       "All three pods belong to the same ReplicaSet (`6d8f9b`) but one has developed a corrupted container filesystem causing crashes",
       "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while the old pods (`6d8f9b`) still remain running",
-      "The third pod was manually created outside of the `Deployment` controller and is completely unrelated to the current `ReplicaSet`",
+      "That third pod was manually created outside of the `Deployment` controller and is completely unrelated to the current `ReplicaSet`",
       "The Deployment's `replicas` was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
     ],
     answer: 1,
@@ -361,7 +361,7 @@ var questions = [
     diagram: null,
     options: [
       "Because the `kube-apiserver` cached the old image tag, it needs to be restarted to clear its internal image cache entry",
-      "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
+      "Instead of honoring the new image, the deployment controller ignores `imagePullPolicy: IfNotPresent` when the tag is unchanged",
       "The container runtime on the cluster nodes does not support pulling images using the mutable `latest` tag via `imagePullPolicy`",
       "With `imagePullPolicy: IfNotPresent`, the node uses its locally cached `myapp:latest` image instead of pulling the update"
     ],
@@ -473,7 +473,7 @@ var questions = [
     diagram: null,
     options: [
       "Two distinct issues: two nodes lack sufficient memory, and two other nodes fail the pod's affinity or selector rules",
-      "One issue: all four nodes have insufficient memory because node affinity overrides the scheduler's memory capacity checks",
+      "Only one issue: all four nodes have insufficient memory because node affinity overrides the scheduler's memory capacity checks",
       "Three issues: memory shortage, affinity mismatch, and an implicit CPU shortage that the scheduler is not explicitly reporting",
       "One issue: the node selector is misconfigured which causes the scheduler to misreport memory availability on those two nodes"
     ],
@@ -600,10 +600,10 @@ var questions = [
     text: "A pod fails to pull an image from a private container registry. The event shows: `Failed to pull image: unauthorized: authentication required`. The correct `imagePullSecrets` was created but the pod still cannot authenticate. What is a common mistake?",
     diagram: null,
     options: [
-      "The Secret was created with `type: Opaque` instead of required `type: kubernetes.io/dockerconfigjson`",
+      "The Secret was created with `type: Opaque` instead of the required `type: kubernetes.io/dockerconfigjson` format",
       "The node's `kubelet` is configured to ignore `imagePullSecrets` for security compliance policy enforcement",
       "The container image tag is set to `latest` which bypasses authentication checks on all private registries",
-      "The Secret's data field must be `base64`-encoded twice for proper Docker registry authentication to succeed"
+      "The Secret's data field must be `base64`-encoded twice instead of once for Docker registry authentication"
     ],
     answer: 0,
     explanation: "Image pull secrets must be of type `kubernetes.io/dockerconfigjson` to be recognized by the kubelet for registry authentication. If the Secret was created as `type: Opaque`, the kubelet cannot parse the registry credentials from it, even if the data content is correct. Additionally, the secret must be referenced in the pod's `imagePullSecrets` field or in the ServiceAccount.\n\nWhy other options are wrong:\n- B: kubelet does not have a setting to ignore image pull secrets\n- C: The latest tag does not bypass authentication on private registries\n- D: Secret data only needs to be base64-encoded once; double encoding would corrupt the credentials\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
@@ -698,7 +698,7 @@ var questions = [
     options: [
       "Its pod transitions to `Completed` state and is never restarted by the kubelet regardless of its configured restart policy",
       "Kubernetes restarts the container because `restartPolicy: Always` means it restarts regardless of the exit code value",
-      "The pod is deleted and a new replacement pod is created by the ReplicaSet controller on a potentially different cluster node",
+      "After exiting, the pod is deleted and a new replacement pod is created by the ReplicaSet controller on a different cluster node",
       "The kubelet marks the pod as `Failed` because containers should not exit with code 0 under the Always restart policy rules"
     ],
     answer: 1,
@@ -713,8 +713,8 @@ var questions = [
     diagram: null,
     options: [
       "The old pod's logs are permanently lost unless a cluster-level log aggregation system like `Fluentd` or Loki collected them",
-      "Use `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
-      "Run `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
+      "Run `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred",
+      "Check `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster",
       "Use `kubectl get events` which captures full container logs like stdout and stderr on pod termination events automatically"
     ],
     answer: 0,
@@ -873,7 +873,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="120" rx="8" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/><text x="200" y="35" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="bold">NetworkPolicy Effect</text><rect x="30" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="80" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">frontend</text><rect x="150" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#e76f51" stroke-width="1.5"/><text x="200" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">api (selected)</text><rect x="270" y="55" width="100" height="40" rx="6" fill="#264653" stroke="#7a8a99" stroke-width="1.5"/><text x="320" y="79" text-anchor="middle" fill="#e0e0e0" font-size="10">database</text><line x1="130" y1="75" x2="148" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#a55)"/><text x="139" y="68" fill="#7a8a99" font-size="9">?</text><line x1="250" y1="75" x2="268" y2="75" stroke="#7a8a99" stroke-width="2" marker-end="url(#b55)"/><text x="259" y="68" fill="#7a8a99" font-size="9">?</text><defs><marker id="a55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker><marker id="b55" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8a99"/></marker></defs></svg>',
     options: [
       "Listing `Egress` in `policyTypes` without defining egress rules creates a default-deny for all outbound traffic from the selected pods, including DNS",
-      "The `NetworkPolicy` Ingress rule only allows traffic from app=frontend, including its replicas, so the database pods are denied inbound api connections",
+      "Because the `NetworkPolicy` Ingress rule only allows traffic from app=frontend, including its replicas, the database pods are denied inbound api connections",
       "`NetworkPolicies` require a corresponding `allow-all` egress rule to be created in a separate resource for outbound traffic to function correctly",
       "The `CNI` plugin installed on this particular cluster does not support NetworkPolicy enforcement, so the policy object is being silently ignored"
     ],
@@ -1066,7 +1066,7 @@ var questions = [
     options: [
       "A new container image was pulled from an untrusted external container registry (e.g., a public `Docker Hub` repo)",
       "Someone executed an interactive shell command (e.g., via `kubectl exec`) inside the running `web-app` container",
-      "The `web-app` container's Dockerfile includes a `CMD` instruction that starts a shell process at container boot time",
+      "That `web-app` container's Dockerfile `CMD` instruction starts a shell process at container boot time automatically",
       "The container's `securityContext` was modified at runtime to allow elevated root access to the host system process"
     ],
     answer: 1,
@@ -1178,7 +1178,7 @@ var questions = [
     options: [
       "Increase the canary percentage to 50% to gather more error data and improve the statistical analysis of failures",
       "Wait for the canary's auto-healing mechanism to resolve the 500 errors through automatic retry and recovery logic",
-      "Delete the entire Deployment resource and redeploy from scratch to clear any corrupted state in the new revision",
+      "Immediately delete the entire Deployment resource and redeploy from scratch to clear any corrupted state in the revision",
       "Halt the rollout immediately and route 100% of traffic back to the stable version, then investigate the canary"
     ],
     answer: 3,
@@ -1209,7 +1209,7 @@ var questions = [
     diagram: null,
     options: [
       "No `Node` has 500m CPU available for scheduling the new pod, and the `ReplicaSet` controller cannot create it in production now",
-      "The pod's CPU request of 500m exceeds the maximum allowed per-pod by a `LimitRange` named compute-quota in the production namespace",
+      "That pod's CPU request of 500m exceeds the maximum allowed per-pod by a `LimitRange` named compute-quota in the production namespace",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
       "The cluster-wide CPU capacity has been fully allocated and no additional `Pods` can be scheduled on any node in the cluster"
     ],
@@ -1320,7 +1320,7 @@ var questions = [
     text: "A headless Service (`clusterIP: None`) is created for a StatefulSet. When you run `nslookup <service-name>` from a pod, it returns multiple IP addresses. What do these IPs represent?",
     diagram: null,
     options: [
-      "The IP addresses of the nodes where the StatefulSet pods are running, returned through the cluster DNS system",
+      "The IP addresses of the nodes where the StatefulSet pods are running, returned instead of pod IPs through the cluster DNS",
       "Multiple virtual IPs allocated by the headless Service, since it load-balances across all StatefulSet pod instances",
       "The IP addresses of the `kube-proxy` instances on each node that handle traffic routing for this Service type",
       "The individual pod IPs of each StatefulSet member, since a headless Service returns pod IPs instead of a VIP"
@@ -1338,7 +1338,7 @@ var questions = [
     options: [
       "Some pods lack the sidecar proxy, so they cannot participate in mTLS and their plaintext connections are rejected",
       "Sidecar proxy containers do not have enough CPU resources allocated to handle the mTLS encryption overhead",
-      "The Kubernetes API server does not support mTLS between pods and requires a separate certificate management tool",
+      "Kubernetes API server components do not support mTLS between pods and require a separate certificate management tool",
       "The Service definitions need to be updated to specify TLS ports explicitly in each port mapping configuration"
     ],
     answer: 0,
@@ -1417,7 +1417,7 @@ var questions = [
     diagram: null,
     options: [
       "Nothing is wrong—interactive debugging, data patching, and schema changes are standard cloud native practices",
-      "The `kubectl exec` command does not support interactive database clients like `psql` due to TTY protocol limitations",
+      "Running `kubectl exec` does not support interactive database clients like `psql` due to TTY protocol limitations",
       "The pod's network policy blocks interactive sessions, database clients, shell access, and tunnels in production",
       "Manual changes via `kubectl exec` bypass version control, audit trails, and automation, violating declarative ops"
     ],
@@ -1529,7 +1529,7 @@ var questions = [
     diagram: null,
     options: [
       "The `Local` external traffic policy is deprecated in recent Kubernetes versions; NodePort Services must use `Cluster` instead",
-      "The `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
+      "Using `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly",
       "With `externalTrafficPolicy: Local`, `kube-proxy` only routes to pods on the same node; nodes without a pod drop the traffic",
       "When using `Local` external traffic policy, the CNI plugin silently falls back to the default `Cluster` behavior"
     ],
@@ -1577,7 +1577,7 @@ var questions = [
     diagram: null,
     options: [
       "The kube-proxy is not updating iptables rules for the new Service, since stale routing entries persist across all cluster nodes",
-      "The pods need to be restarted for the new iptables rules to take effect because they cache network state at startup time",
+      "The pods need to be restarted instead of relying on live updates because they cache network state at startup time",
       "The Service got a new ClusterIP. Clients should use DNS names instead of hardcoded IPs, since DNS resolves to the new IP",
       "Switching the Service to `type: ExternalName` would decouple the Service from a fixed ClusterIP and resolve IPs transparently"
     ],

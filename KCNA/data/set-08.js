@@ -203,7 +203,7 @@ var questions = [
     options: [
       "Using declarative configuration requires fewer YAML lines, and it makes manifests faster to write across environments",
       "Users define desired end state, and controllers continuously reconcile actual state, enabling self-healing operations",
-      "Declarative configuration stores desired state in the Kubernetes scheduler rather than etcd for faster lookups",
+      "Desired state is stored in the Kubernetes scheduler rather than etcd for faster lookups under declarative config",
       "Declarative configuration bypasses the Kubernetes API server, allowing resources to be written to etcd directly"
     ],
     answer: 1,
@@ -571,7 +571,7 @@ var questions = [
     diagram: null,
     options: [
       "Argo Workflows — uses `Workflow`, `WorkflowTemplate`, and `CronWorkflow` CRDs to define multi-step DAG pipelines",
-      "Argo CD — a GitOps continuous delivery tool that syncs resources like `Application` from Git to Kubernetes clusters",
+      "The Argo CD tool — a GitOps continuous delivery solution that syncs resources like `Application` from Git to clusters",
       "Tekton — a Kubernetes-native CI/CD framework defining pipelines via CRDs like `Task`, `Pipeline`, and `PipelineRun`",
       "Flux — a GitOps toolkit that reconciles cluster state from `GitRepository` and `Kustomization` sources continuously"
     ],
@@ -619,7 +619,7 @@ var questions = [
     diagram: null,
     options: [
       "Only at runtime, by monitoring running container processes and blocking unauthorized container images",
-      "At scheduling time, when the kube-scheduler assigns the Pod to a specific node in the cluster",
+      "When the kube-scheduler assigns the Pod to a specific node at scheduling time in the cluster",
       "At image pull time, when the kubelet on the node attempts to download the image from the registry",
       "During admission, as a validating webhook that intercepts API requests before persistence to etcd"
     ],
@@ -685,7 +685,7 @@ var questions = [
       "It returns individual Pod IP addresses in DNS A/AAAA records instead of a single virtual IP address",
       "It exposes the Service on every node's IP address on a random high port for external access to Pods",
       "It forwards traffic to Pods in other namespaces by creating cross-namespace endpoint slice resources",
-      "It load-balances traffic across Pods using round-robin at the kernel level via iptables or IPVS rules"
+      "It load-balances traffic across Pods using round-robin at the kernel level instead of user-space proxying"
     ],
     answer: 0,
     explanation: "A headless Service (`clusterIP: None`) does not allocate a virtual IP. Instead, DNS queries for the Service return the IP addresses of all backing Pods as individual A/AAAA records. For StatefulSets, each Pod also gets a stable DNS name (e.g., `pod-0.service.namespace.svc.cluster.local`). This allows clients to discover and connect to specific Pods, which is essential for stateful applications.\n\nWhy other options are wrong:\n- B: Headless Services do not expose on node IPs; that is NodePort behavior\n- C: Headless Services do not create cross-namespace endpoints; they return Pod IPs in the same namespace\n- D: Headless Services do not perform kernel-level load balancing; there is no virtual IP to balance on\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services",
@@ -714,7 +714,7 @@ var questions = [
     text: "An engineer is investigating why a ConfigMap change is not reflected in a running Pod. The Pod mounts the ConfigMap as an environment variable. Which statement explains this behavior?",
     diagram: null,
     options: [
-      "ConfigMap updates are delayed until the kubelet's sync period expires, while this can take several hours in large clusters",
+      "Updates to ConfigMaps are delayed until the kubelet's sync period expires, while this can take several hours in large clusters",
       "ConfigMap changes require deleting the ConfigMap resource from scratch, but updates only take effect after Pod restart",
       "Env vars from ConfigMaps are set at Pod creation and not updated without restart, but volume mounts are eventually refreshed",
       "The kubelet polls ConfigMap changes every 5 seconds and refreshes both environment variables and volume-mounted data"
@@ -843,7 +843,7 @@ var questions = [
     text: "An architect is implementing the circuit breaker pattern in a microservices system. The payment service calls an external fraud-detection API. When the API starts timing out, the circuit breaker trips to the open state. What does the open state mean?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="390" height="190" rx="8" fill="#1e293b" stroke="#334155"/><text x="200" y="25" text-anchor="middle" fill="#94a3b8" font-size="11">Circuit Breaker States</text><circle cx="80" cy="110" r="35" fill="#065f46" stroke="#10b981" stroke-width="2"/><text x="80" y="107" text-anchor="middle" fill="white" font-size="10">Closed</text><text x="80" y="120" text-anchor="middle" fill="#6ee7b7" font-size="8">(normal)</text><circle cx="200" cy="110" r="35" fill="#7f1d1d" stroke="#ef4444" stroke-width="2"/><text x="200" y="107" text-anchor="middle" fill="white" font-size="10">Open</text><text x="200" y="120" text-anchor="middle" fill="#fca5a5" font-size="8">(failing)</text><circle cx="320" cy="110" r="35" fill="#713f12" stroke="#f59e0b" stroke-width="2"/><text x="320" y="107" text-anchor="middle" fill="white" font-size="10">Half-Open</text><text x="320" y="120" text-anchor="middle" fill="#fcd34d" font-size="8">(testing)</text><path d="M115,100 L165,100" stroke="#ef4444" stroke-width="2" marker-end="url(#arrRed)"/><text x="140" y="93" text-anchor="middle" fill="#fca5a5" font-size="7">failures</text><path d="M235,100 L285,100" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrYel)"/><text x="260" y="93" text-anchor="middle" fill="#fcd34d" font-size="7">timeout</text><path d="M320,145 C320,170 80,170 80,145" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrGrn)"/><text x="200" y="175" text-anchor="middle" fill="#6ee7b7" font-size="7">success → close</text><defs><marker id="arrRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#ef4444"/></marker><marker id="arrYel" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker><marker id="arrGrn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker></defs></svg>',
     options: [
-      "All requests are forwarded to the external API normally while logging each failure for later analysis and review",
+      "All requests are immediately forwarded to the external API while logging each failure for later analysis and review",
       "Requests to the external API are immediately rejected without attempting the call, returning a fallback or error",
       "A single probe request is sent to the external API while all other requests are queued until it responds back",
       "The service retries the external API call indefinitely with exponential backoff until a success is returned"
@@ -1325,7 +1325,7 @@ var questions = [
     diagram: null,
     options: [
       "A single `from` entry combining `podSelector` matching labels, and `namespaceSelector`: both conditions must be true at once",
-      "A `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
+      "The `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic",
       "An `egress` rule allowing traffic from `frontend` Pods to `web` Pods and from all `monitoring` namespace Pods for egress traffic controls",
       "Two separate `from` entries: one with `podSelector` matching `role: frontend`, and another with `namespaceSelector` for `monitoring`"
     ],
@@ -1439,7 +1439,7 @@ var questions = [
       "Use `kubectl rollout undo` to switch traffic from the blue Deployment replicas to the green version pods",
       "Deploy green as a separate Deployment, then update the Service selector to match green Pods for a switch",
       "Scale the blue Deployment to 0 and create a new Deployment with the same name but the green image tag",
-      "Use a CronJob that periodically checks for new versions and automatically switches the Service selector"
+      "Run a CronJob that periodically checks for new versions and automatically switches the Service selector"
     ],
     answer: 1,
     explanation: "In a blue-green deployment on Kubernetes, both versions run simultaneously as separate Deployments with different labels (e.g., `version: blue` and `version: green`). The Service's `selector` initially points to the blue Pods. To switch traffic, you update the Service selector to match the green Pods. This provides instant cutover and easy rollback by switching the selector back.\n\nWhy other options are wrong:\n- A: kubectl rollout undo reverts to a previous revision within the same Deployment, not blue-green switching\n- C: Scaling blue to 0 causes downtime; blue-green avoids downtime by running both versions simultaneously\n- D: CronJob-based selector switching is not a standard Kubernetes pattern for blue-green deployments\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#canary-deployment",

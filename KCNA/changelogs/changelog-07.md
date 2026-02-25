@@ -610,3 +610,58 @@
 
 ---
 No issues found. All three automated checkers (length balance at 1.15 threshold, giveaway pattern, backtick balance) report 0 flags. Manual review of all 100 questions confirmed accuracy of correct answers, answer indices, explanations, and option balance.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-07.js`
+**Issues found**: 16 giveaway flags (12 first-word, 4 keyword)
+**Issues fixed**: 16 across 16 questions (plus 2 length-balance residuals)
+
+### s07-q010 — first-word: correct "All", distractors cluster "The" (2x)
+- Changed distractor B first word from "The" to "Each": "Each pod's `nodeAffinity` rules exclude nodes with the not-ready taint based on their current assigned labels in the cluster".
+
+### s07-q021 — first-word: correct "A", distractors cluster "The" (2x)
+- Changed distractor C first word from "The" to "That": "That third pod was manually created outside of the `Deployment` controller and is completely unrelated to the current `ReplicaSet`".
+
+### s07-q023 — first-word: correct "With", distractors cluster "The" (2x) + keyword "instead of"
+- Rewrote distractor B to start with "Instead of" and trimmed: "Instead of honoring the new image, the deployment controller ignores `imagePullPolicy: IfNotPresent` when the tag is unchanged". Breaks both the first-word cluster and adds "instead of" keyword. Also fixed length-balance residual (B trimmed from 137 to 125 chars).
+
+### s07-q030 — first-word: correct "Two", distractors cluster "One" (2x)
+- Changed distractor B first word from "One" to "Only one": "Only one issue: all four nodes have insufficient memory because node affinity overrides the scheduler's memory capacity checks".
+
+### s07-q038 — keyword "instead of" unique to correct answer
+- Added "instead of once" to distractor D: "The Secret's data field must be `base64`-encoded twice instead of once for Docker registry authentication". Also expanded correct A from 101 to 112 chars ("the required...format") and trimmed D from 123 to 105 to fix length-balance residual (ratio now within threshold).
+
+### s07-q044 — first-word: correct "Kubernetes", distractors cluster "The" (2x)
+- Changed distractor C first word from "The" to "After exiting, the": "After exiting, the pod is deleted and a new replacement pod is created by the ReplicaSet controller on a different cluster node".
+
+### s07-q045 — first-word: correct "The", distractors cluster "Use" (2x)
+- Changed distractor B first word from "Use" to "Run": "Run `kubectl logs <pod> --since=3h` to reach back in time to the old pod's logs from before the replacement occurred". Then fixed residual cluster "Run" (2x) on B/C by changing C from "Run" to "Check": "Check `kubectl describe pod <pod>` which stores the last 1000 log lines from all previous pod instances in the cluster".
+
+### s07-q055 — first-word: correct "Listing", distractors cluster "The" (2x)
+- Changed distractor B first word from "The" to "Because the": "Because the `NetworkPolicy` Ingress rule only allows traffic from app=frontend, including its replicas, the database pods are denied inbound api connections".
+
+### s07-q067 — first-word: correct "Someone", distractors cluster "The" (2x)
+- Changed distractor C first word from "The" to "That": "That `web-app` container's Dockerfile `CMD` instruction starts a shell process at container boot time automatically". Breaks the "The" cluster (A="A", C="That", D="The").
+
+### s07-q074 — keyword "immediately" unique to correct answer
+- Added "Immediately" to distractor C: "Immediately delete the entire Deployment resource and redeploy from scratch to clear any corrupted state in the revision".
+
+### s07-q076 — first-word: correct "A", distractors cluster "The" (2x)
+- Changed distractor B first word from "The" to "That": "That pod's CPU request of 500m exceeds the maximum allowed per-pod by a `LimitRange` named compute-quota in the production namespace".
+
+### s07-q083 — keyword "instead of" unique to correct answer
+- Added "instead of pod IPs" to distractor A: "The IP addresses of the nodes where the StatefulSet pods are running, returned instead of pod IPs through the cluster DNS".
+
+### s07-q084 — first-word: correct "Some", distractors cluster "The" (2x)
+- Changed distractor C first word from "The" to "Kubernetes": "Kubernetes API server components do not support mTLS between pods and require a separate certificate management tool".
+
+### s07-q089 — first-word: correct "Manual", distractors cluster "The" (2x)
+- Changed distractor B first word from "The" to "Running": "Running `kubectl exec` does not support interactive database clients like `psql` due to TTY protocol limitations".
+
+### s07-q096 — first-word: correct "With", distractors cluster "The" (2x)
+- Changed distractor B first word from "The" to "Using": "Using `Local` external traffic policy requires all pods to have `hostNetwork: true` enabled in the pod spec to function properly".
+
+### s07-q099 — keyword "instead of" unique to correct answer
+- Added "instead of relying on live updates" to distractor B: "The pods need to be restarted instead of relying on live updates because they cache network state at startup time".

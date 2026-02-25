@@ -589,3 +589,34 @@
 
 ---
 No issues found. All 100 questions pass all three automated checkers (length balance at 1.15 threshold, giveaway pattern, backtick balance) with 0 flags. Manual review of all questions confirmed: correct answer indices are accurate, CNCF project statuses are up-to-date (gRPC incubating, Thanos incubating, Cilium graduated, NATS graduated, Knative graduated, KEDA graduated), explanations are factually sound, and no structural giveaway patterns exist.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-08.js`
+**Issues found**: 8 giveaway flags (6 first-word, 2 keyword)
+**Issues fixed**: 8 across 8 questions
+
+### s08-q013 — giveaway: first-word 2-1-1, correct "users" vs "declarative" (2x)
+- **Option C:** Changed first word from "Declarative" to "Desired": "Desired state is stored in the Kubernetes scheduler rather than etcd for faster lookups under declarative config". Breaks the 2x "declarative" cluster among distractors.
+
+### s08-q036 — giveaway: first-word 2-1-1, correct "tekton" vs "argo" (2x)
+- **Option B:** Changed first word from "Argo" to "The": "The Argo CD tool — a GitOps continuous delivery solution that syncs resources like `Application` from Git to clusters". Breaks the 2x "argo" cluster among distractors.
+
+### s08-q039 — giveaway: first-word 2-1-1, correct "during" vs "at" (2x)
+- **Option B:** Changed first word from "At" to "When": "When the kube-scheduler assigns the Pod to a specific node at scheduling time in the cluster". Breaks the 2x "at" cluster among distractors.
+
+### s08-q043 — giveaway: keyword "instead of" only in correct answer
+- **Option D:** Added "instead of" to distractor: changed "It load-balances traffic across Pods using round-robin at the kernel level via iptables or IPVS rules" to "It load-balances traffic across Pods using round-robin at the kernel level instead of user-space proxying". Now both correct A and distractor D contain "instead of".
+
+### s08-q045 — giveaway: first-word 2-1-1, correct "env" vs "configmap" (2x)
+- **Option A:** Changed first word from "ConfigMap" to "Updates": "Updates to ConfigMaps are delayed until the kubelet's sync period expires, while this can take several hours in large clusters". Breaks the 2x "configmap" cluster among distractors.
+
+### s08-q053 — giveaway: keyword "immediately" only in correct answer
+- **Option A:** Added "immediately" to distractor: changed "All requests are forwarded to the external API normally while logging each failure for later analysis and review" to "All requests are immediately forwarded to the external API while logging each failure for later analysis and review". Now both correct B and distractor A contain "immediately".
+
+### s08-q083 — giveaway: first-word 2-1-1, correct "two" vs "a" (2x)
+- **Option B:** Changed first word from "A" to "The": "The `to` rule with `podSelector` matching `web` Pods and `namespaceSelector` matching `monitoring` namespace for outbound traffic". Breaks the 2x "a" cluster among distractors.
+
+### s08-q090 — giveaway: first-word 2-1-1, correct "deploy" vs "use" (2x)
+- **Option D:** Changed first word from "Use" to "Run": "Run a CronJob that periodically checks for new versions and automatically switches the Service selector". Breaks the 2x "use" cluster among distractors.

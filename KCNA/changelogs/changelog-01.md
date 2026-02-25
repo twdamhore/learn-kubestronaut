@@ -563,3 +563,43 @@ No issues found. All 100 questions were reviewed for option length balance (max/
 
 ---
 No issues found. All 100 questions were reviewed for option length balance (max/min ratio threshold 1.15), giveaway patterns (unique keywords, structural elements like `, which` / `, and` / `, or` / em-dashes / semicolons / parentheticals, first-word patterns, polarity, backtick density), factual accuracy (CNCF project maturity levels including Linkerd graduated Jul 2021 and Knative graduated Oct 2025, Kubernetes features, explanation correctness), and answer index correctness. All three automated checkers (check_length_balance.js, check_giveaway.js, check_backtick_balance.js) returned 0 flags both before and after review. No actionable issues remain after 12 previous rounds of refinement (Rounds 36-47d).
+
+## Round 48b — 2026-02-25
+**File**: `set-01.js`
+**Issues fixed**: 12 giveaway flags (first-word and keyword patterns)
+
+### s01-q008 — giveaway: keyword "natively" unique to correct answer
+- Option D: Added "natively" to Jaeger distractor. Changed `"Jaeger, which provides distributed metrics collection and aggregation pipeline support"` to `"Jaeger, which natively provides distributed metrics collection and aggregation pipelines"`. Also trims length to fix ratio from 1.173 to within 1.15.
+
+### s01-q016 — giveaway: first-word cluster "deploy" (2x) vs correct "a"
+- Option A: Changed first word from `"Deploy a logging agent..."` to `"Run a logging agent as a sidecar container inside every application Pod in the cluster"`.
+
+### s01-q037 — giveaway: first-word cluster "a" (2x) vs correct "pod"
+- Option C: Changed first word from `"A \`PodDisruptionBudget\`..."` to `"Setting a \`PodDisruptionBudget\` with \`maxUnavailable: 1\` to prevent any co-location on nodes"`.
+
+### s01-q043 — giveaway: keyword "specifically" unique to correct answer
+- Option A: Added "specifically" to Envoy distractor. Changed `"Envoy, which provides a complete service mesh with a built-in control plane"` to `"Envoy, which provides a complete service mesh built specifically as a control plane"`.
+
+### s01-q048 — giveaway: first-word cluster "a" (2x) vs correct "an"
+- Option B: Changed first word from `"A Job resource that runs the migration..."` to `"Running a Job resource that performs the migration as a separate workload before the Deployment"`.
+
+### s01-q054 — giveaway: first-word cluster "create" (2x) vs correct "configure"
+- Option A: Changed first word from `"Create a \`NetworkPolicy\`..."` to `"Apply a \`NetworkPolicy\` that restricts the developer's Pod access to resources in the \`staging\` namespace"`.
+
+### s01-q055 — giveaway: first-word cluster "a" (2x) vs correct "an"
+- Option A: Changed first word from `"A \`LoadBalancer\` Service..."` to `"Adding a \`LoadBalancer\` Service for each backend that the Ingress resource routes traffic to"`. Also trims length to fix ratio from 1.181 to within 1.15.
+
+### s01-q057 — giveaway: keyword "dynamically" unique to correct answer
+- Option B: Added "dynamically" to VolumeAttachment distractor. Changed `"A \`VolumeAttachment\` resource that connects cloud storage to Pods on demand when requested"` to `"A \`VolumeAttachment\` resource that dynamically connects cloud storage to Pods on demand"`.
+
+### s01-q059 — giveaway: first-word cluster "a" (2x) vs correct "an"
+- Option A: Changed first word from `"A \`ClusterIP\` Service..."` to `"Using a \`ClusterIP\` Service with annotation-based routing rules to handle external HTTP traffic"`.
+
+### s01-q080 — giveaway: first-word cluster "it" (2x) vs correct "dns" + keyword "instead of"
+- Option D: Changed first word from `"It routes all traffic..."` to `"Traffic is routed to a single Pod instead of using the endpoint list, bypassing round-robin distribution"`. Fixes both the first-word cluster and adds "instead of" to a distractor.
+
+### s01-q094 — giveaway: first-word cluster "use" (2x) vs correct "deploy"
+- Option A: Changed first word from `"Use a single Deployment..."` to `"Update a single Deployment's image tag, which performs a blue-green switch automatically per rollout"`.
+
+### s01-q099 — giveaway: keyword "automatically" unique to correct answer
+- Option A: Added "automatically" to kube-proxy distractor. Changed `"The \`kube-proxy\` generates and distributes authentication tokens to all Pods in the cluster"` to `"The \`kube-proxy\` automatically generates and distributes authentication tokens to all Pods"`. Also trims length to fix ratio from 1.207 to within 1.15.

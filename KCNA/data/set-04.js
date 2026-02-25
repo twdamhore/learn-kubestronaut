@@ -283,7 +283,7 @@ var questions = [
       "Examine kubelet logs, CSI driver logs, and `kubectl describe pv/pvc` events for storage errors",
       "Check Elasticsearch application logs, JVM heap dumps, and container restart counts for storage errors",
       "Review the `kube-scheduler` logs for scheduling decisions related to pod placement on specific nodes",
-      "Check the `kube-apiserver` audit logs for PVC creation timestamps and API request latencies"
+      "Inspect the `kube-apiserver` audit logs for PVC creation timestamps and API request latencies"
     ],
     answer: 0,
     explanation: "Storage I/O issues require a multi-layer debugging approach. The kubelet logs contain volume mount/unmount operations and errors. CSI driver logs show low-level storage operations. The events on PV and PVC objects (visible via `kubectl describe`) reveal binding issues, provisioning failures, and attachment errors. Application logs alone miss infrastructure-level problems.\n\nWhy other options are wrong:\n- B: Application-level diagnostics like logs and heap dumps do not reveal infrastructure storage failures at the CSI or kubelet layer\n- C: Scheduler logs show pod placement decisions, not storage I/O errors or data corruption details\n- D: API server audit logs show API request timing, not storage-level I/O or corruption diagnostics\n\nReference: https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/",
@@ -347,7 +347,7 @@ var questions = [
       "Use local node storage like host-attached SSDs combined with manual backup scripts run via cron jobs",
       "Deploy a distributed storage solution like Ceph via Rook that provides replication and self-healing",
       "Store all data on a single NFS server located outside the cluster to centralize data management tasks",
-      "Use application-managed in-memory replication across pods, avoiding external storage dependencies for simplicity"
+      "Rely on application-managed in-memory replication across pods, avoiding external storage dependencies entirely"
     ],
     answer: 1,
     explanation: "Cloud-native storage practices favor distributed, software-defined storage systems that provide replication, self-healing, and are managed declaratively within Kubernetes. Solutions like Ceph (managed by Rook) align with these principles by treating storage as code and automating operations. Single points of failure like a standalone NFS server do not meet HA requirements.\n\nWhy other options are wrong:\n- A: Manual backup scripts with local storage lack self-healing and automated replication\n- C: A single NFS server is a single point of failure and does not provide self-healing distributed storage\n- D: In-memory replication across pods is not durable storage; pod failures would cause data loss for stateful applications\n\nReference: https://rook.io/docs/rook/latest/Getting-Started/intro/",
@@ -538,7 +538,7 @@ var questions = [
     options: [
       "As encrypted files stored on-disk that require a separate decryption key to read their contents",
       "As base64-encoded files on-disk matching the Secret's original data encoding format from the API",
-      "As binary files stored in a protected directory on the node that only the kubelet process can read",
+      "As binary files automatically stored in a protected directory on the node that only the kubelet can read",
       "As plain-text files in a tmpfs filesystem where the base64 encoding is decoded automatically"
     ],
     answer: 3,
@@ -987,7 +987,7 @@ var questions = [
       "Span duration for database write operations showing I/O wait times on the storage backend",
       "HTTP status code of the response returned from the order service to the upstream API gateway",
       "The number of replicas in the Deployment managing the order service's horizontal pod count",
-      "The container image tag used by the order service which determines the application version"
+      "Container image tag used by the order service, which determines the application version deployed"
     ],
     answer: 0,
     explanation: "Trace spans for database write operations include timing information that reveals I/O wait times. If the spans show long durations for write operations relative to compute operations, the bottleneck is likely storage I/O. Correlating this with storage metrics (IOPS, throughput, latency) from the CSI driver or cloud provider confirms the root cause.\n\nWhy other options are wrong:\n- B: HTTP status codes indicate success/failure but do not reveal whether latency is caused by storage I/O\n- C: Replica count is a configuration value, not a trace attribute that reveals storage performance\n- D: The image tag identifies the version but does not provide runtime performance information about storage\n\nReference: https://opentelemetry.io/docs/concepts/signals/traces/",
@@ -1034,7 +1034,7 @@ var questions = [
     options: [
       "Balance cost against performance by defaulting to the cheapest tier for compute, storage, and networking",
       "Match the storage type to the workload's I/O pattern, durability needs, and horizontal scaling goals",
-      "Prefer local volumes for their performance advantages and accept the reduced availability trade-off",
+      "Choose local volumes for their performance advantages and accept the reduced availability trade-off",
       "Prefer object storage as the default choice for its broad API support and portability across providers"
     ],
     answer: 1,
@@ -1144,7 +1144,7 @@ var questions = [
     text: "A StatefulSet-based Kafka cluster uses PVCs for log storage and a headless Service for broker discovery. A new broker pod `kafka-3` is added via scaling. How do existing brokers discover the new member?",
     diagram: null,
     options: [
-      "The kube-apiserver sends a notification event to all running broker pods about the new cluster member",
+      "Kube-apiserver sends a notification event to all running broker pods about the new cluster member",
       "Kafka brokers perform DNS lookups against the headless Service which returns updated A records for all",
       "The new broker automatically inherits the full cluster configuration from its provisioned PVC contents",
       "Existing brokers must be manually reconfigured with the new pod's IP since headless Services do not update DNS"
@@ -1226,7 +1226,7 @@ var questions = [
     options: [
       "The new PVC shares the same underlying PV as the source PVC using a symbolic link on the storage backend",
       "A new PV is provisioned with a copy of the source PVC's data and the new PVC binds to that new PV",
-      "The source PVC is deleted and its PV is transferred to the new PVC as part of the cloning operation",
+      "Source PVC is deleted and its PV is transferred to the new PVC as part of the cloning operation",
       "Volume cloning primarily targets ephemeral `emptyDir` volumes and has limited PersistentVolumeClaim support"
     ],
     answer: 1,
@@ -1400,7 +1400,7 @@ var questions = [
     text: "A cluster has nodes in three availability zones. A StatefulSet with 3 replicas needs to spread pods across zones for high availability. Which scheduling feature achieves this?",
     diagram: null,
     options: [
-      "Set `nodeSelector` to a single zone and rely on the Kubernetes `scheduler` to auto-distribute across zones",
+      "Apply `nodeSelector` to a single zone and rely on the Kubernetes `scheduler` to distribute across zones",
       "Use `topologySpreadConstraints` with `topologyKey: topology.kubernetes.io/zone` and `maxSkew: 1`",
       "Create three separate `StatefulSets`, one per availability zone, each managing a single Cassandra replica",
       "Set `podAntiAffinity` with `topologyKey: kubernetes.io/hostname` — this spreads pods across host nodes"

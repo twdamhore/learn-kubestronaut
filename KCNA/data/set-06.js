@@ -1147,7 +1147,7 @@ var questions = [
       "A. Pods are evicted in strict reverse ordinal order regardless of the management policy",
       "B. With `Parallel` policy, Pods are evicted in a different order than with `OrderedReady`",
       "C. With `Parallel`, replacement Pods can start simultaneously instead of sequentially",
-      "D. The policy primarily influences creation order, with minimal impact on eviction behavior"
+      "D. The policy influences creation order instead of eviction, with minimal drain impact"
     ],
     answer: 2,
     explanation: "With `Parallel` pod management, StatefulSet replacement Pods can be created simultaneously without waiting for previous ordinals to be ready. With `OrderedReady`, each Pod must be running and ready before the next is created, which slows recovery after drain.\n\nWhy other options are wrong:\n- A: Drain eviction order is not determined by podManagementPolicy; eviction order depends on PDB and controller logic\n- B: The podManagementPolicy does not change drain eviction order; drain evicts Pods based on PDB and controller logic, not the StatefulSet management policy\n- D: The policy also affects how replacement Pods are created after eviction, not just initial creation\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies",

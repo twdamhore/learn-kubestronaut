@@ -510,3 +510,46 @@ No issues found. All 100 questions passed review for option length balance (max/
 
 ---
 No issues found. All 100 questions passed review for option length balance (max/min ratio threshold 1.15), giveaway patterns (unique structural signals, keyword patterns, backtick density, polarity, first-word patterns), factual accuracy, and explanation quality. All three automated checkers (length balance, giveaway, backtick balance) report 0 flags across all sets. Answer distribution remains well-balanced (A=25, B=24, C=25, D=26). This set has been through 12 prior review rounds (Rounds 36-47d) with 90+ cumulative fixes applied.
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-03.js`
+**Issues fixed**: 10 (first-word and keyword giveaway patterns)
+
+### s03-q002 — first-word giveaway (correct "kube-proxy", distractors cluster "The" 2x)
+- **Option D:** Changed "The container runtime tunnels the packet back to the API server which then routes it to the pod" to "Container runtime tunnels the packet back to the API server, which then routes it to the pod" to break the 2x "The" cluster among distractors.
+
+### s03-q003 — first-word giveaway (correct "An", distractors cluster "A" 2x)
+- **Option A:** Changed "A `NetworkPolicy` that selectively forwards..." to "One `NetworkPolicy` that selectively forwards..." to break the 2x "A" cluster among distractors.
+
+### s03-q048 — first-word giveaway (correct "kube-proxy", distractors cluster "The" 2x)
+- **Option C:** Changed "The etcd audit log showing key-value store operations for the Service resources" to "Etcd audit log entries showing key-value store operations for the Service resources" to break the 2x "The" cluster among distractors.
+
+### s03-q058 — first-word giveaway (correct "Queries", distractors cluster "The" 2x)
+- **Option D:** Changed "The pod queries CoreDNS and the node resolver in round-robin order for each DNS lookup" to "Each pod queries CoreDNS and the node resolver in round-robin order for every DNS lookup" to break the 2x "The" cluster among distractors.
+
+### s03-q072 — keyword giveaway (only correct contains "instead of")
+- **Option D:** Changed "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely" to "Running all microservices in a single pod to use `localhost` instead of the network and avoid overhead" to add "instead of" to a distractor.
+
+### s03-q081 — first-word giveaway (correct "Directly", distractors cluster "To" 2x)
+- **Option C:** Changed "To the cloud load balancer, which drops it because the pod source IP is not allowed" to "Back to the cloud load balancer, which drops it because the pod source IP is not allowed" to break the 2x "To" cluster among distractors.
+
+### s03-q083 — first-word giveaway (correct "Pods", distractors cluster "The" 2x)
+- **Option B:** Changed "The Service publishes the node IP addresses instead of pod IPs in the Endpoints object" to "Node IP addresses are published instead of pod IPs in the Endpoints object for the Service" to break the 2x "The" cluster among distractors.
+
+### s03-q085 — first-word giveaway (correct "Backend", distractors cluster "The" 2x)
+- **Option A:** Changed "The Service enables TLS (1.2) encryption for proxy-to-backend pod connections by default" to "TLS (1.2) encryption is enabled by the Service for proxy-to-backend pod connections by default" to break the 2x "The" cluster among distractors.
+
+### s03-q087 — first-word giveaway (correct "A", distractors cluster "The" 2x)
+- **Option D:** Changed "The CNI plugin does not support `NodePort` Services and drops traffic at the network overlay" to "No CNI plugin supports `NodePort` Services and traffic is dropped at the network overlay level" to break the 2x "The" cluster among distractors.
+
+### s03-q096 — keyword giveaway (only correct contains "instead of")
+- **Option C:** Changed "Delete the blue `ClusterIP` Service to force traffic to the green backend" to "Delete the blue `ClusterIP` Service instead of updating it to force green traffic" to add "instead of" to a distractor.
+
+### Summary
+- 8 first-word giveaway fixes (breaking 2x distractor first-word clusters)
+- 2 keyword giveaway fixes (adding "instead of" to distractors)
+- No answer indices were changed
+- No accuracy or explanation changes
+- All three checkers report 0 flags for set-03

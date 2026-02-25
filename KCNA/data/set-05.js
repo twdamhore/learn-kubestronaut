@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "Pod creation requests are rejected until the webhook endpoint becomes available",
       "Pods are created normally by the API server, completely bypassing the endpoint",
-      "The API server queues incoming requests and retries for 30 seconds on failure",
+      "Incoming requests are queued by the API server and retried for 30 seconds on failure",
       "The kube-controller-manager handles the admission in place of the failed webhook"
     ],
     answer: 0,

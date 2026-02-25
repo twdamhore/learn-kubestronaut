@@ -27,7 +27,7 @@ var questions = [
       "The kubelet on the receiving node spawns a temporary proxy pod to relay each inbound request onward",
       "kube-proxy on each node programs iptables/IPVS rules that forward traffic to any pod endpoint",
       "CoreDNS redirects the request at the DNS layer to a node that currently hosts the target pod replica",
-      "The container runtime tunnels the packet back to the API server which then routes it to the pod"
+      "Container runtime tunnels the packet back to the API server, which then routes it to the pod"
     ],
     answer: 1,
     explanation: "kube-proxy runs on every node and maintains iptables or IPVS rules that can forward traffic to pod endpoints across the cluster, regardless of whether a pod is local. Kubelet does not spawn proxy pods. CoreDNS resolves names but does not redirect live TCP/UDP connections. The API server is a control-plane component and is not in the data path for service traffic.\n\nWhy other options are wrong:\n- A: The kubelet does not spawn temporary proxy pods; it manages pod lifecycle, not service traffic routing.\n- C: CoreDNS resolves DNS names but does not redirect live TCP/UDP connections at the packet level.\n- D: The API server is a control-plane component and is not in the data path for service traffic.\n\nReference: https://kubernetes.io/docs/reference/networking/virtual-ips/",
@@ -40,7 +40,7 @@ var questions = [
     text: "A team wants to route external HTTPS traffic to two different backend services based on the URL path — `/api` to `api-svc` and `/web` to `web-svc`. Both services are `ClusterIP`. Which resource is designed for this?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="30" rx="4" fill="#326CE5" /><text x="200" y="25" text-anchor="middle" fill="#fff" font-size="12">?</text><line x1="170" y1="35" x2="80" y2="100" stroke="#999" stroke-width="1.5" /><line x1="230" y1="35" x2="320" y2="100" stroke="#999" stroke-width="1.5" /><text x="110" y="70" fill="#ccc" font-size="10">/api</text><text x="270" y="70" fill="#ccc" font-size="10">/web</text><rect x="20" y="100" width="120" height="30" rx="4" fill="#4CAF50" /><text x="80" y="120" text-anchor="middle" fill="#fff" font-size="11">api-svc (ClusterIP)</text><rect x="260" y="100" width="120" height="30" rx="4" fill="#FF9800" /><text x="320" y="120" text-anchor="middle" fill="#fff" font-size="11">web-svc (ClusterIP)</text><rect x="20" y="150" width="50" height="25" rx="3" fill="#555" /><text x="45" y="167" text-anchor="middle" fill="#fff" font-size="9">Pod</text><rect x="90" y="150" width="50" height="25" rx="3" fill="#555" /><text x="115" y="167" text-anchor="middle" fill="#fff" font-size="9">Pod</text><rect x="260" y="150" width="50" height="25" rx="3" fill="#555" /><text x="285" y="167" text-anchor="middle" fill="#fff" font-size="9">Pod</text><rect x="330" y="150" width="50" height="25" rx="3" fill="#555" /><text x="355" y="167" text-anchor="middle" fill="#fff" font-size="9">Pod</text><line x1="45" y1="130" x2="45" y2="150" stroke="#999" stroke-width="1" /><line x1="115" y1="130" x2="115" y2="150" stroke="#999" stroke-width="1" /><line x1="285" y1="130" x2="285" y2="150" stroke="#999" stroke-width="1" /><line x1="355" y1="130" x2="355" y2="150" stroke="#999" stroke-width="1" /></svg>',
     options: [
-      "A `NetworkPolicy` that selectively forwards external traffic based on URL path and destination",
+      "One `NetworkPolicy` that selectively forwards external traffic based on URL path and destination",
       "Two separate `LoadBalancer` Services with custom path annotations to split traffic by URL",
       "A single `NodePort` Service with `sessionAffinity` and per-path routing configuration set",
       "An `Ingress` resource with path-based rules and an Ingress controller deployed in the cluster"
@@ -762,7 +762,7 @@ var questions = [
     options: [
       "kube-proxy logs showing iptables rule updates and endpoint changes on each node",
       "kube-scheduler logs showing pod placement decisions for the affected workload",
-      "The etcd audit log showing key-value store operations for the Service resources",
+      "Etcd audit log entries showing key-value store operations for the Service resources",
       "The kubelet logs showing image pull progress and container start events on nodes"
     ],
     answer: 0,
@@ -923,7 +923,7 @@ var questions = [
       "Cluster-internal names are resolved, which is the default, but external names may time out",
       "The pod uses the node DNS settings by default, querying CoreDNS for cluster-local names",
       "Queries go to CoreDNS first, which forwards unresolved external names to upstream DNS",
-      "The pod queries CoreDNS and the node resolver in round-robin order for each DNS lookup"
+      "Each pod queries CoreDNS and the node resolver in round-robin order for every DNS lookup"
     ],
     answer: 2,
     explanation: "`ClusterFirst` sends all DNS queries to the cluster DNS server (CoreDNS) first. CoreDNS resolves cluster names (e.g., `*.svc.cluster.local`) directly and forwards all other queries to configured upstream resolvers (typically from the node's `/etc/resolv.conf`). External names are not blocked. `Default` policy uses node DNS directly. There is no random alternation.\n\nWhy other options are wrong:\n- A: External names are not merely dependent on upstream configuration; CoreDNS actively forwards unresolved queries to upstream DNS servers.\n- B: `ClusterFirst` sends queries to CoreDNS first, not to the node DNS by default; the `Default` policy uses node DNS settings.\n- D: There is no round-robin order between CoreDNS and the node resolver; `ClusterFirst` always queries CoreDNS first.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -1147,7 +1147,7 @@ var questions = [
       "Using `gRPC` with `HTTP/2` connection multiplexing instead of REST for inter-service communication",
       "Replacing all `ClusterIP` Services with `NodePort` Services for more direct inter-service routing",
       "Setting all pod `dnsPolicy` to `None` to bypass DNS resolution latency on each service call",
-      "Running all microservices in a single pod to use `localhost` and avoid network overhead entirely"
+      "Running all microservices in a single pod to use `localhost` instead of the network and avoid overhead"
     ],
     answer: 0,
     explanation: "gRPC uses HTTP/2 with multiplexed streams over a single connection, reducing connection overhead and latency compared to REST with HTTP/1.1. Switching to `NodePort` adds extra hops. Setting `dnsPolicy: None` without alternatives breaks name resolution. Putting all services in one pod defeats the purpose of microservices and eliminates independent scaling.\n\nWhy other options are wrong:\n- B: Replacing ClusterIP with NodePort adds extra network hops and does not reduce east-west latency.\n- C: Setting `dnsPolicy: None` without proper alternatives breaks name resolution entirely.\n- D: Running all microservices in a single pod defeats the purpose of microservices and eliminates independent scaling.\n\nReference: https://grpc.io/docs/what-is-grpc/introduction/",
@@ -1290,7 +1290,7 @@ var questions = [
     options: [
       "Through the cloud load balancer, which forwards the traffic back into the cluster for routing",
       "To the kube-apiserver, which acts as a proxy and forwards the request to the backend",
-      "To the cloud load balancer, which drops it because the pod source IP is not allowed",
+      "Back to the cloud load balancer, which drops it because the pod source IP is not allowed",
       "Directly to Service endpoints via kube-proxy hairpin rules, without leaving the cluster"
     ],
     answer: 3,
@@ -1321,7 +1321,7 @@ var questions = [
     diagram: null,
     options: [
       "Only pods in `CrashLoopBackOff` state are included in the Endpoints for the Service",
-      "The Service publishes the node IP addresses instead of pod IPs in the Endpoints object",
+      "Node IP addresses are published instead of pod IPs in the Endpoints object for the Service",
       "Pods not yet passing their readiness probe are included in the Endpoints for this svc",
       "The Service stops performing health checks on backend pods and includes all endpoints"
     ],
@@ -1352,7 +1352,7 @@ var questions = [
     text: "A developer sets `spec.ports[0].appProtocol: kubernetes.io/h2c` on a Service. What does this indicate to consuming infrastructure?",
     diagram: null,
     options: [
-      "The Service enables TLS (1.2) encryption for proxy-to-backend pod connections by default",
+      "TLS (1.2) encryption is enabled by the Service for proxy-to-backend pod connections by default",
       "kube-proxy will use HTTP/2 to communicate with the API server for this Service endpoint",
       "The Service will automatically upgrade HTTP/1.1 clients to HTTP/2 via protocol negotiation",
       "Backend pods speak cleartext HTTP/2 (h2c), letting protocol-aware proxies use HTTP/2"
@@ -1387,7 +1387,7 @@ var questions = [
       "kube-proxy is not running on the nodes, preventing iptables rules from being programmed at all",
       "The Service's `sessionAffinity` is set to `ClientIP`, which blocks connections from external IPs",
       "A firewall or security group rule blocks inbound traffic on port 31000 to the cluster's nodes",
-      "The CNI plugin does not support `NodePort` Services and drops traffic at the network overlay"
+      "No CNI plugin supports `NodePort` Services and traffic is dropped at the network overlay level"
     ],
     answer: 2,
     explanation: "If the NodePort works internally but not externally, the most common cause is a firewall or cloud security group blocking external traffic on that port. kube-proxy must be running since it works internally. Session affinity does not block clients. All CNI plugins support NodePort since it is handled by kube-proxy, not the CNI.\n\nWhy other options are wrong:\n- A: kube-proxy must be running since the Service works internally; if it were down, internal access would also fail.\n- B: `sessionAffinity: ClientIP` only controls routing stickiness; it does not block connections from any source.\n- D: CNI plugins do not interfere with NodePort Services; NodePort is handled by kube-proxy at the node level.\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport",
@@ -1530,7 +1530,7 @@ var questions = [
     options: [
       "Update the Ingress backend to point to the green Service instead of blue",
       "Scale the blue Deployment to zero replicas and wait for traffic to drain",
-      "Delete the blue `ClusterIP` Service to force traffic to the green backend",
+      "Delete the blue `ClusterIP` Service instead of updating it to force green traffic",
       "Change the blue Service's selector to match the green pods' label values"
     ],
     answer: 0,

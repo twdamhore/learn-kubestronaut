@@ -184,7 +184,7 @@ var questions = [
     text: "A Kubernetes cluster uses containerd as the container runtime. An operator notices that <code>docker ps</code> on a worker node shows no running containers despite multiple Pods being active. Why is this expected?",
     diagram: null,
     options: [
-      "The Pods are using a virtual machine runtime like Kata Containers instead of Docker for workload isolation",
+      "Running Pods use a virtual machine runtime like Kata Containers instead of Docker for workload isolation",
       "The kubelet only creates containers during Pod initialization and hands them off to the kernel scheduler",
       "Docker and containerd share the same container store but <code>docker ps</code> requires root-level privileges",
       "Containerd manages containers independently of the Docker daemon, so <code>docker ps</code> does not list any of them"
@@ -538,7 +538,7 @@ var questions = [
     options: [
       "Use a single Deployment and perform a rolling update with <code>maxSurge: 100%</code> to replace all Pods at once",
       "Create a <code>v2</code> Deployment with a <code>version: v2</code> label, verify health, then update the selector",
-      "Use a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured time schedule",
+      "Configure a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured schedule",
       "Deploy v2 Pods into a separate namespace, configure an ExternalName Service, and redirect incoming traffic"
     ],
     answer: 1,
@@ -729,7 +729,7 @@ var questions = [
     diagram: null,
     options: [
       "CI/CD pipelines bypass audit trails and allow cluster state to diverge from version-controlled manifests",
-      "The <code>kubectl apply</code> command is deprecated and scheduled for removal in upcoming Kubernetes releases",
+      "Kubernetes has deprecated <code>kubectl apply</code> and scheduled it for removal in upcoming releases",
       "The <code>kubectl apply</code> command does not verify container image signatures before updating Deployments",
       "Push-based deployments add latency because kubectl waits for image pulls on every node before returning"
     ],
@@ -874,7 +874,7 @@ var questions = [
     options: [
       "Each request is proxied through the Envoy sidecar, adding overhead for TLS, routing, and telemetry",
       "Envoy replaces kube-proxy iptables rules, causing slower network packet processing on each node",
-      "Envoy sidecars consume all available CPU on the node, starving the application containers of resources",
+      "Sidecar containers consume all available CPU on the node, starving the application containers of resources",
       "The service mesh disables connection reuse, forcing new handshakes, slow starts, and teardowns per request"
     ],
     answer: 0,
@@ -1000,7 +1000,7 @@ var questions = [
     text: "A Kubernetes cluster runs version 1.28. A developer creates a Pod using the <code>apps/v1</code> API group for a Deployment and the <code>v1</code> API group for a ConfigMap. What determines which API group and version is used for a particular resource?",
     diagram: null,
     options: [
-      "The developer can select from multiple compatible API groups for each resource type during manifest creation",
+      "Developers can select from multiple compatible API groups for each resource type during manifest creation",
       "The API group used for each resource is determined by the namespace in which the resource is being created",
       "All resources default to the <code>v1</code> API group, and other API groups are deprecated in recent versions",
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
@@ -1065,7 +1065,7 @@ var questions = [
     diagram: null,
     options: [
       "Pods keep running, the node is marked <code>NotReady</code>, and the control plane begins evicting Pods after timeout",
-      "The kubelet restarts all Pods on the node, clears their caches, and reattempts connection to the API server",
+      "After partition, the kubelet restarts all Pods on the node, clears caches, and reattempts API server connection",
       "All Pods on the node are immediately terminated by the container runtime when the network partition occurs",
       "The Pods are instantly marked <code>Failed</code> and rescheduled to other available nodes without any termination delay"
     ],
@@ -1336,8 +1336,8 @@ var questions = [
     text: "A team configures a Service of type <code>LoadBalancer</code> in a bare-metal Kubernetes cluster (no cloud provider). After creation, the Service shows <code>EXTERNAL-IP</code> as <code>&lt;pending&gt;</code> indefinitely. What is the likely cause and solution?",
     diagram: null,
     options: [
-      "The Service YAML is malformed; the <code>loadBalancerIP</code> field must be explicitly specified in the spec",
-      "The kube-proxy DaemonSet needs to be restarted to detect the new LoadBalancer Service type correctly",
+      "A malformed Service YAML requires the <code>loadBalancerIP</code> field to be explicitly specified in the spec",
+      "Restarting the kube-proxy DaemonSet is needed; it must detect the new LoadBalancer Service type correctly",
       "Bare-metal clusters lack a cloud load balancer; MetalLB or similar must be installed to allocate IPs",
       "CoreDNS must be configured with an external DNS provider before LoadBalancer IPs can be allocated"
     ],
@@ -1435,7 +1435,7 @@ var questions = [
       "An administrator manually tainted the node during a scheduled maintenance window for workload draining",
       "The kube-scheduler applied the taint because too many Pods were already running on the node at capacity",
       "The kubelet detected available memory fell below the eviction threshold and applied the taint automatically",
-      "The taint was added by the kube-controller-manager due to a failed node health check on memory status"
+      "The taint was automatically added by the kube-controller-manager due to a failed node health check on status"
     ],
     answer: 2,
     explanation: "The kubelet automatically applies condition-based taints when it detects resource pressure. The `node.kubernetes.io/memory-pressure:NoSchedule` taint indicates that available memory is below the configured eviction threshold. This prevents new Pods from being scheduled on the node while existing Pods may be evicted based on their QoS class and priority.\n\nWhy other options are wrong:\n- A: This taint is applied automatically by the kubelet, not manually by an administrator\n- B: The kube-scheduler does not apply resource pressure taints; this is a kubelet responsibility\n- D: The kube-controller-manager applies unreachable/not-ready taints, not resource pressure taints\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/",
@@ -1545,7 +1545,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="40" rx="8" fill="#455A64" stroke="#263238" stroke-width="2"/><text x="200" y="30" text-anchor="middle" fill="white" font-size="11" font-weight="bold">base/</text><rect x="20" y="90" width="100" height="40" rx="8" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="70" y="115" text-anchor="middle" fill="white" font-size="10" font-weight="bold">dev/</text><rect x="150" y="90" width="100" height="40" rx="8" fill="#F57F17" stroke="#E65100" stroke-width="2"/><text x="200" y="115" text-anchor="middle" fill="white" font-size="10" font-weight="bold">staging/</text><rect x="280" y="90" width="100" height="40" rx="8" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><text x="330" y="115" text-anchor="middle" fill="white" font-size="10" font-weight="bold">production/</text><line x1="170" y1="45" x2="80" y2="88" stroke="#333" stroke-width="1.5" marker-end="url(#arrow9h)"/><line x1="200" y1="45" x2="200" y2="88" stroke="#333" stroke-width="1.5" marker-end="url(#arrow9h)"/><line x1="230" y1="45" x2="320" y2="88" stroke="#333" stroke-width="1.5" marker-end="url(#arrow9h)"/><text x="200" y="165" text-anchor="middle" fill="#333" font-size="10">How are environment-specific changes applied?</text><rect x="250" y="140" width="160" height="30" rx="5" fill="#FFEBEE" stroke="#C62828" stroke-width="1"/><text x="330" y="160" text-anchor="middle" fill="#C62828" font-size="9">???</text><defs><marker id="arrow9h" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
       "Overlays contain patches applied on top of base resources at build time, producing environment-specific output",
-      "Kustomize directly modifies the base manifest files in place for each environment during the build process",
+      "Base manifest files are directly modified in place by Kustomize for each environment during the build process",
       "Kustomize generates Helm charts from the base and injects environment-specific values per overlay directory",
       "Each overlay must contain a complete copy of all base manifests with the required modifications pre-applied"
     ],

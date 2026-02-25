@@ -33,7 +33,7 @@ var questions = [
     options: [
       "ConfigMaps are immutable by default; the update was silently rejected by the API server",
       "Env vars from a ConfigMap are set at pod creation; the pod must restart to see changes",
-      "The kubelet refreshes env vars every 60 seconds so the operator just needs to wait longer",
+      "Kubelet refreshes env vars every 60 seconds so the operator just needs to wait a bit longer",
       "The container runtime caches ConfigMap data and requires a full `kubectl rollout restart`"
     ],
     answer: 1,
@@ -66,7 +66,7 @@ var questions = [
       "`Guaranteed` — because at least one container has equal requests and limits set for resources",
       "`Burstable` — not every container specifies both CPU and memory requests equal to limits",
       "`BestEffort` — because one container is entirely missing memory request specifications",
-      "`Guaranteed` — because Kubernetes rounds up partial specs for both CPU and memory automatically"
+      "Kubernetes assigns `Guaranteed` — because it rounds up partial specs for both CPU and memory"
     ],
     answer: 1,
     explanation: "For a pod to receive the `Guaranteed` QoS class, every container must specify both CPU and memory requests, and each request must equal its corresponding limit. Here, the first container lacks CPU specs and the second lacks memory specs, so the pod cannot be `Guaranteed`. Since at least one container has some resource specifications, it is not `BestEffort` either. The pod is classified as `Burstable`. QoS classification is independent of node resource availability.\n\nWhy other options are wrong:\n- A: Guaranteed requires every container to set both CPU and memory with requests equal to limits, not just one container\n- C: BestEffort requires zero resource specs on all containers; this pod has some specs set\n- D: Kubernetes does not round up or auto-fill partial resource specifications; Guaranteed requires every container to explicitly set both CPU and memory with requests equal to limits\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed",
@@ -95,8 +95,8 @@ var questions = [
     text: "A cluster administrator creates a ResourceQuota in the `dev` namespace that sets `requests.cpu: 4` and `limits.cpu: 8`. A developer tries to create a pod without specifying any CPU requests or limits. What happens?",
     diagram: null,
     options: [
-      "The pod is created because Kubernetes auto-assigns default CPU values derived from the ResourceQuota",
-      "No scheduling occurs and the pod stays in pending state until the administrator adds a LimitRange object",
+      "Kubernetes creates the pod and auto-assigns default CPU values derived from the ResourceQuota",
+      "No scheduling occurs because the pod stays in pending state until the administrator adds a LimitRange",
       "The pod is created with `BestEffort` QoS class but its resources do not count against the quota",
       "Pod creation is rejected because CPU quota exists but the pod specifies no CPU requests/limits"
     ],
@@ -130,7 +130,7 @@ var questions = [
       "The kubelet's local cache on the node where the pod is currently running and scheduled",
       "Inside the kube-apiserver's in-memory store, which is cleared each time the server is restarted",
       "etcd, the cluster's key-value store that persists all Kubernetes API objects at rest",
-      "The container runtime's internal image layer filesystem storage on the scheduling node"
+      "Within the container runtime's internal image layer filesystem storage on the scheduling node"
     ],
     answer: 2,
     explanation: "All Kubernetes API objects, including Secrets, are stored in etcd. While the kubelet may cache Secret data locally for volume mounts, the authoritative storage is etcd. This is why enabling etcd encryption at rest is recommended for sensitive data. The API server reads from and writes to etcd but does not store objects only in memory. The container runtime filesystem stores image layers, not Kubernetes API objects.\n\nWhy other options are wrong:\n- A: The kubelet caches Secret data locally for mounts, but this is not the authoritative at-rest store\n- B: The API server reads from and writes to etcd; it does not hold objects only in volatile memory\n- D: The container runtime stores image layers, not Kubernetes API objects like Secrets\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/#information-security-for-secrets",
@@ -512,7 +512,7 @@ var questions = [
     diagram: null,
     options: [
       "A bug in the kubelet accidentally deleted the extra files during the ConfigMap mount process on the node",
-      "The container runtime performs a security cleanup of any directory where a ConfigMap volume is mounted",
+      "During startup the container runtime cleans any directory where a ConfigMap volume is mounted",
       "Mounting a volume at a path replaces the directory contents; only the ConfigMap data exists there",
       "The files still exist but are hidden beneath the mount point; running `ls -a /config` would show them"
     ],
@@ -610,7 +610,7 @@ var questions = [
       "`Guaranteed` — because memory requests are equal to memory limits for the container",
       "`Burstable` — because CPU requests and limits are not specified for the container",
       "`BestEffort` — because CPU has no specifications at all in the pod's resource spec",
-      "`Guaranteed` — because Kubernetes defaults CPU values to match memory specifications"
+      "Kubernetes assigns `Guaranteed` — because it defaults CPU to match memory specs"
     ],
     answer: 1,
     explanation: "For the `Guaranteed` QoS class, every container must have both CPU and memory requests set, and each must equal its corresponding limit. This pod only specifies memory, not CPU. Since at least one resource is specified (memory), it is not `BestEffort`. Therefore it receives the `Burstable` class. Kubernetes does not automatically set CPU defaults based on memory specifications — a LimitRange would be needed for default injection.\n\nWhy other options are wrong:\n- A: Guaranteed requires both CPU and memory requests equal to limits, not just memory\n- C: BestEffort requires zero resource specs on all containers; this pod specifies memory\n- D: Kubernetes does not auto-set CPU values from memory specs; a LimitRange would be needed\n\nReference: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#burstable",
@@ -825,7 +825,7 @@ var questions = [
     options: [
       "Create versioned ConfigMaps (`config-v1`, `config-v2`) and have each Deployment reference its own",
       "Store both versions' config in one ConfigMap with keys prefixed by version (e.g., `v1-flags`, `v2-flags`)",
-      "Use a single `ConfigMap` and toggle feature flags with environment variables set on each individual pod",
+      "Place all feature flags in a single `ConfigMap` and toggle them with environment variables per pod",
       "Use a single `ConfigMap` and rely on the application to detect its own version and load correct flags"
     ],
     answer: 0,
@@ -911,7 +911,7 @@ var questions = [
     text: "A LimitRange in a namespace sets `max.cpu: 2` for containers. A developer tries to create a pod with `resources.limits.cpu: 4`. What happens?",
     diagram: null,
     options: [
-      "The pod is created but the CPU limit is automatically capped at 2 cores by the LimitRange enforcer",
+      "Kubernetes creates the pod but automatically caps the CPU limit at 2 cores via the LimitRange",
       "CPU-specific LimitRanges are ignored because CPU constraints require a separate CpuLimitRange resource",
       "The pod is created in `Pending` state until a node with 4 CPUs becomes available for scheduling",
       "Pod creation is rejected because the container CPU limit exceeds the LimitRange max of 2 cores"
@@ -975,7 +975,7 @@ var questions = [
     text: "A pod with no resource requests or limits is running on a node. The node comes under memory pressure. In which order does Kubernetes evict pods?",
     diagram: null,
     options: [
-      "`Pods` are evicted alphabetically by name to ensure deterministic and repeatable behavior on every node",
+      "Eviction occurs alphabetically by `Pod` name to ensure deterministic and repeatable behavior on nodes",
       "`Pods` are evicted randomly — there is no guaranteed or deterministic order during node pressure events",
       "`BestEffort` pods are evicted first, then `Burstable` exceeding requests, then `Guaranteed` pods",
       "`Guaranteed` pods are evicted first, then `Burstable`, then `BestEffort` as reserved resources are reclaimed"
@@ -1460,7 +1460,7 @@ var questions = [
       "A `hostPath` volume pointing to a shared directory on the node filesystem for data exchange between containers",
       "Using a `configMap` volume that the init container populates at runtime by writing into the mounted path",
       "An `emptyDir` volume shared between the init container and the main application container within the pod",
-      "A `persistentVolumeClaim` that the init container writes to and the main container reads from at startup"
+      "Provisioning a `persistentVolumeClaim` that the init container writes to and the main container reads"
     ],
     answer: 2,
     explanation: "An `emptyDir` volume is created when a pod is assigned to a node and is shared among all containers in the pod, including init containers. The init container can download data into the emptyDir, and the main container can read it after the init container completes. `hostPath` creates node dependency. ConfigMap volumes are read-only and cannot be written to by containers. While a PVC would work, it is over-engineered for ephemeral data that only needs to last for the pod's lifetime.\n\nWhy other options are wrong:\n- A: hostPath creates node dependency and is not recommended for ephemeral data sharing\n- B: ConfigMap volumes are read-only and cannot be written to by init containers\n- D: PVC is over-engineered for ephemeral data that only needs to last for the pod's lifetime\n\nReference: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir",
@@ -1523,7 +1523,7 @@ var questions = [
     text: "A company's cloud-native strategy document states that \"configuration must be treated as a first-class artifact.\" In practical Kubernetes terms, what does this mean?",
     diagram: null,
     options: [
-      "Configuration files should be compiled into the application binary, validated at build, cached for performance, and versioned internally",
+      "All configuration files should be compiled into the application binary, validated at build, cached, and versioned internally",
       "Environment variables are the preferred cloud-native configuration mechanism, while file-based configuration requires tooling",
       "Configuration is best managed by a dedicated operations team who apply, validate, and monitor changes through `kubectl` commands",
       "ConfigMaps and Secrets should be version-controlled, peer-reviewed, tested in staging, and deployed through a CI/CD pipeline"
@@ -1589,10 +1589,10 @@ var questions = [
     text: "A platform team uses Fluentd to collect logs from all pods. They want to enrich log entries with the pod's resource limits to correlate application errors with resource constraints. Where can Fluentd obtain this information?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="180" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Log Enrichment Pipeline</text><rect x="20" y="55" width="90" height="40" rx="5" fill="#2d6a4f"/><text x="65" y="80" text-anchor="middle" fill="white" font-size="11">Pod Logs</text><line x1="110" y1="75" x2="140" y2="75" stroke="#555" stroke-width="2"/><rect x="140" y="55" width="110" height="40" rx="5" fill="#e6a817"/><text x="195" y="80" text-anchor="middle" fill="white" font-size="11">Fluentd DaemonSet</text><line x1="250" y1="75" x2="280" y2="75" stroke="#555" stroke-width="2"/><rect x="280" y="55" width="100" height="40" rx="5" fill="#326CE5"/><text x="330" y="80" text-anchor="middle" fill="white" font-size="11">Enriched Logs</text><rect x="140" y="115" width="110" height="35" rx="5" fill="#16213e" stroke="#e6a817" stroke-width="1"/><text x="195" y="137" text-anchor="middle" fill="#e0e0e0" font-size="10">?</text><line x1="195" y1="95" x2="195" y2="115" stroke="#e6a817" stroke-width="1" stroke-dasharray="3,3"/></svg>',
     options: [
-      "Fluentd reads resource limits directly from the container's `/proc/cgroups` file using the cgroup parser plugin on the node",
+      "Fluentd reads resource limits from the container's `/proc/cgroups` file using the cgroup parser plugin",
       "The Fluentd Kubernetes metadata filter plugin queries the API to enrich logs with pod metadata and resource specs",
       "Resource limits are automatically included in every log line by the container runtime without extra configuration",
-      "Fluentd reads the node's kubelet configuration file to determine pod resource limits for log enrichment purposes"
+      "Reading the node's kubelet configuration file lets Fluentd determine pod resource limits for enrichment"
     ],
     answer: 1,
     explanation: "The Fluentd Kubernetes metadata filter plugin enriches log entries by querying the Kubernetes API for pod metadata, including labels, annotations, and resource specifications. This allows correlating logs with resource constraints. Container runtimes do not add resource limits to log output. While cgroup files contain resource constraints, Fluentd typically uses the Kubernetes API for this data. The kubelet config does not contain per-pod resource limits.\n\nWhy other options are wrong:\n- A: While cgroup files contain resource constraints, Fluentd typically uses the Kubernetes API for this\n- C: Container runtimes do not automatically include resource limits in log output\n- D: The kubelet config does not contain per-pod resource limits; the API server stores this data\n\nReference: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter",
@@ -1655,7 +1655,7 @@ var questions = [
     text: "A Helm chart creates a ConfigMap and a Deployment. The team wants to ensure that whenever the ConfigMap content changes, the Deployment pods are automatically restarted. They add the annotation `checksum/config: {{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}` to the pod template. What does this achieve?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Helm Checksum Pattern</text><rect x="40" y="55" width="140" height="50" rx="5" fill="#326CE5"/><text x="110" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap</text><text x="110" y="92" text-anchor="middle" fill="#ccc" font-size="10">content changes</text><line x1="110" y1="105" x2="110" y2="125" stroke="#aaa" stroke-width="2"/><rect x="40" y="125" width="320" height="50" rx="5" fill="#16213e" stroke="#aaa" stroke-width="1"/><text x="200" y="155" text-anchor="middle" fill="#aaa" font-size="13">??? mechanism ???</text><line x1="200" y1="175" x2="200" y2="195" stroke="#aaa" stroke-width="2"/><rect x="130" y="195" width="140" height="35" rx="5" fill="#2d6a4f"/><text x="200" y="217" text-anchor="middle" fill="white" font-size="12">??? outcome</text></svg>',
     options: [
-      "It embeds the ConfigMap content directly in the pod template, significantly reducing the need for a separate ConfigMap resource",
+      "Embedding the ConfigMap content directly in the pod template reduces the need for a separate ConfigMap resource",
       "Any change to ConfigMap content changes the hash annotation, which alters the pod template spec and triggers a rolling update",
       "It encrypts the ConfigMap data using SHA-256 for security purposes so that sensitive configuration is protected at rest",
       "The annotation validates ConfigMap content against a known checksum, which blocks the deployment if corruption occurs"

@@ -473,3 +473,13 @@
 ### s05-q096 (keyword giveaway)
 - **Problem:** Correct answer C uniquely contained "automatically" while no distractor used this word.
 - **Fix:** Changed A from "Hardcode the token in the application source code and redeploy it monthly" to "Hardcode the token in application source code and automatically redeploy monthly". Now both A and C contain "automatically".
+
+---
+
+## Round 48b — 2026-02-25
+**File**: `set-05.js`
+**Issues fixed**: 1
+
+### s05-q063 (first-word giveaway)
+- **Problem:** Correct answer A started with "Pod" while two distractors (C, D) started with "The", creating a 2-1-1 first-word cluster.
+- **Fix:** Changed C from "The API server queues incoming requests and retries for 30 seconds on failure" to "Incoming requests are queued by the API server and retried for 30 seconds on failure". Now C starts with "Incoming", breaking the "The" cluster.
