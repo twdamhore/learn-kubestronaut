@@ -88,10 +88,10 @@ var questions = [
     text: "An SRE team adopts Argo CD for GitOps-based deployments. After pushing a manifest change to the Git repository, Argo CD shows the application status as <code>OutOfSync</code> but does not automatically deploy the change. What is the most likely reason?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="100" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="60" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Git Repo</text><rect x="150" y="70" width="100" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Argo CD</text><rect x="290" y="70" width="100" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="340" y="100" text-anchor="middle" fill="white" font-size="12" font-weight="bold">K8s Cluster</text><line x1="110" y1="95" x2="148" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9a)"/><line x1="250" y1="95" x2="288" y2="95" stroke="#999" stroke-width="2" stroke-dasharray="6,3"/><text x="200" y="155" text-anchor="middle" fill="#555" font-size="11" font-style="italic">Why no auto-deploy?</text><defs><marker id="arrow9a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
-      "Argo CD requires Flux as a co-controller for enabling automatic sync operations on the cluster",
-      "The sync policy is set to <code>manual</code> rather than <code>automated</code>, so changes are detected but not auto-applied",
+      "Argo CD requires Flux installed as a co-controller to enable automatic sync operations on the cluster",
+      "The sync policy is <code>manual</code> rather than <code>automated</code>, so changes are detected but not applied",
       "Git webhooks must be configured through a third-party integration because Argo CD relies solely on polling",
-      "The Argo CD application manifest is missing the required <code>repoURL</code> field in the source specification"
+      "The Argo CD application manifest is missing the required <code>repoURL</code> field in its source specification"
     ],
     answer: 1,
     explanation: "By default, Argo CD applications use a manual sync policy, meaning it detects drift (showing `OutOfSync`) but waits for an operator to trigger the sync. Setting the sync policy to `automated` enables Argo CD to automatically apply changes when the Git repository state diverges from the live cluster state.\n\nWhy other options are wrong:\n- A: Argo CD operates independently of Flux; they are separate GitOps tools that do not require each other\n- C: Argo CD does support Git webhooks for faster detection; webhooks supplement but are not required for sync\n- D: If repoURL were missing, the application would fail to create, not show OutOfSync status\n\nReference: https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/",
@@ -136,8 +136,8 @@ var questions = [
     text: "A security audit reveals that Pods in the <code>production</code> namespace are running containers as the root user. The team wants to enforce that all containers must run as a non-root user. Which Kubernetes mechanism should they use?",
     diagram: null,
     options: [
-      "Add a <code>NetworkPolicy</code> that blocks all network traffic originating from containers running as root user",
-      "Configure a <code>Pod Security Admission</code> controller with the <code>restricted</code> profile enforced on the namespace",
+      "Add a <code>NetworkPolicy</code> that blocks all network traffic from containers running as root user in the namespace",
+      "Configure a <code>Pod Security Admission</code> controller with the <code>restricted</code> profile on the namespace",
       "Create a <code>ResourceQuota</code> that limits the total number of containers running as root in the namespace",
       "Set <code>privileged: false</code> in the container's resource limits section to prevent root-level access"
     ],
@@ -168,8 +168,8 @@ var questions = [
     text: "A data-processing Pod requires a GPU node for its workload. The cluster has nodes labeled <code>accelerator=nvidia-tesla-v100</code>. The Pod spec uses a <code>nodeSelector</code> with <code>accelerator: nvidia-tesla-a100</code>. What happens when this Pod is submitted?",
     diagram: null,
     options: [
-      "The scheduler assigns it to one of the V100 nodes since both are NVIDIA GPUs with compatible compute capabilities",
-      "The Pod remains in <code>Pending</code> state with a FailedScheduling event because no node matches <code>accelerator: nvidia-tesla-a100</code>",
+      "The scheduler assigns it to a V100 node since both are NVIDIA GPUs with compatible compute capabilities on the cluster",
+      "The Pod remains in <code>Pending</code> state because no node matches the label <code>accelerator: nvidia-tesla-a100</code>",
       "The Pod is scheduled on a V100 node but the container fails to start because of incompatible GPU driver versions",
       "The scheduler automatically creates the missing <code>accelerator</code> label on the most suitable node with GPU resources"
     ],
@@ -232,10 +232,10 @@ var questions = [
     text: "A StatefulSet with 3 replicas uses a <code>volumeClaimTemplate</code> to provision PersistentVolumeClaims. When the StatefulSet is scaled down from 3 to 1 replica, what happens to the PVCs associated with the removed Pods?",
     diagram: null,
     options: [
-      "All three PVCs are deleted and automatically reprovisioned when the StatefulSet scales back up later",
-      "The PVCs associated with removed Pods are migrated to the remaining Pod to consolidate storage",
-      "The PVCs for removed Pods are retained, preserving data if the StatefulSet is later scaled back up",
-      "The PVCs are marked as <code>Released</code> and the underlying storage is immediately reclaimed by the provisioner"
+      "All three PVCs are deleted and then automatically reprovisioned when the StatefulSet scales back up",
+      "The PVCs associated with removed Pods are migrated to the remaining Pod to consolidate the storage",
+      "The PVCs for the removed Pods are retained, preserving data if the StatefulSet is later scaled back up",
+      "The PVCs are marked as <code>Released</code> and the underlying storage is reclaimed by the provisioner"
     ],
     answer: 2,
     explanation: "Kubernetes retains PVCs created by a StatefulSet's `volumeClaimTemplate` even when the corresponding Pods are deleted during scale-down. This ensures that data is preserved and can be reattached to the same Pod identity when the StatefulSet scales back up. Manual deletion is required to remove orphaned PVCs.\n\nWhy other options are wrong:\n- A: PVCs are retained by default on scale-down, not deleted; this preserves stateful data\n- B: PVCs are not migrated between Pods; each PVC is bound to a specific Pod ordinal identity\n- D: PVCs remain Bound (not Released) to the PV; the PVC object itself is retained in the namespace\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage",
@@ -312,10 +312,10 @@ var questions = [
     text: "A team manages their application using a Helm chart. After running <code>helm upgrade my-release ./my-chart</code>, they discover a critical bug in the new version. They need to immediately revert to the previous working state. What is the fastest correct action?",
     diagram: null,
     options: [
-      "Run <code>helm delete my-release</code> and then <code>helm install</code> with the previous chart version to redeploy the release",
+      "Run <code>helm delete my-release</code> then <code>helm install</code> with the previous chart version to redeploy",
       "Run <code>helm rollback my-release 1</code> to roll back to the first revision (the original install state)",
       "Run <code>helm rollback my-release 0</code> to revert to the previous release (revision 0 means \"previous release\")",
-      "Manually edit each Kubernetes resource to match the previous chart's templates and desired configuration"
+      "Manually edit each Kubernetes resource to match the previous chart's templates and the desired configuration"
     ],
     answer: 2,
     explanation: "The `helm rollback my-release 0` command uses revision 0, which is a special value meaning \"roll back to the immediately previous release.\" This is the fastest way to restore the previous state because Helm maintains a history of all release revisions and can re-apply the previous manifests. Option B targets revision 1 specifically, which is the very first install and may not be the immediately previous release if multiple upgrades have occurred. Deleting and reinstalling would cause unnecessary downtime.\n\nWhy other options are wrong:\n- A: Deleting and reinstalling causes unnecessary downtime and loses release history\n- B: Revision 1 is the first install, which may not be the immediately previous release after multiple upgrades\n- D: Manually editing resources is error-prone, slow, and does not leverage Helm's release management\n\nReference: https://helm.sh/docs/helm/helm_rollback/",
@@ -330,8 +330,8 @@ var questions = [
     options: [
       "The Pod is created successfully with default CPU values automatically assigned by the cluster scheduler",
       "The ResourceQuota is automatically adjusted because the API server detects unset resource fields",
-      "The Pod is created but remains in <code>Pending</code> state until a suitable LimitRange is defined in the namespace",
-      "The API server rejects Pod creation because CPU requests and limits must be specified under a quota"
+      "The Pod is created but remains in <code>Pending</code> state until a LimitRange is defined in the namespace",
+      "The API server rejects the Pod creation because CPU requests and limits must be specified under a quota"
     ],
     answer: 3,
     explanation: "When a ResourceQuota specifying compute resources (CPU or memory) exists in a namespace, all Pods must explicitly declare requests and limits for those resources. If not specified, the API server rejects the Pod creation. A LimitRange can be configured to automatically inject defaults, preventing this rejection.\n\nWhy other options are wrong:\n- A: Default values are not assigned automatically by the scheduler; a LimitRange would be needed for that\n- B: ResourceQuota is not auto-adjusted; it is a fixed constraint that must be explicitly modified\n- C: The Pod is rejected immediately by the API server, not left in Pending state waiting for a LimitRange\n\nReference: https://kubernetes.io/docs/concepts/policy/resource-quotas/#compute-resource-quota",
@@ -344,10 +344,10 @@ var questions = [
     text: "A NetworkPolicy is applied to the <code>backend</code> namespace that allows ingress traffic only from Pods with the label <code>role: frontend</code>. A Pod in the <code>monitoring</code> namespace with the label <code>role: prometheus</code> needs to scrape metrics from backend Pods. What must be added to allow this traffic?",
     diagram: null,
     options: [
-      "A DNS policy exception added in the CoreDNS ConfigMap to allow cross-namespace metric collection",
+      "A DNS policy exception added to the CoreDNS ConfigMap to permit cross-namespace metric collection traffic",
       "An annotation on the Prometheus Pod to bypass all NetworkPolicy restrictions in the backend namespace",
       "A <code>ServiceAccount</code> with elevated cluster-wide privileges assigned to the Prometheus Pod for scraping",
-      "A NetworkPolicy with a <code>namespaceSelector</code> for monitoring and a <code>podSelector</code> matching the scraper"
+      "A NetworkPolicy with a <code>namespaceSelector</code> for monitoring and <code>podSelector</code> for the scraper"
     ],
     answer: 3,
     explanation: "NetworkPolicies support cross-namespace access control using `namespaceSelector` combined with `podSelector`. To allow the Prometheus Pod in the `monitoring` namespace to reach backend Pods, a new ingress rule must specify both the namespace and the Pod labels. Annotations and ServiceAccounts do not override NetworkPolicy enforcement.\n\nWhy other options are wrong:\n- A: DNS policies in CoreDNS do not override NetworkPolicy enforcement at the network layer\n- B: Annotations cannot bypass NetworkPolicy; enforcement is done at the CNI level, not by annotation\n- C: ServiceAccount privileges control API access, not network-level traffic allowed by NetworkPolicy\n\nReference: https://kubernetes.io/docs/concepts/services-networking/network-policies/#behavior-of-to-and-from-selectors",
@@ -360,10 +360,10 @@ var questions = [
     text: "A Kubernetes cluster runs CoreDNS for service discovery. An application Pod attempts to resolve the DNS name <code>my-svc.my-ns.svc.cluster.local</code> but receives <code>NXDOMAIN</code>. The Service <code>my-svc</code> exists in namespace <code>my-ns</code>. Which of the following could cause this?",
     diagram: null,
     options: [
-      "The Service type must be set to <code>LoadBalancer</code> for CoreDNS to generate DNS records for the Service",
-      "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving internal Service names",
+      "The Service type must be set to <code>LoadBalancer</code> for CoreDNS to create the required DNS records for it",
+      "CoreDNS does not support the <code>svc.cluster.local</code> DNS suffix for resolving Service names internally",
       "CoreDNS maps <code>ClusterIP</code> addresses to IP ranges and does not support hostname-based Service lookups",
-      "The Pod's <code>dnsPolicy</code> is set to <code>None</code> without a custom <code>dnsConfig</code> pointing to the CoreDNS nameserver"
+      "The Pod's <code>dnsPolicy</code> is <code>None</code> without a <code>dnsConfig</code> pointing to the CoreDNS nameserver"
     ],
     answer: 3,
     explanation: "When a Pod's `dnsPolicy` is set to `None`, Kubernetes does not configure any default DNS servers for the Pod. Without a `dnsConfig` that includes the CoreDNS ClusterIP as a nameserver, the Pod cannot resolve cluster-internal DNS names. This results in `NXDOMAIN` even though the Service exists.\n\nWhy other options are wrong:\n- A: DNS records are created for all Service types including ClusterIP; LoadBalancer is not required\n- B: CoreDNS fully supports the svc.cluster.local suffix; it is the standard cluster DNS domain\n- C: DNS resolution works with Service names; name-based lookups are the primary use case for CoreDNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy",
@@ -392,9 +392,9 @@ var questions = [
     text: "A team deploys a DaemonSet that runs a log collector agent on every node. They add a new node to the cluster with the taint <code>dedicated=monitoring:NoSchedule</code>. The DaemonSet Pod is not scheduled on the new node. What change to the DaemonSet spec would fix this?",
     diagram: null,
     options: [
-      "Add a <code>nodeSelector</code> matching the new node's hostname label to target that specific node for scheduling",
+      "Add a <code>nodeSelector</code> matching the new node's hostname label to target that node for scheduling",
       "Add a toleration for <code>dedicated=monitoring:NoSchedule</code> so the DaemonSet Pod tolerates the taint",
-      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force a rescheduling pass on all tainted nodes",
+      "Set the DaemonSet's <code>updateStrategy</code> to <code>OnDelete</code> to force rescheduling on all tainted nodes",
       "Remove the DaemonSet's resource requests so the Pod fits on any node regardless of available capacity"
     ],
     answer: 1,
@@ -424,9 +424,9 @@ var questions = [
     text: "A cluster administrator wants to ensure that Pods from two different applications, <code>app-a</code> and <code>app-b</code>, are never placed on the same node. Which scheduling mechanism should they use?",
     diagram: null,
     options: [
-      "Taints applied on all cluster nodes with tolerations granted to only one application at any given time",
+      "Taints applied on all cluster nodes with tolerations granted only to a single application at any given time",
       "Node affinity with <code>preferredDuringSchedulingIgnoredDuringExecution</code> targeting different node labels",
-      "A PriorityClass that assigns higher scheduling priority to <code>app-a</code> Pods over <code>app-b</code> Pods during contention",
+      "A PriorityClass assigning higher priority to <code>app-a</code> over <code>app-b</code> during scheduling contention",
       "Pod anti-affinity with <code>requiredDuringSchedulingIgnoredDuringExecution</code> and the hostname topology key"
     ],
     answer: 3,
@@ -472,10 +472,10 @@ var questions = [
     text: "A platform team deploys Fluent Bit as a DaemonSet to collect container logs from every node. They configure Fluent Bit to read from <code>/var/log/containers/*.log</code> and forward to Elasticsearch. After a node restart, Fluent Bit re-sends all existing logs, creating duplicates. How should they prevent this?",
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="120" height="50" rx="8" fill="#455A64" stroke="#263238" stroke-width="2"/><text x="70" y="40" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Node Logs</text><text x="70" y="52" text-anchor="middle" fill="#B0BEC5" font-size="9">/var/log/containers/</text><rect x="10" y="90" width="120" height="50" rx="8" fill="#0288D1" stroke="#01579B" stroke-width="2"/><text x="70" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Fluent Bit</text><rect x="250" y="90" width="140" height="50" rx="8" fill="#388E3C" stroke="#1B5E20" stroke-width="2"/><text x="320" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Elasticsearch</text><line x1="70" y1="60" x2="70" y2="88" stroke="#333" stroke-width="2" marker-end="url(#arrow9b)"/><line x1="130" y1="115" x2="248" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arrow9b)"/><text x="70" y="185" text-anchor="middle" fill="#F57F17" font-size="16" font-weight="bold">?</text><defs><marker id="arrow9b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker></defs></svg>',
     options: [
-      "Enable the <code>DB</code> parameter on Fluent Bit's tail input plugin to persist file read offsets across restarts",
+      "Enable the <code>DB</code> parameter on Fluent Bit's tail input plugin to persist file read offsets on restarts",
       "Switch from Fluent Bit to Fluentd, which automatically handles log file offset tracking by default",
       "Configure Elasticsearch to deduplicate incoming log entries automatically using <code>_id</code> document fields",
-      "Reduce Fluent Bit's buffer size to minimize the volume of re-sent logs after each node restart event"
+      "Reduce Fluent Bit's buffer size to minimize the volume of logs that are re-sent after each node restart"
     ],
     answer: 0,
     explanation: "Fluent Bit's tail input plugin supports a `DB` parameter that stores file read positions (offsets) in a local SQLite database. When Fluent Bit restarts, it resumes reading from the last recorded position rather than the beginning. Setting `storage.type` to `filesystem` also persists in-flight data to disk to prevent data loss.\n\nWhy other options are wrong:\n- B: Fluentd does not automatically handle offset tracking by default; it also requires explicit configuration\n- C: Elasticsearch deduplication is possible but complex and shifts the burden downstream\n- D: Reducing buffer size does not prevent re-reading from the beginning of log files after restart\n\nReference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#keep-state",
@@ -537,7 +537,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><rect x="140" y="5" width="120" height="40" rx="8" fill="#7B1FA2" stroke="#4A148C" stroke-width="2"/><text x="200" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Service</text><rect x="20" y="80" width="150" height="55" rx="8" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><text x="95" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Blue (v1) Deploy</text><text x="95" y="120" text-anchor="middle" fill="#90CAF9" font-size="10">version: v1</text><rect x="230" y="80" width="150" height="55" rx="8" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><text x="305" y="105" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Green (v2) Deploy</text><text x="305" y="120" text-anchor="middle" fill="#A5D6A7" font-size="10">version: v2</text><line x1="175" y1="45" x2="95" y2="78" stroke="#1565C0" stroke-width="2" marker-end="url(#arrow9c)"/><line x1="225" y1="45" x2="305" y2="78" stroke="#999" stroke-width="2" stroke-dasharray="5,3"/><text x="200" y="170" text-anchor="middle" fill="#333" font-size="10">How to switch traffic?</text><rect x="100" y="185" width="200" height="25" rx="5" fill="#FFF3E0" stroke="#E65100" stroke-width="1"/><text x="200" y="202" text-anchor="middle" fill="#E65100" font-size="10">?</text><defs><marker id="arrow9c" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1565C0"/></marker></defs></svg>',
     options: [
       "Use a single Deployment and perform a rolling update with <code>maxSurge: 100%</code> to replace all Pods at once",
-      "Create a <code>v2</code> Deployment with a <code>version: v2</code> label, verify its health, then switch the Service selector",
+      "Create a <code>v2</code> Deployment with a <code>version: v2</code> label, verify health, then update the selector",
       "Use a CronJob to periodically swap traffic between v1 and v2 Pods based on a configured time schedule",
       "Deploy v2 Pods into a separate namespace, configure an ExternalName Service, and redirect incoming traffic"
     ],
@@ -586,8 +586,8 @@ var questions = [
     options: [
       "Neither backend receives the request because <code>/api/v1/users</code> is not an exact match for <code>/api</code>",
       "The Ingress controller returns a 404 because the path <code>/api/v1/users</code> is not explicitly defined",
-      "The request is routed to <code>api-service:8080</code> because <code>/api/v1/users</code> starts with the <code>/api</code> prefix",
-      "The request is load-balanced equally between both backends based on the round-robin algorithm"
+      "The request goes to <code>api-service:8080</code> because <code>/api/v1/users</code> starts with <code>/api</code>",
+      "The request is load-balanced equally between both backends using the configured round-robin algorithm"
     ],
     answer: 2,
     explanation: "With `pathType: Prefix`, the Ingress controller matches the request path against the defined prefixes. Since `/api/v1/users` starts with `/api`, it matches the rule for `api-service:8080`. The full path (including `/v1/users`) is forwarded to the backend service. Prefix matching is the most common path type used in Ingress resources.\n\nWhy other options are wrong:\n- A: Prefix pathType matches any path that starts with the defined prefix, not just exact matches\n- B: The Ingress controller routes to the matching prefix rule, not return 404 for sub-paths\n- D: Requests are routed to the single matching backend, not load-balanced across all backends\n\nReference: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types",
@@ -666,7 +666,7 @@ var questions = [
     options: [
       "Deleting the default ServiceAccount in the <code>team-beta</code> namespace to revoke all network access",
       "A NetworkPolicy selecting all Pods with <code>policyTypes: [\"Egress\"]</code> and no egress rules defined",
-      "A <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> applied in that namespace",
+      "A <code>NetworkPolicy</code> with <code>podSelector: {}</code> and <code>policyTypes: [Ingress]</code> in the namespace",
       "Adding an annotation <code>network-isolation: enabled</code> to the <code>team-beta</code> namespace metadata labels"
     ],
     answer: 2,
@@ -683,7 +683,7 @@ var questions = [
       "A <code>Gateway</code> resource configured with dual upstream backends for mirroring traffic while routing to the canary",
       "A <code>DestinationRule</code> with <code>trafficPolicy.loadBalancer.simple: ROUND_ROBIN</code> distributing across versions",
       "A <code>PeerAuthentication</code> policy that routes all mTLS-encrypted traffic directly to the test version only",
-      "A <code>VirtualService</code> with a <code>mirror</code> field that duplicates traffic to the new version while serving from stable"
+      "A <code>VirtualService</code> with a <code>mirror</code> field that copies traffic to the new version while serving from stable"
     ],
     answer: 3,
     explanation: "Istio's `VirtualService` supports a `mirror` field that sends a copy of live traffic to a mirrored service. The responses from the mirrored service are discarded, ensuring no impact on end users. This is also known as shadow traffic or dark launching, and it allows testing with real production traffic patterns without risk.\n\nWhy other options are wrong:\n- A: Gateway resources handle ingress traffic entry, not traffic mirroring between service versions\n- B: DestinationRule with ROUND_ROBIN distributes traffic, not mirrors it to a separate version\n- C: PeerAuthentication configures mTLS policies, not traffic routing or mirroring behavior\n\nReference: https://istio.io/latest/docs/tasks/traffic-management/mirroring/",
@@ -744,9 +744,9 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin) rules",
+      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin)",
       "Only SRV records are created for headless Services; A records require extra DNS configuration in CoreDNS",
-      "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the DNS system",
+      "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of DNS",
       "Individual A records for each Pod (by ordinal) plus a Service-level A record returning all Pod IPs"
     ],
     answer: 3,
@@ -760,10 +760,10 @@ var questions = [
     text: "An operator creates a Namespace with the label <code>environment: production</code> and applies a LimitRange that sets default CPU requests to <code>100m</code> and default CPU limits to <code>500m</code>. A developer deploys a Pod in this namespace specifying only <code>resources.requests.cpu: 200m</code> but no limits. What CPU limit is applied to the Pod?",
     diagram: null,
     options: [
-      "No CPU limit is applied to the container; the Pod runs without any enforced limit on CPU usage",
-      "The CPU limit is automatically set equal to the specified request value of <code>200m</code> to match the request",
+      "No CPU limit is applied to the container; the Pod runs without any enforced limit on its CPU usage",
+      "The CPU limit is automatically set equal to the specified request value of <code>200m</code> to match it",
       "The LimitRange default limit of <code>500m</code> is applied when the developer does not specify a limit",
-      "Pod creation fails because both requests and limits must be explicitly specified under a quota"
+      "Pod creation fails because both CPU requests and limits must be explicitly specified under a quota"
     ],
     answer: 2,
     explanation: "A LimitRange injects default values for any resource field not specified by the user. Since the developer specified a CPU request but not a CPU limit, the LimitRange fills in the default limit of `500m`. If neither request nor limit were specified, the LimitRange would inject both defaults. The LimitRange also enforces min/max constraints if configured.\n\nWhy other options are wrong:\n- A: A LimitRange does inject defaults when they are not specified; the Pod would not run without a CPU limit only if a ResourceQuota were also present\n- B: The limit is not set to the request value; the LimitRange default limit is used independently\n- D: Pod creation does not fail because the LimitRange provides the missing limit value automatically\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",
@@ -808,10 +808,10 @@ var questions = [
     text: "A developer runs <code>kubectl apply -f deployment.yaml</code> and the Deployment is created. Minutes later, another team member runs <code>kubectl edit deployment my-app</code> and changes the replica count. The next time the first developer runs <code>kubectl apply -f deployment.yaml</code> (which still has the original replica count), what happens to the replica count?",
     diagram: null,
     options: [
-      "The replica count stays at the <code>kubectl edit</code> value because <code>kubectl apply</code> performs a three-way merge and the file has not changed",
-      "The command fails with a conflict error because the live cluster state differs from the local manifest file that was applied",
-      "Kubernetes automatically chooses the higher replica count to avoid disruption to the currently running workload in the cluster",
-      "The replica count reverts to the file value because <code>kubectl apply</code> uses a three-way merge of the file, annotation, and live state"
+      "The replica count keeps the <code>kubectl edit</code> value because <code>kubectl apply</code> three-way merge sees no change",
+      "The command fails with a conflict error because the live state differs from the local manifest file that was applied",
+      "Kubernetes automatically picks the higher replica count to avoid disruption to the running workload in the cluster",
+      "The replica count reverts to the file value because <code>kubectl apply</code> three-way merge always compares file and live"
     ],
     answer: 0,
     explanation: "`kubectl apply` performs a three-way strategic-merge-patch between the local file, the `last-applied-configuration` annotation, and the live object. Since the replica count in the file has not changed relative to the last-applied annotation, the three-way diff does not generate a patch for that field. The live value (set by `kubectl edit`) is therefore preserved. Only fields that differ between the current file and the last-applied annotation produce a patch entry. This is why `kubectl apply` is safe to use alongside manual edits — it only overwrites fields that the file author intentionally changed.\n\nWhy other options are wrong:\n- B: kubectl apply does not fail with conflict errors; it performs a three-way merge patch\n- C: Kubernetes does not choose the higher replica count; the three-way diff determines the outcome\n- D: The replica count does not revert because the file value has not changed relative to last-applied\n\nReference: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
@@ -904,7 +904,7 @@ var questions = [
     text: "A platform team practices infrastructure as code (IaC) and stores all Kubernetes manifests in a Git repository. They want to ensure that any manual change made to the cluster (e.g., via <code>kubectl edit</code>) is detected and reverted automatically. Which approach achieves this?",
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="70" width="90" height="50" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/><text x="55" y="100" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Git Repo</text><rect x="155" y="70" width="90" height="50" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/><text x="200" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="bold">???</text><rect x="300" y="70" width="90" height="50" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/><text x="345" y="100" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Cluster</text><line x1="100" y1="95" x2="153" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow9d)"/><line x1="245" y1="85" x2="298" y2="85" stroke="#4CAF50" stroke-width="2" marker-end="url(#arrow9d)"/><line x1="298" y1="105" x2="245" y2="105" stroke="#F44336" stroke-width="2" marker-end="url(#arrow9e)"/><text x="270" y="75" fill="#4CAF50" font-size="9">?</text><text x="270" y="125" fill="#F44336" font-size="9">?</text><text x="200" y="160" text-anchor="middle" fill="#333" font-size="10" font-style="italic">How to detect and revert manual changes?</text><defs><marker id="arrow9d" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#333"/></marker><marker id="arrow9e" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F44336"/></marker></defs></svg>',
     options: [
-      "Use a CronJob that periodically runs <code>kubectl apply</code> (or similar) against manifests in the Git repository",
+      "Use a CronJob that periodically runs <code>kubectl apply</code> (or similar) against manifests in the Git repo",
       "Deploy a GitOps controller (Argo CD or Flux) with automated sync and self-healing to reconcile drift",
       "Configure RBAC to prevent all manual changes by removing edit permissions from every cluster user",
       "Set all Kubernetes resources to immutable using finalizers to block any modifications after creation"
@@ -920,9 +920,9 @@ var questions = [
     text: "A cluster has nodes in three availability zones: <code>zone-a</code>, <code>zone-b</code>, and <code>zone-c</code>. A Deployment with 6 replicas needs Pods spread evenly across zones. Which Kubernetes feature achieves this?",
     diagram: null,
     options: [
-      "Pod affinity rules to co-locate replicas using <code>topologyKey: topology.kubernetes.io/zone</code> within each zone",
-      "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code> in the Pod spec",
-      "Node affinity rules that prefer nodes in each availability zone equally using weighted preferences",
+      "Pod affinity rules to co-locate replicas using <code>topologyKey: topology.kubernetes.io/zone</code> in each zone",
+      "Topology spread constraints with <code>maxSkew: 1</code> and <code>topologyKey: topology.kubernetes.io/zone</code> set",
+      "Node affinity rules that prefer nodes in each of the availability zones equally using weighted preferences",
       "Setting <code>replicas: 2</code> in three separate Deployments, with one Deployment targeted to each availability zone"
     ],
     answer: 1,
@@ -936,7 +936,7 @@ var questions = [
     text: "An operations team notices that a container keeps getting OOM-killed despite the application process using only 500MB of memory. The container has a 2GB memory limit and uses an <code>emptyDir</code> with <code>medium: Memory</code>. What explains the OOM kills?",
     diagram: null,
     options: [
-      "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer will terminate the container",
+      "Memory-backed <code>emptyDir</code> volumes count against the Pod's memory budget, and the kernel OOM killer terminates the container",
       "Memory limits apply to the main process only; tmpfs-backed mounts are tracked separately by the node eviction manager",
       "The <code>tmpfs</code> mount is charged to the node's system-reserved allocation rather than the container's cgroup memory limit",
       "Memory-backed <code>emptyDir</code> volumes count against Pod-level overhead, not the container limit, inflating node-level metrics"
@@ -968,9 +968,9 @@ var questions = [
     text: "A Prometheus instance is configured with a <code>scrape_interval</code> of 15 seconds and a <code>scrape_timeout</code> of 10 seconds. One target consistently takes 12 seconds to respond to scrape requests. What is the impact on Prometheus metrics collection for this target?",
     diagram: null,
     options: [
-      "Prometheus waits the full 12 seconds and collects the metrics since the response is within <code>scrape_interval</code>",
-      "Prometheus automatically increases the timeout for targets that consistently respond slowly to scrapes",
-      "The scrape fails because the 12-second response exceeds the 10-second <code>scrape_timeout</code> and <code>up</code> reads 0",
+      "Prometheus waits the full 12 seconds and collects metrics since the response is within the <code>scrape_interval</code>",
+      "Prometheus automatically increases the timeout for slow targets that consistently respond late to scrapes",
+      "The scrape fails because the 12-second response exceeds <code>scrape_timeout</code> of 10s so <code>up</code> reads 0",
       "The target is dropped from the scrape configuration because three consecutive timeouts trigger its removal"
     ],
     answer: 2,
@@ -987,7 +987,7 @@ var questions = [
       "Create or update an <code>imagePullSecret</code> in the namespace and reference it in the Pod spec or ServiceAccount",
       "Recreate the Pod with <code>hostNetwork: true</code> to allow direct network access to the private registry endpoint",
       "Change the image tag from <code>v2.0</code> to <code>latest</code> since private registries may not retain older tagged images",
-      "Add the registry URL to the CoreDNS configuration as a custom upstream resolver for registry lookups"
+      "Add the registry URL to CoreDNS as a custom upstream resolver for the registry hostname lookups in the cluster"
     ],
     answer: 0,
     explanation: "The `unauthorized` error indicates that the container runtime cannot authenticate to the private registry. Kubernetes uses `imagePullSecrets` (Secrets of type `kubernetes.io/dockerconfigjson`) to provide registry credentials. These can be referenced directly in the Pod spec or attached to the default ServiceAccount in the namespace for automatic injection.\n\nWhy other options are wrong:\n- B: hostNetwork does not solve authentication issues; it changes network namespace, not registry credentials\n- C: Private registries serve any valid tag; the latest tag is not special for authentication purposes\n- D: CoreDNS configuration is for DNS resolution, not registry authentication or authorization\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/",
@@ -1002,7 +1002,7 @@ var questions = [
     options: [
       "The developer can select from multiple compatible API groups for each resource type during manifest creation",
       "The API group used for each resource is determined by the namespace in which the resource is being created",
-      "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent Kubernetes versions",
+      "All resources default to the <code>v1</code> API group and other API groups are deprecated in recent versions",
       "Each resource type belongs to a specific API group, and the API server only accepts the correct group"
     ],
     answer: 3,
@@ -1032,7 +1032,7 @@ var questions = [
     text: "A team has a Deployment with <code>revisionHistoryLimit: 3</code>. After performing 7 rolling updates, how many old ReplicaSets are retained in the cluster?",
     diagram: null,
     options: [
-      "3 old ReplicaSets are retained as specified by <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
+      "3 old ReplicaSets are retained per <code>revisionHistoryLimit</code>, plus the current active ReplicaSet",
       "0 old ReplicaSets, because Kubernetes automatically cleans up all inactive ReplicaSets after updates",
       "7 old ReplicaSets are retained because <code>revisionHistoryLimit</code> caps ReplicaSets older than 30 days",
       "1 old ReplicaSet is retained, representing only the immediately previous version of the Deployment"
@@ -1130,8 +1130,8 @@ var questions = [
     options: [
       "The <code>ClusterIP</code> address of the Service, which kube-proxy then forwards to the external hostname",
       "An A record containing the pre-resolved IP address of the external hostname as cached by CoreDNS",
-      "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client resolver then follows",
-      "ExternalName Services add latency to external hostname resolution by routing through kube-proxy"
+      "A CNAME record pointing to <code>db.legacy-datacenter.example.com</code>, which the client resolver follows",
+      "ExternalName Services add latency to external hostname resolution by routing through kube-proxy rules"
     ],
     answer: 2,
     explanation: "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external hostname. When a Pod queries the Service DNS name, CoreDNS returns a CNAME record. The client (or resolver) then follows the CNAME to resolve the actual IP address. No proxying or ClusterIP is involved.\n\nWhy other options are wrong:\n- A: ExternalName Services have no ClusterIP; they do not use kube-proxy for forwarding\n- B: ExternalName returns a CNAME record, not a pre-resolved A record; the client resolves the CNAME\n- D: ExternalName Services do not route through kube-proxy; they return CNAME records directly via DNS\n\nReference: https://kubernetes.io/docs/concepts/services-networking/service/#externalname",
@@ -1163,7 +1163,7 @@ var questions = [
       "The PVC is bound to a 10Gi EBS volume because EBS natively supports <code>ReadWriteMany</code> access mode across nodes",
       "The provisioner automatically creates an NFS share on top of the <code>EBS</code> volume for <code>ReadWriteMany</code> access",
       "The PVC is created with <code>ReadWriteOnce</code> mode, silently downgrading from the requested access mode setting",
-      "The PVC stays <code>Pending</code> because EBS volumes only support <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
+      "The PVC stays <code>Pending</code> because EBS only supports <code>ReadWriteOnce</code> and cannot satisfy <code>ReadWriteMany</code>"
     ],
     answer: 3,
     explanation: "AWS EBS volumes are block storage devices that can only be attached to a single EC2 instance at a time, supporting only `ReadWriteOnce` (RWO) access mode. A PVC requesting `ReadWriteMany` (RWX) cannot be satisfied by an EBS-backed StorageClass. The PVC stays `Pending` until a compatible volume (such as EFS or an NFS provisioner) becomes available.\n\nWhy other options are wrong:\n- A: EBS volumes only support ReadWriteOnce; they cannot provide ReadWriteMany access mode\n- B: The provisioner does not automatically create NFS on top of EBS; these are separate storage types\n- C: The PVC is not silently downgraded; it stays Pending because the access mode cannot be satisfied\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
@@ -1320,10 +1320,10 @@ var questions = [
     text: "A cluster administrator needs to restrict which container registries can be used for pulling images in the production namespace. They want to enforce that only images from <code>registry.company.com</code> are allowed. Which approach is most effective?",
     diagram: null,
     options: [
-      "Configure <code>imagePullPolicy: Never</code> on all Pods to prevent pulling from external registries (any origin)",
+      "Configure <code>imagePullPolicy: Never</code> on all Pods to prevent pulling from any external registry (any origin)",
       "Set a NetworkPolicy that blocks all outbound traffic to registries except <code>registry.company.com</code>",
-      "Create a ResourceQuota that limits the number of images pulled from external container registries",
-      "Use an admission controller (OPA Gatekeeper or Kyverno) to validate image repositories at creation"
+      "Create a ResourceQuota that limits the total number of images pulled from external container registries",
+      "Use an admission controller (OPA Gatekeeper or Kyverno) to validate image repositories at Pod creation"
     ],
     answer: 3,
     explanation: "Admission controllers like OPA Gatekeeper or Kyverno can inspect Pod specs during creation and reject those with images from unauthorized registries. A policy can enforce that all image references start with `registry.company.com/`. NetworkPolicies could block traffic but are less precise and may break other functionality. `imagePullPolicy: Never` only works if the image is pre-cached on the node.\n\nWhy other options are wrong:\n- A: imagePullPolicy: Never prevents pulling but does not validate which registries are allowed\n- B: NetworkPolicy blocks traffic but cannot inspect image references in Pod specs during creation\n- C: ResourceQuota limits resource consumption quantities, not image source registries\n\nReference: https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/",
@@ -1384,9 +1384,9 @@ var questions = [
     text: "A developer creates a Pod with <code>restartPolicy: Never</code> that runs a data processing script. The script encounters an error and the container exits with code 1. What happens to the Pod?",
     diagram: null,
     options: [
-      "The Pod is automatically deleted by the garbage collector after the container exits with an error",
+      "The Pod is automatically deleted by the garbage collector after the container exits with an error code",
       "The kubelet restarts the container using exponential backoff until the script completes successfully",
-      "The Pod stays in <code>Failed</code> status and the container is not restarted because the policy is <code>Never</code>",
+      "The Pod stays in <code>Failed</code> status and the container is not restarted because policy is <code>Never</code>",
       "The Pod transitions to <code>Succeeded</code> status because the container completed its execution run"
     ],
     answer: 2,
@@ -1416,10 +1416,10 @@ var questions = [
     text: "A team maintains a Helm chart with a <code>values.yaml</code> that sets <code>replicaCount: 3</code>. For their staging environment, they want to override this to 1 replica without modifying the chart. What is the correct approach?",
     diagram: null,
     options: [
-      "Edit the <code>values.yaml</code> file in the chart source and change <code>replicaCount</code> to 1 directly in the repository",
-      "Use <code>helm install --set replicaCount=1</code> or provide a separate <code>-f staging-values.yaml</code> file to override",
-      "Create a Kustomize overlay that patches the rendered Helm template output to change the replica count",
-      "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for the staging environment"
+      "Edit the <code>values.yaml</code> in the chart source and change <code>replicaCount</code> to 1 directly in the repo",
+      "Use <code>helm install --set replicaCount=1</code> or provide a <code>-f staging-values.yaml</code> file to override",
+      "Create a Kustomize overlay that patches the rendered Helm template output to change the replica count value",
+      "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for staging"
     ],
     answer: 1,
     explanation: "Helm allows overriding default values at install or upgrade time using `--set` flags or `-f` with a custom values file. The `--set replicaCount=1` flag overrides the chart's `values.yaml` without modifying it. Using a separate `staging-values.yaml` file is preferred for complex overrides, as it is version-controllable and easier to maintain than inline `--set` flags.\n\nWhy other options are wrong:\n- A: Editing values.yaml in the chart source modifies the chart itself, which the question wants to avoid\n- C: Kustomize overlays can post-process Helm output but add unnecessary complexity for simple overrides\n- D: Helm does not read environment variables for value injection; --set or -f flags are the correct mechanism\n\nReference: https://helm.sh/docs/chart_template_guide/values_files/",

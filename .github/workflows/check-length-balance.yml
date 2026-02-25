@@ -1,0 +1,17 @@
+name: Check Option Length Balance
+
+on:
+  pull_request:
+    paths:
+      - "KCNA/data/set-*.js"
+
+jobs:
+  length-balance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check option length balance
+        run: node KCNA/data/check_length_balance.js 1.15

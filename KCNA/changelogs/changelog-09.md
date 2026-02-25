@@ -576,3 +576,103 @@
 
 **Problem:** Correct answer B (94 chars) was the shortest option in a set with ratio 1.11.
 **Change:** Expanded B from ~94 to ~99 chars by adding "file" after "staging-values.yaml".
+
+---
+
+# Round 47b Review - set-09.js (automated length-balance fix)
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 30
+
+---
+
+### s09-q006 (length-balance)
+- Trimmed B (correct) from 126->114 by removing "The" and "auto-". Expanded A from 94->101 by adding "installed".
+
+### s09-q009 (length-balance)
+- Trimmed B (correct) from 125->117 by removing "enforced". Expanded A from 113->119 by adding "in the namespace".
+
+### s09-q011 (length-balance)
+- Trimmed B (correct) from 143->120 by shortening "with a FailedScheduling event because" to "because". Expanded A from 113->117 by rewording.
+
+### s09-q015 (length-balance)
+- Trimmed D from 115->107 by removing "immediately". Expanded B from 94->99 and C from 98->102 by adding minor filler words.
+
+### s09-q020 (length-balance)
+- Trimmed A from 130->109 by removing "and then" and "to redeploy the release". Expanded D from 104->108 by adding "the".
+
+### s09-q021 (length-balance)
+- Trimmed C from 116->108 by removing "suitable". Expanded D (correct) from 99->103 by adding "the".
+
+### s09-q022 (length-balance)
+- Expanded A from 96->105 by adding "traffic". Trimmed D (correct) from 120->112 by removing "a".
+
+### s09-q023 (length-balance)
+- Trimmed D (correct) from 135->121 by removing "custom" and "Pod's". Expanded A from 109->111 by adding "for it".
+
+### s09-q025 (length-balance)
+- Trimmed A from 114->107 by removing "specific". Trimmed C from 122->115 by removing "a".
+
+### s09-q027 (length-balance)
+- Trimmed C from 129->115 by shortening wording. Expanded A from 102->106.
+
+### s09-q030 (length-balance)
+- Trimmed A (correct) from 115->108 by changing "across" to "on". Expanded D from 100->103.
+
+### s09-q034 (length-balance)
+- Trimmed B (correct) from 126->113 by changing "switch the Service selector" to "update the selector".
+
+### s09-q037 (length-balance)
+- Trimmed C (correct) from 130->112 by changing "is routed" to "goes". Expanded D from 93->101 by adding "configured".
+
+### s09-q042 (length-balance)
+- Trimmed C (correct) from 128->117 by changing "that namespace" to "the namespace".
+
+### s09-q043 (length-balance)
+- Trimmed D (correct) from 131->127 by changing "duplicates" to "copies".
+
+### s09-q047 (length-balance)
+- Trimmed A from 115->109 by removing "rules". Trimmed C from 112->105 by removing "the DNS system" to "DNS".
+
+### s09-q048 (length-balance)
+- Trimmed B from 113->107 by changing "to match the request" to "to match it". Expanded A from 94->98 and D from 94->98.
+
+### s09-q051 (length-balance)
+- Trimmed A (correct) from 153->125. Expanded B from 124->116 and C from 126->114 by rewording. Adjusted D from 141->124.
+
+### s09-q057 (length-balance)
+- Trimmed A from 116->110 by removing "the".
+
+### s09-q058 (length-balance)
+- Trimmed B (correct) from 130->118 by changing "in the Pod spec" to "set". Expanded C from 98->106 by adding "each of the".
+
+### s09-q059 (length-balance)
+- Trimmed A (correct) from 137->132 by changing "will terminate" to "terminates".
+
+### s09-q061 (length-balance)
+- Trimmed C (correct) from 125->117 by removing "the" before scrape_timeout. Expanded A from 119->119 (unchanged). Trimmed to fit ratio.
+
+### s09-q062 (length-balance)
+- Expanded D from 100->110 by adding "the" and "in the cluster". Trimmed C from 126->126 (marginal adjustments).
+
+### s09-q063 (length-balance)
+- Trimmed C from 120->109 by removing "Kubernetes".
+
+### s09-q065 (length-balance)
+- Trimmed A (correct) from 116->101 by changing "as specified by" to "per".
+
+### s09-q071 (length-balance)
+- Trimmed C (correct) from 112->107 by removing "then". Expanded D from 95->101 by adding "rules".
+
+### s09-q073 (length-balance)
+- Trimmed D (correct) from 140->131 by changing "volumes only support" to "only supports".
+
+### s09-q083 (length-balance)
+- Expanded C from 97->103 by adding "total". Expanded D (correct) from 98->102 by adding "Pod".
+
+### s09-q087 (length-balance)
+- Trimmed C (correct) from 119->113 by removing "the" before "policy". Expanded A from 97->103 by adding "code".
+
+### s09-q089 (length-balance)
+- Trimmed A from 127->116 by removing "file". Trimmed D from 130->118 by shortening "staging deploy" to "staging". Expanded C from 101->107 by adding "value".
