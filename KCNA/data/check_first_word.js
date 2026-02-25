@@ -3,7 +3,7 @@
 // check_first_word.js — flag questions where the correct answer's first word
 // stands out from the distractors
 //
-// Usage:  node check_first_word.js [--verbose]
+// Usage:  node check_first_word.js
 //
 // Flags when:
 //   1. All 3 distractors share the same first word, correct differs (3-vs-1)
@@ -14,7 +14,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const VERBOSE = process.argv.includes("--verbose");
 const DATA_DIR = __dirname;
 
 const setFiles = fs

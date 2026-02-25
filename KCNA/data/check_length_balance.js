@@ -52,6 +52,7 @@ for (const file of setFiles) {
     const lengths = q.options.map((o) => o.length);
     const min = Math.min(...lengths);
     const max = Math.max(...lengths);
+    if (min === 0) continue;
     const ratio = max / min;
 
     if (ratio > THRESHOLD) {
@@ -102,7 +103,6 @@ if (flagged.length === 0) {
     console.log(`--- ${file} (${items.length} flagged) ---`);
     for (const item of items) {
       const labels = ["A", "B", "C", "D"];
-      const correctLabel = labels[item.correctIdx];
       const lengthStr = item.lengths
         .map(
           (l, i) =>

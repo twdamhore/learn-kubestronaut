@@ -2,20 +2,19 @@
 //
 // check_backtick_balance.js — flag questions where backtick usage is uneven across options
 //
-// Usage:  node check_backtick_balance.js [--verbose]
+// Usage:  node check_backtick_balance.js
 //
 // Checks for:
-//   1. Correct answer has unique backtick count (no other option shares it)
-//      AND differs by >2 from the nearest other option
+//   1. Correct answer has unique backtick-term count (no other option shares it)
+//      AND differs by >1 from the nearest other option
 //   2. Correct answer has backticks while zero distractors do (or vice versa)
-//   3. Large backtick gap: correct answer has 2x+ more backticks than the
+//   3. Large backtick gap: correct answer has 2x+ more backtick-terms than the
 //      distractor average (or 2x+ fewer)
 //
 
 const fs = require("fs");
 const path = require("path");
 
-const VERBOSE = process.argv.includes("--verbose");
 const DATA_DIR = __dirname;
 
 const setFiles = fs
@@ -47,7 +46,7 @@ for (const file of setFiles) {
 
   for (const q of questions) {
     totalQuestions++;
-    const counts = q.options.map((o) => (o.match(/`/g) || []).length / 2); // pairs = number of backtick-wrapped terms
+    const counts = q.options.map((o) => (o.match(/`[^`]*`/g) || []).length); // number of backtick-wrapped terms
     const correctCount = counts[q.answer];
     const otherCounts = counts.filter((_, i) => i !== q.answer);
     const findings = [];
