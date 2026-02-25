@@ -673,7 +673,7 @@ var questions = [
     text: "A team needs to combine multiple ConfigMaps and a Secret into the same directory inside a pod. Using separate volume mounts at the same path would cause conflicts. Which volume type solves this?",
     diagram: null,
     options: [
-      "An `emptyDir` volume with an init container that copies data from ConfigMaps and Secrets into a shared directory",
+      "An `emptyDir` volume with an init container that copies ConfigMaps, Secrets, and tokens into one directory",
       "A `persistentVolumeClaim` that aggregates data from multiple ConfigMap and Secret sources together",
       "A `hostPath` volume that maps to a pre-populated directory on the node's local disk filesystem path",
       "A `projected` volume combining multiple ConfigMap, Secret, and Downward API sources into a single mount point"
@@ -809,7 +809,7 @@ var questions = [
     options: [
       "Use a Helm chart that templates both the image tag and ConfigMap name, deploying them as a single release",
       "Update the image tag with `kubectl set image` and the ConfigMap with `kubectl apply` in two separate steps",
-      "Edit the running Deployment manually with `kubectl edit` to update both fields simultaneously",
+      "Edit the running Deployment manually with `kubectl edit` to update both fields simultaneously in one session",
       "Rely on Kubernetes eventual consistency — both changes will be applied within seconds of each other"
     ],
     answer: 0,
@@ -1108,7 +1108,7 @@ var questions = [
       "`0.5Gi` — the value converted to the largest convenient unit",
       "`536870912` — the value in bytes regardless of the divisor",
       "`512Mi` — the value with the original unit suffix preserved",
-      "`512` — the value in the unit specified by the divisor"
+      "`512` — the value expressed in the unit specified by the divisor"
     ],
     answer: 3,
     explanation: "The `divisor` field in `resourceFieldRef` divides the resource value to produce the output. With a limit of `512Mi` and a divisor of `1Mi`, the result is `512` (a plain number). This is useful for applications that expect numeric values without unit suffixes. Without a divisor (or divisor of 1), the value would be in bytes (536870912). The divisor does not preserve unit suffixes or convert to other units.\n\nWhy other options are wrong:\n- A: The divisor produces a plain number, not a converted unit like 0.5Gi\n- B: With a divisor of 1Mi, the value is divided accordingly, not returned in raw bytes\n- C: The divisor strips the unit suffix and returns a plain numeric value\n\nReference: https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/#use-container-fields-as-values-for-environment-variables",
@@ -1142,7 +1142,7 @@ var questions = [
       "Kubernetes does not support conditional logic inside ConfigMaps so if/else is not valid for configuration management at all",
       "Externalizing config separates concerns: app logic stays environment-agnostic while config is managed independently",
       "Using if/else logic in the application requires a full code review: every environment configuration change needs approval",
-      "ConfigMaps per environment use less cluster memory and etcd storage than a single ConfigMap with embedded conditionals"
+      "ConfigMaps per environment use less cluster memory and etcd storage, while a single ConfigMap with conditionals is heavier"
     ],
     answer: 1,
     explanation: "The cloud-native approach of externalizing configuration follows separation of concerns. The application code handles business logic while configuration is managed by the platform. This means the same container image runs in all environments — only the configuration changes. While code reviews (option C) are a secondary benefit, the primary rationale is architectural separation. ConfigMaps do not support conditional logic (option A is true but not the rationale). Memory usage is negligible either way.\n\nWhy other options are wrong:\n- A: While ConfigMaps do not support conditional logic, that is not the primary cloud-native rationale\n- C: Code reviews are a secondary benefit, not the primary architectural rationale for config externalization\n- D: Memory and etcd storage differences between approaches are negligible and not the design motivation\n\nReference: https://12factor.net/config",
@@ -1264,7 +1264,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="380" height="230" rx="8" fill="#1a1a2e" stroke="#326CE5" stroke-width="2"/><text x="200" y="35" text-anchor="middle" fill="#326CE5" font-size="14" font-weight="bold">Selective ConfigMap Mounting</text><rect x="130" y="50" width="140" height="40" rx="5" fill="#326CE5"/><text x="200" y="75" text-anchor="middle" fill="white" font-size="12">ConfigMap: app-config</text><line x1="160" y1="90" x2="90" y2="130" stroke="#555" stroke-width="1"/><line x1="240" y1="90" x2="310" y2="130" stroke="#555" stroke-width="1"/><rect x="30" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="95" y="150" text-anchor="middle" fill="white" font-size="11">Container A</text><text x="95" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-a.conf</text><rect x="240" y="130" width="130" height="50" rx="5" fill="#2d6a4f"/><text x="305" y="150" text-anchor="middle" fill="white" font-size="11">Container B</text><text x="305" y="168" text-anchor="middle" fill="#ccc" font-size="10">needs app-b.conf</text><text x="200" y="215" text-anchor="middle" fill="#aaa" font-size="10">How can each container receive only its own config file?</text></svg>',
     options: [
       "Define one volume with the full ConfigMap, mount it in both containers, and let each read only its own file",
-      "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name",
+      "Use `subPath` in the ConfigMap definition to split the ConfigMap into per-container sections by container name",
       "Define two volumes from the same ConfigMap, each using `items` to select the needed key, then mount respectively",
       "Create two separate ConfigMaps because a single ConfigMap does not support per-container key selection"
     ],

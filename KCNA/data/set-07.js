@@ -137,8 +137,8 @@ var questions = [
     diagram: null,
     options: [
       "`kubectl logs <pod-name>` which defaults to the first container only listed",
-      "`kubectl describe pod <pod-name> | grep logs` to filter the log output",
-      "`kubectl logs <pod-name> -c app` to select a specific container by name",
+      "`kubectl describe pod <pod-name> | grep logs` to filter for the log output",
+      "`kubectl logs <pod-name> -c app` to select a specific container by its name",
       "`kubectl exec <pod-name> -- cat /var/log/app.log` to read the log file directly"
     ],
     answer: 2,
@@ -329,8 +329,8 @@ var questions = [
     diagram: null,
     options: [
       "All three pods belong to the same ReplicaSet (`6d8f9b`) and one has developed a corrupted container filesystem causing crashes",
-      "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while old pods (`6d8f9b`) remain",
-      "The third pod was manually created outside of the Deployment controller and is unrelated to the current ReplicaSet",
+      "A rolling update created a new ReplicaSet (`7c4e2a`) but the new pod is crashing, while the old pods (`6d8f9b`) still remain running",
+      "The third pod was manually created outside of the Deployment controller and is completely unrelated to the current ReplicaSet",
       "The Deployment's replica count was scaled down from 3 to 2, and the excess pod is being terminated while the controller reconciles"
     ],
     answer: 1,
@@ -360,9 +360,9 @@ var questions = [
     text: "Your CI/CD pipeline deploys a new image tag but the pods still run the old version. The Deployment spec uses `image: myapp:latest` and `imagePullPolicy: IfNotPresent`. What explains this behavior?",
     diagram: null,
     options: [
-      "The Kubernetes API server cached the old image tag and needs to be restarted to clear the internal cache entry",
+      "The Kubernetes API server cached the old image tag and needs to be restarted to clear its internal image cache entry",
       "The deployment controller ignores `imagePullPolicy: IfNotPresent` when the image name and tag string remain exactly the same",
-      "The container runtime installed on the nodes does not support pulling images using the mutable `latest` tag name",
+      "The container runtime installed on the cluster nodes does not support pulling images using the mutable `latest` tag name",
       "With `imagePullPolicy: IfNotPresent`, the node uses its locally cached `myapp:latest` image instead of pulling the update"
     ],
     answer: 3,
@@ -504,10 +504,10 @@ var questions = [
     text: "A 12-factor application's pod spec references a ConfigMap that exists but does not contain the key `DATABASE_URL`. The team expects the environment variable to be injected from this ConfigMap. What is the pod's expected behavior?",
     diagram: null,
     options: [
-      "The pod starts normally but the environment variable is set to an empty string, causing application errors at runtime when the database URL is used",
+      "The pod starts normally but the environment variable is set to an empty string, causing application errors when the database URL is used",
       "The pod fails with a `CreateContainerConfigError` status because the referenced key does not exist in the ConfigMap, blocking container startup",
       "The pod starts but Kubernetes automatically injects a default value of `localhost` for any missing ConfigMap keys referenced in the pod spec",
-      "The pod enters `Pending` state because the scheduler waits for the ConfigMap to be updated with the missing key before proceeding"
+      "The pod enters `Pending` state because the scheduler waits for the ConfigMap to be updated with the missing key before proceeding with placement"
     ],
     answer: 1,
     explanation: "When a pod spec uses `configMapKeyRef` to reference a specific key in a ConfigMap and that key does not exist, the container creation fails with `CreateContainerConfigError`. The pod will not start until the ConfigMap is updated to include the missing key or the reference is marked as `optional: true`.\n\nWhy other options are wrong:\n- A: An empty string would occur if the key exists but is empty; a missing key causes CreateContainerConfigError\n- C: Kubernetes never injects default values for missing ConfigMap keys\n- D: The scheduler does not wait for ConfigMap keys; this is a kubelet container creation error\n\nReference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#restrictions",
@@ -888,8 +888,8 @@ var questions = [
     text: "A Deployment's rollout is stuck. Running `kubectl rollout status deployment/app` shows `Waiting for deployment \"app\" rollout to finish: 1 out of 3 new replicas have been updated...`. The single new pod is in `CrashLoopBackOff`. What parameter controls how long Kubernetes waits before marking the rollout as failed?",
     diagram: null,
     options: [
-      "`spec.template.spec.terminationGracePeriodSeconds` — defines how long the kubelet waits after sending SIGTERM before forcefully killing the container process",
-      "`spec.strategy.rollingUpdate.maxSurge` — defines the maximum number of pods created above the desired count during a rolling update rollout",
+      "`spec.template.spec.terminationGracePeriodSeconds` — defines how long the kubelet waits after SIGTERM before forcefully killing the container process",
+      "`spec.strategy.rollingUpdate.maxSurge` — defines the maximum number of extra pods created above the desired replica count during a rolling update",
       "`spec.minReadySeconds` — defines the minimum seconds a newly created pod must be ready without crashing before it is considered available by the controller",
       "`spec.progressDeadlineSeconds` — defines the maximum time the Deployment controller waits for rollout progress before reporting the condition as failed"
     ],
@@ -1209,7 +1209,7 @@ var questions = [
     diagram: null,
     options: [
       "The node does not have 500m CPU available for scheduling the new pod that the `ReplicaSet` is trying to create in production",
-      "The pod's CPU request of 500m exceeds the maximum allowed by a LimitRange named compute-quota in the namespace",
+      "The pod's CPU request of 500m exceeds the maximum allowed per-pod by a LimitRange named compute-quota in the production namespace",
       "A `ResourceQuota` named `compute-quota` limits total CPU requests in the namespace, and this pod would exceed the 4000m cap",
       "The cluster-wide CPU capacity has been fully allocated and no additional pods can be scheduled on any node in the cluster"
     ],
@@ -1304,9 +1304,9 @@ var questions = [
     text: "A developer pushes a change to the Git repository, but ArgoCD shows the application as `Synced` with the old version. The Git webhook is configured correctly. What is a common cause?",
     diagram: null,
     options: [
-      "The change was pushed to a different branch that ArgoCD is not tracking—verify `targetRevision` in the Application spec",
+      "The change was pushed to a different branch that ArgoCD is not currently tracking—verify `targetRevision` in the Application spec",
       "ArgoCD caches the last-known Git state indefinitely and requires a manual `argocd app refresh` to detect any new commits",
-      "The Kubernetes cluster has reached its resource quota in the target namespace, preventing new rollouts from starting",
+      "The Kubernetes cluster has reached its resource quota limit in the target namespace, preventing any new rollouts from starting",
       "ArgoCD detected the change but its reconciliation loop is paused—a configured sync window restriction is blocking this application"
     ],
     answer: 0,

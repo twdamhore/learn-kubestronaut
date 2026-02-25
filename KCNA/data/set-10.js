@@ -233,9 +233,9 @@ var questions = [
     diagram: null,
     options: [
       "A. Increase Prometheus memory allocation and enable `WAL` compression to reduce the storage footprint of high-cardinality series data",
-      "B. Switch to a push-based metrics model where pods send metrics directly to a `TSDB` that handles high cardinality natively",
+      "B. Switch to a push-based metrics model where pods send metrics directly to a `TSDB` backend that handles high cardinality natively",
       "C. Use `metric_relabel_configs` to drop the `request_id` label before ingestion, and use distributed tracing for per-request data",
-      "D. Add `sample_limit` to the scrape config to cap time series per target and configure recording rules to aggregate high-cardinality data"
+      "D. Add `sample_limit` to the scrape config to cap time series per target and use recording rules to aggregate high-cardinality data"
     ],
     answer: 2,
     explanation: "Unbounded cardinality labels like `request_id` are a well-known anti-pattern in Prometheus metrics. Each unique combination of labels creates a new time series, causing memory bloat and slow queries (the \"cardinality explosion\" problem). The correct approach is to use `metric_relabel_configs` to drop or aggregate the problematic label at scrape time, and use a purpose-built tool like distributed tracing (Jaeger, Tempo) for per-request observability. Option D with `sample_limit` would drop entire scrapes when exceeded, causing data loss.\n\nWhy other options are wrong:\n- A: Increasing memory and enabling WAL compression only delays the problem; it does not address the root cause of unbounded cardinality\n- B: Push-based models do not inherently solve cardinality problems; the label explosion would still occur in the receiving database\n- D: sample_limit drops entire scrapes when exceeded, causing complete data loss for that target rather than selectively handling the problematic label\n\nReference: https://prometheus.io/docs/practices/naming/#labels",
@@ -459,7 +459,7 @@ var questions = [
       "A. Priority 0, because only one `globalDefault` PriorityClass can exist and the system ignores user-created default values",
       "B. Priority 2000000000, because system priority classes are applied as the default when no globalDefault PriorityClass is configured",
       "C. Priority 100, as the custom PriorityClass with `globalDefault: true` applies to all pods without an explicit priority assignment",
-      "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class"
+      "D. No priority is assigned and the pod creation fails with a validation error about an ambiguous default priority class configuration"
     ],
     answer: 2,
     explanation: "When a `PriorityClass` is created with `globalDefault: true`, it becomes the default for all pods that do not specify a `priorityClassName`. Only one PriorityClass should have `globalDefault: true`. The system-provided classes (`system-cluster-critical`, `system-node-critical`) do not have `globalDefault: true` — they must be explicitly referenced. Without any `globalDefault` PriorityClass, pods default to priority 0. With the custom class, the default becomes 100.\n\nWhy other options are wrong:\n- A: The system does not ignore user-created globalDefault; only one should exist, and it correctly sets the default for pods without explicit priorityClassName\n- B: System priority classes do not override globalDefault; they must be explicitly referenced by pods needing those priorities\n- D: Pod creation does not fail; Kubernetes accepts exactly one globalDefault PriorityClass and applies it to pods without a priorityClassName\n\nReference: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/#priorityclass",
@@ -616,7 +616,7 @@ var questions = [
     text: "An operator creates a `ValidatingWebhookConfiguration` with `failurePolicy: Fail` and a `namespaceSelector` that matches all namespaces. The webhook service goes down. What impact does this have on the cluster?",
     diagram: null,
     options: [
-      "A. Only create and update operations on matched resources are blocked; read operations including GET and LIST continue normally in all namespaces",
+      "A. Only create and update operations are blocked; read operations including GET and LIST continue normally across all namespaces",
       "B. The API server automatically switches to `Ignore` failure policy after a configurable timeout to prevent total cluster lockout situation",
       "C. All matching API operations are rejected with 500 errors, including in `kube-system`, potentially making the cluster unmanageable",
       "D. Operations are queued by the API server for up to 30 seconds then processed without webhook validation if the service remains down"
@@ -699,7 +699,7 @@ var questions = [
       "A. OPA/Gatekeeper — it handles validation and mutation through ConstraintTemplates and can generate resources via its audit controller",
       "B. Falco — it provides runtime security policies that can detect, alert on, and remediate policy violations including resource generation",
       "C. Kyverno — it provides validate, mutate, and generate policy rules within a single policy definition using Kubernetes-native declarative syntax",
-      "D. Open Policy Agent standalone — it provides mutation and validation via Rego policies and generates resources through its decision log integration"
+      "D. Open Policy Agent standalone — it provides mutation and validation via Rego policies and generates resources through decision log integration"
     ],
     answer: 2,
     explanation: "Kyverno is a CNCF Graduated project (graduated July 2024) that provides all three capabilities natively: `validate` rules for admission control, `mutate` rules for modifying resources (e.g., injecting labels, setting defaults), and `generate` rules for creating new resources when triggers are matched (e.g., creating a NetworkPolicy whenever a new namespace is created). OPA/Gatekeeper primarily handles validation (and mutation was added later) but does not generate resources. Falco is a runtime security tool, not an admission controller.\n\nWhy other options are wrong:\n- A: OPA/Gatekeeper primarily handles validation; mutation support was added later and it cannot generate resources from triggers\n- B: Falco is a runtime security/threat detection tool, not an admission controller; it cannot mutate, validate, or generate Kubernetes resources\n- D: OPA standalone provides policy decisions but does not have built-in resource generation capability through decision logs\n\nReference: https://kyverno.io/docs/writing-policies/",
@@ -714,7 +714,7 @@ var questions = [
     options: [
       "A. `Guaranteed` QoS — this pod is last to be evicted during memory pressure because requests equal limits for all resources",
       "B. `Burstable` QoS — the CPU value of 4 exceeds the typical node allocatable capacity, so the pod is classified as burstable",
-      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods because actual memory consumption may exceed `limits.memory`",
+      "C. `Guaranteed` QoS — but it can still be evicted before `BestEffort` pods because actual memory usage may exceed `limits.memory`",
       "D. `Guaranteed` QoS — it is evicted after `Burstable` pods but before `BestEffort` pods during node memory pressure events"
     ],
     answer: 0,
@@ -763,7 +763,7 @@ var questions = [
       "A. A single A record pointing to the kube-proxy virtual IP that load-balances across all three backend pod IP addresses",
       "B. A CNAME record pointing to the StatefulSet's stable network identity, which then resolves to the current leader pod IP",
       "C. Three A records, one for each pod IP, allowing the client DNS resolver to perform client-side load balancing",
-      "D. Three SRV records mapping to `web-0.web-svc`, `web-1.web-svc`, and `web-2.web-svc` in the default namespace"
+      "D. Three SRV records mapping to `web-0.web-svc`, `web-1.web-svc`, and `web-2.web-svc` hostnames in the default namespace"
     ],
     answer: 2,
     explanation: "A headless Service (with `clusterIP: None`) does not get a virtual IP. When the Service name is queried via DNS, CoreDNS returns individual A records for each ready pod backing the service. For a StatefulSet with 3 replicas, three A records are returned, each containing a pod's IP address. Additionally, each pod gets a stable DNS hostname (`web-0.web-svc.default.svc.cluster.local`), but a direct A-record query for the Service name returns all pod IPs as A records. SRV records are also available for headless Services (via `_<port>._<protocol>.<svc>` queries), but option D is incorrect because a direct name query returns A records, not SRV records.\n\nWhy other options are wrong:\n- A: A headless Service has no virtual IP (clusterIP: None); kube-proxy does not handle its traffic and there is no VIP\n- B: Headless Services do not return CNAME records; they return individual A records for each pod, and there is no leader concept\n- D: A direct name query for a headless Service returns A records, not SRV records; SRV records require a specific query format\n\nReference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#services",
@@ -1016,7 +1016,7 @@ var questions = [
     text: "A node runs containerd with the default `overlayfs` snapshotter. A pod with 3 containers sharing the same base image (`ubuntu:22.04`) is scheduled to this node. How does containerd handle the image layers for these 3 containers?",
     diagram: null,
     options: [
-      "A. Each container gets its own full copy of all image layers, consuming 3x the storage of a single container",
+      "A. Each container gets its own full copy of all image layers independently, consuming 3x the storage of a single container",
       "B. Base image layers are shared read-only via overlayfs, with each container getting its own thin writable upper layer",
       "C. The first container pulls the image and subsequent containers use a copy-on-write clone of that container's filesystem",
       "D. Containerd deduplicates layers via content-addressable storage but overlayfs creates separate snapshots per container"
@@ -1275,7 +1275,7 @@ var questions = [
       "A. The CSI driver quiesces all I/O to the volume before taking the snapshot, guaranteeing full application-level consistency",
       "B. The snapshot is only crash-consistent, so data in flight or in application buffers at snapshot time may not be captured",
       "C. Kubernetes freezes the filesystem via `fsfreeze` before the CSI snapshot call, ensuring write-order data consistency",
-      "D. Consistency depends on the `snapshotClass` parameter `consistency: application` which must be set explicitly"
+      "D. Consistency depends on the `snapshotClass` parameter `consistency: application` which must be set explicitly in the class"
     ],
     answer: 1,
     explanation: "CSI volume snapshots are typically crash-consistent, not application-consistent. The snapshot captures the state of the block device at a point in time, but data that is buffered in the application, OS page cache, or filesystem journal may not be fully flushed. Kubernetes does not perform filesystem quiescing (`fsfreeze`) or application-level checkpointing before taking snapshots. For application-consistent backups, the application should flush its buffers and pause writes before triggering the snapshot. Some storage vendors offer application-consistent snapshots via custom mechanisms, but this is not standard CSI behavior.\n\nWhy other options are wrong:\n- A: The CSI driver does not quiesce all I/O; standard CSI snapshots are crash-consistent, not application-consistent\n- C: Kubernetes does not run fsfreeze before CSI snapshots; filesystem quiescing is not part of the standard CSI snapshot workflow\n- D: There is no snapshotClass consistency parameter in the standard CSI specification; application consistency requires vendor-specific mechanisms\n\nReference: https://kubernetes.io/docs/concepts/storage/volume-snapshots/",

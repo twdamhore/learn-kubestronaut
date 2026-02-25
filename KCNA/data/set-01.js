@@ -168,7 +168,7 @@ var questions = [
     text: "A team has deployed a web application as a Deployment with 3 replicas. Internal services in the cluster need to access this application using a stable DNS name. Which Service type provides a stable internal cluster IP and DNS entry without exposing the application outside the cluster?",
     diagram: null,
     options: [
-      "A `NodePort` Service, which assigns a static port on all cluster worker nodes",
+      "A `NodePort` Service, which assigns a default static port on all cluster worker nodes",
       "A `LoadBalancer` Service with the `internal` annotation set to value `true`",
       "An `ExternalName` Service, which creates a CNAME record for the Deployment",
       "A `ClusterIP` Service, the default type providing a stable internal virtual IP"
@@ -251,7 +251,7 @@ var questions = [
       "Deploy a logging agent as a sidecar container inside every application Pod in the cluster",
       "Deploy a single logging Deployment with `replicas` equal to the node count that adjusts",
       "A DaemonSet, which guarantees a single Pod copy is present on all cluster nodes as they join",
-      "Configure the kubelet to forward all container logs to the backend service directly"
+      "Configure the kubelet, which writes logs to disk, to forward all container logs to the backend"
     ],
     answer: 2,
     explanation: "Running a logging agent (like Fluentd or Fluent Bit) as a DaemonSet ensures that exactly one agent Pod runs on every node in the cluster, automatically handling node additions and removals. The agent collects logs from all containers on its node. A sidecar per Pod adds overhead and complexity. A Deployment does not guarantee one Pod per node. The kubelet writes logs to disk but does not natively forward them to external backends.\n\nWhy other options are wrong:\n- A: A sidecar per Pod adds overhead and complexity; it does not automatically cover every node.\n- B: A Deployment with replicas equal to node count does not guarantee one Pod per node and does not adapt to node changes.\n- D: The kubelet writes logs to disk but does not natively forward them to external backends.\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/",
@@ -617,7 +617,7 @@ var questions = [
     diagram: null,
     options: [
       "A Deployment with `replicas` set to the node count and a `podAntiAffinity` rule to spread Pods",
-      "A StatefulSet with node affinity rules targeting each node by its individual hostname label",
+      "A StatefulSet, which uses node affinity rules targeting each node by its individual hostname",
       "A DaemonSet, which ensures a single Pod copy is placed on each cluster node as nodes join",
       "A CronJob that periodically checks for new nodes and creates Pods on unmonitored ones"
     ],
@@ -969,12 +969,12 @@ var questions = [
     diagram: null,
     options: [
       "BIND9, configured as a Kubernetes add-on for internal DNS resolution in clusters",
-      "PowerDNS, which is bundled with Kubernetes distributions for service discovery",
+      "PowerDNS, which is the default DNS bundled with Kubernetes distributions for discovery",
       "ExternalDNS, which manages DNS records for Kubernetes Services and Ingresses",
       "CoreDNS, a flexible DNS server that is the default cluster DNS in Kubernetes"
     ],
     answer: 3,
-    explanation: "CoreDNS is a CNCF graduated project and the default DNS server in Kubernetes clusters since version 1.13. It provides service discovery by resolving Service names to ClusterIPs within the cluster. BIND9 is a general-purpose DNS server not used as a Kubernetes default. ExternalDNS synchronizes Kubernetes resources with external DNS providers but is not the internal cluster DNS. PowerDNS is not bundled with Kubernetes.\n\nWhy other options are wrong:\n- A: BIND9 is a general-purpose DNS server, not used as a Kubernetes cluster DNS default.\n- B: PowerDNS is not bundled with or used by Kubernetes distributions.\n- C: ExternalDNS synchronizes Kubernetes resources with external DNS providers but is not the internal cluster DNS.\n\nReference: https://coredns.io/",
+    explanation: "CoreDNS is a CNCF graduated project and the default DNS server in Kubernetes clusters since version 1.13. It provides service discovery by resolving Service names to ClusterIPs within the cluster. BIND9 is a general-purpose DNS server not used as a Kubernetes default. ExternalDNS synchronizes Kubernetes resources with external DNS providers but is not the internal cluster DNS. PowerDNS is not bundled with Kubernetes.\n\nWhy other options are wrong:\n- A: BIND9 is a general-purpose DNS server, not used as a Kubernetes cluster DNS default.\n- B: PowerDNS is not the default DNS and is not bundled with Kubernetes distributions.\n- C: ExternalDNS synchronizes Kubernetes resources with external DNS providers but is not the internal cluster DNS.\n\nReference: https://coredns.io/",
     verify: "microk8s kubectl get pods -n kube-system -l k8s-app=kube-dns"
   },
   {
@@ -1417,7 +1417,7 @@ var questions = [
     diagram: null,
     options: [
       "Functions are short-lived, event-driven compute units scaled automatically by the platform",
-      "Functions are long-running processes that handle multiple requests concurrently in a thread pool",
+      "Functions are long-running processes that automatically handle multiple requests in a thread pool",
       "Functions are compiled to WebAssembly (Wasm) for efficient cold-start performance on Kubernetes",
       "Functions require dedicated nodes with specialized hardware to execute efficiently at scale"
     ],
@@ -1578,7 +1578,7 @@ var questions = [
     options: [
       "The `kube-proxy` generates and distributes authentication tokens to all Pods in the cluster",
       "The `ServiceAccount` resource, which mounts a projected token volume into each Pod automatically",
-      "The kubelet generates a unique API key for each Pod and stores it in an environment variable",
+      "The kubelet, which generates a unique API key per Pod and stores it in an environment variable",
       "The container runtime creates a certificate for each container signed by the cluster CA"
     ],
     answer: 1,

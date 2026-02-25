@@ -393,3 +393,60 @@
 
 ### s07-q099 — giveaway: "since" unique to correct answer C
 - Added "since" to distractor A: changed "The kube-proxy is not updating iptables rules for the new Service, causing stale routing entries to persist across all nodes" to "The kube-proxy is not updating iptables rules for the new Service, since stale routing entries persist across all cluster nodes". Ratio 1.058.
+
+---
+
+# Round 47 Review - set-07.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-07.js`
+**Issues fixed:** 7
+
+---
+
+## s07-q009 (length-balance)
+
+**Problem:** Ratio 1.129 — option B (70 chars) and C (71 chars) were too short compared to D (79 chars).
+**Change:** Expanded B from "to filter the log output" to "to filter for the log output" (70->74). Expanded C from "by name" to "by its name" (71->75). Ratio reduced from 1.129 to 1.068.
+
+---
+
+## s07-q021 (length-balance)
+
+**Problem:** Ratio 1.140 — correct answer B (114 chars) was tied for shortest; D (130 chars) was longest.
+**Change:** Expanded B from "while old pods (`6d8f9b`) remain" to "while the old pods (`6d8f9b`) still remain running" (114->132). Expanded C from "is unrelated to" to "is completely unrelated to" (114->125). Ratio reduced from 1.140 to 1.056.
+
+---
+
+## s07-q023 (length-balance)
+
+**Problem:** Ratio 1.127 — option A (110 chars) was too short compared to B (124 chars).
+**Change:** Expanded A from "to clear the internal cache entry" to "to clear its internal image cache entry" (110->117). Expanded C from "on the nodes" to "on the cluster nodes" (112->120). Ratio reduced from 1.127 to 1.060.
+
+---
+
+## s07-q032 (length-balance)
+
+**Problem:** Ratio 1.140 — option A (147 chars) was too long and D (129 chars) was too short.
+**Change:** Trimmed A from "causing application errors at runtime when the database URL is used" to "causing application errors when the database URL is used" (147->136). Expanded D from "before proceeding" to "before proceeding with placement" (129->144). Ratio reduced from 1.140 to 1.059.
+
+---
+
+## s07-q056 (length-balance)
+
+**Problem:** Ratio 1.129 — option A (157 chars) was too long and B (139 chars) was too short.
+**Change:** Trimmed A from "after sending SIGTERM before" to "after SIGTERM before" (157->149). Expanded B from "the desired count during a rolling update rollout" to "the desired replica count during a rolling update" (139->148). Ratio reduced from 1.129 to 1.069.
+
+---
+
+## s07-q076 (length-balance)
+
+**Problem:** Ratio 1.127 — option B (110 chars) was too short compared to A (124 chars).
+**Change:** Expanded B from "the maximum allowed by a LimitRange named compute-quota in the namespace" to "the maximum allowed per-pod by a LimitRange named compute-quota in the production namespace" (110->129). Ratio reduced from 1.127 to 1.066.
+
+---
+
+## s07-q082 (length-balance)
+
+**Problem:** Ratio 1.121 — option C (116 chars) was too short compared to D (130 chars).
+**Change:** Expanded C from "reached its resource quota in" to "reached its resource quota limit in" (116->126). Expanded A from "ArgoCD is not tracking" to "ArgoCD is not currently tracking" (119->129). Ratio reduced from 1.121 to 1.083.

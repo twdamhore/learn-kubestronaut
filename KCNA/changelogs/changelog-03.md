@@ -378,3 +378,49 @@ No issues found. All 100 questions passed review for option length balance (max/
 - No accuracy or explanation changes
 - All 100 questions pass length-balance check (no ratio > 1.15)
 - Answer distribution unchanged: A=25, B=24, C=25, D=26
+
+---
+
+# Round 47 Review - set-03.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-03.js`
+**Issues fixed:** 4
+
+---
+
+## s03-q015 (backtick-density giveaway)
+
+**Problem:** Option C had only 2 backticks while the correct answer A had 8 and options B/D had 6 each. Option C's low backtick count made it visually distinct and easier to eliminate.
+**Change:** Added backticks around `ingress` and `cluster` in option C ("allowing `ingress` from any pod in the `cluster`"), raising its backtick count from 2 to 6, matching B and D.
+
+---
+
+## s03-q093 (length-balance)
+
+**Problem:** Correct answer B (87ch) was the shortest option while A (95ch) was the longest, creating a 1.092 ratio with the correct answer at the short extreme.
+**Change:** Expanded B from "due to high pod count" to "due to high pod count or load" (87ch to 95ch), closing the gap. Ratio reduced from 1.092 to 1.067.
+
+---
+
+## s03-q019 (length-balance)
+
+**Problem:** Correct answer A (69ch) was the shortest option while C and D (76ch) were the longest, creating a 1.101 ratio with the correct answer at the short extreme.
+**Change:** Changed "with eBPF dataplane" to "with an eBPF-based dataplane" (69ch to 78ch), closing the gap. Ratio reduced from 1.101 to 1.054.
+
+---
+
+## s03-q064 (length-balance)
+
+**Problem:** Correct answer A (96ch) was the longest option while C (88ch) was the shortest, creating a 1.091 ratio with the correct answer at the long extreme.
+**Change:** Changed "natively routable on the physical network without encapsulation" to "directly routable on the physical network without overlay" (96ch to 90ch), reducing the gap. Ratio reduced from 1.091 to 1.068.
+
+---
+
+## Summary
+
+- 1 backtick-density giveaway fix (option C had 2 backticks vs 6-8 for others)
+- 3 length-balance fixes (correct answer at short or long extreme)
+- No answer indices were changed
+- No accuracy or explanation changes
+- Answer distribution unchanged: A=25, B=24, C=25, D=26

@@ -25,12 +25,12 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="15" width="100" height="40" rx="5" fill="#E8F0FE" stroke="#326CE5" stroke-width="2"/><text x="60" y="40" text-anchor="middle" font-size="11" fill="#333">PVC</text><rect x="150" y="15" width="100" height="40" rx="5" fill="#A8D08D" stroke="#6AA84F" stroke-width="2"/><text x="200" y="40" text-anchor="middle" font-size="11" fill="#333">PV (Bound)</text><line x1="110" y1="35" x2="150" y2="35" stroke="#326CE5" stroke-width="2"/><text x="60" y="85" text-anchor="middle" font-size="18" fill="#CC0000">X</text><text x="60" y="100" text-anchor="middle" font-size="9" fill="#CC0000">Deleted</text><line x1="130" y1="85" x2="150" y2="85" stroke="#FFC107" stroke-width="2" stroke-dasharray="5,3"/><rect x="150" y="70" width="120" height="40" rx="5" fill="#FFD966" stroke="#F1C232" stroke-width="2"/><text x="210" y="90" text-anchor="middle" font-size="11" fill="#333">PV (?)</text><text x="210" y="105" text-anchor="middle" font-size="8" fill="#666">Data ???</text><text x="320" y="90" text-anchor="middle" font-size="9" fill="#666">Policy: ???</text></svg>',
     options: [
       "The PV and its underlying storage are permanently deleted from the storage backend by the controller",
-      "The PV transitions back to `Available` state and is immediately eligible to be claimed by a new PVC",
+      "The PV transitions back to `Available` state but only after the kubelet clears its internal claim cache",
       "The PV enters a `Failed` state because the PVC that was previously bound to it no longer exists in etcd",
       "The PV moves to `Released` state and retains its data but cannot bind to a new PVC without admin action"
     ],
     answer: 3,
-    explanation: "With the `Retain` reclaim policy, when the bound PVC is deleted, the PV moves to a `Released` state. The data on the volume is preserved but the PV is not automatically made available for a new claim. An administrator must manually clean up the volume and remove the `claimRef` to make it `Available` again.\n\nWhy other options are wrong:\n- A: The Delete policy deletes the PV and storage, not Retain; Retain preserves both\n- B: Released PVs do not return to Available automatically; the claimRef must be manually removed\n- C: There is no Failed state triggered by PVC deletion; Failed occurs only when automatic reclamation fails\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#retain",
+    explanation: "With the `Retain` reclaim policy, when the bound PVC is deleted, the PV moves to a `Released` state. The data on the volume is preserved but the PV is not automatically made available for a new claim. An administrator must manually clean up the volume and remove the `claimRef` to make it `Available` again.\n\nWhy other options are wrong:\n- A: The Delete policy deletes the PV and storage, not Retain; Retain preserves both\n- B: Released PVs do not return to Available automatically; there is no kubelet claim cache mechanism, and the claimRef must be manually removed\n- C: There is no Failed state triggered by PVC deletion; Failed occurs only when automatic reclamation fails\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#retain",
     verify: "kubectl get pv -o wide"
   },
   {
@@ -761,7 +761,7 @@ var questions = [
     diagram: null,
     options: [
       "No effect on scheduling or eviction; `DiskPressure` is an informational metric only for monitoring",
-      "All existing pods on the node are immediately terminated and rescheduled to other available nodes",
+      "All existing pods on the node are immediately terminated, and the scheduler reschedules them to other nodes",
       "The node may be automatically drained and cordoned by the controller until disk pressure is resolved",
       "The scheduler stops placing new pods on the node, and the kubelet may evict pods to reclaim disk space"
     ],
@@ -778,11 +778,11 @@ var questions = [
     options: [
       "Scaling to zero causes PV mount/unmount cycles that add latency, and `ReadWriteOnce` blocks concurrent sharing",
       "Serverless frameworks on Kubernetes default to in-memory scratch space since PVC mounts are not enabled in Knative pods",
-      "PersistentVolumes are automatically reclaimed by the platform when serverless functions scale to zero running pods",
+      "PersistentVolumes are automatically reclaimed when functions scale to zero, and their data is permanently lost",
       "Knative defaults to `emptyDir` volumes and requires extra configuration for PersistentVolumeClaim mounts in pods"
     ],
     answer: 0,
-    explanation: "Serverless workloads scale to zero when idle, meaning PVs must be detached and reattached on each cold start, adding latency. Additionally, `ReadWriteOnce` PVs cannot be mounted by multiple pods simultaneously, which conflicts with serverless auto-scaling. This is why serverless architectures typically use object storage (e.g., S3) rather than PV-based storage.\n\nWhy other options are wrong:\n- B: Serverless functions in Kubernetes can technically access persistent and ephemeral storage\n- C: PVs are not automatically deleted when functions scale to zero; PVCs persist independently of pods\n- D: Knative does not restrict volumes to emptyDir only; PVCs can be configured in the pod template\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
+    explanation: "Serverless workloads scale to zero when idle, meaning PVs must be detached and reattached on each cold start, adding latency. Additionally, `ReadWriteOnce` PVs cannot be mounted by multiple pods simultaneously, which conflicts with serverless auto-scaling. This is why serverless architectures typically use object storage (e.g., S3) rather than PV-based storage.\n\nWhy other options are wrong:\n- B: Serverless functions in Kubernetes can technically access persistent and ephemeral storage\n- C: PVs are not automatically reclaimed when functions scale to zero; PVCs and their data persist independently of pods\n- D: Knative does not restrict volumes to emptyDir only; PVCs can be configured in the pod template\n\nReference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes",
     verify: null
   },
   {
@@ -1416,7 +1416,7 @@ var questions = [
     text: "A container image includes a `VOLUME` instruction in the Dockerfile. When this container runs in Kubernetes without any volume mounts defined in the pod spec, what happens?",
     diagram: null,
     options: [
-      "The runtime creates an anonymous `emptyDir`-like volume at the path \u2014 managed by Kubernetes as a tracked ephemeral volume attached to the pod lifecycle and visible in the pod spec",
+      "The runtime creates an anonymous `emptyDir`-like volume at the path \u2014 managed by Kubernetes as a tracked ephemeral volume, but it is only visible in the pod spec after a restart",
       "Kubernetes automatically creates a PersistentVolumeClaim for the VOLUME path declared in the image and binds it to a dynamically provisioned PV via the default StorageClass",
       "The VOLUME instruction is not translated into Kubernetes volume mounts \u2014 the container runtime may create anonymous bind mounts, but these are outside Kubernetes management",
       "The pod may fail to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects unmatched VOLUME declarations"
@@ -1513,7 +1513,7 @@ var questions = [
     diagram: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="15" width="130" height="45" rx="5" fill="#E8F0FE" stroke="#326CE5" stroke-width="2"/><text x="95" y="42" text-anchor="middle" font-size="12" fill="#333">PVC (Bound)</text><rect x="230" y="15" width="130" height="45" rx="5" fill="#FFF3CD" stroke="#FFC107" stroke-width="2"/><text x="295" y="42" text-anchor="middle" font-size="12" fill="#333">PV (Bound)</text><line x1="160" y1="37" x2="230" y2="37" stroke="#326CE5" stroke-width="2"/><text x="60" y="90" text-anchor="middle" font-size="22" fill="#CC0000">X</text><text x="95" y="95" text-anchor="middle" font-size="11" fill="#CC0000">PVC Deleted</text><line x1="130" y1="90" x2="230" y2="90" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowR)"/><rect x="230" y="75" width="130" height="35" rx="5" fill="#F8D7DA" stroke="#CC0000" stroke-width="2"/><text x="295" y="97" text-anchor="middle" font-size="11" fill="#CC0000">PV ???</text><line x1="295" y1="110" x2="295" y2="140" stroke="#CC0000" stroke-width="2" stroke-dasharray="4,2"/><rect x="220" y="140" width="150" height="35" rx="5" fill="#F8D7DA" stroke="#CC0000"/><text x="295" y="162" text-anchor="middle" font-size="10" fill="#CC0000">Cloud Disk ???</text></svg>',
     options: [
       "The PV is retained in `Released` state for manual cleanup (e.g., removing the claimRef) by an admin",
-      "Both the PV object and underlying storage resource (e.g., cloud disk) are automatically deleted",
+      "The PV object and its underlying storage resource (e.g., cloud disk) are automatically deleted",
       "The PV is deleted but the underlying cloud disk is preserved and must be cleaned up manually after",
       "The PV transitions to `Available` state for reuse by another PVC that matches its access modes"
     ],

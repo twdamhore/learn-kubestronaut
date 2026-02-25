@@ -137,7 +137,7 @@ var questions = [
     diagram: null,
     options: [
       "Add a <code>NetworkPolicy</code> that blocks all network traffic originating from containers running as root user",
-      "Configure a <code>Pod Security Admission</code> controller with the <code>restricted</code> profile on the namespace",
+      "Configure a <code>Pod Security Admission</code> controller with the <code>restricted</code> profile enforced on the namespace",
       "Create a <code>ResourceQuota</code> that limits the total number of containers running as root in the namespace",
       "Set <code>privileged: false</code> in the container's resource limits section to prevent root-level access"
     ],
@@ -251,7 +251,7 @@ var questions = [
       "A second Job is created and runs concurrently because the Forbid policy allows overlapping runs",
       "The CronJob controller terminates the still-running 10:00 Job and immediately starts the 10:05 Job",
       "The 10:05 Job is queued in a pending state by the Forbid policy and starts after the 10:00 Job completes",
-      "The 10:05 run is skipped entirely because the previous Job is still active under Forbid policy"
+      "The 10:05 run is skipped entirely because the previous Job is still active under the Forbid policy"
     ],
     answer: 3,
     explanation: "With `concurrencyPolicy: Forbid`, the CronJob controller skips a scheduled run if a previous Job is still active. The 10:05 invocation is simply not created. This prevents overlapping executions, which is important for Jobs that access shared resources or have side effects that are not idempotent.\n\nWhy other options are wrong:\n- A: Forbid policy prevents concurrent runs; a second Job is not created alongside the active one\n- B: Forbid does not terminate running Jobs; the Replace policy would do that\n- C: Forbid does not queue Jobs; it simply skips the scheduled run when the previous Job is still active\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy",
@@ -329,7 +329,7 @@ var questions = [
     diagram: null,
     options: [
       "The Pod is created successfully with default CPU values automatically assigned by the cluster scheduler",
-      "The ResourceQuota configuration is automatically adjusted because the API server detects unset resource fields",
+      "The ResourceQuota is automatically adjusted because the API server detects unset resource fields",
       "The Pod is created but remains in <code>Pending</code> state until a suitable LimitRange is defined in the namespace",
       "The API server rejects Pod creation because CPU requests and limits must be specified under a quota"
     ],
@@ -456,7 +456,7 @@ var questions = [
     text: "A platform engineering team is building an internal developer platform and wants to use a Kubernetes-native project that provides a declarative, GitOps-compatible way to define CI/CD pipelines as custom resources. Which project should they evaluate?",
     diagram: null,
     options: [
-      "Tekton, which defines CI/CD components (Tasks, Pipelines, PipelineRuns) as Kubernetes CRDs",
+      "Tekton, which defines CI/CD components (Tasks, Pipelines, PipelineRuns) as native Kubernetes CRDs",
       "Prometheus, which provides pipeline monitoring through its alerting engine (Alertmanager rules)",
       "Envoy, which routes CI/CD traffic between build, test, and deploy stages via its proxy configuration",
       "Harbor, which stores pipeline definitions alongside container images in its artifact registry"
@@ -504,7 +504,7 @@ var questions = [
     text: "An engineer runs <code>kubectl top pods</code> in a namespace and receives the error: <code>error: Metrics API not available</code>. The cluster was set up using kubeadm. What component is most likely missing?",
     diagram: null,
     options: [
-      "The Metrics Server, which implements the resource metrics API (<code>metrics.k8s.io</code>) for the cluster",
+      "The Metrics Server, which implements the resource metrics API (<code>metrics.k8s.io</code>) required by the cluster",
       "The Prometheus server, which provides the Metrics API endpoint (custom.metrics.k8s.io) for resource data",
       "The kube-state-metrics exporter, which exposes Pod-level resource usage as Prometheus-format metrics",
       "The <code>cAdvisor</code> binary, which must be installed separately on each node to collect container-level stats"
@@ -744,7 +744,7 @@ var questions = [
     text: "A headless Service (with <code>clusterIP: None</code>) is created for a StatefulSet named <code>cassandra</code> in the <code>database</code> namespace. The StatefulSet has 3 replicas. Which DNS records does Kubernetes create for this configuration?",
     diagram: null,
     options: [
-      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin) routing rules",
+      "A single A record for the Service that load-balances across Pod IPs via <code>kube-proxy</code> (round-robin) rules",
       "Only SRV records are created for headless Services; A records require extra DNS configuration in CoreDNS",
       "No DNS records are created because headless Services with <code>clusterIP: None</code> opt out of the DNS system",
       "Individual A records for each Pod (by ordinal) plus a Service-level A record returning all Pod IPs"
@@ -1417,7 +1417,7 @@ var questions = [
     diagram: null,
     options: [
       "Edit the <code>values.yaml</code> file in the chart source and change <code>replicaCount</code> to 1 directly in the repository",
-      "Use <code>helm install --set replicaCount=1</code> or provide a separate <code>-f staging-values.yaml</code> to override",
+      "Use <code>helm install --set replicaCount=1</code> or provide a separate <code>-f staging-values.yaml</code> file to override",
       "Create a Kustomize overlay that patches the rendered Helm template output to change the replica count",
       "Set an environment variable <code>HELM_REPLICA_COUNT=1</code> before running <code>helm install</code> for the staging environment"
     ],

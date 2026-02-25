@@ -8,7 +8,7 @@ var questions = [
     text: "A junior admin creates a Role in the `payments` namespace granting `get`, `list`, and `watch` on Pods. They bind it to a user via a ClusterRoleBinding. What happens when the user tries to list Pods in the `payments` namespace?",
     diagram: null,
     options: [
-      "Access is denied because a Role cannot be referenced by a ClusterRoleBinding",
+      "The request is denied because a Role cannot be referenced by a ClusterRoleBinding",
       "The user can list Pods across every namespace including `payments` in the cluster",
       "The user can list Pods only in the `payments` namespace using the bound Role",
       "The ClusterRoleBinding escalates the Role because it is a cluster-level binding"
@@ -169,7 +169,7 @@ var questions = [
     diagram: null,
     options: [
       "The Pods still receive a projected token volume from the kubelet by default",
-      "No token is mounted and API calls from the Pods fail with 401 Unauthorized",
+      "The token volume is not mounted and API calls from Pods fail with 401 error",
       "The kubelet injects a static token sourced from its local credential store",
       "The Pods are rejected at the admission stage because no valid token exists"
     ],
@@ -441,7 +441,7 @@ var questions = [
     diagram: null,
     options: [
       "A `LimitRange` resource that targets container security context settings",
-      "Pod Security Admission with the `restricted` profile on the namespace",
+      "A Pod Security Admission label with the `restricted` profile enforced",
       "A `ResourceQuota` configured to limit allowed seccomp profile types",
       "A `MutatingWebhookConfiguration` that patches Pod security context"
     ],
@@ -504,7 +504,7 @@ var questions = [
     text: "You create an aggregated ClusterRole with the label selector `rbac.authorization.k8s.io/aggregate-to-admin: \"true\"`. What effect does this have?",
     diagram: null,
     options: [
-      "Matching ClusterRole rules are automatically merged into the `admin` ClusterRole",
+      "It automatically merges matching ClusterRole rules into the `admin` ClusterRole",
       "It creates a new ClusterRole definition that overrides the built-in `admin` role",
       "It grants admin-level permissions to all ServiceAccounts in every namespace",
       "It merges the matching ClusterRole rules into the `cluster-admin` built-in role"
@@ -778,7 +778,7 @@ var questions = [
     options: [
       "Immutable containers run faster than mutable ones, reducing the exposure time",
       "Immutable containers automatically encrypt their underlying filesystems",
-      "Attackers cannot persist backdoors and all changes are lost on container restart",
+      "Immutable containers prevent persistent backdoors as changes are lost on restart",
       "Immutable containers do not need RBAC policies for access control purposes"
     ],
     answer: 2,
@@ -906,8 +906,8 @@ var questions = [
     options: [
       "The mounted Secret files immediately disappear from the running container's filesystem",
       "The Pod is immediately terminated by the kubelet because the Secret reference is invalid",
-      "The projected volume controller detects the deletion and recreates the Secret automatically",
-      "Existing mounted data remains temporarily and the kubelet logs errors on the next sync"
+      "The projected volume controller detects the deletion and recreates the Secret resource",
+      "The existing mounted data remains temporarily and the kubelet logs errors on next sync"
     ],
     answer: 3,
     explanation: "When a Secret referenced by a projected volume is deleted, the kubelet will fail to refresh the volume on its next sync cycle. The existing mounted data remains temporarily, but the kubelet eventually triggers an error and the Pod may fail or the volume becomes stale.\n\nWhy other options are wrong:\n- A: Mounted files do not immediately disappear; the kubelet uses cached data temporarily\n- B: The Pod is not immediately terminated; the kubelet logs errors but does not kill the Pod right away\n- C: There is no projected volume controller that recreates deleted Secrets\n\nReference: https://kubernetes.io/docs/concepts/configuration/secret/",
@@ -937,12 +937,12 @@ var questions = [
     diagram: null,
     options: [
       "Tags are mutable and can be repointed to a different image; digests are immutable",
-      "Digests download significantly faster than tags when pulling from registries",
+      "Tags are slower to pull than digests because registries prioritize digest lookups",
       "Digests enable automatic vulnerability scanning during the image pull phase",
       "Digests are required by default admission controllers; tags are being deprecated"
     ],
     answer: 0,
-    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Digests do not download faster than tags; pull speed depends on image size and network\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported and not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
+    explanation: "Image tags are mutable references that can be updated to point to a different image. An attacker could push a malicious image with the same tag. Digests (SHA256 hashes) are immutable and uniquely identify a specific image layer, ensuring you always get the exact image you expect.\n\nWhy other options are wrong:\n- B: Tags are not slower to pull than digests; pull speed depends on image size and network, not the reference format\n- C: Digests do not enable vulnerability scanning; scanning is a separate process\n- D: Tags are fully supported and not being deprecated; admission controllers can enforce digests but do not require them by default\n\nReference: https://kubernetes.io/docs/concepts/containers/images/",
     verify: "kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[0].imageID}'"
   },
   {
@@ -1419,7 +1419,7 @@ var questions = [
       "Completed Pods are immediately removed from the cluster after job finishes",
       "Completed Pods have their mounted volumes automatically encrypted at rest",
       "Completed Pods have their environment variables redacted from describe output",
-      "Env vars and volume mounts with sensitive data remain accessible via kubectl"
+      "Completed Pods retain env vars and volume data accessible via kubectl commands"
     ],
     answer: 3,
     explanation: "Completed Pods remain in the cluster until garbage collected. Their logs can still be viewed with `kubectl logs`, and `kubectl describe` shows their full spec including environment variables referencing Secrets. Setting `ttlSecondsAfterFinished` on the Job ensures timely cleanup.\n\nWhy other options are wrong:\n- A: Completed Pods are not immediately removed; they persist until garbage collected or TTL expires\n- B: Volumes are not automatically encrypted at rest for completed Pods\n- C: Completed Pods can be inspected with kubectl describe and kubectl logs\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/job/#ttl-mechanism-for-finished-jobs",

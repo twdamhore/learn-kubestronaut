@@ -487,3 +487,46 @@
 
 ### s04-q089 — giveaway (unique "may" qualifier in correct)
 - **Option D:** Changed from "The pod fails to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects containers with unmatched VOLUME declarations" to "The pod may fail to start because no explicit volume is configured in the pod spec for the VOLUME path, and the kubelet rejects unmatched VOLUME declarations" to break unique "may" qualifier in correct answer C (was only C had "may"; now C and D both have "may").
+
+---
+
+# Round 47 Review - set-04.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 5
+
+---
+
+## s04-q002 (giveaway — unique "but" contrast in correct)
+
+**Problem:** Correct answer D was the only option using "but" contrast ("retains its data but cannot bind"), making the nuanced/qualified answer stand out as correct.
+**Change:** Changed option B from "The PV transitions back to `Available` state and is immediately eligible to be claimed by a new PVC" to "The PV transitions back to `Available` state but only after the kubelet clears its internal claim cache" so that both B and D now use "but" contrast. Updated B explanation to reference the non-existent kubelet claim cache mechanism.
+
+---
+
+## s04-q048 (giveaway — unique ", and" compound clause in correct)
+
+**Problem:** Correct answer D was the only option with a ", and" compound clause describing two separate behaviors (scheduler stops + kubelet evicts). The other three options each described a single behavior, making D structurally distinct.
+**Change:** Changed option B from "All existing pods on the node are immediately terminated and rescheduled to other available nodes" to "All existing pods on the node are immediately terminated, and the scheduler reschedules them to other nodes" to break the unique compound clause pattern.
+
+---
+
+## s04-q049 (giveaway — unique ", and" compound clause in correct)
+
+**Problem:** Correct answer A was the only option with a ", and" compound clause describing two distinct issues (latency + RWO blocking). The other options each described a single issue.
+**Change:** Changed option C from "PersistentVolumes are automatically reclaimed by the platform when serverless functions scale to zero running pods" to "PersistentVolumes are automatically reclaimed when functions scale to zero, and their data is permanently lost" to break the unique compound clause pattern. Updated C explanation to match.
+
+---
+
+## s04-q089 (giveaway — unique "but" contrast in correct)
+
+**Problem:** Correct answer C was the only option using "but" contrast ("may create anonymous bind mounts, but these are outside Kubernetes management"), making it structurally distinct as the only nuanced option.
+**Change:** Changed option A from "...attached to the pod lifecycle and visible in the pod spec" to "...tracked ephemeral volume, but it is only visible in the pod spec after a restart" so that both A and C now use "but" contrast.
+
+---
+
+## s04-q095 (giveaway — unique "Both" making correct answer sound comprehensive)
+
+**Problem:** Correct answer B started with "Both the PV object and underlying storage resource..." — the word "Both" made the answer sound more comprehensive/thorough than the alternatives, a common correct-answer signal.
+**Change:** Changed "Both the PV object and underlying storage resource" to "The PV object and its underlying storage resource" — same meaning without the comprehensive-sounding "Both" keyword.

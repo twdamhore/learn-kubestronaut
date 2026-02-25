@@ -519,3 +519,34 @@ Options were reordered so labels match array positions (A=index 0, B=index 1, C=
 
 ### s10-q063 — unique "while" in correct answer A
 - **Option C:** Added "while" to balance correct A's unique use. Changed "Pods 0, 1, and 2 are updated first; then pods 3 and 4 are updated only once the first group is fully ready" to "Pods 0, 1, and 2 are updated first, while pods 3 and 4 wait; then pods 3 and 4 update once the first group is ready".
+
+---
+
+## Round 47 — 2026-02-25
+**File**: `set-10.js`
+**Issues found**: 8
+
+### s10-q064 — length-balance (ratio 1.124, A shortest at 105)
+- **Option A:** Expanded from 105 to 119 chars. Changed "Each container gets its own full copy of all image layers, consuming 3x the storage of a single container" to "Each container gets its own full copy of all image layers independently, consuming 3x the storage of a single container".
+
+### s10-q080 — length-balance (ratio 1.120, D shortest at 108)
+- **Option D:** Expanded from 108 to 121 chars. Changed "which must be set explicitly" to "which must be set explicitly in the class".
+
+### s10-q015 — length-balance (ratio 1.117, B shortest at 120, D longest at 134)
+- **Option B:** Expanded from 120 to 128 chars. Changed "directly to a `TSDB` that handles" to "directly to a `TSDB` backend that handles".
+- **Option D:** Trimmed from 134 to 128 chars. Changed "and configure recording rules" to "and use recording rules".
+
+### s10-q029 — length-balance (ratio 1.112, D shortest at 116)
+- **Option D:** Expanded from 116 to 130 chars. Changed "about an ambiguous default priority class" to "about an ambiguous default priority class configuration".
+
+### s10-q039 — length-balance (ratio 1.101, correct C shortest at 129, A longest at 142)
+- **Option A:** Trimmed from 142 to 125 chars. Changed "Only create and update operations on matched resources are blocked; read operations including GET and LIST continue normally in all namespaces" to "Only create and update operations are blocked; read operations including GET and LIST continue normally across all namespaces".
+
+### s10-q044 — length-balance (ratio 1.107, D longest at 145)
+- **Option D:** Trimmed from 145 to 141 chars. Changed "and generates resources through its decision log integration" to "and generates resources through decision log integration".
+
+### s10-q045 — length-balance (ratio 1.109, C longest at 132)
+- **Option C:** Trimmed from 132 to 126 chars. Changed "actual memory consumption may exceed" to "actual memory usage may exceed".
+
+### s10-q048 — length-balance (ratio 1.103, D shortest at 107)
+- **Option D:** Expanded from 107 to 117 chars. Added "hostnames" before "in the default namespace".

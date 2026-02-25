@@ -426,3 +426,53 @@ No issues found. All 100 questions were reviewed for option length balance (max/
 
 ### s01-q092 — giveaway: "At multiple stages" comprehensive-answer pattern
 - Option C (correct) began with "At multiple stages:" which is a strong "all of the above" signal that test-savvy students can exploit without domain knowledge. Rephrased to remove the comprehensive flag while preserving accuracy: changed from `"At multiple stages: during the build, before deployment via admission control, and in the image registry"` to `"In the CI build pipeline, before deployment via admission control, and continuously in the image registry"`. Ratio unchanged at 1.124.
+
+---
+
+# Round 47 Review - set-01.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-01.js`
+**Issues fixed:** 6
+
+---
+
+## s01-q011 (giveaway - unique "default" keyword)
+
+**Problem:** The correct answer (D) was the only option containing the word "default" (`the default type`). Since "default" signals standard/expected behavior, test-savvy students could use this keyword as a heuristic.
+**Change:** Added "default" to option A: changed `"A \`NodePort\` Service, which assigns a static port on all cluster worker nodes"` to `"A \`NodePort\` Service, which assigns a default static port on all cluster worker nodes"`. The word "default" now refers to the default NodePort range (30000-32767), which is accurate.
+
+---
+
+## s01-q016 (giveaway - unique ", which" relative clause)
+
+**Problem:** The correct answer (C) was the only option using a `, which` relative clause (`A DaemonSet, which guarantees...`), creating a structural pattern unique to the correct answer.
+**Change:** Added a `, which` relative clause to option D: changed `"Configure the kubelet to forward all container logs to the backend service directly"` to `"Configure the kubelet, which writes logs to disk, to forward all container logs to the backend"`. Ratio improved from 1.138 to 1.080.
+
+---
+
+## s01-q039 (giveaway - unique ", which" relative clause)
+
+**Problem:** The correct answer (C) was the only option using a `, which` relative clause (`A DaemonSet, which ensures...`), making it structurally distinct from other options.
+**Change:** Added a `, which` relative clause to option B: changed `"A StatefulSet with node affinity rules targeting each node by its individual hostname label"` to `"A StatefulSet, which uses node affinity rules targeting each node by its individual hostname"`. Ratio unchanged at 1.106.
+
+---
+
+## s01-q061 (giveaway - unique "default" keyword echo)
+
+**Problem:** The question asks about "the default DNS server" and the correct answer (D) was the only option echoing the word "default" back (`the default cluster DNS`). This keyword echo between question stem and correct answer is a well-known giveaway pattern.
+**Change:** Added "default" to option B: changed `"PowerDNS, which is bundled with Kubernetes distributions for service discovery"` to `"PowerDNS, which is the default DNS bundled with Kubernetes distributions for discovery"`. Updated explanation bullet for B to match.
+
+---
+
+## s01-q089 (giveaway - unique "automatically" keyword)
+
+**Problem:** The correct answer (A) was the only option using "automatically" (`scaled automatically by the platform`), which signals the key FaaS differentiator and could be used as a heuristic.
+**Change:** Added "automatically" to option B: changed `"Functions are long-running processes that handle multiple requests concurrently in a thread pool"` to `"Functions are long-running processes that automatically handle multiple requests in a thread pool"`. Ratio changed from 1.067 to 1.078.
+
+---
+
+## s01-q099 (giveaway - unique ", which" relative clause)
+
+**Problem:** The correct answer (B) was the only option using a `, which` relative clause (`The \`ServiceAccount\` resource, which mounts...`), making it structurally distinct.
+**Change:** Added a `, which` relative clause to option C: changed `"The kubelet generates a unique API key for each Pod and stores it in an environment variable"` to `"The kubelet, which generates a unique API key per Pod and stores it in an environment variable"`. Ratio improved from 1.103 to 1.103 (unchanged).

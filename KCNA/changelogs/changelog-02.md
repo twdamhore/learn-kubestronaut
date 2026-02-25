@@ -501,3 +501,27 @@
 
 ### s02-q046 — giveaway (correct D lacks backticks while all distractors have them)
 - **Option D (correct):** Added backtick-formatted term to match distractors' code formatting density. Changed `"Use a sidecar that watches the mounted ConfigMap volume for changes and signals the main process to reload"` to `"Use a sidecar that watches the mounted ConfigMap volume for changes and sends a \`SIGHUP\` signal to reload"`.
+
+## Round 47 — 2026-02-25
+**File**: `set-02.js`
+**Issues found**: 5
+
+### s02-q041 — giveaway (comma-list unique to correct)
+- **Problem:** Correct option D had 2 commas listing "ConfigMap, Secret, and Downward API" while all wrong options had 0 commas, creating a structural giveaway.
+- **Option A:** Added comma-list to balance the pattern. Changed `"An \`emptyDir\` volume with an init container that copies data from ConfigMaps and Secrets into a shared directory"` to `"An \`emptyDir\` volume with an init container that copies ConfigMaps, Secrets, and tokens into one directory"`.
+
+### s02-q049 — length-balance (ratio 1.140)
+- **Problem:** Option C was noticeably shorter (93 chars) compared to options A (105) and B (106), with a ratio of 1.140.
+- **Option C:** Padded from 93 to 108 chars. Changed `"Edit the running Deployment manually with \`kubectl edit\` to update both fields simultaneously"` to `"Edit the running Deployment manually with \`kubectl edit\` to update both fields simultaneously in one session"`.
+
+### s02-q067 — length-balance (ratio 1.111, correct shortest)
+- **Problem:** Correct option D was the shortest (54 chars) while others ranged 58-60, making the correct answer structurally distinct as the most concise.
+- **Option D (correct):** Padded from 54 to 64 chars. Changed `"\`512\` — the value in the unit specified by the divisor"` to `"\`512\` — the value expressed in the unit specified by the divisor"`.
+
+### s02-q069 — giveaway ("while" unique to correct)
+- **Problem:** Correct option B had a unique "while" conjunction not present in any other option, creating a structural giveaway.
+- **Option D:** Added "while" to balance the pattern. Changed `"ConfigMaps per environment use less cluster memory and etcd storage than a single ConfigMap with embedded conditionals"` to `"ConfigMaps per environment use less cluster memory and etcd storage, while a single ConfigMap with conditionals is heavier"`.
+
+### s02-q076 — length-balance (ratio 1.137)
+- **Problem:** Option B was the longest (116 chars) while option D was the shortest (102 chars), with a ratio of 1.137.
+- **Option B:** Trimmed from 116 to 110 chars. Changed `"Use \`subPath\` in the ConfigMap definition to split the ConfigMap into per-container sections based on container name"` to `"Use \`subPath\` in the ConfigMap definition to split the ConfigMap into per-container sections by container name"`.

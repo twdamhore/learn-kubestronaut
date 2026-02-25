@@ -430,3 +430,46 @@
 ### s08-q045 — giveaway: unique "while" in correct answer
 - **Problem:** Correct option C uniquely contained the contrast word "while" ("while volume mounts are eventually refreshed") while no distractor used "while", creating a structural giveaway.
 - **Fix:** Moved "while" from correct C to distractor A: changed C from "not updated without restart, while volume mounts are eventually refreshed" to "not updated without restart, but volume mounts are eventually refreshed". Changed A from "which can take several hours in large production clusters" to "while this can take several hours in large clusters". Now A has "while" instead of C.
+
+---
+
+# Round 47 Review - set-08.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-08.js`
+**Issues fixed:** 5
+
+---
+
+## s08-q008 (length-balance)
+
+**Problem:** Option A (91 chars) was 11% longer than option D (82 chars), creating a ratio of 1.110.
+**Change:** Trimmed A from "which terminates all Pods before updating" to "which terminates all Pods before update" (90 chars). Extended D by adding "as a swap" at end (91 chars). New ratio: 1.058.
+
+---
+
+## s08-q031 (length-balance)
+
+**Problem:** Correct option B (96 chars) was the shortest option while D was 106 chars, ratio 1.104. Correct being shortest is a potential giveaway.
+**Change:** Extended B by adding "that" after "ensures" and removing "(s)" for "cluster nodes": "ensures that exactly one `Pod` copy runs on every (or selected subset of) cluster nodes" (99 chars). New ratio: 1.071.
+
+---
+
+## s08-q034 (length-balance)
+
+**Problem:** Option C (105 chars) was 10.5% shorter than options A and B (both 116 chars), ratio 1.105.
+**Change:** Extended C by adding "explicit" before "Ingress resource": "Cross-namespace Pod traffic requires an explicit Ingress resource; same-namespace Pods use optimized local routing" (114 chars). New ratio: 1.018.
+
+---
+
+## s08-q052 (length-balance)
+
+**Problem:** Option C (90 chars) was 10% shorter than option B (99 chars), ratio 1.100.
+**Change:** Extended C by adding "all" before "Service names": "IPVS handles both Service routing and DNS resolution for all Service names at the kernel level" (94 chars). New ratio: 1.053.
+
+---
+
+## s08-q074 (giveaway)
+
+**Problem:** Correct option B contained 3 instances of "and" ("min, and max resource requests and limits for containers and Pods") while no distractor contained any "and", creating a structural list-pattern giveaway.
+**Change:** Added "and" to all three distractors: A changed to "Pods and containers", C changed to "images and tags", D changed to "rate and number". Now all options contain "and", eliminating the unique pattern.

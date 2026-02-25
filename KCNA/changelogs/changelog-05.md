@@ -298,3 +298,67 @@
 
 ### s05-q079 (backtick-density giveaway)
 - **Options B, D:** Correct answer A uniquely had backticks (2) while no distractor had any. Added backticks to B: changed "The Secret name contains a typo preventing the kubelet from locating the resource" to "The Secret name contains a typo preventing the kubelet from locating `tls-cert`". Added backticks to D: changed "The Pod's ServiceAccount lacks permission to read Secrets from another namespace" to "The Pod's ServiceAccount lacks `get` permission to read Secrets from `default`". Backtick distribution now: A=2, B=2, C=0, D=4.
+
+---
+
+# Round 47 Review - set-05.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-05.js`
+**Issues fixed:** 8
+
+---
+
+## s05-q001 (first-word giveaway)
+
+**Problem:** Correct answer A started with "Access" while all three distractors started with "The", making the correct answer visually distinct.
+**Change:** Changed A from "Access is denied because a Role cannot be referenced by a ClusterRoleBinding" to "The request is denied because a Role cannot be referenced by a ClusterRoleBinding". All options now start with "The".
+
+---
+
+## s05-q011 (first-word giveaway)
+
+**Problem:** Correct answer B started with "No" while all three distractors started with "The", making the correct answer visually distinct.
+**Change:** Changed B from "No token is mounted and API calls from the Pods fail with 401 Unauthorized" to "The token volume is not mounted and API calls from Pods fail with 401 error". All options now start with "The".
+
+---
+
+## s05-q028 (first-word giveaway)
+
+**Problem:** Correct answer B started with "Pod" while all three distractors started with "A", making the correct answer visually distinct.
+**Change:** Changed B from "Pod Security Admission with the `restricted` profile on the namespace" to "A Pod Security Admission label with the `restricted` profile enforced". All options now start with "A".
+
+---
+
+## s05-q032 (first-word giveaway)
+
+**Problem:** Correct answer A started with "Matching" while all three distractors started with "It", making the correct answer visually distinct.
+**Change:** Changed A from "Matching ClusterRole rules are automatically merged into the `admin` ClusterRole" to "It automatically merges matching ClusterRole rules into the `admin` ClusterRole". All options now start with "It".
+
+---
+
+## s05-q049 (first-word giveaway)
+
+**Problem:** Correct answer C started with "Attackers" while all three distractors started with "Immutable", making the correct answer visually distinct.
+**Change:** Changed C from "Attackers cannot persist backdoors and all changes are lost on container restart" to "Immutable containers prevent persistent backdoors as changes are lost on restart". All options now start with "Immutable".
+
+---
+
+## s05-q057 (first-word giveaway + length-balance)
+
+**Problem:** Correct answer D started with "Existing" while all three distractors started with "The", making the correct answer visually distinct. Additionally, correct was shortest (81 chars) with ratio 1.123.
+**Change:** Changed D from "Existing mounted data remains temporarily and the kubelet logs errors on sync" to "The existing mounted data remains temporarily and the kubelet logs errors on next sync" (86 chars). Shortened C from "The projected volume controller detects the deletion and recreates the Secret automatically" (91) to "The projected volume controller detects the deletion and recreates the Secret resource" (86). All options now start with "The". Ratio improved from 1.123 to 1.023.
+
+---
+
+## s05-q059 (first-word giveaway)
+
+**Problem:** Correct answer A started with "Tags" while all three distractors started with "Digests", making the correct answer visually distinct.
+**Change:** Changed distractor B from "Digests download significantly faster than tags when pulling from registries" to "Tags are slower to pull than digests because registries prioritize digest lookups". Updated B explanation accordingly. Now A and B start with "Tags", C and D start with "Digests".
+
+---
+
+## s05-q089 (first-word giveaway)
+
+**Problem:** Correct answer D started with "Env" while all three distractors started with "Completed", making the correct answer visually distinct.
+**Change:** Changed D from "Env vars and volume mounts with sensitive data remain accessible via kubectl" to "Completed Pods retain env vars and volume data accessible via kubectl commands". All options now start with "Completed".

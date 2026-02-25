@@ -519,3 +519,60 @@
 
 ### s09-q081 — giveaway: "unless" uniquely in correct answer
 - **Option C:** Changed "Exactly 5 minutes after the broken manifest was deployed, regardless of when the fix was pushed later" to "Exactly 5 minutes after the broken manifest was deployed, unless Flux detects a faster polling source" so that the correct answer B is no longer the only option containing the conditional qualifier "unless".
+
+---
+
+# Round 47 Review - set-09.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-09.js`
+**Issues fixed:** 7
+
+---
+
+## s09-q009 (length-balance)
+
+**Problem:** Correct answer B (90 chars) was the shortest option in a set with ratio 1.11, making it stand out as an outlier.
+**Change:** Expanded B from ~90 to ~99 chars by adding "enforced" before "on the namespace".
+
+---
+
+## s09-q016 (length-balance)
+
+**Problem:** Correct answer D (94 chars) was the shortest option in a set with ratio 1.11.
+**Change:** Expanded D from ~94 to ~98 chars by changing "under Forbid policy" to "under the Forbid policy".
+
+---
+
+## s09-q021 (length-balance)
+
+**Problem:** Correct answer D (99 chars) was the shortest, while B (110 chars) was the longest, giving ratio 1.11.
+**Change:** Trimmed B from ~110 to ~96 chars by changing "The ResourceQuota configuration" to "The ResourceQuota".
+
+---
+
+## s09-q029 (length-balance)
+
+**Problem:** Correct answer A (90 chars) was the shortest option in a set with ratio 1.11.
+**Change:** Expanded A from ~90 to ~97 chars by adding "native" before "Kubernetes CRDs".
+
+---
+
+## s09-q032 (length-balance)
+
+**Problem:** Correct answer A (94 chars) was the shortest option in a set with ratio 1.11.
+**Change:** Expanded A from ~94 to ~102 chars by changing "for the cluster" to "required by the cluster".
+
+---
+
+## s09-q047 (length-balance)
+
+**Problem:** Correct answer D (98 chars) was the shortest, while A (110 chars) was the longest outlier, giving ratio 1.12.
+**Change:** Trimmed A from ~110 to ~102 chars by removing "routing" from "routing rules".
+
+---
+
+## s09-q089 (length-balance)
+
+**Problem:** Correct answer B (94 chars) was the shortest option in a set with ratio 1.11.
+**Change:** Expanded B from ~94 to ~99 chars by adding "file" after "staging-values.yaml".

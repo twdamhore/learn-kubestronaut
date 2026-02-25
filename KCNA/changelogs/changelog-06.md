@@ -392,3 +392,20 @@
 ### s06-q038 — giveaway: "as" causal conjunction still unique to correct answer
 - **Problem:** Round 45 changed "since" to "as" in correct answer D, but "as" used causally ("The Pod continues running as the rule is...") remains a causal conjunction giveaway when no distractor uses any causal conjunction.
 - **Fix:** Restructured option D to eliminate the causal conjunction entirely: changed from "The Pod continues running as the rule is `IgnoredDuringExecution`" to "The Pod continues running under the `IgnoredDuringExecution` behavior". Length changed from 65 to 69 chars; ratio remains 1.09.
+
+---
+
+# Round 47 Review - set-06.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-06.js`
+**Issues fixed:** 1
+
+---
+
+## s06-q088 (backtick-density giveaway)
+
+**Problem:** Correct answer D had 4 backticks (2 pairs: `kubectl get nodes` and `Ready`), option A had 2 backticks, and options B and C had 0 backticks. The correct answer stood out as the most "technical-looking" option with the highest backtick density.
+**Change:** Added backticks to B (`staging`) and C (`CI/CD`) so all wrong options now have 2 backticks each, reducing the visual contrast with the correct answer's 4 backticks. Also minor wording adjustments: B trimmed from 82 to 80 chars ("schedule set" to "schedule"), C trimmed from 84 to 82 chars ("inspects cluster health" to "checks health"). Ratio improved from 1.05 to 1.07 (negligible change).
+
+---

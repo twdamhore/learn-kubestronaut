@@ -234,7 +234,7 @@ var questions = [
     options: [
       "Apply a policy in `finance` on `app: payment` pods allowing ingress from `web` namespace with `role: gateway` on port 8443",
       "Apply a policy in `web` on `role: gateway` allowing egress to `finance` namespace on port 8443 for payment services",
-      "Apply a policy in `finance` on all pods allowing ingress from any pod in the cluster on port 8443 regardless of labels",
+      "Apply a policy in `finance` on all pods allowing `ingress` from any pod in the `cluster` on port 8443 regardless of labels",
       "Apply a policy in `finance` on `app: payment` allowing ingress from `ipBlock: 0.0.0.0/0` on port 8443 for all sources"
     ],
     answer: 0,
@@ -296,7 +296,7 @@ var questions = [
     text: "A platform team evaluates CNI plugins for their new production cluster. They need support for NetworkPolicy enforcement and a high-performance kernel-level dataplane. Which CNCF project fits this requirement?",
     diagram: null,
     options: [
-      "Cilium — a CNCF project with eBPF dataplane and NetworkPolicy support",
+      "Cilium — a CNCF project with an eBPF-based dataplane and NetworkPolicy support",
       "Flannel — a CNI plugin providing overlay networking with a basic dataplane",
       "kube-router — a networking project using BGP with NetworkPolicy via iptables",
       "Multus — a meta-CNI plugin that attaches multiple network interfaces to pods"
@@ -1016,7 +1016,7 @@ var questions = [
     text: "A Calico cluster uses BGP peering with the physical network's top-of-rack routers. What advantage does this provide over VXLAN overlay mode?",
     diagram: null,
     options: [
-      "BGP peering allows pod IPs to be natively routable on the physical network without encapsulation",
+      "BGP peering allows pod IPs to be directly routable on the physical network without overlay",
       "BGP peering encrypts all inter-node traffic across the physical network using IPsec by default",
       "BGP peering reduces reliance on kube-proxy by handling service routing decisions via BGP",
       "BGP peering is primarily needed for IPv6 addressing, which VXLAN handles less efficiently"
@@ -1481,7 +1481,7 @@ var questions = [
     diagram: null,
     options: [
       "The kube-scheduler dispatching pods to nodes in the cluster, overloaded by scheduling decisions",
-      "The kubelet's HTTP server on the affected node, responding slowly due to high pod count",
+      "The kubelet's HTTP server on the affected node, responding slowly due to high pod count or load",
       "CoreDNS handling DNS resolution queries forwarded by the kubelet for health check lookups",
       "The Ingress controller proxying external requests to backend pods under heavy traffic load"
     ],

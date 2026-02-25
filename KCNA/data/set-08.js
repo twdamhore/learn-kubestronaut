@@ -121,10 +121,10 @@ var questions = [
     text: "A team is deploying a stateless web application that must maintain exactly 5 replicas. During a rolling update, no more than 1 Pod should be unavailable and up to 2 extra Pods may be created. Which Deployment strategy configuration achieves this?",
     diagram: null,
     options: [
-      "`strategy: { type: Recreate }` with `replicas: 5` which terminates all Pods before updating",
+      "`strategy: { type: Recreate }` with `replicas: 5` which terminates all Pods before update",
       "`strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 5, maxSurge: 0 } }`",
       "`strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 1, maxSurge: 2 } }`",
-      "`strategy: { type: BlueGreen, rollingUpdate: { maxUnavailable: 0, maxSurge: 5 } }`"
+      "`strategy: { type: BlueGreen, rollingUpdate: { maxUnavailable: 0, maxSurge: 5 } }` as a swap"
     ],
     answer: 2,
     explanation: "The `RollingUpdate` strategy with `maxUnavailable: 1` ensures at most one Pod is taken down at a time, while `maxSurge: 2` allows up to two additional Pods beyond the desired count during the update. `Recreate` terminates all Pods before creating new ones. `BlueGreen` is not a native Kubernetes strategy type.\n\nWhy other options are wrong:\n- A: Recreate terminates all Pods first causing downtime; does not allow granular control of unavailability\n- B: maxUnavailable:5 would allow all Pods to be unavailable at once, maxSurge:0 prevents extras\n- D: BlueGreen is not a valid native Kubernetes Deployment strategy type\n\nReference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment",
@@ -491,7 +491,7 @@ var questions = [
     diagram: null,
     options: [
       "Deployment — with `replicas` set to the current node count and manually adjusted (scaled) as nodes change",
-      "DaemonSet — ensures exactly one `Pod` copy runs on every (or selected subset of) cluster node(s)",
+      "DaemonSet — ensures that exactly one `Pod` copy runs on every (or selected subset of) cluster nodes",
       "StatefulSet — with `podManagementPolicy: Parallel` and replicas matching the current node count exactly",
       "Job — with `completions` equal to the number of nodes and `parallelism` set to the total (full) node count"
     ],
@@ -540,7 +540,7 @@ var questions = [
     options: [
       "Every Pod must share the same IP address as its host node to avoid unnecessary routing complexity across the cluster",
       "Pods must use a Service ClusterIP to communicate with Pods on other nodes since direct Pod-to-Pod traffic is blocked",
-      "Cross-namespace Pod traffic requires an Ingress resource; same-namespace Pods use optimized local routing",
+      "Cross-namespace Pod traffic requires an explicit Ingress resource; same-namespace Pods use optimized local routing",
       "All Pods can communicate across nodes without NAT, and each Pod receives its own unique cluster-routable IP address"
     ],
     answer: 3,
@@ -829,7 +829,7 @@ var questions = [
     options: [
       "IPVS offers O(1) connection processing via hash lookups, improving performance for large clusters",
       "IPVS encrypts all Service traffic using mutual TLS (mTLS) without requiring a service mesh or certs",
-      "IPVS handles both Service routing and DNS resolution for Service names at the kernel level",
+      "IPVS handles both Service routing and DNS resolution for all Service names at the kernel level",
       "IPVS eliminates the need for ClusterIP addresses by routing traffic directly to Pod IPs via BGP"
     ],
     answer: 0,
@@ -1179,10 +1179,10 @@ var questions = [
     text: "A team notices that their Namespace has a `LimitRange` resource configured. What does a `LimitRange` enforce?",
     diagram: null,
     options: [
-      "It sets the maximum number of Pods that can exist in the namespace at any given time during operations",
+      "It sets the maximum number of Pods and containers that can exist in the namespace at any given time",
       "It defines default, min, and max resource requests and limits for containers and Pods in the namespace",
-      "It restricts which container images can be pulled by Pods deployed within the namespace by registry URL",
-      "It limits the number of API requests per second that can be made to resources within that namespace"
+      "It restricts which container images and tags can be pulled by Pods deployed within the namespace by URL",
+      "It limits the rate and number of API requests per second that can be made to resources in that namespace"
     ],
     answer: 1,
     explanation: "A `LimitRange` sets resource constraints at the container/Pod level within a namespace. It can define default requests and limits (applied when containers do not specify their own), minimum and maximum resource values, and max ratio between limit and request. It differs from `ResourceQuota`, which limits the aggregate resource consumption of the entire namespace.\n\nWhy other options are wrong:\n- A: Maximum Pod count in a namespace is controlled by ResourceQuota, not LimitRange\n- C: Image restriction by registry URL requires admission controllers like OPA Gatekeeper, not LimitRange\n- D: API rate limiting is handled by API server flags, not LimitRange resources\n\nReference: https://kubernetes.io/docs/concepts/policy/limit-range/",

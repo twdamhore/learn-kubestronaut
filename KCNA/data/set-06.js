@@ -1401,8 +1401,8 @@ var questions = [
     diagram: null,
     options: [
       "A. Skip pre-deployment checks and rely on `kubectl rollout undo` for recovery if needed",
-      "B. Deploy to a separate staging cluster that has a different maintenance schedule set",
-      "C. Add a manual approval gate in the pipeline where an operator inspects cluster health",
+      "B. Deploy to a separate `staging` cluster that has a different maintenance schedule",
+      "C. Add a manual approval gate in the `CI/CD` pipeline where an operator checks health",
       "D. Run `kubectl get nodes` in the pipeline and assert all nodes are `Ready` before deploy"
     ],
     answer: 3,
