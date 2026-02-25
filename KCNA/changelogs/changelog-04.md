@@ -1,3 +1,18 @@
+# Round 50 Review - set-04.js
+
+**Date:** 2026-02-25
+**File:** `KCNA/data/set-04.js`
+**Issues fixed:** 1
+
+## Changes
+
+### 1. s04-q098 (accuracy)
+- **Type:** Incorrect Kubernetes version number
+- **Problem:** Explanation stated `maxUnavailable` for StatefulSet rolling updates "was promoted to beta (enabled by default) in Kubernetes 1.31". The actual Kubernetes feature gates page shows `MaxUnavailableStatefulSet` remained alpha (disabled by default) from 1.24 through 1.34, and was only promoted to beta (enabled by default) in Kubernetes 1.35.
+- **Fix:** Changed "promoted to beta (enabled by default) in Kubernetes 1.31" to "promoted to beta (enabled by default) in Kubernetes 1.35".
+
+---
+
 # Round 36 Review - set-04.js
 
 **Date:** 2026-02-19
